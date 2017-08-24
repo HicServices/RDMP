@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -17,6 +18,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     {
         private Argument _argument;
         private DemandsInitialization _demand;
+        private bool _bLoading = true;
 
         public ArgumentValueTextUI()
         {
@@ -25,15 +27,20 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
         public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
         {
+            _bLoading = true;
             _argument = argument;
             _demand = demand;
             tbText.Text = argument.Value;
 
             BombIfMandatoryAndEmpty();
+            _bLoading = false;
         }
 
         private void tbText_TextChanged(object sender, System.EventArgs e)
         {
+            if(_bLoading)
+                return;
+
             ragSmiley1.Reset();
 
             _argument.Value = tbText.Text;
