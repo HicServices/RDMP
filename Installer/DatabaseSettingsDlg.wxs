@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+    <UI>
+      <Dialog Id="CatalogueDatabaseSettingsDlg" Width="370" Height="270" Title="Catalogue Database Setup">
+
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.CustomizeDlgBannerBitmap)" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="210" Height="15" Transparent="yes" NoPrefix="yes" Text="Database Settings: (component name here)" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Settings for connecting to the (component name) database." />
+        <Control Id="Text" Type="Text" X="25" Y="55" Width="320" Height="20" Text="Please enter the connection string for the (component name) database." />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+        <!-- Catalogue details -->
+        <Control Id="CatalogueConnectionServerStringLabel" Text="Catalogue Server" Type="Text" X="25" Y="100" Height="18" Width="65" />
+        <Control Id="CatalogueConnectionServerString" Property="CATALOGUE_SERVER" Text="[CATALOGUE_SERVER]" Type="Edit"
+                 X="100" Y="97" Height="18" Width="260" />
+
+        <Control Id="CatalogueConnectionDatabaseStringLabel" Text="Catalogue Database" Type="Text" X="25" Y="100" Height="18" Width="65" />
+        <Control Id="CatalogueConnectionDatabaseString" Property="CATALOGUE_DATABASE" Text="[CATALOGUE_DATABASE]" Type="Edit"
+                 X="100" Y="97" Height="18" Width="260" />
+
+        <!-- Data Export Manager Connection String --><!--
+        <Control Id="DEMConnectionStringLabel" Text="Data Export Manager" Type="Text" X="25" Y="125" Height="18" Width="65" />
+        <Control Id="DEMConnectionString" Property="DEM_CONNECTION_STRING" Text="[DEM_CONNECTION_STRING]" Type="Edit"
+                 X="100" Y="122" Height="18" Width="260" />
+
+        --><!-- ANO Connection String --><!--
+        <Control Id="ANOConnectionStringLabel" Text="ANO" Type="Text" X="25" Y="150" Height="18" Width="65" />
+        <Control Id="ANOConnectionString" Property="ANO_CONNECTION_STRING" Text="[ANO_CONNECTION_STRING]" Type="Edit"
+                 X="100" Y="147" Height="18" Width="260" />
+
+        --><!-- Identifier Dump Connection String --><!--
+        <Control Id="IdentifierDumpConnectionStringLabel" Text="Identifier Dump" Type="Text" X="25" Y="175" Height="18" Width="65" />
+        <Control Id="IdentifierDumpConnectionString" Property="IDENTIFIER_DUMP_CONNECTION_STRING" Text="[IDENTIFIER_DUMP_CONNECTION_STRING]" Type="Edit"
+                 X="100" Y="172" Height="18" Width="260" />
+
+        --><!-- Cohort Connection String --><!--
+        <Control Id="CohortConnectionStringLabel" Text="Cohort" Type="Text" X="25" Y="200" Height="18" Width="65" />
+        <Control Id="CohortConnectionString" Property="COHORT_CONNECTION_STRING" Text="[COHORT_CONNECTION_STRING]" Type="Edit"
+                 X="100" Y="197" Height="18" Width="260" />-->
+        
+        <!-- Back / Next / Cancel -->
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        
+      </Dialog>
+    </UI>
+	</Fragment>
+</Wix>

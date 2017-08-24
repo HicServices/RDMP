@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DataLoadEngineTests.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TestCatalogueConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SERVER=MACKENZIE6105;Database=TestCatalogue;Trusted_Connection=True;</Value>
+    </Setting>
+    <Setting Name="TestLoggingConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SERVER=MACKENZIE6105;Database=TestLogging;Trusted_Connection=True;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

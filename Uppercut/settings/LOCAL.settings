@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="Settings">
+  <!-- environment settings -->
+  <property name="environment" value="LOCAL" />
+  <!-- servers -->
+  <property name="server.app" value="127.0.0.1" />
+  <property name="server.file" value="127.0.0.1" />
+  <property name="server.msmq" value="localhost" />
+  
+  <!-- Catalogue -->
+  <property name="server.database" value="(local)" />
+  <property name="database.name" value="LocalCatalogue" />
+  <property name="database.security" value="Trusted_connection=true" />
+  <property name="test.database.name" value="TestCatalogue" /> <!-- for integration tests -->
+  <property name="test.database.filepath" value="C:\Users\gimcallister\databases\RDMP\" />
+  <property name="folder.database" value="CatalogueManager\CatalogueLibrary.Database\db" overwrite="false" />
+  
+  <!-- Logging -->
+  <property name="server.database.logging" value="(local)" />
+  <property name="database.logging.name" value="LocalLogging" />
+  <property name="database.logging.security" value="Trusted_connection=true" />
+  <property name="test.database.logging.name" value="TestLogging" /> <!-- for integration tests -->
+  <property name="test.database.logging.filepath" value="C:\Users\gimcallister\databases\RDMP\" />
+  <property name="folder.database.logging" value="Logging\HIC.Logging.Database\db" overwrite="false" />
+
+  <!-- DataExportManager -->
+  <property name="server.database.dataExportManager" value="(local)" />
+  <property name="database.dataExportManager.name" value="LocalDataExportManager" />
+  <property name="database.dataExportManager.security" value="Trusted_connection=true" />
+  <property name="test.database.dataExportManager.name" value="TestDataExportManager" /> <!-- for integration tests -->
+  <property name="test.database.dataExportManager.filepath" value="C:\Users\gimcallister\databases\RDMP\" />
+  <property name="folder.database.dataExportManager" value="DataExportManager2\DataExportManager2.Database\db" overwrite="false" />
+
+  <!-- DataQualityEngine -->
+  <property name="server.database.dataQualityEngine" value="(local)" />
+  <property name="database.dataQualityEngine.name" value="LocalDataQualityEngine" />
+  <property name="database.dataQualityEngine.security" value="Trusted_connection=true" />
+  <property name="test.database.dataQualityEngine.name" value="TestDataQualityEngine" /> <!-- for integration tests -->
+  <property name="test.database.dataQualityEngine.filepath" value="C:\Users\gimcallister\databases\RDMP\" />
+  <property name="folder.database.dataQualityEngine" value="DataQualityEngine\DataQualityEngine.Database\db" overwrite="false" />
+
+  <!-- ANO -->
+  <property name="server.database.ano" value="(local)" />
+  <property name="database.ano.name" value="LocalANO" />
+  <property name="database.ano.security" value="Trusted_connection=true" />
+  <property name="test.database.ano.name" value="TestANO" /> <!-- for integration tests -->
+  <property name="test.database.ano.filepath" value="C:\Users\gimcallister\databases\RDMP\" />
+  <property name="folder.database.ano" value="DataLoad\Engine\DataLoadEngine.ANO.Database\db" overwrite="false" />
+  
+  <property name="log.level" value="DEBUG" />
+  <property name="app.user.name" value="" />
+  <property name="app.user.password" value="" />
+  
+  <!-- base settings -->
+  <property name="project.name" value="HIC.DataManagementPlatform" overwrite="false" />
+  <property name="repository.path" value="https://hic.dundee.ac.uk/svn/hicservices/RDMP" />
+  <property name="folder.app.drop" value="${project.name}" overwrite="false" />
+  
+  <!-- database deployment -->
+  <property name="dirs.db" value="${folder.database}" />
+  <property name="file.version" value="_BuildInfo.xml" overwrite="false" />
+  <property name="connection.string" value="Server=${server.database};Database=${database.name};Integrated Security=True;" overwrite="false" />
+  <property name="test.connection.string" value="Server=${server.database};Database=${test.database.name};Integrated Security=True;" overwrite="false" />
+  <property name="restore.from.path" value="CatalogueManager\CatalogueLibrary.Database\backups\Test_Catalogue.bak" overwrite="false" />
+  
+  <property name="dirs.db.logging" value="${folder.database.logging}" />
+  <property name="logging.connection.string" value="Server=${server.database};Database=${database.logging.name};Integrated Security=True;" overwrite="false" />
+  <property name="logging.test.connection.string" value="Server=${server.database};Database=${test.database.logging.name};Integrated Security=True;" overwrite="false" />
+  <property name="logging.restore.from.path" value="Logging\HIC.Logging.Database\backups\Logging.bak" overwrite="false" />
+
+  <property name="dirs.db.dataExportManager" value="${folder.database.dataExportManager}" />
+  <property name="dataExportManager.connection.string" value="Server=${server.database};Database=${database.dataExportManager.name};Integrated Security=True;" overwrite="false" />
+  <property name="dataExportManager.test.connection.string" value="Server=${server.database};Database=${test.database.dataExportManager.name};Integrated Security=True;" overwrite="false" />
+  <property name="dataExportManager.restore.from.path" value="DataExportManager2\HIC.DataExportManager2.Database\backups\DataExportManager2.bak" overwrite="false" />
+
+  <property name="dirs.db.dataQualityEngine" value="${folder.database.dataQualityEngine}" />
+  <property name="dataQualityEngine.connection.string" value="Server=${server.database.dataQualityEngine};Database=${database.dataQualityEngine.name};Integrated Security=True;" overwrite="false" />
+  <property name="dataQualityEngine.test.connection.string" value="Server=${server.database.dataQualityEngine};Database=${test.database.dataQualityEngine.name};Integrated Security=True;" overwrite="false" />
+  <property name="dataQualityEngine.restore.from.path" value="DataQualityEngine\DataQualityEngine.Database\backups\DataQualityEngine.bak" overwrite="false" />
+
+  <property name="dirs.db.ano" value="${folder.database.ano}" />
+  <property name="ano.connection.string" value="Server=${server.database};Database=${database.ano.name};Integrated Security=True;" overwrite="false" />
+  <property name="ano.test.connection.string" value="Server=${server.database};Database=${test.database.ano.name};Integrated Security=True;" overwrite="false" />
+  <property name="ano.restore.from.path" value="DataLoad\Engine\DataLoadEngine.ANO.Database\backups\ANO.bak" overwrite="false" />
+
+</project>

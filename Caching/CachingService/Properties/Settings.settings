@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CachingService.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="CacheProgressIDList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">91</Value>
+    </Setting>
+    <Setting Name="PermissionWindowIDList" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4,5,6</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

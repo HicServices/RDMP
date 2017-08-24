@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="TARGETDIR">
+            <Component Id="cmp1299D860447B69ABB60A5D1B7A7A9152" Guid="*">
+                <File Id="fil79ABC74E8A90C11C077E4CD2D0FDC0DE" KeyPath="yes" Source="SourceDir\CatalogueLibrary.dll" />
+            </Component>
+            <Component Id="cmp5320F03EF2A235364FB2C25C0CA718B6" Guid="*">
+                <File Id="fil9E42FA867697B5E501989539E62D8547" KeyPath="yes" Source="SourceDir\CatalogueLibrary.pdb" />
+            </Component>
+            <Component Id="cmp0CDD720EB88C6F8C12B594314822EBC2" Guid="*">
+                <File Id="fil0FBF3B5405043D3FA81AC2F3CFD59AF2" KeyPath="yes" Source="SourceDir\DataLoadEngine.dll" />
+            </Component>
+            <Component Id="cmp7F2DA27A79FFA41530019866289044E6" Guid="*">
+                <File Id="filB0BAF16CD681E12BE8AB1C6E11B78030" KeyPath="yes" Source="SourceDir\DataLoadEngine.dll.config" />
+            </Component>
+            <Component Id="cmpEF99DC0ED780662D77A10940CBAFE061" Guid="*">
+                <File Id="filA7832C39553843A1CE738BB42AA6E079" KeyPath="yes" Source="SourceDir\DataLoadEngine.pdb" />
+            </Component>
+            <Component Id="cmp569093E4C65002B37D445741DC115569" Guid="*">
+                <File Id="filDB71C4B5384E56BC52E8B65EE2E6CA30" KeyPath="yes" Source="SourceDir\Dicom.dll" />
+            </Component>
+            <Component Id="cmp466CF04CB99F6589654592A3571A56A7" Guid="*">
+                <File Id="fil973CF62114FCC344FDF02CDED4A99683" KeyPath="yes" Source="SourceDir\Dicom.Native.dll" />
+            </Component>
+            <Component Id="cmp59B5858E24F93B1A62D03D77F1478CB8" Guid="*">
+                <File Id="filE937ED4BAE5C3DFECF7ACE7123E1B064" KeyPath="yes" Source="SourceDir\Dicom.Native64.dll" />
+            </Component>
+            <Component Id="cmp379D8D6126489114DED7AD0A283990B2" Guid="*">
+                <File Id="fil7C18053FDE2E06CC17E10CAECEA09899" KeyPath="yes" Source="SourceDir\Dicom.pdb" />
+            </Component>
+            <Component Id="cmp65DC7883D0F41D46DB2C2AC226C98EBD" Guid="*">
+                <File Id="filAAB3ABF9F0B36D42C901F2C44B637169" KeyPath="yes" Source="SourceDir\Dicom.xml" />
+            </Component>
+            <Component Id="cmp8C749D48B68C4C29D549A016A0D71015" Guid="*">
+                <File Id="filE0AFA3C0408C18465BE10AB8367EC521" KeyPath="yes" Source="SourceDir\HIC.Logging.dll" />
+            </Component>
+            <Component Id="cmp2796B3A3DA72314B1C6E96E99DCC7E16" Guid="*">
+                <File Id="filF7CD9987A92D9DC074E4CD6A6191C626" KeyPath="yes" Source="SourceDir\HIC.Logging.pdb" />
+            </Component>
+            <Component Id="cmp93D8B0B4A3E1743DC112AA33040A556E" Guid="*">
+                <File Id="fil26195892AC88FA7C68A5B3256E556D0A" KeyPath="yes" Source="SourceDir\Ionic.Zip.dll" />
+            </Component>
+            <Component Id="cmpDE86F5F2ECC747CD5DBEEE393DF6F171" Guid="*">
+                <File Id="fil21B022DF64AB20896A8D0D6D0A986920" KeyPath="yes" Source="SourceDir\Ionic.Zip.xml" />
+            </Component>
+            <Component Id="cmp21F309C806FA488DFFFE5378BCF611FF" Guid="*">
+                <File Id="fil144615CECAA1643F18747602C1CE74E7" KeyPath="yes" Source="SourceDir\log4net.config" />
+            </Component>
+            <Component Id="cmpACB6CD6FFB2A84501BD9E8392459FA45" Guid="*">
+                <File Id="fil53CF67BC1F7314B08C1D64A6CEA223E4" KeyPath="yes" Source="SourceDir\log4net.dll" />
+            </Component>
+            <Component Id="cmp971CAA5089C607CB15ABC6DB8CA7C5C2" Guid="*">
+                <File Id="filC2B8A215F89AF1071ADDFC39EAE7D41E" KeyPath="yes" Source="SourceDir\log4net.xml" />
+            </Component>
+            <Component Id="cmpD4B5930D9EB3F9DD604CCDF4CACDBB28" Guid="*">
+                <File Id="fil4615277D3B8D60C94CDAE1CC96FCCF8A" KeyPath="yes" Source="SourceDir\Microsoft.SqlServer.DTSRuntimeWrap.dll" />
+            </Component>
+            <Component Id="cmpEA91A1CAC0A304287222B9432625E816" Guid="*">
+                <File Id="filC092736C4A64C000E1A264349D6E0CCB" KeyPath="yes" Source="SourceDir\MySql.Data.dll" />
+            </Component>
+            <Component Id="cmpA38A81F41EBC6C795F530AF736168DD0" Guid="*">
+                <File Id="filD99192F3EF926B0696A896924D4A93A9" KeyPath="yes" Source="SourceDir\NLog.dll" />
+            </Component>
+            <Component Id="cmpB9B3D030803FD34B700D197051491888" Guid="*">
+                <File Id="fil88CDAADE20F6C0BABA487DCEA46ED96F" KeyPath="yes" Source="SourceDir\NLog.xml" />
+            </Component>
+            <Component Id="cmp47B814B56D7A2EAEF582D37497796325" Guid="*">
+                <File Id="fil2800066FBE8546E4819A636F17F53FA9" KeyPath="yes" Source="SourceDir\ReusableLibraryCode.dll" />
+            </Component>
+            <Component Id="cmp3CD10A5BB470777BA0C92D9C2B611D61" Guid="*">
+                <File Id="filE182445CE803EA7CA1E97887B60B581B" KeyPath="yes" Source="SourceDir\ReusableLibraryCode.pdb" />
+            </Component>
+            <Component Id="cmp033D828C9CCC80FBF4E9CD673BFDA264" Guid="*">
+                <File Id="fil6DF3C397FADEBA59573130431A211DBC" KeyPath="yes" Source="SourceDir\ReusableUIComponents.dll" />
+            </Component>
+            <Component Id="cmpFE6C80AED8A2BBB89F699E9B3D140510" Guid="*">
+                <File Id="filD79D8DE0D79957F28019823DE94E988C" KeyPath="yes" Source="SourceDir\ReusableUIComponents.pdb" />
+            </Component>
+            <Component Id="cmp447D3EF9ED34A4D54692D40FB6E15F35" Guid="*">
+                <File Id="filFC7B7595A145BC9B57C56F356F1EB4B8" KeyPath="yes" Source="SourceDir\ScintillaNET.dll" />
+            </Component>
+            <Component Id="cmpEE44950E7AAB38AE99D8C6F15E895B04" Guid="*">
+                <File Id="fil7AA17C1D530C9521583D12D3FA439B91" KeyPath="yes" Source="SourceDir\ScintillaNET.pdb" />
+            </Component>
+            <Component Id="cmp951933E2358CDA1A9C9AA87682BC73A1" Guid="*">
+                <File Id="fil8300EEA6DD6B5E0AD0975D8C3335B6D5" KeyPath="yes" Source="SourceDir\ScintillaNET.xml" />
+            </Component>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="DataLoadEngine.Assemblies">
+            <ComponentRef Id="cmp1299D860447B69ABB60A5D1B7A7A9152" />
+            <ComponentRef Id="cmp5320F03EF2A235364FB2C25C0CA718B6" />
+            <ComponentRef Id="cmp0CDD720EB88C6F8C12B594314822EBC2" />
+            <ComponentRef Id="cmp7F2DA27A79FFA41530019866289044E6" />
+            <ComponentRef Id="cmpEF99DC0ED780662D77A10940CBAFE061" />
+            <ComponentRef Id="cmp569093E4C65002B37D445741DC115569" />
+            <ComponentRef Id="cmp466CF04CB99F6589654592A3571A56A7" />
+            <ComponentRef Id="cmp59B5858E24F93B1A62D03D77F1478CB8" />
+            <ComponentRef Id="cmp379D8D6126489114DED7AD0A283990B2" />
+            <ComponentRef Id="cmp65DC7883D0F41D46DB2C2AC226C98EBD" />
+            <ComponentRef Id="cmp8C749D48B68C4C29D549A016A0D71015" />
+            <ComponentRef Id="cmp2796B3A3DA72314B1C6E96E99DCC7E16" />
+            <ComponentRef Id="cmp93D8B0B4A3E1743DC112AA33040A556E" />
+            <ComponentRef Id="cmpDE86F5F2ECC747CD5DBEEE393DF6F171" />
+            <ComponentRef Id="cmp21F309C806FA488DFFFE5378BCF611FF" />
+            <ComponentRef Id="cmpACB6CD6FFB2A84501BD9E8392459FA45" />
+            <ComponentRef Id="cmp971CAA5089C607CB15ABC6DB8CA7C5C2" />
+            <ComponentRef Id="cmpD4B5930D9EB3F9DD604CCDF4CACDBB28" />
+            <ComponentRef Id="cmpEA91A1CAC0A304287222B9432625E816" />
+            <ComponentRef Id="cmpA38A81F41EBC6C795F530AF736168DD0" />
+            <ComponentRef Id="cmpB9B3D030803FD34B700D197051491888" />
+            <ComponentRef Id="cmp47B814B56D7A2EAEF582D37497796325" />
+            <ComponentRef Id="cmp3CD10A5BB470777BA0C92D9C2B611D61" />
+            <ComponentRef Id="cmp033D828C9CCC80FBF4E9CD673BFDA264" />
+            <ComponentRef Id="cmpFE6C80AED8A2BBB89F699E9B3D140510" />
+            <ComponentRef Id="cmp447D3EF9ED34A4D54692D40FB6E15F35" />
+            <ComponentRef Id="cmpEE44950E7AAB38AE99D8C6F15E895B04" />
+            <ComponentRef Id="cmp951933E2358CDA1A9C9AA87682BC73A1" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CatalogueManager.Menus.RDMPContextMenuStrip" Collapsed="true">
+    <Position X="7" Y="1.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAUAAAAAAAAAAAgAAAAAAAAAAAAAQAgAgAA=</HashCode>
+      <FileName>Menus\RDMPContextMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.CatalogueItemMenu" Collapsed="true">
+    <Position X="4.25" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAIABAAAAAAAIgAAEAAAAAAAAAAgIAAA=</HashCode>
+      <FileName>Menus\CatalogueItemMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.LoadMetadataMenu" Collapsed="true">
+    <Position X="7.25" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAEAAACAAAAIAAAAAAA=</HashCode>
+      <FileName>Menus\LoadMetadataMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.TableInfoMenu" Collapsed="true">
+    <Position X="10.25" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ABQAAAAAAQAwAAAAIAAAAAAAAAAgAAABQAAAEAACAAE=</HashCode>
+      <FileName>Menus\TableInfoMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.AggregateConfigurationMenu" Collapsed="true">
+    <Position X="3.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAIIAAAAAA=</HashCode>
+      <FileName>Menus\AggregateConfigurationMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.AggregateFilterContainerMenu" Collapsed="true">
+    <Position X="10.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAIQAEgAAAAAAAAAgAgAAAAAAAAAgAAA=</HashCode>
+      <FileName>Menus\AggregateFilterContainerMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.CatalogueMenu" Collapsed="true">
+    <Position X="12.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wggAAAACQzEAIgmEAQBSAAQARAQDASIEAAAIAIAAQAA=</HashCode>
+      <FileName>Menus\CatalogueMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.ColumnInfoMenu" Collapsed="true">
+    <Position X="17" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAEAECAAAAAAAAAAAI=</HashCode>
+      <FileName>Menus\ColumnInfoMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.DataAccessCredentialsNodeMenu" Collapsed="true">
+    <Position X="5.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Menus\DataAccessCredentialsNodeMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.DataAccessCredentialUsageNodeMenu" Collapsed="true">
+    <Position X="21.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Menus\DataAccessCredentialUsageNodeMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.DocumentationNodeMenu" Collapsed="true">
+    <Position X="14.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Menus\DocumentationNodeMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.ExtractionInformationMenu" Collapsed="true">
+    <Position X="19.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Menus\ExtractionInformationMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.FiltersParametersNodeMenu" Collapsed="true">
+    <Position X="8" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Menus\FiltersParametersNodeMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Menus.RDMPMenuStrip" Collapsed="true">
+    <Position X="15.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AwGAgAHzgD2AEALQIECAEEQDBASVgYQQgiKAQQgQFwA=</HashCode>
+      <FileName>Menus\RDMPMenuStrip.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <sectionGroup name="userSettings" type="System.Configuration.UserSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" >
+      <section name="DataLoadEngineTests.Properties.Settings" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" allowExeDefinition="MachineToLocalUser" requirePermission="false" />
+    </sectionGroup>
+  </configSections>
+  <connectionStrings configSource="ConnectionStrings.config"/>
+<startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5"/></startup><userSettings>
+    <DataLoadEngineTests.Properties.Settings>
+      <setting name="TestCatalogueConnectionString" serializeAs="String">
+        <value>${test.connection.string}</value>
+      </setting>
+      <setting name="TestLoggingConnectionString" serializeAs="String">
+        <value>${logging.test.connection.string}</value>
+      </setting>
+    </DataLoadEngineTests.Properties.Settings>
+  </userSettings>
+</configuration>

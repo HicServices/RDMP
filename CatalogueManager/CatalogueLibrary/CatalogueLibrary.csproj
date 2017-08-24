@@ -1,0 +1,577 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CatalogueLibrary</RootNamespace>
+    <AssemblyName>CatalogueLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\SMI\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Cloning\MissingTableException.cs" />
+    <Compile Include="DataFlowPipeline\ContextFactory.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\IDataFlowContextProvider.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />
+    <Compile Include="Data\AggregateTopX.cs" />
+    <Compile Include="Data\ConcreteFilter.cs" />
+    <Compile Include="Data\ContainerHelper.cs" />
+    <Compile Include="Data\Dashboarding\DashboardControl.cs" />
+    <Compile Include="Data\Dashboarding\DashboardLayout.cs" />
+    <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
+    <Compile Include="Data\Dashboarding\IPersistableObjectCollection.cs" />
+    <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
+    <Compile Include="Data\DataLoad\IHasStageSpecificRuntimeName.cs" />
+    <Compile Include="Data\DataLoad\IPreLoadDiscardedColumn.cs" />
+    <Compile Include="Data\ExtractionFilterParameterSet.cs" />
+    <Compile Include="Data\ExtractionFilterParameterSetValue.cs" />
+    <Compile Include="Data\Favourite.cs" />
+    <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
+    <Compile Include="Data\ITableInfo.cs" />
+    <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
+    <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
+    <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
+    <Compile Include="FilterImporting\FilterImporter.cs" />
+    <Compile Include="FilterImporting\ParameterCreator.cs" />
+    <Compile Include="Data\Automation\AutomateablePipeline.cs" />
+    <Compile Include="Data\Automation\AutomationJob.cs" />
+    <Compile Include="Data\Automation\AutomationServiceSlot.cs" />
+    <Compile Include="Data\Cache\CacheLagPeriod.cs" />
+    <Compile Include="Data\Cohort\Joinables\JoinableCohortAggregateConfiguration.cs" />
+    <Compile Include="Data\Cohort\Joinables\JoinableCohortAggregateConfigurationUse.cs" />
+    <Compile Include="Data\ConcreteColumn.cs" />
+    <Compile Include="Data\CredentialsInUseException.cs" />
+    <Compile Include="Data\DataAccessCredentialsFactory.cs" />
+    <Compile Include="Data\DataLoad\ArgumentFactory.cs" />
+    <Compile Include="Data\DataLoad\Exceptions\NoDemandsException.cs" />
+    <Compile Include="Data\DataLoad\IArgumentHost.cs" />
+    <Compile Include="Data\DataLoad\ILoadProgressHost.cs" />
+    <Compile Include="Data\DataLoad\ITableInfoCollectionHost.cs" />
+    <Compile Include="Data\IColumn.cs" />
+    <Compile Include="Data\IEncryptedString.cs" />
+    <Compile Include="Data\IExternalDatabaseServer.cs" />
+    <Compile Include="Data\IPermissionWindow.cs" />
+    <Compile Include="Data\IServerDefaults.cs" />
+    <Compile Include="Data\ISupplementalJoin.cs" />
+    <Compile Include="Data\Pipelines\IDemandToUseAPipeline.cs" />
+    <Compile Include="Data\Pipelines\IPipeline.cs" />
+    <Compile Include="Data\Pipelines\IPipelineComponent.cs" />
+    <Compile Include="Data\Pipelines\IPipelineComponentArgument.cs" />
+    <Compile Include="Data\Plugin.cs" />
+    <Compile Include="Data\SelfCertifyingDataAccessPoint.cs" />
+    <Compile Include="Data\VersionedDatabaseEntity.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\ANOStoreDatabasePatcher.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\IExternalDatabaseServerProvider.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\PluginPatcher.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
+    <Compile Include="FatalDeSyncException.cs" />
+    <Compile Include="IEncryptStrings.cs" />
+    <Compile Include="IHICProjectDirectory.cs" />
+    <Compile Include="Nodes\AggregatesNode.cs" />
+    <Compile Include="Nodes\ANOTablesNode.cs" />
+    <Compile Include="Nodes\CatalogueItemsNode.cs" />
+    <Compile Include="Nodes\CohortSetsNode.cs" />
+    <Compile Include="Nodes\DataAccessCredentialUsageNode.cs" />
+    <Compile Include="Nodes\DataAccessCredentialsNode.cs" />
+    <Compile Include="Nodes\DocumentationNode.cs" />
+    <Compile Include="Nodes\JoinableCollectionNode.cs" />
+    <Compile Include="Nodes\LinkedColumnInfoNode.cs" />
+    <Compile Include="Nodes\AllServersNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\AllProcessTasksUsedByLoadMetadataNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\CatalogueUsedByLoadMetadataNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\HICProjectDirectoryNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\AllCataloguesUsedByLoadMetadataNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\LoadMetadataScheduleNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\LoadStageNode.cs" />
+    <Compile Include="Nodes\SingletonNode.cs" />
+    <Compile Include="Nodes\TableInfoServerNode.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Providers\CatalogueChildProvider.cs" />
+    <Compile Include="Data\PerformanceImprovement\CohortHierarchy.cs" />
+    <Compile Include="Nodes\ParametersNode.cs" />
+    <Compile Include="Providers\DescendancyList.cs" />
+    <Compile Include="Providers\IChildProvider.cs" />
+    <Compile Include="Providers\ICoreChildProvider.cs" />
+    <Compile Include="QueryBuilding\CustomLine.cs" />
+    <Compile Include="QueryBuilding\QueryComponent.cs" />
+    <Compile Include="Reports\DocumentationReportFormsAndControlsOfficeBit.cs" />
+    <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabase.cs" />
+    <Compile Include="Reports\Exceptions\SourceCodeNotFoundException.cs" />
+    <Compile Include="Reports\IHasRequirements.cs" />
+    <Compile Include="Repositories\Construction\Exceptions\ObjectLacksCompatibleConstructorException.cs" />
+    <Compile Include="Repositories\Construction\ObjectConstructor.cs" />
+    <Compile Include="Repositories\FriendlyNamedCatalogueItem.cs" />
+    <Compile Include="Repositories\ICatalogueRepository.cs" />
+    <Compile Include="Repositories\ICatalogueRepositoryServiceLocator.cs" />
+    <Compile Include="Repositories\IDataExportRepository.cs" />
+    <Compile Include="Repositories\IDataExportRepositoryServiceLocator.cs" />
+    <Compile Include="Repositories\IRDMPPlatformRepositoryServiceLocator.cs" />
+    <Compile Include="Repositories\JoinInfoFinder.cs" />
+    <Compile Include="Repositories\CatalogueRepository.cs" />
+    <Compile Include="Checks\BadAssembliesChecker.cs" />
+    <Compile Include="Checks\ClonedFilterChecker.cs" />
+    <Compile Include="Checks\PipelineChecker.cs" />
+    <Compile Include="Checks\MEFChecker.cs" />
+    <Compile Include="DataFlowPipeline\DataFlowPipelineEngineFactory.cs" />
+    <Compile Include="DataFlowPipeline\DataFlowPipelineEngine.cs" />
+    <Compile Include="DataFlowPipeline\GracefulCancellationToken.cs" />
+    <Compile Include="DataFlowPipeline\GracefulCancellationTokenSource.cs" />
+    <Compile Include="DataFlowPipeline\IDataFlowComponent.cs" />
+    <Compile Include="DataFlowPipeline\IDataFlowDestination.cs" />
+    <Compile Include="DataFlowPipeline\IDataFlowPipelineEngineFactory.cs" />
+    <Compile Include="DataFlowPipeline\IDataFlowSource.cs" />
+    <Compile Include="DataFlowPipeline\IPluginDataFlowComponent.cs" />
+    <Compile Include="DataFlowPipeline\IPluginDataFlowSource.cs" />
+    <Compile Include="DataFlowPipeline\IResetableSource.cs" />
+    <Compile Include="DataFlowPipeline\Events\PipelineEngineEventArgs.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContext.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContextFactory.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\FlatFileToLoad.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\IPipelineRequirement.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\PipelineUsage.cs" />
+    <Compile Include="DataHelper\ITableInfoImporter.cs" />
+    <Compile Include="Data\Aggregation\AggregateConfiguration.cs" />
+    <Compile Include="Data\Aggregation\AggregateContinuousDateAxis.cs" />
+    <Compile Include="Data\Aggregation\AggregateDimension.cs" />
+    <Compile Include="Data\Aggregation\AggregateFilter.cs" />
+    <Compile Include="Data\Aggregation\AggregateFilterContainer.cs" />
+    <Compile Include="Data\Aggregation\AggregateFilterParameter.cs" />
+    <Compile Include="Data\Aggregation\AggregateForcedJoin.cs" />
+    <Compile Include="Data\Cache\CacheProgress.cs" />
+    <Compile Include="Data\Cache\CacheFetchFailure.cs" />
+    <Compile Include="Data\Cache\ICacheFetchFailure.cs" />
+    <Compile Include="Data\CatalogueFolder.cs" />
+    <Compile Include="Data\PerformanceImprovement\CatalogueItemClassification.cs" />
+    <Compile Include="Data\CatalogueObscureDependencyFinder.cs" />
+    <Compile Include="Data\Cohort\CohortAggregateContainer.cs" />
+    <Compile Include="Data\Cohort\AnyTableSqlParameter.cs" />
+    <Compile Include="Data\Cohort\CohortIdentificationConfiguration.cs" />
+    <Compile Include="Data\Cohort\IOrderable.cs" />
+    <Compile Include="Data\DataAccessCredentials.cs" />
+    <Compile Include="Data\DatabaseEntity.cs" />
+    <Compile Include="Data\DataLoad\Argument.cs" />
+    <Compile Include="Data\DataLoad\ICustomUI.cs" />
+    <Compile Include="Data\DataLoad\ICustomUIDrivenClass.cs" />
+    <Compile Include="Data\DataLoad\ILoadMetadata.cs" />
+    <Compile Include="Data\DataLoad\IResolveDuplication.cs" />
+    <Compile Include="Data\AutomationServiceException.cs" />
+    <Compile Include="DataHelper\RDMPQuerySyntaxHelper.cs" />
+    <Compile Include="Data\DemandsInitialization.cs" />
+    <Compile Include="Data\EncryptedPasswordHost.cs" />
+    <Compile Include="Data\EncryptedString.cs" />
+    <Compile Include="Data\EntityNaming\INameDatabasesAndTablesDuringLoads.cs" />
+    <Compile Include="Data\EntityNaming\SuffixBasedNamer.cs" />
+    <Compile Include="Data\ExternalDatabaseServer.cs" />
+    <Compile Include="Data\Governance\GovernanceDocument.cs" />
+    <Compile Include="Data\Governance\GovernancePeriod.cs" />
+    <Compile Include="Data\Cache\ICacheProgress.cs" />
+    <Compile Include="Data\ICatalogue.cs" />
+    <Compile Include="Data\ICollectSqlParameters.cs" />
+    <Compile Include="Data\ILoadProgress.cs" />
+    <Compile Include="Data\PasswordEncryptionKeyLocation.cs" />
+    <Compile Include="Data\LoadPeriodically.cs" />
+    <Compile Include="Data\PermissionWindow.cs" />
+    <Compile Include="Data\PermissionWindowPeriod.cs" />
+    <Compile Include="Data\Pipelines\IDataFlowPipelineEngine.cs" />
+    <Compile Include="Data\Pipelines\Pipeline.cs" />
+    <Compile Include="Data\Pipelines\PipelineComponent.cs" />
+    <Compile Include="Data\Pipelines\PipelineComponentArgument.cs" />
+    <Compile Include="Data\SafeDirectoryCatalog.cs" />
+    <Compile Include="Data\ServerDefaults.cs" />
+    <Compile Include="Data\DataLoad\ANOTable.cs" />
+    <Compile Include="Cloning\CatalogueCloner.cs" />
+    <Compile Include="DataHelper\JoinHelper.cs" />
+    <Compile Include="DataHelper\TableInfoImporter.cs" />
+    <Compile Include="DataHelper\TableValuedFunctionImporter.cs" />
+    <Compile Include="Data\Catalogue.cs" />
+    <Compile Include="Data\CatalogueItem.cs" />
+    <Compile Include="Data\CatalogueItemIssue.cs" />
+    <Compile Include="Data\ColumnInfo.cs" />
+    <Compile Include="Data\DataLoad\IArgument.cs" />
+    <Compile Include="Data\DataLoad\IProcessTask.cs" />
+    <Compile Include="Data\DataLoad\PreLoadDiscardedColumn.cs" />
+    <Compile Include="Data\DataLoad\ProcessTask.cs" />
+    <Compile Include="Data\DataLoad\ProcessTaskArgument.cs" />
+    <Compile Include="Data\LoadBubble.cs" />
+    <Compile Include="Data\IJoin.cs" />
+    <Compile Include="Data\IssueSystemUser.cs" />
+    <Compile Include="Data\DataLoad\LoadMetadata.cs" />
+    <Compile Include="Data\ExtractionFilter.cs" />
+    <Compile Include="Data\ExtractionInformation.cs" />
+    <Compile Include="Data\ExtractionFilterParameter.cs" />
+    <Compile Include="Data\IContainer.cs" />
+    <Compile Include="Data\IFilter.cs" />
+    <Compile Include="Data\ISqlParameter.cs" />
+    <Compile Include="Data\EntityNaming\FixedStagingDatabaseNamer.cs" />
+    <Compile Include="Data\JoinInfo.cs" />
+    <Compile Include="Data\LoadModuleAssembly.cs" />
+    <Compile Include="Data\LoadProgress.cs" />
+    <Compile Include="Data\Lookup.cs" />
+    <Compile Include="Data\LookupCompositeJoinInfo.cs" />
+    <Compile Include="Data\StandardRegex.cs" />
+    <Compile Include="Data\SupportingSQLTable.cs" />
+    <Compile Include="Data\TableInfoToCredentialsLinker.cs" />
+    <Compile Include="Data\TicketingSystemConfiguration.cs" />
+    <Compile Include="DitaCatalogueExtractor.cs" />
+    <Compile Include="Data\SupportingDocument.cs" />
+    <Compile Include="Data\TableInfo.cs" />
+    <Compile Include="DodgyNamedTableAndColumnsChecker.cs" />
+    <Compile Include="ExitCodeType.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\IPatcher.cs" />
+    <Compile Include="ForwardEngineerCatalogue.cs" />
+    <Compile Include="HICProjectDirectory.cs" />
+    <Compile Include="IArgumentSerializableObject.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\DataQualityEnginePatcher.cs" />
+    <Compile Include="ExternalDatabaseServerPatching\LoggingDatabasePatcher.cs" />
+    <Compile Include="QueryBuilding\AggregateBuilder.cs" />
+    <Compile Include="QueryBuilding\AggregateCountColumn.cs" />
+    <Compile Include="QueryBuilding\ConstantParameter.cs" />
+    <Compile Include="QueryBuilding\ColumnInfoToIColumn.cs" />
+    <Compile Include="QueryBuilding\ISqlQueryBuilder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryBuilding\Parameters\ParameterFoundAtLevel.cs" />
+    <Compile Include="QueryBuilding\Parameters\ParameterLevels.cs" />
+    <Compile Include="QueryBuilding\Parameters\ParameterManager.cs" />
+    <Compile Include="QueryBuilding\Parameters\ParameterManagerLifecycleState.cs" />
+    <Compile Include="QueryBuilding\PrimaryKeyCollisionResolver.cs" />
+    <Compile Include="QueryBuilding\QueryBuilder.cs" />
+    <Compile Include="QueryBuilding\QueryBuildingException.cs" />
+    <Compile Include="QueryBuilding\QueryTimeColumn.cs" />
+    <Compile Include="QueryBuilding\SqlQueryBuilderHelper.cs" />
+    <Compile Include="Reports\DatabaseAccessPrivileges\AccessRightsReportPrerequisites.cs" />
+    <Compile Include="Reports\DatabaseSizeReport.cs" />
+    <Compile Include="Reports\DocumentationReportFormsAndControls.cs" />
+    <Compile Include="Reports\GovernanceReport.cs" />
+    <Compile Include="Reports\IDetermineDatasetTimespan.cs" />
+    <Compile Include="Reports\MetadataReport.cs" />
+    <Compile Include="Reports\RequiresMicrosoftOffice.cs" />
+    <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabaseOfficeBit.cs" />
+    <Compile Include="Repositories\MEF.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedArgument.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedFilter.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedFilterContainer.cs" />
+    <Compile Include="Spontaneous\SpontaneousObject.cs" />
+    <Compile Include="SupportingDocumentsFetcher.cs" />
+    <Compile Include="Triggers\DiffDatabaseDataFetcher.cs" />
+    <Compile Include="Triggers\Exceptions\IrreconcilableColumnDifferencesInArchiveException.cs" />
+    <Compile Include="Triggers\SpecialFieldNames.cs" />
+    <Compile Include="Triggers\TriggerImplementer.cs" />
+    <Compile Include="Reports\CatalogueItemIssueReportGenerator.cs" />
+    <Compile Include="Reports\DatabaseAccessPrivileges\WordAccessRightsByDatabase.cs" />
+    <Compile Include="Reports\DatabaseAccessPrivileges\WordAccessRightsByUser.cs" />
+    <Compile Include="TableInfoSynchronizer.cs" />
+    <Compile Include="SimpleStringValueEncryption.cs" />
+    <Compile Include="WordCatalogueExtractor.cs" />
+    <Compile Include="WordHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DataFlowPipeline\DataFlowPipeline.cd" />
+    <None Include="DataStructures.cd" />
+    <None Include="Arguments.cd" />
+    <None Include="QueryBuilding\MetadataComponentsForQueryBuilding.cd" />
+    <None Include="QueryBuilding\QueryBuilding.cd" />
+    <None Include="Spontaneous\Spontaneous.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
+      <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
+      <Name>HIC.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
+      <Project>{7f56d629-dc24-43a5-a338-073687433e55}</Project>
+      <Name>MapsDirectlyToDatabaseTable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
+      <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
+      <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
+      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
+      <Name>ReusableUIComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
+      <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
+      <Name>CatalogueLibrary.Database</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Useful\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KeywordHelp.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

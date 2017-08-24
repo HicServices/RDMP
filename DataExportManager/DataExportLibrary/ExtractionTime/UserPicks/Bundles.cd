@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DataExportLibrary.ExtractionTime.UserPicks.Bundle">
+    <Position X="9.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ExtractionTime\UserPicks\Bundle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.UserPicks.ExtractableDatasetBundle">
+    <Position X="7.5" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAgCAAAAAgBAAIA=</HashCode>
+      <FileName>ExtractionTime\UserPicks\DatasetBundle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.UserPicks.GlobalsBundle">
+    <Position X="10.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAABAAAA=</HashCode>
+      <FileName>ExtractionTime\UserPicks\GlobalsBundle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

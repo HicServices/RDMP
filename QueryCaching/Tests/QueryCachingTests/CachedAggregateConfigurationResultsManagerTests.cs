@@ -1,0 +1,195 @@
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
+using NUnit.Framework;
+using QueryCaching.Aggregation;
+using QueryCaching.Aggregation.Arguments;
+using ReusableLibraryCode.DataAccess;
+using Tests.Common;
+
+namespace QueryCachingTests
+{
+    public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatabaseTests
+    {
+        private Catalogue _cata;
+        private AggregateConfiguration _config;
+        private CachedAggregateConfigurationResultsManager _manager;
+
+        
+        [SetUp]
+        public void CreateEntities()
+        {
+            _cata =
+               new Catalogue(CatalogueRepository,"CachedAggregateConfigurationResultsManagerTests");
+
+            _config
+                =
+                new AggregateConfiguration(CatalogueRepository,_cata, "CachedAggregateConfigurationResultsManagerTests");
+
+            _manager = new CachedAggregateConfigurationResultsManager(QueryCachingDatabaseServer);
+
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _config.DeleteInDatabase();
+            _cata.DeleteInDatabase();
+        }
+
+        [Test]
+        public void CommitResults_CreatesTablessuccessfully()
+        {
+           DataTable dt = new DataTable();
+            dt.Columns.Add("MyCol");
+
+            dt.Rows.Add("0101010101");
+            dt.Rows.Add("0201010101");
+            dt.Rows.Add("0101310101");
+
+            //commit it 3 times, should just overwrite
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt,null,30));
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, null, 30));
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, null, 30));
+
+            var resultsTableName = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.IndexedExtractionIdentifierList);
+
+
+            Assert.AreEqual("IndexedExtractionIdentifierList_AggregateConfiguration" + _config.ID, resultsTableName.GetRuntimeName());
+
+            var table = DataAccessPortal.GetInstance()
+                .ExpectDatabase(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
+                .ExpectTable(resultsTableName.GetRuntimeName());
+
+            Assert.IsTrue(table.Exists());
+            var col = table.DiscoverColumn("MyCol");
+
+            Assert.IsNotNull(col);
+            Assert.AreEqual("varchar(10)",col.DataType.SQLType);
+
+            using (
+                var con =
+                    DataAccessPortal.GetInstance()
+                        .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
+                        .GetConnection())
+            {
+                con.Open();
+
+                var dt2 = new DataTable();
+                SqlDataAdapter da = new SqlDataAdapter("Select * from " + resultsTableName.GetFullyQualifiedName(),(SqlConnection)con);
+                da.Fill(dt2);
+
+                Assert.AreEqual(dt.Rows.Count,dt2.Rows.Count);
+
+                con.Close();
+            }
+
+            Assert.IsNotNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList, SomeComplexBitOfSqlCode));
+            Assert.IsNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList, "select name,height,scalecount from fish"));
+        }
+        
+        [Test]
+        public void Throws_BecauseItAlreadyHasATableName()
+        {
+            DataTable dt = new DataTable();
+            dt.TableName = "fishy";
+            dt.Columns.Add("MyCol");
+            dt.Rows.Add("0101010101");
+            
+            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, null,30)));
+
+            Assert.IsTrue(ex.Message.Contains("Cannot commit data table because you have given it a name (fishy)"));
+        }
+
+        [Test]
+        public void Throws_BecauseItHasDuplicates()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MyCol");
+            dt.Rows.Add("0101010101");
+            dt.Rows.Add("0101010101");
+
+            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, null, 30)));
+            Assert.IsTrue(ex.Message.Contains("Failed to create unique primary key on the results of AggregateConfiguration CachedAggregateConfigurationResultsManagerTests."));
+        }
+
+        [Test]
+        public void Throws_BecauseInceptionCaching()
+        {
+              DataTable dt = new DataTable();
+            dt.Columns.Add("MyCol");
+            dt.Rows.Add("0101010101");
+
+
+            //If this unit test suddenly starts failing you might have changed the value of CachedAggregateConfigurationResultsManager.CachingPrefix (see sql variable below and make it match the const - the unit test is divorced because why would you want to change that eh!, 'Cached:' is very clear)
+            
+            //this is a cache fetch request that we are trying to inception recache 
+            string sql = @"/*Cached:cic_65_People in DMPTestCatalogue*/
+	select * from [cache]..[IndexedExtractionIdentifierList_AggregateConfiguration217]";
+
+            var ex = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, null, 30)));
+            Assert.IsTrue(ex.Message.Contains("This is referred to as Inception Caching and isn't allowed"));
+
+            
+        }
+
+        [Test]
+        public void Throws_BecauseItHasNulls()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MyCol");
+            dt.Rows.Add("0101010101");
+            dt.Rows.Add(DBNull.Value);
+            dt.Rows.Add("0101010102");
+
+
+            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, null, 30)));
+            Assert.IsTrue(ex.Message.Contains("Failed when trying to make column MyCol into NotNull for AggregateConfiguration CachedAggregateConfigurationResultsManagerTests."));
+        }
+
+
+        private void GetConfigAndManager()
+        {
+            
+        }
+
+
+        private const string SomeComplexBitOfSqlCode =
+            @"USE [QueryCachingDatabase]
+GO
+
+/****** Object:  Table [dbo].[CachedAggregateConfigurationResults]    Script Date: 24/03/2016 16:30:18 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[CachedAggregateConfigurationResults](
+	[Committer] [varchar](500) NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[AggregateConfiguration_ID] [nchar](10) NOT NULL,
+	[SqlExecuted] [varchar](max) NOT NULL,
+	[Operation] [varchar](50) NOT NULL,
+	[TableName] [varchar](500) NOT NULL,
+ CONSTRAINT [PK_CachedAggregateConfigurationResults] PRIMARY KEY CLUSTERED 
+(
+	[AggregateConfiguration_ID] ASC,
+	[Operation] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[CachedAggregateConfigurationResults] ADD  CONSTRAINT [DF_CachedAggregateConfigurationResults_Date]  DEFAULT (getdate()) FOR [Date]
+GO
+
+
+";
+    }
+}

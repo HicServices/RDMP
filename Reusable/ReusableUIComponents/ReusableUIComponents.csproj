@@ -1,0 +1,542 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ReusableUIComponents</RootNamespace>
+    <AssemblyName>ReusableUIComponents</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>ReusableUIComponentsKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutocompleteMenu-ScintillaNET, Version=1.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoCompleteMenu-ScintillaNET.1.5.0\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CsvHelper">
+      <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="GraphX.Controls">
+      <HintPath>..\..\packages\GraphX.2.2.0.2\lib\net40-client\GraphX.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphX.PCL.Common">
+      <HintPath>..\..\packages\GraphX.2.2.0.2\lib\net40-client\GraphX.PCL.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphX.PCL.Logic">
+      <HintPath>..\..\packages\GraphX.2.2.0.2\lib\net40-client\GraphX.PCL.Logic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="QuickGraph">
+      <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data">
+      <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz">
+      <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization">
+      <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AbstractControlDescriptionProvider.cs" />
+    <Compile Include="BetterListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BetterListBoxScrollArgs.cs" />
+    <Compile Include="ChecksUI\AllChecksCompleteHandler.cs" />
+    <Compile Include="ChecksUI\AllChecksCompleteHandlerArgs.cs" />
+    <Compile Include="ChecksUI\ChecksUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ChecksUI\ChecksUI.Designer.cs">
+      <DependentUpon>ChecksUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChecksUI\ChecksUIIconOnly.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ChecksUI\ChecksUIIconOnly.Designer.cs">
+      <DependentUpon>ChecksUIIconOnly.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChecksUI\MakeChangePopup.cs" />
+    <Compile Include="ChecksUI\PopupChecksUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChecksUI\PopupChecksUI.Designer.cs">
+      <DependentUpon>PopupChecksUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConnectionStringTextBox.cs" />
+    <Compile Include="Copying\BasicCommandExecution.cs" />
+    <Compile Include="Copying\ICommandExecution.cs" />
+    <Compile Include="Copying\ICommandExecutionFactory.cs" />
+    <Compile Include="Copying\ICommand.cs" />
+    <Compile Include="Copying\ICommandFactory.cs" />
+    <Compile Include="DataTableViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataTableViewer.Designer.cs">
+      <DependentUpon>DataTableViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dependencies\DependencyFinder.cs" />
+    <Compile Include="Dependencies\DependencyGraph.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Dependencies\DependencyGraph.Designer.cs">
+      <DependentUpon>DependencyGraph.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dependencies\Models\ByteComparer.cs" />
+    <Compile Include="Dependencies\Models\ColorRequest.cs" />
+    <Compile Include="Dependencies\Models\IObjectVisualisation.cs" />
+    <Compile Include="Dependencies\Models\ColorResponse.cs" />
+    <Compile Include="Dependencies\Models\DataEdge.cs" />
+    <Compile Include="Dependencies\Models\DataVertex.cs" />
+    <Compile Include="Dependencies\Models\GraphAreaExample.cs" />
+    <Compile Include="Dependencies\Models\GraphExample.cs" />
+    <Compile Include="Dependencies\Models\StringToVisibilityConverter.cs" />
+    <Compile Include="Dependencies\Models\WPFBitmapConverter.cs" />
+    <Compile Include="Dependencies\ViewDependenciesToolStripMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DoTransparencyProperly.cs" />
+    <Compile Include="Heatmapping\ExampleData.cs" />
+    <Compile Include="Heatmapping\HeatmapUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Heatmapping\HeatmapUI.Designer.cs">
+      <DependentUpon>HeatmapUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Heatmapping\RainbowColorPicker.cs" />
+    <Compile Include="HelpIcon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HelpIcon.Designer.cs">
+      <DependentUpon>HelpIcon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HelpSection.cs" />
+    <Compile Include="IKnowIfImHostedByVisualStudio.cs" />
+    <Compile Include="KeywordHelpTextListbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KeywordHelpTextListbox.Designer.cs">
+      <DependentUpon>KeywordHelpTextListbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LinkLabels\ExceptionLinkLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ExceptionViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExceptionViewer.Designer.cs">
+      <DependentUpon>ExceptionViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExceptionViewerStackTraceWithHyperlinks.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
+      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FilterControl.cs" />
+    <Compile Include="FormsHelper.cs" />
+    <Compile Include="Images.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LockableUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LockableUI.Designer.cs">
+      <DependentUpon>LockableUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="LinkLabels\PathLinkLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Performance\PerformanceCounterResultsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Performance\PerformanceCounterResultsUI.Designer.cs">
+      <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Performance\PerformanceStackPath\PerformanceStackPathViewerUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Performance\PerformanceStackPath\PerformanceStackPathViewerUI.Designer.cs">
+      <DependentUpon>PerformanceStackPathViewerUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Performance\PerformanceStackPath\StackFrame.cs" />
+    <Compile Include="Performance\PerformanceStackPath\StackFrameVisualiser.cs" />
+    <Compile Include="Performance\StackTraceProcessing\StackFramesTree.cs" />
+    <Compile Include="PreviewKey.cs" />
+    <Compile Include="Progress\PopupErrorMessagesEventListener.cs" />
+    <Compile Include="Progress\ProgressUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Progress\ProgressUI.Designer.cs">
+      <DependentUpon>ProgressUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RAGSmiley.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RAGSmiley.Designer.cs">
+      <DependentUpon>RAGSmiley.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecentHistoryOfControls.cs" />
+    <Compile Include="ScintillaHelper\CSharpLexer.cs" />
+    <Compile Include="ScintillaHelper\ScintillaLineHighlightingHelper.cs" />
+    <Compile Include="ScintillaHelper\ScintillaTextEditorFactory.cs" />
+    <Compile Include="ServerDatabaseTableSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ServerDatabaseTableSelector.Designer.cs">
+      <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SingleControlForms\IConsultableBeforeClosing.cs" />
+    <Compile Include="SingleControlForms\SingleControlForm.cs" />
+    <Compile Include="SqlDialogs\SetSQLDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SqlDialogs\SetSQLDialog.Designer.cs">
+      <DependentUpon>SetSQLDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SqlDialogs\SQLBeforeAndAfterViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SqlDialogs\SQLBeforeAndAfterViewer.Designer.cs">
+      <DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SqlDialogs\SQLPreviewWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SqlDialogs\SQLPreviewWindow.Designer.cs">
+      <DependentUpon>SQLPreviewWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SuggestComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TechnicalUI.cs" />
+    <Compile Include="TransparentHelpSystem\HelpBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TransparentHelpSystem\HelpBox.Designer.cs">
+      <DependentUpon>HelpBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TransparentHelpSystem\HelpStage.cs" />
+    <Compile Include="TransparentHelpSystem\HelpWorkflow.cs" />
+    <Compile Include="TransparentHelpSystem\ProgressTracking\IHelpWorkflowProgressProvider.cs" />
+    <Compile Include="TransparentHelpSystem\ProgressTracking\IHelpWorkflowUser.cs" />
+    <Compile Include="TransparentHelpSystem\TransparentHelpForm.cs" />
+    <Compile Include="TreeHelper\TreeNodeParentFinder.cs" />
+    <Compile Include="TypeTextOrCancelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TypeTextOrCancelDialog.Designer.cs">
+      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewSourceCodeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewSourceCodeDialog.Designer.cs">
+      <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WideMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WideMessageBox.Designer.cs">
+      <DependentUpon>WideMessageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="YesNoYesToAllDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="YesNoYesToAllDialog.Designer.cs">
+      <DependentUpon>YesNoYesToAllDialog.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ChecksUI\ChecksUI.resx">
+      <DependentUpon>ChecksUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChecksUI\ChecksUIIconOnly.resx">
+      <DependentUpon>ChecksUIIconOnly.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChecksUI\PopupChecksUI.resx">
+      <DependentUpon>PopupChecksUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataTableViewer.resx">
+      <DependentUpon>DataTableViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dependencies\DependencyGraph.resx">
+      <DependentUpon>DependencyGraph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExceptionViewer.resx">
+      <DependentUpon>ExceptionViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExceptionViewerStackTraceWithHyperlinks.resx">
+      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Heatmapping\HeatmapUI.resx">
+      <DependentUpon>HeatmapUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HelpIcon.resx">
+      <DependentUpon>HelpIcon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KeywordHelpTextListbox.resx">
+      <DependentUpon>KeywordHelpTextListbox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LockableUI.resx">
+      <DependentUpon>LockableUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Performance\PerformanceCounterResultsUI.resx">
+      <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Performance\PerformanceStackPath\PerformanceStackPathViewerUI.resx">
+      <DependentUpon>PerformanceStackPathViewerUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Progress\ProgressUI.resx">
+      <DependentUpon>ProgressUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAGSmiley.resx">
+      <DependentUpon>RAGSmiley.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServerDatabaseTableSelector.resx">
+      <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SqlDialogs\SetSQLDialog.resx">
+      <DependentUpon>SetSQLDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SqlDialogs\SQLBeforeAndAfterViewer.resx">
+      <DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SqlDialogs\SQLPreviewWindow.resx">
+      <DependentUpon>SQLPreviewWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TransparentHelpSystem\HelpBox.resx">
+      <DependentUpon>HelpBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TypeTextOrCancelDialog.resx">
+      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewSourceCodeDialog.resx">
+      <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WideMessageBox.resx">
+      <DependentUpon>WideMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="YesNoYesToAllDialog.resx">
+      <DependentUpon>YesNoYesToAllDialog.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
+      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
+      <Name>MapsDirectlyToDatabaseTable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableLibraryCode\ReusableLibraryCode.csproj">
+      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
+      <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="ReusableUIComponentsKey.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Dependencies\Templates\template.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\ViewDependencies.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\LoadIcon.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DependencyGraphInformation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DependencyGraphToolbarInformation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Pencil.cur">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

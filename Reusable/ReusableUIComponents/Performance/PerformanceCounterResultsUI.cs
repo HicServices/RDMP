@@ -1,0 +1,223 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using BrightIdeasSoftware;
+using ReusableLibraryCode.Performance;
+using ReusableUIComponents.Performance.PerformanceStackPath;
+using ReusableUIComponents.Performance.StackTraceProcessing;
+
+namespace ReusableUIComponents.Performance
+{
+    /// <summary>
+    /// Displays detailed breakdown of database queries sent by the RDMP during Performance Logging (See PerformanceCounterUI).  The colour of the row indicates the number of times a database
+    /// query was sent from that point in the call stack.  Note that this is the number of calls not the time taken to execute the call so you could see poor performance in UI interaction and
+    /// see lots of red calls but the actual slow query might only be called once. 
+    /// 
+    /// </summary>
+    public partial class PerformanceCounterResultsUI : UserControl
+    {
+        private static Color Heavy = Color.Red;
+        private static Color Light = Color.LawnGreen;
+
+        public PerformanceCounterResultsUI()
+        {
+            InitializeComponent();
+
+            tlvLocations.CanExpandGetter += CanExpandGetter;
+            tlvLocations.ChildrenGetter += ChildrenGetter;
+            tlvLocations.RowFormatter += RowFormatter;
+        }
+
+        private void RowFormatter(OLVListItem olvItem)
+        {
+            var o = (StackFramesTree)olvItem.RowObject;
+            
+            //bold the endpoints - where there are no children or they are all in database assemblies
+            if (!o.Children.Any() ||o.Children.Values.All(c => c.IsInDatabaseAccessAssembly))
+                olvItem.Font = new Font(olvItem.Font,FontStyle.Bold);
+
+            var fraction = (double) o.QueryCount/_worstOffenderCount;
+            olvItem.BackColor = GetHeat(fraction);
+
+        }
+
+        private IEnumerable ChildrenGetter(object model)
+        {
+            var treeNode = (StackFramesTree)model;
+
+            if (!treeNode.Children.Any())
+                return null;
+
+            return treeNode.Children.Values.Where(c=>!c.IsInDatabaseAccessAssembly);
+        }
+
+        private bool CanExpandGetter(object model)
+        {
+            var treeNode = (StackFramesTree)model;
+
+            if (!treeNode.Children.Any())
+                return false;
+
+            return treeNode.Children.Values.Any(c=>!c.IsInDatabaseAccessAssembly);
+        }
+
+        List<StackFramesTree> Roots;
+
+        bool ignoreSystemCalls = true;
+        bool collapseToMethod = false;
+        private ComprehensiveQueryPerformanceCounter _performanceCounter;
+        
+        private int _worstOffenderCount;
+
+        public static Color GetHeat(double fraction)
+        {
+            var r = Light.R + ((Heavy.R - Light.R) * fraction);
+            var g = Light.G + ((Heavy.G - Light.G) * fraction);
+            var b = Light.B + ((Heavy.B - Light.B) * fraction);
+
+            return Color.FromArgb((int)r, (int)g, (int)b);
+        }
+
+        public void LoadState(ComprehensiveQueryPerformanceCounter performanceCounter)
+        {
+            _performanceCounter = performanceCounter;
+
+            ignoreSystemCalls = !cbVerbose.Checked;
+
+            Roots = new List<StackFramesTree>();
+
+            _worstOffenderCount = performanceCounter.DictionaryOfQueries.Seconds.Sum(k => k.TimesSeen);
+
+            //for each documented query point (which has a stack trace)
+            foreach (string stackTrace in performanceCounter.DictionaryOfQueries.Firsts)
+            {
+                //get the query
+                var query = performanceCounter.DictionaryOfQueries.GetByFirst(stackTrace);
+
+                //get the stack trace split by line reversed so the root is at the top
+                var lines = stackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Reverse().ToArray();
+
+                if (ignoreSystemCalls)
+                    lines = lines.Where(StackFramesTree.FindSourceCode).ToArray();
+
+                if(collapseToMethod)
+                {
+                    
+                    List<string> uniqueMethodLines = new List<string>();
+
+                    string lastMethodName = StackFramesTree.GetMethodName(lines[0]);
+                    uniqueMethodLines.Add(lines[0]);
+                    
+                    for (int i = 1; i < lines.Length; i++)
+                    {
+                        string currentMethodName = StackFramesTree.GetMethodName(lines[i]);
+                        
+                        //if there is no method name or it is not new
+                        if(currentMethodName == null || lastMethodName.Equals(currentMethodName))
+                            continue;
+
+                        lastMethodName = currentMethodName;
+                        uniqueMethodLines.Add(lines[i]);
+                    }
+
+
+                    lines = uniqueMethodLines.ToArray();
+                }
+
+                StackFramesTree currentRoot = null;
+
+                //if we have seen the root before?
+                currentRoot = Roots.SingleOrDefault(n => n.CurrentFrame.Equals(lines[0]));
+
+                //it's novel
+                if (currentRoot == null)
+                {
+                    //add a new root level entrypoint
+                    currentRoot = new StackFramesTree(lines, query,false);
+                    Roots.Add(currentRoot);
+                }
+                else
+                    currentRoot.AddSubframes(lines, query);
+            }
+            
+            //if there is one root node
+            if(Roots.Count == 1)
+            {
+                //find the first point at which it splits
+                var firstBranch = Roots.Single();
+
+                //still hasn't split
+                while (firstBranch.Children.Count == 1)
+                    firstBranch = firstBranch.Children.Values.Single();
+
+                //if it did split
+                if(firstBranch.Children.Count > 1)
+                    Roots = new List<StackFramesTree>(new []{firstBranch});
+            }
+
+            
+            tlvLocations.ClearObjects();
+            tlvLocations.AddObjects(Roots);
+            tlvLocations.ExpandAll();
+        }
+
+        private void tlvLocations_ItemActivate(object sender, EventArgs e)
+        {
+            var model = tlvLocations.SelectedObject as StackFramesTree;
+
+            if (model != null)
+            {
+                if(model.HasSourceCode)
+                {
+                    var dialog = new ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
+                    dialog.Show();
+                }
+            }
+            
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(tbFilter.Text))
+            {
+                tlvLocations.UseFiltering = false;
+                tlvLocations.ModelFilter = null;
+            }
+            else
+            {
+                tlvLocations.ModelFilter = new TextMatchFilter(tlvLocations,tbFilter.Text);
+                tlvLocations.UseFiltering = true;
+            }
+        }
+
+        private void cbVerbose_CheckedChanged(object sender, EventArgs e)
+        {
+            //reload it
+            LoadState(_performanceCounter);
+        }
+
+        private void btnShowNetwork_Click(object sender, EventArgs e)
+        {
+
+            Form f = new Form();
+            
+            var stackPathViewer = new PerformanceStackPathViewerUI(_performanceCounter, _worstOffenderCount, ignoreSystemCalls);
+            stackPathViewer.Dock = DockStyle.Fill;
+            f.Controls.Add(stackPathViewer);
+
+            f.Width = 500;
+            f.Height = 500;
+            f.Show();
+
+
+        }
+    }
+}

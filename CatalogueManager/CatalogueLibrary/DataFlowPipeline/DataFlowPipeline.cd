@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Your components can implement any number of these e.g.: IPipelineRequirement&lt;TableInfo&gt;,IPipelineRequirement&lt;TableLoadInfo&gt;.   DataFlowPipelineContext is then used to determine whether your component is allowed or not under a given usage of a pipeline (e.g. in data extraction no components which require TableInfo - single table is the target, are allowed)">
+    <Position X="0.542" Y="7.913" Height="1.433" Width="3.581" />
+  </Comment>
+  <Comment CommentText="The above 3 classes reflect a saved Pipeline configuration that is in the Catalogue (A list of classes that are IDataFlowComponent, some arguments to set at runtime when instantiating the components and optionally a destination component).  This pipeline can be instantiated into a DataFlowPipeline by using DataFlowPipelineEngineFactory.  Alternatively you create your own DataFlowPipelineEngine yourself out of thin air (without even involving the Catalogue at all).  Finally you should consider using the DataFlowPipelineContextFactory which will let you require certain things like that the saved Catalogue Pipeline has no fixed destination or advertise that your usage requirement (of the pipeline you are trying to instantiate) supports logging.">
+    <Position X="5.977" Y="1.813" Height="1.509" Width="6.477" />
+  </Comment>
+  <Comment CommentText="Used to turn Saved Catalogue Pipeline configurations into runtime DataFlowPipelineEngines">
+    <Position X="3.559" Y="5.018" Height="0.819" Width="2.403" />
+  </Comment>
+  <Class Name="DataLoadEngine.DataFlowPipeline.DataFlowPipelineEngine&lt;T&gt;">
+    <Position X="6.25" Y="3.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAhACBYAAAAAAAAAAAAAAAAAEBAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\DataFlowPipelineEngine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.DataLoadInfo" Collapsed="true">
+    <Position X="8.75" Y="4" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Components.CleanStrings" Collapsed="true">
+    <Position X="7.75" Y="8" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAQAAAwCACAAgAAAAAAAAAAAAAAAAAAAAggAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Components\CleanStrings.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Components.RemoveDuplicates" Collapsed="true">
+    <Position X="7.75" Y="8.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACBAAAAAAAAAAAAAAAAAAAEAAgAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Components\RemoveDuplicates.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.BasicAnonymisationEngine" Collapsed="true">
+    <Position X="7.75" Y="10.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAwAAGIABAACAAAABAAAAAAAAAIAAggAAAEAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Components\Anonymisation\BasicAnonymisationEngine.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_dumper" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="columnsToAnonymise" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.IdentifierDumper" Collapsed="true">
+    <Position X="11" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>FSASAAgAAABAAAAgAACAAAIAAAAACRKAIFBAAIgAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Components\Anonymisation\IdentifierDumper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.ANOTransformer" Collapsed="true">
+    <Position X="11.5" Y="11.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AQACAAAAAIIgAAAAAAAAIARAAAAAEEAAIBAIAAAACAA=</HashCode>
+      <FileName>DataFlowPipeline\Components\Anonymisation\ANOTransformer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Destinations.SqlBulkInsertDestination" Collapsed="true">
+    <Position X="12" Y="6" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QACAAAQAAGChAAAAAAAQQQAAAAAEAAIgAgCAAiAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Destinations\SqlBulkInsertDestination.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Sources.DbDataReaderDataFlowSource" Collapsed="true">
+    <Position X="4.5" Y="7.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAWAAAQAACAAAAAgCAAAQAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Sources\DbDataReaderDataFlowSource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Pipelines.Pipeline" Collapsed="true">
+    <Position X="3.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Pipelines.PipelineComponent" Collapsed="true">
+    <Position X="5.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Pipelines.PipelineComponentArgument" Collapsed="true">
+    <Position X="7.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.DataFlowPipelineEngineFactory&lt;T&gt;">
+    <Position X="3.5" Y="3.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAABAAAAAAQAAAAAAAAAEAAAAAAAAAAJEA=</HashCode>
+      <FileName>DataFlowPipeline\DataFlowPipelineComponentFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Requirements.DataFlowPipelineContext&lt;T&gt;">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAASAgAgAAACCAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Requirements\DataFlowPipelineContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.DataFlowPipeline.Requirements.DataFlowPipelineContextFactory&lt;T&gt;">
+    <Position X="0.5" Y="2.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Requirements\DataFlowPipelineContextFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="DataLoadEngine.DataFlowPipeline.IDataFlowComponent&lt;T&gt;" Collapsed="true">
+    <Position X="8.25" Y="6.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\IDataFlowComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.DataFlowPipeline.IDataFlowDestination&lt;T&gt;" Collapsed="true">
+    <Position X="12" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\IDataFlowDestination.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.DataFlowPipeline.IDataFlowSource&lt;T&gt;" Collapsed="true">
+    <Position X="5" Y="6.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAACAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\IDataFlowSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.DataFlowPipeline.Requirements.IPipelineRequirement&lt;T&gt;" Collapsed="true">
+    <Position X="0.5" Y="7.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Requirements\IPipelineRequirement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

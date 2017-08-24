@@ -1,0 +1,52 @@
+--////////////////////////////////////////////Output 1//////////////////////////
+SELECT
+max(Biochemistry..BC_header.DT_sampled) Sample_date
+FROM 
+Biochemistry..BC_header
+--///////////////////////////////////////////////////////////////////////////////
+
+--////////////////////////////////////////////Output 2//////////////////////////
+SELECT
+min(Biochemistry..BC_header.DT_sampled) Sample_date
+FROM 
+Biochemistry..BC_header
+--///////////////////////////////////////////////////////////////////////////////
+
+
+--////////////////////////////////////////////Output 3 - Record Count////////////
+--32,875,825
+select YEAR(DT_sampled) ,count(*) from Biochemistry..BC_header where DT_sampled is not null group by YEAR(DT_sampled)
+--///////////////////////////////////////////////////////////////////////////////
+
+
+--////////////////////////////////////////////Output 4 - Time Series////////////
+select 
+
+RIGHT('0'+ --add leading zeroes
+CAST(MONTH(DT_sampled) AS VARCHAR(2))  --month
+,2) --end adding leading zeroes 
+[Month]
+
+,YEAR(DT_sampled) 
+[Year]
+ 
+ ,count(*)
+ [Count]
+ 
+ from Biochemistry..BC_header
+
+ group by 
+RIGHT('0'+ --add leading zeroes
+CAST(MONTH(DT_sampled) AS VARCHAR(2))  --month
+,2) --end adding leading zeroes 
+
+,YEAR(DT_sampled) 
+ 
+ -- dtYear
+
+ order by [Year],[Month]
+ --/////////////////////////////////////////////////////////////////////////////
+
+
+
+  

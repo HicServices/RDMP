@@ -1,0 +1,1018 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7665AFDE-002D-4A53-B3B8-AE17BC8F2BBA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DataExportManager</RootNamespace>
+    <AssemblyName>DataExportManager</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <PublishUrl>C:\Development\Deployments\RDMP\DataExportManager2\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>true</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>https://hic.dundee.ac.uk/Installers/RDMP/DataExportManager2/</InstallUrl>
+    <MinimumRequiredVersion>1.0.1.410</MinimumRequiredVersion>
+    <ApplicationRevision>411</ApplicationRevision>
+    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>F048E664FB6FC6DA51ABB0FAB72EA28DFCAA0309</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon>hazard.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Debug\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestTimestampUrl>http://timestamp.verisign.com/scripts/timstamp.dll</ManifestTimestampUrl>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\..\libs\JIRA\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceDiagram.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceDiagram.Designer.cs">
+      <DependentUpon>CohortSourceDiagram.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.Designer.cs">
+      <DependentUpon>CreateNewCohortDatabaseWizardUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\ExternalCohortTableUI.Designer.cs">
+      <DependentUpon>ExternalCohortTableUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen1.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen1.Designer.cs">
+      <DependentUpon>Screen1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.Designer.cs">
+      <DependentUpon>Screen2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.Designer.cs">
+      <DependentUpon>Screen3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\ExtractableCohortCollection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\ExtractableCohortCollection.Designer.cs">
+      <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\ImportCustomData\CohortCreationRequestUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CohortUI\ImportCustomData\CohortCreationRequestUI.Designer.cs">
+      <DependentUpon>CohortCreationRequestUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\ExtractableCohortUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\ExtractableCohortUI.Designer.cs">
+      <DependentUpon>ExtractableCohortUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.Designer.cs">
+      <DependentUpon>ImportCustomDataFileUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\DataExportCollectionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Collections\DataExportCollectionUI.Designer.cs">
+      <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\Nodes\CohortsNode.cs" />
+    <Compile Include="Collections\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
+    <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
+    <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
+    <Compile Include="Collections\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
+    <Compile Include="Collections\Nodes\ExtractionFolderNode.cs" />
+    <Compile Include="Collections\Nodes\LinkedCohortNode.cs" />
+    <Compile Include="Collections\Nodes\PackageContentNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectsNode.cs" />
+    <Compile Include="Collections\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
+    <Compile Include="Collections\Providers\DataExportChildProvider.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
+    <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
+    <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
+    <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />
+    <Compile Include="Collections\Providers\DataExportTextFormatProvider.cs" />
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableDataSetStateBasedIconProvider.cs" />
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractionConfigurationStateBasedIconProvider.cs" />
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ProjectStateBasedIconProvider.cs" />
+    <Compile Include="DataRelease\CleanupConfirmationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataRelease\CleanupConfirmationDialog.Designer.cs">
+      <DependentUpon>CleanupConfirmationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataRelease\ConfigurationReleasePotentialUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataRelease\ConfigurationReleasePotentialUI.Designer.cs">
+      <DependentUpon>ConfigurationReleasePotentialUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataRelease\DataReleaseKeyUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataRelease\DataReleaseKeyUI.Designer.cs">
+      <DependentUpon>DataReleaseKeyUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataRelease\DataReleaseUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataRelease\DataReleaseUI.Designer.cs">
+      <DependentUpon>DataReleaseUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataRelease\DoReleaseAndAuditUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataRelease\DoReleaseAndAuditUI.Designer.cs">
+      <DependentUpon>DoReleaseAndAuditUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChangesSavedHandler.cs" />
+    <Compile Include="ProjectUI\ExecuteExtractionUIRequest.cs" />
+    <Compile Include="ItemActivation\IActivateDataExportItems.cs" />
+    <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
+    <Compile Include="Menus\CustomDataTableNodeMenu.cs" />
+    <Compile Include="Menus\ExtractableDatasetMenu.cs" />
+    <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
+    <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
+    <Compile Include="Menus\FilterContainerMenu.cs" />
+    <Compile Include="Menus\SelectedDataSetMenu.cs" />
+    <Compile Include="Menus\ProjectsMenu.cs" />
+    <Compile Include="Menus\ProjectsNodeMenu.cs" />
+    <Compile Include="Menus\ExtractableDataSetsNodeMenu.cs" />
+    <Compile Include="Menus\ExtractableCohortMenu.cs" />
+    <Compile Include="Menus\ExternalCohortTableMenu.cs" />
+    <Compile Include="Menus\CohortsNodeMenu.cs" />
+    <Compile Include="ProjectUI\ChooseExtractablesUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\ChooseExtractablesUI.Designer.cs">
+      <DependentUpon>ChooseExtractablesUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectUI\ConfigureDatasetUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\ConfigureDatasetUI.Designer.cs">
+      <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectUI\DataGridViewWithBackgroundImage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\DataUsers\DataUserManagement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\DataUsers\DataUserManagement.Designer.cs">
+      <DependentUpon>DataUserManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectUI\ExecuteDatasetExtractionHostUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\ExecuteDatasetExtractionHostUI.Designer.cs">
+      <DependentUpon>ExecuteDatasetExtractionHostUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectUI\ExecuteExtractionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\ExecuteExtractionUI.Designer.cs">
+      <DependentUpon>ExecuteExtractionUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectUI\ExtractCommandStateMonitor.cs" />
+    <Compile Include="ProjectUI\ExtractionConfigurationUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\ExtractionConfigurationUI.Designer.cs">
+      <DependentUpon>ExtractionConfigurationUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectUI\Graphs\ExtractionAggregateGraph.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\Graphs\ExtractionAggregateGraphObjectCollection.cs" />
+    <Compile Include="ProjectUI\Graphs\ProjectExtractionGraphsGenerator.cs" />
+    <Compile Include="ProjectUI\ProjectUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\ProjectUI.Designer.cs">
+      <DependentUpon>ProjectUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectUI\ViewExtractionConfigurationSQLUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProjectUI\ViewExtractionConfigurationSQLUI.Designer.cs">
+      <DependentUpon>ViewExtractionConfigurationSQLUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CustomDataTableNodeStateBasedIconProvider.cs" />
+    <Compile Include="SimpleDialogs\BlacklistOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\BlacklistOptions.Designer.cs">
+      <DependentUpon>BlacklistOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleDialogs\ConfigureDisclaimer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\ConfigureDisclaimer.Designer.cs">
+      <DependentUpon>ConfigureDisclaimer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithm.Designer.cs">
+      <DependentUpon>ConfigureHashingAlgorithm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleDialogs\SelectWhichCohortToImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\SelectWhichCohortToImport.Designer.cs">
+      <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizard\CreateNewDataExtractionProjectUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizard\CreateNewDataExtractionProjectUI.Designer.cs">
+      <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="CohortUI\CohortSourceDiagram.resx">
+      <DependentUpon>CohortSourceDiagram.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
+      <DependentUpon>CreateNewCohortDatabaseWizardUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\CohortSourceManagement\ExternalCohortTableUI.resx">
+      <DependentUpon>ExternalCohortTableUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen1.resx">
+      <DependentUpon>Screen1.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">
+      <DependentUpon>Screen2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.resx">
+      <DependentUpon>Screen3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\ExtractableCohortCollection.resx">
+      <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\ImportCustomData\CohortCreationRequestUI.resx">
+      <DependentUpon>CohortCreationRequestUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\ExtractableCohortUI.resx">
+      <DependentUpon>ExtractableCohortUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.resx">
+      <DependentUpon>ImportCustomDataFileUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Collections\DataExportCollectionUI.resx">
+      <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataRelease\CleanupConfirmationDialog.resx">
+      <DependentUpon>CleanupConfirmationDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataRelease\ConfigurationReleasePotentialUI.resx">
+      <DependentUpon>ConfigurationReleasePotentialUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataRelease\DataReleaseKeyUI.resx">
+      <DependentUpon>DataReleaseKeyUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataRelease\DataReleaseUI.resx">
+      <DependentUpon>DataReleaseUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataRelease\DoReleaseAndAuditUI.resx">
+      <DependentUpon>DoReleaseAndAuditUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\ChooseExtractablesUI.resx">
+      <DependentUpon>ChooseExtractablesUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\ConfigureDatasetUI.resx">
+      <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\DataUsers\DataUserManagement.resx">
+      <DependentUpon>DataUserManagement.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\ExecuteDatasetExtractionHostUI.resx">
+      <DependentUpon>ExecuteDatasetExtractionHostUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\ExecuteExtractionUI.resx">
+      <DependentUpon>ExecuteExtractionUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\ExtractionConfigurationUI.resx">
+      <DependentUpon>ExtractionConfigurationUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\Graphs\ExtractionAggregateGraph.resx">
+      <DependentUpon>ExtractionAggregateGraph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\ProjectUI.resx">
+      <DependentUpon>ProjectUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectUI\ViewExtractionConfigurationSQLUI.resx">
+      <DependentUpon>ViewExtractionConfigurationSQLUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="SimpleDialogs\BlacklistOptions.resx">
+      <DependentUpon>BlacklistOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleDialogs\ConfigureDisclaimer.resx">
+      <DependentUpon>ConfigureDisclaimer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleDialogs\ConfigureHashingAlgorithm.resx">
+      <DependentUpon>ConfigureHashingAlgorithm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleDialogs\SelectWhichCohortToImport.resx">
+      <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <Content Include="..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
+      <Link>SourceCodeForSelfAwareness.zip</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Wizard\CreateNewDataExtractionProjectUI.resx">
+      <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="DataExportManager2_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="hazard.ico" />
+    <None Include="Images\ManageSources.png" />
+    <None Include="Images\ShowCustomCohortColumns.png" />
+    <None Include="Images\ExtractableCohort.png" />
+    <None Include="Images\ImportCohort.png" />
+    <None Include="Images\Import_SubstituteAColumn.png" />
+    <None Include="Images\1To0.png" />
+    <None Include="Images\1ToM.png" />
+    <None Include="Images\MTo1.png" />
+    <None Include="Images\ExtractionInformationDeleted.png" />
+    <None Include="Images\SliderAdjustLeft.png" />
+    <None Include="Images\SliderAdjustRight.png" />
+    <None Include="Images\ConfigureHashingAlgorithm.png" />
+    <None Include="Resources\Folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
+      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
+      <Name>CatalogueLibrary</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj">
+      <Project>{FDF08240-2AFC-48A4-8F48-37CC7EA3000B}</Project>
+      <Name>CatalogueManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CatalogueManager\TicketingModules\Ticketing\Ticketing.csproj">
+      <Project>{048E1478-E4A7-4AD1-95AB-C40C604A4F60}</Project>
+      <Name>Ticketing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
+      <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
+      <Name>DataLoadEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+      <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
+      <Name>LoadModules.Generic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj">
+      <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
+      <Name>Diagnostics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
+      <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
+      <Name>HIC.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
+      <Project>{b541f57b-631a-4639-8589-8cda0021ae2d}</Project>
+      <Name>RDMPObjectVisualisation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
+      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
+      <Name>RDMPStartup</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj">
+      <Project>{94797307-05F3-4E72-B60B-DCB51B41CF9C}</Project>
+      <Name>MapsDirectlyToDatabaseTableUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
+      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
+      <Name>MapsDirectlyToDatabaseTable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
+      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
+      <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
+      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
+      <Name>ReusableUIComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
+      <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
+      <Name>HIC.Common.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
+      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
+      <Name>DataExportLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataExportLibrary\DataExportLibrary.csproj">
+      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
+      <Name>DataExportLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="ANOStore.Database.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="CatalogueLibrary.Database.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="CatalogueLibrary.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="CatalogueManager.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DataExportManager2.Database.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DataExportManager2.Interfaces.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DataExportManager2.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DataExportManager2Library.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DataLoadEngine.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DataQualityEngine.Database.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="DataQualityEngine.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Diagnostics.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="HIC.Common.Validation.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="HIC.Logging.Database.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="HIC.Logging.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="IdentifierDump.Database.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="LoadModules.Generic.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="MapsDirectlyToDatabaseTable.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="MapsDirectlyToDatabaseTableUI.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Microsoft.VisualBasic.PowerPacks.Vs">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
+    <PublishFile Include="MySql.Data">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
+    <PublishFile Include="QueryCaching.Database.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="QueryCaching.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="RDMPObjectVisualisation.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="RDMPStartup.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="ReusableLibraryCode.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="ReusableUIComponents.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Ticketing.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SubComponents\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

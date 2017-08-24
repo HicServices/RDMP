@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="TARGETDIR">
+            <Component Id="cmp1299D860447B69ABB60A5D1B7A7A9152" Guid="*">
+                <File Id="fil79ABC74E8A90C11C077E4CD2D0FDC0DE" KeyPath="yes" Source="SourceDir\CatalogueLibrary.dll" />
+            </Component>
+            <Component Id="cmp5320F03EF2A235364FB2C25C0CA718B6" Guid="*">
+                <File Id="fil9E42FA867697B5E501989539E62D8547" KeyPath="yes" Source="SourceDir\CatalogueLibrary.pdb" />
+            </Component>
+            <Component Id="cmp8C749D48B68C4C29D549A016A0D71015" Guid="*">
+                <File Id="filE0AFA3C0408C18465BE10AB8367EC521" KeyPath="yes" Source="SourceDir\HIC.Logging.dll" />
+            </Component>
+            <Component Id="cmp2796B3A3DA72314B1C6E96E99DCC7E16" Guid="*">
+                <File Id="filF7CD9987A92D9DC074E4CD6A6191C626" KeyPath="yes" Source="SourceDir\HIC.Logging.pdb" />
+            </Component>
+            <Component Id="cmpEA91A1CAC0A304287222B9432625E816" Guid="*">
+                <File Id="filC092736C4A64C000E1A264349D6E0CCB" KeyPath="yes" Source="SourceDir\MySql.Data.dll" />
+            </Component>
+            <Component Id="cmp47B814B56D7A2EAEF582D37497796325" Guid="*">
+                <File Id="fil2800066FBE8546E4819A636F17F53FA9" KeyPath="yes" Source="SourceDir\ReusableLibraryCode.dll" />
+            </Component>
+            <Component Id="cmp3CD10A5BB470777BA0C92D9C2B611D61" Guid="*">
+                <File Id="filE182445CE803EA7CA1E97887B60B581B" KeyPath="yes" Source="SourceDir\ReusableLibraryCode.pdb" />
+            </Component>
+            <Component Id="cmp033D828C9CCC80FBF4E9CD673BFDA264" Guid="*">
+                <File Id="fil6DF3C397FADEBA59573130431A211DBC" KeyPath="yes" Source="SourceDir\ReusableUIComponents.dll" />
+            </Component>
+            <Component Id="cmpFE6C80AED8A2BBB89F699E9B3D140510" Guid="*">
+                <File Id="filD79D8DE0D79957F28019823DE94E988C" KeyPath="yes" Source="SourceDir\ReusableUIComponents.pdb" />
+            </Component>
+            <Component Id="cmp447D3EF9ED34A4D54692D40FB6E15F35" Guid="*">
+                <File Id="filFC7B7595A145BC9B57C56F356F1EB4B8" KeyPath="yes" Source="SourceDir\ScintillaNET.dll" />
+            </Component>
+            <Component Id="cmpEE44950E7AAB38AE99D8C6F15E895B04" Guid="*">
+                <File Id="fil7AA17C1D530C9521583D12D3FA439B91" KeyPath="yes" Source="SourceDir\ScintillaNET.pdb" />
+            </Component>
+            <Component Id="cmp951933E2358CDA1A9C9AA87682BC73A1" Guid="*">
+                <File Id="fil8300EEA6DD6B5E0AD0975D8C3335B6D5" KeyPath="yes" Source="SourceDir\ScintillaNET.xml" />
+            </Component>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="CatalogueLibrary.Assemblies">
+            <ComponentRef Id="cmp1299D860447B69ABB60A5D1B7A7A9152" />
+            <ComponentRef Id="cmp5320F03EF2A235364FB2C25C0CA718B6" />
+            <ComponentRef Id="cmp8C749D48B68C4C29D549A016A0D71015" />
+            <ComponentRef Id="cmp2796B3A3DA72314B1C6E96E99DCC7E16" />
+            <ComponentRef Id="cmpEA91A1CAC0A304287222B9432625E816" />
+            <ComponentRef Id="cmp47B814B56D7A2EAEF582D37497796325" />
+            <ComponentRef Id="cmp3CD10A5BB470777BA0C92D9C2B611D61" />
+            <ComponentRef Id="cmp033D828C9CCC80FBF4E9CD673BFDA264" />
+            <ComponentRef Id="cmpFE6C80AED8A2BBB89F699E9B3D140510" />
+            <ComponentRef Id="cmp447D3EF9ED34A4D54692D40FB6E15F35" />
+            <ComponentRef Id="cmpEE44950E7AAB38AE99D8C6F15E895B04" />
+            <ComponentRef Id="cmp951933E2358CDA1A9C9AA87682BC73A1" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

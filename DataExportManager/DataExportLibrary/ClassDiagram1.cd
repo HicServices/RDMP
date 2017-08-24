@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Entrypoint to HIC Logging Architecture ">
+    <Position X="10.156" Y="7.375" Height="0.344" Width="2.565" />
+  </Comment>
+  <Comment CommentText="Entrypoint to HIC Validation Architecture ">
+    <Position X="12.061" Y="8.652" Height="0.344" Width="2.565" />
+  </Comment>
+  <Comment CommentText="Entrypoint to HIC DataCatalogue Architecture (Does the heavy lifting i.e. query generation)">
+    <Position X="12.754" Y="6.409" Height="0.787" Width="3.091" />
+  </Comment>
+  <Class Name="DataExportLibrary.Data.DataTables.Project" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAIAAEAAAACAgAAEgAQgUAQAgAQAAMAAAAgICIAIAAA=</HashCode>
+      <FileName>Data\DataTables\Project.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.Data.DataTables.ExtractableColumn" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.5" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAEQAEAAAgJQoAQEgBQggAAGABAAAICCACgIQAAAAAI=</HashCode>
+      <FileName>Data\DataTables\ExtractableColumn.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.Data.DataTables.ExtractableDataSet" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAQAEsAAEgAwgBAAACAAIBIAAAAgKAAAIABA=</HashCode>
+      <FileName>Data\DataTables\ExtractableDataSet.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.Data.DataTables.ExtractionConfiguration" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gBwCAEACAAAggCACgQQgIAAQAAAABJEAgAgIKBAAAAE=</HashCode>
+      <FileName>Data\DataTables\ExtractionConfiguration.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.Data.LinkCreators.SelectedDataSets">
+    <Position X="3" Y="3.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAQAAAAAAAAAAAAAAAAAQAAAAAAAEAA=</HashCode>
+      <FileName>Data\LinkCreators\SelectedDataSets.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.WordDataWritter">
+    <Position X="3" Y="1.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAABAEAAAAAGABAAIGIEQCAEAAAAgoBEAAAGAAAAA=</HashCode>
+      <FileName>ExtractionTime\WordDataWritter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.ExtractionTimeValidator" Collapsed="true">
+    <Position X="9" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAACDBAQAAAAAAAAAACAAAAAIAgAAAAAAAABA=</HashCode>
+      <FileName>ExtractionTime\ExtractionTimeValidator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Validator" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HIC.Common.Validation.Validator" Collapsed="true">
+    <Position X="12.5" Y="8" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataExportLibrary.Data.DataTables.DeployedExtractionFilter" Collapsed="true">
+    <Position X="19.75" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>CIIAAEBYAAAggAAEgQQgIAQABAIAAIAAAAAIASAAAAA=</HashCode>
+      <FileName>Data\DataTables\DeployedExtractionFilter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.Data.DataTables.DeployedExtractionFilterParameter" Collapsed="true">
+    <Position X="22" Y="2.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AEAAAEAEAAAAgAAEgQQgAAAIAAAgEJAAAABoEgAAAAA=</HashCode>
+      <FileName>Data\DataTables\DeployedExtractionFilterParameter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.Data.DataTables.FilterContainer" Collapsed="true">
+    <Position X="15.75" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAAAECkAAEggQCAgAhAAAAAIACAAEIAAAAgAA=</HashCode>
+      <FileName>Data\DataTables\FilterContainer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.QueryBuilding.QueryBuilder" Collapsed="true">
+    <Position X="12.75" Y="5.75" Width="2.75" />
+    <NestedTypes>
+      <Enum Name="CatalogueLibrary.QueryBuilding.QueryBuilder.QueryComponent" Collapsed="true">
+        <TypeIdentifier />
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="HIC.Logging.DataLoadInfo" Collapsed="true">
+    <Position X="10.5" Y="7" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.Data.DataTables.ExtractableCohort" Collapsed="true">
+    <Position X="13.5" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAABEKAAAAghABegAQkEgwIABYKAIEIAAmYASBAUAA=</HashCode>
+      <FileName>Data\DataTables\ExtractableCohort.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.DataFlowPipeline.DataFlowPipelineEngine&lt;T&gt;" Collapsed="true">
+    <Position X="7.75" Y="2.5" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="HIC.Logging.IDataLoadInfo" Collapsed="true">
+    <Position X="10.5" Y="6" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
