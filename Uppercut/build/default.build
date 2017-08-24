@@ -20,7 +20,7 @@
   <property name="project.name" value="__SOLUTION_NAME_WITHOUT_SLN_EXTENSION__" overwrite="false" />
   <property name="repository.path" value="__REPOSITORY_PATH__" overwrite="false" />
   <property name="company.name" value="__COMPANY_NAME__" overwrite="false" />
-  <property name="source_control_type" value="svn" overwrite="false" />
+  <property name="source_control_type" value="git" overwrite="false" />
   <property name="version.uppercut" value="0" />
   <property name="version.major" value="0" overwrite="false" />
   <property name="version.minor" value="0" overwrite="false" />
