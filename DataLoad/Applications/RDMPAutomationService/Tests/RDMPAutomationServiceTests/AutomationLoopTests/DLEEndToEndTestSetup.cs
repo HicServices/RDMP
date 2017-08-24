@@ -21,13 +21,13 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
     public class DLEEndToEndTestSetup
     {
-        public SqlConnectionStringBuilder ServerICanCreateRandomDatabasesAndTablesOn { get; set; }
+        public DiscoveredServer ServerICanCreateRandomDatabasesAndTablesOn { get; set; }
         public SqlConnectionStringBuilder UnitTestLoggingConnectionString { get; set; }
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
         public DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn { get; set; }
         public CatalogueRepository CatalogueRepository { get; set; }
 
-        public DLEEndToEndTestSetup(SqlConnectionStringBuilder serverICanCreateRandomDatabasesAndTablesOn, SqlConnectionStringBuilder unitTestLoggingConnectionString, IRDMPPlatformRepositoryServiceLocator repositoryLocator, DiscoveredServer discoveredServerICanCreateRandomDatabasesAndTablesOn)
+        public DLEEndToEndTestSetup(DiscoveredServer serverICanCreateRandomDatabasesAndTablesOn, SqlConnectionStringBuilder unitTestLoggingConnectionString, IRDMPPlatformRepositoryServiceLocator repositoryLocator, DiscoveredServer discoveredServerICanCreateRandomDatabasesAndTablesOn)
         {
             ServerICanCreateRandomDatabasesAndTablesOn = serverICanCreateRandomDatabasesAndTablesOn;
             UnitTestLoggingConnectionString = unitTestLoggingConnectionString;
@@ -48,7 +48,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             _testFolder = rootFolder.CreateSubdirectory("TestTheTestDatasetSetup");
             var datasetFolder = _testFolder.CreateSubdirectory("TestDataset");
             
-            _stage1_setupCatalogue = new UserAcceptanceTestEnvironment(ServerICanCreateRandomDatabasesAndTablesOn, datasetFolder.FullName, UnitTestLoggingConnectionString, "Internal", null, null, RepositoryLocator);
+            _stage1_setupCatalogue = new UserAcceptanceTestEnvironment((SqlConnectionStringBuilder) ServerICanCreateRandomDatabasesAndTablesOn.Builder, datasetFolder.FullName, UnitTestLoggingConnectionString, "Internal", null, null, RepositoryLocator);
             _stage1_setupCatalogue.SilentRunning = true;
 
             //create it all

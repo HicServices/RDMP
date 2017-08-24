@@ -19,6 +19,7 @@ namespace CatalogueLibrary.Data
         public int ID { get; set; }
 
         protected bool MaxLengthSet = false;
+        private bool _readonly;
 
         [NoMappingToDatabase]
         public IRepository Repository { get; set; }
@@ -145,9 +146,18 @@ namespace CatalogueLibrary.Data
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+
+            if (_readonly)
+                throw new Exception("An attempt was made to modify Property '" + propertyName + "' of Database Object of Type '" + GetType().Name + "' while it was in read only mode.  Object was called '" + this + "'");
+
             field = value;
             OnPropertyChanged(propertyName);
             return true;
+        }
+
+        public void SetReadOnly()
+        {
+            _readonly = true;
         }
     }
 }

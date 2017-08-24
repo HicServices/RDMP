@@ -19,11 +19,12 @@ namespace CohortManagerTests.QueryTests
         {
             CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1,null);
 
-            Assert.AreEqual(@"/*UnitTestAggregate1*/
-SELECT distinct
+            Assert.AreEqual(CollapseWhitespace(string.Format(@"/*cic_{0}_UnitTestAggregate1*/
+SELECT 
+distinct
 [" + _scratchDatabaseName + @"]..[BulkData].[chi]
 FROM 
-[" + _scratchDatabaseName + @"]..[BulkData]", builder.SQL);
+[" + _scratchDatabaseName + @"]..[BulkData]", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
         }
         
         [Test]
@@ -31,11 +32,13 @@ FROM
         {
             CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null);
 
-            Assert.AreEqual(@"	/*UnitTestAggregate1*/
-	SELECT top 1000
+            Assert.AreEqual(CollapseWhitespace(
+                string.Format(@"/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	TOP 1000
 	*
 	FROM 
-	[" + _scratchDatabaseName + @"]..[BulkData]", builder.GetDatasetSampleSQL());
+	[" + _scratchDatabaseName + @"]..[BulkData]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(builder.GetDatasetSampleSQL()));
         }
         [Test]
         public void TestGettingAggregateSQLFromEntirity()
@@ -52,21 +55,29 @@ FROM
             Assert.AreEqual(rootcontainer,aggregate1.GetCohortAggregateContainerIfAny());
             try
             {
-                Assert.AreEqual(@"(
-	/*UnitTestAggregate2*/
-	SELECT distinct
+                Assert.AreEqual(
+
+                    CollapseWhitespace(string.Format(
+@"(
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
 
 	EXCEPT
 
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
-)".Trim(), builder.SQL.Trim());
+)"
+       
+       ,cohortIdentificationConfiguration.ID))
+       , CollapseWhitespace(builder.SQL));
             }
             finally 
             {
@@ -101,9 +112,12 @@ FROM
                 Assert.IsTrue(allConfigurations.Contains(aggregate2));
                 Assert.IsTrue(allConfigurations.Contains(aggregate3));
 
-                Assert.AreEqual(@"(
-	/*UnitTestAggregate1*/
-	SELECT distinct
+                Assert.AreEqual(
+                    CollapseWhitespace(string.Format(
+@"(
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
@@ -112,22 +126,26 @@ FROM
 
 
 	(
-		/*UnitTestAggregate2*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate2*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
 
 		UNION
 
-		/*UnitTestAggregate3*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate3*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
 	)
 
-)".Trim(), builder.SQL.Trim());
+)",cohortIdentificationConfiguration.ID))
+  , 
+  CollapseWhitespace(builder.SQL));
             }
             finally
             {
@@ -156,19 +174,24 @@ FROM
             
             try
             {
-                Assert.AreEqual(@"(
+                Assert.AreEqual(
+                    CollapseWhitespace(
+                    string.Format(
+@"(
 
 	(
-		/*UnitTestAggregate2*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate2*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
 
 		UNION
 
-		/*UnitTestAggregate3*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate3*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
@@ -177,12 +200,14 @@ FROM
 
 	EXCEPT
 
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
-)".Trim(), builder.SQL.Trim());
+)",cohortIdentificationConfiguration.ID))
+  ,CollapseWhitespace(builder.SQL));
             }
             finally
             {
@@ -197,6 +222,7 @@ FROM
         {
             CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
 
+            
             //setup a filter (all filters must be in a container so the container is a default AND container)
             var AND = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
             var filter = new AggregateFilter(CatalogueRepository,"hithere",AND);
@@ -204,20 +230,22 @@ FROM
             //give the filter an implicit parameter requiring bit of SQL
             filter.WhereSQL = "1=@abracadabra";
             filter.SaveToDatabase();
-            
-            
+
+            //Make aggregate1 use the filter we just setup (required to happen before parameter creator gets hit because otherwise it won't know the IFilter DatabaseType because IFilter is an orphan at the moment)
+            aggregate1.RootFilterContainer_ID = AND.ID;
+            aggregate1.SaveToDatabase();
+
             //get it to create the parameters for us
             new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
 
             //get the parameter it just created, set it's value and save it
             var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
             param.Value = "1";
-            param.ParameterSQL = "DECLARE @abracadabra AS int";
+            param.ParameterSQL = "DECLARE @abracadabra AS int;";
             param.SaveToDatabase();
 
-            //Make aggregate1 use the filter we just setup
-            aggregate1.RootFilterContainer_ID = AND.ID;
-            aggregate1.SaveToDatabase();
+            
+            
             
             //set the order so that 2 comes before 1
             rootcontainer.AddChild(aggregate2, 1);
@@ -225,20 +253,25 @@ FROM
             
             try
             {
-                Assert.AreEqual(@"DECLARE @abracadabra AS int;
+                Assert.AreEqual(
+                    CollapseWhitespace(
+                    string.Format(
+@"DECLARE @abracadabra AS int;
 SET @abracadabra=1;
 
 (
-	/*UnitTestAggregate2*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
 
 	EXCEPT
 
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
@@ -248,14 +281,20 @@ SET @abracadabra=1;
 	1=@abracadabra
 	)
 )
-", builder.SQL);
+",cohortIdentificationConfiguration.ID))
+ ,CollapseWhitespace(builder.SQL));
 
 
                 CohortQueryBuilder builder2 = new CohortQueryBuilder(aggregate1, null);
-                Assert.AreEqual(@"DECLARE @abracadabra AS int;
+                Assert.AreEqual(
+
+CollapseWhitespace(
+string.Format(
+@"DECLARE @abracadabra AS int;
 SET @abracadabra=1;
-/*UnitTestAggregate1*/
-SELECT distinct
+/*cic_{0}_UnitTestAggregate1*/
+SELECT
+distinct
 [" + _scratchDatabaseName + @"]..[BulkData].[chi]
 FROM 
 [" + _scratchDatabaseName + @"]..[BulkData]
@@ -263,24 +302,32 @@ WHERE
 (
 /*hithere*/
 1=@abracadabra
-)", builder2.SQL);
+)",cohortIdentificationConfiguration.ID)), 
+  CollapseWhitespace(builder2.SQL));
 
 
                 string selectStar = new CohortQueryBuilder(aggregate1,null).GetDatasetSampleSQL();
 
-                Assert.AreEqual(@"DECLARE @abracadabra AS int;
+                Assert.AreEqual(
+                    CollapseWhitespace(
+                    string.Format(
+
+@"DECLARE @abracadabra AS int;
 SET @abracadabra=1;
 
-	/*UnitTestAggregate1*/
-	SELECT top 1000
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	TOP 1000
 	*
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
 	WHERE
 	(
 	/*hithere*/
 	1=@abracadabra
-	)", selectStar);
+	)",cohortIdentificationConfiguration.ID)),
+      CollapseWhitespace(selectStar));
+
             }
             finally
             {
@@ -306,52 +353,66 @@ SET @abracadabra=1;
             builder.StopContainerWhenYouReach = aggregate2;
             try
             {
-                Assert.AreEqual(@"
+                Assert.AreEqual(
+                    CollapseWhitespace(
+                    string.Format(
+
+@"
 (
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
 
 	EXCEPT
 
-	/*UnitTestAggregate2*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
 )
-", builder.SQL);
+",cohortIdentificationConfiguration.ID)),
+ CollapseWhitespace(builder.SQL));
 
 
                 CohortQueryBuilder builder2 = new CohortQueryBuilder(rootcontainer, null);
             builder2.StopContainerWhenYouReach = null;
-            Assert.AreEqual(@"
+            Assert.AreEqual(
+CollapseWhitespace(
+string.Format(
+@"
 (
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
 
 	EXCEPT
 
-	/*UnitTestAggregate2*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
 
 	EXCEPT
 
-	/*UnitTestAggregate3*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate3*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
 )
-", builder2.SQL);
+",cohortIdentificationConfiguration.ID)),
+ CollapseWhitespace(builder2.SQL));
             }
             finally
             {
@@ -391,10 +452,14 @@ SET @abracadabra=1;
             builder.StopContainerWhenYouReach = container1;
             try
             {
-                Assert.AreEqual(@"
+                Assert.AreEqual(
+CollapseWhitespace(
+string.Format(
+@"
 (
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
@@ -403,23 +468,26 @@ SET @abracadabra=1;
 
 
 	(
-		/*UnitTestAggregate2*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate2*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
 
 		UNION
 
-		/*UnitTestAggregate3*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate3*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
 	)
 
 )
-", builder.SQL);
+",cohortIdentificationConfiguration.ID)),
+ CollapseWhitespace(builder.SQL));
             }
             finally
             {
@@ -450,10 +518,14 @@ SET @abracadabra=1;
                 rootcontainer.AddChild(container1);
 
                 CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null);
-                Assert.AreEqual(@"
+                Assert.AreEqual(
+CollapseWhitespace(
+string.Format(
+@"
 (
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
@@ -466,27 +538,30 @@ SET @abracadabra=1;
 
 
 	(
-		/*UnitTestAggregate2*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate2*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
-		group by 
+		group by
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		HAVING
 		count(*)>1
 
 		UNION
 
-		/*UnitTestAggregate3*/
-		SELECT distinct
+		/*cic_{0}_UnitTestAggregate3*/
+		SELECT
+		distinct
 		[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 		FROM 
 		[" + _scratchDatabaseName + @"]..[BulkData]
 	)
 
 )
-", builder.SQL);
+",cohortIdentificationConfiguration.ID))
+ ,CollapseWhitespace(builder.SQL));
 
             }
             finally
@@ -518,6 +593,19 @@ SET @abracadabra=1;
              var AND2 = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
             var filter2_1 = new AggregateFilter(CatalogueRepository,"filter2_1",AND2);
             var filter2_2 = new AggregateFilter(CatalogueRepository,"filter2_2",AND2);
+             
+            //Filters must belong to containers BEFORE parameter creation
+            //Make aggregate1 use the filter set we just setup
+            aggregate1.RootFilterContainer_ID = AND1.ID;
+            aggregate1.SaveToDatabase();
+
+            //Make aggregate3 use the other filter set we just setup
+            aggregate2.RootFilterContainer_ID = AND2.ID;
+            aggregate2.SaveToDatabase();
+
+            //set the order so that 2 comes before 1
+            rootcontainer.AddChild(aggregate2, 1);
+            rootcontainer.AddChild(aggregate1, 5);
 
             //give the filter an implicit parameter requiring bit of SQL
             foreach (var filter in new IFilter[]{filter1_1,filter1_2,filter2_1,filter2_2})
@@ -530,7 +618,7 @@ SET @abracadabra=1;
                 //get the parameter it just created, set it's value and save it
                 var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
                 param.Value = "'Boom!'";
-                param.ParameterSQL = "DECLARE @bob AS varchar(10)";
+                param.ParameterSQL = "DECLARE @bob AS varchar(10);";
                 
                 //if test case is different values then we change the values of the parameters
                 if (!valuesAreSame && (filter.Equals(filter2_1) || Equals(filter, filter2_2)))
@@ -539,30 +627,22 @@ SET @abracadabra=1;
                 param.SaveToDatabase();
             }
             
-            //Make aggregate1 use the filter set we just setup
-            aggregate1.RootFilterContainer_ID = AND1.ID;
-            aggregate1.SaveToDatabase();
-
-             //Make aggregate3 use the other filter set we just setup
-            aggregate2.RootFilterContainer_ID = AND2.ID;
-            aggregate2.SaveToDatabase();
-            
-            //set the order so that 2 comes before 1
-            rootcontainer.AddChild(aggregate2, 1);
-            rootcontainer.AddChild(aggregate1, 5);
-
              Console.WriteLine( builder.SQL);
 
              try
              {
                  if (valuesAreSame)
                  {
-                     Assert.AreEqual(@"DECLARE @bob AS varchar(10);
+                     Assert.AreEqual(
+CollapseWhitespace(
+string.Format(
+@"DECLARE @bob AS varchar(10);
 SET @bob='Boom!';
 
 (
-	/*UnitTestAggregate2*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
@@ -577,8 +657,9 @@ SET @bob='Boom!';
 
 	EXCEPT
 
-	/*UnitTestAggregate1*/
-	SELECT distinct
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
 	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]
@@ -591,21 +672,27 @@ SET @bob='Boom!';
 	@bob = 'bob'
 	)
 )
-", builder.SQL);
+",cohortIdentificationConfiguration.ID)),
+ CollapseWhitespace(builder.SQL));
                  }
                  else
                  {
-                     Assert.AreEqual(@"DECLARE @bob AS varchar(10);
+                     Assert.AreEqual(
+
+                        CollapseWhitespace( 
+                        string.Format(
+@"DECLARE @bob AS varchar(10);
 SET @bob='Grenades Are Go';
 DECLARE @bob_2 AS varchar(10);
 SET @bob_2='Boom!';
 
 (
-	/*UnitTestAggregate2*/
-	SELECT distinct
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
+	["+TestDatabaseNames.Prefix+ @"ScratchArea]..[BulkData]
 	WHERE
 	(
 	/*filter2_1*/
@@ -617,9 +704,10 @@ SET @bob_2='Boom!';
 
 	EXCEPT
 
-	/*UnitTestAggregate1*/
-	SELECT distinct
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 	FROM 
 	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
 	WHERE
@@ -631,7 +719,8 @@ SET @bob_2='Boom!';
 	@bob_2 = 'bob'
 	)
 )
-", builder.SQL);
+",cohortIdentificationConfiguration.ID)),
+ CollapseWhitespace(builder.SQL));
                  }
              }
              finally

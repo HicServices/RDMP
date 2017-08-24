@@ -61,7 +61,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 ddAscOrDesc.Enabled = true;
                 
                 tbTopX.Text = _topX.TopX.ToString();
-                ddAscOrDesc.DataSource = Enum.GetValues(typeof(AggregateTopX.AggregateTopXOrderByDirection));
+                ddAscOrDesc.DataSource = Enum.GetValues(typeof(AggregateTopXOrderByDirection));
                 ddAscOrDesc.SelectedItem = _topX.OrderByDirection;
 
                 if (_topX.OrderByDimensionIfAny_ID == null)
@@ -147,7 +147,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             if(_topX == null || ddAscOrDesc.SelectedItem == null)
                 return;
 
-            _topX.OrderByDirection = (AggregateTopX.AggregateTopXOrderByDirection) ddAscOrDesc.SelectedItem;
+            _topX.OrderByDirection = (AggregateTopXOrderByDirection) ddAscOrDesc.SelectedItem;
             _topX.SaveToDatabase();
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
         }

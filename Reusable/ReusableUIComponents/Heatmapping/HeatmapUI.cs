@@ -95,7 +95,8 @@ namespace ReusableUIComponents.Heatmapping
                 for (int x = 0; x < _dataTable.Rows.Count; x++)
                     for (int y = 1; y < _dataTable.Columns.Count; y++)
                     {
-                        var cellValue = Convert.ToDouble(_dataTable.Rows[x][y]);
+
+                        var cellValue = ToDouble(_dataTable.Rows[x][y]);
 
                         if (cellValue < _minValueInDataTable)
                             _minValueInDataTable = cellValue;
@@ -108,6 +109,11 @@ namespace ReusableUIComponents.Heatmapping
             }
             
             Invalidate();
+        }
+
+        private double ToDouble(object o)
+        {
+            return o == DBNull.Value ? 0 : Convert.ToDouble(o);
         }
 
         private DataTable _dataTable;
@@ -235,7 +241,7 @@ namespace ReusableUIComponents.Heatmapping
                         for (int y = 1; y < _dataTable.Columns.Count; y++)
                         {
                             //the value we are drawing
-                            var cellValue = Convert.ToDouble(_dataTable.Rows[x][y]);
+                            var cellValue = ToDouble(_dataTable.Rows[x][y]);
                         
                             //if the cell value is 0 render it as black
                             if (Math.Abs(cellValue - _minValueInDataTable) < 0.0000000001 && Math.Abs(_minValueInDataTable) < 0.0000000001)

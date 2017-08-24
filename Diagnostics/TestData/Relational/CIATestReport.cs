@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Diagnostics.TestData.Relational
 {
@@ -114,9 +116,9 @@ namespace Diagnostics.TestData.Relational
             throw new ArgumentOutOfRangeException();
         }
 
-        public void CommitToDatabase(SqlConnection con)
+        public void CommitToDatabase(DiscoveredDatabase database, DbConnection con)
         {
-            new SqlCommand(string.Format("INSERT INTO CIATestReport VALUES ({0},'{1}','{2}','{3}','{4}',{5},{6},{7})",PKID,ReportText,ReportDate.ToString("yyyy-MM-dd"),PKFKAgencyCodename,PKFKClearenceLevel,
+            database.Server.GetCommand(string.Format("INSERT INTO CIATestReport VALUES ({0},'{1}','{2}','{3}','{4}',{5},{6},{7})", PKID, ReportText, ReportDate.ToString("yyyy-MM-dd"), PKFKAgencyCodename, PKFKClearenceLevel,
                 CIATestInformantSignatory1 == null ? "null" : CIATestInformantSignatory1.ID.ToString(),
                 CIATestInformantSignatory2 == null ? "null" : CIATestInformantSignatory2.ID.ToString(),
                 CIATestInformantSignatory3 == null ? "null" : CIATestInformantSignatory3.ID.ToString()), con).ExecuteNonQuery();

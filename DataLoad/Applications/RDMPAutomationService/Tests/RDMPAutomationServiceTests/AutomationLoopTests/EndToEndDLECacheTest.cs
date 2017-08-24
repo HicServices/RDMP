@@ -30,7 +30,11 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             int timeoutInMilliseconds = 120000;
             
-            var setup = new DLEEndToEndTestSetup(ServerICanCreateRandomDatabasesAndTablesOn, UnitTestLoggingConnectionString,RepositoryLocator, DiscoveredServerICanCreateRandomDatabasesAndTablesOn);
+            var setup = new DLEEndToEndTestSetup(
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn,
+                UnitTestLoggingConnectionString,
+                RepositoryLocator,
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn);
 
             LoadMetadata lmd;
             setup.SetUp(timeoutInMilliseconds,out lmd);

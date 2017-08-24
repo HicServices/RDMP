@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems
 {

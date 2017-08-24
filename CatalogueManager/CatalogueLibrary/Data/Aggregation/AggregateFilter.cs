@@ -129,7 +129,12 @@ namespace CatalogueLibrary.Data.Aggregation
 
         public override Catalogue GetCatalogue()
         {
-            return GetAggregate().Catalogue;
+            var agg = GetAggregate();
+
+            if(agg == null)
+                throw new Exception("Cannot determine the Catalogue for AggregateFilter " + this + " because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
+
+            return agg.Catalogue;
         }
 
         public void Check(ICheckNotifier notifier)

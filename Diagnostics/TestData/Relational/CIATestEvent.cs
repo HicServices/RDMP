@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
@@ -109,32 +110,33 @@ namespace Diagnostics.TestData.Relational
             dt.Rows.Add(new object[] {PKAgencyCodename, PKClearenceLevel,EventName,TypeOfEvent,EstimatedEventDate});
         }
 
-        public void CommitToDatabase(DiscoveredServer server,SqlConnection con)
+        public void CommitToDatabase(DiscoveredDatabase database,DbConnection con)
         {
             foreach (CIATestAgent agent in AgentsInvolved)
-                agent.CommitToDatabase(server,con);
+                agent.CommitToDatabase(database, con);
 
-            new SqlCommand(
+            var server = database.Server;
+            server.GetCommand(
                 string.Format("INSERT INTO CIATestEvent VALUES ('{0}','{1}','{2}','{3}','{4}')", PKAgencyCodename,
                     PKClearenceLevel, EventName, TypeOfEvent, EstimatedEventDate.ToString("yyyy-M-dd")), con).ExecuteNonQuery();
 
             foreach (var a in AgentsInvolved)
-                new SqlCommand(string.Format("INSERT INTO CIATestEvent_AgentLinkTable VALUES ('{0}','{1}',{2})",
+                server.GetCommand(string.Format("INSERT INTO CIATestEvent_AgentLinkTable VALUES ('{0}','{1}',{2})",
                     PKAgencyCodename, PKClearenceLevel, a.PKAgentID),con).ExecuteNonQuery();
 
             foreach (CIATestReport report in Reports)
-                report.CommitToDatabase(con);
+                report.CommitToDatabase(database,con);
 
         }
 
-        public static bool IsExactMatchToDatabase(CIATestEvent[] events, SqlConnectionStringBuilder builder)
+        public static bool IsExactMatchToDatabase(CIATestEvent[] events, DiscoveredDatabase database)
         {
-            using (SqlConnection con = new SqlConnection(builder.ConnectionString))
+            using (var con = database.Server.GetConnection())
             {
                 con.Open();
 
                 DataTable dt = new DataTable();
-                new SqlDataAdapter(new SqlCommand("Select * from CIATestEvent order by PKAgencyCodename asc",con)).Fill(dt);
+                database.Server.GetDataAdapter("Select * from CIATestEvent order by PKAgencyCodename asc", con).Fill(dt);
 
                 var orderedEvents = events.OrderBy(e => e.PKAgencyCodename).ToArray();
 

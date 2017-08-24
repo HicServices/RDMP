@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Oracle.ManagedDataAccess.Client;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {
@@ -109,6 +110,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
         {
             throw new NotImplementedException();
+        }
+
+        public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
+        {
+            return ((OracleConnectionStringBuilder) builder).UserID;
+        }
+
+        public override string GetExplicitPasswordIfAny(DbConnectionStringBuilder builder)
+        {
+            return ((OracleConnectionStringBuilder)builder).Password;
         }
 
         public override string[] ListDatabases(DbConnectionStringBuilder builder)

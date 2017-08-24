@@ -11,6 +11,7 @@ using CatalogueManager.ItemActivation;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems
 {

@@ -22,8 +22,8 @@ namespace Tests.OtherProviders.Microsoft
         {
             try
             {
-                server = new DiscoveredServer(ServerICanCreateRandomDatabasesAndTablesOn);
-                if (!server.Exists())
+                server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
+                if (server == null || !server.Exists())
                     Assert.Inconclusive();
 
                 //cleanup 
@@ -92,7 +92,7 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
         [TestCase(true)]
         public void CreateAndDestroy(bool simulateExceptionOnConnection)
         {
-            using (var con = new SqlConnection(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString))
+            using (var con = new SqlConnection(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString))
             {
                 con.Open();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using Diagnostics;
@@ -23,7 +24,7 @@ namespace CatalogueLibraryTests.Integration
 
 
             var testEnvironment = new UserAcceptanceTestEnvironment(
-                ServerICanCreateRandomDatabasesAndTablesOn,
+                (SqlConnectionStringBuilder) DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder,
                 Path.GetDirectoryName(whereIsTheBinDirectory),
                 UnitTestLoggingConnectionString,
                 "Internal",

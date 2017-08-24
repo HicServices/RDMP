@@ -117,4 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Microsoft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\Microsoft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MicrosoftOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\MicrosoftOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MySql" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\MySql.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MySqlOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\MySqlOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Oracle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\Oracle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OracleOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\OracleOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

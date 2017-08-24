@@ -3,6 +3,7 @@ using System.Web.UI.WebControls;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.FilterImporting.Construction
 {

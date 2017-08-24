@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.QueryBuilding
@@ -48,9 +50,8 @@ namespace CatalogueLibrary.QueryBuilding
 
         public List<TableInfo> TablesUsedInQuery { get; private set; }
         
-        List<CustomLine> _customLines = new List<CustomLine>();
-
-        public CustomLine[] CustomLines { get { return _customLines.ToArray(); } }
+        public List<CustomLine> CustomLines { get; private set; }
+        public CustomLine TopXCustomLine { get; set; }
 
         public ParameterManager ParameterManager { get; private set; }
         
@@ -107,23 +108,40 @@ namespace CatalogueLibrary.QueryBuilding
 
         public void SetLimitationSQL(string limitationSQL)
         {
+            if(limitationSQL != null && limitationSQL.Contains("top"))
+                throw new Exception("Use TopX property instead of limitation SQL to acheive this");
+
             LimitationSQL = limitationSQL;
             SQLOutOfDate = true;
         }
 
         public List<IFilter> Filters { get; private set; }
+
+        public int TopX
+        {
+            get { return _topX; }
+            set
+            {
+                //it already has that value
+                if(_topX == value)
+                    return;
+
+                _topX = value;
+                SQLOutOfDate = true;
+            }
+        }
+
         private int[] Filters_LineNumbers;
         private int Select_LineNumber;
         private int FROM_LineNumber;
 
         private int currentLine = 0;
         private string _sql;
-        public bool SQLOutOfDate = false;
+        public bool SQLOutOfDate { get; set; }
         private IContainer _rootFilterContainer;
         private string _hashingAlgorithm;
-
-        
-
+        private int _topX;
+        private IQuerySyntaxHelper _syntaxHelper;
 
         /// <summary>
         /// Used to build extraction queries based on ExtractionInformation sets
@@ -131,13 +149,17 @@ namespace CatalogueLibrary.QueryBuilding
         /// <param name="limitationSQL">Any text you want after SELECT to limit the results e.g. "DISTINCT" or "TOP 10"</param>
         public QueryBuilder(string limitationSQL, string hashingAlgorithm)
         {
-            LimitationSQL = limitationSQL;
+            SetLimitationSQL(limitationSQL);
             Sort = true;
             ParameterManager = new ParameterManager();
+            CustomLines = new List<CustomLine>();
+
             CheckSyntax = true;
             SelectColumns = new List<QueryTimeColumn>();
 
             _hashingAlgorithm = hashingAlgorithm ?? "Work.dbo.HicHash({0},{1})";
+
+            TopX = -1;
         }
 
         #region public stuff
@@ -162,29 +184,6 @@ namespace CatalogueLibrary.QueryBuilding
             }   
         }
         
-        /// <summary>
-        /// Add a custom line of code into the query at the specified position.  This will be maintained throughout the lifespan of the object such that if
-        /// you add other columns etc then your code will still be included at the appropriate position.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="positionToInsert"></param>
-        public void AddCustomLine(string text, QueryComponent positionToInsert)
-        {
-            CustomLine toAdd = new CustomLine();
-            toAdd.Text = text;
-            
-            if(positionToInsert == QueryComponent.Filter)
-                if (text.Trim().StartsWith("AND ") || text.Trim().StartsWith("OR "))
-                    throw new Exception("Custom filters are always AND, you should not specify the operator AND/OR, you passed\"" + text + "\"");
-
-            toAdd.LocationToInsert = positionToInsert;
-
-            if(positionToInsert == QueryComponent.SELECT)
-                throw new ArgumentException("Use QueryComponent " + QueryComponent.QueryTimeColumn + " instead for SELECT elements");
-
-            _customLines.Add(toAdd);
-            SQLOutOfDate = true;
-        }
 
         /// <summary>
         /// Pass in a column and it will tell you which line of .SQL it wrote it out to.  Returns -1 if it is not found
@@ -226,12 +225,18 @@ namespace CatalogueLibrary.QueryBuilding
             
             if (Filters_LineNumbers.Any())
                 if (Filters_LineNumbers.Contains(iLineNumber))
-                    return QueryComponent.Filter;
+                    return QueryComponent.WHERE;
             
             if (iLineNumber == FROM_LineNumber)
                 return QueryComponent.FROM;
 
             return QueryComponent.None;
+        }
+
+        public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
+        {
+            SQLOutOfDate = true;
+            return SqlQueryBuilderHelper.AddCustomLine(this, text, positionToInsert);
         }
 
         [Pure]
@@ -247,7 +252,7 @@ namespace CatalogueLibrary.QueryBuilding
             {
                 case QueryComponent.QueryTimeColumn:
                     return SelectColumns[Array.IndexOf(UserSelectColumns_LineNumbers, iLineNumber)].IColumn;
-                case QueryComponent.Filter:
+                case QueryComponent.WHERE:
                     return Filters[Array.IndexOf(Filters_LineNumbers, iLineNumber)];
                 case QueryComponent.JoinInfoJoin:
                     return JoinsUsedInQuery[Array.IndexOf(JoinsUsedInQuery_LineNumbers, iLineNumber)];
@@ -352,8 +357,16 @@ namespace CatalogueLibrary.QueryBuilding
 
             //deal with case when there are no tables in the query or there are only lookup descriptions in the query
             if (TablesUsedInQuery.Count == 0)
-                    throw new Exception("There are no fields marked for extraction in this dataset");
-     
+                throw new Exception("There are no TablesUsedInQuery in this dataset");
+
+
+            _syntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(TablesUsedInQuery);
+
+            if (TopX != -1)
+                SqlQueryBuilderHelper.HandleTopX(this, _syntaxHelper, TopX);
+            else
+                SqlQueryBuilderHelper.ClearTopX(this);
+
             //declare parameters
             ParameterManager.AddParametersFor(Filters);
             
@@ -377,8 +390,8 @@ namespace CatalogueLibrary.QueryBuilding
             }
 
             //add user custom Parameter lines
-            foreach (CustomLine line in _customLines.Where(c => c.LocationToInsert == QueryComponent.VariableDeclaration))
-                toReturn += line.Text + TakeNewLine();
+            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.VariableDeclaration);
+
             #endregion
 
             #region Select (including all IColumns)
@@ -386,16 +399,15 @@ namespace CatalogueLibrary.QueryBuilding
             Select_LineNumber = currentLine;
             toReturn += "SELECT " + LimitationSQL + TakeNewLine();
 
-            //add user custom SELECT lines
-            foreach (CustomLine line in _customLines.Where(c => c.LocationToInsert == QueryComponent.QueryTimeColumn))
-                toReturn += line.Text + TakeNewLine();
+            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.SELECT);
+            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.QueryTimeColumn);
             
             for (int i = 0; i < SelectColumns.Count;i++ )
             {
                 //output each of the ExtractionInformations that the user requested and record the line number for posterity
                 UserSelectColumns_LineNumbers[i] = currentLine;
 
-                 string columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm,_salt);
+                string columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, _syntaxHelper);
 
                  //there is another one coming
                  if (i + 1 < SelectColumns.Count)
@@ -415,37 +427,19 @@ namespace CatalogueLibrary.QueryBuilding
             JoinsUsedInQuery_LineNumbers = joinLineNumbers;
 
             //add user custom JOIN lines
-            foreach (CustomLine line in _customLines.Where(c => c.LocationToInsert == QueryComponent.JoinInfoJoin))
-                toReturn += line.Text + TakeNewLine();
+            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.JoinInfoJoin);
             
-
             #region Filters (WHERE)
 
             int[] filterLineNumbers;
-            toReturn += SqlQueryBuilderHelper.GetWHERESQL(this, out filterLineNumbers, false);
+            toReturn += SqlQueryBuilderHelper.GetWHERESQL(this, out filterLineNumbers);
             Filters_LineNumbers = filterLineNumbers;
-            
-            #region Custom Filters (for people who can't be bothered to implement IFilter or when IContainer doesnt support ramming in additional Filters at runtime because you feel like it ) - these all get AND together and a WHERE is put at the start if needed
-            //if there are custom lines being rammed into the Filter section
-            if(_customLines.Any(c => c.LocationToInsert == QueryComponent.Filter))
-                //if we haven't put a WHERE yet, put one in
-                if (Filters.Count == 0)
-                    toReturn += "WHERE" + TakeNewLine();
-                else
-                    toReturn += "AND" + TakeNewLine(); //otherwise just AND it with every other filter we currently have configured
 
-            //add user custom Filter lines
-            List<CustomLine> customFilterLines = new List<CustomLine>(_customLines.Where(c => c.LocationToInsert == QueryComponent.Filter));
-            
-            for (int i = 0; i < customFilterLines.Count(); i++)
-            {
-                toReturn += customFilterLines[i].Text + TakeNewLine();
-                
-                if(i+1<customFilterLines.Count())
-                    toReturn += "AND" + TakeNewLine();
-            }
-            #endregion
+            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.WHERE);
 
+            toReturn += TakeNewLine();
+            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.Postfix);
+            
             _sql = toReturn;
             SQLOutOfDate = false;
 
@@ -454,9 +448,6 @@ namespace CatalogueLibrary.QueryBuilding
             
             
         }
-
-
-       
 
         public string TakeNewLine()
         {
@@ -478,15 +469,17 @@ namespace CatalogueLibrary.QueryBuilding
 
         public static ConstantParameter DeconstructStringIntoParameter(string sql)
         {
-            string[] lines = sql.Split(new[] {'\n'});
+            string[] lines = sql.Split(new[] {'\n'},StringSplitOptions.RemoveEmptyEntries);
 
             string comment = null;
 
-            if (lines[0].StartsWith("--"))
-                comment = lines[0].Substring(2).Trim();
+            Regex commentRegex = new Regex(@"/\*(.*)\*/");
+            var matchComment = commentRegex.Match(lines[0]);
+            if (lines.Length >= 3 && matchComment.Success)
+                comment = matchComment.Groups[1].Value;
 
             string declaration = comment == null ? lines[0]:lines[1];
-            declaration = declaration.TrimEnd(new[] {'\r', ';'});
+            declaration = declaration.TrimEnd(new[] {'\r'});
 
             string valueLine = comment == null ? lines[1] : lines[2];
 
@@ -504,10 +497,15 @@ namespace CatalogueLibrary.QueryBuilding
         {
             string toReturn = "";
 
-            if (sqlParameter.Comment != null)
-                toReturn += "--" + sqlParameter.Comment + Environment.NewLine;
+            if (!string.IsNullOrWhiteSpace(sqlParameter.Comment))
+            {
+                toReturn += "/*" + sqlParameter.Comment + "*/" + Environment.NewLine;
+                newlinesTaken = 3;
+            }
+            else
+                newlinesTaken = 2;//IMPORTANT, if you edit this to have more newlines, correct this value
 
-            toReturn += sqlParameter.ParameterSQL + ";" + Environment.NewLine;
+            toReturn += sqlParameter.ParameterSQL + Environment.NewLine;
 
             //it's a table valued parameter! advanced
             if (!string.IsNullOrEmpty(sqlParameter.Value) && Regex.IsMatch(sqlParameter.Value, @"\binsert\s+into\b",RegexOptions.IgnoreCase))
@@ -515,8 +513,8 @@ namespace CatalogueLibrary.QueryBuilding
             else
                 toReturn += "SET " + sqlParameter.ParameterName + "=" + sqlParameter.Value + ";" + Environment.NewLine;//its a regular value
             
-            //IMPORTANT, if you edit this to have more newlines, correct this value
-            newlinesTaken = 3;
+            
+            
 
             return toReturn;
         }

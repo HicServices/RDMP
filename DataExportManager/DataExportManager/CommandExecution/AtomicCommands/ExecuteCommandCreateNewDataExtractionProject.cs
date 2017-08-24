@@ -12,6 +12,7 @@ using DataExportManager.ProjectUI;
 using DataExportManager.Wizard;
 using ReusableUIComponents;
 using ReusableUIComponents.Copying;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {

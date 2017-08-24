@@ -13,6 +13,7 @@ using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {

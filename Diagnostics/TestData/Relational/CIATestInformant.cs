@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Diagnostics.TestData.Relational
 {
@@ -28,9 +30,9 @@ namespace Diagnostics.TestData.Relational
 
         }
 
-        public void CommitToDatabase(SqlConnection con)
+        public void CommitToDatabase(DiscoveredDatabase database,DbConnection con)
         {
-            new SqlCommand(string.Format("INSERT INTO CIATestInformant VALUES ({0},'{1}','{2}')",ID,Name,DateOfBirth.ToString("yyyy-MM-dd")), con).ExecuteNonQuery();
+            database.Server.GetCommand(string.Format("INSERT INTO CIATestInformant VALUES ({0},'{1}','{2}')", ID, Name, DateOfBirth.ToString("yyyy-MM-dd")), con).ExecuteNonQuery();
         }
     }
 }

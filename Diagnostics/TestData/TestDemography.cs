@@ -43,7 +43,7 @@ namespace Diagnostics.TestData
 
         public string GetCreateDemographyTableSql(bool createANOVersion, string testTableName)
         {
-            return @"--Drop table if it already exists 
+            return @"/*Drop table if it already exists */
                IF OBJECT_ID('" + testTableName + @"') IS NOT NULL
  DROP TABLE " + testTableName + @"
 

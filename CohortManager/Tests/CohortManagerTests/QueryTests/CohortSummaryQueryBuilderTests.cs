@@ -118,14 +118,14 @@ namespace CohortManagerTests.QueryTests
            string sql = acDataset.GetQueryBuilder().SQL;
 
            Assert.AreEqual(@"/*Agg2_Dataset*/
-SELECT 
+SELECT
 Year,
-count(*)
+count(*) AS MyCount
 FROM 
 MyTable
-group by 
+group by
 Year
-order by 
+order by
 Year", sql);
         }
 
@@ -168,14 +168,14 @@ Year", sql);
             var builder = csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereRecordsIn);
 
             Assert.AreEqual(@"/*Agg2_Dataset*/
-SELECT 
+SELECT
 Year,
-count(*)
+count(*) AS MyCount
 FROM 
 MyTable
-group by 
+group by
 Year
-order by 
+order by
 Year", builder.SQL);
         }
 
@@ -184,7 +184,7 @@ Year", builder.SQL);
         {
             CreateParameters("'bob'", "'fish'");
 
-            var global = new AnyTableSqlParameter(CatalogueRepository, cic, "DECLARE @bob AS VARCHAR(50)");
+            var global = new AnyTableSqlParameter(CatalogueRepository, cic, "DECLARE @bob AS varchar(50);");
             global.Value = "'zomber'";
             global.SaveToDatabase();
 
@@ -195,12 +195,12 @@ Year", builder.SQL);
 
                 var builder = csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereRecordsIn);
 
-                Assert.AreEqual(@"DECLARE @bob AS VARCHAR(50);
+                Assert.AreEqual(CollapseWhitespace(@"DECLARE @bob AS varchar(50);
 SET @bob='zomber';
 /*Agg2_Dataset*/
-SELECT 
+SELECT
 Year,
-count(*)
+count(*) AS MyCount
 FROM 
 MyTable
 WHERE
@@ -219,7 +219,7 @@ AND
 group by 
 Year
 order by 
-Year", builder.SQL);
+Year"), CollapseWhitespace(builder.SQL));
 
             }
             finally

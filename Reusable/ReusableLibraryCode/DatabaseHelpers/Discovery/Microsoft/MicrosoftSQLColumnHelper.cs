@@ -1,4 +1,6 @@
-﻿namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
+﻿using System;
+
+namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
     public class MicrosoftSQLColumnHelper : IDiscoveredColumnHelper
     {
@@ -11,6 +13,11 @@
                 sql += " WHERE " + column.GetRuntimeName() + " IS NOT NULL";
 
             return sql;
+        }
+
+        public string GetAlterColumnToSql(DiscoveredColumn column, string newType, bool allowNulls)
+        {
+            return "ALTER TABLE " + column.Table.GetRuntimeName() + " ALTER COLUMN " + column.GetRuntimeName() + " " + newType + " " + (allowNulls ? "NULL" : "NOT NULL");
         }
     }
 }

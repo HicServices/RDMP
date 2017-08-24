@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
 using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle;
 using ReusableLibraryCode.Performance;
 
 namespace ReusableLibraryCode
@@ -66,17 +70,24 @@ namespace ReusableLibraryCode
 
         public static DbConnectionStringBuilder GetConnectionStringBuilder(string targetCatalogueConnectionString, DatabaseType targetDatabaseType)
         {
+            IDiscoveredServerHelper helper;
+            
             switch (targetDatabaseType)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    return new SqlConnectionStringBuilder(targetCatalogueConnectionString);
+                    helper = new MicrosoftSQLServerHelper();
+                    break;
                 case DatabaseType.MYSQLServer:
-                    return new MySqlConnectionStringBuilder(targetCatalogueConnectionString);
+                    helper = new MySqlServerHelper();
+                    break;
                 case DatabaseType.Oracle:
-                    return new OracleConnectionStringBuilder(targetCatalogueConnectionString);
+                    helper = new OracleServerHelper();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("targetDatabaseType");
             }
+
+            return helper.GetConnectionStringBuilder(targetCatalogueConnectionString);
         }
     }
 }

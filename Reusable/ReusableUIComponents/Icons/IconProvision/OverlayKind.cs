@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.Icons.IconOverlays
+﻿namespace ReusableUIComponents.Icons.IconProvision
 {
     public enum OverlayKind
     {

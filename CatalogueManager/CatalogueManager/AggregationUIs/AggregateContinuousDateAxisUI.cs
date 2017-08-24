@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataHelper;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueManager.AggregationUIs
 {

@@ -74,16 +74,15 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
 INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Condition2], [Condition3], [Condition4], [CHI]) VALUES (CAST(0x0000088A00000000 AS DateTime), CAST(0x0000089300000000 AS DateTime), N'G009', NULL, NULL, NULL, N'0706013071')
 INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Condition2], [Condition3], [Condition4], [CHI]) VALUES (CAST(0x000008CA00000000 AS DateTime), CAST(0x000008D100000000 AS DateTime), N'T47', N'H311', N'O037', NULL, N'1204057592')";
 
-            using (SqlConnection con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString))
+            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            using (var con = server.GetConnection())
             {
                 con.Open();
-
-                SqlCommand cmd = new SqlCommand(sql,con);
-                cmd.ExecuteNonQuery();
+                server.GetCommand(sql,con).ExecuteNonQuery();
             }
 
-           
-            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, DatabaseICanCreateRandomTablesIn.DataSource, DatabaseICanCreateRandomTablesIn.InitialCatalog, tableName, DatabaseType.MicrosoftSQLServer,DatabaseICanCreateRandomTablesIn.UserID,DatabaseICanCreateRandomTablesIn.Password);
+            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(tableName);
+            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, table);
             importer.DoImport(out _tableInfo,out _columnInfos);
 
             //Configure the structure of the ANO transform we want - identifiers should have 3 characters and 2 ints and end with _C

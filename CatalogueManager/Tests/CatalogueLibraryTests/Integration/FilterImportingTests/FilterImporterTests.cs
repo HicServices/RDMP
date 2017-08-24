@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using NUnit.Framework;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using Rhino.Mocks;
 
 namespace CatalogueLibraryTests.Integration.FilterImportingTests
@@ -19,6 +20,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         {
             //Thing we will be cloning
             var master = MockRepository.GenerateStub<IFilter>();
+            master.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             master.Name = "Space Odyssey";
             
             //The factory will return this value
@@ -43,6 +45,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         {
             //The thing we will be importing
             var master = MockRepository.GenerateStub<IFilter>();
+            master.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             master.Name = "Space Odyssey";
 
             //An existing IFilter that is in the scope that is being imported into (e.g. a data extract configuration)
@@ -71,15 +74,17 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         public void FilterCreated_Parameters()
         {
             var master = MockRepository.GenerateStub<IFilter>();
+            master.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             master.Name = "Space Odyssey";
             master.WhereSQL = "@hall = 'active'";
             
             var constructed = MockRepository.GenerateStub<IFilter>();
+            constructed.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             var constructedParameter = MockRepository.GenerateStub<ISqlParameter>();
 
             var factory = MockRepository.GenerateStrictMock<IFilterFactory>();
             factory.Expect(m => m.CreateNewFilter("Space Odyssey")).Return(constructed).Repeat.Once();
-            factory.Expect(m => m.CreateNewParameter(constructed, "DECLARE @hall AS VARCHAR(50)")).Return(constructedParameter).Repeat.Once();
+            factory.Expect(m => m.CreateNewParameter(constructed, "DECLARE @hall AS varchar(50);")).Return(constructedParameter).Repeat.Once();
 
             var filterCreator = new FilterImporter(factory, null);
             //Returns constructed
@@ -91,6 +96,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         {
             //The filter we are cloning
             var master = MockRepository.GenerateStub<IFilter>();
+            master.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             master.Name = "Space Odyssey";
             master.WhereSQL = "@hall = 'active'";
 
@@ -136,6 +142,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         {
             //The filter we are cloning
             var master = MockRepository.GenerateStub<IFilter>();
+            master.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             master.Name = "Space Odyssey";
             master.WhereSQL = "@hall = 'active'";
 
@@ -145,17 +152,19 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
 
             //The filter to which the above existing parameter belongs
             var existing = MockRepository.GenerateStub<IFilter>();
+            existing.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             existing.Name = "Space Odyssey";
             existing.Expect(m => m.GetAllParameters()).Return(new[] { existingParameter }).Repeat.Once();
 
             //The return value for our Mock factory
             var constructed = MockRepository.GenerateStub<IFilter>();
+            constructed.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             var constructedParameter = MockRepository.GenerateStub<ISqlParameter>();
             
             //The mocked factory
             var factory = MockRepository.GenerateStrictMock<IFilterFactory>();
             factory.Expect(m => m.CreateNewFilter("Copy of Space Odyssey")).Return(constructed).Repeat.Once();
-            factory.Expect(m => m.CreateNewParameter(constructed,"DECLARE @hall2 AS VARCHAR(50)")).Return(constructedParameter).Repeat.Once();
+            factory.Expect(m => m.CreateNewParameter(constructed,"DECLARE @hall2 AS varchar(50);")).Return(constructedParameter).Repeat.Once();
 
             //The thing we are testing
             var filterCreator = new FilterImporter(factory, null);
@@ -173,6 +182,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         {
             //The filter we are cloning
             var master = MockRepository.GenerateStub<IFilter>();
+            master.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             master.Name = "Space Odyssey";
             master.WhereSQL = "@hall = 'active'";
 
@@ -193,11 +203,13 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
 
             //The filter to which the above existing parameter belongs
             var existing = MockRepository.GenerateStub<IFilter>();
+            existing.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             existing.Name = "Space Odyssey";
             existing.Expect(m => m.GetAllParameters()).Return(new[] { existingParameter }).Repeat.Once();
 
             //The return value for our Mock factory
             var constructed = MockRepository.GenerateStub<IFilter>();
+            constructed.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             var constructedParameter = MockRepository.GenerateStub<ISqlParameter>();
 
             //The mocked factory

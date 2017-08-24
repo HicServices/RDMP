@@ -10,6 +10,7 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -22,6 +23,7 @@ namespace CatalogueLibraryTests.Integration
 
         private Exception _setupException;
         private CatalogueCloner _cloner;
+        private DiscoveredDatabase _cloneDatabase;
 
         protected override void SetUp()
         {
@@ -31,18 +33,13 @@ namespace CatalogueLibraryTests.Integration
 
                 _sourceCatalogue = new Catalogue(CatalogueRepository, "CatalogueClonerTests");
 
-                //setup new Catalogue databse to clone into
-                //make copy of this so we can mess with Initial Catalog without confusing other unit tests
+                //setup new Catalogue databse to clone into (wont exist yet)
+                _cloneDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDatabaseName);
+                _cloneDatabase.ForceDrop();
 
-                var cloneConnectionStringBuilder =
-                    new SqlConnectionStringBuilder(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString)
-                    {
-                        InitialCatalog = testDatabaseName
-                    };
+                //the clone repo (database doesn't exist yet)
+                _cloneRepository = new CatalogueRepository(_cloneDatabase.Server.Builder);
                 
-                _cloneRepository = new CatalogueRepository(cloneConnectionStringBuilder);
-                DropTestDatabase(testDatabaseName);
-
                 _cloner = new CatalogueCloner(CatalogueRepository, _cloneRepository);
                 _cloner.CreateNewEmptyCatalogueDatabase(testDatabaseName, new ThrowImmediatelyCheckNotifier());
             }
@@ -57,7 +54,7 @@ namespace CatalogueLibraryTests.Integration
         protected void TearDown()
         {
             _sourceCatalogue.DeleteInDatabase();
-            DropTestDatabase(((SqlConnectionStringBuilder)_cloneRepository.ConnectionStringBuilder).InitialCatalog);
+            _cloneDatabase.ForceDrop();
         }
 
         [Test]
@@ -233,8 +230,7 @@ namespace CatalogueLibraryTests.Integration
             try
             {
                 // build a repository pointing at an empty database to clone into (won't work because the empty database is actually 100% empty with no tables - as intended
-                var destinationBuilder = new SqlConnectionStringBuilder(DatabaseICanCreateRandomTablesIn.ConnectionString);
-                destinationBuilder.InitialCatalog = DatabaseICanCreateRandomTablesIn.InitialCatalog;
+                var destinationBuilder = DiscoveredDatabaseICanCreateRandomTablesIn.Server.Builder;
                 var destinationRepository = new CatalogueRepository(destinationBuilder);
 
                 var catalogueCloner = new CatalogueCloner(CatalogueRepository, destinationRepository);
@@ -247,31 +243,5 @@ namespace CatalogueLibraryTests.Integration
          
         }
         #endregion
-
-        private void DropTestDatabase(string databaseToDrop)
-        {
-            if (_setupException != null)
-                throw _setupException;
-
-            string destinationConStr = ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString;
-
-            using (var con = new SqlConnection(destinationConStr))
-            {
-                try
-                {
-                    con.Open();
-                    var cmdDelete = new SqlCommand(@"if db_id('" + databaseToDrop + @"') is not null 
-begin
-ALTER DATABASE " + databaseToDrop + @" SET SINGLE_USER WITH ROLLBACK IMMEDIATE 
-drop database " + databaseToDrop + @"
-end", con);
-                    cmdDelete.ExecuteNonQuery();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Couldn't delete database: " + e);
-                }
-            }
-        }
     }
 }

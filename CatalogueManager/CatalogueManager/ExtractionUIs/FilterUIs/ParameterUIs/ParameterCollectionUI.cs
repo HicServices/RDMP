@@ -11,6 +11,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using CatalogueLibrary.Spontaneous;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
@@ -117,7 +118,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             
             var parameters = olvParameters.Objects.Cast<ISqlParameter>().ToArray();
 
-            var toDisable = parameters.Where(p => IsOverridden(p) || Options.IsHigherLevel(p));
+            var toDisable = parameters.Where(Options.ShouldBeDisabled);
 
             //These parameters are super special and in fact only have a Value (other properties are inherited from a parent ExtractionFilterParameter) so only let the user edit the Value textbox if there are any of these in the UI
             if(parameters.Any(p=>p is ExtractionFilterParameterSetValue))
@@ -289,7 +290,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             }
 
             //if it is locked
-            if (IsOverridden(sqlParameter))
+            if (Options.IsOverridden(sqlParameter))
             {
                 e.Title = "Parameter is overridden by a higher level";
                 e.Text = "You have defined a higher level parameter with the same name/datatype which will override this parameters value during query generation";
@@ -313,8 +314,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             
                 if (parameterEditorScintillaControl1.ProblemObjects.ContainsKey(sqlParameter))
                     return "Warning.png";
-         
-                if (IsOverridden(sqlParameter))
+
+                if (Options.IsOverridden(sqlParameter))
                     return "Overridden.png";
           
                 if(Options.IsHigherLevel(sqlParameter))
@@ -325,11 +326,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
                 return "Warning.png"; //if it crashed trying to get an image then ... bad times return warning
             }
             return null;
-        }
-
-        private bool IsOverridden(ISqlParameter sqlParameter)
-        {
-            return Options.ParameterManager.GetOverrideIfAnyFor(sqlParameter) != null;
         }
 
         private object OwnerAspectGetter(object rowobject)
@@ -357,7 +353,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         {
             if(sqlParameter != null)
                 //if it is not already overridden 
-                if (!IsOverridden(sqlParameter) &&
+                if (!Options.IsOverridden(sqlParameter) &&
                     //and it exists at a lower level
                     Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel)
                     return true;

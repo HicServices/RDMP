@@ -12,6 +12,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace ReusableUIComponents
 {
@@ -68,10 +69,14 @@ namespace ReusableUIComponents
         private BackgroundWorker _workerRefreshTables = new BackgroundWorker();
         CancellationTokenSource _workerRefreshTablesToken;
         private List<DiscoveredTable> _listTablesAsyncResult;
+        
+        DatabaseTypeIconProvider _databaseIconProvider;
 
         //constructor
         public ServerDatabaseTableSelector()
         {
+            _databaseIconProvider = new DatabaseTypeIconProvider();
+
             InitializeComponent();
             ddDatabaseType.DataSource = Enum.GetValues(typeof (DatabaseType));
 
@@ -83,7 +88,10 @@ namespace ReusableUIComponents
             _workerRefreshTables.WorkerSupportsCancellation = true;
             _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
 
+            
+            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType);
         }
+
         
         #region Async Stuff
 
@@ -380,9 +388,13 @@ namespace ReusableUIComponents
         private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
         {
             _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+
+            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType);
+
             UpdateDatabaseList();
         }
-        
+
+
         private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             AbortWorkers();

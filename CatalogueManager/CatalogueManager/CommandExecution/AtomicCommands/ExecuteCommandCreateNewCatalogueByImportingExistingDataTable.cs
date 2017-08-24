@@ -5,6 +5,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.Refreshing;
 using ReusableUIComponents.Copying;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

@@ -11,6 +11,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 {

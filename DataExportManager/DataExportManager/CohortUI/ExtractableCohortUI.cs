@@ -87,7 +87,7 @@ namespace DataExportManager.CohortUI
 
                 DiscoveredDatabase location = ExtractableCohort.GetDatabaseServer();
                 //tell user about connection string (currently we don't support usernames/passwords so it's fine
-                toShow += "--Cohort is stored in Server " + location.Server.Name + " Database " + location.GetRuntimeName() + Environment.NewLine;
+                toShow += "/*Cohort is stored in Server " + location.Server.Name + " Database " + location.GetRuntimeName() +"*/" + Environment.NewLine;
                 toShow += Environment.NewLine;
 
 
@@ -95,12 +95,12 @@ namespace DataExportManager.CohortUI
                 string[] customTablesExtractionSQL = ExtractableCohort.GetCustomTableExtractionSQLs().ToArray();
 
                 if (!customTablesExtractionSQL.Any())
-                    toShow += "--No Custom Data:" + Environment.NewLine;
+                    toShow += "/*No Custom Data:*/" + Environment.NewLine;
                 else
                 {
                     foreach (string customTableSql in customTablesExtractionSQL)
                     {
-                        toShow += "--Custom Data Extraction SQL:" + Environment.NewLine;
+                        toShow += "/*Custom Data Extraction SQL:*/" + Environment.NewLine;
                         toShow += customTableSql;
                         toShow += Environment.NewLine;
                         toShow += Environment.NewLine;
@@ -117,7 +117,7 @@ namespace DataExportManager.CohortUI
                              + " WHERE " + ExtractableCohort.WhereSQL();
 
                 toShow += Environment.NewLine;
-                toShow += Environment.NewLine + "--SQL to view cohort:" + Environment.NewLine;
+                toShow += Environment.NewLine + "/*SQL to view cohort:*/" + Environment.NewLine;
                 toShow += sql;
 
                 QueryPreview.Text = toShow;

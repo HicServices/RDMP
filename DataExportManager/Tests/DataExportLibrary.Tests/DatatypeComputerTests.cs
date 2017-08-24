@@ -1,12 +1,19 @@
 ﻿using System;
 using NUnit.Framework;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DataTableExtension;
 
 namespace DataExportLibrary.Tests
 {
     public class DatatypeComputerTests
     {
+        private MicrosoftSQLTypeTranslater _translater;
 
+        public DatatypeComputerTests()
+        {
+            _translater = new MicrosoftSQLTypeTranslater();
+
+        }
         [Test]
         public void TestDatatypeComputer_decimal()
         {
@@ -42,7 +49,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(DBNull.Value);
 
             Assert.AreEqual(t.CurrentEstimate, typeof(decimal));
-            Assert.AreEqual("decimal(4,1)",t.GetSqlDBType());
+            Assert.AreEqual("decimal(4,1)", t.GetSqlDBType(_translater));
         }
 
         [Test]
@@ -53,7 +60,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(null);
 
             Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
-            Assert.AreEqual("datetime2",t.GetSqlDBType());
+            Assert.AreEqual("datetime2", t.GetSqlDBType(_translater));
         }
 
         [Test]
@@ -64,7 +71,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(null);
 
             Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
-            Assert.AreEqual("datetime2", t.GetSqlDBType());
+            Assert.AreEqual("datetime2", t.GetSqlDBType(_translater));
         }
 
         [Test]
@@ -75,7 +82,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(null);
 
             Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
-            Assert.AreEqual("datetime2", t.GetSqlDBType());
+            Assert.AreEqual("datetime2", t.GetSqlDBType(_translater));
         }
         [Test]
         public void TestDatatypeComputer_DateTime_EnglishWithTimeAndAM()
@@ -85,7 +92,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(null);
 
             Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
-            Assert.AreEqual("datetime2", t.GetSqlDBType());
+            Assert.AreEqual("datetime2", t.GetSqlDBType(_translater));
         }
         [Test]
         public void TestDatatypeComputer_PreeceedingZeroes()
@@ -106,7 +113,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("-99.99");
 
             Assert.AreEqual(t.CurrentEstimate, typeof(decimal));
-            Assert.AreEqual("decimal(4,2)", t.GetSqlDBType());
+            Assert.AreEqual("decimal(4,2)", t.GetSqlDBType(_translater));
         }
 
 
@@ -207,7 +214,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("F");
 
             Assert.AreEqual(typeof(string), t.CurrentEstimate);
-            Assert.AreEqual("varchar(4)",t.GetSqlDBType());
+            Assert.AreEqual("varchar(4)", t.GetSqlDBType(_translater));
         }
         [Test]
         public void TestDatatypeComputer_Time()
@@ -216,7 +223,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("12:30:00");
 
             Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
-            Assert.AreEqual("time", t.GetSqlDBType());
+            Assert.AreEqual("time", t.GetSqlDBType(_translater));
         }
 
         [Test]
@@ -226,7 +233,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("12:01");
 
             Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
-            Assert.AreEqual("time", t.GetSqlDBType());
+            Assert.AreEqual("time", t.GetSqlDBType(_translater));
         }
 
         [Test]
@@ -236,7 +243,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("1:01PM");
 
             Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
-            Assert.AreEqual("time", t.GetSqlDBType());
+            Assert.AreEqual("time", t.GetSqlDBType(_translater));
         }
         [Test]
         public void TestDatatypeComputer_24Hour()
@@ -245,7 +252,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("23:01");
 
             Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
-            Assert.AreEqual("time", t.GetSqlDBType());
+            Assert.AreEqual("time", t.GetSqlDBType(_translater));
         }
         [Test]
         public void TestDatatypeComputer_Midnight()
@@ -254,7 +261,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("00:00");
 
             Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
-            Assert.AreEqual("time", t.GetSqlDBType());
+            Assert.AreEqual("time", t.GetSqlDBType(_translater));
         }
         [Test]
         public void TestDatatypeComputer_TimeObject()
@@ -263,7 +270,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(new TimeSpan(10,1,1));
 
             Assert.AreEqual(typeof(TimeSpan), t.CurrentEstimate);
-            Assert.AreEqual("time", t.GetSqlDBType());
+            Assert.AreEqual("time", t.GetSqlDBType(_translater));
         }
         [Test]
         public void TestDatatypeComputer_MixedDateAndTime_FallbackToString()
@@ -274,7 +281,7 @@ namespace DataExportLibrary.Tests
 
             t.AdjustToCompensateForValue("2001-12-29 23:01");
             Assert.AreEqual(typeof(string), t.CurrentEstimate);
-            Assert.AreEqual("varchar(16)", t.GetSqlDBType());
+            Assert.AreEqual("varchar(16)", t.GetSqlDBType(_translater));
         }
 
         [TestCase("1-1000")]

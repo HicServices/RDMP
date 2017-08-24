@@ -37,14 +37,12 @@ namespace AnonymisationTests
             Cleanup();
 
             Console.WriteLine("Setting up bulk test data");
-            _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, DatabaseICanCreateRandomTablesIn);
+            _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             _bulkData.SetupTestData();
             
             Console.WriteLine("Importing to Catalogue");
-            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, _bulkData.BulkDataBuilder.DataSource,
-                _bulkData.BulkDataBuilder.InitialCatalog,
-                BulkTestsData.BulkDataTable, DatabaseType.MicrosoftSQLServer,
-                username: _bulkData.BulkDataBuilder.UserID,password: _bulkData.BulkDataBuilder.Password);
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(BulkTestsData.BulkDataTable);
+            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, tbl);
 
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
             
@@ -99,12 +97,13 @@ namespace AnonymisationTests
                 Assert.IsFalse(dt.Columns.Contains("surname"));
 
                 //now look at the ids in the identifier dump and make sure they match what was in the pipeline before we sent it
-                using(var con = new SqlConnection(IdentifierDump_ConnectionStringBuilder.ConnectionString))
+                var server = IdentifierDump_Database.Server;
+                using (var con = server.GetConnection())
                 {
                     con.Open();
 
-                    SqlCommand cmd = new SqlCommand("Select * from " + "ID_" + BulkTestsData.BulkDataTable,con);
-                    SqlDataReader r = cmd.ExecuteReader();
+                    var cmd = server.GetCommand("Select * from " + "ID_" + BulkTestsData.BulkDataTable, con);
+                    var r = cmd.ExecuteReader();
                     
                     //make sure the values in the ID table match the ones we originally had in the pipeline
                     while (r.Read())
@@ -115,11 +114,15 @@ namespace AnonymisationTests
                     r.Close();
 
                     //leave the identifier dump in the way we found it (empty)
-                    SqlCommand cmdDrop = new SqlCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable,con);
-                    cmdDrop.ExecuteNonQuery();
+                    var tbl = IdentifierDump_Database.ExpectTable("ID_" + BulkTestsData.BulkDataTable);
 
-                    SqlCommand cmdDropArchive = new SqlCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable + "_Archive", con);
-                    cmdDropArchive.ExecuteNonQuery();
+                    if(tbl.Exists())
+                        tbl.Drop();
+
+                    tbl = IdentifierDump_Database.ExpectTable("ID_" + BulkTestsData.BulkDataTable + "_Archive");
+
+                    if (tbl.Exists())
+                        tbl.Drop();
                 }
             }
             finally
@@ -127,7 +130,6 @@ namespace AnonymisationTests
                 preDiscardedColumn1.DeleteInDatabase();
                 tableInfoCreated.IdentifierDumpServer_ID = null;//reset it back to how it was when we found it
                 tableInfoCreated.SaveToDatabase();
-
             }
 
         }
@@ -158,7 +160,7 @@ namespace AnonymisationTests
             IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
             dumper.Check(new AcceptAllCheckNotifier());
 
-            DiscoveredTable tableInDump = new DiscoveredServer(IdentifierDump_ConnectionStringBuilder).ExpectDatabase(IdentifierDump_DatabaseName).ExpectTable("ID_" + BulkTestsData.BulkDataTable);
+            DiscoveredTable tableInDump = IdentifierDump_Database.ExpectTable("ID_" + BulkTestsData.BulkDataTable);
             Assert.IsTrue(tableInDump.Exists(), "ID table did not exist");
 
 
@@ -185,15 +187,16 @@ namespace AnonymisationTests
             finally
             {
                 //Drop all this stuff
-                using (var con = new SqlConnection(IdentifierDump_ConnectionStringBuilder.ConnectionString))
+                var server = IdentifierDump_Database.Server;
+                using (var con = server.GetConnection())
                 {
                     con.Open();
                     
                     //leave the identifier dump in the way we found it (empty)
-                    SqlCommand cmdDrop = new SqlCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable, con);
+                    var cmdDrop = server.GetCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable, con);
                     cmdDrop.ExecuteNonQuery();
 
-                    SqlCommand cmdDropArchive = new SqlCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable + "_Archive", con);
+                    var cmdDropArchive = server.GetCommand("DROP TABLE ID_" + BulkTestsData.BulkDataTable + "_Archive", con);
                     cmdDropArchive.ExecuteNonQuery();
                 }
 

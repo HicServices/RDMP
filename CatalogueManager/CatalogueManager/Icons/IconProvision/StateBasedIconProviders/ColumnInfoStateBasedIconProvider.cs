@@ -1,6 +1,7 @@
 using System.Drawing;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconOverlays;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 {

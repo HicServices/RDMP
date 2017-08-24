@@ -12,6 +12,7 @@ using CatalogueManager.DashboardTabs;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
@@ -18,7 +19,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         #region Up Typing
         public override DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null)
         {
-            return new MySqlCommand(s.Replace("[", "`").Replace("]", "`"), con as MySqlConnection, transaction as MySqlTransaction);
+            return new MySqlCommand(s, con as MySqlConnection, transaction as MySqlTransaction);
         }
 
         public override DbDataAdapter GetDataAdapter(DbCommand cmd)
@@ -43,13 +44,29 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public override DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString)
         {
-            return new MySqlConnectionStringBuilder(connectionString);
+            return EnforceSensibleOptions(new MySqlConnectionStringBuilder(connectionString));
         }
+
+        private MySqlConnectionStringBuilder EnforceSensibleOptions(MySqlConnectionStringBuilder builder)
+        {
+            builder.AllowUserVariables = true;
+            builder.AllowBatch = true;
+            return builder;
+        }
+
         #endregion
 
         public override DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database, string username, string password)
         {
-            var toReturn = new MySqlConnectionStringBuilder() {Server = server, Database = database };
+            var toReturn = new MySqlConnectionStringBuilder()
+            {
+                Server = server, Database = database
+
+            };
+
+            //makes variables to work
+            toReturn.AllowUserVariables = true;
+
             if (!string.IsNullOrWhiteSpace(username))
             {
                 toReturn.UserID = username;
@@ -84,7 +101,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public override void CreateDatabase(DbConnectionStringBuilder builder, IHasRuntimeName newDatabaseName)
         {
-            var b = new MySqlConnectionStringBuilder(builder.ConnectionString);
+            var b = (MySqlConnectionStringBuilder)GetConnectionStringBuilder(builder.ConnectionString);
             b.Database = null;
 
             using(var con = new MySqlConnection(b.ConnectionString))
@@ -104,9 +121,19 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             throw new NotImplementedException();
         }
 
+        public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
+        {
+            return ((MySqlConnectionStringBuilder) builder).UserID;
+        }
+
+        public override string GetExplicitPasswordIfAny(DbConnectionStringBuilder builder)
+        {
+            return ((MySqlConnectionStringBuilder)builder).Password;
+        }
+
         public override string[] ListDatabases(DbConnectionStringBuilder builder)
         {
-            var b = new MySqlConnectionStringBuilder(builder.ConnectionString);
+            var b = (MySqlConnectionStringBuilder)GetConnectionStringBuilder(builder.ConnectionString);
             b.Database = null;
 
             using (var con = new MySqlConnection(b.ConnectionString))

@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DataTableExtension
 {
@@ -137,9 +139,8 @@ namespace ReusableLibraryCode.DataTableExtension
                         return false;
 
                     DateTime t;
-                    if(DateTime.TryParse(value,CultureInfo.CurrentCulture,DateTimeStyles.NoCurrentDateDefault, out t));
+                    return DateTime.TryParse(value, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault,out t);
 
-                    return t > DateTime.MinValue;
                 }
                 catch (Exception)
                 {
@@ -237,12 +238,21 @@ namespace ReusableLibraryCode.DataTableExtension
 
             //as if by magic... apparently
             after = BitConverter.GetBytes(decimal.GetBits(value)[3])[2];
-            
         }
 
-        public string GetSqlDBType()
+        public string GetSqlDBType(DiscoveredServer server)
         {
-            return UsefulStuff.GetSQLDBTypeForCSharpType(CurrentEstimate, Length == -1?(int?) null:Length, new Tuple<int, int>(numbersBeforeDecimalPlace,numbersAfterDecimalPlace));
+            return GetSqlDBType(server.Helper.GetQuerySyntaxHelper().TypeTranslater);
+        }
+
+        public string GetSqlDBType(ITypeTranslater translater)
+        {
+            return translater.GetSQLDBTypeForCSharpType(
+                new DatabaseTypeRequest(
+                    CurrentEstimate,
+                    Length == -1 ? (int?) null : Length,
+                    new Tuple<int, int>(numbersBeforeDecimalPlace, numbersAfterDecimalPlace)
+                    ));
         }
     }
 }

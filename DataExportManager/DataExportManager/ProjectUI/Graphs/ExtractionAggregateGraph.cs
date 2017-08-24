@@ -25,6 +25,7 @@ using DataExportManager.Collections.Providers;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying.Commands;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.ProjectUI.Graphs
 {
@@ -77,7 +78,7 @@ namespace DataExportManager.ProjectUI.Graphs
             //Finally we expect that there is an impromptu filter which does the cohort ID restriction on the query - we have already dealt with that above with a SpontaneouslyInventedFilter so we can ignore those
 
             //But maybe some other programmer has sneaked in some other custom lines we should worry about 
-            var customLines = Request.QueryBuilder.CustomLines;
+            var customLines = Request.QueryBuilder.CustomLines.ToArray();
 
             //we expected a custom line for this (which we have dealt with above so throw it away)
             customLines = customLines.Where(c => c.Text != Request.ExtractableCohort.WhereSQL()).ToArray();
@@ -90,7 +91,7 @@ namespace DataExportManager.ProjectUI.Graphs
                 throw new Exception("Expected there to be at least 1 custom join line returned by the ISqlQueryBuilder fetched with Request.GetQueryBuilder but it had 0 so how did it know what cohort table to join against?");
 
             foreach (CustomLine line in customLines)
-                toReturn.AddCustomJoinLine(line.Text);
+                toReturn.AddCustomLine(line.Text,QueryComponent.JoinInfoJoin);
             
             spontedContainer.AddChild(spontedFilter);
 

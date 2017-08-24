@@ -1,88 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
 using NUnit.Framework;
-using RDMPStartup;
-using Tests.Common;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
-namespace CatalogueLibraryTests.Integration.QueryBuildingTests
+namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderTests
 {
-    public class AggregateBuilderTests:DatabaseTests
+    public class MicrosoftAggregateBuilderTests:AggregateBuilderTestsBase
     {
-        private Catalogue _c;
-        private CatalogueItem _cataItem1;
-        private CatalogueItem _cataItem2;
-        private TableInfo _ti;
-        private ColumnInfo _columnInfo1;
-        private ColumnInfo _columnInfo2;
-        private ExtractionInformation _ei1;
-        private ExtractionInformation _ei2;
-        private AggregateConfiguration _configuration;
-        private AggregateDimension _dimension1;
-        private AggregateDimension _dimension2;
-
-        [SetUp]
-        public void CreateEntities()
-        {
-            _c = new Catalogue(CatalogueRepository, "AggregateBuilderTests");
-            _cataItem1 = new CatalogueItem(CatalogueRepository, _c, "Col1");
-            _cataItem2 = new CatalogueItem(CatalogueRepository, _c, "Col2");
-
-            _ti = new TableInfo(CatalogueRepository, "T1");
-            _columnInfo1 = new ColumnInfo(CatalogueRepository, "Col1", "varchar(100)", _ti);
-            _columnInfo2 = new ColumnInfo(CatalogueRepository, "Col2", "date", _ti);
-
-            _ei1 = new ExtractionInformation(CatalogueRepository, _cataItem1, _columnInfo1, _columnInfo1.Name);
-            _ei2 = new ExtractionInformation(CatalogueRepository, _cataItem2, _columnInfo2, _columnInfo2.Name);
-
-            _configuration = new AggregateConfiguration(CatalogueRepository, _c, "MyConfig");
-
-            _dimension1 = new AggregateDimension(CatalogueRepository, _ei1, _configuration);
-            _dimension2 = new AggregateDimension(CatalogueRepository, _ei2, _configuration);
-
-            _dimension1.Order = 1;
-            _dimension1.SaveToDatabase();
-            _dimension2.Order = 2;
-            _dimension2.SaveToDatabase();
-        }
+       
         
         [Test]
         public void TestAggregateBuilding_NoConfigurationOneDimension()
         {
-            var builder = new AggregateBuilder(null, "count(*)", null);
+            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);
             builder.AddColumn(_dimension1);
 
-            Assert.AreEqual(@"/**/
+            Assert.AreEqual(CollapseWhitespace(@"/**/
 SELECT 
 Col1,
-count(*)
+count(*) AS MyCount
 FROM 
 T1
 group by 
 Col1
 order by 
-Col1", builder.SQL);
+Col1"),CollapseWhitespace(builder.SQL));
         }
 
 
         [Test]
         public void TestAggregateBuilding_NoConfigurationTwoDimension()
         {
-            var builder = new AggregateBuilder(null, "count(*)", null);
+            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);
             builder.AddColumn(_dimension1);
             builder.AddColumn(_dimension2);
 
-            Assert.AreEqual(@"/**/
-SELECT 
+            Assert.AreEqual(CollapseWhitespace(CollapseWhitespace(@"/**/
+SELECT
 Col1,
 Col2,
-count(*)
+count(*) AS MyCount
 FROM 
 T1
 group by 
@@ -90,21 +51,21 @@ Col1,
 Col2
 order by 
 Col1,
-Col2", builder.SQL);
+Col2")),CollapseWhitespace(builder.SQL));
         }
 
         [Test]
         public void TestAggregateBuilding_ConfigurationTwoDimension()
         {
-            var builder = new AggregateBuilder(null, "count(*)", _configuration);
+            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", _configuration);
             builder.AddColumn(_dimension1);
             builder.AddColumn(_dimension2);
 
-            Assert.AreEqual(@"/*MyConfig*/
+            Assert.AreEqual(CollapseWhitespace(@"/*MyConfig*/
 SELECT 
 Col1,
 Col2,
-count(*)
+count(*) AS MyCount
 FROM 
 T1
 group by 
@@ -112,7 +73,7 @@ Col1,
 Col2
 order by 
 Col1,
-Col2", builder.SQL);
+Col2"), CollapseWhitespace(builder.SQL));
         }
 
         [Test]
@@ -133,8 +94,8 @@ Col2", builder.SQL);
         {
             var topX = new AggregateTopX(CatalogueRepository, _configuration, 10);
             topX.OrderByDirection = asc
-                ? AggregateTopX.AggregateTopXOrderByDirection.Ascending
-                : AggregateTopX.AggregateTopXOrderByDirection.Descending;
+                ? AggregateTopXOrderByDirection.Ascending
+                : AggregateTopXOrderByDirection.Descending;
             topX.SaveToDatabase();
 
             var beforeCountSQL = _configuration.CountSQL;
@@ -142,18 +103,19 @@ Col2", builder.SQL);
 
             var builder = _configuration.GetQueryBuilder();
             
-            Assert.AreEqual(@"/*MyConfig*/
-SELECT TOP 10
+            Assert.AreEqual(CollapseWhitespace(@"/*MyConfig*/
+SELECT 
+TOP 10
 Col1,
 Col2,
-"+countColField+@"
+"+countColField+@" AS MyCount
 FROM 
 T1
 group by 
 Col1,
 Col2
 order by 
-"+countColField+" " + (asc?"asc":"desc"), builder.SQL);
+"+countColField+" " + (asc?"asc":"desc")),CollapseWhitespace(builder.SQL));
 
             _configuration.CountSQL = beforeCountSQL;
             topX.DeleteInDatabase();
@@ -167,24 +129,25 @@ order by
             var topX = new AggregateTopX(CatalogueRepository, _configuration, 10);
             topX.OrderByDimensionIfAny_ID = _dimension1.ID;
             topX.OrderByDirection = asc
-                ? AggregateTopX.AggregateTopXOrderByDirection.Ascending
-                : AggregateTopX.AggregateTopXOrderByDirection.Descending;
+                ? AggregateTopXOrderByDirection.Ascending
+                : AggregateTopXOrderByDirection.Descending;
             topX.SaveToDatabase();
             
             var builder = _configuration.GetQueryBuilder();
 
-            Assert.AreEqual(@"/*MyConfig*/
-SELECT TOP 10
+            Assert.AreEqual(CollapseWhitespace(@"/*MyConfig*/
+SELECT 
+TOP 10
 Col1,
 Col2,
-count(*)
+count(*) AS MyCount
 FROM 
 T1
 group by 
 Col1,
 Col2
 order by 
-Col1 " + (asc ? "asc" : "desc"), builder.SQL);
+Col1 " + (asc ? "asc" : "desc")), CollapseWhitespace(builder.SQL));
             
             topX.DeleteInDatabase();
         }
@@ -192,13 +155,13 @@ Col1 " + (asc ? "asc" : "desc"), builder.SQL);
         [Test]
         public void TestAggregateBuilding_NoConfigurationNoDimensions()
         {
-            var builder = new AggregateBuilder(null, "count(*)", null,new []{_ti});
+            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null,new []{_ti});
             
-            Assert.AreEqual(@"/**/
+            Assert.AreEqual(CollapseWhitespace(@"/**/
 SELECT 
-count(*)
+count(*) AS MyCount
 FROM 
-T1", builder.SQL);
+T1"), CollapseWhitespace(builder.SQL));
         }
 
         [Test]
@@ -213,13 +176,15 @@ T1", builder.SQL);
             axis.StartDate = "'2012-01-01'";
             axis.EndDate = "GETDATE()";
             axis.SaveToDatabase();
-            var builder = new AggregateBuilder(null, "count(*)", _configuration);
+            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", _configuration);
             builder.AddColumn(_dimension2);
 
             switch (increment)
             {
                 case AxisIncrement.Day:
-                    Assert.AreEqual(@"
+                    Assert.AreEqual(
+                        CollapseWhitespace(
+@"
     DECLARE	@startDate DATE
     DECLARE	@endDate DATE
 
@@ -243,19 +208,19 @@ T1", builder.SQL);
     END
 
 /*MyConfig*/
-SELECT 
- Convert(date, axis.dt)  joinDt,
-count(Col2)
+SELECT
+Convert(date, axis.dt) AS joinDt,
+count(*) AS MyCount
 FROM 
-T1 RIGHT JOIN  @dateAxis axis ON  Convert(date, Col2) =axis.dt
-
+T1
+RIGHT JOIN  @dateAxis axis ON  Convert(date, Col2)=axis.dt
 group by 
- Convert(date, axis.dt) 
+Convert(date, axis.dt)
 order by 
- Convert(date, axis.dt) ", builder.SQL);
+Convert(date, axis.dt) "), CollapseWhitespace(builder.SQL));
                     break;
                 case AxisIncrement.Month:
-                    Assert.AreEqual(@"
+                    Assert.AreEqual(CollapseWhitespace(@"
     DECLARE	@startDate DATE
     DECLARE	@endDate DATE
 
@@ -279,20 +244,20 @@ order by
     END
 
 /*MyConfig*/
-SELECT 
- CONVERT(nvarchar(7),axis.dt,126) joinDt,
-count(Col2)
+SELECT
+CONVERT(nvarchar(7),axis.dt,126) AS joinDt,
+count(*) AS MyCount
 FROM 
-T1 RIGHT JOIN  @dateAxis axis ON YEAR(Col2) = YEAR(axis.dt) AND MONTH(Col2) = MONTH(axis.dt)
-
+T1
+RIGHT JOIN  @dateAxis axis ON YEAR(Col2) = YEAR(axis.dt) AND MONTH(Col2) = MONTH(axis.dt)
 group by 
- CONVERT(nvarchar(7),axis.dt,126)
+CONVERT(nvarchar(7),axis.dt,126)
 order by 
- CONVERT(nvarchar(7),axis.dt,126)", builder.SQL);
+CONVERT(nvarchar(7),axis.dt,126)"),CollapseWhitespace(builder.SQL));
                     break;
                 case AxisIncrement.Year:
 
-                    Assert.AreEqual(@"
+                    Assert.AreEqual(CollapseWhitespace(@"
     DECLARE	@startDate DATE
     DECLARE	@endDate DATE
 
@@ -316,19 +281,19 @@ order by
     END
 
 /*MyConfig*/
-SELECT 
- YEAR(axis.dt) joinDt,
-count(Col2)
+SELECT
+YEAR(axis.dt) AS joinDt,
+count(*) AS MyCount
 FROM 
-T1 RIGHT JOIN  @dateAxis axis ON  YEAR(Col2)= YEAR(axis.dt)
-
+T1
+RIGHT JOIN  @dateAxis axis ON  YEAR(Col2)= YEAR(axis.dt)
 group by 
  YEAR(axis.dt)
 order by 
- YEAR(axis.dt)", builder.SQL);
+ YEAR(axis.dt)"), CollapseWhitespace(builder.SQL));
                     break;
                 case AxisIncrement.Quarter:
-                    Assert.AreEqual(@"
+                    Assert.AreEqual(CollapseWhitespace(@"
     DECLARE	@startDate DATE
     DECLARE	@endDate DATE
 
@@ -352,53 +317,50 @@ order by
     END
 
 /*MyConfig*/
-SELECT 
- DATENAME(year, axis.dt) +'Q' + DATENAME(quarter,axis.dt) joinDt,
-count(Col2)
+SELECT
+DATENAME(year, axis.dt) +'Q' + DATENAME(quarter,axis.dt) AS joinDt,
+count(*) AS MyCount
 FROM 
-T1 RIGHT JOIN  @dateAxis axis ON YEAR(Col2) = YEAR(axis.dt) AND DATEPART(QUARTER, Col2) = DATEPART(QUARTER, axis.dt)
-
+T1
+RIGHT JOIN  @dateAxis axis ON YEAR(Col2) = YEAR(axis.dt) AND DATEPART(QUARTER, Col2) = DATEPART(QUARTER, axis.dt)
 group by 
  DATENAME(year, axis.dt) +'Q' + DATENAME(quarter,axis.dt)
 order by 
- DATENAME(year, axis.dt) +'Q' + DATENAME(quarter,axis.dt)", builder.SQL);
+ DATENAME(year, axis.dt) +'Q' + DATENAME(quarter,axis.dt)"),CollapseWhitespace(builder.SQL));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("increment");
             }
         }
 
+        
+
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestAggregateBuilding_Pivot(bool forgetToAlias)
+        public void TestAggregateBuilding_Pivot()
         {
-            var builder = new AggregateBuilder(null,forgetToAlias? "count(*)":"count(*) as fish", _configuration);
+            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null,"count(*)", _configuration);
+
+            var axis = new AggregateContinuousDateAxis(CatalogueRepository, _dimension2);
+            axis.StartDate = "'2001-01-01'";
+            axis.EndDate = "'2003-01-01'";
+            axis.AxisIncrement = AxisIncrement.Year;
+            axis.SaveToDatabase();
 
             builder.AddColumn(_dimension1);
             builder.AddColumn(_dimension2);
             builder.SetPivotToDimensionID(_dimension1);
-
-            string sql;
-
-            if (forgetToAlias)
-            {
-                var ex = Assert.Throws<QueryBuildingException>(() => sql = builder.SQL);
-                Assert.AreEqual("Count columns in Pivot Aggregates must have an Alias e.g. 'Count(*) as bob'", ex.Message);
-                return;
-            }
-
-            Assert.AreEqual(@"
---DYNAMICALLY FETCH COLUMN VALUES FOR USE IN PIVOT
+            
+            Assert.AreEqual(CollapseWhitespace(@"/*DYNAMICALLY FETCH COLUMN VALUES FOR USE IN PIVOT*/
 DECLARE @Columns as VARCHAR(MAX)
 
---Get distinct values of the PIVOT Column if you have columns with values T and F and Z this will produce [T],[F],[Z] and you will end up with a pivot against these values
+/*Get distinct values of the PIVOT Column if you have columns with values T and F and Z this will produce [T],[F],[Z] and you will end up with a pivot against these values*/
 set @Columns = (
-select
- ',' + QUOTENAME(LTRIM(RTRIM(REPLACE(Col1,',','')))) as [text()] 
+/*MyConfig*/
+SELECT
+',' + QUOTENAME(LTRIM(RTRIM(REPLACE(Col1,',','')))) as [text()] 
 FROM 
 T1
-WHERE LTRIM(RTRIM(REPLACE(Col1,',',''))) IS NOT NULL and LTRIM(RTRIM(REPLACE(Col1,',',''))) <> '' 
+WHERE ( LTRIM(RTRIM(REPLACE(Col1,',',''))) IS NOT NULL and LTRIM(RTRIM(REPLACE(Col1,',',''))) <> '' )
 
 group by 
 LTRIM(RTRIM(REPLACE(Col1,',','')))
@@ -409,9 +371,9 @@ FOR XML PATH('')
 
 set @Columns = SUBSTRING(@Columns,2,LEN(@Columns))
 
-
 DECLARE @FinalSelectList as VARCHAR(MAX)
-SET @FinalSelectList ='Col2'
+SET @FinalSelectList = 'joinDt'
+
 --Split up that pesky string in tsql which has the column names up into array elements again
 DECLARE @value varchar(8000)
 DECLARE @pos INT
@@ -430,14 +392,36 @@ BEGIN
     set @pos = CHARINDEX(',', @Columns +',', @pos+@len) +1
 END
 
---DYNAMIC PIVOT
+/*DYNAMIC PIVOT*/
 declare @Query varchar(MAX)
 
 SET @Query = '
 
 
+    DECLARE	@startDate DATE
+    DECLARE	@endDate DATE
 
---Would normally be Select * but must make it IsNull to ensure we see 0s instead of null
+    SET @startDate = ''2001-01-01''
+    SET @endDate = ''2003-01-01''
+
+    DECLARE @dateAxis TABLE
+    (
+	    dt DATE
+    )
+
+    DECLARE @currentDate DATE = @startDate
+
+    WHILE @currentDate <= @endDate
+    BEGIN
+	    INSERT INTO @dateAxis 
+		    SELECT @currentDate 
+
+	    SET @currentDate = DATEADD(Year, 1, @currentDate)
+
+    END
+
+
+/*Would normally be Select * but must make it IsNull to ensure we see 0s instead of null*/
 select '+@FinalSelectList+'
 from
 (
@@ -445,30 +429,28 @@ from
 /*MyConfig*/
 SELECT 
 LTRIM(RTRIM(REPLACE(Col1,'','',''''))) AS MyPivot,
-Col2,
-count(*) AS fish
+ YEAR(axis.dt) AS joinDt,
+count(*) AS MyCount
 FROM 
 T1
+RIGHT JOIN  @dateAxis axis ON  YEAR(Col2)= YEAR(axis.dt)
 group by 
-LTRIM(RTRIM(REPLACE(Col1,'','',''''))),
-Col2) s
+Col1,
+ YEAR(axis.dt)
+
+) s
 PIVOT
 (
-	sum(fish)
+	sum(MyCount)
 	for MyPivot in ('+@Columns+') --The dynamic Column list we just fetched at top of query
-) piv
-'
+) piv'
 
-EXECUTE(@Query)", builder.SQL);
+EXECUTE(@Query)
+"), CollapseWhitespace(builder.SQL));
+
+            axis.DeleteInDatabase();
         }
 
-        [TearDown]
-        public void DeleteEntities()
-        {
-            _configuration.DeleteInDatabase();
-            _c.DeleteInDatabase();
-            _ti.DeleteInDatabase();
-        }
 
     }
 }

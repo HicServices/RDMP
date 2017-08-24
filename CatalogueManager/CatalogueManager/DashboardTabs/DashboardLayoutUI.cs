@@ -17,6 +17,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.DashboardTabs
 {

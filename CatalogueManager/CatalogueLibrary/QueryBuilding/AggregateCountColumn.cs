@@ -1,21 +1,37 @@
 ﻿using System;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
     public class AggregateCountColumn:IColumn
     {
+        private IQuerySyntaxHelper _syntaxHelper;
+        private readonly string _sql;
+
         public AggregateCountColumn(string sql)
         {
+            _sql = sql;
+        }
+
+        public void SetQuerySyntaxHelper(IQuerySyntaxHelper syntaxHelper, bool ensureAliasExists)
+        {
+            _syntaxHelper = syntaxHelper;
             string select;
             string alias;
 
-            RDMPQuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(sql, out select, out alias);
-            
+            //if alias exists
+            if (_syntaxHelper.SplitLineIntoSelectSQLAndAlias(_sql, out select, out alias))
+                Alias = alias; //use the users explicit alias
+            else
+                Alias = ensureAliasExists?"MyCount":null;//set an alias of MyCount
+
             SelectSQL = select;
-            Alias = alias;
+
         }
+
         public string GetRuntimeName()
         {
             return RDMPQuerySyntaxHelper.GetRuntimeName(this);
@@ -25,8 +41,8 @@ namespace CatalogueLibrary.QueryBuilding
         {
             if (string.IsNullOrWhiteSpace(Alias))
                 return SelectSQL;
-            
-            return SelectSQL + RDMPQuerySyntaxHelper.AliasPrefix + Alias;
+
+            return SelectSQL + _syntaxHelper.AliasPrefix + Alias;
         }
 
         public ColumnInfo ColumnInfo { get { return null; } }

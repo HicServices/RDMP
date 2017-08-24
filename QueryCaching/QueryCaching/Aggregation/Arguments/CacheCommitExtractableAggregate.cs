@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DataTableExtension;
 
 namespace QueryCaching.Aggregation.Arguments
@@ -31,7 +32,7 @@ namespace QueryCaching.Aggregation.Arguments
             
         }
 
-        public override void CommitTableDataCompleted(string tableName, DataTableHelper helper, DbConnection con, DbTransaction transaction)
+        public override void CommitTableDataCompleted(DiscoveredServer server, string tableName, DataTableHelper helper, DbConnection con, DbTransaction transaction)
         {
             //no need to do anything here we dont need index or anything else
         }

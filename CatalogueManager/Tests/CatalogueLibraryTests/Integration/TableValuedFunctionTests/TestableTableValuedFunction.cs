@@ -11,6 +11,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
@@ -25,7 +26,7 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
         public ExtractionInformation[] ExtractionInformations;
 
 
-        public void Create(SqlConnectionStringBuilder databaseICanCreateRandomTablesIn, CatalogueRepository catalogueRepository)
+        public void Create(DiscoveredDatabase databaseICanCreateRandomTablesIn, CatalogueRepository catalogueRepository)
         {
 
             CreateFunctionSQL = @"
@@ -62,14 +63,13 @@ BEGIN
 	RETURN 
 END
 ";
-            using (var con = new SqlConnection(databaseICanCreateRandomTablesIn.ConnectionString))
+            using (var con = databaseICanCreateRandomTablesIn.Server.GetConnection())
             {
                 con.Open();
                 UsefulStuff.ExecuteBatchNonQuery(CreateFunctionSQL, con);
             }
-
-
-            TableValuedFunctionImporter importer = new TableValuedFunctionImporter(catalogueRepository, databaseICanCreateRandomTablesIn.ConnectionString, databaseICanCreateRandomTablesIn.DataSource, databaseICanCreateRandomTablesIn.InitialCatalog, "MyAwesomeFunction",databaseICanCreateRandomTablesIn.UserID,databaseICanCreateRandomTablesIn.Password);
+            var tbl = databaseICanCreateRandomTablesIn.ExpectTableValuedFunction("MyAwesomeFunction");
+            TableValuedFunctionImporter importer = new TableValuedFunctionImporter(catalogueRepository, tbl);
             importer.DoImport(out TableInfoCreated, out ColumnInfosCreated);
 
             importer.ParametersCreated[0].Value = "5";

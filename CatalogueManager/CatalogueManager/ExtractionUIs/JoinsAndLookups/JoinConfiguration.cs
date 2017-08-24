@@ -18,6 +18,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 {

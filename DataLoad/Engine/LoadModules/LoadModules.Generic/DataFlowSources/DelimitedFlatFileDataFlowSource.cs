@@ -232,6 +232,7 @@ namespace LoadModules.Generic.DataFlowSources
                 _headers = null;
                 _helper = null;
                 _reader = null;
+                _haveComplainedAboutColumnMismatch = false;
 
                 return toReturn;
             }
@@ -564,7 +565,7 @@ namespace LoadModules.Generic.DataFlowSources
             return l.ToArray();
         }
 
-        private int _columnMismatchComplaintCounter = 20;
+        private bool _haveComplainedAboutColumnMismatch = false;
         /// <summary>
         /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
         /// </summary>
@@ -582,18 +583,14 @@ namespace LoadModules.Generic.DataFlowSources
 
         private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, int lineNumber, DataRow currentRow, string[] headers)
         {
+            int headerCount = headers.Count(h => !string.IsNullOrWhiteSpace(h));
             //if the number of not empty headers doesn't match the headers in the data table
-            if (dt.Columns.Count != headers.Count(h => !string.IsNullOrWhiteSpace(h)))
-                if (--_columnMismatchComplaintCounter > 0)
+            if (dt.Columns.Count != headerCount)
+                if (!_haveComplainedAboutColumnMismatch)
                 {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There were " + dt.Columns.Count + " columns in the DataTable (generated from the destination Table on the server) but there were " + headers.Count(h => !string.IsNullOrWhiteSpace(h)) + " read from the flat file "));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Flat file '" + _fileToLoad.File.Name + "' line number '" + lineNumber + "' had  " + headerCount + " columns while the destination DataTable had " + dt.Columns.Count + " columns.  This message apperas only once per file"));
+                    _haveComplainedAboutColumnMismatch = true;
                 }
-
-            if (_columnMismatchComplaintCounter == 0)
-            {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Notifications of column count mismatch disabled due to flooding of messages"));
-                _columnMismatchComplaintCounter = -999;
-            }
 
             bool haveIncremented_bufferOverrunsWhereColumnValueWasBlank = false;
             for (int i = 0; i < splitUpInputLine.Length; i++)

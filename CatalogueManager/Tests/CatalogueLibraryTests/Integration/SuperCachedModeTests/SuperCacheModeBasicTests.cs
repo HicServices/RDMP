@@ -223,5 +223,38 @@ namespace CatalogueLibraryTests.Integration.SuperCachedModeTests
                 myCata.DeleteInDatabase();
             }
         }
+
+
+        //RDMPDEV-668
+        [Test]
+        public void CannotChangeDatabasePropertiesOnCachedObjects()
+        {
+            var myCata = new Catalogue(CatalogueRepository, "MyCata");
+
+            try
+            {
+                using (CatalogueRepository.SuperCachingMode())
+                {
+                    var cachedVersion1 = CatalogueRepository.GetObjectByID<Catalogue>(myCata.ID);
+                    var ex = Assert.Throws<Exception>(()=>cachedVersion1.Name = "amagad");
+                    Assert.AreEqual(
+                        @"An attempt was made to modify Property 'Name' of Database Object of Type 'Catalogue' while it was in read only mode.  Object was called 'MyCata'",ex.Message);
+
+                    //because object was fetched before caching was turned on we can actually edit it
+                    Assert.DoesNotThrow(() => myCata.Name = "frankly my dear");
+
+                    //but cannot save it
+                    Assert.Throws<SuperCachingModeIsOnException>(myCata.SaveToDatabase);
+
+                }
+                
+                var fresh = CatalogueRepository.GetObjectByID<Catalogue>(myCata.ID);
+                Assert.DoesNotThrow(() => fresh.Name = "amagad");
+            }
+            finally
+            {
+                myCata.DeleteInDatabase();
+            }
+        }
     }
 }

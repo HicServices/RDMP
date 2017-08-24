@@ -46,6 +46,11 @@ namespace CatalogueLibrary.Spontaneous
         public int ID { get { return _id; }  set{throw new NotSupportedException();}}
         public IRepository Repository { get { throw new NotSupportedException(); } set { throw new NotSupportedException(); } }
         public event PropertyChangedEventHandler PropertyChanged;
+        public void SetReadOnly()
+        {
+            //already is mate... kinda
+        }
+
         public DbCommand UpdateCommand { get { throw new NotSupportedException(); } set { throw new NotSupportedException(); } }
 
         public void RevertToDatabaseState()

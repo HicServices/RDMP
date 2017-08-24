@@ -178,6 +178,11 @@ namespace MapsDirectlyToDatabaseTableUI
                     _repository.ClearUpdateCommandCache();
                     checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success, null));
                 }
+
+                checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
+
+                MessageBox.Show("Application will now restart");
+                Application.Restart();
             }
             catch (Exception exception)
             {

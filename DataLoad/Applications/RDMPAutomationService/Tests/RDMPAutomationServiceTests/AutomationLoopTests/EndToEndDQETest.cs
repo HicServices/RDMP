@@ -18,7 +18,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         [TestCase(true)]
         public void TestEndToEndDQE(bool cancelEarly)
         {
-            BulkTestsData bulkTests = new BulkTestsData(CatalogueRepository, DatabaseICanCreateRandomTablesIn, cancelEarly ? 100000 : 100);
+            BulkTestsData bulkTests = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, cancelEarly ? 100000 : 100);
             bulkTests.SetupTestData();
             bulkTests.ImportAsCatalogue();
 

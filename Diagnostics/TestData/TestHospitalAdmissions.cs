@@ -43,7 +43,7 @@ namespace Diagnostics.TestData
         public string GetCreateHospitalAdmissions(bool anonymousVersion)
         {
             return
-                @"--Drop table if it already exists 
+                @"/*Drop table if it already exists */
                IF OBJECT_ID('" + HospitalAdmissionsTableName + @"') IS NOT NULL
  DROP TABLE " + HospitalAdmissionsTableName + @"
 
@@ -98,7 +98,7 @@ GO
         public string GetCreateLookupsSql()
         {
             return 
-                       @"--Drop table if it already exists 
+                       @"/*Drop table if it already exists */
                IF OBJECT_ID('" + LookupTableName + @"') IS NOT NULL
  DROP TABLE " + LookupTableName + @"
 

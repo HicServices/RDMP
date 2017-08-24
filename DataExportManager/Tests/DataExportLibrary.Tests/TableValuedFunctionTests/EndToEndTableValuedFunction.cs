@@ -72,7 +72,8 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
             _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
                 new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier),
                 ReleaseIdentifierAssignmentStrategy.Guid, 
-                ServerICanCreateRandomDatabasesAndTablesOn,cohortDatabaseNameWillBe,
+                (SqlConnectionStringBuilder)DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder
+                ,cohortDatabaseNameWillBe,
                 "TbvCohorts",new ThrowImmediatelyCheckNotifier());
 
             //create a table valued function
@@ -202,11 +203,9 @@ end
                 svr.GetCommand(sql, con).ExecuteNonQuery();
             }
 
-            var importer = new TableValuedFunctionImporter(CatalogueRepository,
-                DiscoveredDatabaseICanCreateRandomTablesIn.Server.Builder.ConnectionString,
-                DiscoveredDatabaseICanCreateRandomTablesIn.Server.Name,
-                DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName(),
-                "GetTopXRandom");
+            var tblvf = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTableValuedFunction("GetTopXRandom");
+
+            var importer = new TableValuedFunctionImporter(CatalogueRepository, tblvf);
 
             TableInfo tbl;
             ColumnInfo[] cols;
@@ -357,7 +356,7 @@ end
             }
 
             //create a global overriding parameter on the aggregate
-            var global = new AnyTableSqlParameter(CatalogueRepository, _aggregate, "DECLARE @numberOfRecords AS int");
+            var global = new AnyTableSqlParameter(CatalogueRepository, _aggregate, "DECLARE @numberOfRecords AS int;");
             global.Value = "1";
             global.SaveToDatabase();
 
@@ -435,7 +434,7 @@ end
             Assert.AreEqual("10",_tvfTableInfo.GetAllParameters().Single().Value);
 
             //configure an extraction specific global of 1 so that only 1 chi number is fetched (which will be in the cohort)
-            var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int");
+            var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;");
             globalP.Value = "1";
             globalP.SaveToDatabase();
             

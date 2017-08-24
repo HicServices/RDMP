@@ -14,6 +14,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace Diagnostics
 {

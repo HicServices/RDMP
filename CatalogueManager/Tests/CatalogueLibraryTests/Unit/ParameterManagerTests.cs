@@ -72,10 +72,10 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void ParameterDeclarationAndDeconstruction()
         {
-            var param = new ConstantParameter("DECLARE @Fish as int","3","I've got a lovely bunch of coconuts");
+            var param = new ConstantParameter("DECLARE @Fish as int;","3","I've got a lovely bunch of coconuts");
             var sql = QueryBuilder.GetParameterDeclarationSQL(param);
 
-            Assert.AreEqual(@"--I've got a lovely bunch of coconuts
+            Assert.AreEqual(@"/*I've got a lovely bunch of coconuts*/
 DECLARE @Fish as int;
 SET @Fish=3;
 ", sql);

@@ -3,7 +3,6 @@ using CatalogueManager.Collections;
 using CatalogueManager.LocationsMenu.Ticketing;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.SimpleControls;
-using CohortManager.Results;
 
 namespace CohortManager.SubComponents
 {

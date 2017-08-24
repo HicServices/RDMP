@@ -27,8 +27,8 @@ namespace DataLoadEngineTests
             dt.TableName = "MyExcitingTempTable";
 
             DataTableHelper  helper = new DataTableHelper(dt);
-            
-            var server = new DiscoveredServer(ServerICanCreateRandomDatabasesAndTablesOn);
+
+            var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
             helper.CommitDataTableToTempDB(server, true);
 
             Assert.Contains("MyExcitingTempTable", server.ExpectDatabase("tempdb").DiscoverTables(false).Select(t=>t.GetRuntimeName()).ToArray());

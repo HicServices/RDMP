@@ -262,6 +262,7 @@
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowContextProvider.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />
     <Compile Include="Data\AggregateTopX.cs" />
+    <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
     <Compile Include="Data\ContainerHelper.cs" />
     <Compile Include="Data\Dashboarding\DashboardControl.cs" />
@@ -274,6 +275,7 @@
     <Compile Include="Data\ExtractionFilterParameterSet.cs" />
     <Compile Include="Data\ExtractionFilterParameterSetValue.cs" />
     <Compile Include="Data\Favourite.cs" />
+    <Compile Include="Data\IAggregateTopX.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
@@ -346,8 +348,6 @@
     <Compile Include="Providers\DescendancyList.cs" />
     <Compile Include="Providers\IChildProvider.cs" />
     <Compile Include="Providers\ICoreChildProvider.cs" />
-    <Compile Include="QueryBuilding\CustomLine.cs" />
-    <Compile Include="QueryBuilding\QueryComponent.cs" />
     <Compile Include="Reports\DocumentationReportFormsAndControlsOfficeBit.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabase.cs" />
     <Compile Include="Reports\Exceptions\SourceCodeNotFoundException.cs" />
@@ -501,9 +501,11 @@
     <Compile Include="Reports\RequiresMicrosoftOffice.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabaseOfficeBit.cs" />
     <Compile Include="Repositories\MEF.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedAggregateTopX.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedArgument.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedFilter.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedFilterContainer.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedSqlParameter.cs" />
     <Compile Include="Spontaneous\SpontaneousObject.cs" />
     <Compile Include="SupportingDocumentsFetcher.cs" />
     <Compile Include="Triggers\DiffDatabaseDataFetcher.cs" />

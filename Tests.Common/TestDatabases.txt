@@ -8,3 +8,4 @@
 
 ServerName:localhost\sqlexpress
 Prefix:TEST_
+MySql:Server=localhost;Uid=root;Pwd=zombie;

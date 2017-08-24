@@ -142,10 +142,11 @@ namespace ReusableLibraryCode.DataTableExtension
         {
             tableName = GetTableName();
             
-            sql = GetCreateTableSql(tableName, dropIfAlreadyExists, server.GetTableHelper());
+            sql = GetCreateTableSql(server,tableName, dropIfAlreadyExists, server.GetTableHelper());
 
-            if (useOldDateTimes)
+            if (useOldDateTimes && server.DatabaseType == DatabaseType.MicrosoftSQLServer)
                 sql = sql.Replace("datetime2", "datetime");
+
             try
             {
                 DbCommand cmdCreate = server.GetCommand(sql, con);
@@ -170,12 +171,12 @@ namespace ReusableLibraryCode.DataTableExtension
 
         }
 
-        public string GetCreateTableSql(bool dropIfExists, IDiscoveredTableHelper tableHelper)
+        public string GetCreateTableSql(DiscoveredServer server,bool dropIfExists, IDiscoveredTableHelper tableHelper)
         {
-            return GetCreateTableSql(GetTableName(), dropIfExists, tableHelper);
+            return GetCreateTableSql(server,GetTableName(), dropIfExists, tableHelper);
         }
 
-        protected string GetCreateTableSql(string tableName, bool dropIfAlreadyExists,  IDiscoveredTableHelper tableHelper)
+        protected string GetCreateTableSql(DiscoveredServer server, string tableName, bool dropIfAlreadyExists, IDiscoveredTableHelper tableHelper)
         {
 
             if (typeDictionary == null)
@@ -198,7 +199,7 @@ namespace ReusableLibraryCode.DataTableExtension
                 if (ExplicitWriteTypes != null && ExplicitWriteTypes.ContainsKey(col.ColumnName))
                     datatype = ExplicitWriteTypes[col.ColumnName];
                 else
-                    datatype = typeDictionary[col].GetSqlDBType();
+                    datatype = typeDictionary[col].GetSqlDBType(server);
                 
                 //add the column name and accompanying datatype
                 bodySql += SqlSyntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + "," + Environment.NewLine;
@@ -226,6 +227,5 @@ namespace ReusableLibraryCode.DataTableExtension
         {
             return typeDictionary;
         }
-
     }
 }

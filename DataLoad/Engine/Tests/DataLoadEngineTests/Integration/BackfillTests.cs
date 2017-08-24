@@ -1130,8 +1130,8 @@ namespace DataLoadEngineTests.Integration
         {
             TableInfo ti;
 
-            var resultsImporter = new TableInfoImporter(CatalogueRepository, ServerICanCreateRandomDatabasesAndTablesOn.DataSource,
-                databaseName, tableName, DatabaseType.MicrosoftSQLServer,ServerICanCreateRandomDatabasesAndTablesOn.UserID,ServerICanCreateRandomDatabasesAndTablesOn.Password);
+            var table = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
+            var resultsImporter = new TableInfoImporter(CatalogueRepository, table);
             
             resultsImporter.DoImport(out ti, out ciList);
             

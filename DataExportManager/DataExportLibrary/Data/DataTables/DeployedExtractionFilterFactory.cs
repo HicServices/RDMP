@@ -4,6 +4,7 @@ using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
 {

@@ -12,5 +12,9 @@
             return sql;
         }
 
+        public string GetAlterColumnToSql(DiscoveredColumn column, string newType, bool allowNulls)
+        {
+            return "ALTER TABLE " + column.Table.GetRuntimeName() + " MODIFY COLUMN " + column.GetRuntimeName() + " " + newType + " " + (allowNulls ? "NULL" : "NOT NULL");
+        }
     }
 }

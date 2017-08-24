@@ -24,16 +24,22 @@ namespace CatalogueLibraryTests.Integration.Validation
         [TestFixtureSetUp]
         public void Setup()
         {
-            using (var con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString))
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");
+
+            if(tbl.Exists())
+                tbl.Drop();
+
+            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            
+            using (var con = server.GetConnection())
             {
                 con.Open();
 
-                new SqlCommand("if exists (select 1 from sys.tables where name ='ReferentialIntegrityConstraintTests') Drop table ReferentialIntegrityConstraintTests", con).ExecuteNonQuery();
-                new SqlCommand("CREATE TABLE ReferentialIntegrityConstraintTests(MyValue int)",con).ExecuteNonQuery();
-                new SqlCommand("INSERT INTO ReferentialIntegrityConstraintTests (MyValue) VALUES (5)", con).ExecuteNonQuery();
+                server.GetCommand("CREATE TABLE ReferentialIntegrityConstraintTests(MyValue int)", con).ExecuteNonQuery();
+                server.GetCommand("INSERT INTO ReferentialIntegrityConstraintTests (MyValue) VALUES (5)", con).ExecuteNonQuery();
             }
 
-            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, DatabaseICanCreateRandomTablesIn.DataSource, DatabaseICanCreateRandomTablesIn.InitialCatalog, "ReferentialIntegrityConstraintTests",DatabaseType.MicrosoftSQLServer,DatabaseICanCreateRandomTablesIn.UserID,DatabaseICanCreateRandomTablesIn.Password);
+            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, tbl);
             importer.DoImport(out _tableInfo,out _columnInfo);
 
             _constraint = new ReferentialIntegrityConstraint(CatalogueRepository);
@@ -90,11 +96,10 @@ namespace CatalogueLibraryTests.Integration.Validation
         [TestFixtureTearDown]
         public void Drop()
         {
-            using (var con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString))
-            {
-                con.Open();
-                new SqlCommand("Drop table ReferentialIntegrityConstraintTests",con).ExecuteNonQuery();
-            }
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");
+            
+            if(tbl.Exists())
+                tbl.Drop();
 
             var credentials = _tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             _tableInfo.DeleteInDatabase();

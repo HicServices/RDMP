@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Remoting.Messaging;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {

@@ -60,15 +60,15 @@ namespace DataExportLibrary.Tests.Cloning
                 ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(_extractableDataSet));
                 request.GenerateQueryBuilder();
                 Assert.AreEqual(
-
+                    CollapseWhitespace(
 string.Format(
-@"DECLARE @fish AS VARCHAR(50);
+@"DECLARE @fish AS varchar(50);
 SET @fish='jormungander';
---The ID of the cohort in [{0}CohortDatabase]..[Cohort]
+/*The ID of the cohort in [{0}CohortDatabase]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
 SET @CohortDefinitionID=-599;
---The project number of project {0}ExtractionConfiguration
-DECLARE @ProjectNumber as int;
+/*The project number of project {0}ExtractionConfiguration*/
+DECLARE @ProjectNumber AS int;
 SET @ProjectNumber=1;
 
 SELECT DISTINCT 
@@ -85,8 +85,8 @@ Fish = @fish
 AND
 [{0}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599
 "
-  , TestDatabaseNames.Prefix)
-  ,request.QueryBuilder.SQL);
+  , TestDatabaseNames.Prefix))
+  ,CollapseWhitespace(request.QueryBuilder.SQL));
 
                 ExtractionConfiguration deepClone = _configuration.DeepCloneWithNewIDs();
                 Assert.AreEqual(deepClone.Cohort_ID,_configuration.Cohort_ID);

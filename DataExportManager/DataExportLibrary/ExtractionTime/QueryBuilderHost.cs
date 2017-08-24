@@ -10,6 +10,8 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace DataExportLibrary.ExtractionTime
 {
@@ -63,13 +65,23 @@ namespace DataExportLibrary.ExtractionTime
             string hashingAlgorithm = configurationProperties.TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern);
             if (string.IsNullOrWhiteSpace(hashingAlgorithm))
                 hashingAlgorithm = null;
+
             
+
             QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql,hashingAlgorithm);
          
             queryBuilder.SetSalt(request.Salt.GetSalt());
 
+
+            var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
+
+            if(databaseType == null)
+                throw new NotSupportedException("Catalogue " + request.Catalogue + " did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
+
+            var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType.Value);
+
             //add the constant parameters
-            foreach (ConstantParameter parameter in GetConstantParameters(request.Configuration, request.ExtractableCohort))
+            foreach (ConstantParameter parameter in GetConstantParameters(syntaxHelper,request.Configuration, request.ExtractableCohort))
                 queryBuilder.ParameterManager.AddGlobalParameter(parameter);
 
             //add the global parameters
@@ -114,14 +126,14 @@ namespace DataExportLibrary.ExtractionTime
 
 
                 //add the filter cohortID because our new Cohort system uses ID number and a giant combo table with all the cohorts in it we need to say Select XX from XX join Cohort Where Cohort number = Y
-                queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.Filter);
+                queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
             }
 
             request.QueryBuilder = queryBuilder;
             return queryBuilder;
         }
 
-        public static List<ConstantParameter> GetConstantParameters(IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
+        public static List<ConstantParameter> GetConstantParameters(IQuerySyntaxHelper syntaxHelper, IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
         {
             List<ConstantParameter> toReturn = new List<ConstantParameter>();
 
@@ -135,31 +147,13 @@ namespace DataExportLibrary.ExtractionTime
 
             IExternalCohortTable externalCohortTable = extractableCohort.ExternalCohortTable;
 
-            toReturn.Add(new ConstantParameter("DECLARE @CohortDefinitionID AS int", extractableCohort.OriginID.ToString(), "The ID of the cohort in " + externalCohortTable.TableName));
-            toReturn.Add(new ConstantParameter("DECLARE @ProjectNumber as int", project.ProjectNumber.ToString(),"The project number of project " + project.Name));
+            var declarationSqlCohortId = syntaxHelper.GetParameterDeclaration("@CohortDefinitionID", new DatabaseTypeRequest(typeof (int)));
+            var declarationSqlProjectNumber = syntaxHelper.GetParameterDeclaration("@ProjectNumber", new DatabaseTypeRequest(typeof(int)));
+
+            toReturn.Add(new ConstantParameter(declarationSqlCohortId, extractableCohort.OriginID.ToString(), "The ID of the cohort in " + externalCohortTable.TableName));
+            toReturn.Add(new ConstantParameter(declarationSqlProjectNumber, project.ProjectNumber.ToString(), "The project number of project " + project.Name));
 
             return toReturn;
         }
-
-        public static List<ConstantParameter> PreviewConstantParameters(ExtractionConfiguration configuration)
-        {
-            if (configuration.Cohort_ID != null)
-                return GetConstantParameters(configuration, configuration.Cohort);
-
-            List<ConstantParameter> toReturn = new List<ConstantParameter>();
-
-            IProject project = configuration.Project;
-
-            if (project.ProjectNumber == null)
-                throw new Exception("Project number has not been entered, cannot create constant paramaters");
-            
-            toReturn.Add(new ConstantParameter("DECLARE @CohortDefinitionID AS int", "<<CohortNotYetSelected>>", "The ID of the cohort table once you have picked it"));
-            toReturn.Add(new ConstantParameter("DECLARE @ProjectNumber as int", project.ProjectNumber.ToString(), "The project number of project " + project.Name));
-
-            return toReturn;
-        }
-
-   
-   
     }
 }

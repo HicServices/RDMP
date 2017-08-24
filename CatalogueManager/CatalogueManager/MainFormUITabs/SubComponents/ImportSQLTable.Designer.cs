@@ -95,14 +95,13 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             // 
             this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.ForeColor = System.Drawing.Color.Red;
-            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Location = new System.Drawing.Point(7, 166);
+            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Location = new System.Drawing.Point(6, 230);
             this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Name = "lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue";
-            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Size = new System.Drawing.Size(627, 32);
+            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Size = new System.Drawing.Size(627, 19);
             this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.TabIndex = 160;
-            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Text = "Username and Password will be stored in the Catalogue and associated with the Tab" +
-    "leInfo that is imported.";
+            this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Text = "Encrypted username and password will be stored in the Catalogue database.";
             this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue.Visible = false;
             // 
             // serverDatabaseTableSelector1
@@ -115,7 +114,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             this.serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
             this.serverDatabaseTableSelector1.Password = "";
             this.serverDatabaseTableSelector1.Server = "";
-            this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(648, 143);
+            this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(648, 146);
             this.serverDatabaseTableSelector1.TabIndex = 159;
             this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";

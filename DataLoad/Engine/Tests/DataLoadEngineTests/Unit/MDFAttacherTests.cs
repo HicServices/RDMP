@@ -107,8 +107,7 @@ namespace DataLoadEngineTests.Unit
 
             var hicProjDir = HICProjectDirectory.CreateDirectoryStructure(projDir,true);
 
-            var server = new DiscoveredServer(ServerICanCreateRandomDatabasesAndTablesOn);
-            var db = server.ExpectDatabase("MyImaginaryDB_RAW");
+            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("MyImaginaryDB_RAW");
             Assert.IsFalse(db.Exists());
 
             var mdf = new MDFAttacher();

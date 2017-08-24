@@ -3,6 +3,7 @@ using System.Data.Common;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using Tests.Common;
 
 namespace Tests.OtherProviders
@@ -82,32 +83,29 @@ namespace Tests.OtherProviders
 
         private void GetCleanedServer(DatabaseType type, out DiscoveredServer server, out DiscoveredDatabase database)
         {
-            DbConnectionStringBuilder builder;
-
             switch (type)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    builder = ServerICanCreateRandomDatabasesAndTablesOn;
+                    server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                     break;
                 case DatabaseType.MYSQLServer:
-                    builder = MySQlServer;
+                    server = DiscoveredMySqlServer;
                     break;
                 case DatabaseType.Oracle:
-                    builder = OracleServer;
+                    server = DiscoveredOracleServer;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type");
             }
 
-            if(builder == null)
+            if(server == null)
                 Assert.Inconclusive();
 
-            server = new DiscoveredServer(builder);
-            
             if(!server.Exists())
                 Assert.Inconclusive();
-            server.TestConnection();
 
+            server.TestConnection();
+            
             database = server.ExpectDatabase(_dbName);
 
             if (database.Exists())

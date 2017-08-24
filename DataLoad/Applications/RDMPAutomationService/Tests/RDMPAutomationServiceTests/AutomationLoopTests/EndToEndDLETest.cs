@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -24,7 +25,11 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         {
             const int timeoutInMilliseconds = 120000;
 
-            var setup = new DLEEndToEndTestSetup(ServerICanCreateRandomDatabasesAndTablesOn, UnitTestLoggingConnectionString, RepositoryLocator,DiscoveredServerICanCreateRandomDatabasesAndTablesOn);
+            var setup = new DLEEndToEndTestSetup(
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn, 
+                UnitTestLoggingConnectionString,
+                RepositoryLocator,
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn);
 
             LoadMetadata lmd;
             setup.SetUp(timeoutInMilliseconds,out lmd);

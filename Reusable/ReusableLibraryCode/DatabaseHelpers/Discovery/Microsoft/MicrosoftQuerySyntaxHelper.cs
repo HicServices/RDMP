@@ -1,20 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
     public class MicrosoftQuerySyntaxHelper : QuerySyntaxHelper
     {
+        public MicrosoftQuerySyntaxHelper() : base(new MicrosoftSQLTypeTranslater(),new MicrosoftSQLAggregateHelper())
+        {
+        }
+
         public override string DatabaseTableSeparator
         {
-            get { return "."; }
+           get { return "."; }
         }
-
-        public override string Escape(string sql)
+        
+        public override TopXResponse HowDoWeAchieveTopX(int x)
         {
-            throw new NotImplementedException();
+            return new TopXResponse("TOP " + x, QueryComponent.SELECT);
         }
 
+        public override string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request)
+        {
+            return "DECLARE " + proposedNewParameterName + " AS " + TypeTranslater.GetSQLDBTypeForCSharpType(request) +";";
+        }
+        
         public override string EnsureFullyQualified(string databaseName, string schema, string tableName)
         {
             //if there is no schema address it as db..table (which is the same as db.dbo.table in Microsoft SQL Server)

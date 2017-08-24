@@ -336,7 +336,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             sql = HackExtractionSQL(sql,listener);
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "--Decided on extraction SQL:"+Environment.NewLine + sql));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "/*Decided on extraction SQL:*/"+Environment.NewLine + sql));
             
             return sql;
         }
@@ -406,7 +406,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             {
                 con.Open();
 
-                var da = server.GetDataAdapter(server.GetCommand(Request.QueryBuilder.SQL, con));
+                var da = server.GetDataAdapter(Request.QueryBuilder.SQL, con);
 
                 //get up to 1000 records
                 da.Fill(0, 1000, toReturn);

@@ -166,13 +166,13 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
                 updateSql += "SELECT stag.* FROM " + GetStagingRuntimeName() + " AS stag" + Environment.NewLine;
                 updateSql += "LEFT OUTER JOIN " + GetRuntimeName() + " AS prod" + Environment.NewLine;
                 updateSql += "ON ( " + Environment.NewLine;
-                updateSql += "--Primary Keys JOIN" + Environment.NewLine;
+                updateSql += "/*Primary Keys JOIN*/" + Environment.NewLine;
                 updateSql = pks.Aggregate(updateSql, (s, n) => s + " stag.[" + n + "]=prod.[" + n + "] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
                 updateSql += ") WHERE" + Environment.NewLine;
-                updateSql += "--Primary Keys not null" + Environment.NewLine;
+                updateSql += "/*Primary Keys not null*/" + Environment.NewLine;
                 updateSql = pks.Aggregate(updateSql, (s, n) => s + " stag.[" + n + "] IS NOT NULL AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
                 updateSql += "AND EXISTS (SELECT " + Environment.NewLine;
-                updateSql += "--All columns in stag" + Environment.NewLine;
+                updateSql += "/*All columns in stag*/" + Environment.NewLine;
                 updateSql = allColumns.Aggregate(updateSql, (s, n) => s + " stag.[" + n + "],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
                 updateSql += "EXCEPT SELECT" + Environment.NewLine;
                 updateSql = allColumns.Aggregate(updateSql, (s, n) => s + " prod.[" + n + "],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;

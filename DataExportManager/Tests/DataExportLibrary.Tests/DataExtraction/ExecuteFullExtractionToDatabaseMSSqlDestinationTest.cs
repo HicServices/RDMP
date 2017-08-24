@@ -21,13 +21,12 @@ namespace DataExportLibrary.Tests.DataExtraction
     public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiringAnExtractionConfiguration
     {
         private ExternalDatabaseServer _extractionServer;
-        SqlConnectionStringBuilder _builder;
-
+        
         private readonly string _expectedTableName = TestDatabaseNames.GetConsistentName("ExtractionConfiguration") + "_1_ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
 
         //The database that the extracted records will appear in
         DiscoveredDatabase dbToExtractTo;
-        
+
         [Test]
         public void SQLServerDestination()
         {
@@ -45,14 +44,15 @@ namespace DataExportLibrary.Tests.DataExtraction
                 
                 Assert.IsTrue( extractionDatabase.ExpectTable(_expectedTableName).Exists());
 
-                using (var con = new SqlConnection(_builder.ConnectionString))
+                var server = extractionDatabase.Server;
+                using (var con = server.GetConnection())
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM " +_expectedTableName,con);
+                    var cmd = server.GetCommand("SELECT * FROM " + _expectedTableName, con);
 
                     DataTable dt = new DataTable();
 
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    var da = server.GetDataAdapter(cmd);
                     da.Fill(dt);
 
                     Assert.AreEqual(1,dt.Rows.Count);
@@ -84,25 +84,14 @@ namespace DataExportLibrary.Tests.DataExtraction
         
         protected override Pipeline SetupPipeline()
         {
+            var dbname = TestDatabaseNames.GetConsistentName("ExtractionTest");
+            dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
+
             //create a target server pointer
-            _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "ExtractionTest")
-            {
-                Server = ServerICanCreateRandomDatabasesAndTablesOn.DataSource,
-                Database = "ExtractionTest",
-                Username =  ServerICanCreateRandomDatabasesAndTablesOn.UserID,
-                Password = ServerICanCreateRandomDatabasesAndTablesOn.Password
-            };
-            _extractionServer.SaveToDatabase();//use integrated security
-
+            _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "ExtractionTest");
+            _extractionServer.SetProperties(dbToExtractTo);
             
-            _builder = new SqlConnectionStringBuilder(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString);
-            _builder.InitialCatalog = "ExtractionTest";
-
-            
-            dbToExtractTo = ToDiscoveredDatabase(_builder);
-
-            if(!dbToExtractTo.Exists())
-                dbToExtractTo.Server.CreateDatabase(dbToExtractTo.GetRuntimeName());
+            dbToExtractTo.Create(true);
 
             //create a pipeline
             var pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");

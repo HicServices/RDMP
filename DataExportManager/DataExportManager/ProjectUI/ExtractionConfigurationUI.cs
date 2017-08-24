@@ -34,6 +34,7 @@ using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.ProjectUI
 {

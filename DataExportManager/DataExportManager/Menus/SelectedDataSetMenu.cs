@@ -17,6 +17,7 @@ using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using RDMPStartup;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.Menus
 {

@@ -119,19 +119,21 @@ ACTUAL  :RunID,hic_validFrom,hic_validT...
 
         private object ExecuteScalar(string sql)
         {
-            using (var con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString))
+            var svr = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            using (var con = svr.GetConnection())
             {
                 con.Open();
-                return new SqlCommand(sql, con).ExecuteScalar();
+                return svr.GetCommand(sql, con).ExecuteScalar();
             }
         }
 
         private void RunSQL(string sql)
         {
-            using (var con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString))
+            var svr = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            using (var con = svr.GetConnection())
             {
                 con.Open();
-                new SqlCommand(sql, con).ExecuteNonQuery();
+                svr.GetCommand(sql, con).ExecuteNonQuery();
             }
         }
 

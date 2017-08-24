@@ -14,7 +14,7 @@ namespace MapsDirectlyToDatabaseTable.Relationships
         private readonly SqlConnectionStringBuilder _builder;
         public Relationship[] Relationships { get; private set; }
 
-        private const string FindRelationshipsSQL = @"--Get dependencies
+        private const string FindRelationshipsSQL = @"/*Get dependencies*/
 SELECT
     o1.name AS FK_table,
     c1.name AS FK_column,

@@ -19,6 +19,7 @@ using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ReusableUIComponents.SingleControlForms;
@@ -46,6 +47,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
     /// </summary>
     public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSubscriber,IConsultableBeforeClosing, ISaveableUI
     {
+        private IQuerySyntaxHelper _querySyntaxHelper;
+
         private IFilter _extractionFilter;
         public IFilter ExtractionFilter
         {
@@ -246,9 +249,12 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
         public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
         {
+            _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
+
             base.SetDatabaseObject(activator,databaseObject);
             Catalogue = databaseObject.GetCatalogue();
             ExtractionFilter = databaseObject;
+
             objectSaverButton1.SetupFor((DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
             
         }
@@ -287,7 +293,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                         string selectSql;
                         string embeddedAlias;
 
-                        RDMPQuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.SelectSQL, out selectSql, out embeddedAlias);
+                        _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.SelectSQL, out selectSql, out embeddedAlias);
                         cbxInsertColumnName.Items.Add(embeddedAlias ?? selectSql);   
                     }
                 }
@@ -387,6 +393,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
         private bool expand = false;
         
+
 
         private void btnParametersExpand_Click(object sender, EventArgs e)
         {

@@ -17,6 +17,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 using ScintillaNET;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using Point = System.Drawing.Point;

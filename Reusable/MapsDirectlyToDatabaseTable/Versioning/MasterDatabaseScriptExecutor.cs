@@ -62,6 +62,31 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             }
         }
 
+        public MasterDatabaseScriptExecutor(DiscoveredServer server, string database):this(server.ExpectDatabase(database))
+        {
+            
+        }
+
+        public MasterDatabaseScriptExecutor(DiscoveredDatabase discoveredDatabase)
+        {
+            _builder = (SqlConnectionStringBuilder)discoveredDatabase.Server.Builder;
+            _server = _builder.DataSource;
+            _database = _builder.InitialCatalog;
+
+            _builder = new SqlConnectionStringBuilder
+            {
+                DataSource = _server,
+                InitialCatalog = _database,
+                IntegratedSecurity = string.IsNullOrWhiteSpace(_builder.UserID),
+            };
+
+            if (!string.IsNullOrWhiteSpace(_builder.UserID))
+            {
+                _builder.UserID = _builder.UserID;
+                _builder.Password = _builder.Password;
+            }
+        }
+
         public bool BinaryCollation { get; set; }
 
         public string CreateConnectionString(bool includeDatabaseInString = true)

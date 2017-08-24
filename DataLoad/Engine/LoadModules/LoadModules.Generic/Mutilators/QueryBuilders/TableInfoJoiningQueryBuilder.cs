@@ -1,5 +1,6 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace LoadModules.Generic.Mutilators.QueryBuilders
 {

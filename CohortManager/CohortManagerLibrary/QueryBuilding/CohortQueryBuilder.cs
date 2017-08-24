@@ -32,6 +32,8 @@ namespace CohortManagerLibrary.QueryBuilding
                 }
             }
         }
+        
+        public int TopX { get; set; }
 
         private CohortAggregateContainer container;
         private AggregateConfiguration configuration;
@@ -50,7 +52,8 @@ namespace CohortManagerLibrary.QueryBuilding
         {
             globals = globals ?? new ISqlParameter[] {};
             _globals = globals.ToArray();
-
+            TopX = -1;
+            
             SQLOutOfDate = true;
 
             foreach (ISqlParameter parameter in _globals)
@@ -97,9 +100,14 @@ namespace CohortManagerLibrary.QueryBuilding
 
             //create a clone of ourselves so we don't mess up the ParameterManager of this instance
             var cloneBuilder = new CohortQueryBuilder(configuration, _globals);
+            cloneBuilder.TopX = topX;
 
-            
-            string sampleSQL = cloneBuilder.GetSQLForAggregate(configuration, 0, _isExplicitRequestForJoinableInceptionAggregateQuery,_isExplicitRequestForJoinableInceptionAggregateQuery?null: "*", "top " + topX);
+            string sampleSQL = 
+                cloneBuilder.GetSQLForAggregate(configuration,
+                0, 
+                _isExplicitRequestForJoinableInceptionAggregateQuery,
+                _isExplicitRequestForJoinableInceptionAggregateQuery?null: "*", //preview means we override the select columns with * unless its a patient index table
+                ""); //gets rid of the distinct keyword
 
             string parameterSql = "";
 
@@ -116,6 +124,8 @@ namespace CohortManagerLibrary.QueryBuilding
             
             return sampleSQL;
         }
+
+        
 
         private CohortQueryBuilderHelper helper;
         public void RegenerateSQL()
@@ -216,7 +226,7 @@ namespace CohortManagerLibrary.QueryBuilding
 
         private string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null)
         {
-            return helper.GetSQLForAggregate(aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL);
+            return helper.GetSQLForAggregate(aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL,TopX);
         }
 
         public bool SQLOutOfDate { get; set; }

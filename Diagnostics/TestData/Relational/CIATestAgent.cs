@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using ReusableLibraryCode;
@@ -46,7 +47,7 @@ namespace Diagnostics.TestData.Relational
 
         private bool isCommited = false;
 
-        public void CommitToDatabase(DiscoveredServer server, SqlConnection con)
+        public void CommitToDatabase(DiscoveredDatabase database, DbConnection con)
         {
             if(isCommited)
                 return;
@@ -60,18 +61,16 @@ namespace Diagnostics.TestData.Relational
             foreach(CIATestAgentEquipment eq in Equipment)
                 eq.AddToDataTable(dtEquipment);
 
-            SqlBulkCopy bulk = new SqlBulkCopy(con);
+            SqlBulkCopy bulk = new SqlBulkCopy((SqlConnection) con);
             bulk.DestinationTableName = "CIATestAgentEquipment";
 
             foreach (DataColumn col in dtEquipment.Columns)
                 bulk.ColumnMappings.Add(col.ColumnName, col.ColumnName);
 
-            UsefulStuff.BulkInsertWithBetterErrorMessages(bulk, dtEquipment, server);
+            UsefulStuff.BulkInsertWithBetterErrorMessages(bulk, dtEquipment, database.Server);
 
             //add the agent
-            new SqlCommand(string.Format("INSERT INTO CIATestAgent VALUES ({0},'{1}')",PKAgentID,AgentCodeName),con).ExecuteNonQuery();
+            database.Server.GetCommand(string.Format("INSERT INTO CIATestAgent VALUES ({0},'{1}')",PKAgentID,AgentCodeName),con).ExecuteNonQuery();
         }
-
-        
     }
 }

@@ -124,7 +124,7 @@ where object_id =OBJECT_ID('" + tableValuedFunctionName+"')", connection.Connect
 
         public int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null)
         {
-                    SqlCommand cmdCount = new SqlCommand(@"-- Do not lock anything, and do not get held up by any locks.
+                    SqlCommand cmdCount = new SqlCommand(@"/*Do not lock anything, and do not get held up by any locks.*/
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
  
 -- Quickly get row counts.
@@ -207,6 +207,10 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return toReturn.ToArray();
         }
 
+        public IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction)
+        {
+            return new MicrosoftSQLBulkCopy(discoveredTable,connection,transaction);
+        }
 
         public string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)
         {

@@ -12,6 +12,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using RDMPStartup;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {

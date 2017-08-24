@@ -18,6 +18,7 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

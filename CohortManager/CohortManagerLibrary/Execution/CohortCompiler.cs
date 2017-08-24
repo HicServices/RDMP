@@ -132,11 +132,12 @@ namespace CohortManagerLibrary.Execution
                 }
                 
             }
-
+            ExternalDatabaseServer cacheServer = null;
             //if the overall owner has a cache configured
             if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
             {
-                var cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
+                
+                cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
                 queryBuilder.CacheServer = cacheServer;
 
                 if (cumulativeQueryBuilder != null)
@@ -194,22 +195,11 @@ namespace CohortManagerLibrary.Execution
                     Tasks.Remove(existingTask.Key);
                 }
             
-            //if it is aggregate (as opposed to a container), also get a select top 1000 * from XyZ query 
-            string newSelectStarSQL = "";
-            if(aggregate != null && string.IsNullOrWhiteSpace(aggregate.HavingSQL))
-                try
-                {
-                    newSelectStarSQL = queryBuilder.GetDatasetSampleSQL();
-                }
-                catch (QueryBuildingException e)
-                {
-                    task.State = CompilationState.Crashed;
-                    task.CrashMessage = e;
-                }
-
+      
             var isResultsForRootContainer = container != null && container.ID == CohortIdentificationConfiguration.RootCohortAggregateContainer_ID;
 
-            var taskExecution = new CohortIdentificationTaskExecution(newsql, newSelectStarSQL, cumulativeSql, source,
+
+            var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
                 queryBuilder.CountOfSubQueries,
                 queryBuilder.CountOfCachedSubQueries, 
                 isResultsForRootContainer);

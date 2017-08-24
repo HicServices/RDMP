@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 {

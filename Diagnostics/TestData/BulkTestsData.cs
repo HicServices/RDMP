@@ -14,48 +14,39 @@ using HIC.Common.Validation.Constraints.Primary;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using Tests.Common;
 
 namespace Diagnostics.TestData
 {
     public class BulkTestsData
     {
         private readonly CatalogueRepository _repository;
-        private readonly SqlConnectionStringBuilder _builder;
-        public SqlConnectionStringBuilder BulkDataBuilder { get; set; }
-        private DiscoveredServer _server;
+        public readonly DiscoveredDatabase BulkDataDatabase;
+        
 
-        public readonly string BulkDataDatabase;
         public const string BulkDataTable = "BulkData";
         public const string SlowView = "vSlowView";
 
         public readonly int ExpectedNumberOfRowsInTestData = 100000;
 
-        public BulkTestsData(CatalogueRepository repository, SqlConnectionStringBuilder builder, int numberOfRows = 100000)
+        public BulkTestsData(CatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 100000)
         {
             _repository = repository;
-            _builder = builder; 
-            BulkDataBuilder = new SqlConnectionStringBuilder(_builder.ConnectionString);
-            _server = new DiscoveredServer(BulkDataBuilder);
+            BulkDataDatabase = targetDatabase;
             ExpectedNumberOfRowsInTestData = numberOfRows;
-            BulkDataDatabase = builder.InitialCatalog;
-            
         }
 
         public void SetupTestData()
         {
             //make sure database exists
-            if(!_server.ExpectDatabase(BulkDataDatabase).Exists())
-                _server.CreateDatabase(BulkDataDatabase);
+            if (!BulkDataDatabase.Exists())
+                BulkDataDatabase.Create();
 
-            //point the builder at the newly created database (incase it wasn't already pointed at it)
-            BulkDataBuilder.InitialCatalog = BulkDataDatabase;
-
-            using (var con = new SqlConnection(BulkDataBuilder.ConnectionString))
+            var server = BulkDataDatabase.Server;
+            using (var con = server.GetConnection())
             {
                 con.Open();
                 
-                SqlCommand createTable = new SqlCommand(
+                var createTable = server.GetCommand(
                     @"
 if exists (select * from sysobjects where name='" + BulkDataTable + @"' and xtype='U')
 begin
@@ -134,11 +125,11 @@ CREATE VIEW vSlowView As Select * from " + BulkDataTable + " boss where date_of_
                         dt.Rows.Add(GenerateTestDataRow());
 
 
-                    SqlBulkCopy bulkcopy = new SqlBulkCopy(con);
+                    SqlBulkCopy bulkcopy = new SqlBulkCopy((SqlConnection) con);
                     bulkcopy.BulkCopyTimeout = 50000;
                     bulkcopy.DestinationTableName = BulkDataTable;
 
-                    UsefulStuff.BulkInsertWithBetterErrorMessages(bulkcopy, dt, new DiscoveredServer(BulkDataBuilder));
+                    UsefulStuff.BulkInsertWithBetterErrorMessages(bulkcopy, dt, server);
                     sw.Stop();
                     Console.WriteLine("Submitting Batch:" + batch + " ("+sw.Elapsed+")");
                     sw.Reset();
@@ -151,10 +142,7 @@ CREATE VIEW vSlowView As Select * from " + BulkDataTable + " boss where date_of_
 
         public void Destroy()
         {
-            var db = _server.ExpectDatabase(BulkDataDatabase);
-            db.ExpectTable(BulkDataTable).Drop();
-
-            _server.ExpectDatabase(BulkDataDatabase).ForceDrop();
+            BulkDataDatabase.ForceDrop();
         }
 
         private void GenerateColumns(DataTable dt)
@@ -388,11 +376,12 @@ dt.Columns.Add(MigrationColumnSet.DataLoadRunField);
         public DataTable GetDataTable(int numberOfRows)
         {
             DataTable dt = new DataTable();
-            using (var con = new SqlConnection(BulkDataBuilder.ConnectionString))
+            var server = BulkDataDatabase.Server;
+            using (var con = server.GetConnection())
             {
                 con.Open();
 
-                SqlDataAdapter da = new SqlDataAdapter("Select * from " + BulkDataTable,con);
+                var da = server.GetDataAdapter("Select * from " + BulkDataTable,con);
                 da.Fill(0, numberOfRows, dt);
             }
 
@@ -408,8 +397,7 @@ dt.Columns.Add(MigrationColumnSet.DataLoadRunField);
 
         public Catalogue ImportAsCatalogue()
         {
-            TableInfoImporter f = new TableInfoImporter(_repository, _builder.DataSource, _builder.InitialCatalog,
-                BulkDataTable, DatabaseType.MicrosoftSQLServer, _builder.UserID, _builder.Password);
+            TableInfoImporter f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
             f.DoImport(out tableInfo,out columnInfos);
 
             ForwardEngineerCatalogue forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos,true);

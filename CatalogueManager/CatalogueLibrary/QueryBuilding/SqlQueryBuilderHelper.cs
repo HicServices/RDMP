@@ -8,6 +8,9 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -392,7 +395,30 @@ namespace CatalogueLibrary.QueryBuilding
             return toReturn;
         }
 
-        public static string GetWHERESQL(ISqlQueryBuilder qb, out int[] Filters_LineNumbers, bool escapeSingleQuotes)
+
+        /// <summary>
+        /// Add a custom line of code into the query at the specified position.  This will be maintained throughout the lifespan of the object such that if
+        /// you add other columns etc then your code will still be included at the appropriate position.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="text"></param>
+        /// <param name="positionToInsert"></param>
+        public static CustomLine AddCustomLine(ISqlQueryBuilder builder, string text, QueryComponent positionToInsert)
+        {
+            CustomLine toAdd = new CustomLine(text, positionToInsert);
+
+            if(positionToInsert == QueryComponent.GroupBy || positionToInsert == QueryComponent.OrderBy || positionToInsert == QueryComponent.FROM)
+                throw new QueryBuildingException("Cannot inject custom lines into QueryBuilders at location " + positionToInsert);
+
+            if (positionToInsert == QueryComponent.WHERE)
+                if (text.Trim().StartsWith("AND ") || text.Trim().StartsWith("OR "))
+                    throw new Exception("Custom filters are always AND, you should not specify the operator AND/OR, you passed\"" + text + "\"");
+
+            builder.CustomLines.Add(toAdd);
+            return toAdd;
+        }
+
+        public static string GetWHERESQL(ISqlQueryBuilder qb, out int[] Filters_LineNumbers)
         {
             Filters_LineNumbers = new int[qb.Filters.Count];
             string toReturn = "";
@@ -403,13 +429,13 @@ namespace CatalogueLibrary.QueryBuilding
                 toReturn += qb.TakeNewLine();
                 toReturn += "WHERE" + qb.TakeNewLine();
 
-                toReturn = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb, ref Filters_LineNumbers, escapeSingleQuotes);
+                toReturn = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb, ref Filters_LineNumbers);
             }
 
             return toReturn;
         }
 
-        private static string WriteContainerTreeRecursively(string toReturn, int tabDepth, IContainer currentContainer, ISqlQueryBuilder qb, ref int[] Filters_LineNumbers, bool escapeSingleQuotes)
+        private static string WriteContainerTreeRecursively(string toReturn, int tabDepth, IContainer currentContainer, ISqlQueryBuilder qb, ref int[] Filters_LineNumbers)
         {
             string tabs = "";
             //see how far we have to tab in
@@ -425,7 +451,7 @@ namespace CatalogueLibrary.QueryBuilding
             if (subcontainers != null)
                 for (int i = 0; i < subcontainers.Length; i++)
                 {
-                    toReturn = WriteContainerTreeRecursively(toReturn, tabDepth + 1, subcontainers[i], qb, ref Filters_LineNumbers, escapeSingleQuotes);
+                    toReturn = WriteContainerTreeRecursively(toReturn, tabDepth + 1, subcontainers[i], qb, ref Filters_LineNumbers);
 
                     //there are more subcontainers to come
                     if (i + 1 < subcontainers.Length)
@@ -446,10 +472,7 @@ namespace CatalogueLibrary.QueryBuilding
                 if (qb.CheckSyntax)
                     RDMPQuerySyntaxHelper.CheckSyntax(filtersInContainer[i]);
 
-                if (escapeSingleQuotes)
-                    toReturn += SqlSyntaxHelper.EscapeQuotesForDynamicSql(tabs + @"/*" + filtersInContainer[i].Name +@"*/" + qb.TakeNewLine());
-                else
-                    toReturn += tabs + @"/*" + filtersInContainer[i].Name + @"*/" + qb.TakeNewLine();
+                toReturn += tabs + @"/*" + filtersInContainer[i].Name + @"*/" + qb.TakeNewLine();
 
                 //record the line number that we wrote this out on
                 Filters_LineNumbers[qb.Filters.FindIndex(f => f.ID == filtersInContainer[i].ID)] = qb.CurrentLine;
@@ -459,11 +482,7 @@ namespace CatalogueLibrary.QueryBuilding
                     .Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
                     .Select(s => s.Trim());
                 var singleLineWhereSQL = string.Join(" ", trimmedFilters);
-
-                if (escapeSingleQuotes)
-                    toReturn += SqlSyntaxHelper.EscapeQuotesForDynamicSql(tabs + singleLineWhereSQL +qb.TakeNewLine());
-                else
-                    toReturn += tabs + singleLineWhereSQL + qb.TakeNewLine();
+                toReturn += tabs + singleLineWhereSQL + qb.TakeNewLine();
 
                 //if there are more filters to come
                 if (i + 1 < filtersInContainer.Count())
@@ -472,6 +491,81 @@ namespace CatalogueLibrary.QueryBuilding
             }
 
             toReturn += tabs + ")" + qb.TakeNewLine();
+
+            return toReturn;
+        }
+
+        public static IQuerySyntaxHelper GetSyntaxHelper(List<TableInfo> tablesUsedInQuery)
+        {
+            if (!tablesUsedInQuery.Any())
+                throw new QueryBuildingException("Could not pick an IQuerySyntaxHelper because the there were no TableInfos used in the query");
+            
+
+            var databaseTypes = tablesUsedInQuery.Select(t => t.DatabaseType).Distinct().ToArray();
+            if(databaseTypes.Length > 1)
+                throw new QueryBuildingException("Cannot build query because there are multiple DatabaseTypes involved in the query:" + string.Join(",",
+                    tablesUsedInQuery.Select(t=>t.GetRuntimeName() + "(" + t.DatabaseType + ")")));
+
+            var helper = new DatabaseHelperFactory(databaseTypes.Single()).CreateInstance();
+            return helper.GetQuerySyntaxHelper();
+        }
+
+        public static void HandleTopX(ISqlQueryBuilder queryBuilder, IQuerySyntaxHelper syntaxHelper, int topX)
+        {
+            //if we have a lingering custom line from last time
+            ClearTopX(queryBuilder);
+
+            //if we are expected to have a topx
+            var response = syntaxHelper.HowDoWeAchieveTopX(topX);
+            queryBuilder.TopXCustomLine = AddCustomLine(queryBuilder,response.SQL, response.Location);
+        }
+
+        public static void ClearTopX(ISqlQueryBuilder queryBuilder)
+        {
+            //if we have a lingering custom line from last time
+            if (queryBuilder.TopXCustomLine != null)
+            {
+                queryBuilder.CustomLines.Remove(queryBuilder.TopXCustomLine); //remove it
+                queryBuilder.SQLOutOfDate = true;
+            }
+        }
+
+
+        public static string GetCustomLinesSQLForStage(ISqlQueryBuilder queryBuilder, QueryComponent stage)
+        {
+            var lines = queryBuilder.CustomLines.Where(c => c.LocationToInsert == stage).ToArray();
+            
+            if (!lines.Any())//no lines
+                return "";
+
+           string toReturn = Environment.NewLine;
+
+            //Custom Filters (for people who can't be bothered to implement IFilter or when IContainer doesnt support ramming in additional Filters at runtime because you feel like it ) - these all get AND together and a WHERE is put at the start if needed
+            //if there are custom lines being rammed into the Filter section
+            if (stage == QueryComponent.WHERE)
+            {
+                //if we haven't put a WHERE yet, put one in
+                if (queryBuilder.Filters.Count == 0)
+                    toReturn += "WHERE" + queryBuilder.TakeNewLine();
+                else
+                    toReturn += "AND" + queryBuilder.TakeNewLine(); //otherwise just AND it with every other filter we currently have configured
+
+                //add user custom Filter lines
+                for (int i = 0; i < lines.Count(); i++)
+                {
+                    toReturn += lines[i].Text + queryBuilder.TakeNewLine();
+
+                    if (i + 1 < lines.Count())
+                        toReturn += "AND" + queryBuilder.TakeNewLine();
+                }
+                    
+                
+                return toReturn;
+            }
+            
+            //not a custom filter (which requires ANDing - see above) so this is the rest of the cases
+            foreach (CustomLine line in lines)
+                toReturn += line.Text + queryBuilder.TakeNewLine();
 
             return toReturn;
         }

@@ -69,7 +69,6 @@ namespace DataExportLibrary.CohortDatabaseWizard
 
         public ExternalCohortTable CreateDatabase(PrivateIdentifierPrototype privateIdentifierPrototype, ReleaseIdentifierAssignmentStrategy strategy, SqlConnectionStringBuilder builder, string database, string nameForTheNewCohortSource, ICheckNotifier notifier)
         {
-
             if(strategy == ReleaseIdentifierAssignmentStrategy.Unspecified)
                 throw new NotSupportedException("Cannot create unspecified strategy, use LeaveBlank if you want a placeholder release identifier that the user will ALTER/Create it himself");
 

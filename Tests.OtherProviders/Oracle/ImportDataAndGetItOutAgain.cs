@@ -29,10 +29,10 @@ namespace Tests.OtherProviders.Oracle
             generator.GenerateTestDataFile(people, new FileInfo(testFile), 500, new ToMemoryDataLoadEventReceiver(true));
 
             Assert.IsTrue(File.Exists(testFile));
-            
-            server = new DiscoveredServer(OracleServer);
 
-            if(!server.Exists())
+            server = DiscoveredOracleServer;
+
+            if(server == null || !server.Exists())
                 Assert.Inconclusive();
         }
 

@@ -17,7 +17,7 @@ namespace ReusableCodeTests
         [TestFixtureSetUp]
         public void BulkTestsSetUp()
         {
-            _bulkTests = new BulkTestsData(CatalogueRepository, DatabaseICanCreateRandomTablesIn);
+            _bulkTests = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             _bulkTests.SetupTestData();
         }
 
@@ -46,20 +46,21 @@ namespace ReusableCodeTests
         [Test]
         public void GetRowCountWhenNoIndexes()
         {
-            var server = new DiscoveredServer(DatabaseICanCreateRandomTablesIn);
-            var dbname = DatabaseICanCreateRandomTablesIn.InitialCatalog;
+            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("GetRowCountWhenNoIndexes");
+            Assert.AreEqual("GetRowCountWhenNoIndexes",table.GetRuntimeName());
 
             using(var con = server.GetConnection())
             {
                 con.Open();
 
-                var cmd = server.GetCommand("CREATE TABLE GetRowCountWhenNoIndexes (age int, name varchar(5))", con);
+                var cmd = server.GetCommand("CREATE TABLE " + table .GetRuntimeName()+ " (age int, name varchar(5))", con);
                 cmd.ExecuteNonQuery();
 
-                var cmdInsert = server.GetCommand("INSERT INTO GetRowCountWhenNoIndexes VALUES (1,'Fish')",con);
+                var cmdInsert = server.GetCommand("INSERT INTO " + table.GetRuntimeName() + " VALUES (1,'Fish')", con);
                 Assert.AreEqual(1,cmdInsert.ExecuteNonQuery());
 
-                Assert.AreEqual(1,server.ExpectDatabase(dbname).ExpectTable("GetRowCountWhenNoIndexes").GetRowCount());
+                Assert.AreEqual(1,table.GetRowCount());
                 
             }
         }
@@ -67,8 +68,7 @@ namespace ReusableCodeTests
         [Test]
         public void GetRowCount_Views()
         {
-            var server = new DiscoveredServer(DatabaseICanCreateRandomTablesIn);
-            var dbname = DatabaseICanCreateRandomTablesIn.InitialCatalog;
+            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
 
             using (var con = server.GetConnection())
             {
@@ -86,7 +86,7 @@ namespace ReusableCodeTests
                 cmdView.ExecuteNonQuery();
 
                 Assert.AreEqual(1,
-                    server.ExpectDatabase(dbname).ExpectTable("v_GetRowCount_Views").GetRowCount());
+                    DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("v_GetRowCount_Views").GetRowCount());
             }
         }
         
@@ -98,8 +98,8 @@ namespace ReusableCodeTests
             dt.Columns.Add("myfloat", typeof(object));
             dt.Rows.Add(1.5f);
 
-            SqlBulkCopy copy = new SqlBulkCopy(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString);
-            UsefulStuff.BulkInsertWithBetterErrorMessages(copy, dt, new DiscoveredServer(ServerICanCreateRandomDatabasesAndTablesOn));
+            SqlBulkCopy copy = new SqlBulkCopy(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString);
+            UsefulStuff.BulkInsertWithBetterErrorMessages(copy, dt, DiscoveredServerICanCreateRandomDatabasesAndTablesOn);
         }
     }
 }

@@ -502,51 +502,6 @@ c.name = @column_name", con);
                 default: return false;
             }
         }
-
-        public static string GetSQLDBTypeForCSharpType(Type propertyType, int? maxWidthForStrings = null,Tuple<int,int> decimalPlacesBeforeAndAfter = null)
-        {
-            if (propertyType == typeof(int) || propertyType == typeof(Int64) || propertyType == typeof(Int32) || propertyType == typeof(Int16))
-                return "int";
-            if (propertyType == typeof(int?))
-                return "int";
-            if (propertyType == typeof(bool))
-                return "bit";
-            if (propertyType == typeof(bool?))
-                return "bit";
-            if (propertyType == typeof(TimeSpan))
-                return "time";
-            if (propertyType == typeof(TimeSpan?))
-                return "time";
-            if (propertyType == typeof(string))
-            {
-                if (maxWidthForStrings == null)
-                    return "varchar(4000)";
-                if (maxWidthForStrings > 8000)
-                    return "varchar(max)";
-                else
-                    return "varchar(" + maxWidthForStrings + ")";
-            }
-            if (propertyType == typeof(DateTime))
-                return "datetime2";
-            if (propertyType == typeof(DateTime?))
-                return "datetime2";
-
-            if (propertyType == typeof(float) || propertyType == typeof(float?) || propertyType == typeof(double) || propertyType == typeof(double?) || propertyType == typeof(decimal) || propertyType == typeof(decimal?))
-            {
-                if (decimalPlacesBeforeAndAfter == null)
-                    return "decimal(20,10)";
-                else
-                    return "decimal(" + (decimalPlacesBeforeAndAfter.Item1 + decimalPlacesBeforeAndAfter.Item2) + "," + decimalPlacesBeforeAndAfter.Item2+ ")";
-            }
-
-            if (propertyType == typeof(byte))
-                return "tinyint";
-
-            if (propertyType == typeof(byte[]))
-                return "varbinary(max)";
-
-            throw new NotImplementedException("Unsure what SQL Database type to use for Property Type " + propertyType.Name);
-        }
         
         public Dictionary<string, object> DbDataReaderToDictionary(DbDataReader r)
         {

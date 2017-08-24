@@ -16,14 +16,12 @@ namespace CatalogueLibraryTests.Integration
         [Test]
         public void MasterDatabaseScriptExecutor_CreateDatabase()
         {
-            var target = ServerICanCreateRandomDatabasesAndTablesOn;
             string dbName = "CreateANewCatalogueDatabaseWithMasterDatabaseScriptExecutor";
 
             var database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
-            if (database != null)
-                database.ForceDrop();
+            database.ForceDrop();
 
-            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(target.DataSource, dbName, target.UserID, target.Password);
+            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(database);
             executor.CreateDatabase(@"
 CREATE TABLE Bob
 (
@@ -31,23 +29,13 @@ age int
 )
 GO", "1.0.0.0", new ThrowImmediatelyCheckNotifier());
 
-            var db = new DiscoveredServer(ServerICanCreateRandomDatabasesAndTablesOn).ExpectDatabase(dbName);
-            var versionTable = db.ExpectTable("Version");
-            var bobTable = db.ExpectTable("Bob");
+            var versionTable = database.ExpectTable("Version");
+            var bobTable = database.ExpectTable("Bob");
 
             Assert.IsTrue(versionTable.Exists());
             Assert.IsTrue(bobTable.Exists());
 
-            if (db.Exists())
-            {
-                var tables = db.DiscoverTables(true);
-                foreach (var table in tables.Where(table => table.Exists()))
-                {
-                    table.Drop();
-                }
-
-                db.Drop();
-            }
+            database.ForceDrop();
         }
 
     }

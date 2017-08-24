@@ -24,7 +24,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
                 while (r.Read())
                 {
-                    var toAdd = new DiscoveredColumn(discoveredTable, (string) r["Field"],(bool)r["Null"]);
+                    var toAdd = new DiscoveredColumn(discoveredTable, (string) r["Field"],YesNoToBool(r["Null"]));
 
                     if (r["Key"].Equals("PRI"))
                         toAdd.IsPrimaryKey = true;
@@ -40,6 +40,24 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return columns.ToArray();
             
         }
+
+        private bool YesNoToBool(object o)
+        {
+            if (o is bool)
+                return (bool)o;
+
+            if (o == null || o == DBNull.Value)
+                return false;
+
+            if (o.ToString() == "NO")
+                return false;
+            
+            if (o.ToString() == "YES")
+                return true;
+
+            return Convert.ToBoolean(o);
+        }
+
         private string SensibleTypeFromMySqlType(string type)
         {
             if (type.StartsWith("int"))//for some reason mysql likes to put parenthesis and the byte size.. ??? after the number
@@ -47,7 +65,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             if (type.StartsWith("smallint"))//for some reason mysql likes to put parenthesis and the byte size.. ??? after the number
                 return "smallint";
-            
+
+            if (type.Equals("bit(1)"))
+                return "bit";
+
             return type;
         }
 
@@ -107,9 +128,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             throw new NotImplementedException();
         }
 
+        public IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction)
+        {
+            return new MySqlBulkCopy(discoveredTable, connection, transaction);
+        }
+
         public string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)
         {
-            throw new NotImplementedException();
+            return "SELECT * FROM " + table.GetFullyQualifiedName() + " LIMIT " + topX;
         }
 
 

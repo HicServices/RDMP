@@ -52,5 +52,6 @@ namespace CatalogueLibrary.Data
         ExtractionFilter[] GetAllMandatoryFilters();
         ExtractionFilter[] GetAllFilters();
 
+        DatabaseType? GetDistinctLiveDatabaseServerType();
     }
 }

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Web.UI.WebControls;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
@@ -967,29 +968,46 @@ namespace CatalogueLibrary.Data
 
         public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
         {
-            //try with only the normal tables
-            var tables = GetTableInfoList(false);
-
-            //there are no normal tables!
-            if (!tables.Any())
-                tables = GetTableInfoList(true);
+            var tables = GetTableInfosIdeallyJustFromMainTables();
 
             distinctAccessPoint = tables.FirstOrDefault();
 
             return DataAccessPortal.GetInstance().ExpectDistinctServer(tables, context, setInitialDatabase);
         }
 
-
-        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
+        private TableInfo[] GetTableInfosIdeallyJustFromMainTables()
         {
+
             //try with only the normal tables
             var tables = GetTableInfoList(false);
 
             //there are no normal tables!
             if (!tables.Any())
                 tables = GetTableInfoList(true);
-            
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(tables, context, setInitialDatabase);
+
+            return tables;
+        }
+
+        public DatabaseType? GetDistinctLiveDatabaseServerType()
+        {
+            var tables = GetTableInfosIdeallyJustFromMainTables();
+
+            var type = tables.Select(t => t.DatabaseType).Distinct().ToArray();
+
+            if (type.Length == 0)
+                return null;
+
+            if (type.Length == 1)
+                return type[0];
+
+            throw new Exception("The Catalogue '" + this + "' has TableInfos belonging to multiple DatabaseTypes (" + string.Join(",",tables.Select(t=>t.GetRuntimeName()  +"(ID=" +t.ID + " is " + t.DatabaseType +")")));
+        }
+
+        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
+        {
+
+            return DataAccessPortal.GetInstance().ExpectDistinctServer(
+                GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
         }
 
         /// <summary>

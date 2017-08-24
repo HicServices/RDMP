@@ -25,6 +25,8 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;
@@ -71,6 +73,7 @@ namespace CatalogueManager.ExtractionUIs
         private bool _namesMatchedWhenDialogWasLaunched = false;
 
         private bool isFirstTimeSetupCalled = true;
+        private IQuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
         public ExtractionInformationUI()//For use with SetDatabaseObject
         {
@@ -90,11 +93,11 @@ namespace CatalogueManager.ExtractionUIs
         private bool BeforeSave(DatabaseEntity arg)
         {
             //alias prefix is ' as ' so make sure user doesn't start a new line with "bobbob\r\nas fish" since this won't be recognised, solve the problem by inserting the original alias
-            if (RDMPQuerySyntaxHelper.AliasPrefix.StartsWith(" "))
+            if (_querySyntaxHelper.AliasPrefix.StartsWith(" "))
             {
                 string before = QueryEditor.Text;
-                string after = Regex.Replace(before, "^" + RDMPQuerySyntaxHelper.AliasPrefix.TrimStart(),
-                    RDMPQuerySyntaxHelper.AliasPrefix, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                string after = Regex.Replace(before, "^" + _querySyntaxHelper.AliasPrefix.TrimStart(),
+                    _querySyntaxHelper.AliasPrefix, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
                 if (!before.Equals(after))
                     QueryEditor.Text = after;
@@ -114,7 +117,7 @@ namespace CatalogueManager.ExtractionUIs
                 string alias;
                 
                 //ensure it's all on one line
-                RDMPQuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(QueryEditor.Text, out sql, out alias);
+                _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(QueryEditor.Text, out sql, out alias);
 
                 ExtractionInformation.SelectSQL = sql;
                 ExtractionInformation.Alias = alias;
@@ -186,7 +189,7 @@ namespace CatalogueManager.ExtractionUIs
             }
 
 
-            QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias) ? RDMPQuerySyntaxHelper.AliasPrefix + ExtractionInformation.Alias : "");
+            QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias) ? _querySyntaxHelper.AliasPrefix + ExtractionInformation.Alias : "");
             lblFromTable.Text = ExtractionInformation.ColumnInfo.TableInfo.Name;
 
             tbDefaultOrder.Text = ExtractionInformation.Order.ToString();

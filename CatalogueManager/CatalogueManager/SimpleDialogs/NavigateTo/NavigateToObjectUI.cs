@@ -19,6 +19,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
 {

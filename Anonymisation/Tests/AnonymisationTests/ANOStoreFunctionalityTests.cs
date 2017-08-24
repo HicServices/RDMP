@@ -13,15 +13,18 @@ namespace AnonymisationTests
         [Test]
         public void CanAccessANODatabase_Directly()
         {
-            SqlConnection con = new SqlConnection(ANOStore_ConnectionStringBuilder.ConnectionString);
-            con.Open();
+            var server = ANOStore_Database.Server;
+            using (var con = server.GetConnection())
+            {
+                con.Open();
 
-            SqlCommand cmd = new SqlCommand("Select version from RoundhousE.Version", con);
-            var version = new Version(cmd.ExecuteScalar().ToString());
+                var cmd = server.GetCommand("Select version from RoundhousE.Version", con);
+                var version = new Version(cmd.ExecuteScalar().ToString());
 
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
 
-            con.Close();
+                con.Close();
+            }
         }
 
         [Test]
@@ -42,15 +45,17 @@ namespace AnonymisationTests
         [Test]
         public void CanAccessIdentifierDumpDatabase_Directly()
         {
-            SqlConnection con = new SqlConnection(IdentifierDump_ConnectionStringBuilder.ConnectionString);
-            con.Open();
+            using (var con = IdentifierDump_Database.Server.GetConnection())
+            {
+                con.Open();
 
-            SqlCommand cmd = new SqlCommand("Select version from RoundhousE.Version", con);
-            var version = new Version(cmd.ExecuteScalar().ToString());
+                var cmd = IdentifierDump_Database.Server.GetCommand("Select version from RoundhousE.Version", con);
+                var version = new Version(cmd.ExecuteScalar().ToString());
 
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
 
-            con.Close();
+                con.Close();
+            }
         }
 
         [Test]

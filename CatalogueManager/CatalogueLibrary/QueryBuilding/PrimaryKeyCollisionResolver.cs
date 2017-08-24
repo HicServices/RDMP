@@ -53,7 +53,7 @@ WHERE DuplicateCount > 1";
             primaryKeys = primaryKeys.TrimEnd(new[] {','});
 
 
-            sql += "--Notice how entities are not fully indexed with Database, this is because this code will run on RAW servers, prior to reaching STAGING/LIVE - the place where there are primary keys" + Environment.NewLine;
+            sql += "/*Notice how entities are not fully indexed with Database, this is because this code will run on RAW servers, prior to reaching STAGING/LIVE - the place where there are primary keys*/" + Environment.NewLine;
 
             sql += WithCTE + Environment.NewLine;
             sql += "AS" + Environment.NewLine;
@@ -63,7 +63,7 @@ WHERE DuplicateCount > 1";
             sql += "\t\t " + primaryKeys + Environment.NewLine;
             sql += "\t ORDER BY"  + Environment.NewLine;
 
-            sql += "\t -- Priority in which order they should be used to resolve duplication of the primary key values, order by:"  + Environment.NewLine;
+            sql += "\t /*Priority in which order they should be used to resolve duplication of the primary key values, order by:*/"  + Environment.NewLine;
             
             resolvers = new List<IResolveDuplication>();
 
