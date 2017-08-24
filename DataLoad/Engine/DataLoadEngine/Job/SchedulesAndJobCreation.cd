@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="For working out how to generate dates">
+    <Position X="9" Y="1" Height="0.354" Width="2.554" />
+  </Comment>
+  <Comment CommentText="A Schedule is a way of working out what dates we should be loading for a given dataset.  This requires the Schedule to be told what the Strategy is e.g. 'Single day at a time'.  The JobDateGenerationStrategy is the bit that calculates date ranges. ">
+    <Position X="4.01" Y="0.917" Height="0.969" Width="4.387" />
+  </Comment>
+  <Class Name="DataLoadEngine.Job.Scheduling.MultipleScheduleJobFactory" Collapsed="true">
+    <Position X="3" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAhAABAAIAAAAAAAAAAAAAAAEAAAgAAAAgAAAA=</HashCode>
+      <FileName>Job\Scheduling\MultipleScheduleJobFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Job.Scheduling.ScheduledDataLoadJob" Collapsed="true">
+    <Position X="4.25" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Job\Scheduling\ScheduledDataLoadJob.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Job.Scheduling.ScheduledJobFactory" Collapsed="true">
+    <Position X="4" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAgAAAAAAAAAABAAAAAAEAAAAAAAAAgAAA=</HashCode>
+      <FileName>Job\Scheduling\ScheduledJobFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Job.Scheduling.SingleScheduledJobFactory" Collapsed="true">
+    <Position X="5.5" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAEAAAACAAAAAAAA=</HashCode>
+      <FileName>Job\Scheduling\SingleScheduledJobFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Job.Scheduling.JobDateGenerationStrategyFactory" Collapsed="true">
+    <Position X="9" Y="1.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAgAAAAAEAAAAAAAAAAIAI=</HashCode>
+      <FileName>Job\Scheduling\JobDateGenerationStrategyFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Job.Scheduling.ListOfScheduleDatesFromCacheDirectory" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.25" Y="3.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAIAAAAAAAAAAAAAAAAAAAogM=</HashCode>
+      <FileName>Job\Scheduling\ListOfScheduleDatesFromCacheDirectory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Job.Scheduling.SingleScheduleConsecutiveDateStrategy" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9" Y="3.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Job\Scheduling\SingleScheduleConsecutiveDateStrategy.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.JobFactory" Collapsed="true">
+    <Position X="6" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAEAAAAAAAAAAAAAAAAAEAAAAAIAAAAAAA=</HashCode>
+      <FileName>Job\JobFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Job.DataLoadJob" Collapsed="true">
+    <Position X="1.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>KkAAAEACAYggEAAAAABAIAIQIkAAARCAAABAgAAIgkA=</HashCode>
+      <FileName>Job\DataLoadJob.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="DataLoadEngine.Job.Scheduling.IJobDateGenerationStrategy" Collapsed="true">
+    <Position X="9" Y="2.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Job\Scheduling\IJobDateGenerationStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.IJobFactory" Collapsed="true">
+    <Position X="4" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Job\IJobFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.Job.IDataLoadJob" Collapsed="true">
+    <Position X="1.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>KkAAAAAAAIggEAAAAABAAAIAIgAAARAAAABAAAAAAkA=</HashCode>
+      <FileName>Job\IDataLoadJob.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

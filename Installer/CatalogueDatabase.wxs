@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:sql="http://schemas.microsoft.com/wix/SqlExtension">
+  
+	<!--<Fragment>
+    <DirectoryRef Id="CatManProgramFolder">
+        <Component Id="CatalogueDatabaseSql" Guid="2118243F-7751-4D90-87AD-E15B3C7D9B24">
+          <sql:SqlDatabase Id="CatalogueDatabaseCreate"
+                          Database="[CATALOGUE_DATABASE]"
+                          Server="[CATALOGUE_SERVER]"
+                          CreateOnInstall="yes"
+                          DropOnUninstall="no">
+            --><!-- Does not support UTF8 (and you don't find out until the install fails!), remember to save sql scripts as ANSI or Unicode --><!--
+            <sql:SqlScript Id="CreateScript" ExecuteOnInstall="yes" BinaryKey="CreateCatalogue28052015"/>
+          </sql:SqlDatabase>
+        </Component>
+      </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <Binary Id="CreateCatalogue28052015" SourceFile="CreateCatalogue28052015.sql" />
+  </Fragment>-->
+
+
+
+
+</Wix>

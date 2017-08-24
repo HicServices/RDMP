@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:sql="http://schemas.microsoft.com/wix/SqlExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<!-- should we be using Product ID="*"?-->
+  <Product Id="D0DDC220-2ACD-4B02-BB1A-23B390E5049A" Name="RDMP Tools" Language="1033" Version="1.0.0.0" Manufacturer="HIC" UpgradeCode="117C61DE-513E-4FF6-8DD3-C7404FD9A8AB"
+           Codepage="1252">
+    
+		<Package Id="D6C4414A-6F9F-4665-8DE7-03675CE0C040" Keywords="RDMP" 
+             Description="Research Data Management Platform Tools" Manufacturer="HIC"
+             InstallerVersion="200" Compressed="yes" Languages="1033" SummaryCodepage="1252"
+             InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+    <WixVariable Id ="WixUIDialogBmp" Value="WixUIDialogBmp.bmp"/>
+    <WixVariable Id ="WixUIBannerBmp" Value="WixUIBannerBmp.bmp"/>
+    
+    <Feature Id="RDMPTools" Title="Research Data Management Platform Tools" Display="expand">
+
+
+      <!--<Feature Id="CatalogueDatabase" Title="Catalogue Database" Description="Catalogue Manager description. Lorem ipsum dolor amet..." Level="1">
+        <ComponentRef Id="CatalogueDatabaseSql" />
+      </Feature>-->
+
+      <Feature Id="CatalogueManager" Title="Catalogue Manager" Description="The Catalogue Manager facilitates the catalogue management process.It keeps the catalogue up-to-date, monitors dataset issues and populates metadata for new datasets." Level="1">
+        <ComponentGroupRef Id="CatalogueManager.Binaries" />
+        <ComponentRef Id="CatManStartMenuShortcuts" />
+        <ComponentRef Id="ApplicationProgramsFolderComponent" />
+      </Feature>
+
+        <Feature Id="CohortManager" Title="Cohort Manager" Description="The Cohort Manager identifies groups linked using a common identifier." Level="1">
+            <ComponentGroupRef Id="CohortManager.Assemblies" />
+            <ComponentRef Id="CohortManagerStartMenuShortcuts" />
+            <ComponentRef Id="ApplicationProgramsFolderComponent" />
+        </Feature>
+
+        <Feature Id="DatasetLoaderUI" Title="Dataset Loader" Description="The Dataset Loader is a single platform for data loading, managing remote data sources and loading data from structured and unstructured local sources." Level="1">
+        <ComponentGroupRef Id="DatasetLoaderUI.Assemblies" />
+        <ComponentRef Id="DatasetLoaderUIStartMenuShortcuts" />
+        <ComponentRef Id="ApplicationProgramsFolderComponent" />
+      </Feature>
+        
+      <Feature Id="DataExportManager" Title="Data Export Manager" Description="The Data Export Manager provides a structured means of versioning and releasing cohort-based datasets." Level="1">
+        <ComponentGroupRef Id="DataExportManager.Assemblies" />
+        <ComponentRef Id="DEMStartMenuShortcuts" />
+        <ComponentRef Id="ApplicationProgramsFolderComponent" />
+      </Feature>
+    </Feature>
+    
+    <Feature Id="DLEPlugins" Title="RDMP Custom Plugins" Display="expand">
+      <ComponentGroupRef Id="PACS" />
+    </Feature>
+
+    <Icon Id="CatManIcon" SourceFile="$(var.CatalogueManager.TargetDir)\CatalogueManager.exe" />
+
+    <UIRef Id="CustomInstall" />
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationProgramsFolderComponent" Guid="8B00FB50-AF14-4B77-8117-4B8E075EB3D9">
+        <RegistryKey Action="createAndRemoveOnUninstall" Root="HKCU" Key="Software\HIC\RDMPTools">
+          <RegistryValue Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        </RegistryKey>
+        <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall"></RemoveFolder>
+      </Component>
+    </DirectoryRef>
+    
+    <DirectoryRef Id="CatManProgramFolder">
+      <Component Id="CatManStartMenuShortcuts" Guid="D02293DC-495C-46B7-8792-C623692D1F09">
+        <Shortcut Id="CatManStartMenuShortcut"
+                  Name="Catalogue Manager"
+                  Description="The Catalogue Manager facilitates the catalogue management process.It keeps the catalogue up-to-date, monitors dataset issues and populates metadata for new datasets."
+                  Target="[#cm_fil7E509721979F0C26DD4FB93D99FEAC7F]"
+                  WorkingDirectory="CATMANROOTDIRECTORY" />
+        <RemoveFolder Id="RemoveCatManProgramFolder" On="uninstall" />
+        <RegistryKey Action="createAndRemoveOnUninstall" Root="HKCU" Key="Software\HIC\RDMPTools\CatalogueManager">
+          <RegistryValue Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        </RegistryKey>
+      </Component>
+    </DirectoryRef>
+
+      <DirectoryRef Id="CohortManagerProgramFolder">
+          <Component Id="CohortManagerStartMenuShortcuts" Guid="28DF0153-760F-4413-A8F5-7A17D9DF1C28">
+              <Shortcut Id="CohortManagerStartMenuShortcut"
+                        Name="Cohort Manager"
+                        Description="The Cohort Manager allows the identification of patien/subject groups linked using a common identifier by drawing on multiple datasets using set operations."
+                        Target="[#com_fil5128DFE936704EDB803C3D49EDE1C3A3]"
+                        WorkingDirectory="COHMANROOTDIRECTORY" />
+              <RemoveFolder Id="RemoveCohortManagerProgramFolder" On="uninstall" />
+              <RegistryKey Action="createAndRemoveOnUninstall" Root="HKCU" Key="Software\HIC\RDMPTools\CohortManager">
+                  <RegistryValue Name="installed" Type="integer" Value="1" KeyPath="yes" />
+              </RegistryKey>
+          </Component>
+      </DirectoryRef>
+
+    <DirectoryRef Id="DatasetLoaderProgramFolder">
+      <Component Id="DatasetLoaderUIStartMenuShortcuts" Guid="33FF14B3-1DB6-49AE-A1E4-79D014F41A4E">
+        <Shortcut Id="DatasetLoaderUIStartMenuShortcut"
+                  Name="Dataset Loader"
+                  Description="The Dataset Loader is a single platform for data loading, managing remote data sources and loading data from structured and unstructured local sources."
+                  Target="[#fil836A0357E185AC1278D0A2872F5AEB36]"
+                  WorkingDirectory="LOADERROOTDIRECTORY" />
+        <RemoveFolder Id="RemoveDatasetLoaderProgramFolder" On="uninstall" />
+        <RegistryKey Action="createAndRemoveOnUninstall" Root="HKCU" Key="Software\HIC\RDMPTools\DatasetLoader">
+          <RegistryValue Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        </RegistryKey>
+      </Component>
+    </DirectoryRef>
+
+      <DirectoryRef Id="DataExportManagerProgramFolder">
+          <Component Id="DEMStartMenuShortcuts" Guid="5C32B645-0DFE-4CDA-BD45-5447FCC0ABE2">
+              <Shortcut Id="DEMStartMenuShortcut"
+                        Name="Data Export Manager"
+                        Description="The Data Export Manager provides a structured means of versioning and releasing cohort-based datasets."
+                        Target="[#dem_EA5244245B6749FDBDC1F05A70536062]"
+                        WorkingDirectory="DEMROOTDIRECTORY" />
+              <RemoveFolder Id="RemoveDataExportManagerProgramFolder" On="uninstall" />
+              <RegistryKey Action="createAndRemoveOnUninstall" Root="HKCU" Key="Software\HIC\RDMPTools\DataExportManager">
+                  <RegistryValue Name="installed" Type="integer" Value="1" KeyPath="yes" />
+              </RegistryKey>
+          </Component>
+      </DirectoryRef>
+    
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="RDMPROOT" Name="RDMP">
+          <Directory Id="CATMANROOTDIRECTORY" Name="Catalogue Manager" />
+           <Directory Id="COHMANROOTDIRECTORY" Name="Cohort Manager" />
+          <Directory Id="LOADERROOTDIRECTORY" Name="Dataset Loader" >
+            <Directory Id="LOADERPLUGINS" Name="Plugins"/>
+          </Directory>
+           <Directory Id="DEMROOTDIRECTORY" Name="Data Export Manager" />
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="RDMP Tools">
+          <Directory Id="CatManProgramFolder" Name="Catalogue Manager" />
+            <Directory Id="CohortManagerProgramFolder" Name="Cohort Manager" />
+          <Directory Id="DatasetLoaderProgramFolder" Name="Dataset Loader" />
+          <Directory Id="DataExportManagerProgramFolder" Name="Data Export Manager" />
+        </Directory>
+      </Directory>
+    </Directory>
+	</Fragment>
+</Wix>

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5EC77801-AC9C-4DA1-8597-9A66D058112F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>QueryCachingTests</RootNamespace>
+    <AssemblyName>QueryCachingTests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="CachedAggregateConfigurationResultsManagerTests.cs" />
+    <Compile Include="ExtractableAggregateCachingTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryCachingDatabaseTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
+      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
+      <Name>CatalogueLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
+      <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
+      <Name>DataExportLibrary.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
+      <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
+      <Name>DataLoadEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
+      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
+      <Name>MapsDirectlyToDatabaseTable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
+      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
+      <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj">
+      <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
+      <Name>Tests.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QueryCaching.Database\QueryCaching.Database.csproj">
+      <Project>{3fd82ca1-5f5a-4142-957a-13b29d729ec8}</Project>
+      <Name>QueryCaching.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QueryCaching\QueryCaching.csproj">
+      <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
+      <Name>QueryCaching</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

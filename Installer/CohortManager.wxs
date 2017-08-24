@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="COHMANROOTDIRECTORY">
+            
+             <!-- Needed for ReConfigurePlatformDatabases and LoadMetadataUI dialogs -->
+            <Component Id="com_CatalogueManager.exe" Guid="*">
+                <File Id="com_fil_CatalogueManager.exe" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\CatalogueManager.exe" />
+            </Component>
+            <Component Id="com_CohortManager.exe" Guid="*">
+                <File Id="com_fil5128DFE936704EDB803C3D49EDE1C3A3" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\CohortManager.exe" />
+            </Component>
+            <Component Id="com_cmpC2754C85B582439294A252207D64C1D3" Guid="*">
+                <File Id="com_filB38FAF6D210148B6979C28A6C9C65A7E" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ANOStore.Database.dll" />
+            </Component>
+            <Component Id="com_cmp1299D860447B69ABB60A5D1B7A7A9152" Guid="*">
+                <File Id="com_fil79ABC74E8A90C11C077E4CD2D0FDC0DE" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\CatalogueLibrary.dll" />
+            </Component>
+            <Component Id="com_cmp98AC5FD113B4445F8C1636967B9D5C20" Guid="*">
+                <File Id="com_fil78609F2926B5422BAFC2F56578A1AD8F" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\CatalogueLibrary.Database.dll" />
+            </Component>
+            <Component Id="com_cmpE507A1C6BB441CEB0F38DD2D4AD3F3A2" Guid="*">
+                <File Id="com_fil5A65BEF9C3E00B4AE3E8F0F569C83979" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\CsvHelper.dll" />
+            </Component>
+            <Component Id="com_cmpCA31154B59581219A1C65A7E5ED4AAA6" Guid="*">
+                <File Id="com_fil88EE93C520D09B9AB5C6769D42BE38CF" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\DataExportManager2Library.dll" />
+            </Component>
+            <Component Id="com_cmp5F7E47D2429445C184022E8498DA1C74" Guid="*">
+                <File Id="com_filC7997951B39C4F7B99E08CFD617CCBBD" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\DataExportManager2.Database.dll" />
+            </Component>
+            <Component Id="com_cmp0CDD720EB88C6F8C12B594314822EBC2" Guid="*">
+                <File Id="com_fil0FBF3B5405043D3FA81AC2F3CFD59AF2" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\DataLoadEngine.dll" />
+            </Component>
+            <Component Id="com_cmp38ACDDB0273A4CA98FDC68BD46DF6FD2" Guid="*">
+                <File Id="com_fil781FED5D681345B1B57E4ABA1AFDDA2D" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\CohortManagerLibrary.dll" />
+            </Component>
+            <!--<Component Id="com_cmp6B586ED4AA5A48C140B3B99977D3ABBF" Guid="*">
+                <File Id="com_fil836A0357E185AC1278D0A2872F5AEB36" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\DatasetLoaderUI.exe" />
+            </Component> -->
+            <Component Id="com_cmp2A29C8F2C8F15BC3BA27BC3BAB20EA75" Guid="*">
+                <File Id="com_fil5DD39397EBB2034071A70B156A02C95E" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\Diagnostics.dll" />
+            </Component>
+            <Component Id="com_cmp569093E4C65002B37D445741DC115569" Guid="*">
+                <File Id="com_filDB71C4B5384E56BC52E8B65EE2E6CA30" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\Dicom.dll" />
+            </Component>
+            <Component Id="com_cmpC7CF8466CA81199E73AD23F1CFD4B9D1" Guid="*">
+                <File Id="com_fil552B5602D0FE9F71CE1675CA8A9B7205" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\DiffieHellman.dll" />
+            </Component>
+            <Component Id="com_cmp29AB443805EC477AA2635260717FFA72" Guid="*">
+                <File Id="com_fil0919C80CD7F749DC9518AB824CCEC0CB" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\FluentNHibernate.dll" />
+            </Component>
+            <Component Id="com_cmp0C227F0B3A1A42ED84982CA98043AF36" Guid="*">
+                <File Id="com_filB3BD512C581249C49685A3F1C7217449" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\GraphX.Controls.dll" />
+            </Component>
+            <Component Id="com_cmp55E23AC275264454A4A0476A6D86212B" Guid="*">
+                <File Id="com_filDB077BDD027248B9A0B70F101622EE0D" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\GraphX.PCL.Common.dll" />
+            </Component>
+            <Component Id="com_cmp06330F29DA26422CA3CF69D84AE7E45C" Guid="*">
+                <File Id="com_filF5DB6D44E57C4C12BBD2E5085015D878" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\GraphX.PCL.Logic.dll" />
+            </Component>
+            <Component Id="com_cmp8C749D48B68C4C29D549A016A0D71015" Guid="*">
+                <File Id="com_filE0AFA3C0408C18465BE10AB8367EC521" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\HIC.Logging.dll" />
+            </Component>
+            <Component Id="com_cmp6DCAB764AADD4A7EB4DCA30372D96D4C" Guid="*">
+                <File Id="com_filFA121395177D4100A4D30C128AB6220B" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\HIC.Logging.Database.dll" />
+            </Component>
+            <Component Id="com_cmp612B8EDB65D51904C1652A7E7B28F59F" Guid="*">
+                <File Id="com_filC4FB21276BDBCDD1F4E7BF8A7F45C4A5" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ICSharpCode.SharpZipLib.dll" />
+            </Component>
+            <Component Id="com_cmpBC7CC8633C9D4A0ABC0FB89EC10368C6" Guid="*">
+                <File Id="com_fil38377D12D65C477B9BD18E1C60E53A83" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\Iesi.Collections.dll" />
+            </Component>
+            <Component Id="com_cmp842C8E0262D9ECF381FA551D8D181FF3" Guid="*">
+                <File Id="com_fil879AE43C6A45FBF84DC487EF56FB747B" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\LoadModules.Generic.dll" />
+            </Component>
+           <!-- <Component Id="com_cmp21F309C806FA488DFFFE5378BCF611FF" Guid="*">
+                <File Id="com_fil144615CECAA1643F18747602C1CE74E7" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\log4net.config" />
+            </Component>-->
+            <Component Id="com_cmpACB6CD6FFB2A84501BD9E8392459FA45" Guid="*">
+                <File Id="com_fil53CF67BC1F7314B08C1D64A6CEA223E4" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\log4net.dll" />
+            </Component>
+            <Component Id="com_cmp6249D07397494894AF7C81F88380D40E" Guid="*">
+                <File Id="com_filD2E1C3ABFD3946BEA77471FD3FF455D4" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\MapsDirectlyToDatabaseTable.dll" />
+            </Component>
+            <Component Id="com_cmpEA91A1CAC0A304287222B9432625E816" Guid="*">
+                <File Id="com_filC092736C4A64C000E1A264349D6E0CCB" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\MySql.Data.dll" />
+            </Component>
+            <Component Id="com_cmpA38A81F41EBC6C795F530AF736168DD0" Guid="*">
+                <File Id="com_filD99192F3EF926B0696A896924D4A93A9" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\NLog.dll" />
+            </Component>
+            <Component Id="com_cmp31DD069827FB41569AD7712013DF5567" Guid="*">
+                <File Id="com_fil51966496D5FA44CEA9B5E38B30268E9B" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\NHibernate.dll" />
+            </Component>
+            <Component Id="com_cmpC2255923CCE5D193305E160FBD29CA49" Guid="*">
+                <File Id="com_fil131AF8D114BDC5779E719BB8E000F2A6" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\Org.Mentalis.Security.dll" />
+            </Component>
+            <Component Id="com_cmp28F4A526498B40F0AC6BEED9E63C65C8" Guid="*">
+                <File Id="com_filD5E5E897DCFD475BAAFFD5DE9B4B229E" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ObjectListView.dll" />
+            </Component>
+            <Component Id="com_cmp47B814B56D7A2EAEF582D37497796325" Guid="*">
+                <File Id="com_fil2800066FBE8546E4819A636F17F53FA9" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ReusableLibraryCode.dll" />
+            </Component>
+            <Component Id="com_cmp033D828C9CCC80FBF4E9CD673BFDA264" Guid="*">
+                <File Id="com_fil6DF3C397FADEBA59573130431A211DBC" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ReusableUIComponents.dll" />
+            </Component>
+            <Component Id="com_cmp4231F68F922847AC85DA2E694387719C" Guid="*">
+                <File Id="com_fil3656C362851440D4B5255670FC3EC740" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\QuickGraph.dll" />
+            </Component>
+            <Component Id="com_cmp9A99E5F6EA1A4A388E9BF7E94AC860E5" Guid="*">
+                <File Id="com_filF50C0562E79845F4BB123071D66F248E" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\RDMPObjectVisualisation.dll" />
+            </Component>
+            <Component Id="com_cmpDCB3F8B05400425FA55FDCF010BC2B79" Guid="*">
+                <File Id="com_filA040CC97FD124DB5ACA17F07C117DB95" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\roundhouse.databases.sqlserver.dll" />
+            </Component>
+            <Component Id="com_cmp4892F6E318F642EABBA89A9F070FD941" Guid="*">
+                <File Id="com_filB05DE86496674966A760FC1AB9AA5D95" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\roundhouse.dll" />
+            </Component>
+            <Component Id="com_cmp10A8D2BEB419A4BD4E7A3F808C0713E2" Guid="*">
+                <File Id="com_filE16BFF406FF8805F55B6FEBF17269B36" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\SciLexer.dll" />
+            </Component>
+            <Component Id="com_cmpFD90520610D2D16C043B553B731DC300" Guid="*">
+                <File Id="com_filF313C767F04D281A1D154EF46A28DC51" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\SciLexer64.dll" />
+            </Component>
+            <Component Id="com_cmp447D3EF9ED34A4D54692D40FB6E15F35" Guid="*">
+                <File Id="com_filFC7B7595A145BC9B57C56F356F1EB4B8" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ScintillaNET.dll" />
+            </Component>
+            <Component Id="com_cmp5123E10D7237F2459A2F6600D6E9621A" Guid="*">
+                <File Id="com_filC54E916FB59050E9EB98E9810FA2487C" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\Tamir.SharpSSH.dll" />
+            </Component>
+            <Component Id="com_cmp5F56F78E8C4F421E90F7B56A221E37E6" Guid="*">
+                <File Id="com_fil22A82B6511BF4168A9ADE5DD3E419C83" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\Ticketing.dll" />
+            </Component>
+            <Component Id="com_cmp87E0CE7C333DECAA55C968CAA3009409" Guid="*">
+                <File Id="com_fil989A51E2BE9A1BDCA82EFB30A7BBD156" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ValidationLibrary.dll" />
+            </Component>
+            <Component Id="com_cmpB0E0AA7232F3908A62F48D1303BD0C98" Guid="*">
+                <File Id="com_fil180CF7293170539C037AF54BFCADF604" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ValidationUI.exe" />
+            </Component>
+            <Component Id="com_cmpA851CBFAFB2688CAF398592F2BE0C289" Guid="*">
+                <File Id="com_fil7F68EF6960CF494D1713FDCEE34F40D4" KeyPath="yes" Source="$(var.CohortManager _CohortManager\CohortManager_.TargetDir)\ValidationUtilities.dll" />
+            </Component>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="CohortManager.Assemblies">
+            <ComponentRef Id="com_CatalogueManager.exe"/>
+            <ComponentRef Id="com_CohortManager.exe"/>
+           <!-- <ComponentRef Id="com_cmp22C3ED249537F4BED9AD7D1F0646BF7B" /> -->
+            <ComponentRef Id="com_cmp1299D860447B69ABB60A5D1B7A7A9152" />
+            <ComponentRef Id="com_cmpE507A1C6BB441CEB0F38DD2D4AD3F3A2" />
+            <ComponentRef Id="com_cmpCA31154B59581219A1C65A7E5ED4AAA6" />
+            <ComponentRef Id="com_cmp0CDD720EB88C6F8C12B594314822EBC2" />
+            <!--<ComponentRef Id="com_cmp6B586ED4AA5A48C140B3B99977D3ABBF" /> -->
+            <ComponentRef Id="com_cmp2A29C8F2C8F15BC3BA27BC3BAB20EA75" />
+            <ComponentRef Id="com_cmp569093E4C65002B37D445741DC115569" />
+            <ComponentRef Id="com_cmpC7CF8466CA81199E73AD23F1CFD4B9D1" />
+            <ComponentRef Id="com_cmp8C749D48B68C4C29D549A016A0D71015" />
+            <ComponentRef Id="com_cmp612B8EDB65D51904C1652A7E7B28F59F" />
+            <ComponentRef Id="com_cmp842C8E0262D9ECF381FA551D8D181FF3" />
+           <!-- <ComponentRef Id="com_cmp21F309C806FA488DFFFE5378BCF611FF" /> -->
+            <ComponentRef Id="com_cmpACB6CD6FFB2A84501BD9E8392459FA45" />
+            <ComponentRef Id="com_cmpEA91A1CAC0A304287222B9432625E816" />
+            <ComponentRef Id="com_cmpA38A81F41EBC6C795F530AF736168DD0" />
+            <ComponentRef Id="com_cmpC2255923CCE5D193305E160FBD29CA49" />
+            <ComponentRef Id="com_cmp47B814B56D7A2EAEF582D37497796325" />
+            <ComponentRef Id="com_cmp033D828C9CCC80FBF4E9CD673BFDA264" />
+            <ComponentRef Id="com_cmp10A8D2BEB419A4BD4E7A3F808C0713E2" />
+            <ComponentRef Id="com_cmpFD90520610D2D16C043B553B731DC300" />
+            <ComponentRef Id="com_cmp447D3EF9ED34A4D54692D40FB6E15F35" />
+            <ComponentRef Id="com_cmp5123E10D7237F2459A2F6600D6E9621A" />
+            <ComponentRef Id="com_cmp87E0CE7C333DECAA55C968CAA3009409" />
+            <ComponentRef Id="com_cmpB0E0AA7232F3908A62F48D1303BD0C98" />
+            <ComponentRef Id="com_cmpA851CBFAFB2688CAF398592F2BE0C289" />
+            <ComponentRef Id="com_cmp6249D07397494894AF7C81F88380D40E" />
+            <ComponentRef Id="com_cmp98AC5FD113B4445F8C1636967B9D5C20" />
+            <ComponentRef Id="com_cmp5F7E47D2429445C184022E8498DA1C74" />
+            <ComponentRef Id="com_cmp29AB443805EC477AA2635260717FFA72" />
+            <ComponentRef Id="com_cmp6DCAB764AADD4A7EB4DCA30372D96D4C" />
+            <ComponentRef Id="com_cmpBC7CC8633C9D4A0ABC0FB89EC10368C6" />
+            <ComponentRef Id="com_cmpDCB3F8B05400425FA55FDCF010BC2B79" />
+            <ComponentRef Id="com_cmp4892F6E318F642EABBA89A9F070FD941" />
+            <ComponentRef Id="com_cmp31DD069827FB41569AD7712013DF5567" />
+            <ComponentRef Id="com_cmpC2754C85B582439294A252207D64C1D3" />
+            <ComponentRef Id="com_cmp0C227F0B3A1A42ED84982CA98043AF36" />
+            <ComponentRef Id="com_cmp55E23AC275264454A4A0476A6D86212B" />
+            <ComponentRef Id="com_cmp06330F29DA26422CA3CF69D84AE7E45C" />
+            <ComponentRef Id="com_cmp28F4A526498B40F0AC6BEED9E63C65C8" />
+            <ComponentRef Id="com_cmp4231F68F922847AC85DA2E694387719C" />
+            <ComponentRef Id="com_cmp9A99E5F6EA1A4A388E9BF7E94AC860E5" />
+            <ComponentRef Id="com_cmp5F56F78E8C4F421E90F7B56A221E37E6" />
+            <ComponentRef Id="com_cmp38ACDDB0273A4CA98FDC68BD46DF6FD2" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MapsDirectlyToDatabaseTable.MapsDirectlyToDatabaseTableRepository">
+    <Position X="5.25" Y="1.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>IASQAgAAgAAAAAAIQAgIAEBAEAAAAIAAMAAIAIAAACA=</HashCode>
+      <FileName>MapsDirectlyToDatabaseTableRepository.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapsDirectlyToDatabaseTable.NoMappingToDatabase" Collapsed="true">
+    <Position X="8.5" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NoMappingToDatabase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapsDirectlyToDatabaseTable.SqlSyntaxHelper" Collapsed="true">
+    <Position X="8.5" Y="4.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAIAAAAAAA=</HashCode>
+      <FileName>SqlSyntaxHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Settings.DatabaseConnectionConfiguration">
+    <Position X="15" Y="9.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAgAAAAAAAAAAAAAACAAQABAgAAAA=</HashCode>
+      <FileName>Settings\DatabaseConnectionConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Settings.RegistryDatabaseConnectionConfiguration">
+    <Position X="14.75" Y="5.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAEABAAACAAAAAAEAAAAAAAAAABAgAAAA=</HashCode>
+      <FileName>Settings\RegistryDatabaseConnectionConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapsDirectlyToDatabaseTable.DatabaseCommandHelper">
+    <Position X="8.5" Y="5.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>ABAQAAAAAAAAAAAAAAAAQAAAAAAAQAAAAAAAAJBAAAA=</HashCode>
+      <FileName>DatabaseCommandHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="MapsDirectlyToDatabaseTable.IMapsDirectlyToDatabaseTable">
+    <Position X="2" Y="1.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IMapsDirectlyToDatabaseTable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.ISaveable" Collapsed="true">
+    <Position X="8.5" Y="1.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>ISaveable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.IDeleteable" Collapsed="true">
+    <Position X="8.5" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IDeleteable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="MapsDirectlyToDatabaseTable.DatabaseType">
+    <Position X="10.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>DatabaseType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

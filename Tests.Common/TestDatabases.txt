@@ -1,0 +1,10 @@
+﻿#Expects the following to exist on the server:
+#Catalogue
+#DQE
+#DataExport
+#Logging
+#To achieve this, you can run DatabaseCreation.exe with argument 1 being your ServerName
+#You can apply a prefix e.g. TEST_ as an argument to DatabaseCreation.exe and include that prefix below if you like
+
+ServerName:localhost\sqlexpress
+Prefix:TEST_

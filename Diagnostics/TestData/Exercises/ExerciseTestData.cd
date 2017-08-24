@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Diagnostics.TestData.Exercises.BiochemistryExerciseTestData" Collapsed="true">
+    <Position X="8.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>TestData\Exercises\BiochemistryExerciseTestData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diagnostics.TestData.Exercises.DemographyExerciseTestData" Collapsed="true">
+    <Position X="6" Y="4.75" Width="2.25" />
+    <InheritanceLine Type="Diagnostics.TestData.Exercises.ExerciseTestDataGenerator" FixedFromPoint="true">
+      <Path>
+        <Point X="7.25" Y="3.062" />
+        <Point X="7.25" Y="4.375" />
+        <Point X="7.125" Y="4.375" />
+        <Point X="7.125" Y="4.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>TestData\Exercises\DemographyExerciseTestData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diagnostics.TestData.Exercises.ExerciseTestDataGenerator" Collapsed="true">
+    <Position X="6" Y="2.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAACAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>TestData\Exercises\ExerciseTestDataGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Diagnostics.TestData.Exercises.ExerciseTestIdentifiers" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAACAAAAABAAAAAAA=</HashCode>
+      <FileName>TestData\Exercises\ExerciseTestIdentifiers.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Diagnostics.TestData.Exercises.PrescribingExerciseTestData" Collapsed="true">
+    <Position X="3.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAACAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>TestData\Exercises\PrescribingExerciseTestData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Diagnostics.TestData.Exercises.IExerciseTestDataGenerator">
+    <Position X="5.75" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TestData\Exercises\IExerciseTestDataGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Diagnostics.TestData.Exercises.IExerciseTestIdentifiers">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>TestData\Exercises\IExerciseTestIdentifiers.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Sets up STAGING and (optionally) RAW databases">
+    <Position X="14.708" Y="0.5" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Comes from Catalogue, describes all steps involved in data load for a given dataset">
+    <Position X="5.159" Y="1.227" Height="0.786" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Transfers data from STAGING to LIVE">
+    <Position X="20.722" Y="5.352" Height="0.558" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Transfers data from RAW to STAGING (optionally doing anonymisation/cleaning)">
+    <Position X="12.535" Y="7.883" Height="0.978" Width="1.808" />
+  </Comment>
+  <Comment CommentText="Adjust STAGING/RAW/LIVE etc">
+    <Position X="11.99" Y="4.61" Height="0.39" Width="2.02" />
+  </Comment>
+  <Comment CommentText="Objects with config info, passed throughout all components">
+    <Position X="6.64" Y="3.32" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Carries out grand operations as defined by LoadMetadata e.g. Attach MDF files talk to FTP servers etc">
+    <Position X="19.733" Y="2.847" Height="0.669" Width="3.414" />
+  </Comment>
+  <Comment CommentText="Below is the HIC standard pipeline components (produced by the Factory) :--other agencies might mess with the order / add new 'stages' (components).  To do this, create a new Factory.">
+    <Position X="10.139" Y="0.5" Height="0.958" Width="2.838" />
+  </Comment>
+  <Class Name="DataLoadEngine.Migration.MigrationColumnSet">
+    <Position X="24.25" Y="5.75" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ABAAAAgAAAAAAAAAAACQIAAAAAAEAAIAAAAAABAAAAA=</HashCode>
+      <FileName>Migration\MigrationColumnSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Migration.OverwriteMigrationStrategy" Collapsed="true">
+    <Position X="24.25" Y="5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Migration\OverwriteMigrationStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.DatabaseManagement.DatabaseOperations" Collapsed="true">
+    <Position X="13.5" Y="1.25" Width="3" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>EAgBAAIAAAAAQQAAhBAAIAAAIAgQAABAAAwEAgRGQAA=</HashCode>
+      <FileName>DatabaseManagement\DatabaseOperations.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.DatabaseManagement.DatabaseCloner" Collapsed="true">
+    <Position X="13.5" Y="0.5" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAIQAAAAAAAAAIAAAAAAQAIAAAQAAAAAAA=</HashCode>
+      <FileName>DatabaseManagement\DatabaseCloner.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Checks.MultiStageDataLoadProcessCheck" Collapsed="true">
+    <Position X="8.25" Y="10" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAEAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Checks\MultiStageDataLoadProcessCheck.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Checks.HICDirectoryExistsCheck" Collapsed="true">
+    <Position X="8.5" Y="11.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Checks\MultiStageDataLoadProcessCheck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Checks.HICDirectoryConfigurationCheck" Collapsed="true">
+    <Position X="5.5" Y="11.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Checks\MultiStageDataLoadProcessCheck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Checks.ForLoadingDirectoryCheck" Collapsed="true">
+    <Position X="10.75" Y="11.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Checks\MultiStageDataLoadProcessCheck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.PreExecutionChecker" Collapsed="true">
+    <Position X="8.25" Y="8.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAACAAIAgCAIAhAAACQAgAAAAAgAYAgAAEA=</HashCode>
+      <FileName>PreExecutionChecker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.DataLoadEntireSystemStateChecker" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5" Y="9.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>gHCAAgAQBAAAAAAAAAAAACABAQAASAAQQCpAAACAQCE=</HashCode>
+      <FileName>DataLoadEntireSystemStateChecker.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.MultiStageDataLoadProcess" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="0.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>CEAgAIAAAAwAACQEICIBYgRAAUAAAgDAIghEoACAggI=</HashCode>
+      <FileName>MultiStageDataLoadProcess.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="LoadMetadata" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="_toDisposeAfterDataLoad" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.MigrationConfiguration" Collapsed="true">
+    <Position X="24.25" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAgIAQAABAAAgAAAAAAAA=</HashCode>
+      <FileName>MigrationConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Pipeline.Components.CleanStrings" Collapsed="true">
+    <Position X="15.5" Y="8" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CAQAAAACACAAAQAAAAAAAAAAAEAAAABAAggAgACAAAA=</HashCode>
+      <FileName>Pipeline\Components\CleanStrings.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Pipeline.Components.Anonymisation.BasicAnonymisationEngine" Collapsed="true">
+    <Position X="17.75" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQGIABQACAAAABAAAAEAAAAJAAggAgAGAAAA=</HashCode>
+      <FileName>Pipeline\Components\Anonymisation\BasicAnonymisationEngine.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Pipeline.PipelineEngine">
+    <Position X="13.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAKAAAAAAAAAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\Pipeline.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_source" />
+      <Field Name="_destination" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Components" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.ProcessTaskRuntime" Collapsed="true">
+    <Position X="21.25" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQEAAAgAAAAAACIAAAICAAYAQEAAAQBAIAAIgAGASAI=</HashCode>
+      <FileName>ProcessTaskRuntime.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.HICLoadConfigurationFlags" Collapsed="true">
+    <Position X="4.5" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAEAAAAAAAAAAAAgBAAAAAAAAAABA=</HashCode>
+      <FileName>HICLoadConfigurationFlags.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.MigrateStagingToLiveComponent" Collapsed="true" HideInheritanceLine="true">
+    <Position X="9.75" Y="3.75" Width="3" />
+    <AssociationLine Name="_loadConfigurationFlags" Type="DataLoadEngine.HICLoadConfigurationFlags">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-2.468" Y="0.877" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAgQAAAAgAAAAAAAI=</HashCode>
+      <FileName>MigrateStagingToLiveComponent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_loadConfigurationFlags" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.MigrateRAWToStagingComponent" Collapsed="true" HideInheritanceLine="true">
+    <Position X="9.75" Y="3" Width="2.75" />
+    <AssociationLine Name="_loadConfigurationFlags" Type="DataLoadEngine.HICLoadConfigurationFlags">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.404" Y="-0.056" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAIACAAACAAAQAAAAEgAAQAAgYAAAAgIQAAIAAI=</HashCode>
+      <FileName>MigrateRAWToStagingComponent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_loadConfigurationFlags" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="_tableMigrations" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.Migration.MigrationHost" Collapsed="true">
+    <Position X="19.25" Y="5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>EAAEAAAAAABACAAAAAAAAAEAAAAAgACAAAgAAABAAAA=</HashCode>
+      <FileName>Migration\MigrationHost.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_migrationStrategy" />
+      <Field Name="_migrationConfig" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.MigrateRAWTableToStagingComponent" Collapsed="true" HideInheritanceLine="true">
+    <Position X="14.25" Y="3" Width="3" />
+    <TypeIdentifier>
+      <HashCode>QAgAAAAAAAAAAAAgAAAAAAIgAQIAAQAAAAgIIAgAAAI=</HashCode>
+      <FileName>MigrateRAWTableToStagingComponent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_pipeline" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.SingleJobPipeline" BaseTypeListCollapsed="true">
+    <Position X="4" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAQAAAAAAAAIIAAAAAAAAQAAABAAAAAAAAE=</HashCode>
+      <FileName>SingleJobPipeline.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.DataLoadComponent" Collapsed="true">
+    <Position X="7.25" Y="5.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAICAAAAAQAAAAAAAAACEAI=</HashCode>
+      <FileName>LoadComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DataLoadJob" Collapsed="true">
+    <Position X="4.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>KEAAAEECAIggEAAAAAAAIAIQAEAAARAAAABAAAAYgEA=</HashCode>
+      <FileName>DataLoadJob.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.PopulateRAWComponent" Collapsed="true" HideInheritanceLine="true">
+    <Position X="9.75" Y="2.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAABAAAAACAQIAgQAAAAgAQAAAAAI=</HashCode>
+      <FileName>PopulateRAWComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.LoadFilesComponent" Collapsed="true" HideInheritanceLine="true">
+    <Position X="9.75" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAASAAAAQAAAAAAIABAAAIAAQAAAAAIAAAQAAI=</HashCode>
+      <FileName>LoadFilesComponent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_pipeline" />
+      <Field Name="_loadMetadata" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.RuntimeTaskPipeline" Collapsed="true">
+    <Position X="18.75" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAABgAKAAAAAAEAAAAAAAAUAAAgAAAAAACAI=</HashCode>
+      <FileName>RuntimeTaskPipeline.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_currentProcessTask" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.RuntimePipelineComponent" Collapsed="true" HideInheritanceLine="true">
+    <Position X="9.75" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAAAACAAIAAQAAAAAAAAAAAAI=</HashCode>
+      <FileName>RuntimePipelineComponent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_pipeline" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataLoadEngine.ArchiveFilesComponent" Collapsed="true" HideInheritanceLine="true">
+    <Position X="9.75" Y="5.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAI=</HashCode>
+      <FileName>ArchiveFilesComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.Checks.CheckNotifier" Collapsed="true">
+    <Position X="8.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAA=</HashCode>
+      <FileName>Checks\CheckNotifier.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.DatabaseManagement.TableInfoCloneOperation" Collapsed="true">
+    <Position X="13.5" Y="1.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAEEAAAgAABAQAoAAAEAAEAAQAAAAEAAAAAAEABAA=</HashCode>
+      <FileName>DatabaseManagement\TableInfoCloneOperation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLoadEngine.HICDataLoadPipelineFactory" Collapsed="true">
+    <Position X="8.25" Y="1" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AEAAAIAAAAAAAAAAAAAAAAAAAQAAAEAAAAgAAAAAAAA=</HashCode>
+      <FileName>HICDataLoadPipelineFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="CatalogueLibrary.IDisposeAfterDataLoad" Collapsed="true">
+    <Position X="1.75" Y="9.25" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="DataLoadEngine.Pipeline.IDataLoadDestination" Collapsed="true">
+    <Position X="15.75" Y="8.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\IPipelineDestination.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.Pipeline.IDataLoadSource" Collapsed="true">
+    <Position X="15.75" Y="5.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\IPipelineSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.PipelineComponent.IDataLoadComponent" Collapsed="true">
+    <Position X="16.5" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\IPipelineComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.Pipeline.Components.Anonymisation.IAnonymisationEngine" Collapsed="true">
+    <Position X="19.25" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\Components\Anonymisation\IAnonymisationEngine.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DataLoadEngine.IProcessTaskRuntime" Collapsed="true">
+    <Position X="2" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAIAAAAAAAAAAAAAIAAIAAEAAAI=</HashCode>
+      <FileName>IProcessTaskRuntime.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CatalogueLibrary.Data.DataLoad.ILoadMetadata" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="2" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Sources are polled, their job is to identify whether slot has the capacity to support a new async job and if so package up a Task as an 'OnGoingAutomationTask'.  This Task will then be funneled down the pipeline to the single AutomationDestination which will immediately start it asyncronously.  It is up to your Source to remember what Tasks it has packaged up and sent off and not issue duplicate requests.  The best way to achieve this is to inspect AutomationLockedCatalogues and/or MaxJobs settings in AutomationServiceSlot">
+    <Position X="0.5" Y="10.479" Height="1.5" Width="4.752" />
+  </Comment>
+  <Class Name="RDMPAutomationService.RDMPAutomationLoop">
+    <Position X="3.5" Y="1.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAACBAAUAAAAAAAAAAAAAAAgAAIAQAAAAAAAI=</HashCode>
+      <FileName>RDMPAutomationLoop.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_collection" />
+      <Property Name="AutomationDestination" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="RDMPAutomationService.Pipeline.AutomationDestination">
+    <Position X="7" Y="7" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgIAAAAACAAACAAAAAAAAQAAAAAAAAAAgAgAAAAAAA=</HashCode>
+      <FileName>Pipeline\AutomationDestination.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="OnGoingTasks" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RDMPAutomationService.Logic.DQE.DQERunFinder" Collapsed="true">
+    <Position X="3" Y="9" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAgAAAAAAACgAAAAAIAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Logic\DQE\DQERunFinder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RDMPAutomationService.OnGoingAutomationTask">
+    <Position X="10.75" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAIAAAAAIAAAAAAAAAAAAAACAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>OnGoingAutomationTask.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Job" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="RDMPAutomationService.Logic.DLE.DLERunFinder" Collapsed="true">
+    <Position X="0.5" Y="9" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Logic\DLE\DLERunFinder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RDMPAutomationService.Logic.DQE.AutomatedDQERun" Collapsed="true">
+    <Position X="3" Y="9.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAgAAACAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logic\DQE\AutomatedDQERun.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RDMPAutomationService.Pipeline.AutomationPipelineEngineCollection">
+    <Position X="7.5" Y="2" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAEAA=</HashCode>
+      <FileName>Pipeline\AutomationPipelineEngineCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RDMPAutomationService.Pipeline.Sources.DQEAutomationSource" Collapsed="true">
+    <Position X="3" Y="8.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAACAAACAAAAACAAAAEAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\Sources\DQEAutomationSource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RDMPAutomationService.Pipeline.Sources.DLEAutomationSource" Collapsed="true">
+    <Position X="0.5" Y="8.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgQAACAAACAAAAAAAAAAEAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\Sources\DLEAutomationSource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RDMPAutomationService.Logic.DLE.AutomatedDLELoad" Collapsed="true">
+    <Position X="0.5" Y="9.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgAQAAAAAAAEAAgAAACAAAAAAQAAAAAAAAAAAAiAAA=</HashCode>
+      <FileName>Logic\DLE\AutomatedDLELoad.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Automation.AutomationJob" Collapsed="true">
+    <Position X="14" Y="6" Width="1.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RDMPAutomationService.Pipeline.AutomationPipelineContext" Collapsed="true">
+    <Position X="7.5" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pipeline\AutomationPipelineContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="RDMPAutomationService.Interfaces.IAutomationSource" Collapsed="true">
+    <Position X="1.5" Y="7" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IAutomationSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CatalogueLibrary.DataFlowPipeline.IDataFlowSource&lt;T&gt;" Collapsed="true">
+    <Position X="3" Y="5.75" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="CatalogueLibrary.DataFlowPipeline.Requirements.IPipelineRequirement&lt;T&gt;" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="2" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,15 @@
+To implement in Library
+Primary Constraints:
+Varchar10Date  //TODO:  confirm in description/title that this is DDMMCCYY, are there any other formats that HIC uses as varchar(10) dates
+GPReferenceNumber
+StringTypeZeroPunctuation 
+AlphanumericStringType 
+
+Secondary Constraints:
+NotNull when ColumnX NotNull
+When current_record is 0 then ValidTo NotNull
+
+Notes:
+//figure out what the current postcode regex is and add it under current_postcode OR if there are multiple, do not need to add it
+//TODO: run UPDATE command to set all to active where not depricated (CHI)
+//date out / date in chain for a specific person should be intact

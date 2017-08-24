@@ -1,0 +1,377 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{146B6739-8541-42D3-A390-4917E6F3BCC2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DataExportLibrary</RootNamespace>
+    <AssemblyName>DataExportLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\SMI\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CsvHelper">
+      <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="DataExportLibrary, Version=2.2.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Diagnostics\bin\Debug\DataExportLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\..\libs\Npgsql\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="Office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\libs\Microsoft.Office.Interop\Office.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\..\libs\JIRA\RestSharp.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Checks\ProjectChecker.cs" />
+    <Compile Include="CohortCreationPipeline\CohortCreationRequest.cs" />
+    <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
+    <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
+    <Compile Include="CohortCreationPipeline\Destinations\CustomCohortDataDestination.cs" />
+    <Compile Include="CohortCreationPipeline\Sources\PatientIndexTableSource.cs" />
+    <Compile Include="CohortCreationPipeline\Sources\CohortIdentificationConfigurationSource.cs" />
+    <Compile Include="CohortDatabaseWizard\CreateNewCohortDatabaseWizard.cs" />
+    <Compile Include="CohortDatabaseWizard\PrivateIdentifierPrototype.cs" />
+    <Compile Include="BetweenCatalogueAndDataExportObscureDependencyFinder.cs" />
+    <Compile Include="CohortDescribing\CohortDescriptionDataTableAsyncFetch.cs" />
+    <Compile Include="CohortDescribing\CohortDescriptionFactory.cs" />
+    <Compile Include="CohortDescribing\ExtractableCohortDescription.cs" />
+    <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
+    <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
+    <Compile Include="DataRelease\ReleaseEngine.cs" />
+    <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
+    <Compile Include="Data\ConfigurationProperties.cs" />
+    <Compile Include="Data\DataTables\CohortCustomColumn.cs" />
+    <Compile Include="Data\DataTables\CohortDefinition.cs" />
+    <Compile Include="Data\DataTables\CumulativeExtractionResults.cs" />
+    <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
+    <Compile Include="Data\DataTables\DeployedExtractionFilterFactory.cs" />
+    <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
+    <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
+    <Compile Include="Data\Hierarchy\ExtractionFilterUser.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractCommandCollectionFactory.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteExtractionToRemoteRDMP.cs" />
+    <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
+    <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
+    <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractCohortCustomTableCommand.cs" />
+    <Compile Include="Data\DataTables\DataUser.cs" />
+    <Compile Include="Data\DataTables\ExternalCohortTable.cs" />
+    <Compile Include="Data\DataTables\ExtractableCohort.cs" />
+    <Compile Include="Data\DataTables\DeployedExtractionFilter.cs" />
+    <Compile Include="Data\DataTables\DeployedExtractionFilterParameter.cs" />
+    <Compile Include="Data\DataTables\ExtractableColumn.cs" />
+    <Compile Include="Data\DataTables\ExtractableDataSet.cs" />
+    <Compile Include="Data\DataTables\ExtractionConfiguration.cs" />
+    <Compile Include="Data\DataTables\FilterContainer.cs" />
+    <Compile Include="Data\DataTables\GlobalExtractionFilterParameter.cs" />
+    <Compile Include="Data\DataTables\Project.cs" />
+    <Compile Include="Data\ExternalCohortDefinitionData.cs" />
+    <Compile Include="Data\HICProjectSalt.cs" />
+    <Compile Include="Data\LinkCreators\SelectedDataSets.cs" />
+    <Compile Include="Data\SqlDataReaderHelper.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\IExecuteDatasetExtractionDestination.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecuteCrossServerDatasetExtractionSource.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteDatasetExtractionFlatFileDestination.cs" />
+    <Compile Include="ExtractionTime\ExtractionDirectory.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\ExtractionPipelineHost.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractDatasetCommand.cs" />
+    <Compile Include="ExtractionTime\ExtractionTimeTimeCoverageAggregator.cs" />
+    <Compile Include="ExtractionTime\ExtractionTimeTimeCoverageAggregatorBucket.cs" />
+    <Compile Include="ExtractionTime\ExtractionTimeValidator.cs" />
+    <Compile Include="ExtractionTime\ExtractTableVerbatim.cs" />
+    <Compile Include="ExtractionTime\ExtractTimeTransformationObserved.cs" />
+    <Compile Include="ExtractionTime\FileOutputFormats\CSVOutputFormat.cs" />
+    <Compile Include="ExtractionTime\FileOutputFormats\FileOutputFormat.cs" />
+    <Compile Include="ExtractionTime\FileOutputFormats\IFileOutputFormat.cs" />
+    <Compile Include="ExtractionTime\FileOutputFormats\MicrosoftAccessDatabaseFormat.cs" />
+    <Compile Include="ExtractionTime\UserPicks\GlobalsBundle.cs" />
+    <Compile Include="ExtractionTime\WordDataReleaseFileGenerator.cs" />
+    <Compile Include="ExtractionTime\QueryBuilderHost.cs" />
+    <Compile Include="ExtractionTime\ReleaseIdentifierSubstitution.cs" />
+    <Compile Include="ExtractionTime\WordDataWritter.cs" />
+    <Compile Include="CsvDataTableHelper.cs" />
+    <Compile Include="Nodes\ExtractableDataSetsNode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataRelease\ReleasePotential.cs" />
+    <Compile Include="Repositories\DataExportRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="DataRelease\DataRelease.cd" />
+    <None Include="ExecuteDatasetExtraction.cd" />
+    <None Include="ExecuteDatasetExtractionToDatabase.cd" />
+    <None Include="ExtractionTimeColumns.cd" />
+    <None Include="ExtractionTime\UserPicks\Bundles.cd" />
+    <None Include="ImportingCustomData.cd" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
+      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
+      <Name>CatalogueLibrary</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CatalogueManager\TicketingModules\Ticketing\Ticketing.csproj">
+      <Project>{048E1478-E4A7-4AD1-95AB-C40C604A4F60}</Project>
+      <Name>Ticketing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj">
+      <Project>{AA8B053B-3CF6-42EF-B5E6-2F9EE97F822F}</Project>
+      <Name>CohortManagerLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
+      <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
+      <Name>DataLoadEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+      <Project>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</Project>
+      <Name>LoadModules.Generic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
+      <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
+      <Name>HIC.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
+      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
+      <Name>MapsDirectlyToDatabaseTable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
+      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
+      <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
+      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
+      <Name>ReusableUIComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
+      <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
+      <Name>HIC.Common.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
+      <Project>{76d185e2-2b48-45b6-a2a9-74ff71d46c15}</Project>
+      <Name>DataExportLibrary.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="ADOX">
+      <Guid>{00000600-0000-0010-8000-00AA006D2EA4}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

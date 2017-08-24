@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HICSSISLibrary.Logging.LoggingDatabaseSettings">
+    <Position X="5.75" Y="6.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACIACAAQAAQAoIACAIACASAAAAAAABIQA=</HashCode>
+      <FileName>Logging\LoggingDatabaseSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.DataLoadInfo">
+    <Position X="6.25" Y="1" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAGgAAAAIAgiohAEAgBAAwAIIEAwAGAAAAIAIACgAAA=</HashCode>
+      <FileName>DataLoadInfo.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DatabaseSettings" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="TableLoads" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="HIC.Logging.FatalErrorLogging" Collapsed="true">
+    <Position X="3.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACEAAAAAAAAAAAAAAAAAQAABAAAACEAAAIAAAAgAAA=</HashCode>
+      <FileName>FatalErrorLogging.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.LoggingDatabaseSettings">
+    <Position X="6.25" Y="4.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACIACAAQAAQAoIACAIACASAAAAAAABIQA=</HashCode>
+      <FileName>LoggingDatabaseSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.LogManager">
+    <Position X="3.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>LogManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.ProgressLogging" Collapsed="true">
+    <Position X="3.25" Y="3.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="HIC.Logging.ProgressLogging.ProgressEventType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ProgressLogging.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAABAAAACEAAAJAAAAgAAA=</HashCode>
+      <FileName>ProgressLogging.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.RowErrorLogging" Collapsed="true">
+    <Position X="3.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABEAAAAAAAAAAAAAAQAAAAABAAAACEAAAIAAAAgAAA=</HashCode>
+      <FileName>RowErrorLogging.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.DataSource" Collapsed="true">
+    <Position X="11.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAgAAgAgAAAAAgAAAAAAAAAASAAAAAAAAAAA=</HashCode>
+      <FileName>TableLoadInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HIC.Logging.TableLoadInfo" Collapsed="true">
+    <Position X="8.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEIAAAAIAgGgCYAIADAAAACIAwgAGAQIAIAIkAAAIA=</HashCode>
+      <FileName>TableLoadInfo.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="DataSources" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

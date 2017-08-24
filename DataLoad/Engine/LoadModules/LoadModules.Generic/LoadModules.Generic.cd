@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Add this Attribute to public properties that require to be set externally">
+    <Position X="6.989" Y="3.291" Height="0.75" Width="2.012" />
+  </Comment>
+  <Class Name="LoadModules.Generic.Attachers.FixedWidthAttacher" Collapsed="true">
+    <Position X="2.25" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAGAAAAAAAAAAAAAAAAAAUAAQAACAEAAABA=</HashCode>
+      <FileName>Attachers\FixedWidthAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.FixedWidthFormatFile" Collapsed="true">
+    <Position X="2.25" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAIAAAAAAAAQAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Attachers\FixedWidthFormatFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.FlatFileAttacher" Collapsed="true">
+    <Position X="3.5" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAgEAAAIAAAAAAFAQQAACIAAA0AAQAAAAUAABBA=</HashCode>
+      <FileName>Attachers\FlatFileAttacher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.FlatFileLoadException" Collapsed="true">
+    <Position X="0.75" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Attachers\FlatFileAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.AnySeparatorFileAttacher" Collapsed="true">
+    <Position X="5" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Attachers\FlatFileAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.MDFAttacher" Collapsed="true">
+    <Position X="6" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAFAAAAAAAAgAAIAAAYAIAAAAAAQOAAA=</HashCode>
+      <FileName>Attachers\MDFAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.TSVAttacher" Collapsed="true">
+    <Position X="8.5" Y="7.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Attachers\TSVAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.TSVAttacher_HackersEdition" Collapsed="true">
+    <Position X="8.5" Y="9" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Attachers\TSVAttacher_HackersEdition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.FileOperations.FileUnzipper" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAgAAACAAAAAIAEAAAoAAABAAQABAAAAAAAAABA=</HashCode>
+      <FileName>FileOperations\FileUnzipper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LoadModules.Generic.FTP.FTPDownloader" Collapsed="true">
+    <Position X="13.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAACAAKAEAgIIBEAAAIAAAAAAQAAAAMARAAAABA=</HashCode>
+      <FileName>FTP\FTPDownloader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LoadModules.Generic.FTP.SFTPDownloader" Collapsed="true">
+    <Position X="13.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>FTP\SFTPDownloader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Web.WebFileDownloader" Collapsed="true">
+    <Position X="9.75" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAIAEAAAIAAAIAgQAAAAAAAAAAABA=</HashCode>
+      <FileName>Web\WebFileDownloader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LoadModules.Generic.FileOperations.ExcelToCsvConverter" Collapsed="true">
+    <Position X="9.25" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACQAAAAIAUAAAIAAAAAAQAAAAAAAAAAABA=</HashCode>
+      <FileName>FileOperations\ExcelToCsvConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataLoadEngine.Attachers.Attacher" Collapsed="true">
+    <Position X="3.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.DemandsInitialization" Collapsed="true">
+    <Position X="7" Y="2.75" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.DelimitedFlatFileAttacher" Collapsed="true">
+    <Position X="5.5" Y="6" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAGBCAAAAAAAAAABAAAAAEAAQAAAAEAAEhA=</HashCode>
+      <FileName>Attachers\DelimitedFlatFileAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.ExcelAttacher" Collapsed="true">
+    <Position X="0.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QFAAAAgACAAAAAEAAAAAAAAAAEAAAAADQABAAEAAABA=</HashCode>
+      <FileName>Attachers\ExcelAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="LoadModules.Generic.Attachers.FixedWidthColumn" Collapsed="true">
+    <Position X="2.25" Y="9.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAgAAAAAAAAAAAAAAIIAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Attachers\FixedWidthFormatFile.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="DataLoadEngine.Attachers.IAttacher" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="DataLoadEngine.DataProvider.IDataProvider" Collapsed="true">
+    <Position X="12" Y="2" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<datasets ver="1.0.0">
+    <dataset name="chi">
+        <metadataSource>
+            <server>MACKENZIE100</server>
+            <database>DataCatalogueTest</database>
+        </metadataSource>
+        <server>MACKENZIE100</server>
+        <database>DataCatalogueTest</database>
+        <table>CHI_ULTRA</table>
+    </dataset>
+</datasets>

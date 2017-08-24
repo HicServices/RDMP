@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ToolboxWindowManager">
+    <Position X="3.5" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAQEAoAAEAIAAQCIAAFAEAABAAABAAAgEAIA=</HashCode>
+      <FileName>WindowManagement\ToolboxWindowManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="ContentManager" />
+      <Field Name="_windowFactory" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowFactory" Collapsed="true">
+    <Position X="8" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAUAAAAAAAgAgAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>WindowManagement\WindowFactory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="WindowTracker" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowManager" Collapsed="true">
+    <Position X="8" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAiQJAAgAAgQAAAAAAAgRIIUABAAhAAAA=</HashCode>
+      <FileName>WindowManagement\ContentWindowManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.ContentWindowTracker" Collapsed="true">
+    <Position X="11" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAgAAAAAABAAAAAAAAAACAAAAAEAAAAA=</HashCode>
+      <FileName>WindowManagement\ContentWindowTracking\ContentWindowTracker.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="TrackedWindows" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CatalogueManager.MainFormUITabs.CatalogueTab" Collapsed="true">
+    <Position X="10.5" Y="6.5" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="CatalogueManager.AggregationUIs.AggregateGraph" Collapsed="true">
+    <Position X="18.5" Y="6.5" Width="3.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="CatalogueManager.AggregationUIs.Advanced.AggregateEditor" Collapsed="true">
+    <Position X="16.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.TrackedWindow">
+    <Position X="14.5" Y="1.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAACAAAgCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WindowManagement\ContentWindowTracking\TrackedWindow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.ItemActivation.DefaultItemActivation">
+    <Position X="6.75" Y="7.5" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.MainFormUITabs.CatalogueItemTab" Collapsed="true">
+    <Position X="13.5" Y="6.5" Width="2.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+    <Position X="12.75" Y="4.5" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="CatalogueManager.ItemActivation.IActivateItems">
+    <Position X="6.75" Y="4" Width="2.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

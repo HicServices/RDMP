@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="CATMANROOTDIRECTORY">
+            <Component Id="cmpFD25A148C50C415BADE6F8F97EDA3D40" Guid="*">
+                <File Id="cm_filC9A0BA241F1A4A639700B0F332873BCC" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ANOStore.dll" />
+            </Component>
+            <Component Id="cmpB962D54469A5466DA3536982EC2C6F54" Guid="*">
+                <File Id="cm_filE789D41E664A4C04A17987B5581E55ED" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ANOStore.Database.dll" />
+            </Component>
+            <Component Id="cmpB4E8B242E57E07284B92D4941EA01FF9" Guid="*">
+                <File Id="cm_fil7E509721979F0C26DD4FB93D99FEAC7F" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\CatalogueManager.exe" />
+            </Component>
+            <Component Id="cmpD7505A207B76C15F5B7CD2ACC0F3C133" Guid="*">
+                <File Id="cm_filF0DEFA66DAA6912D353EE5D0568D9DC4" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\CatalogueManager.exe.config" />
+            </Component>
+            <Component Id="cmp1299D860447B69ABB60A5D1B7A7A9152" Guid="*">
+                <File Id="cm_fil79ABC74E8A90C11C077E4CD2D0FDC0DE" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\CatalogueLibrary.dll" />
+            </Component>
+            <Component Id="cmp98AC5FD113B4445F8C1636967B9D5C20" Guid="*">
+                <File Id="cm_fil78609F2926B5422BAFC2F56578A1AD8F" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\CatalogueLibrary.Database.dll" />
+            </Component>
+            <Component Id="cmpE507A1C6BB441CEB0F38DD2D4AD3F3A2" Guid="*">
+                <File Id="cm_fil5A65BEF9C3E00B4AE3E8F0F569C83979" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\CsvHelper.dll" />
+            </Component>
+            <Component Id="cmpCA31154B59581219A1C65A7E5ED4AAA6" Guid="*">
+                <File Id="cm_fil88EE93C520D09B9AB5C6769D42BE38CF" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\DataExportManager2Library.dll" />
+            </Component>
+            <Component Id="cmp5F7E47D2429445C184022E8498DA1C74" Guid="*">
+                <File Id="cm_filC7997951B39C4F7B99E08CFD617CCBBD" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\DataExportManager2.Database.dll" />
+            </Component>
+            <Component Id="cmp0CDD720EB88C6F8C12B594314822EBC2" Guid="*">
+                <File Id="cm_fil0FBF3B5405043D3FA81AC2F3CFD59AF2" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\DataLoadEngine.dll" />
+            </Component>
+            <Component Id="cmp2A29C8F2C8F15BC3BA27BC3BAB20EA75" Guid="*">
+                <File Id="cm_fil5DD39397EBB2034071A70B156A02C95E" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\Diagnostics.dll" />
+            </Component>
+            <Component Id="cmpD02517AC8EDB4BB98D1ADEAA9FD3D073" Guid="*">
+                <File Id="cm_filE80AF587A685470299905968A96193D4" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\Dicom.dll" />
+            </Component>
+            <Component Id="cmpC7CF8466CA81199E73AD23F1CFD4B9D1" Guid="*">
+                <File Id="cm_fil552B5602D0FE9F71CE1675CA8A9B7205" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\DiffieHellman.dll" />
+            </Component>
+            <Component Id="cmp29AB443805EC477AA2635260717FFA72" Guid="*">
+                <File Id="cm_fil0919C80CD7F749DC9518AB824CCEC0CB" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\FluentNHibernate.dll" />
+            </Component>
+            <Component Id="cmp2933DBBB394A47FABF481A98A3025FA9" Guid="*">
+                <File Id="cm_filDFB900F58534492B9D87D29E0D08C556" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\GraphX.Controls.dll" />
+            </Component>
+            <Component Id="cmp535B1AAA89274584B6CAE818CC120763" Guid="*">
+                <File Id="cm_fil6DB50AE309AC43FCBC2879D0CD8741D9" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\GraphX.PCL.Common.dll" />
+            </Component>
+            <Component Id="cmpF393AD117A1E42F085F4D0448839397F" Guid="*">
+                <File Id="cm_fil21AB6D58516045869791B08934D40C24" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\GraphX.PCL.Logic.dll" />
+            </Component>
+            <Component Id="cmp8C749D48B68C4C29D549A016A0D71015" Guid="*">
+                <File Id="cm_filE0AFA3C0408C18465BE10AB8367EC521" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\HIC.Logging.dll" />
+            </Component>
+            <Component Id="cmp6DCAB764AADD4A7EB4DCA30372D96D4C" Guid="*">
+                <File Id="cm_filFA121395177D4100A4D30C128AB6220B" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\HIC.Logging.Database.dll" />
+            </Component>
+            <Component Id="cmp612B8EDB65D51904C1652A7E7B28F59F" Guid="*">
+                <File Id="cm_filC4FB21276BDBCDD1F4E7BF8A7F45C4A5" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ICSharpCode.SharpZipLib.dll" />
+            </Component>
+            <Component Id="cmpC0E960B5264042328B95C655C89C709C" Guid="*">
+                <File Id="cm_fil683C5A8F418846D0811F220C126A05A8" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\IdentifierDump.dll" />
+            </Component>
+            <Component Id="cmp50F93D61EF6D4DDD81024F70D142BF3B" Guid="*">
+                <File Id="cm_fil5994A20CFAF0445AA5DC8976D1ED9323" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\IdentifierDump.Database.dll" />
+            </Component>
+            <Component Id="cmpBC7CC8633C9D4A0ABC0FB89EC10368C6" Guid="*">
+                <File Id="cm_fil38377D12D65C477B9BD18E1C60E53A83" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\Iesi.Collections.dll" />
+            </Component>
+            <Component Id="cmp842C8E0262D9ECF381FA551D8D181FF3" Guid="*">
+                <File Id="cm_fil879AE43C6A45FBF84DC487EF56FB747B" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\LoadModules.Generic.dll" />
+            </Component>
+            <Component Id="cmp21F309C806FA488DFFFE5378BCF611FF" Guid="*">
+                <File Id="cm_fil144615CECAA1643F18747602C1CE74E7" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\log4net.config" />
+            </Component>
+            <Component Id="cmpACB6CD6FFB2A84501BD9E8392459FA45" Guid="*">
+                <File Id="cm_fil53CF67BC1F7314B08C1D64A6CEA223E4" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\log4net.dll" />
+            </Component>
+            <Component Id="cmp6249D07397494894AF7C81F88380D40E" Guid="*">
+                <File Id="cm_filD2E1C3ABFD3946BEA77471FD3FF455D4" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\MapsDirectlyToDatabaseTable.dll" />
+            </Component>
+            <Component Id="cmp69FE8A7FE7AB4D738CDB850DA4E365F8" Guid="*">
+                <File Id="cm_filCB731100812A48D391C6EAA83B759B78" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\Microsoft.VisualBasic.PowerPacks.Vs.dll" />
+            </Component>
+            <Component Id="cmpEA91A1CAC0A304287222B9432625E816" Guid="*">
+                <File Id="cm_filC092736C4A64C000E1A264349D6E0CCB" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\MySql.Data.dll" />
+            </Component>
+            <Component Id="cmp31DD069827FB41569AD7712013DF5567" Guid="*">
+                <File Id="cm_fil51966496D5FA44CEA9B5E38B30268E9B" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\NHibernate.dll" />
+            </Component>
+            <Component Id="cmpA38A81F41EBC6C795F530AF736168DD0" Guid="*">
+                <File Id="cm_filD99192F3EF926B0696A896924D4A93A9" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\NLog.dll" />
+            </Component>
+            <Component Id="cmp9D40D9EBB63140BB9D20A6067DB398B7" Guid="*">
+                <File Id="cm_filCDBF5380045743D2B1D37238EDDD648F" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ObjectListView.dll" />
+            </Component>
+            <Component Id="cmpC2255923CCE5D193305E160FBD29CA49" Guid="*">
+                <File Id="cm_fil131AF8D114BDC5779E719BB8E000F2A6" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\Org.Mentalis.Security.dll" />
+            </Component>
+            <Component Id="cmpBD0E100A120448F99F9E7D22BF2CC9CD" Guid="*">
+                <File Id="cm_fil31FF7159CB884DE88CF983D7EE70074C" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\QuickGraph.dll" />
+            </Component>
+            <Component Id="cmp1D09A0F7373B455CB7F6052980FDA1BF" Guid="*">
+                <File Id="cm_filA2F4F49A43D84E909E8BEFFB2268AB40" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\RDMPObjectVisualisation.dll" />
+            </Component>
+            <Component Id="cmp47B814B56D7A2EAEF582D37497796325" Guid="*">
+                <File Id="cm_fil2800066FBE8546E4819A636F17F53FA9" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ReusableLibraryCode.dll" />
+            </Component>
+            <Component Id="cmp033D828C9CCC80FBF4E9CD673BFDA264" Guid="*">
+                <File Id="cm_fil6DF3C397FADEBA59573130431A211DBC" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ReusableUIComponents.dll" />
+            </Component>
+            <Component Id="cmpDCB3F8B05400425FA55FDCF010BC2B79" Guid="*">
+                <File Id="cm_filA040CC97FD124DB5ACA17F07C117DB95" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\roundhouse.databases.sqlserver.dll" />
+            </Component>
+            <Component Id="cmp4892F6E318F642EABBA89A9F070FD941" Guid="*">
+                <File Id="cm_filB05DE86496674966A760FC1AB9AA5D95" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\roundhouse.dll" />
+            </Component>
+            <Component Id="cmp10A8D2BEB419A4BD4E7A3F808C0713E2" Guid="*">
+                <File Id="cm_filE16BFF406FF8805F55B6FEBF17269B36" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\SciLexer.dll" />
+            </Component>
+            <Component Id="cmpFD90520610D2D16C043B553B731DC300" Guid="*">
+                <File Id="cm_filF313C767F04D281A1D154EF46A28DC51" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\SciLexer64.dll" />
+            </Component>
+            <Component Id="cmp447D3EF9ED34A4D54692D40FB6E15F35" Guid="*">
+                <File Id="cm_filFC7B7595A145BC9B57C56F356F1EB4B8" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ScintillaNET.dll" />
+            </Component>
+            <Component Id="cmp5123E10D7237F2459A2F6600D6E9621A" Guid="*">
+                <File Id="cm_filC54E916FB59050E9EB98E9810FA2487C" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\Tamir.SharpSSH.dll" />
+            </Component>
+            <Component Id="cmp35409853DAA649E9AF5697FDDA6194EB" Guid="*">
+                <File Id="cm_fil5006AC5972114160B2597FFA4AF92FAA" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\Ticketing.dll" />
+            </Component>
+            <Component Id="cmp87E0CE7C333DECAA55C968CAA3009409" Guid="*">
+                <File Id="cm_fil989A51E2BE9A1BDCA82EFB30A7BBD156" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ValidationLibrary.dll" />
+            </Component>
+            <Component Id="cmpB0E0AA7232F3908A62F48D1303BD0C98" Guid="*">
+                <File Id="cm_fil180CF7293170539C037AF54BFCADF604" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ValidationUI.exe" />
+            </Component>
+            <Component Id="cmpA851CBFAFB2688CAF398592F2BE0C289" Guid="*">
+                <File Id="cm_fil7F68EF6960CF494D1713FDCEE34F40D4" KeyPath="yes" Source="$(var.CatalogueManager.TargetDir)\ValidationUtilities.dll" />
+            </Component>
+            
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="CatalogueManager.Binaries">
+            <ComponentRef Id="cmp1299D860447B69ABB60A5D1B7A7A9152" />
+            <ComponentRef Id="cmpB4E8B242E57E07284B92D4941EA01FF9" />
+            <ComponentRef Id="cmpD7505A207B76C15F5B7CD2ACC0F3C133" />
+            <ComponentRef Id="cmpE507A1C6BB441CEB0F38DD2D4AD3F3A2" />
+            <ComponentRef Id="cmpCA31154B59581219A1C65A7E5ED4AAA6" />
+            <ComponentRef Id="cmp0CDD720EB88C6F8C12B594314822EBC2" />
+            <ComponentRef Id="cmp2A29C8F2C8F15BC3BA27BC3BAB20EA75" />
+            <ComponentRef Id="cmpC7CF8466CA81199E73AD23F1CFD4B9D1" />
+            <ComponentRef Id="cmp8C749D48B68C4C29D549A016A0D71015" />
+            <ComponentRef Id="cmp612B8EDB65D51904C1652A7E7B28F59F" />
+            <ComponentRef Id="cmp842C8E0262D9ECF381FA551D8D181FF3" />
+            <ComponentRef Id="cmp21F309C806FA488DFFFE5378BCF611FF" />
+            <ComponentRef Id="cmpACB6CD6FFB2A84501BD9E8392459FA45" />
+            <ComponentRef Id="cmpEA91A1CAC0A304287222B9432625E816" />
+            <ComponentRef Id="cmpA38A81F41EBC6C795F530AF736168DD0" />
+            <ComponentRef Id="cmpC2255923CCE5D193305E160FBD29CA49" />
+            <ComponentRef Id="cmp47B814B56D7A2EAEF582D37497796325" />
+            <ComponentRef Id="cmp033D828C9CCC80FBF4E9CD673BFDA264" />
+            <ComponentRef Id="cmp10A8D2BEB419A4BD4E7A3F808C0713E2" />
+            <ComponentRef Id="cmpFD90520610D2D16C043B553B731DC300" />
+            <ComponentRef Id="cmp447D3EF9ED34A4D54692D40FB6E15F35" />
+            <ComponentRef Id="cmp5123E10D7237F2459A2F6600D6E9621A" />
+            <ComponentRef Id="cmp87E0CE7C333DECAA55C968CAA3009409" />
+            <ComponentRef Id="cmpB0E0AA7232F3908A62F48D1303BD0C98" />
+            <ComponentRef Id="cmpA851CBFAFB2688CAF398592F2BE0C289" />
+            <ComponentRef Id="cmp6249D07397494894AF7C81F88380D40E" />
+            <ComponentRef Id="cmp98AC5FD113B4445F8C1636967B9D5C20" />
+            <ComponentRef Id="cmp5F7E47D2429445C184022E8498DA1C74" />
+            <ComponentRef Id="cmpD02517AC8EDB4BB98D1ADEAA9FD3D073" />
+            <ComponentRef Id="cmp6DCAB764AADD4A7EB4DCA30372D96D4C" />
+            <ComponentRef Id="cmpBC7CC8633C9D4A0ABC0FB89EC10368C6" />
+            <ComponentRef Id="cmp31DD069827FB41569AD7712013DF5567" />
+            <ComponentRef Id="cmpDCB3F8B05400425FA55FDCF010BC2B79" />
+            <ComponentRef Id="cmp4892F6E318F642EABBA89A9F070FD941" />
+            <ComponentRef Id="cmp29AB443805EC477AA2635260717FFA72" />
+            <ComponentRef Id="cmp2933DBBB394A47FABF481A98A3025FA9" />
+            <ComponentRef Id="cmp535B1AAA89274584B6CAE818CC120763" />
+            <ComponentRef Id="cmpF393AD117A1E42F085F4D0448839397F" />
+            <ComponentRef Id="cmpBD0E100A120448F99F9E7D22BF2CC9CD" />
+            <ComponentRef Id="cmp1D09A0F7373B455CB7F6052980FDA1BF" />
+            <ComponentRef Id="cmp9D40D9EBB63140BB9D20A6067DB398B7" />
+            <ComponentRef Id="cmp69FE8A7FE7AB4D738CDB850DA4E365F8" />
+            <ComponentRef Id="cmpC0E960B5264042328B95C655C89C709C" />
+            <ComponentRef Id="cmp50F93D61EF6D4DDD81024F70D142BF3B" />
+            <ComponentRef Id="cmpFD25A148C50C415BADE6F8F97EDA3D40" />
+            <ComponentRef Id="cmpB962D54469A5466DA3536982EC2C6F54" />
+            <ComponentRef Id="cmp35409853DAA649E9AF5697FDDA6194EB" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

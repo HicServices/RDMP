@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Call Publish to push an updated database object into the Event Bus">
+    <Position X="0.583" Y="4.198" Height="0.521" Width="2.377" />
+  </Comment>
+  <Comment CommentText="3 ways to subscribe:&#xD;&#xA;1. manually sub/unsub&#xD;&#xA;2. sub for lifetime of control&#xD;&#xA;3. sub for lifetime of object">
+    <Position X="3.667" Y="3.969" Height="0.917" Width="2.377" />
+  </Comment>
+  <Class Name="CatalogueManager.Collections.TableInfoCollectionUI" Collapsed="true">
+    <Position X="3.5" Y="7.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>MgIABAAIACSgABAYAQCAQQQCAABAAAFAEAIIAIhAWAA=</HashCode>
+      <FileName>Collections\TableInfoCollectionUI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.Collections.LoadMetadataCollectionUI" Collapsed="true">
+    <Position X="6" Y="7.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAABAVAACQABtBAIAKAAAQDAAAgAAFCABoEAAgAAAA=</HashCode>
+      <FileName>Collections\LoadMetadataCollectionUI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.Collections.RDMPCollectionUI" Collapsed="true">
+    <Position X="4" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAgAAAAAAgAAAA=</HashCode>
+      <FileName>Collections\RDMPCollectionUI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.Collections.CatalogueCollectionUI" Collapsed="true">
+    <Position X="1.25" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QAICFHFYACUAEAA4IECIRAYXKJQAL6EIBLYgAAgQFBA=</HashCode>
+      <FileName>Collections\CatalogueCollectionUI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.Refreshing.RefreshBus">
+    <Position X="0.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgEEAEAAQAAAACAAUBQAAAAAAAAEA=</HashCode>
+      <FileName>Refreshing\RefreshBus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+    <Position X="8.75" Y="6" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Refreshing.SelfDestructProtocol&lt;T&gt;" Collapsed="true">
+    <Position X="3.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAQAAAAAAAAAAAAAAAAAAgEAAAAAAAAAAAA=</HashCode>
+      <FileName>Refreshing\SelfDestructProtocol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.AggregationUIs.Advanced.AggregateEditor_Design" Collapsed="true">
+    <Position X="0.5" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregationUIs\Advanced\AggregateEditor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ExecuteAggregateConfigurationAndViewDataTableUI_Design" Collapsed="true">
+    <Position X="2.75" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregationUIs\Advanced\ExecuteAggregateConfigurationAndViewDataTableUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.AggregationUIs.Advanced.ViewAggregateSQLUI_Design" Collapsed="true">
+    <Position X="5" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregationUIs\Advanced\ViewAggregateSQLUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.AggregationUIs.AggregateGraph_Design" Collapsed="true">
+    <Position X="7.25" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregationUIs\AggregateGraph.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.AggregationUIs.AggregateGraphLoadAndSave_Design" Collapsed="true">
+    <Position X="9.5" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregationUIs\AggregateGraphLoadAndSave.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.CredentialsUIs.DataAccessCredentialsUI_Design" Collapsed="true">
+    <Position X="11.75" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CredentialsUIs\DataAccessCredentialsUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement.ConvertColumnInfoIntoANOColumnInfo_Design" Collapsed="true">
+    <Position X="0.5" Y="9.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataLoadUIs\ANOUIs\ANOTableManagement\ConvertColumnInfoIntoANOColumnInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadMetadataUI_Design" Collapsed="true">
+    <Position X="2.75" Y="9.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.ExtractionUIs.ExtractionInformationUI_Design" Collapsed="true">
+    <Position X="5" Y="9.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExtractionUIs\ExtractionInformationUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.ExtractionUIs.FilterUIs.ExtractionFilterUI_Design" Collapsed="true">
+    <Position X="7.25" Y="9.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExtractionUIs\FilterUIs\ExtractionFilterUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ExtractionFilterParameterSetUI_Design" Collapsed="true">
+    <Position X="9.5" Y="9.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.ExtractionUIs.ViewExtractionSql_Design" Collapsed="true">
+    <Position X="11.75" Y="9.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExtractionUIs\ViewExtractionSql.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.Issues.IssueUI_Design" Collapsed="true">
+    <Position X="0.5" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Issues\IssueUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.MainFormUITabs.CatalogueItemTab_Design" Collapsed="true">
+    <Position X="2.75" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MainFormUITabs\CatalogueItemTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.MainFormUITabs.CatalogueTab_Design" Collapsed="true">
+    <Position X="5" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MainFormUITabs\CatalogueTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.SimpleDialogs.SupportingDocumentUI_Design" Collapsed="true">
+    <Position X="7.25" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SimpleDialogs\SupportingDocumentUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.SimpleDialogs.SupportingSQLTableUI_Design" Collapsed="true">
+    <Position X="9.5" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SimpleDialogs\SupportingSQLTableUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="CatalogueManager.Refreshing.ILifetimeSubscriber" Collapsed="true">
+    <Position X="3.75" Y="2" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Refreshing\ILifetimeSubscriber.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CatalogueManager.Refreshing.IRefreshBusSubscriber">
+    <Position X="3.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Refreshing\IRefreshBusSubscriber.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
