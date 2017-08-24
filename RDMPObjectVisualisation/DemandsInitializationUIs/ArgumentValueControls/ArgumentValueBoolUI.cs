@@ -15,6 +15,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     public partial class ArgumentValueBoolUI : UserControl, IArgumentValueUI
     {
         private Argument _argument;
+        private bool _bLoading = true;
 
         public ArgumentValueBoolUI()
         {
@@ -23,12 +24,17 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
         public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
         {
+            _bLoading = true;
             _argument = argument;
             cbValue.Checked = (bool) argument.GetValueAsSystemType();
+            _bLoading = false;
         }
 
         private void cbValue_CheckedChanged(object sender, System.EventArgs e)
         {
+            if(_bLoading)
+                return;
+
             _argument.SetValue(cbValue.Checked);
             _argument.SaveToDatabase();
         }

@@ -17,6 +17,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     {
         private Argument _argument;
         private DemandsInitialization _demand;
+        private bool _bLoading = true;
 
         private const string ClearSelection = "<<Clear Selection>>";
 
@@ -39,6 +40,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
         public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
         {
+            _bLoading = true;
             _argument = argument;
             _demand = demand;
 
@@ -56,6 +58,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 cbxValue.Text = currentValue.ToString();
 
             BombIfMandatoryAndEmpty();
+            _bLoading = false;
         }
 
         private void cbxValue_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -65,29 +68,31 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
         private void cbxValue_TextChanged(object sender, System.EventArgs e)
         {
+            if (_bLoading)
+                return;
+
             ragSmiley1.Reset();
 
-            if (_argument != null)
+           
+            //user chose to clear selection from a combo box
+            if (cbxValue.Text == ClearSelection)
+                _argument.Value = null;
+            else if (cbxValue.SelectedItem != null)
+                _argument.SetValue(cbxValue.SelectedItem);
+
+            _argument.SaveToDatabase();
+
+            try
             {
-                //user chose to clear selection from a combo box
-                if (cbxValue.Text == ClearSelection)
-                    _argument.Value = null;
-                else if (cbxValue.SelectedItem != null)
-                    _argument.SetValue(cbxValue.SelectedItem);
-
-                _argument.SaveToDatabase();
-
-                try
-                {
-                    _argument.GetValueAsSystemType();
-                }
-                catch (Exception exception)
-                {
-                    ragSmiley1.Fatal(exception);
-                }
-
-                BombIfMandatoryAndEmpty();
+                _argument.GetValueAsSystemType();
             }
+            catch (Exception exception)
+            {
+                ragSmiley1.Fatal(exception);
+            }
+
+            BombIfMandatoryAndEmpty();
+            
         }
 
         private void BombIfMandatoryAndEmpty()
