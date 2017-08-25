@@ -32,9 +32,10 @@ namespace RDMPStartup
             {
                 throw;
             }
-            catch (Exception )
+            catch (Exception)
             {
                 CatalogueRepository = null;
+                throw;
             }
             
             try
@@ -44,13 +45,11 @@ namespace RDMPStartup
             catch (Exception)
             {
                 DataExportRepository = null;
+                throw;
             }
 
             if (CatalogueRepository != null)
                 ConfigureObscureDependencies();
-
-
-
         }
 
         public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString, out Exception catalogueException, out Exception dataExportException)

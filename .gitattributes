@@ -4,6 +4,7 @@
 * text=auto
 
 *.cs text eol=crlf diff=csharp
+*.txt text eol=crlf
 
 # (binary is a macro for -text -diff)
 *.png binary
