@@ -32,9 +32,10 @@ namespace RDMPStartup
             {
                 throw;
             }
-            catch (Exception )
+            catch (Exception)
             {
                 CatalogueRepository = null;
+                throw;
             }
             
             try
@@ -44,6 +45,7 @@ namespace RDMPStartup
             catch (Exception)
             {
                 DataExportRepository = null;
+                throw;
             }
 
             if (CatalogueRepository != null)
