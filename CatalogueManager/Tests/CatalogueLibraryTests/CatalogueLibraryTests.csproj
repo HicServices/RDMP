@@ -267,6 +267,7 @@
     <Compile Include="Integration\ArgumentTests\ProcessTaskTests.cs" />
     <Compile Include="Integration\Dependencies\RelationshipTests.cs" />
     <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateBuilderTestsBase.cs" />
+    <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateDataBasedTests.cs" />
     <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\MicrosoftAggregateBuilderTests.cs" />
     <Compile Include="Integration\QueryBuildingTests\QueryBuilderTests\MicrosoftQueryBuilderTests.cs" />
     <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\MySqlAggregateBuilderTests.cs" />

@@ -195,7 +195,7 @@ namespace CatalogueLibrary.QueryBuilding
                 throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is null");
 
             if(qb.SelectColumns.Count == 0)
-                throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is empty");
+                throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is empty, use .AddColumn to add a column to the query builder");
 
             List<TableInfo> toReturn = new List<TableInfo>();
             primaryExtractionTable = null;
