@@ -1,10 +1,11 @@
 # Auto detect text files and perform LF normalization
-# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
 
 * text=auto
+* eol=crlf
 
 *.cs text eol=crlf diff=csharp
 *.txt text eol=crlf
+*.resx text eol=crlf
 
 # (binary is a macro for -text -diff)
 *.png binary
