@@ -276,6 +276,7 @@
     <Compile Include="Mutilators\QueryBuilders\CascadeSqlBuilder.cs" />
     <Compile Include="Mutilators\QueryBuilders\TableInfoJoiningQueryBuilder.cs" />
     <Compile Include="Mutilators\StagingBackfillMutilator.cs" />
+    <Compile Include="Mutilators\TableVarcharMaxer.cs" />
     <Compile Include="ScheduleStrategy.cs" />
     <Compile Include="Web\WebFileDownloader.cs" />
     <Compile Include="NativeFileIO.cs" />
