@@ -30,7 +30,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
             throw new System.NotImplementedException();
         }
-        
+
+        public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override string DatabaseTableSeparator
         {
             get { return "."; }

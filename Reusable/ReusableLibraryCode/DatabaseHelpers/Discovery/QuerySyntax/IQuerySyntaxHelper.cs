@@ -21,5 +21,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         string AliasPrefix { get; }
         bool SplitLineIntoSelectSQLAndAlias(string lineToSplit, out string selectSQL, out string alias);
 
+        string GetScalarFunctionSql(MandatoryScalarFunctions function);
+    }
+
+    public enum MandatoryScalarFunctions
+    {
+        GetTodaysDate
+        
     }
 }
