@@ -408,7 +408,7 @@ namespace CatalogueLibrary.QueryBuilding
         {
             CustomLine toAdd = new CustomLine(text, positionToInsert);
 
-            if(positionToInsert == QueryComponent.GroupBy || positionToInsert == QueryComponent.OrderBy || positionToInsert == QueryComponent.FROM)
+            if(positionToInsert == QueryComponent.GroupBy || positionToInsert == QueryComponent.OrderBy || positionToInsert == QueryComponent.FROM || positionToInsert == QueryComponent.Having)
                 throw new QueryBuildingException("Cannot inject custom lines into QueryBuilders at location " + positionToInsert);
 
             if (positionToInsert == QueryComponent.WHERE)

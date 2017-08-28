@@ -160,7 +160,7 @@ ORDER BY
                 countAlias,
                 
                 //the entire query
-                string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.SELECT && c.LocationToInsert <= QueryComponent.GroupBy)),
+                string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.SELECT && c.LocationToInsert <= QueryComponent.Having)),
                 axisColumnAlias
                 ).Trim();
 
@@ -209,7 +209,9 @@ ORDER BY
             //if theres a topX limit postfix line (See MySqlQuerySyntaxHelper.HowDoWeAchieveTopX) add that too
             var topXLimitLine = lines.SingleOrDefault(c => c.LocationToInsert == QueryComponent.Postfix && c.Role == CustomLineRole.TopX);
             string topXLimitSqlIfAny = topXLimitLine != null ? topXLimitLine.Text : "";
-            
+
+            string havingSqlIfAny = string.Join(Environment.NewLine,
+                lines.Where(l => l.LocationToInsert == QueryComponent.Having).Select(l => l.Text));
 
             return string.Format(@"
 {0}
@@ -228,6 +230,7 @@ SELECT
 {11}
 group by
 {3}
+{14}
 order by
 {13}
 {12}
@@ -306,7 +309,8 @@ DEALLOCATE PREPARE stmt;",
                 string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.FROM && c.LocationToInsert <= QueryComponent.WHERE)),
                 whereDateColumnNotNull,
                 topXLimitSqlIfAny,
-                orderBy
+                orderBy,
+                havingSqlIfAny
                 );
         }
 

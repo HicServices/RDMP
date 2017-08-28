@@ -139,7 +139,7 @@ ORDER BY
                 countAlias,
 
                 //the entire query
-                string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.SELECT && c.LocationToInsert <= QueryComponent.GroupBy)),
+                string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.SELECT && c.LocationToInsert <= QueryComponent.Having)),
                 axisColumnAlias
                 ).Trim();
         }
@@ -206,6 +206,9 @@ ORDER BY
             if (topXOrderByLine != null)
                 orderBy = topXOrderByLine.Text;
 
+            string havingSqlIfAny = string.Join(Environment.NewLine,
+                lines.Where(l => l.LocationToInsert == QueryComponent.Having).Select(l => l.Text));
+
             string part1 = string.Format(
                @"
 /*DYNAMICALLY FETCH COLUMN VALUES FOR USE IN PIVOT*/
@@ -221,6 +224,7 @@ set @Columns = (
 {5} ( {2} IS NOT NULL and {2} <> '' AND  {7} is not null)
 group by 
 {2}
+{8}
 order by 
 {6}
 FOR XML PATH('') 
@@ -260,7 +264,8 @@ END
                                                   string.Join(Environment.NewLine,lines.Where(l=>l.LocationToInsert == QueryComponent.WHERE)),
                                                   anyFilters ? "AND" : "WHERE",
                                                   orderBy,
-                                                  axisColumnWithoutAlias
+                                                  axisColumnWithoutAlias,
+                                                  havingSqlIfAny
                                                   );
 
            //The dynamic query in which we assemble a query string and EXECUTE it

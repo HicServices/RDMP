@@ -393,7 +393,7 @@ namespace CatalogueLibrary.QueryBuilding
                 //clear trailing last comma
                 queryLines.Last().Text = queryLines.Last().Text.TrimEnd('\n', '\r', ',');
                 
-                queryLines.Add(new CustomLine(GetHavingSql(),QueryComponent.GroupBy));
+                queryLines.Add(new CustomLine(GetHavingSql(),QueryComponent.Having));
 
                 CompileCustomLinesInStageAndAddToList(QueryComponent.GroupBy, queryLines);
 

@@ -409,6 +409,50 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             }
             
         }
+        [Test]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void GroupBy_AxisWithCount_HAVING(DatabaseType type)
+        {
+            Catalogue catalogue;
+            ExtractionInformation[] extractionInformations;
+            TableInfo tableInfo;
+            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+
+            //setup the aggregate with axis
+            AggregateDimension dimension;
+            var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out dimension);
+
+            configuration.CountSQL = "count(*)";
+            configuration.HavingSQL = "count(*)>3"; //matches only years with more than 3 records
+            configuration.SaveToDatabase();
+
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(dimension);
+
+                var resultTable = GetResultForBuilder(builder, tbl);
+
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+
+                VerifyRowExist(resultTable, "2000", null); //records only showing where there are more than 3 records (HAVING refers to the year since theres no pivot)
+                VerifyRowExist(resultTable, "2001", 5);
+                VerifyRowExist(resultTable, "2002", 5);
+                VerifyRowExist(resultTable, "2003", null);
+                VerifyRowExist(resultTable, "2004", null);
+                VerifyRowExist(resultTable, "2005", null);
+                VerifyRowExist(resultTable, "2006", null);
+                VerifyRowExist(resultTable, "2007", null);
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
+
+        }
 
 
         [Test]
@@ -620,7 +664,6 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             {
                 Destroy(tbl, topx, configuration, catalogue, tableInfo);
             }
-            
         }
 
         /// <summary>
@@ -686,7 +729,70 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             {
                 Destroy(tbl, topx, configuration, catalogue, tableInfo);
             }
-            
+        }
+
+        /// <summary>
+        /// Assemble an aggregate which returns the top 1 pivot dimension HAVING count(*) less than 2
+        /// </summary>
+        /// <param name="type"></param>
+        [Test]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void GroupBy_PivotWithSum_HAVING_Top1_WHERE(DatabaseType type)
+        {
+            Catalogue catalogue;
+            ExtractionInformation[] extractionInformations;
+            TableInfo tableInfo;
+            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+
+            //setup the aggregate pivot (and axis)
+            AggregateDimension axisDimension;
+            AggregateDimension pivotDimension;
+            var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+
+            configuration.CountSQL = "sum(NumberInTrouble)";
+            configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
+
+            configuration.HavingSQL = "count(*)<5"; //throws out 'T'
+
+            configuration.SaveToDatabase();
+
+            var topx = new AggregateTopX(CatalogueRepository, configuration, 1); //Top 1 (highest count columns should be used for pivot)
+            topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
+            topx.SaveToDatabase();
+
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(axisDimension);
+                builder.AddColumn(pivotDimension);
+                builder.SetPivotToDimensionID(pivotDimension);
+
+                AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+
+                var resultTable = GetResultForBuilder(builder, tbl);
+
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+
+                //where logic matches T in spades but HAVING statement throws it out for having more than 4 records total
+                Assert.AreEqual("E", resultTable.Columns[1].ColumnName);
+
+                //Only E appears because of Top 1 pivot statement
+                VerifyRowExist(resultTable, "2000", null); //all E records are discarded except 59 because that is the WHERE logic
+                VerifyRowExist(resultTable, "2001", null);
+                VerifyRowExist(resultTable, "2002", null);
+                VerifyRowExist(resultTable, "2003", null);
+                VerifyRowExist(resultTable, "2004", null);
+                VerifyRowExist(resultTable, "2005", 59);
+                VerifyRowExist(resultTable, "2006", null);
+                VerifyRowExist(resultTable, "2007", null);
+            }
+            finally
+            {
+                Destroy(tbl, topx, configuration, catalogue, tableInfo);
+            }
         }
     }
 }
