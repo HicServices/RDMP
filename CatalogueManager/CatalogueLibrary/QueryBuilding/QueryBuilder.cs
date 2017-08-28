@@ -390,7 +390,7 @@ namespace CatalogueLibrary.QueryBuilding
             }
 
             //add user custom Parameter lines
-            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.VariableDeclaration);
+            toReturn = AppendCustomLines(toReturn, QueryComponent.VariableDeclaration);
 
             #endregion
 
@@ -399,8 +399,8 @@ namespace CatalogueLibrary.QueryBuilding
             Select_LineNumber = currentLine;
             toReturn += "SELECT " + LimitationSQL + TakeNewLine();
 
-            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.SELECT);
-            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.QueryTimeColumn);
+            toReturn = AppendCustomLines(toReturn, QueryComponent.SELECT);
+            toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
             
             for (int i = 0; i < SelectColumns.Count;i++ )
             {
@@ -427,7 +427,7 @@ namespace CatalogueLibrary.QueryBuilding
             JoinsUsedInQuery_LineNumbers = joinLineNumbers;
 
             //add user custom JOIN lines
-            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.JoinInfoJoin);
+            toReturn = AppendCustomLines(toReturn, QueryComponent.JoinInfoJoin);
             
             #region Filters (WHERE)
 
@@ -435,10 +435,8 @@ namespace CatalogueLibrary.QueryBuilding
             toReturn += SqlQueryBuilderHelper.GetWHERESQL(this, out filterLineNumbers);
             Filters_LineNumbers = filterLineNumbers;
 
-            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.WHERE);
-
-            toReturn += TakeNewLine();
-            toReturn += SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, QueryComponent.Postfix);
+            toReturn = AppendCustomLines(toReturn, QueryComponent.WHERE);
+            toReturn = AppendCustomLines(toReturn, QueryComponent.Postfix);
             
             _sql = toReturn;
             SQLOutOfDate = false;
@@ -447,6 +445,16 @@ namespace CatalogueLibrary.QueryBuilding
             #endregion
             
             
+        }
+
+        private string AppendCustomLines(string toReturn, QueryComponent stage)
+        {
+            var lines = SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage).ToArray();
+            if (lines.Any())
+                toReturn += TakeNewLine();
+
+            toReturn += string.Join(TakeNewLine(), lines.Select(l=>l.Text));
+            return toReturn;
         }
 
         public string TakeNewLine()

@@ -29,7 +29,14 @@ namespace CatalogueLibrary.QueryBuilding
         } }
         public string LimitationSQL { get; private set; }
         public string LabelWithComment { get; set; }
+
+
         private AggregateCountColumn _countColumn;
+        
+        QueryTimeColumn _pivotDimension = null;
+        AggregateContinuousDateAxis _axis = null;
+        AggregateDimension _axisAppliesToDimension = null;
+        bool _isCohortIdentificationAggregate;
 
         public string HavingSQL { get; set; }
         public IAggregateTopX AggregateTopX { get; set; }
@@ -70,7 +77,7 @@ namespace CatalogueLibrary.QueryBuilding
 
         public ICollectSqlParameters QueryLevelParameterProvider { get; set; }
 
-
+        
         public bool DoNotWriteOutOrderBy { get; set; }
 
         public bool DoNotWriteOutParameters
@@ -201,6 +208,12 @@ namespace CatalogueLibrary.QueryBuilding
             if (Sort)
                 SelectColumns.Sort();
 
+            //things we discover below, set them all to default values again
+            _pivotDimension = null;
+            _axisAppliesToDimension = null;
+            _axis = null;
+            _isCohortIdentificationAggregate = false;
+
             ParameterManager.ClearNonGlobals();
 
             if(QueryLevelParameterProvider != null)
@@ -214,25 +227,23 @@ namespace CatalogueLibrary.QueryBuilding
                 _forceJoinsToTheseTables != null ?
                 TablesUsedInQuery.Union(_forceJoinsToTheseTables).ToList() : TablesUsedInQuery);
 
+
             //tell the count column what language it is
             if (_countColumn != null)
-            {
-                bool isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null && _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
+            {    
+                _isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null && _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
 
                 //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
-                _countColumn.SetQuerySyntaxHelper(_syntaxHelper,!isCohortIdentificationAggregate);
+                _countColumn.SetQuerySyntaxHelper(_syntaxHelper,!_isCohortIdentificationAggregate);
             }
             
 
             IAggregateHelper aggregateHelper = _syntaxHelper.AggregateHelper;
-
-
-            QueryTimeColumn pivotDimension = null;
-
+            
             if(_pivotID != -1)
                 try
                 {
-                    pivotDimension = SelectColumns.Single(
+                    _pivotDimension = SelectColumns.Single(
                         qtc => qtc.IColumn is AggregateDimension 
                                &&
                                ((AggregateDimension)qtc.IColumn).ID == _pivotID);
@@ -242,28 +253,24 @@ namespace CatalogueLibrary.QueryBuilding
                     throw new QueryBuildingException("Problem occurred when trying to find PivotDimension ID " + _pivotID + " in SelectColumns list",e);
                 }
 
-            //work out the axis (if there is one)
-            AggregateContinuousDateAxis axis = null;
-            AggregateDimension axisAppliesToDimension = null; 
-            
             foreach (AggregateDimension dimension in SelectColumns.Select(c=>c.IColumn).Where(e=>e is AggregateDimension))
             {
                 var availableAxis =dimension.AggregateContinuousDateAxis;
 
                 if(availableAxis != null)
-                    if (axis != null)
+                    if (_axis != null)
                         throw new QueryBuildingException(
-                            "Multiple dimensions have an AggregateContinuousDateAxis within the same configuration (Dimensions " + axisAppliesToDimension.GetRuntimeName() + " and " + dimension.GetRuntimeName() + ")");
+                            "Multiple dimensions have an AggregateContinuousDateAxis within the same configuration (Dimensions " + _axisAppliesToDimension.GetRuntimeName() + " and " + dimension.GetRuntimeName() + ")");
                     else
                     {
-                        axis = availableAxis;
-                        axisAppliesToDimension = dimension;
+                        _axis = availableAxis;
+                        _axisAppliesToDimension = dimension;
                     }
             }
 
-            if (pivotDimension != null)
-                if (pivotDimension.IColumn == axisAppliesToDimension)
-                    throw new QueryBuildingException("Column " + pivotDimension.IColumn + " is both a PIVOT and has an AXIS configured on it, you cannot have both.");
+            if (_pivotDimension != null)
+                if (_pivotDimension.IColumn == _axisAppliesToDimension)
+                    throw new QueryBuildingException("Column " + _pivotDimension.IColumn + " is both a PIVOT and has an AXIS configured on it, you cannot have both.");
             
             //work out all the filters 
             Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
@@ -306,17 +313,17 @@ namespace CatalogueLibrary.QueryBuilding
             var queryLines = new List<CustomLine>();
             _sql = "";
             
-            ValidateDimensions(axis,pivotDimension);
+            ValidateDimensions();
 
             //assuming we were not told to ignore the writing out of parameters!
             if (!DoNotWriteOutParameters)
                 foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
-                    AddLineTo(queryLines, QueryBuilder.GetParameterDeclarationSQL(parameter), QueryComponent.VariableDeclaration, parameter);
+                    queryLines.Add(new CustomLine(QueryBuilder.GetParameterDeclarationSQL(parameter),QueryComponent.VariableDeclaration));
 
             CompileCustomLinesInStageAndAddToList(QueryComponent.VariableDeclaration, queryLines);
             
             //put the name in as SQL comments followed by the SQL e.g. the name of an AggregateConfiguration or whatever
-            GetSelectSQL(queryLines,axis,axisAppliesToDimension,aggregateHelper);
+            GetSelectSQL(queryLines);
             
             int[] whoCares;
             queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetFROMSQL(this, out whoCares), QueryComponent.FROM));
@@ -326,35 +333,30 @@ namespace CatalogueLibrary.QueryBuilding
 
             CompileCustomLinesInStageAndAddToList(QueryComponent.WHERE,queryLines);
             
-            GetGroupBySQL(queryLines,aggregateHelper,axisAppliesToDimension, axis);
+            GetGroupBySQL(queryLines,aggregateHelper);
             
             queryLines = queryLines.Where(l => !string.IsNullOrWhiteSpace(l.Text)).ToList();
 
-            _sql = aggregateHelper.BuildAggregate(queryLines, axis, pivotDimension != null ? pivotDimension.IColumn : null, _countColumn);
+            _sql = aggregateHelper.BuildAggregate(queryLines, _axis, _pivotDimension != null);
         }
         
-        private void ValidateDimensions(AggregateContinuousDateAxis axis, QueryTimeColumn pivotDimension)
+        private void ValidateDimensions()
         {
             //axis but no pivot
-            if(axis != null && pivotDimension == null && SelectColumns.Count !=2 )
+            if(_axis != null && _pivotDimension == null && SelectColumns.Count !=2 )
                 throw new QueryBuildingException("You must have two columns in an AggregateConfiguration that contains an axis.  These must be the axis column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
             
             //axis and pivot
-            if(axis != null && pivotDimension != null && SelectColumns.Count !=3 )
+            if(_axis != null && _pivotDimension != null && SelectColumns.Count !=3 )
                 throw new QueryBuildingException("You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
         }
-
-        private void AddLineTo(List<CustomLine> queryLines, string newLine, QueryComponent location, object relatedObject)
-        {
-            queryLines.Add(new CustomLine(newLine, location,relatedObject,Environment.StackTrace));
-        }
-
+        
         private void CompileCustomLinesInStageAndAddToList( QueryComponent stage,List<CustomLine> list)
         {
-             list.Add(new CustomLine(SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage).TrimEnd(),stage,CustomLines,Environment.StackTrace));
+            list.AddRange(SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage));
         }
 
-        private void GetGroupBySQL(List<CustomLine> queryLines,IAggregateHelper aggregateHelper, IColumn axisAppliesToDimension , AggregateContinuousDateAxis axis)
+        private void GetGroupBySQL(List<CustomLine> queryLines,IAggregateHelper aggregateHelper)
         {
             //now are there columns that...
             if (SelectColumns.Count(col =>
@@ -379,10 +381,12 @@ namespace CatalogueLibrary.QueryBuilding
                     string alias;
 
                     _syntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null,_syntaxHelper), out select, out alias);
-                    queryLines.Add(new CustomLine(select + ",",QueryComponent.GroupBy,
 
-                        //if it is an axis column tag it with the axis otherwise tag it with the icolumn
-                        col.IColumn == axisAppliesToDimension?(object) axis:col.IColumn,Environment.StackTrace));
+                    var line = new CustomLine(select + ",",QueryComponent.GroupBy);
+
+                    FlagLineBasedOnIcolumn(line,col.IColumn);
+
+                    queryLines.Add(line);
 
                 }
 
@@ -400,7 +404,9 @@ namespace CatalogueLibrary.QueryBuilding
 
                     //if theres a top X (with an explicit order by)
                     if (AggregateTopX != null)
-                        queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX) ,QueryComponent.OrderBy,AggregateTopX,Environment.StackTrace));
+                    {
+                        queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy) { Role = CustomLineRole.TopX });
+                    }
                     else
                         foreach (var col in SelectColumns)
                         {
@@ -417,11 +423,12 @@ namespace CatalogueLibrary.QueryBuilding
                             _syntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, _syntaxHelper),
                                 out select,
                                 out alias);
-                            
-                            queryLines.Add(new CustomLine(select + ",",QueryComponent.OrderBy,
 
-                                //tag it with the axis if it is the axis dimension
-                                col.IColumn == axisAppliesToDimension ? (object) axis:col.IColumn,Environment.StackTrace));
+                            var line = new CustomLine(select + ",", QueryComponent.OrderBy);
+
+                            FlagLineBasedOnIcolumn(line,col.IColumn);
+
+                            queryLines.Add(line);
                         }
 
                     queryLines.Last().Text = queryLines.Last().Text.TrimEnd(',');
@@ -435,7 +442,22 @@ namespace CatalogueLibrary.QueryBuilding
             CompileCustomLinesInStageAndAddToList(QueryComponent.Postfix, queryLines);
         }
 
-        private void GetSelectSQL(List<CustomLine> lines,AggregateContinuousDateAxis axis, IColumn axisAppliesToDimension, IAggregateHelper aggregateHelper)
+        private void FlagLineBasedOnIcolumn(CustomLine line, IColumn column)
+        {
+            //if it is an axis column tag it as an axis
+            if (Equals(column, _axisAppliesToDimension))
+                line.Role = CustomLineRole.Axis;
+            
+            //if it is a count column then flag it as that (cic aggregates take extreme liberties with count columns like hijacking them in a most dispicable way so don't even bother with this flag for them)
+            if (column is AggregateCountColumn && !_isCohortIdentificationAggregate)
+                line.Role = CustomLineRole.CountFunction;
+
+            if(_pivotDimension != null)
+                if(Equals(column,_pivotDimension.IColumn))
+                    line.Role = CustomLineRole.Pivot;
+        }
+
+        private void GetSelectSQL(List<CustomLine> lines)
         {
             lines.Add(new CustomLine("/*" + LabelWithComment + "*/",QueryComponent.SELECT));
             lines.Add(new CustomLine("SELECT ",QueryComponent.SELECT));
@@ -454,17 +476,12 @@ namespace CatalogueLibrary.QueryBuilding
                 if (col.IColumn.HashOnDataRelease)
                     throw new QueryBuildingException("Column " + col.IColumn.GetRuntimeName() + " is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
 
-                
-                lines.Add(
-                    new CustomLine(
-                        col.GetSelectSQL(null, null, _syntaxHelper) + ",",
-                        QueryComponent.QueryTimeColumn,
 
-                        //it's the axis dimension tag it with the axis not the column, otherwise tag it with the column
-                        col.IColumn == axisAppliesToDimension?(object) axis:col.IColumn,
+                var line = new CustomLine(col.GetSelectSQL(null, null, _syntaxHelper) + ",", QueryComponent.QueryTimeColumn);
+                FlagLineBasedOnIcolumn(line,col.IColumn);
 
-                        Environment.StackTrace));
-                
+                //it's the axis dimension tag it with the axis tag
+                lines.Add(line);
             }
 
             //get rid of the trailing comma

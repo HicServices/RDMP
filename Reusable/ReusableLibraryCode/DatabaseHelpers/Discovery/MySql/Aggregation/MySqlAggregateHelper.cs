@@ -89,41 +89,41 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;";
         }
 
-        public string BuildAggregate(List<CustomLine> queryLines, IQueryAxis axisIfAny, object pivotColumnIfAny, object countColumn)
+        public string BuildAggregate(List<CustomLine> queryLines, IQueryAxis axisIfAny, bool pivot)
         {
-            if (pivotColumnIfAny == null && axisIfAny == null)
+            if (!pivot && axisIfAny == null)
                 return string.Join(Environment.NewLine, queryLines);
 
             //axis only
-            if (pivotColumnIfAny == null)
-                return BuildAxisOnlyAggregate(queryLines,axisIfAny,countColumn);
+            if (!pivot)
+                return BuildAxisOnlyAggregate(queryLines,axisIfAny);
             
             //axis and pivot (cannot pivot without axis)
             if (axisIfAny == null)
                 throw new NotSupportedException("Expected there to be both a pivot and an axis");
 
-            return BuildPivotAggregate(queryLines, axisIfAny, pivotColumnIfAny, countColumn);
+            return BuildPivotAggregate(queryLines, axisIfAny);
             
         }
 
-        private string BuildAxisOnlyAggregate(List<CustomLine> lines, IQueryAxis axis, object countColumn)
+        private string BuildAxisOnlyAggregate(List<CustomLine> lines, IQueryAxis axis)
         {
             var syntaxHelper = new MySqlQuerySyntaxHelper();
             
-            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == countColumn);
+            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.CountFunction);
 
             string countSqlWithoutAlias;
             string countAlias;
             syntaxHelper.SplitLineIntoSelectSQLAndAlias(countSelectLine.Text, out countSqlWithoutAlias, out countAlias);
 
             //Deal with the axis dimension which is currently `mydb`.`mytbl`.`mycol` and needs to become YEAR(`mydb`.`mytbl`.`mycol`) As joinDt 
-            var axisColumn = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == axis);
+            var axisColumn = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.Axis);
 
             string axisColumnWithoutAlias;
             string axisColumnAlias;
             syntaxHelper.SplitLineIntoSelectSQLAndAlias(axisColumn.Text, out axisColumnWithoutAlias, out axisColumnAlias);
 
-            var axisGroupBy = lines.Single(l => l.LocationToInsert == QueryComponent.GroupBy && l.RelatedObject == axis);
+            var axisGroupBy = lines.Single(l => l.LocationToInsert == QueryComponent.GroupBy && l.Role == CustomLineRole.Axis);
 
             if (string.IsNullOrWhiteSpace(axisColumnAlias))
                 axisColumnAlias = "joinDt";
@@ -166,17 +166,17 @@ ORDER BY
 
         }
 
-        private string BuildPivotAggregate(List<CustomLine> lines, IQueryAxis axis, object pivotColumn, object countColumn)
+        private string BuildPivotAggregate(List<CustomLine> lines, IQueryAxis axis)
         {
             var syntaxHelper = new MySqlQuerySyntaxHelper();
 
-            var pivotSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == pivotColumn);
+            var pivotSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.Pivot);
 
             string pivotSqlWithoutAlias;
             string pivotAlias;
             syntaxHelper.SplitLineIntoSelectSQLAndAlias(pivotSelectLine.Text, out pivotSqlWithoutAlias, out pivotAlias);
 
-            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == countColumn);
+            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.CountFunction);
 
             string countSqlWithoutAlias;
             string countAlias;
@@ -189,7 +189,7 @@ ORDER BY
             if (aggregateParameter.Equals("*"))
                 aggregateParameter = "1";
 
-            var joinDtColumn = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == axis);
+            var joinDtColumn = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.Axis);
 
             string axisColumnWithoutAlias;
             string axisColumnAlias;
@@ -197,6 +197,19 @@ ORDER BY
 
             string whereDateColumnNotNull = lines.Any(l => l.LocationToInsert == QueryComponent.WHERE) ? "AND " : "WHERE ";
             whereDateColumnNotNull += axisColumnWithoutAlias + " IS NOT NULL";
+
+            //work out how to order the pivot columns
+            string orderBy = countSqlWithoutAlias + " desc"; //default, order by the count(*) / sum(*) etc column desc
+
+            //theres an explicit topX so order by it verbatim instead
+            var topXOrderByLine = lines.SingleOrDefault(c => c.LocationToInsert == QueryComponent.OrderBy && c.Role == CustomLineRole.TopX);
+            if (topXOrderByLine != null)
+                orderBy = topXOrderByLine.Text;
+
+            //if theres a topX limit postfix line (See MySqlQuerySyntaxHelper.HowDoWeAchieveTopX) add that too
+            var topXLimitLine = lines.SingleOrDefault(c => c.LocationToInsert == QueryComponent.Postfix && c.Role == CustomLineRole.TopX);
+            string topXLimitSqlIfAny = topXLimitLine != null ? topXLimitLine.Text : "";
+            
 
             return string.Format(@"
 {0}
@@ -210,12 +223,14 @@ DROP TEMPORARY TABLE IF EXISTS pivotValues;
 /*Get the unique values in the pivot column into a temporary table ordered by size of the count*/
 CREATE TEMPORARY TABLE pivotValues AS (
 SELECT
-{3} as piv,
-{6} as countName
+{3} as piv
 {5}
 {11}
 group by
 {3}
+order by
+{13}
+{12}
 );
 
 /* Build case when x='fish' then 1 end as 'fish', case when x='cammel' then 1 end as 'cammel' etc*/
@@ -224,7 +239,7 @@ SELECT
   GROUP_CONCAT(
     CONCAT(
       '{2}(case when {3} = ''', pivotValues.piv, ''' then {4} end) AS `', pivotValues.piv,'`'
-    ) order by pivotValues.countName desc
+    )
   ) INTO @columnsSelectCases
 FROM
 pivotValues;
@@ -234,7 +249,7 @@ SET @columnsSelectFromDataset = NULL;
 SELECT
   GROUP_CONCAT(
     CONCAT(
-      'dataset.`', pivotValues.piv,'`') order by pivotValues.countName desc
+      'dataset.`', pivotValues.piv,'`')
   ) INTO @columnsSelectFromDataset
 FROM
 pivotValues;
@@ -276,7 +291,7 @@ DEALLOCATE PREPARE stmt;",
                 aggregateParameter,
 
                 //the from including all table joins and where but no calendar table join
-                string.Join(Environment.NewLine, lines.Where(l => l.LocationToInsert >= QueryComponent.FROM && l.LocationToInsert <= QueryComponent.WHERE && l.RelatedObject != axis)),
+                string.Join(Environment.NewLine, lines.Where(l => l.LocationToInsert >= QueryComponent.FROM && l.LocationToInsert <= QueryComponent.WHERE && l.Role != CustomLineRole.Axis)),
 
                 //the order by (should be count so that heavy populated columns come first)
                 countSqlWithoutAlias,
@@ -289,8 +304,9 @@ DEALLOCATE PREPARE stmt;",
 
                 //the rest of the query down to the WHERE
                 string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.FROM && c.LocationToInsert <= QueryComponent.WHERE)),
-                whereDateColumnNotNull
-
+                whereDateColumnNotNull,
+                topXLimitSqlIfAny,
+                orderBy
                 );
         }
 

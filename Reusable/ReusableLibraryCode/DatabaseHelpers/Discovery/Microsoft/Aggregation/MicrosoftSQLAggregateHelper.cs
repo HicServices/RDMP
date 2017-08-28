@@ -98,11 +98,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation
         }
 
 
-        private string BuildAxisAggregate(List<CustomLine> lines, IQueryAxis axis, object countColumn)
+        private string BuildAxisAggregate(List<CustomLine> lines, IQueryAxis axis)
         {
             var syntaxHelper = new MicrosoftQuerySyntaxHelper();
 
-            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == countColumn);
+            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.CountFunction);
 
             string countSqlWithoutAlias;
             string countAlias;
@@ -147,11 +147,11 @@ ORDER BY
         private void AdjustAxisQueryLines(List<CustomLine> lines, IQueryAxis axis, MicrosoftQuerySyntaxHelper syntaxHelper,out CustomLine axisColumn, out string axisColumnWithoutAlias,out string axisColumnAlias, out CustomLine axisGroupBy)
         {
             //Deal with the axis dimension which is currently [mydb].[mytbl].[mycol] and needs to become YEAR([mydb].[mytbl].[mycol]) As joinDt 
-            axisColumn = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == axis);
+            axisColumn = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.Axis);
 
             syntaxHelper.SplitLineIntoSelectSQLAndAlias(axisColumn.Text, out axisColumnWithoutAlias, out axisColumnAlias);
 
-            axisGroupBy = lines.Single(l => l.LocationToInsert == QueryComponent.GroupBy && l.RelatedObject == axis);
+            axisGroupBy = lines.Single(l => l.LocationToInsert == QueryComponent.GroupBy && l.Role == CustomLineRole.Axis);
 
             if (string.IsNullOrWhiteSpace(axisColumnAlias))
                 axisColumnAlias = "joinDt";
@@ -167,15 +167,13 @@ ORDER BY
         }
 
 
-        private string BuildPivotAggregate(List<CustomLine> lines, IQueryAxis axis, object pivotColumnIfAny, object countColumn)
+        private string BuildPivotAggregate(List<CustomLine> lines, IQueryAxis axis)
         {
             var syntaxHelper = new MicrosoftQuerySyntaxHelper();
 
             //find the pivot column e.g. 'hb_extract AS Healthboard'
-            var pivotSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == pivotColumnIfAny);
+            var pivotSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.Pivot);
             
-            var pivotHadComma = pivotSelectLine.Text.EndsWith(",");
-
             //the LHS e.g. hb_extract
             string pivotSqlWithoutAlias;
             //the RHS e.g. Healthboard
@@ -186,15 +184,7 @@ ORDER BY
             if (string.IsNullOrWhiteSpace(pivotAlias))
                 pivotAlias = syntaxHelper.GetRuntimeName(pivotSqlWithoutAlias);
 
-            //intended to treat column values like ' T' and 'T' as the same pivot value and to teat 'T,F' as 'TF' because commas are not going to fly
-            const string pivotCleanPrefix = "LTRIM(RTRIM(REPLACE(";
-            const string pivotCleanSuffix = ",',','')))";
-
-            //inject the cleaning prefix/suffix into the column pivot
-            pivotSelectLine.Text = pivotCleanPrefix + pivotSqlWithoutAlias + pivotCleanSuffix + syntaxHelper.AliasPrefix + pivotAlias + (pivotHadComma?",":"");
-            syntaxHelper.SplitLineIntoSelectSQLAndAlias(pivotSelectLine.Text, out pivotSqlWithoutAlias, out pivotAlias);
-
-            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.RelatedObject == countColumn);
+            var countSelectLine = lines.Single(l => l.LocationToInsert == QueryComponent.QueryTimeColumn && l.Role == CustomLineRole.CountFunction);
 
             string countSqlWithoutAlias;
             string countAlias;
@@ -209,6 +199,12 @@ ORDER BY
             //Part 1 is where we get all the unique values from the pivot column (after applying the WHERE logic)
 
             bool anyFilters = lines.Any(l => l.LocationToInsert == QueryComponent.WHERE);
+
+            string orderBy = countSqlWithoutAlias + " desc";
+            var topXOrderByLine = lines.SingleOrDefault(l => l.LocationToInsert == QueryComponent.OrderBy && l.Role == CustomLineRole.TopX);
+
+            if (topXOrderByLine != null)
+                orderBy = topXOrderByLine.Text;
 
             string part1 = string.Format(
                @"
@@ -226,7 +222,7 @@ set @Columns = (
 group by 
 {2}
 order by 
-{6} desc
+{6}
 FOR XML PATH('') 
 )
 
@@ -259,11 +255,11 @@ END
                                                    pivotSqlWithoutAlias,
                                                   
                                                   //FROM and JOINs that are not to the calendar table
-                                                  string.Join(Environment.NewLine,lines.Where(l=>l.LocationToInsert == QueryComponent.FROM || l.LocationToInsert == QueryComponent.JoinInfoJoin && l.RelatedObject != axis)),
+                                                  string.Join(Environment.NewLine,lines.Where(l=>l.LocationToInsert == QueryComponent.FROM || l.LocationToInsert == QueryComponent.JoinInfoJoin && l.Role != CustomLineRole.Axis)),
                                                   
                                                   string.Join(Environment.NewLine,lines.Where(l=>l.LocationToInsert == QueryComponent.WHERE)),
                                                   anyFilters ? "AND" : "WHERE",
-                                                  countSqlWithoutAlias,
+                                                  orderBy,
                                                   axisColumnWithoutAlias
                                                   );
 
@@ -304,9 +300,11 @@ EXECUTE(@Query)
  syntaxHelper.Escape(string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert < QueryComponent.SELECT))),
  syntaxHelper.Escape(GetDateAxisTableDeclaration(axis)),
  
- //the entire select query up to the end of the group by
+ //the entire select query up to the end of the group by (ommitting any Top X)
  syntaxHelper.Escape(string.Join(Environment.NewLine, lines.Where(c =>
-     c.LocationToInsert >= QueryComponent.SELECT && c.LocationToInsert < QueryComponent.OrderBy ))),
+     c.LocationToInsert >= QueryComponent.SELECT && 
+     c.LocationToInsert < QueryComponent.OrderBy  &&
+     c.Role != CustomLineRole.TopX))),
 
      syntaxHelper.Escape(countAlias),
      syntaxHelper.Escape(pivotAlias),
@@ -317,21 +315,20 @@ EXECUTE(@Query)
         }
 
 
-        public string BuildAggregate(List<CustomLine> queryLines, IQueryAxis axisIfAny, object pivotColumnIfAny, object countColumn)
+        public string BuildAggregate(List<CustomLine> queryLines, IQueryAxis axisIfAny, bool pivot)
         {
-            if (axisIfAny == null && pivotColumnIfAny == null)
+            if (axisIfAny == null && !pivot)
                 return string.Join(Environment.NewLine, queryLines);
 
-            if (pivotColumnIfAny == null)
+            if (!pivot)
                 //axis but no pivot
-                return BuildAxisAggregate(queryLines, axisIfAny, countColumn);
+                return BuildAxisAggregate(queryLines, axisIfAny);
             
             //axis and pivot (cannot pivot without axis)
             if (axisIfAny == null)
                 throw new NotSupportedException("Expected there to be both a pivot and an axis");
 
-            return BuildPivotAggregate(queryLines, axisIfAny, pivotColumnIfAny, countColumn);
-            
+            return BuildPivotAggregate(queryLines, axisIfAny);
         }
 
     }

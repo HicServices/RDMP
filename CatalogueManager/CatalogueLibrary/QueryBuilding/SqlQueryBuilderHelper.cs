@@ -7,6 +7,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -518,6 +519,7 @@ namespace CatalogueLibrary.QueryBuilding
             //if we are expected to have a topx
             var response = syntaxHelper.HowDoWeAchieveTopX(topX);
             queryBuilder.TopXCustomLine = AddCustomLine(queryBuilder,response.SQL, response.Location);
+            queryBuilder.TopXCustomLine.Role = CustomLineRole.TopX;
         }
 
         public static void ClearTopX(ISqlQueryBuilder queryBuilder)
@@ -531,43 +533,38 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
 
-        public static string GetCustomLinesSQLForStage(ISqlQueryBuilder queryBuilder, QueryComponent stage)
+        public static IEnumerable<CustomLine> GetCustomLinesSQLForStage(ISqlQueryBuilder queryBuilder, QueryComponent stage)
         {
             var lines = queryBuilder.CustomLines.Where(c => c.LocationToInsert == stage).ToArray();
             
             if (!lines.Any())//no lines
-                return "";
+                yield break;
 
-           string toReturn = Environment.NewLine;
-
+           
             //Custom Filters (for people who can't be bothered to implement IFilter or when IContainer doesnt support ramming in additional Filters at runtime because you feel like it ) - these all get AND together and a WHERE is put at the start if needed
             //if there are custom lines being rammed into the Filter section
             if (stage == QueryComponent.WHERE)
             {
                 //if we haven't put a WHERE yet, put one in
                 if (queryBuilder.Filters.Count == 0)
-                    toReturn += "WHERE" + queryBuilder.TakeNewLine();
+                    yield return new CustomLine("WHERE" ,QueryComponent.WHERE);
                 else
-                    toReturn += "AND" + queryBuilder.TakeNewLine(); //otherwise just AND it with every other filter we currently have configured
+                    yield return new CustomLine("AND" , QueryComponent.WHERE); //otherwise just AND it with every other filter we currently have configured
 
                 //add user custom Filter lines
                 for (int i = 0; i < lines.Count(); i++)
                 {
-                    toReturn += lines[i].Text + queryBuilder.TakeNewLine();
+                    yield return lines[i];
 
                     if (i + 1 < lines.Count())
-                        toReturn += "AND" + queryBuilder.TakeNewLine();
+                        yield return new CustomLine("AND" , QueryComponent.WHERE);
                 }
-                    
-                
-                return toReturn;
+                yield break;
             }
             
             //not a custom filter (which requires ANDing - see above) so this is the rest of the cases
             foreach (CustomLine line in lines)
-                toReturn += line.Text + queryBuilder.TakeNewLine();
-
-            return toReturn;
+                yield return line;
         }
     }
 }

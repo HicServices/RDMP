@@ -187,6 +187,51 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
             builder.RootFilterContainer = ORContainer;
         }
+
+        private AggregateConfiguration SetupAggregateWithAxis(DatabaseType type, ExtractionInformation[] extractionInformations,
+            Catalogue catalogue, out AggregateDimension axisDimension)
+        {
+            var dateDimension =
+                extractionInformations.Single(
+                    e => e.GetRuntimeName().Equals("EventDate", StringComparison.CurrentCultureIgnoreCase));
+            var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
+            axisDimension = new AggregateDimension(CatalogueRepository, dateDimension, configuration);
+
+            var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
+
+            var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
+            axis.StartDate = "'2000-01-01'";
+            axis.EndDate = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
+            axis.AxisIncrement = AxisIncrement.Year;
+            axis.SaveToDatabase();
+            return configuration;
+        }
+
+        private AggregateConfiguration SetupAggregateWithPivot(DatabaseType type, ExtractionInformation[] extractionInformations,
+            Catalogue catalogue, out AggregateDimension axisDimension, out AggregateDimension pivotDimension)
+        {
+            var axisCol =
+                extractionInformations.Single(
+                    e => e.GetRuntimeName().Equals("EventDate", StringComparison.CurrentCultureIgnoreCase));
+            var categoryCol =
+                extractionInformations.Single(
+                    e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
+
+
+            var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
+            axisDimension = new AggregateDimension(CatalogueRepository, axisCol, configuration);
+            pivotDimension = new AggregateDimension(CatalogueRepository, categoryCol, configuration);
+
+            var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
+
+            var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
+            axis.StartDate = "'2000-01-01'";
+            axis.EndDate = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
+            axis.AxisIncrement = AxisIncrement.Year;
+            axis.SaveToDatabase();
+            return configuration;
+        }
+
         #endregion
 
         [Test]
@@ -201,11 +246,15 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
             var builder = new AggregateBuilder(null, "count(*)", null,new []{tableInfo});
             var resultTable = GetResultForBuilder(builder, tbl);
-
-            //table has 14 rows
-            VerifyRowExist(resultTable, 14);
-
-            Destroy(tbl, catalogue, tableInfo);
+            try
+            {
+                //table has 14 rows
+                VerifyRowExist(resultTable, 14);
+            }
+            finally
+            {
+                Destroy(tbl, catalogue, tableInfo);
+            }
         }
 
         [Test]
@@ -223,17 +272,22 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             var configuration  = new AggregateConfiguration(CatalogueRepository,catalogue,"GroupBy_Category");
             var dimension = new AggregateDimension(CatalogueRepository, categoryDimension, configuration);
 
-            //get the result of the aggregate 
-            var builder = new AggregateBuilder(null, configuration.CountSQL,configuration);
-            builder.AddColumn(dimension);
-            var resultTable = GetResultForBuilder(builder, tbl);
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(dimension);
+                var resultTable = GetResultForBuilder(builder, tbl);
 
-            VerifyRowExist(resultTable, "T", 7);
-            VerifyRowExist(resultTable, "F", 2);
-            VerifyRowExist(resultTable, "E", 3);
-            VerifyRowExist(resultTable, "G", 2);
-
-            Destroy(tbl, configuration,catalogue, tableInfo);
+                VerifyRowExist(resultTable, "T", 7);
+                VerifyRowExist(resultTable, "F", 2);
+                VerifyRowExist(resultTable, "E", 3);
+                VerifyRowExist(resultTable, "G", 2);
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
         }
 
         [Test]
@@ -253,19 +307,23 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
             configuration.CountSQL = "sum(NumberInTrouble)";
             configuration.SaveToDatabase();
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(dimension);
+                var resultTable = GetResultForBuilder(builder, tbl);
 
-            //get the result of the aggregate 
-            var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
-            builder.AddColumn(dimension);
-            var resultTable = GetResultForBuilder(builder, tbl);
-
-            VerifyRowExist(resultTable, "T", 139);
-            VerifyRowExist(resultTable, "F", 60);
-            VerifyRowExist(resultTable, "E", 137);
-            VerifyRowExist(resultTable, "G", 100);
-            Assert.AreEqual(4,resultTable.Rows.Count);
-
-            Destroy(tbl, configuration, catalogue, tableInfo);
+                VerifyRowExist(resultTable, "T", 139);
+                VerifyRowExist(resultTable, "F", 60);
+                VerifyRowExist(resultTable, "E", 137);
+                VerifyRowExist(resultTable, "G", 100);
+                Assert.AreEqual(4,resultTable.Rows.Count);
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
         }
 
         [Test]
@@ -286,22 +344,27 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             configuration.CountSQL = "sum(NumberInTrouble)";
             configuration.SaveToDatabase();
 
-            //get the result of the aggregate 
-            var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
-            builder.AddColumn(dimension);
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(dimension);
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+                AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
 
-            var resultTable = GetResultForBuilder(builder, tbl);
+                var resultTable = GetResultForBuilder(builder, tbl);
 
-            //T is matched on all records so they are summed
-            VerifyRowExist(resultTable, "T", 139);
-            //VerifyRowExist(resultTable, "F", 60); //F does not have any records over 42 and isn't T so shouldnt be matched
-            VerifyRowExist(resultTable, "E", 59); //E has 1 records over 42
-            VerifyRowExist(resultTable, "G", 100); //47 + 53
-            Assert.AreEqual(3, resultTable.Rows.Count);
-
-            Destroy(tbl, configuration, catalogue, tableInfo);
+                //T is matched on all records so they are summed
+                VerifyRowExist(resultTable, "T", 139);
+                //VerifyRowExist(resultTable, "F", 60); //F does not have any records over 42 and isn't T so shouldnt be matched
+                VerifyRowExist(resultTable, "E", 59); //E has 1 records over 42
+                VerifyRowExist(resultTable, "G", 100); //47 + 53
+                Assert.AreEqual(3, resultTable.Rows.Count);
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
         }
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -312,43 +375,41 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             ExtractionInformation[] extractionInformations;
             TableInfo tableInfo;
             var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
-
-            //setup the aggregate
-            var dateDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("EventDate", StringComparison.CurrentCultureIgnoreCase));
-            var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
-            var dimension = new AggregateDimension(CatalogueRepository, dateDimension, configuration);
-
-            var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
-
-            var axis = new AggregateContinuousDateAxis(CatalogueRepository, dimension);
-            axis.StartDate = "'2000-01-01'";
-            axis.EndDate = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
-            axis.AxisIncrement = AxisIncrement.Year;
-            axis.SaveToDatabase();
+            
+            //setup the aggregate with axis
+            AggregateDimension dimension;
+            var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out dimension);
 
             configuration.CountSQL = "sum(NumberInTrouble)";
             configuration.SaveToDatabase();
 
-            //get the result of the aggregate 
-            var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
-            builder.AddColumn(dimension);
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(dimension);
 
-            var resultTable = GetResultForBuilder(builder, tbl);
+                var resultTable = GetResultForBuilder(builder, tbl);
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals( "2000",resultTable.Rows[0][0]));
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals( "2000",resultTable.Rows[0][0]));
 
-            VerifyRowExist(resultTable, "2000", null); //because it is a SUM the ANSI return should be null not 0 since it is a sum of no records
-            VerifyRowExist(resultTable, "2001", 157);
-            VerifyRowExist(resultTable, "2002", 131);
-            VerifyRowExist(resultTable, "2003", 42);
-            VerifyRowExist(resultTable, "2004", null);
-            VerifyRowExist(resultTable, "2005", 59);
-            VerifyRowExist(resultTable, "2006", null);
-            VerifyRowExist(resultTable, "2007", null);
-
-            Destroy(tbl, configuration, catalogue, tableInfo);
+                VerifyRowExist(resultTable, "2000", null); //because it is a SUM the ANSI return should be null not 0 since it is a sum of no records
+                VerifyRowExist(resultTable, "2001", 157);
+                VerifyRowExist(resultTable, "2002", 131);
+                VerifyRowExist(resultTable, "2003", 42);
+                VerifyRowExist(resultTable, "2004", null);
+                VerifyRowExist(resultTable, "2005", 59);
+                VerifyRowExist(resultTable, "2006", null);
+                VerifyRowExist(resultTable, "2007", null);
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
+            
         }
+
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -360,37 +421,34 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             TableInfo tableInfo;
             var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
 
-            //setup the aggregate
-            var dateDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("EventDate", StringComparison.CurrentCultureIgnoreCase));
-            var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
-            var dimension = new AggregateDimension(CatalogueRepository, dateDimension, configuration);
-            
-            var axis = new AggregateContinuousDateAxis(CatalogueRepository, dimension);
-            axis.StartDate = "'2000-01-01'";
-            axis.EndDate = "'2003-01-01'";
-            axis.AxisIncrement = AxisIncrement.Year;
-            axis.SaveToDatabase();
+            //setup the aggregate with axis
+            AggregateDimension dimension;
+            var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out dimension);
 
             configuration.CountSQL = "count(NumberInTrouble)";
             configuration.SaveToDatabase();
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(dimension);
 
-            //get the result of the aggregate 
-            var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
-            builder.AddColumn(dimension);
+                AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+                var resultTable = GetResultForBuilder(builder, tbl);
 
-            var resultTable = GetResultForBuilder(builder, tbl);
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
-
-            VerifyRowExist(resultTable, "2000", null);
-            VerifyRowExist(resultTable, "2001", 4); //4 are T or > 42
-            VerifyRowExist(resultTable, "2002", 2);
-            VerifyRowExist(resultTable, "2003", 2); //only the first date in the test data is <= 2003-01-01
-
-            Destroy(tbl, configuration, catalogue, tableInfo);
+                VerifyRowExist(resultTable, "2000", null);
+                VerifyRowExist(resultTable, "2001", 4); //4 are T or > 42
+                VerifyRowExist(resultTable, "2002", 2);
+                VerifyRowExist(resultTable, "2003", 2); //only the first date in the test data is <= 2003-01-01
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
         }
 
         [Test]
@@ -403,56 +461,51 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             TableInfo tableInfo;
             var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
 
-            //setup the aggregate
-            var axisCol = extractionInformations.Single(e => e.GetRuntimeName().Equals("EventDate", StringComparison.CurrentCultureIgnoreCase));
-            var categoryCol = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
-
-
-            var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
-            var axisDimension = new AggregateDimension(CatalogueRepository, axisCol, configuration);
-            var pivotDimension = new AggregateDimension(CatalogueRepository, categoryCol, configuration);
-
-            var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
-
-            var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
-            axis.StartDate = "'2000-01-01'";
-            axis.EndDate = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
-            axis.AxisIncrement = AxisIncrement.Year;
-            axis.SaveToDatabase();
+            //setup the aggregate pivot (and axis)
+            AggregateDimension axisDimension;
+            AggregateDimension pivotDimension;
+            var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
 
             configuration.CountSQL = "sum(NumberInTrouble)";
             configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
 
             configuration.SaveToDatabase();
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(axisDimension);
+                builder.AddColumn(pivotDimension);
+                builder.SetPivotToDimensionID(pivotDimension);
 
-            //get the result of the aggregate 
-            var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
-            builder.AddColumn(axisDimension);
-            builder.AddColumn(pivotDimension);
-            builder.SetPivotToDimensionID(pivotDimension);
+                var resultTable = GetResultForBuilder(builder, tbl);
 
-            var resultTable = GetResultForBuilder(builder, tbl);
-
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
             
-            Assert.AreEqual("T",resultTable.Columns[1].ColumnName);
-            Assert.AreEqual("E", resultTable.Columns[2].ColumnName);
-            Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
-            Assert.AreEqual("G", resultTable.Columns[4].ColumnName);
+                Assert.AreEqual("T",resultTable.Columns[1].ColumnName);
+                Assert.AreEqual("E", resultTable.Columns[2].ColumnName);
+                Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
+                Assert.AreEqual("G", resultTable.Columns[4].ColumnName);
 
-            //T,F,E,G
-            VerifyRowExist(resultTable, "2000", null,null,null,null); //because it is a SUM the ANSI return should be null not 0 since it is a sum of no records
-            VerifyRowExist(resultTable, "2001", 67, 37, null, 53);
-            VerifyRowExist(resultTable, "2002", 30, 41, 60, null);
-            VerifyRowExist(resultTable, "2003", 42, null, null, null);
-            VerifyRowExist(resultTable, "2004", null, null, null, null);
-            VerifyRowExist(resultTable, "2005", null, 59,null , null);
-            VerifyRowExist(resultTable, "2006", null, null, null, null);
-            VerifyRowExist(resultTable, "2007", null, null, null, null);
-
-            Destroy(tbl, configuration, catalogue, tableInfo);
+                //T,E,F,G
+                VerifyRowExist(resultTable, "2000", null, null, null, null);//no records in 2000 but it is important it appears still because that is what the axis says
+                VerifyRowExist(resultTable, "2001", 67, 37, null, 53);
+                VerifyRowExist(resultTable, "2002", 30, 41, 60, null);
+                VerifyRowExist(resultTable, "2003", 42, null, null, null);
+                VerifyRowExist(resultTable, "2004", null, null, null, null);
+                VerifyRowExist(resultTable, "2005", null, 59,null , null);
+                VerifyRowExist(resultTable, "2006", null, null, null, null);
+                VerifyRowExist(resultTable, "2007", null, null, null, null);
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
+            
         }
+
+
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
@@ -463,56 +516,177 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             TableInfo tableInfo;
             var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
 
-            //setup the aggregate
-            var axisCol = extractionInformations.Single(e => e.GetRuntimeName().Equals("EventDate", StringComparison.CurrentCultureIgnoreCase));
-            var categoryCol = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
+            //setup the aggregate pivot (and axis)
+            AggregateDimension axisDimension;
+            AggregateDimension pivotDimension;
+            var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+
+            configuration.CountSQL = "sum(NumberInTrouble)";
+            configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
+
+            configuration.SaveToDatabase();
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(axisDimension);
+                builder.AddColumn(pivotDimension);
+                builder.SetPivotToDimensionID(pivotDimension);
+
+                AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+
+                var resultTable = GetResultForBuilder(builder, tbl);
+
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+
+                Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
+                Assert.AreEqual("E", resultTable.Columns[2].ColumnName);
+                Assert.AreEqual("G", resultTable.Columns[3].ColumnName);
+
+                //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
+                VerifyRowExist(resultTable, "2000", null, null, null); //no records in 2000 but it is important it appears still because that is what the axis says
+                VerifyRowExist(resultTable, "2001", 67, null, 53);
+                VerifyRowExist(resultTable, "2002", 30, null, null);
+                VerifyRowExist(resultTable, "2003", 42, null, null);
+                VerifyRowExist(resultTable, "2004", null, null, null);
+                VerifyRowExist(resultTable, "2005", null, 59,  null);
+                VerifyRowExist(resultTable, "2006", null, null, null);
+                VerifyRowExist(resultTable, "2007", null, null,  null);
+            }
+            finally
+            {
+                Destroy(tbl, configuration, catalogue, tableInfo);
+            }
+        }
 
 
-            var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
-            var axisDimension = new AggregateDimension(CatalogueRepository, axisCol, configuration);
-            var pivotDimension = new AggregateDimension(CatalogueRepository, categoryCol, configuration);
+        /// <summary>
+        /// A test which checks the behaviour of Aggregate Building when there is an axis, a pivot and a TopX in which the TopX selection is the 'Top 2 count column'
+        /// This translates as 'identify the top 2 pivot values which have the highest counts matching the WHERE condition and pivot those categories only (for all data)'
+        /// </summary>
+        /// <param name="type"></param>
+        [Test]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void GroupBy_PivotWithSum_Top2BasedonCountColumnDesc(DatabaseType type)
+        {
+            Catalogue catalogue;
+            ExtractionInformation[] extractionInformations;
+            TableInfo tableInfo;
+            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
 
-            var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
-
-            var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
-            axis.StartDate = "'2000-01-01'";
-            axis.EndDate = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
-            axis.AxisIncrement = AxisIncrement.Year;
-            axis.SaveToDatabase();
+            //setup the aggregate pivot (and axis)
+            AggregateDimension axisDimension;
+            AggregateDimension pivotDimension;
+            var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
 
             configuration.CountSQL = "sum(NumberInTrouble)";
             configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
 
             configuration.SaveToDatabase();
 
-            //get the result of the aggregate 
-            var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
-            builder.AddColumn(axisDimension);
-            builder.AddColumn(pivotDimension);
-            builder.SetPivotToDimensionID(pivotDimension);
+            var topx = new AggregateTopX(CatalogueRepository, configuration, 2);
+            topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
+            topx.SaveToDatabase();
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(axisDimension);
+                builder.AddColumn(pivotDimension);
+                builder.SetPivotToDimensionID(pivotDimension);
 
-            var resultTable = GetResultForBuilder(builder, tbl);
+                var resultTable = GetResultForBuilder(builder, tbl);
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
-            Assert.AreEqual("E", resultTable.Columns[2].ColumnName);
-            Assert.AreEqual("G", resultTable.Columns[3].ColumnName);
+                Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
+                Assert.AreEqual("E", resultTable.Columns[2].ColumnName);
 
-            //T,F,E,G
-            VerifyRowExist(resultTable, "2000", null, null, null); //because it is a SUM the ANSI return should be null not 0 since it is a sum of no records
-            VerifyRowExist(resultTable, "2001", 67, null, 53);
-            VerifyRowExist(resultTable, "2002", 30, null, null);
-            VerifyRowExist(resultTable, "2003", 42, null, null);
-            VerifyRowExist(resultTable, "2004", null, null, null);
-            VerifyRowExist(resultTable, "2005", null, 59,  null);
-            VerifyRowExist(resultTable, "2006", null, null, null);
-            VerifyRowExist(resultTable, "2007", null, null,  null);
+                //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
+                VerifyRowExist(resultTable, "2000", null, null); //no records in 2000 but it is important it appears still because that is what the axis says
+                VerifyRowExist(resultTable, "2001", 67, 37);
+                VerifyRowExist(resultTable, "2002", 30, 41);
+                VerifyRowExist(resultTable, "2003", 42, null);
+                VerifyRowExist(resultTable, "2004", null, null);
+                VerifyRowExist(resultTable, "2005", null, 59);
+                VerifyRowExist(resultTable, "2006", null, null);
+                VerifyRowExist(resultTable, "2007", null, null);
+            }
+            finally
+            {
+                Destroy(tbl, topx, configuration, catalogue, tableInfo);
+            }
+            
+        }
 
-            Destroy(tbl, configuration, catalogue, tableInfo);
+        /// <summary>
+        /// A test which checks the behaviour of Aggregate Building when there is an axis, a pivot and a TopX in which the TopX selection is the 'Top 2 count column'
+        /// This translates as 'identify the top 2 pivot values which have the highest counts matching the WHERE condition and pivot those categories only (for all data)'
+        /// </summary>
+        /// <param name="type"></param>
+        [Test]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void GroupBy_PivotWithSum_Top2AlphabeticalAsc_WHEREStatement(DatabaseType type)
+        {
+            Catalogue catalogue;
+            ExtractionInformation[] extractionInformations;
+            TableInfo tableInfo;
+            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+
+            //setup the aggregate pivot (and axis)
+            AggregateDimension axisDimension;
+            AggregateDimension pivotDimension;
+            var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+
+            configuration.CountSQL = "sum(NumberInTrouble)";
+            configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
+            configuration.SaveToDatabase();
+            
+            var topx = new AggregateTopX(CatalogueRepository, configuration, 2);
+            topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
+            topx.OrderByDimensionIfAny_ID = pivotDimension.ID;
+            topx.OrderByDirection = AggregateTopXOrderByDirection.Ascending;
+            topx.SaveToDatabase();
+
+            try
+            {
+                //get the result of the aggregate 
+                var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
+                builder.AddColumn(axisDimension);
+                builder.AddColumn(pivotDimension);
+                builder.SetPivotToDimensionID(pivotDimension);
+
+                AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+
+                var resultTable = GetResultForBuilder(builder, tbl);
+
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+
+                //sort in AggregateTopX is the pivot dimension asc (i.e. order alphabetically)
+                Assert.AreEqual("E", resultTable.Columns[1].ColumnName);
+                Assert.AreEqual("G", resultTable.Columns[2].ColumnName);
+
+                //E,G (note that only 1 value appears for E because WHERE throws out rest).  Also note the two columns are E and G because that is Top 2 when alphabetically sorted of the pivot values (E,F,G,T) that match the filter (F doesn't)
+                VerifyRowExist(resultTable, "2000", null, null); //no records in 2000 but it is important it appears still because that is what the axis says
+                VerifyRowExist(resultTable, "2001", null, 53);
+                VerifyRowExist(resultTable, "2002", null, null);
+                VerifyRowExist(resultTable, "2003", null, null);
+                VerifyRowExist(resultTable, "2004", null, null);
+                VerifyRowExist(resultTable, "2005", 59, null);
+                VerifyRowExist(resultTable, "2006", null, null);
+                VerifyRowExist(resultTable, "2007", null, null);
+            }
+            finally
+            {
+                Destroy(tbl, topx, configuration, catalogue, tableInfo);
+            }
+            
         }
     }
 }

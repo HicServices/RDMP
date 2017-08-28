@@ -245,6 +245,7 @@
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Aggregation\IAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Aggregation\IQueryAxis.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\CustomLine.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\CustomLineSemanticType.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\IQuerySyntaxHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\ManagedConnection.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\MicrosoftQuerySyntaxHelper.cs" />
