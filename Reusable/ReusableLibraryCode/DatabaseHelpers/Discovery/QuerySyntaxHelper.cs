@@ -83,7 +83,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public abstract TopXResponse HowDoWeAchieveTopX(int x);
         public abstract string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request);
 
-
         private string ValidateAlias(string getAlias)
         {
             if (!(getAlias.StartsWith(" ") && getAlias.EndsWith(" ")))
@@ -132,6 +131,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return false;
         }
 
+        public abstract string GetScalarFunctionSql(MandatoryScalarFunctions function);
 
         /// <summary>
         /// Takes a line line " count(*) " and returns "count" and "*"

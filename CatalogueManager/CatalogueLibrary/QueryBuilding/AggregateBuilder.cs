@@ -321,9 +321,6 @@ namespace CatalogueLibrary.QueryBuilding
             int[] whoCares;
             queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetFROMSQL(this, out whoCares), QueryComponent.FROM));
             CompileCustomLinesInStageAndAddToList(QueryComponent.JoinInfoJoin, queryLines);
-
-            if (axis != null)
-                queryLines.Add(new CustomLine(GetJoinSQLForAxis(axis, axisAppliesToDimension),QueryComponent.JoinInfoJoin,axis,Environment.StackTrace));
             
             queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this, out whoCares),QueryComponent.WHERE));
 
@@ -339,12 +336,12 @@ namespace CatalogueLibrary.QueryBuilding
         private void ValidateDimensions(AggregateContinuousDateAxis axis, QueryTimeColumn pivotDimension)
         {
             //axis but no pivot
-            if(axis != null && pivotDimension == null && SelectColumns.Count !=2 ) 
-                throw new QueryBuildingException("You must have two columns in an AggregateConfiguration that contains an axis.  These must be the axis column and the count/sum column.  Your query had "+SelectColumns.Count+ " (" + string.Join(",","'"+SelectColumns+"'")+")");
+            if(axis != null && pivotDimension == null && SelectColumns.Count !=2 )
+                throw new QueryBuildingException("You must have two columns in an AggregateConfiguration that contains an axis.  These must be the axis column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
             
             //axis and pivot
-            if(axis != null && pivotDimension != null && SelectColumns.Count !=3 ) 
-                throw new QueryBuildingException("You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had "+SelectColumns.Count+ " (" + string.Join(",","'"+SelectColumns+"'")+")");
+            if(axis != null && pivotDimension != null && SelectColumns.Count !=3 )
+                throw new QueryBuildingException("You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
         }
 
         private void AddLineTo(List<CustomLine> queryLines, string newLine, QueryComponent location, object relatedObject)
@@ -378,18 +375,14 @@ namespace CatalogueLibrary.QueryBuilding
                     if (_skipGroupByForThese.Contains(col.IColumn))
                         continue;
 
-                    //if it is an axis column just add the reference to the axis
-                    if (col.IColumn == axisAppliesToDimension)
-                    {
-                        queryLines.Add(new CustomLine(GetAxisSelectSql(aggregateHelper, axis) + ",", QueryComponent.GroupBy,axis,Environment.StackTrace));
-                        continue;
-                    }
-
                     string select;
                     string alias;
 
                     _syntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null,_syntaxHelper), out select, out alias);
-                    queryLines.Add(new CustomLine(select + ",",QueryComponent.GroupBy));
+                    queryLines.Add(new CustomLine(select + ",",QueryComponent.GroupBy,
+
+                        //if it is an axis column tag it with the axis otherwise tag it with the icolumn
+                        col.IColumn == axisAppliesToDimension?(object) axis:col.IColumn,Environment.StackTrace));
 
                 }
 
@@ -417,14 +410,7 @@ namespace CatalogueLibrary.QueryBuilding
                             //was added with skip for group by enabled
                             if (_skipGroupByForThese.Contains(col.IColumn))
                                 continue;
-
-                            //if it is an axis column just add the reference to the axis
-                            if (col.IColumn == axisAppliesToDimension)
-                            {
-                                queryLines.Add(new CustomLine(GetAxisSelectSql(aggregateHelper, axis) + ",", QueryComponent.OrderBy, axis, Environment.StackTrace));
-                                continue;
-                            }
-
+                            
                             string select;
                             string alias;
 
@@ -432,7 +418,10 @@ namespace CatalogueLibrary.QueryBuilding
                                 out select,
                                 out alias);
                             
-                            queryLines.Add(new CustomLine(select + ",",QueryComponent.OrderBy));
+                            queryLines.Add(new CustomLine(select + ",",QueryComponent.OrderBy,
+
+                                //tag it with the axis if it is the axis dimension
+                                col.IColumn == axisAppliesToDimension ? (object) axis:col.IColumn,Environment.StackTrace));
                         }
 
                     queryLines.Last().Text = queryLines.Last().Text.TrimEnd(',');
@@ -465,25 +454,17 @@ namespace CatalogueLibrary.QueryBuilding
                 if (col.IColumn.HashOnDataRelease)
                     throw new QueryBuildingException("Column " + col.IColumn.GetRuntimeName() + " is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
 
-                //it's the axis dimension 
-                if (col.IColumn == axisAppliesToDimension)
-                {
-                    lines.Add(
-                        new CustomLine(
-                        GetAxisSelectSql(aggregateHelper, axis) + _syntaxHelper.AliasPrefix + "joinDt," ,
+                
+                lines.Add(
+                    new CustomLine(
+                        col.GetSelectSQL(null, null, _syntaxHelper) + ",",
                         QueryComponent.QueryTimeColumn,
-                        axis,
+
+                        //it's the axis dimension tag it with the axis not the column, otherwise tag it with the column
+                        col.IColumn == axisAppliesToDimension?(object) axis:col.IColumn,
+
                         Environment.StackTrace));
-                }
-                else
-                {
-                    lines.Add(
-                        new CustomLine(
-                            col.GetSelectSQL(null, null, _syntaxHelper) + ",",
-                            QueryComponent.QueryTimeColumn,
-                            col.IColumn,
-                            Environment.StackTrace));
-                }
+                
             }
 
             //get rid of the trailing comma
@@ -491,11 +472,6 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
 
-        private string GetAxisSelectSql(IAggregateHelper aggregateHelper, AggregateContinuousDateAxis axis)
-        {
-            return aggregateHelper.GetDatePartOfColumn(axis.AxisIncrement, aggregateHelper.GetAxisTableRuntimeName() + ".dt");
-        }
-        
         private string GetOrderBySQL(IAggregateTopX aggregateTopX)
         {
             var dimension = aggregateTopX.OrderByColumn;
@@ -523,40 +499,6 @@ namespace CatalogueLibrary.QueryBuilding
                 toReturn += HavingSQL;
             }
             return toReturn;
-        }
-
-
-        
-        private string GetJoinSQLForAxis(AggregateContinuousDateAxis axis, AggregateDimension axisAppliesToDimension)
-        {
-            var fullName = _syntaxHelper.AggregateHelper.GetAxisTableNameFullyQualified();
-            var runtimeName = _syntaxHelper.AggregateHelper.GetAxisTableRuntimeName();
-            var joinEqualsBit = _syntaxHelper.AggregateHelper.GetDatePartBasedEqualsBetweenColumns(axis.AxisIncrement, axisAppliesToDimension.SelectSQL, runtimeName + ".dt");
-
-            return "RIGHT JOIN  " + fullName + " ON " + joinEqualsBit;
-        }
-
-        private bool IsNormalSelectDimension(QueryTimeColumn qtc, AggregateContinuousDateAxis axisDimensionIfAny, QueryTimeColumn pivotDimensionIfAny)
-        {
-            //its a count(*) column
-            if (qtc.IColumn is AggregateCountColumn)
-                return false;
-
-            //its not normal! because its the pivot dimension
-            if (qtc == pivotDimensionIfAny)
-                return false;
-
-            //there is no axis it is probably normal
-            if (axisDimensionIfAny == null)
-                return true;
-
-            //if it is an axis column and you are asking if qtc is normal or not and the axis is this qtc then it is not normal!
-            if (((AggregateDimension)qtc.IColumn).ID == axisDimensionIfAny.AggregateDimension_ID)
-                return false;
-
-
-            //it is probably normal
-            return true;
         }
 
         public string TakeNewLine()

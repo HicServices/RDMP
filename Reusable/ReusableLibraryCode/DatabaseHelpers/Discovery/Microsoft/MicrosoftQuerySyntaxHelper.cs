@@ -28,7 +28,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         {
             return "DECLARE " + proposedNewParameterName + " AS " + TypeTranslater.GetSQLDBTypeForCSharpType(request) +";";
         }
-        
+
+        public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
+        {
+            switch (function)
+            {
+                case MandatoryScalarFunctions.GetTodaysDate:
+                    return "GETDATE()";
+                default:
+                    throw new ArgumentOutOfRangeException("function");
+            }
+        }
+
         public override string EnsureFullyQualified(string databaseName, string schema, string tableName)
         {
             //if there is no schema address it as db..table (which is the same as db.dbo.table in Microsoft SQL Server)

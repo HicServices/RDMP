@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
@@ -36,6 +37,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return "/*" + proposedNewParameterName + "*/";
         }
 
-
+        public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
+        {
+            switch (function)
+            {
+                case MandatoryScalarFunctions.GetTodaysDate:
+                    return "now()";
+                default:
+                    throw new ArgumentOutOfRangeException("function");
+            }
+        }
     }
 }
