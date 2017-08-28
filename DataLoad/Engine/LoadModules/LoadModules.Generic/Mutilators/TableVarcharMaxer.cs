@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -12,15 +13,16 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators
 {
+    [Description("Runs in in Mounting or RAW (ideally as the first module in Mounting) which turns all columns in all tables in the bubble into a different data type (e.g. varchar(max)).")]
     public class TableVarcharMaxer : IPluginMutilateDataTables
     {
         private DiscoveredDatabase _dbInfo;
         private LoadStage _loadStage;
 
-        [DemandsInitialization("When true the mutilator will expand for all tables found in staging e.g. RAW regardless of whether they are part of the load.  Only makes a difference if you have table creation scripts in RAW before this component")]
+        [DemandsInitialization("When true the mutilator will expand for all tables found in staging e.g. RAW regardless of whether they are part of the load.  Only makes a difference if you have table creation scripts in RAW before this component", defaultValue: true)]
         public bool AllTables { get; set; }
 
-        [DemandsInitialization("By default (false) the mutilator will only expand columns with an SQL Type containing 'char', if set to true then this will do all columns including decimals, dates etc")]
+        [DemandsInitialization("By default (false) the mutilator will only expand columns with an SQL Type containing 'char', if set to true then this will do all columns including decimals, dates etc", defaultValue: false)]
         public bool AllDataTypes { get; set; }
 
         [DemandsInitialization(description: "The type that all matching columns will be converted into", defaultValue: "varchar(max)", typeOf: null, mandatory: true)]
