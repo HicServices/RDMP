@@ -18,7 +18,7 @@ namespace CatalogueLibrary.Data
     /// Also if you have a very strange requirement you can pick an AggregateDimension for the TopX to apply to other than the count column e.g. top 10 drug names by ascending would give
     ///  Asprin, Aardvarksprin, A... etc
     /// </summary>
-    public class AggregateTopX :DatabaseEntity
+    public class AggregateTopX : DatabaseEntity, IAggregateTopX
     {
         private int _topX;
         private int? _orderByDimensionIfAny_ID;
@@ -67,6 +67,10 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        //interface 
+        [NoMappingToDatabase]
+        public IColumn OrderByColumn { get { return OrderByDimensionIfAny; } }
+
         public AggregateTopX(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -85,29 +89,6 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public enum AggregateTopXOrderByDirection
-        {
-            Ascending,
-            Descending
-        }
-
-        public string GetOrderBySQL(List<AggregateCountColumn> countCols)
-        {
-            var dimension = OrderByDimensionIfAny;
-            if (dimension == null)
-                if (countCols.Count == 1)
-                    return countCols[0].SelectSQL
-                           + (OrderByDirection == AggregateTopXOrderByDirection.Ascending
-                               ? " asc"
-                               : " desc");
-                else
-                    throw new QueryBuildingException(
-                        "AggregateTopX lists it's OrderBy criteria as AggregateCountColumn but there are no count(*) columns in the Query being built");
-
-            return dimension.SelectSQL
-                + (OrderByDirection == AggregateTopXOrderByDirection.Ascending
-                ? " asc"
-                : " desc");
-        }
+        
     }
 }

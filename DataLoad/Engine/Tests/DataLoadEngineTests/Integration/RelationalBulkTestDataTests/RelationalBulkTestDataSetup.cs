@@ -20,10 +20,10 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
         [Test]
         public void SetupTables_Exists()
         {
-            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DatabaseICanCreateRandomTablesIn);
+            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             bulkData.SetupTestData();
 
-            Assert.IsTrue(new DiscoveredServer(DatabaseICanCreateRandomTablesIn).ExpectDatabase(bulkData.BulkDataDatabase).ExpectTable("CIATestEvent").Exists());
+            Assert.IsTrue(bulkData.Database.ExpectTable("CIATestEvent").Exists());
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
                 remnant.DeleteInDatabase();
             }
 
-            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DatabaseICanCreateRandomTablesIn);
+            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             bulkData.SetupTestData();
 
 
@@ -56,14 +56,14 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
                 var extractionInformations = bulkData.CIATestEventCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Cast<IColumn>().ToArray();
                 qb.AddColumnRange(extractionInformations);
 
-                Assert.AreEqual(@"SELECT 
+                Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[PKAgencyCodename],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[PKClearenceLevel],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[EventName],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[TypeOfEvent],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[EstimatedEventDate]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent]", qb.SQL.Trim());
+["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent]"),CollapseWhitespace(qb.SQL));
 
             }
             finally
@@ -80,8 +80,8 @@ FROM
         public void DatabaseIsSame()
         {
             int seed = 500;
-            
-            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DatabaseICanCreateRandomTablesIn, seed);
+
+            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, seed);
             bulkData.SetupTestData();
 
             CIATestInformant[] allInformants;
@@ -89,12 +89,12 @@ FROM
             bulkData.CommitToDatabase(events,allInformants);
 
             //regenerate with the same seed
-            bulkData = new RelationalBulkTestData(CatalogueRepository, DatabaseICanCreateRandomTablesIn,seed);
+            bulkData = new RelationalBulkTestData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, seed);
             events = bulkData.GenerateEvents(DateTime.Now.AddYears(-5), DateTime.Now.AddYears(-3), 100, 50, 20, out allInformants);
 
-            Assert.IsTrue(CIATestEvent.IsExactMatchToDatabase(events, DatabaseICanCreateRandomTablesIn));
+            Assert.IsTrue(CIATestEvent.IsExactMatchToDatabase(events, bulkData.Database));
 
-            Assert.IsTrue(new DiscoveredServer(DatabaseICanCreateRandomTablesIn).ExpectDatabase(bulkData.BulkDataDatabase).ExpectTable("CIATestEvent").Exists());
+            Assert.IsTrue(bulkData.Database.ExpectTable("CIATestEvent").Exists());
             
         }
     }

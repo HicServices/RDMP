@@ -45,18 +45,15 @@ namespace DataLoadEngineTests.Integration
             trigger.Create();
 
 
-            var dbInfo = ToDiscoveredDatabase(
-                new SqlConnectionStringBuilder(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString)
-                {
-                    InitialCatalog = databaseName
-                });
+            var dbInfo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName);
 
             var triggerImplementer = new TriggerImplementer(dbInfo, tableName);
             var isEnabled = triggerImplementer.CheckUpdateTriggerIsEnabledOnServer();
             Assert.AreEqual(TriggerImplementer.TriggerStatus.Enabled, isEnabled);
 
+            
             // disable the trigger and test correct reporting
-            using (var con = new SqlConnection(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString))
+            using (var con = new SqlConnection(dbInfo.Server.Builder.ConnectionString))
             {
                 con.Open();
                 var cmd =
@@ -70,8 +67,6 @@ namespace DataLoadEngineTests.Integration
             isEnabled = triggerImplementer.CheckUpdateTriggerIsEnabledOnServer();
             Assert.AreEqual(TriggerImplementer.TriggerStatus.Disabled, isEnabled);
 
-            if (smoServer.Name.Equals("CONSUS"))
-                throw new Exception("Never drop databases on CONSUS please");
             smoServer.KillDatabase(databaseName);
         }
 

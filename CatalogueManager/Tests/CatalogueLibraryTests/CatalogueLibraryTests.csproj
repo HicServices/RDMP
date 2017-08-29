@@ -237,6 +237,7 @@
     </Compile>
     <Compile Include="Automation\AutomationJobTests.cs" />
     <Compile Include="Automation\AutomationServiceSlotTests.cs" />
+    <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
     <Compile Include="Integration\AllKeywordsDescribedTest.cs" />
     <Compile Include="Integration\AllObjectsHaveImages.cs" />
     <Compile Include="Integration\ArgumentTests\TestArgumentedClass.cs" />
@@ -265,7 +266,12 @@
     <Compile Include="Integration\ArgumentTests\ProcessTaskArgumentTests.cs" />
     <Compile Include="Integration\ArgumentTests\ProcessTaskTests.cs" />
     <Compile Include="Integration\Dependencies\RelationshipTests.cs" />
-    <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests.cs" />
+    <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateBuilderTestsBase.cs" />
+    <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateDataBasedTests.cs" />
+    <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\MicrosoftAggregateBuilderTests.cs" />
+    <Compile Include="Integration\QueryBuildingTests\QueryBuilderTests\MicrosoftQueryBuilderTests.cs" />
+    <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\MySqlAggregateBuilderTests.cs" />
+    <Compile Include="Integration\QueryBuildingTests\QueryBuilderTests\MySqlQueryBuilderTests.cs" />
     <Compile Include="Integration\ServerDefaultsTests.cs" />
     <Compile Include="Integration\SuperCachedModeTests\SuperCacheModeBasicTests.cs" />
     <Compile Include="Integration\TableInfoSynchronizerTests.cs" />
@@ -321,7 +327,6 @@
     <Compile Include="Integration\SupportingDocumentTests.cs" />
     <Compile Include="Unit\PluginBootstrapperTests.cs" />
     <Compile Include="Unit\PreInitializeTests.cs" />
-    <Compile Include="Unit\QueryTimeColumnTests.cs" />
     <Compile Include="Unit\SimpleColumnInfoTests.cs" />
     <Compile Include="Unit\SqlSyntaxHelperTests.cs" />
     <Compile Include="Integration\TableInfoTests.cs" />

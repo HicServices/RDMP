@@ -32,6 +32,7 @@ using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying.Commands;
 using RDMPStartup;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.Menus

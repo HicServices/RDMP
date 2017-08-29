@@ -5,6 +5,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.Collections.Providers;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.Icons.IconProvision.StateBasedIconProviders
 {

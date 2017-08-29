@@ -26,11 +26,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Components
         public void SetupServer()
         {
             _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer");
-            
-            _server.Server = DatabaseICanCreateRandomTablesIn.DataSource;
-            _server.Database = DatabaseICanCreateRandomTablesIn.InitialCatalog;
-            _server.SaveToDatabase();
-
+            _server.SetProperties(DiscoveredDatabaseICanCreateRandomTablesIn);
 
             var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
             using (var con = s.GetConnection())

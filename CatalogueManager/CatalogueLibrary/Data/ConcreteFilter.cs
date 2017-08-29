@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -71,5 +74,28 @@ namespace CatalogueLibrary.Data
         public abstract ColumnInfo GetColumnInfoIfExists();
         public abstract IFilterFactory GetFilterFactory();
         public abstract Catalogue GetCatalogue();
+
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return new QuerySyntaxHelperFactory().Create(GetDatabaseType());
+        }
+
+        private DatabaseType? _cachedDatabaseTypeAnswer;
+
+        protected DatabaseType GetDatabaseType()
+        {
+            if (_cachedDatabaseTypeAnswer != null)
+                return _cachedDatabaseTypeAnswer.Value;
+
+            var col = GetColumnInfoIfExists();
+            if (col != null)
+                _cachedDatabaseTypeAnswer = col.TableInfo.DatabaseType;
+            else
+                _cachedDatabaseTypeAnswer = GetCatalogue().GetDistinctLiveDatabaseServerType();
+
+            
+            return _cachedDatabaseTypeAnswer.Value;
+        }
     }
 }

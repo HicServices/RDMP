@@ -45,7 +45,7 @@ namespace RDMPAutomationServiceTests
             }
             
             //create some test data and import it as a catalogue
-            BulkTestsData testData = new BulkTestsData(CatalogueRepository,DatabaseICanCreateRandomTablesIn,100); 
+            BulkTestsData testData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100); 
             testData.SetupTestData();
             testData.ImportAsCatalogue();
             try

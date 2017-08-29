@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections.Providers.Copying;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
@@ -21,6 +22,7 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
@@ -170,9 +172,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             
             if (rowObject is LoadDiagramServerNode)
                 if (string.IsNullOrWhiteSpace(((LoadDiagramServerNode) rowObject).ErrorDescription))
-                    return _activator.CoreIconProvider.GetImage(RDMPConcept.TableInfoServerNode);
-                else
-                    return _activator.CoreIconProvider.GetImage(RDMPConcept.TableInfoServerNode,OverlayKind.Problem);
+                        return _activator.CoreIconProvider.GetImage(rowObject);
+                    else
+                        return _activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem);
 
             if (db != null)
                 return db.GetImage(_activator.CoreIconProvider);

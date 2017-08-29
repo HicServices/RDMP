@@ -50,6 +50,7 @@ namespace CohortManagerTests
         {
 
             //should not follow naming convention
+            aggregate1.Name = "fish";
             Assert.IsFalse(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregate1));
 
             //add a clone using aggregate1 as a template 
@@ -72,6 +73,8 @@ namespace CohortManagerTests
             }
             finally
             {
+                aggregate1.RevertToDatabaseState();
+
                 rootcontainer.RemoveChild(clone);
 
                 if (clone.RootFilterContainer != null)
@@ -130,10 +133,11 @@ namespace CohortManagerTests
 
 
 //the basic aggregate has the filter, parameter and group by
-                Assert.AreEqual(
-@"DECLARE @sex AS VARCHAR(50);
+                Assert.AreEqual(CollapseWhitespace(
+                    string.Format(
+@"DECLARE @sex AS varchar(50);
 SET @sex='M';
-/*UnitTestAggregate1*/
+/*cic_{0}_UnitTestAggregate1*/
 SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi],
 count(*)
@@ -148,7 +152,7 @@ sex=@sex
 group by 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 order by 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]",aggregateSql);
+["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(aggregateSql));
 
 //the expected differences are
 //1. should not have the count
@@ -157,10 +161,11 @@ order by
 //4. should have a distinct on the identifier column
 
                 Assert.AreEqual(
-@"DECLARE @sex AS VARCHAR(50);
+@"DECLARE @sex AS varchar(50);
 SET @sex='M';
 /*cic_"+cohortIdentificationConfiguration.ID+@"_UnitTestAggregate1*/
-SELECT distinct
+SELECT
+distinct
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 FROM 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]

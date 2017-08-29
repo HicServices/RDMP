@@ -163,7 +163,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
                     int lineCount = GetLineCount(toAdd);
 
-                    Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += (lineCount - 1), parameter, !Options.IsHigherLevel(parameter), toAdd));
+                    Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += (lineCount - 1), parameter, 
+                        
+                        !Options.ShouldBeDisabled(parameter),
+                        
+                        toAdd));
 
                     sql += toAdd;
                     currentLine++;

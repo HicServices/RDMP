@@ -41,6 +41,9 @@ namespace MapsDirectlyToDatabaseTable.RepositoryResultCaching
             if (result == null)
                 throw new ArgumentException("Result of query " + whereSQL + " was null, expected it to be an array of results or an empty array if there were no results returned by the query, null represents no cached answer available so you can't store a null in the cache", "result");
 
+            foreach (IMapsDirectlyToDatabaseTable o in result)
+                o.SetReadOnly();
+
             //we now know the results of a GetAllObjects query with no associated where statement 
             if (string.IsNullOrWhiteSpace(whereSQL))
                 _emptyWhereResultObjects = result;
@@ -54,6 +57,17 @@ namespace MapsDirectlyToDatabaseTable.RepositoryResultCaching
                 AddResultIfNotAlreadyCached(o.ID,o);
         }
 
+        public void AddResultIfNotAlreadyCached(int id, IMapsDirectlyToDatabaseTable result)
+        {
+            if (result.ID != id)
+                throw new ArgumentException("ID of object was " + result.ID + " while the claimed id was " + id,"id");
+
+            result.SetReadOnly();
+
+            if (!_knowResultsByID.ContainsKey(result.ID))
+                _knowResultsByID.Add(result.ID, result);    
+        }
+
         public IMapsDirectlyToDatabaseTable GetObjectByID(int id)
         {
             if(_knowResultsByID.ContainsKey(id))
@@ -61,15 +75,6 @@ namespace MapsDirectlyToDatabaseTable.RepositoryResultCaching
 
             //no cached result known
             return null;
-        }
-
-        public void AddResultIfNotAlreadyCached(int id, IMapsDirectlyToDatabaseTable result)
-        {
-            if (result.ID != id)
-                throw new ArgumentException("ID of object was " + result.ID + " while the claimed id was " + id,"id");
-
-            if (!_knowResultsByID.ContainsKey(result.ID))
-                _knowResultsByID.Add(result.ID, result);    
         }
 
         public T[] GetAllObjectsWithParent<T>(Type typeOfParent, int id)

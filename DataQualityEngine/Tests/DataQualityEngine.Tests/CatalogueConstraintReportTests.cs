@@ -28,7 +28,7 @@ namespace DataQualityEngine.Tests
             int numberOfRecordsToGenerate = 10000;
             DateTime startTime = DateTime.Now;
 
-            BulkTestsData testData = new BulkTestsData(CatalogueRepository,DatabaseICanCreateRandomTablesIn,numberOfRecordsToGenerate); 
+            BulkTestsData testData = new BulkTestsData(CatalogueRepository,DiscoveredDatabaseICanCreateRandomTablesIn,numberOfRecordsToGenerate); 
             testData.SetupTestData();
             testData.ImportAsCatalogue();
 

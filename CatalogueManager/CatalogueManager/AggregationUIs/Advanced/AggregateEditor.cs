@@ -23,6 +23,9 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using RDMPObjectVisualisation.Copying;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
@@ -76,6 +79,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryHaving;
 
+        IQuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
+
         //Constructor
         public AggregateEditor()
         {
@@ -101,7 +106,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
         { 
-            
             var ti = rowobject as TableInfo;
             var patientIndexTable = rowobject as JoinableCohortAggregateConfiguration;
             var patientIndexTableUse = rowobject as JoinableCohortAggregateConfigurationUse;
@@ -410,10 +414,10 @@ namespace CatalogueManager.AggregationUIs.Advanced
             string col;
             string alias;
 
-            RDMPQuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(_aggregate.CountSQL, out col, out alias);
+            _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(_aggregate.CountSQL, out col, out alias);
 
             if (string.IsNullOrWhiteSpace(alias))
-                _aggregate.CountSQL = col + " as MyCount";
+                _aggregate.CountSQL = col + _querySyntaxHelper.AliasPrefix+ " MyCount";
         }
 
         private void btnClearPivotDimension_Click(object sender, EventArgs e)

@@ -90,18 +90,6 @@ namespace QueryCachingTests
             Assert.IsNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList, "select name,height,scalecount from fish"));
         }
         
-        [Test]
-        public void Throws_BecauseItAlreadyHasATableName()
-        {
-            DataTable dt = new DataTable();
-            dt.TableName = "fishy";
-            dt.Columns.Add("MyCol");
-            dt.Rows.Add("0101010101");
-            
-            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, null,30)));
-
-            Assert.IsTrue(ex.Message.Contains("Cannot commit data table because you have given it a name (fishy)"));
-        }
 
         [Test]
         public void Throws_BecauseItHasDuplicates()

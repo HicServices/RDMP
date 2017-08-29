@@ -9,6 +9,7 @@ using CatalogueManager.ObjectVisualisation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections
 {
@@ -72,7 +73,11 @@ namespace CatalogueManager.DataViewing.Collections
 
         public string GetSql()
         {
-            var qb = new QueryBuilder(ViewType == ViewType.TOP_100 ? "Top 100" : null, null);
+            var qb = new QueryBuilder(null, null);
+
+            if (ViewType == ViewType.TOP_100)
+                qb.TopX = 100;
+
             qb.AddColumn(new ColumnInfoToIColumn(ColumnInfo));
             
             var filter = GetFilterIfAny();

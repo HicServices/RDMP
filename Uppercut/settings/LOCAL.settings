@@ -53,7 +53,7 @@
   
   <!-- base settings -->
   <property name="project.name" value="HIC.DataManagementPlatform" overwrite="false" />
-  <property name="repository.path" value="https://hic.dundee.ac.uk/svn/hicservices/RDMP" />
+  <property name="repository.path" value="https://github.com/HicServices/RDMP.git" />
   <property name="folder.app.drop" value="${project.name}" overwrite="false" />
   
   <!-- database deployment -->

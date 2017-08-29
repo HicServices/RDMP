@@ -26,13 +26,7 @@ namespace ReusableLibraryCode
 
             return toReturn;
         }
-
-        public static string EscapeQuotesForDynamicSql(string sql)
-        {
-            return sql.Replace("'","''");
-
-        }
-
+        
         public static string WrapStringWithHashingAlgorithm(string pattern, string SelectSQL, string salt)
         {
             return String.Format(pattern, SelectSQL, salt);

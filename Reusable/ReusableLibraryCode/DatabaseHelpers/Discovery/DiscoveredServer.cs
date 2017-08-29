@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
 using System.Threading;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -16,7 +17,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public DiscoveredServer(DbConnectionStringBuilder builder)
         {
             Helper = new DatabaseHelperFactory(builder).CreateInstance();
-            Builder = builder;
+
+            //give helper a chance to mutilate the builder if he wants (also gives us a new copy of the builder incase anyone external modifies the old reference)
+            Builder = Helper.GetConnectionStringBuilder(builder.ConnectionString);
         }
         
         public DbConnection GetConnection(IManagedTransaction transaction = null)
@@ -120,6 +123,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
         }
 
+        public string ExplicitUsernameIfAny { get { return Helper.GetExplicitUsernameIfAny(Builder); }}
+        public string ExplicitPasswordIfAny { get { return Helper.GetExplicitPasswordIfAny(Builder); }}
+
         public DbDataAdapter GetDataAdapter(DbCommand cmd)
         {
             return Helper.GetDataAdapter(cmd);
@@ -189,6 +195,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public bool RespondsWithinTime(int timeoutInSeconds, out Exception exception)
         {
             return Helper.RespondsWithinTime(Builder,timeoutInSeconds, out exception);
+        }
+
+        public DbDataAdapter GetDataAdapter(string command, DbConnection con)
+        {
+            return GetDataAdapter(GetCommand(command, con));
         }
     }
 }

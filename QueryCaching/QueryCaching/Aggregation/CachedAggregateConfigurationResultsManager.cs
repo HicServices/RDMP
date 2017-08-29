@@ -96,12 +96,6 @@ namespace QueryCaching.Aggregation
 
                 string nameWeWillGiveTableInCache = operation + "_AggregateConfiguration" + configuration.ID;
 
-                //it already has a name
-                if(!string.IsNullOrWhiteSpace(arguments.Results.TableName))
-                    //if it isn't the one we want then user has named his table something so complain
-                    if (!arguments.Results.TableName.Equals(nameWeWillGiveTableInCache))
-                        throw new Exception("Cannot commit data table because you have given it a name (" + arguments.Results.TableName +") - we want to rename it but I'm guessing you'd be surprised if it came back with a different name on it");
-                    
                 //either it has no name or it already has name we want so its ok
                 arguments.Results.TableName = nameWeWillGiveTableInCache;
 
@@ -138,7 +132,7 @@ namespace QueryCaching.Aggregation
 
                 cmdCreateNew.ExecuteNonQuery();
 
-                arguments.CommitTableDataCompleted(tableName,helper,con,transaction);
+                arguments.CommitTableDataCompleted(_server,tableName, helper, con, transaction);
              
                 transaction.Commit();
             }

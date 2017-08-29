@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
@@ -223,6 +224,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
                 exception = e;
                 return false;
             }
+        }
+
+        public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
+        {
+            var u = ((SqlConnectionStringBuilder) builder).UserID;
+            return string.IsNullOrWhiteSpace(u) ? null: u;
+        }
+
+        public override string GetExplicitPasswordIfAny(DbConnectionStringBuilder builder)
+        {
+            var pwd = ((SqlConnectionStringBuilder) builder).Password;
+            return string.IsNullOrWhiteSpace(pwd) ? null : pwd;
         }
 
         public override DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database, string username, string password)

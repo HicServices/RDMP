@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueManager.Icons.IconOverlays;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision
 {

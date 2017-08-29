@@ -163,10 +163,6 @@
       <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
       <Name>ReusableUIComponents</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Tests.Common\Tests.Common.csproj">
-      <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
-      <Name>Tests.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
       <Name>HIC.Common.Validation</Name>

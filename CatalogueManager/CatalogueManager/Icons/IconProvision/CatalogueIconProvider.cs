@@ -18,6 +18,7 @@ using CatalogueManager.PluginChildProvision;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.Icons.IconProvision;
 using ScintillaNET;
 
 namespace CatalogueManager.Icons.IconProvision
@@ -53,11 +54,11 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new TableInfoStateBasedIconProvider());
             StateBasedIconProviders.Add(new AggregateConfigurationStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new CohortIdentificationConfigurationStateBasedIconProvider());
-            StateBasedIconProviders.Add(new ExternalDatabaseServerStateBasedIconProvider());
+            StateBasedIconProviders.Add(new ExternalDatabaseServerStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new LoadStageNodeStateBasedIconProvider(this));
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
             StateBasedIconProviders.Add(new HICProjectDirectoryStateBasedIconProvider(OverlayProvider));
-
+            StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
             
             _catalogueItemStateBasedIconProvider = new CatalogueItemStateBasedIconProvider(OverlayProvider);
             StateBasedIconProviders.Add(_catalogueItemStateBasedIconProvider);

@@ -29,6 +29,7 @@ using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
@@ -70,7 +71,7 @@ namespace CatalogueManager.AggregationUIs
 
             QueryEditor = new ScintillaTextEditorFactory().Create();
 
-            QueryEditor.Text = "--Graph load has not been attempted yet, wait till the system calls LoadGraphAsync() or LoadGraph()";
+            QueryEditor.Text = "/*Graph load has not been attempted yet, wait till the system calls LoadGraphAsync() or LoadGraph()*/";
 
             QueryEditor.ReadOnly = true;
             

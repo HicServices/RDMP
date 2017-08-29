@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
+using MySql.Data.MySqlClient;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
@@ -18,18 +20,20 @@ namespace Tests.OtherProviders.MySql
         [TestFixtureSetUp]
         public void CreateTestDatabase()
         {
-            if (MySQlServer == null)
+            if (DiscoveredMySqlServer == null)
             {
                 _isServerAvailable = false;
                 return;
             }
 
-            server = new DiscoveredServer(MySQlServer);
+            server = DiscoveredMySqlServer;
             if (!server.Exists())
             {
                 _isServerAvailable = false;
                 return;
             }
+
+            _isServerAvailable = true;
 
             //cleanup
             try
@@ -123,6 +127,68 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
             Assert.AreEqual(0, table.GetRowCount());
         }
 
+
+        [Test]
+        public void BulkInsert()
+        {
+            var table = server.ExpectDatabase(_databaseName).ExpectTable("Fish");
+
+            //now rows to start with
+            Assert.AreEqual(0, table.GetRowCount());
+
+            using (var con = server.GetConnection())
+            {
+                con.Open();
+                var i = table.BeginBulkInsert();
+
+                var dt = new DataTable();
+                dt.Columns.Add("id");
+                dt.Columns.Add("name");
+                dt.Columns.Add("height");
+                dt.Columns.Add("chi");
+                dt.Columns.Add("myfloat");
+                dt.Columns.Add("mydouble");
+                dt.Columns.Add("chiAsNumeric");
+                dt.Columns.Add("teenynumber");
+                
+                dt.Rows.Add("10", "flibble", 1.5, "0101010101", 2.5, 1.1, 1000, 5);
+                dt.Rows.Add("11", "bandycoot", 1.1, "0202020202", 1.5, 1.2, 2000, 8);
+                i.Upload(dt);
+                i.Dispose();
+
+                Assert.AreEqual(2, table.GetRowCount());
+
+                var r = new MySqlCommand("select * from Fish", (MySqlConnection) con).ExecuteReader();
+                Assert.IsTrue(r.Read());
+
+                Assert.AreEqual(10,r["id"]);
+                Assert.AreEqual("flibble", r["name"]);
+                Assert.AreEqual(1.5, r["height"]);
+                Assert.AreEqual("0101010101", r["chi"]);
+                Assert.AreEqual(2.5, r["myfloat"]);
+                Assert.AreEqual(1.1, r["mydouble"]);
+                Assert.AreEqual(1000, r["chiAsNumeric"]);
+                Assert.AreEqual(5, r["teenynumber"]);
+
+                Assert.IsTrue(r.Read());
+
+                Assert.AreEqual(11, r["id"]);
+                Assert.AreEqual("bandycoot", r["name"]);
+                Assert.AreEqual(1.1, r["height"]);
+                Assert.AreEqual("0202020202", r["chi"]);
+                Assert.AreEqual(1.5, r["myfloat"]);
+                Assert.AreEqual(1.2, r["mydouble"]);
+                Assert.AreEqual(2000, r["chiAsNumeric"]);
+                Assert.AreEqual(8, r["teenynumber"]);
+                r.Close();
+
+                new MySqlCommand("truncate table Fish", (MySqlConnection)con).ExecuteNonQuery();
+            }
+
+            Assert.AreEqual(0, table.GetRowCount());
+
+        }
+
         [Test]
         public void RowCount()
         {
@@ -175,5 +241,6 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
             Assert.IsFalse(cols.Single(c => c.GetRuntimeName().Equals("chiasnumeric")).IsPrimaryKey);
             Assert.IsFalse(cols.Single(c=>c.GetRuntimeName().Equals("teenynumber")).IsPrimaryKey);
         }
+
     }
 }

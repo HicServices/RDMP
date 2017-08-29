@@ -116,43 +116,46 @@ namespace DataExportLibrary.Tests.DataExtraction
 
         private void SetupCatalogueConfigurationEtc()
         {
-            SqlConnection con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString);
-            con.Open();
+            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            using(var con = server.GetConnection())
+            {
+                con.Open();
 
-            SqlCommand cmdCreateTestTable = new SqlCommand(@"
+                var cmdCreateTestTable = server.GetCommand(@"
 if exists (select 1 from sys.tables where Name = 'TestTable')
 begin
 drop table TestTable
 end
 CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
-            cmdCreateTestTable.ExecuteNonQuery();
+                cmdCreateTestTable.ExecuteNonQuery();
 
-            SqlCommand cmdInsert = new SqlCommand("INSERT INTO TestTable VALUES('"+_cohortKeysGenerated.Keys.First()+"',1);",con);
-            cmdInsert.ExecuteNonQuery();
+                var cmdInsert = server.GetCommand("INSERT INTO TestTable VALUES('" + _cohortKeysGenerated.Keys.First() + "',1);", con);
+                cmdInsert.ExecuteNonQuery();
             
-            con.Close();
+                con.Close();
+                
+                TableInfoImporter importer = new TableInfoImporter(RepositoryLocator.CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable"));
 
-            TableInfoImporter importer = new TableInfoImporter(RepositoryLocator.CatalogueRepository, DatabaseICanCreateRandomTablesIn.DataSource,DatabaseICanCreateRandomTablesIn.InitialCatalog, "TestTable",DatabaseType.MicrosoftSQLServer,DatabaseICanCreateRandomTablesIn.UserID,DatabaseICanCreateRandomTablesIn.Password);
+                TableInfo t;
+                ColumnInfo[] cs;
+                importer.DoImport(out t, out cs);
 
-            TableInfo t;
-            ColumnInfo[] cs;
-            importer.DoImport(out t, out cs);
+                var forwardEngineer = new ForwardEngineerCatalogue(t,cs,true);
+                _tableInfo = t;
 
-            var forwardEngineer = new ForwardEngineerCatalogue(t,cs,true);
-            _tableInfo = t;
+                Catalogue catalogue;
+                CatalogueItem[] cataItems;
+                ExtractionInformation[] extractionInformations;
 
-            Catalogue catalogue;
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
+                forwardEngineer.ExecuteForwardEngineering(out catalogue,out cataItems,out extractionInformations);
+                _extractionInformations = extractionInformations;
 
-            forwardEngineer.ExecuteForwardEngineering(out catalogue,out cataItems,out extractionInformations);
-            _extractionInformations = extractionInformations;
+                ExtractionInformation _privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
+                _privateID.IsExtractionIdentifier = true;
+                _privateID.SaveToDatabase();
 
-            ExtractionInformation _privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
-            _privateID.IsExtractionIdentifier = true;
-            _privateID.SaveToDatabase();
-
-            _catalogue = catalogue;
+                _catalogue = catalogue;
+            }
         }
 
         protected void Execute(out ExtractionPipelineHost pipelineHost, out IExecuteDatasetExtractionDestination results)

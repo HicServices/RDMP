@@ -1,5 +1,6 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace LoadModules.Generic.Mutilators.QueryBuilders
 {
@@ -13,7 +14,7 @@ namespace LoadModules.Generic.Mutilators.QueryBuilders
                 foreach (ColumnInfo col in tableInfo.ColumnInfos)
                     qb.AddColumn(new ColumnInfoToIColumn(col));
 
-            return qb.GetSQLSubstringStartingAtLineNumber(qb.GetLineNumberOfFirst(QueryComponent.FROM));
+            return qb.GetSQLSubstringStartingAtLineNumber(qb.GetLineNumberOfFirst(QueryComponent.FROM)+1);
         }
     }
 }

@@ -10,6 +10,9 @@ using CatalogueLibrary.QueryBuilding.Parameters;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -26,10 +29,17 @@ namespace CatalogueLibrary.QueryBuilding
         } }
         public string LimitationSQL { get; private set; }
         public string LabelWithComment { get; set; }
-        private List<AggregateCountColumn> _countColumns;
+
+
+        private AggregateCountColumn _countColumn;
+        
+        QueryTimeColumn _pivotDimension = null;
+        AggregateContinuousDateAxis _axis = null;
+        AggregateDimension _axisAppliesToDimension = null;
+        bool _isCohortIdentificationAggregate;
 
         public string HavingSQL { get; set; }
-        public AggregateTopX AggregateTopX { get; set; }
+        public IAggregateTopX AggregateTopX { get; set; }
 
         public int LineCount { get; private set; }
 
@@ -37,7 +47,16 @@ namespace CatalogueLibrary.QueryBuilding
         public List<TableInfo> TablesUsedInQuery { get; private set; }
 
         public List<JoinInfo> JoinsUsedInQuery { get; private set; }
-        private List<string> _customJoinLines = new List<string>();   //Impromptu joins the user wants rammed into his query wherever we are doing proper legit joining (e.g. to munge an aggregate into a forced join against a cohort)
+
+        public List<CustomLine> CustomLines { get; private set; }
+        public CustomLine TopXCustomLine { get; set; }
+
+        public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
+        {
+            SQLOutOfDate = true;
+            return SqlQueryBuilderHelper.AddCustomLine(this,text, positionToInsert);
+        }
+
 
         public List<IFilter> Filters { get; private set; }
 
@@ -54,11 +73,11 @@ namespace CatalogueLibrary.QueryBuilding
         public ParameterManager ParameterManager { get; private set; }
 
         string _sql;
-        private bool SQLOutOfDate = true;
+        public bool SQLOutOfDate { get; set; }
 
         public ICollectSqlParameters QueryLevelParameterProvider { get; set; }
 
-
+        
         public bool DoNotWriteOutOrderBy { get; set; }
 
         public bool DoNotWriteOutParameters
@@ -86,35 +105,31 @@ namespace CatalogueLibrary.QueryBuilding
         private readonly List<IColumn> _skipGroupByForThese = new List<IColumn>();
 
         public AggregateBuilder(string limitationSQL, string countSQL,AggregateConfiguration aggregateConfigurationIfAny,TableInfo[] forceJoinsToTheseTables)
-            : this(limitationSQL, countSQL != null?new[] { countSQL }:new string[0], aggregateConfigurationIfAny)
+            : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
         {
             _forceJoinsToTheseTables = forceJoinsToTheseTables;
         }
 
+
         public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny)
-            : this(limitationSQL, new[] { countSQL }, aggregateConfigurationIfAny)
         {
-            
+            if (limitationSQL != null && limitationSQL.Contains("top"))
+                throw new Exception("Use AggregateTopX property instead of limitation SQL to acheive this");
 
-        }
-
-        public AggregateBuilder(string limitationSQL, string[] countSQLColumns, AggregateConfiguration aggregateConfigurationIfAny)
-        {
+            _aggregateConfigurationIfAny = aggregateConfigurationIfAny;
             LimitationSQL = limitationSQL;
             ParameterManager = new ParameterManager();
-
-            _countColumns = new List<AggregateCountColumn>();
-
-            foreach (var countSqlColumn in countSQLColumns)
-            {
-                var c = new AggregateCountColumn(countSqlColumn);
-                c.Order = int.MaxValue;//order these last
-                _countColumns.Add(c);
-            }
+            CustomLines = new List<CustomLine>();
+            SQLOutOfDate = true;
 
             SelectColumns = new List<QueryTimeColumn>();
 
-            AddColumnRange(_countColumns.ToArray());
+            if(!string.IsNullOrWhiteSpace(countSQL))
+            {
+                _countColumn = new AggregateCountColumn(countSQL);
+                _countColumn.Order = int.MaxValue;//order these last
+                AddColumn(_countColumn);
+            }
 
             LabelWithComment = aggregateConfigurationIfAny != null ? aggregateConfigurationIfAny.Name : "";
 
@@ -170,6 +185,8 @@ namespace CatalogueLibrary.QueryBuilding
 
         private int _pivotID=-1;
         private bool _doNotWriteOutParameters;
+        private IQuerySyntaxHelper _syntaxHelper;
+        private AggregateConfiguration _aggregateConfigurationIfAny;
 
         public void SetPivotToDimensionID(AggregateDimension pivot)
         {
@@ -191,51 +208,69 @@ namespace CatalogueLibrary.QueryBuilding
             if (Sort)
                 SelectColumns.Sort();
 
+            //things we discover below, set them all to default values again
+            _pivotDimension = null;
+            _axisAppliesToDimension = null;
+            _axis = null;
+            _isCohortIdentificationAggregate = false;
+
             ParameterManager.ClearNonGlobals();
 
             if(QueryLevelParameterProvider != null)
                 ParameterManager.AddParametersFor(QueryLevelParameterProvider,ParameterLevel.QueryLevel);
 
-            QueryTimeColumn pivotDimension = null;
+            TableInfo primary;
+            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary);
 
+            //get the database language syntax based on the tables used in the query 
+            _syntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(
+                _forceJoinsToTheseTables != null ?
+                TablesUsedInQuery.Union(_forceJoinsToTheseTables).ToList() : TablesUsedInQuery);
+
+
+            //tell the count column what language it is
+            if (_countColumn != null)
+            {    
+                _isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null && _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
+
+                //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
+                _countColumn.SetQuerySyntaxHelper(_syntaxHelper,!_isCohortIdentificationAggregate);
+            }
+            
+
+            IAggregateHelper aggregateHelper = _syntaxHelper.AggregateHelper;
+            
             if(_pivotID != -1)
                 try
                 {
-                    pivotDimension = SelectColumns.Single(
+                    _pivotDimension = SelectColumns.Single(
                         qtc => qtc.IColumn is AggregateDimension 
                                &&
                                ((AggregateDimension)qtc.IColumn).ID == _pivotID);
-
-
-                    wrapPivotDimensionWithCleaningSql(pivotDimension);
                 }
                 catch (Exception e)
                 {
                     throw new QueryBuildingException("Problem occurred when trying to find PivotDimension ID " + _pivotID + " in SelectColumns list",e);
                 }
 
-            //work out the axis (if there is one)
-            AggregateContinuousDateAxis axis = null;
-            AggregateDimension axisAppliesToDimension = null; 
-            
             foreach (AggregateDimension dimension in SelectColumns.Select(c=>c.IColumn).Where(e=>e is AggregateDimension))
             {
                 var availableAxis =dimension.AggregateContinuousDateAxis;
 
                 if(availableAxis != null)
-                    if (axis != null)
+                    if (_axis != null)
                         throw new QueryBuildingException(
-                            "Multiple dimensions have an AggregateContinuousDateAxis within the same configuration (Dimensions " + axisAppliesToDimension.GetRuntimeName() + " and " + dimension.GetRuntimeName() + ")");
+                            "Multiple dimensions have an AggregateContinuousDateAxis within the same configuration (Dimensions " + _axisAppliesToDimension.GetRuntimeName() + " and " + dimension.GetRuntimeName() + ")");
                     else
                     {
-                        axis = availableAxis;
-                        axisAppliesToDimension = dimension;
+                        _axis = availableAxis;
+                        _axisAppliesToDimension = dimension;
                     }
             }
 
-            if (pivotDimension != null)
-                if (pivotDimension.IColumn == axisAppliesToDimension)
-                    throw new QueryBuildingException("Column " + pivotDimension.IColumn + " is both a PIVOT and has an AXIS configured on it, you cannot have both.");
+            if (_pivotDimension != null)
+                if (_pivotDimension.IColumn == _axisAppliesToDimension)
+                    throw new QueryBuildingException("Column " + _pivotDimension.IColumn + " is both a PIVOT and has an AXIS configured on it, you cannot have both.");
             
             //work out all the filters 
             Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
@@ -243,9 +278,10 @@ namespace CatalogueLibrary.QueryBuilding
              //tell the manager about them
             ParameterManager.AddParametersFor(Filters);
 
-
-            TableInfo primary;
-            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary);
+            if (AggregateTopX != null)
+                SqlQueryBuilderHelper.HandleTopX(this, _syntaxHelper, AggregateTopX.TopX);
+            else
+                SqlQueryBuilderHelper.ClearTopX(this);
 
             //if user wants to force join to some other tables that don't appear in the SELECT list, who are we to stop him!
             if (_forceJoinsToTheseTables != null)
@@ -274,95 +310,63 @@ namespace CatalogueLibrary.QueryBuilding
 
             JoinsUsedInQuery = SqlQueryBuilderHelper.FindRequiredJoins(this);
 
+            var queryLines = new List<CustomLine>();
             _sql = "";
-
-            string parameterSQL = "";
+            
+            ValidateDimensions();
 
             //assuming we were not told to ignore the writing out of parameters!
             if (!DoNotWriteOutParameters)
                 foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
-                    parameterSQL += QueryBuilder.GetParameterDeclarationSQL(parameter);
+                    queryLines.Add(new CustomLine(QueryBuilder.GetParameterDeclarationSQL(parameter),QueryComponent.VariableDeclaration));
 
-            _sql += parameterSQL;
-
-            if (pivotDimension != null)
-                _sql += GetPivotDISTINCTValueGettingSql(pivotDimension);
-
-            if (pivotDimension != null)
-                _sql += GetPivotPrefixSql(axis, pivotDimension, parameterSQL);
-            else
-                if (axis != null)
-                    _sql += GetAxisGenerationSql(axis, null);
-
+            CompileCustomLinesInStageAndAddToList(QueryComponent.VariableDeclaration, queryLines);
+            
             //put the name in as SQL comments followed by the SQL e.g. the name of an AggregateConfiguration or whatever
-            if(LabelWithComment != null)
-                _sql += "/*" + LabelWithComment +"*/" + Environment.NewLine;
-
-            _sql += "SELECT ";
-            
-            //if there is no top X or an axis is specified (in which case the TopX applies to the PIVOT if any not the axis)
-            if(AggregateTopX == null || axis != null)
-                _sql += LimitationSQL + TakeNewLine();
-            else
-                if(!string.IsNullOrWhiteSpace(LimitationSQL))
-                    throw new QueryBuildingException("You cannot have both an AggregateTopX and LimitationSQL ('" + LimitationSQL + "')");
-                else
-                    _sql += "TOP " + AggregateTopX.TopX + TakeNewLine();
-            
-
-            //put in all the selected columns (which are not being skipped because they aren't a part of group by)
-            foreach (QueryTimeColumn col in SelectColumns.Where(col => !_skipGroupByForThese.Contains(col.IColumn)))
-            {
-                if(col.IColumn.HashOnDataRelease)
-                    throw new QueryBuildingException("Column " + col.IColumn.GetRuntimeName() + " is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
-
-                if (col.IColumn is AggregateCountColumn && axis != null)
-                {
-                    //replace (*) with (AxisColumn) -- allowing for whitespaces in the brackets
-                    _sql += Regex.Replace(col.GetSelectSQL(null,null), @"\(\s*\*\s*\)", "(" + axisAppliesToDimension.SelectSQL + ")")+ TakeNewLine();;
-                    continue;
-                }
-
-                if (col.IColumn == axisAppliesToDimension)
-                {
-                    if (pivotDimension != null)
-                        _sql += SqlSyntaxHelper.EscapeQuotesForDynamicSql(axis.WrapWithIntervalFunction("axis.dt")) + " joinDt," + TakeNewLine();
-                    else
-                        _sql += axis.WrapWithIntervalFunction("axis.dt") + " joinDt," + TakeNewLine();
-                }
-                else
-                {
-                    if (pivotDimension != null)
-                        _sql += SqlSyntaxHelper.EscapeQuotesForDynamicSql(col.GetSelectSQL(null,null)) + "," + TakeNewLine();
-                    else
-                        _sql += col.GetSelectSQL(null,null) + "," + TakeNewLine();
-                }
-            }
-
-            //get rid of the trailing comma
-            _sql = _sql.TrimEnd('\n', '\r', ',');
-            _sql += Environment.NewLine;
-
-            _sql += GetFromSQL(pivotDimension!= null);
-
-            if (axis != null)
-                _sql += GetJoinSQLForAxis(axis, axisAppliesToDimension) + TakeNewLine();
+            GetSelectSQL(queryLines);
             
             int[] whoCares;
-            _sql += SqlQueryBuilderHelper.GetWHERESQL(this, out whoCares, pivotDimension != null);
+            queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetFROMSQL(this, out whoCares), QueryComponent.FROM));
+            CompileCustomLinesInStageAndAddToList(QueryComponent.JoinInfoJoin, queryLines);
+            
+            queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this, out whoCares),QueryComponent.WHERE));
 
-            _sql += TakeNewLine();
+            CompileCustomLinesInStageAndAddToList(QueryComponent.WHERE,queryLines);
+            
+            GetGroupBySQL(queryLines,aggregateHelper);
+            
+            queryLines = queryLines.Where(l => !string.IsNullOrWhiteSpace(l.Text)).ToList();
 
+            _sql = aggregateHelper.BuildAggregate(queryLines, _axis, _pivotDimension != null);
+        }
+        
+        private void ValidateDimensions()
+        {
+            //axis but no pivot
+            if(_axis != null && _pivotDimension == null && SelectColumns.Count !=2 )
+                throw new QueryBuildingException("You must have two columns in an AggregateConfiguration that contains an axis.  These must be the axis column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
+            
+            //axis and pivot
+            if(_axis != null && _pivotDimension != null && SelectColumns.Count !=3 )
+                throw new QueryBuildingException("You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had " + SelectColumns.Count + " (" + string.Join(",", SelectColumns.Select(c => "'" + c.IColumn.ToString() + "'")) + ")");
+        }
+        
+        private void CompileCustomLinesInStageAndAddToList( QueryComponent stage,List<CustomLine> list)
+        {
+            list.AddRange(SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage));
+        }
 
+        private void GetGroupBySQL(List<CustomLine> queryLines,IAggregateHelper aggregateHelper)
+        {
             //now are there columns that...
-            if (SelectColumns.Count(col => 
+            if (SelectColumns.Count(col =>
                 !(col.IColumn is AggregateCountColumn)  //are not count(*) style columns
                 &&
                 !_skipGroupByForThese.Contains(col.IColumn)) > 0) //and are not being skipped for GROUP BY
             {
 
                 //yes there are! better group by then!
-                _sql += "group by " + TakeNewLine();
+                queryLines.Add(new CustomLine("group by ",QueryComponent.GroupBy));
 
                 foreach (var col in SelectColumns)
                 {
@@ -373,40 +377,36 @@ namespace CatalogueLibrary.QueryBuilding
                     if (_skipGroupByForThese.Contains(col.IColumn))
                         continue;
 
-                    //if it is an axis column just add the reference to the axis
-                    if (col.IColumn == axisAppliesToDimension)
-                    {
-                        if (pivotDimension != null)
-                            _sql += SqlSyntaxHelper.EscapeQuotesForDynamicSql(axis.WrapWithIntervalFunction("axis.dt")) + "," + TakeNewLine();
-                        else
-                            _sql += axis.WrapWithIntervalFunction("axis.dt") + "," + TakeNewLine();
-                        
-                        continue;
-                    }
-
                     string select;
                     string alias;
 
-                    RDMPQuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null), out select, out alias);
+                    _syntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null,_syntaxHelper), out select, out alias);
 
-                    if (pivotDimension != null)
-                        _sql += SqlSyntaxHelper.EscapeQuotesForDynamicSql(select) + "," + TakeNewLine();
-                    else
-                        _sql += select + "," + TakeNewLine();
+                    var line = new CustomLine(select + ",",QueryComponent.GroupBy);
+
+                    FlagLineBasedOnIcolumn(line,col.IColumn);
+
+                    queryLines.Add(line);
+
                 }
-                _sql = _sql.TrimEnd('\n', '\r', ',') + Environment.NewLine;
-                    //clear trailing last comma (and then put the newline back on again)
 
-                _sql += GetHavingSql();
+                //clear trailing last comma
+                queryLines.Last().Text = queryLines.Last().Text.TrimEnd('\n', '\r', ',');
+                
+                queryLines.Add(new CustomLine(GetHavingSql(),QueryComponent.Having));
+
+                CompileCustomLinesInStageAndAddToList(QueryComponent.GroupBy, queryLines);
 
                 //order by only if we are not pivotting
-                if (pivotDimension == null && !DoNotWriteOutOrderBy)
+                if (!DoNotWriteOutOrderBy)
                 {
-                    _sql += "order by " + TakeNewLine();
+                    queryLines.Add(new CustomLine("order by " ,QueryComponent.OrderBy));
 
                     //if theres a top X (with an explicit order by)
                     if (AggregateTopX != null)
-                        _sql += AggregateTopX.GetOrderBySQL(_countColumns) + TakeNewLine();
+                    {
+                        queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy) { Role = CustomLineRole.TopX });
+                    }
                     else
                         foreach (var col in SelectColumns)
                         {
@@ -416,42 +416,94 @@ namespace CatalogueLibrary.QueryBuilding
                             //was added with skip for group by enabled
                             if (_skipGroupByForThese.Contains(col.IColumn))
                                 continue;
-
-                            //if it is an axis column just add the reference to the axis
-                            if (col.IColumn == axisAppliesToDimension)
-                            {
-                                _sql += axis.WrapWithIntervalFunction("axis.dt") + "," + TakeNewLine();
-                                continue;
-                            }
-
+                            
                             string select;
                             string alias;
 
-                            RDMPQuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null),
+                            _syntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, _syntaxHelper),
                                 out select,
                                 out alias);
 
-                            if (pivotDimension != null)
-                                _sql += SqlSyntaxHelper.EscapeQuotesForDynamicSql(select) + "," + TakeNewLine();
-                            else
-                                _sql += select + "," + TakeNewLine();
+                            var line = new CustomLine(select + ",", QueryComponent.OrderBy);
+
+                            FlagLineBasedOnIcolumn(line,col.IColumn);
+
+                            queryLines.Add(line);
                         }
+
+                    queryLines.Last().Text = queryLines.Last().Text.TrimEnd(',');
                 }
             }
             else
-                _sql += GetHavingSql();
+                queryLines.Add(new CustomLine(GetHavingSql(),QueryComponent.GroupBy));
 
-            _sql = _sql.TrimEnd('\n', '\r', ',');
+            queryLines.Last().Text = queryLines.Last().Text.TrimEnd('\n', '\r', ',');
 
-            if (pivotDimension != null)
-                _sql += GetPivotPostfixSql(axisAppliesToDimension, pivotDimension);
-
+            CompileCustomLinesInStageAndAddToList(QueryComponent.Postfix, queryLines);
         }
 
-        private void wrapPivotDimensionWithCleaningSql(QueryTimeColumn pivotDimension)
+        private void FlagLineBasedOnIcolumn(CustomLine line, IColumn column)
         {
-            pivotDimension.WrapIColumnSelectSql("LTRIM(RTRIM(REPLACE(", ",',','')))");
+            //if it is an axis column tag it as an axis
+            if (Equals(column, _axisAppliesToDimension))
+                line.Role = CustomLineRole.Axis;
+            
+            //if it is a count column then flag it as that (cic aggregates take extreme liberties with count columns like hijacking them in a most dispicable way so don't even bother with this flag for them)
+            if (column is AggregateCountColumn && !_isCohortIdentificationAggregate)
+                line.Role = CustomLineRole.CountFunction;
+
+            if(_pivotDimension != null)
+                if(Equals(column,_pivotDimension.IColumn))
+                    line.Role = CustomLineRole.Pivot;
         }
+
+        private void GetSelectSQL(List<CustomLine> lines)
+        {
+            lines.Add(new CustomLine("/*" + LabelWithComment + "*/",QueryComponent.SELECT));
+            lines.Add(new CustomLine("SELECT ",QueryComponent.SELECT));
+
+            //if there is no top X or an axis is specified (in which case the TopX applies to the PIVOT if any not the axis)
+            if (!string.IsNullOrWhiteSpace(LimitationSQL))
+                lines.Add(new CustomLine(LimitationSQL ,QueryComponent.SELECT));
+            
+            CompileCustomLinesInStageAndAddToList(QueryComponent.SELECT,lines);
+
+            CompileCustomLinesInStageAndAddToList(QueryComponent.QueryTimeColumn, lines);
+            
+            //put in all the selected columns (which are not being skipped because they aren't a part of group by)
+            foreach (QueryTimeColumn col in SelectColumns.Where(col => !_skipGroupByForThese.Contains(col.IColumn)))
+            {
+                if (col.IColumn.HashOnDataRelease)
+                    throw new QueryBuildingException("Column " + col.IColumn.GetRuntimeName() + " is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
+
+
+                var line = new CustomLine(col.GetSelectSQL(null, null, _syntaxHelper) + ",", QueryComponent.QueryTimeColumn);
+                FlagLineBasedOnIcolumn(line,col.IColumn);
+
+                //it's the axis dimension tag it with the axis tag
+                lines.Add(line);
+            }
+
+            //get rid of the trailing comma
+            lines.Last().Text = lines.Last().Text.TrimEnd('\n', '\r', ',');
+        }
+
+
+        private string GetOrderBySQL(IAggregateTopX aggregateTopX)
+        {
+            var dimension = aggregateTopX.OrderByColumn;
+            if (dimension == null)
+                return _countColumn.SelectSQL
+                           + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
+                               ? " asc"
+                               : " desc");
+        
+            return dimension.SelectSQL
+                + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
+                ? " asc"
+                : " desc");
+        }
+
 
         private string GetHavingSql()
         {
@@ -461,273 +513,10 @@ namespace CatalogueLibrary.QueryBuilding
             if (!string.IsNullOrWhiteSpace(HavingSQL))
             {
                 toReturn += "HAVING" + TakeNewLine();
-                toReturn += HavingSQL + TakeNewLine();
+                toReturn += HavingSQL;
             }
             return toReturn;
         }
-
-
-        private string GetFromSQL(bool escapeQuotes)
-        {
-            int[] whoCares;
-            string toReturn = SqlQueryBuilderHelper.GetFROMSQL(this, out whoCares);
-            foreach (string customJoinLine in _customJoinLines)
-            {
-                toReturn += customJoinLine;
-                toReturn += TakeNewLine();
-            }
-
-            if(escapeQuotes)
-                toReturn =  SqlSyntaxHelper.EscapeQuotesForDynamicSql(toReturn);
-
-            return toReturn;
-        }
-
-        private string GetJoinSQLForAxis(AggregateContinuousDateAxis axis, AggregateDimension axisAppliesToDimension)
-        {
-            return " RIGHT JOIN  @dateAxis axis ON " + axis.GetJOINSqlWithIntervalFunction(axisAppliesToDimension.SelectSQL,"axis.dt");
-        }
-
-        private string GetPivotPrefixSql(AggregateContinuousDateAxis axis, QueryTimeColumn pivotDimension, string parameterSQL)
-        {
-            string toReturn="";
-
-            string additionalSelectColumns = string.Join(",",
-                SelectColumns.Where(qtc => IsNormalSelectDimension(qtc, axis,pivotDimension))
-                    .Select(c => c.IColumn.GetRuntimeName()));
-
-            toReturn =
-                    @"
-DECLARE @FinalSelectList as VARCHAR(MAX)
-SET @FinalSelectList =";
-
-
-            //if there is no axis
-            if(axis == null )
-                if (string.IsNullOrWhiteSpace(additionalSelectColumns))//and there are no other columns
-                    toReturn += @"''"; //set it to a blank string
-                else
-                    toReturn += @"'"+additionalSelectColumns+"'"; //set the additionalSelectColumns
-            else
-            {
-                //there IS an axis!
-                if (string.IsNullOrWhiteSpace(additionalSelectColumns))//but fortunately no other columns
-                    toReturn += @"'joinDt'"; //set it to the axis name
-                else
-                    toReturn += @"'joinDt,"+additionalSelectColumns+"'"; //set it to the axis name comma the rest of the columns (good luck graphing that or it even executing!)
-                
-            }
-
-            toReturn += @"
---Split up that pesky string in tsql which has the column names up into array elements again
-DECLARE @value varchar(8000)
-DECLARE @pos INT
-DECLARE @len INT
-set @pos = 0
-set @len = 0
-
-WHILE CHARINDEX(',', @Columns +',', @pos+1)>0
-BEGIN
-    set @len = CHARINDEX(',', @Columns +',', @pos+1) - @pos
-    set @value = SUBSTRING(@Columns +',', @pos, @len)
-        
-    --We are constructing a version that turns: '[fish],[lama]' into 'ISNULL([fish],0) as [fish], ISNULL([lama],0) as [lama]'
-	SET @FinalSelectList = @FinalSelectList + ', ISNULL(' + @value  + ',0) as ' + @value 
-
-    set @pos = CHARINDEX(',', @Columns +',', @pos+@len) +1
-END
-";
-
-            //there was no axis and no other columns!
-            if (axis == null && string.IsNullOrWhiteSpace(additionalSelectColumns))
-
-                toReturn += @"--if there isn't an axis we must trim the extra comma that would be there after the 'joinDt,' bit
-set @FinalSelectList = SUBSTRING(@FinalSelectList,2,LEN(@FinalSelectList))
-
-";
- 
-            if(axis == null)
-                toReturn += @"
---DYNAMIC PIVOT
-declare @Query varchar(MAX)
-
-SET @Query = '
-
-{0}
-
---Would normally be Select * but must make it IsNull to ensure we see 0s instead of null
-select '+@FinalSelectList+'
-from
-(
-
-";
-else
-            //There is an axis
-            toReturn += @"
-
---DYNAMIC PIVOT
-declare @Query varchar(MAX)
-
-SET @Query = '
-
-{0}
-
-" + GetAxisGenerationSql(axis, pivotDimension) + @"
-
---Would normally be Select * but must make it IsNull to ensure we see 0s instead of null
-select '+@FinalSelectList+'
-from
-(
-
-";
-            if(parameterSQL.Contains("''"))
-                throw new QueryBuildingException("It looks like one of your sql parameters is initialized to '', this is forbidden as it makes dynamic escaping difficult, your current SQLParameters are :" + Environment.NewLine + parameterSQL);
-
-            return string.Format(toReturn,SqlSyntaxHelper.EscapeQuotesForDynamicSql(parameterSQL));
-        }
-
-        private bool IsNormalSelectDimension(QueryTimeColumn qtc, AggregateContinuousDateAxis axisDimensionIfAny, QueryTimeColumn pivotDimensionIfAny)
-        {
-            //its a count(*) column
-            if (qtc.IColumn is AggregateCountColumn)
-                return false;
-
-            //its not normal! because its the pivot dimension
-            if (qtc == pivotDimensionIfAny)
-                return false;
-
-            //there is no axis it is probably normal
-            if (axisDimensionIfAny == null)
-                return true;
-
-            //if it is an axis column and you are asking if qtc is normal or not and the axis is this qtc then it is not normal!
-            if (((AggregateDimension)qtc.IColumn).ID == axisDimensionIfAny.AggregateDimension_ID)
-                return false;
-
-
-            //it is probably normal
-            return true;
-        }
-
-        private string GetPivotPostfixSql(AggregateDimension axisDimension,QueryTimeColumn pivotDimension)
-        {
-            var countColumns = SelectColumns.Where(c => c.IColumn is AggregateCountColumn).ToArray();
-
-            if(!countColumns.Any())
-                throw new QueryBuildingException("Could not find any " + typeof(AggregateCountColumn).FullName + " columns in the SelectColumns collection");
-
-            if(countColumns.Count() > 1)
-                throw new QueryBuildingException("PIVOT can only be used with a single " + typeof(AggregateCountColumn).FullName + " column (you're query configuration has " + countColumns.Count() + ")");
-
-            var countColumn = countColumns.Single();
-
-            if(string.IsNullOrWhiteSpace(countColumn.IColumn.Alias))
-                throw new QueryBuildingException("Count columns in Pivot Aggregates must have an Alias e.g. 'Count(*) as bob'");
-
-            string toReturn = string.Format(@") s
-PIVOT
-(
-	sum({0})
-	for {1} in ('+@Columns+') --The dynamic Column list we just fetched at top of query
-) piv
-",
-      countColumn.IColumn.GetRuntimeName(),
-      pivotDimension.IColumn.GetRuntimeName());
-
-            string orderby = "";
-            
-
-            //All other columns should be ordered by as normal
-            foreach (QueryTimeColumn column in SelectColumns)
-            {
-                //column ? is the count(*) As Bob line
-                if (column == countColumn)
-                    continue;
-
-                //Column ? is the Pivot column
-                if (column == pivotDimension)
-                    continue;
-
-                if (column.IColumn == axisDimension)
-                    orderby += "joinDt," + Environment.NewLine;
-                else
-                    if (!string.IsNullOrWhiteSpace(column.IColumn.Alias))
-                        orderby += column.IColumn.Alias + "," + Environment.NewLine;
-
-            }
-            orderby = orderby.TrimEnd('\n', '\r', ',');
-
-            if (!string.IsNullOrWhiteSpace(orderby))
-                toReturn += " order by " + Environment.NewLine + orderby;
-
-            toReturn += @"'
-
-EXECUTE(@Query)";
-
-            return toReturn;
-        }
-
-        private string GetPivotDISTINCTValueGettingSql(QueryTimeColumn pivotDimension)
-        {
-          int[] nvm;
-            string where = SqlQueryBuilderHelper.GetWHERESQL(this, out nvm, false).TrimStart();
-            string from = GetFromSQL(false);
-
-            if (where.StartsWith("WHERE"))
-                where = where.Substring("WHERE".Length);
-
-
-            if (!string.IsNullOrWhiteSpace(where))
-                where = " AND " + where;
-
-            string pivotDimensionSQL = pivotDimension.GetSelectSQL(null, null);
-
-            if (pivotDimensionSQL.Contains(RDMPQuerySyntaxHelper.AliasPrefix))
-                pivotDimensionSQL = pivotDimensionSQL.Substring(0,pivotDimensionSQL.IndexOf(RDMPQuerySyntaxHelper.AliasPrefix));
-
-            return string.Format(
-                @"
---DYNAMICALLY FETCH COLUMN VALUES FOR USE IN PIVOT
-DECLARE @Columns as VARCHAR(MAX)
-
---Get distinct values of the PIVOT Column if you have columns with values T and F and Z this will produce [T],[F],[Z] and you will end up with a pivot against these values
-set @Columns = (
-select{0}
- ',' + QUOTENAME({1}) as [text()] 
-{2}
-WHERE {1} IS NOT NULL and {1} <> '' 
-{3}
-group by 
-{1}
-order by 
-{4}
-FOR XML PATH('') 
-)
-
-set @Columns = SUBSTRING(@Columns,2,LEN(@Columns))
-
-",
-
-                                                   AggregateTopX != null ? " TOP " + AggregateTopX.TopX: "",
-                                                   pivotDimensionSQL,
-                                                   from,
-                                                   where,
-                                                   GetPivotOrderBySQL());
-        }
-
-        private string GetPivotOrderBySQL()
-        {
-            var countColumn = _countColumns.FirstOrDefault();
-
-            if(countColumn == null)
-                throw new QueryBuildingException("There is no AggregateCountColumn, how can there be an Order By?");
-
-            if (AggregateTopX == null)
-                return  countColumn.SelectSQL + " desc"; //there is no top X so order by the count(*) descending
-            
-            return AggregateTopX.GetOrderBySQL(_countColumns);
-        }
-
 
         public string TakeNewLine()
         {
@@ -738,59 +527,5 @@ set @Columns = SUBSTRING(@Columns,2,LEN(@Columns))
         {
             throw new NotImplementedException();
         }
-
-        public CustomLine[] CustomLines { get { return new CustomLine[0]; }}
-        
-
-
-        private string GetAxisGenerationSql(AggregateContinuousDateAxis axis, QueryTimeColumn pivotDimension)
-        {
-
-            string startDate = axis.StartDate;
-            string endDate = axis.EndDate;
-
-            //if pivot dimension is set then this code appears inside dynamic SQL constant string that will be Exec'd so we have to escape single quotes 
-            if (pivotDimension != null)
-            {
-                startDate = startDate.Replace("'", "''");
-                endDate = endDate.Replace("'", "''");
-            }
-
-
-
-    return String.Format(
-@"
-    DECLARE	@startDate DATE
-    DECLARE	@endDate DATE
-
-    SET @startDate = {0}
-    SET @endDate = {1}
-
-    DECLARE @dateAxis TABLE
-    (
-	    dt DATE
-    )
-
-    DECLARE @currentDate DATE = @startDate
-
-    WHILE @currentDate <= @endDate
-    BEGIN
-	    INSERT INTO @dateAxis 
-		    SELECT @currentDate 
-
-	    SET @currentDate = DATEADD({2}, 1, @currentDate)
-
-    END
-
-", startDate,endDate, axis.AxisIncrement);
-        }
-
-
-        public void AddCustomJoinLine(string joinLine)
-        {
-            _customJoinLines.Add(joinLine);
-        }
     }
-
-
 }

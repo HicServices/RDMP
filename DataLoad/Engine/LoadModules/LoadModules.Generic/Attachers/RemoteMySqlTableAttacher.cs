@@ -13,6 +13,7 @@ using MySql.Data.MySqlClient;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
@@ -29,21 +30,8 @@ namespace LoadModules.Generic.Attachers
 
         protected override DbConnectionStringBuilder GetConnectionString()
         {
-            if (string.IsNullOrWhiteSpace(_remotePassword))
-                return new MySqlConnectionStringBuilder()
-                {
-                    Server = RemoteServer,
-                    Database = RemoteDatabaseName,
-                    IntegratedSecurity = true
-                };
-
-            return new MySqlConnectionStringBuilder()
-            {
-                Server = RemoteServer,
-                Database = RemoteDatabaseName,
-                UserID = _remoteUsername,
-                Password = _remotePassword
-            };
+            var helper = new MySqlServerHelper();
+            return helper.GetConnectionStringBuilder(RemoteServer, RemoteDatabaseName, _remoteUsername, _remotePassword);
         }
         
         protected override DbConnection GetConnection()

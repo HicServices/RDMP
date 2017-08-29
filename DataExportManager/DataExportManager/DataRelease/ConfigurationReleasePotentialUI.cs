@@ -19,6 +19,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.SqlDialogs;
 using Ticketing;
 
@@ -415,7 +416,7 @@ namespace DataExportManager.DataRelease
                             tag.ColumnsThatAreDifferentFromCatalogue.Select(
                                 kvp =>
                                     kvp.Value == null
-                                        ? kvp.Key.SelectSQL + "--Column no longer appears in catalogue"
+                                        ? kvp.Key.SelectSQL + "/*Column no longer appears in catalogue*/"
                                         : kvp.Key.SelectSQL)),
                         "Catalogue Version", "Current Configuration Version",
                         "Catalogue Vs DataExportManager Configuration", MessageBoxButtons.OK).Show());

@@ -13,6 +13,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
@@ -132,11 +133,21 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
                     transaction = _con.BeginTransaction();//if it is preview only we will use a transaction which we will then rollback
 
                     if (mustPush)
+                    {
+                        var cSharpType = 
+                            new DatabaseTypeRequest(table.Columns[0].DataType,
+                                _anoTable.NumberOfIntegersToUseInAnonymousRepresentation
+                            + _anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
+                        
+                        //we want to use this syntax
+                        var syntaxHelper = _server.Helper.GetQuerySyntaxHelper();
+
+                        //push to the destination server
                         _anoTable.PushToANOServerAsNewTable(
-                            UsefulStuff.GetSQLDBTypeForCSharpType(table.Columns[0].DataType,
-                            _anoTable.NumberOfIntegersToUseInAnonymousRepresentation 
-                            + _anoTable.NumberOfCharactersToUseInAnonymousRepresentation),
+                            //turn the csharp type into an SQL type e.g. string 30 becomes varchar(30)
+                            syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(cSharpType),
                             new ThrowImmediatelyCheckNotifier(), _con, transaction);
+                    }
                 }
 
                 string substituteForANOIdentifiersProc = SubstitutionStoredprocedure;

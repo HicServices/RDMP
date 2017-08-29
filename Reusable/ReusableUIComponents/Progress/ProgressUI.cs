@@ -28,11 +28,12 @@ namespace ReusableUIComponents.Progress
 
         DataTable progress = new DataTable();
 
-
         /// <summary>
         /// See HandleThrottlingForJob, basically if the message in a progress event changes over time we don;t want to spam the datagrid so instead we just note that there is a flood of distinct messages coming from a specific source
         /// </summary>
         private const int MaxNumberOfJobsAcceptableFromSenderBeforeThrottlingKicksIn = 5000;
+
+        private int _processingTimeColIndex;
 
         public ProgressUI()
         {
@@ -42,16 +43,32 @@ namespace ReusableUIComponents.Progress
             progress.Columns.Add("Job");
             progress.PrimaryKey = new []{progress.Columns[0]};
 
-            progress.Columns.Add("Progress");
+            progress.Columns.Add("Progress",typeof(int));
             progress.Columns.Add("Quantity");
-            progress.Columns.Add("Processing Time");
+            progress.Columns.Add("Processing Time",typeof(TimeSpan));
 
             Timer t = new Timer();
             t.Interval = 3000;//every 3 seconds
             t.Tick += ProcessAndClearQueuedProgressMessages;
             t.Start();
+
+            DataGridViewCellStyle style = new DataGridViewCellStyle();
+            style.Format = "N0";
+            dataGridView1.Columns["Progress"].DefaultCellStyle = style;
+
+            dataGridView1.CellFormatting += dataGridView1_CellFormatting;
+            _processingTimeColIndex = dataGridView1.Columns["Processing Time"].Index;
         }
-        
+
+        void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if(e.ColumnIndex == _processingTimeColIndex)
+                if (e.Value != null && e.Value != DBNull.Value)
+                    e.Value = ((TimeSpan)e.Value).Hours.ToString("00") + ":" +
+                           ((TimeSpan)e.Value).Minutes.ToString("00") + ":" +
+                           ((TimeSpan)e.Value).Seconds.ToString("00");
+        }
+
 
         public void Clear()
         {
@@ -133,7 +150,7 @@ namespace ReusableUIComponents.Progress
 
 
         Dictionary<object, HashSet<string>> JobsreceivedFromSender = new Dictionary<object, HashSet<string>>();
-        
+
         object oProgressQueLock = new object();
         Dictionary<string, QueuedProgressMessage> ProgressQueue = new Dictionary<string, QueuedProgressMessage>();
 

@@ -20,6 +20,8 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 
@@ -43,6 +45,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private List<IColumn> _availableColumns;
         private List<IColumn> _includedColumns;
+
+        public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
         public SelectColumnUI()
         {
@@ -306,10 +310,21 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             //add count option unless it cannot have one
             if (_options.GetCountColumnRequirement(_aggregate) != CountColumnRequirement.CannotHaveOne)
+            {
+                AggregateCountColumn countCol;
+
                 if (!string.IsNullOrEmpty(_aggregate.CountSQL))
-                    _includedColumns.Add(new AggregateCountColumn(_aggregate.CountSQL));
+                {
+                    countCol = new AggregateCountColumn(_aggregate.CountSQL);
+                    _includedColumns.Add(countCol);
+                }
                 else
-                    _availableColumns.Add(new AggregateCountColumn("count(*) as CountColumn"));
+                {
+                    countCol = new AggregateCountColumn("count(*) as CountColumn");
+                    _availableColumns.Add(countCol);
+                }
+                countCol.SetQuerySyntaxHelper(_querySyntaxHelper,true);
+            }
 
             olvSelectColumns.AddObjects(_includedColumns);
             olvSelectColumns.AddObjects(_availableColumns);

@@ -7,6 +7,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems
 {

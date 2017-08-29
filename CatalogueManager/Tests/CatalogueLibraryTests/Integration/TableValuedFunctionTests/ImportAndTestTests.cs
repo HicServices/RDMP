@@ -25,16 +25,17 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
         [SetUp]
         public void CreateFunction()
         {
-            _function.Create(DatabaseICanCreateRandomTablesIn, CatalogueRepository);
+            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, CatalogueRepository);
         }
 
         [Test]
         public void FunctionWorks()
         {
-            using (var con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString))
+            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            using (var con = server.GetConnection())
             {
                 con.Open();
-                var r = new SqlCommand("Select * from dbo.MyAwesomeFunction(5,10,'Fish')",con).ExecuteReader();
+                var r = server.GetCommand("Select * from dbo.MyAwesomeFunction(5,10,'Fish')",con).ExecuteReader();
 
                 r.Read();
                 Assert.AreEqual(5, r["Number"]);
@@ -83,24 +84,26 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
         [TestCase(false)]
         public void TestDiscovery(bool usetransaction)
         {
-            var db = new DiscoveredServer(DatabaseICanCreateRandomTablesIn).ExpectDatabase(DatabaseICanCreateRandomTablesIn.InitialCatalog);
+            var db = DiscoveredDatabaseICanCreateRandomTablesIn;
             
-            ManagedTransaction transaction = null;
+            IManagedTransaction transaction = null;
 
             if(usetransaction)
             {
-                 SqlConnection con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString);
+                var con = db.Server.GetConnection();
                 con.Open();
 
                 //drop function - outside of transaction
-                new SqlCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
+                db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
 
                 //now begin transaction
                 var t = con.BeginTransaction();
                 
                 //create it within the scope of the transaction
                 transaction = new ManagedTransaction(con,t);
-                new SqlCommand(_function.CreateFunctionSQL.Substring(_function.CreateFunctionSQL.IndexOf("GO") + 3), con, t).ExecuteNonQuery();
+                var cmd = db.Server.GetCommand(_function.CreateFunctionSQL.Substring(_function.CreateFunctionSQL.IndexOf("GO") + 3),con);
+                cmd.Transaction = t;
+                cmd.ExecuteNonQuery();
             }
             
             Assert.IsTrue(db.DiscoverTableValuedFunctions(transaction).Any(tbv=>tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
@@ -177,10 +180,10 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
         public void Synchronization_ParameterDefinitionChanged()
         {
             string expectedMessage =
-                "Parameter @startNumber is declared as 'DECLARE @startNumber AS int' but in the Catalogue it appears as 'DECLARE @startNumber AS datetime'";
+                "Parameter @startNumber is declared as 'DECLARE @startNumber AS int;' but in the Catalogue it appears as 'DECLARE @startNumber AS datetime;'";
 
             AnyTableSqlParameter parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
-            parameter.ParameterSQL = "DECLARE @startNumber AS datetime";
+            parameter.ParameterSQL = "DECLARE @startNumber AS datetime;";
             parameter.SaveToDatabase();
 
             var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
@@ -198,8 +201,8 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
             Assert.IsTrue(parameter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);
             var diff = parameter.HasLocalChanges().Differences.Single();
 
-            Assert.IsTrue(diff.LocalValue.Equals("DECLARE @startNumber AS datetime"));
-            Assert.IsTrue(diff.DatabaseValue.Equals("DECLARE @startNumber AS int"));
+            Assert.AreEqual("DECLARE @startNumber AS datetime;",diff.LocalValue);
+            Assert.AreEqual("DECLARE @startNumber AS int;", diff.DatabaseValue);
 
         }
 

@@ -10,6 +10,8 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -70,6 +72,7 @@ namespace CatalogueLibrary.Data
         {
             return new ExtractionFilterFactory(ExtractionInformation);
         }
+
 
         public override Catalogue GetCatalogue()
         {

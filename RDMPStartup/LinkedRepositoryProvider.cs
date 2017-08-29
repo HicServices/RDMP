@@ -50,9 +50,6 @@ namespace RDMPStartup
 
             if (CatalogueRepository != null)
                 ConfigureObscureDependencies();
-
-
-
         }
 
         public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString, out Exception catalogueException, out Exception dataExportException)

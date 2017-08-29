@@ -15,12 +15,14 @@ using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using QueryCachingTests;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CohortManagerTests.QueryTests
 {
     public class JoinableCohortConfigurationTests : CohortIdentificationTests
     {
+        private DiscoveredDatabase _queryCachingDatabase;
 
         [Test]
         public void CreateJoinable()
@@ -187,18 +189,21 @@ namespace CohortManagerTests.QueryTests
                 //after joinables
                 Assert.AreEqual(
                     string.Format(
-    @"/*UnitTestAggregate1*/
-SELECT distinct
+    @"/*cic_{1}_UnitTestAggregate1*/
+SELECT
+distinct
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData] LEFT Join (
-	/*UnitTestAggregate2*/
-	SELECT distinct
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
+["+TestDatabaseNames.Prefix+ @"ScratchArea]..[BulkData]
+LEFT Join (
+	/*cic_{1}_UnitTestAggregate2*/
+	SELECT
+	distinct
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 	FROM 
 	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
 ){0}
-on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi",expectedTableAlias), builder.SQL);
+on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi",expectedTableAlias,cohortIdentificationConfiguration.ID), builder.SQL);
 
             }
             finally
@@ -259,15 +264,18 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi",expec
 
                 //after joinables
                 Assert.AreEqual(
+                    CollapseWhitespace(
                     string.Format(
-    @"/*UnitTestAggregate1*/
-SELECT distinct
+    @"/*cic_{1}_UnitTestAggregate1*/
+SELECT
+distinct
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData] LEFT Join (
-	/*UnitTestAggregate2*/
+["+TestDatabaseNames.Prefix+ @"ScratchArea]..[BulkData]
+LEFT Join (
+	/*cic_{1}_UnitTestAggregate2*/
 	SELECT distinct
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi], ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[dtCreated]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi], ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[dtCreated]
 	FROM 
 	["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
 	WHERE
@@ -282,7 +290,7 @@ WHERE
 (
 /*Within 1 year of event*/
 ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].dtCreated)) <= 1
-)", expectedTableAlias), builder.SQL);
+)", expectedTableAlias,cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
 
             }
             finally
@@ -411,20 +419,15 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
             aggregate2.AddDimension(anotherCol);
 
-            var remnantDb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName);
-            if(remnantDb.Exists())
-                remnantDb.ForceDrop();
+            _queryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName);
+            _queryCachingDatabase.ForceDrop(); //make sure it doesn't exist
 
-            MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(ServerICanCreateRandomDatabasesAndTablesOn.DataSource, queryCachingDatabaseName, ServerICanCreateRandomDatabasesAndTablesOn.UserID, ServerICanCreateRandomDatabasesAndTablesOn.Password);
+            MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
             scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new AcceptAllCheckNotifier());
 
             var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName);
-            queryCachingDatabaseServer.Server = ServerICanCreateRandomDatabasesAndTablesOn.DataSource;
-            queryCachingDatabaseServer.Database = queryCachingDatabaseName;
-            queryCachingDatabaseServer.Username = ServerICanCreateRandomDatabasesAndTablesOn.UserID;
-            queryCachingDatabaseServer.Password = ServerICanCreateRandomDatabasesAndTablesOn.Password;
-            queryCachingDatabaseServer.SaveToDatabase();
-
+            queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
+            
             //make the builder use the query cache we just set up
             builder.CacheServer = queryCachingDatabaseServer;
             try
@@ -460,17 +463,21 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
 
                     //after joinables
                     Assert.AreEqual(
+                        CollapseWhitespace(
                         string.Format(
-        @"/*UnitTestAggregate1*/
-SELECT distinct
+        @"/*cic_{2}_UnitTestAggregate1*/
+SELECT
+distinct
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData] LEFT Join (
-	/*Cached:UnitTestAggregate2*/
+["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
+LEFT Join (
+	/*Cached:cic_{2}_UnitTestAggregate2*/
 	select * from [MyQueryCachingDatabase]..[JoinableInceptionQuery_AggregateConfiguration{1}]
 
 ){0}
-on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi", expectedTableAlias,aggregate2.ID), builder.SQL);
+on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi", expectedTableAlias,aggregate2.ID,cohortIdentificationConfiguration.ID)),
+     CollapseWhitespace(builder.SQL));
 
                 }
                 finally

@@ -28,16 +28,14 @@ namespace AnonymisationTests
         [TestCase("bit")]
         public void CreateAnANOTable_PushAs(string datatypeForPush)
         {
-            DiscoveredServer server = new DiscoveredServer(ANOStore_ConnectionStringBuilder);
-            DiscoveredDatabase database = server.GetCurrentDatabase();
-
+            
             var anoTable = GetANOTable();
             Assert.AreEqual("ANOMyTable", anoTable.TableName);
             anoTable.NumberOfCharactersToUseInAnonymousRepresentation =20;
             anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 20;
             anoTable.PushToANOServerAsNewTable(datatypeForPush, new ThrowImmediatelyCheckNotifier());
 
-            var discoveredTable = database.DiscoverTables(false).SingleOrDefault(t => t.GetRuntimeName().Equals("ANOMyTable"));
+            var discoveredTable = ANOStore_Database.DiscoverTables(false).SingleOrDefault(t => t.GetRuntimeName().Equals("ANOMyTable"));
             
             //server should have 
             Assert.NotNull(discoveredTable);
@@ -207,7 +205,7 @@ namespace AnonymisationTests
             anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
             anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
 
-            DiscoveredTable ANOtable = new DiscoveredServer(ANOStore_ConnectionStringBuilder).ExpectDatabase(ANOStore_ExternalDatabaseServer.Database).ExpectTable(anoTable.TableName);
+            DiscoveredTable ANOtable = ANOStore_Database.ExpectTable(anoTable.TableName);
 
             //should not exist yet
             Assert.False(ANOtable.Exists());
@@ -291,22 +289,25 @@ namespace AnonymisationTests
             Console.WriteLine("Allocated " + uniqueSet.Count + " anonymous identifiers");
 
 
-            SqlConnection con = new SqlConnection(ANOStore_ConnectionStringBuilder.ConnectionString);
-            con.Open();
-            
-            SqlCommand cmd = new SqlCommand("Select count(*) from ANOMyTable",con);
-            int numberOfRows = Convert.ToInt32(cmd.ExecuteScalar());
+            var server = ANOStore_Database.Server;
+            using (var con = server.GetConnection())
+            {
+                con.Open();
 
-            //should be the same number of unique identifiers in memory as in the database
-            Assert.AreEqual(uniqueSet.Count,numberOfRows);
-            Console.WriteLine("Found " + numberOfRows + " unique ones");
+                var cmd = server.GetCommand("Select count(*) from ANOMyTable", con);
+                int numberOfRows = Convert.ToInt32(cmd.ExecuteScalar());
 
-            SqlCommand cmdNulls = new SqlCommand("select count(*) from ANOMyTable where ANOMyTable is null",con);
-            int nulls = Convert.ToInt32(cmdNulls.ExecuteScalar());
-            Assert.AreEqual(0,nulls);
-            Console.WriteLine("Found " + nulls + " null ANO identifiers");
+                //should be the same number of unique identifiers in memory as in the database
+                Assert.AreEqual(uniqueSet.Count,numberOfRows);
+                Console.WriteLine("Found " + numberOfRows + " unique ones");
 
-            con.Close();
+                var cmdNulls = server.GetCommand("select count(*) from ANOMyTable where ANOMyTable is null", con);
+                int nulls = Convert.ToInt32(cmdNulls.ExecuteScalar());
+                Assert.AreEqual(0,nulls);
+                Console.WriteLine("Found " + nulls + " null ANO identifiers");
+
+                con.Close();
+            }
             sw.Stop();
             Console.WriteLine("Time to evaluate results:" + sw.Elapsed);
             TruncateANOTable(anoTable);

@@ -53,17 +53,17 @@ namespace DataLoadEngineTests.Integration
                 TableInfo = null;
             }
 
-            public void Create(CatalogueRepository repository, string serverToLoad, string databaseToLoad, IHICProjectDirectory hicProjectDirectory,string username, string password)
+            public void Create(CatalogueRepository repository,DiscoveredDatabase database, IHICProjectDirectory hicProjectDirectory)
             {
                 TableInfo = new TableInfo(repository, "TestData")
                 {
-                    Server = serverToLoad,
-                    Database = databaseToLoad
+                    Server = database.Server.Name,
+                    Database = database.GetRuntimeName()
                 };
                 TableInfo.SaveToDatabase();
 
-                if(!string.IsNullOrWhiteSpace(username))
-                    Credentials = new DataAccessCredentialsFactory(repository).Create(TableInfo, username, password, DataAccessContext.Any);
+                if(!string.IsNullOrWhiteSpace(database.Server.ExplicitUsernameIfAny))
+                    Credentials = new DataAccessCredentialsFactory(repository).Create(TableInfo, database.Server.ExplicitUsernameIfAny, database.Server.ExplicitPasswordIfAny, DataAccessContext.Any);
 
 
                 ColumnInfo = new ColumnInfo(repository, "Col1", "int", TableInfo)
@@ -231,22 +231,15 @@ namespace DataLoadEngineTests.Integration
                 databaseHelper.SetUp(server);
 
                 // Create the Catalogue entities for the dataset
-                var databaseToLoadName = databaseHelper.DatabaseToLoad.GetRuntimeName();
-                catalogueEntities.Create(CatalogueRepository, server.Name, databaseToLoadName, hicProjectDirectory,ServerICanCreateRandomDatabasesAndTablesOn.UserID,ServerICanCreateRandomDatabasesAndTablesOn.Password);
+
+                catalogueEntities.Create(CatalogueRepository, databaseHelper.DatabaseToLoad, hicProjectDirectory);
 
                 if(overrideRAW)
                 {
                     external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server");
+                    external.SetProperties(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("master"));
 
-                    external.Server = ServerICanCreateRandomDatabasesAndTablesOn.DataSource;
-                    external.Database = "master";
-
-                    if (!sendDodgyCredentials)
-                    {
-                        external.Username = ServerICanCreateRandomDatabasesAndTablesOn.UserID;
-                        external.Password = ServerICanCreateRandomDatabasesAndTablesOn.Password;
-                    }
-                    else
+                    if (sendDodgyCredentials)
                     {
                         external.Username = "IveGotaLovely";
                         external.Password = "BunchOfCoconuts";

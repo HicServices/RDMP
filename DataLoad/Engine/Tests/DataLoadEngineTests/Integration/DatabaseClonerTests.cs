@@ -35,11 +35,11 @@ namespace DataLoadEngineTests.Integration
             try
             {
                 _userAcceptanceTestEnvironmentHelper = new UserAcceptanceTestEnvironmentHelper(
-                    ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString,
+                    DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString,
                     CatalogueRepository.ConnectionString,
                     UnitTestLoggingConnectionString.ConnectionString, 
-                    ANOStore_ConnectionStringBuilder.ConnectionString, 
-                    IdentifierDump_ConnectionStringBuilder.ConnectionString,
+                    ANOStore_Database.Server.Builder.ConnectionString, 
+                    IdentifierDump_Database.Server.Builder.ConnectionString,
                     RepositoryLocator);
 
                 _userAcceptanceTestEnvironmentHelper.SetUp();

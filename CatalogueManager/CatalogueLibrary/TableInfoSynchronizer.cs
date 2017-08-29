@@ -104,8 +104,7 @@ namespace CatalogueLibrary
 
             //for importing new stuff
             if (_tableToSync.IsTableValuedFunction)
-                importer = new TableValuedFunctionImporter(_repository,_toSyncTo.Builder.ConnectionString, _toSyncTo.Name,
-                    _toSyncTo.GetCurrentDatabase().GetRuntimeName(), _tableToSync.GetRuntimeName());
+                importer = new TableValuedFunctionImporter(_repository, (DiscoveredTableValuedFunction) expectedTable);
             else
                 importer = new TableInfoImporter(_repository, _toSyncTo.Name, _toSyncTo.GetCurrentDatabase().GetRuntimeName(), _tableToSync.GetRuntimeName(), _tableToSync.DatabaseType, username: usr, password: pwd);
 

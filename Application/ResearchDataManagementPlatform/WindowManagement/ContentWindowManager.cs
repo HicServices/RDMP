@@ -362,7 +362,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ViewFilterGraph(object sender,FilterGraphObjectCollection collection)
         {
-            var aggFilter = (AggregateFilter) collection.GetFilter();
+            var aggFilter = collection.GetFilter() as AggregateFilter;
 
             //if it's a cohort set
             if(aggFilter != null && aggFilter.GetAggregate().IsCohortIdentificationAggregate)

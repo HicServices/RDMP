@@ -48,8 +48,8 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
                 Assert.DoesNotThrow(() => sql = qb.SQL);
 
 
-                Assert.AreEqual(@"
-SELECT 
+                Assert.AreEqual(CollapseWhitespace(@"
+SELECT
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[PKAgencyCodename],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[PKID],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[ReportText],
@@ -61,7 +61,7 @@ SELECT
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory3]
 FROM 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport] Right JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent] ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[PKFKAgencyCodename] = ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[PKAgencyCodename]
-", sql);
+"), CollapseWhitespace(sql));
 
                 //now make it a combo join but in wrong direction
                 var pk2 = bulkData.CIATestEventCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("PKClearenceLevel"));
@@ -151,12 +151,12 @@ FROM
                 qb.AddColumn(lookup_desc);
                 qb.AddColumn(lookup_pk);
 
-                Assert.AreEqual(@"
+                Assert.AreEqual(CollapseWhitespace(@"
 SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant].[ID],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant].[Name]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant]", qb.SQL);
+["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant]"), CollapseWhitespace(qb.SQL));
 
 
                 //will be complaint about join info lookup tables missing
@@ -170,11 +170,11 @@ FROM
                 var cleanup1 = new Lookup(CatalogueRepository, lookup_desc.ColumnInfo, dataset_fk1.ColumnInfo, lookup_pk.ColumnInfo, ExtractionJoinType.Left, "");
 
                 qb.Invalidate();
-                Assert.AreEqual(@"SELECT 
+                Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1],
 lookup_1.[Name]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport] Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_1 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1] = lookup_1.[ID]", qb.SQL.Trim());
+["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport] Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_1 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1] = lookup_1.[ID]"),CollapseWhitespace(qb.SQL));
 
 
                 //now do it properly 
@@ -217,7 +217,7 @@ FROM
                     ei3
                 });
 
-                Assert.AreEqual(@"SELECT 
+                Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1],
 lookup_1.[Name] AS NameOfSignatory1,
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory2],
@@ -227,7 +227,7 @@ lookup_3.[Name] AS NameOfSignatory3
 FROM 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport] Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_1 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1] = lookup_1.[ID]
  Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_2 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory2] = lookup_2.[ID]
- Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_3 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory3] = lookup_3.[ID]", qb.SQL.Trim());
+ Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_3 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory3] = lookup_3.[ID]"),CollapseWhitespace(qb.SQL));
 
 
                 //now we remove one of the fks from the query 
@@ -235,7 +235,7 @@ FROM
                 qb.Invalidate();
 
                 //notice how now it doesn't have the fk it will think that both the lookup descriptions refer to the fk it encounters first 
-                Assert.AreEqual(@"SELECT 
+                Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1],
 lookup_1.[Name] AS NameOfSignatory1,
 lookup_1.[Name] AS NameOfSignatory2,
@@ -243,8 +243,8 @@ lookup_1.[Name] AS NameOfSignatory2,
 lookup_2.[Name] AS NameOfSignatory3
 FROM 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport] Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_1 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1] = lookup_1.[ID]
- Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_2 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory3] = lookup_2.[ID]",
-                qb.SQL.Trim());
+ Left JOIN ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestInformant] AS lookup_2 ON ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory3] = lookup_2.[ID]"),
+                CollapseWhitespace(qb.SQL));
 
                 //remove 2 lookup descriptions
                 qb.SelectColumns.Remove(qb.SelectColumns.Single(qtc => qtc.IColumn.ID == ei1.ID));
@@ -272,7 +272,7 @@ FROM
 
         private RelationalBulkTestData GetBulkDataWithImportedCatalogues()
         {
-            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DatabaseICanCreateRandomTablesIn);
+            RelationalBulkTestData bulkData = new RelationalBulkTestData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             bulkData.SetupTestData();
             bulkData.ImportCatalogues();
             return bulkData;

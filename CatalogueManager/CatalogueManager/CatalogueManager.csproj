@@ -256,9 +256,6 @@
       <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\VBPowerPacks\v10.0\Microsoft.VisualBasic.PowerPacks.Vs.dll</HintPath>
-    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
@@ -456,7 +453,6 @@
     <Compile Include="DataViewing\Collections\ViewColumnInfoExtractUICollection.cs" />
     <Compile Include="Icons\IconOverlays\CachedOverlayResult.cs" />
     <Compile Include="Icons\IconOverlays\IconOverlayProvider.cs" />
-    <Compile Include="Icons\IconOverlays\OverlayKind.cs" />
     <Compile Include="Icons\IconOverlays\Overlays.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -487,7 +483,6 @@
       <DependentUpon>FamFamFamIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="Icons\IconProvision\IconConcept.cs" />
-    <Compile Include="Icons\IconProvision\IIconProvider.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionality.cs" />
     <Compile Include="Collections\RDMPCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -659,6 +654,7 @@
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ProcessTaskStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\SupportingObjectStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\TableInfoStateBasedIconProvider.cs" />
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\TableInfoServerNodeStateBasedIconProvider.cs" />
     <Compile Include="Images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

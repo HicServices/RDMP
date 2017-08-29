@@ -17,6 +17,7 @@ using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {

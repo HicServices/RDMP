@@ -16,13 +16,13 @@ namespace Tests.OtherProviders.Oracle
         [TestFixtureSetUp]
         public void CreateTestDatabase()
         {
-            if (OracleServer == null)
+            if (DiscoveredOracleServer == null)
             {
                 _isServerAvailable = false;
                 return;
             }
 
-            server = new DiscoveredServer(OracleServer);
+            server = DiscoveredOracleServer;
             if (!server.Exists())
             {
                 _isServerAvailable = false;

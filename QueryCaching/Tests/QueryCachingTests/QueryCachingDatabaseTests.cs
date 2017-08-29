@@ -19,28 +19,28 @@ namespace QueryCachingTests
     public class QueryCachingDatabaseTests:DatabaseTests
     {
         protected string QueryCachingDatabaseName = Tests.Common.TestDatabaseNames.GetConsistentName("QueryCaching");
+        public DiscoveredDatabase DiscoveredQueryCachingDatabase { get; set; }
         public ExternalDatabaseServer QueryCachingDatabaseServer;
-        
+
         [TestFixtureSetUp]
         public void Setup()
         {
-            MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(ServerICanCreateRandomDatabasesAndTablesOn.DataSource, QueryCachingDatabaseName, ServerICanCreateRandomDatabasesAndTablesOn.UserID, ServerICanCreateRandomDatabasesAndTablesOn.Password);
+            DiscoveredQueryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
+
+            MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
             scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
 
             QueryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,QueryCachingDatabaseName);
-            QueryCachingDatabaseServer.Server = ServerICanCreateRandomDatabasesAndTablesOn.DataSource;
-            QueryCachingDatabaseServer.Database = QueryCachingDatabaseName;
-            QueryCachingDatabaseServer.Username = ServerICanCreateRandomDatabasesAndTablesOn.UserID;
-            QueryCachingDatabaseServer.Password = ServerICanCreateRandomDatabasesAndTablesOn.Password;
-            QueryCachingDatabaseServer.SaveToDatabase();
+            QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);
         }
-        
+
         [TestFixtureTearDown]
         public void Destroy()
         {
             QueryCachingDatabaseServer.DeleteInDatabase();
 
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName).ForceDrop();
+            if (DiscoveredQueryCachingDatabase.Exists())
+                DiscoveredQueryCachingDatabase.ForceDrop();
         }
     }
 }

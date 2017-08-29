@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -39,5 +41,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         DatabaseType DatabaseType { get; }
         Dictionary<string, string> DescribeServer(DbConnectionStringBuilder builder);
         bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception);
+        
+        string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder);
+        string GetExplicitPasswordIfAny(DbConnectionStringBuilder builder);
     }
 }

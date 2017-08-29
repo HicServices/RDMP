@@ -181,7 +181,7 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
         private BulkTestsData SetupTestData(out ColumnInfo l2ColumnInfo)
         {
             //Setup test data
-            var testData = new BulkTestsData(CatalogueRepository, DatabaseICanCreateRandomTablesIn);
+            var testData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             testData.SetupTestData();
             testData.ImportAsCatalogue();
 

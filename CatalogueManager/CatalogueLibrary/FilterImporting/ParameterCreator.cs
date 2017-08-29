@@ -7,6 +7,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting.Construction;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.Office.Interop.Excel;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.FilterImporting
@@ -100,7 +101,11 @@ namespace CatalogueLibrary.FilterImporting
                     }
                     else
                     {
-                        newParameter = _factory.CreateNewParameter(filterToCreateFor, "DECLARE " + proposedNewParameterName + " AS VARCHAR(50)");//its not got a template match so just create it as varchar(50)
+                        var syntaxHelper = filterToCreateFor.GetQuerySyntaxHelper();
+                        //its not got a template match so just create it as varchar(50)
+                        var declaration = syntaxHelper.GetParameterDeclaration(proposedNewParameterName,new DatabaseTypeRequest(typeof(string),50));
+
+                        newParameter = _factory.CreateNewParameter(filterToCreateFor,declaration);
 
                         if (newParameter != null)
                         {

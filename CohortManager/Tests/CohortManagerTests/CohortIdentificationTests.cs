@@ -24,7 +24,7 @@ namespace CohortManagerTests
         [SetUp]
         public void SetupTestData()
         {
-            testData = new BulkTestsData(CatalogueRepository,DatabaseICanCreateRandomTablesIn, 100);
+            testData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
             testData.SetupTestData();
 
             testData.ImportAsCatalogue();
@@ -38,6 +38,7 @@ namespace CohortManagerTests
 
             aggregate2 =
                 new AggregateConfiguration(CatalogueRepository,testData.catalogue, "UnitTestAggregate2");
+
             aggregate2.CountSQL = null;
             aggregate2.SaveToDatabase();
 
@@ -57,6 +58,10 @@ namespace CohortManagerTests
 
             cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
             cohortIdentificationConfiguration.SaveToDatabase();
+
+            cohortIdentificationConfiguration.EnsureNamingConvention(aggregate1);
+            cohortIdentificationConfiguration.EnsureNamingConvention(aggregate2);
+            cohortIdentificationConfiguration.EnsureNamingConvention(aggregate3);
         }
 
         [TearDown]

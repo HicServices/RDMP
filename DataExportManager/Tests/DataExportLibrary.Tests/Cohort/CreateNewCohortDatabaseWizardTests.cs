@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data.SqlClient;
+using System.Linq;
 using CatalogueLibrary.Data;
 using DataExportLibrary.CohortDatabaseWizard;
 using DataExportLibrary.Data.DataTables;
@@ -119,7 +120,7 @@ namespace DataExportLibrary.Tests.Cohort
             wizard.CreateDatabase(
                 candidate,
                 strategy, 
-                ServerICanCreateRandomDatabasesAndTablesOn,
+                (SqlConnectionStringBuilder)DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder,
                 cohortDatabaseName,
                 cohortDatabaseName,
                 new ThrowImmediatelyCheckNotifier());

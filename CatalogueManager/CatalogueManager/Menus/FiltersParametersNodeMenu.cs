@@ -14,6 +14,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {

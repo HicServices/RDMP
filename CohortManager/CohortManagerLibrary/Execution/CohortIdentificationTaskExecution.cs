@@ -2,26 +2,29 @@
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
     public class CohortIdentificationTaskExecution
     {
+        private readonly IDataAccessPoint _cacheServerIfAny;
         public int SubQueries { get; private set; }
         public int SubqueriesCached { get; private set; }
 
         public bool IsResultsForRootContainer { get; set; }
 
-        public CohortIdentificationTaskExecution(string countSQL, string sampleSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer)
+        public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer)
         {
+            _cacheServerIfAny = cacheServerIfAny;
             SubQueries = subQueries;
             SubqueriesCached = subqueriesCached;
             CountSQL = countSQL;
-            SampleSQL = sampleSQL;
             CumulativeSQL = cumulativeSQL;
             CancellationTokenSource = cancellationTokenSource;
             IsResultsForRootContainer = isResultsForRootContainer;
@@ -33,10 +36,8 @@ namespace CohortManagerLibrary.Execution
         /// Although this is called CountSQL it is actually a select distinct identifiers!
         /// </summary>
         public string CountSQL { get; set; }
-        public string SampleSQL { get; set; }
         public CancellationTokenSource CancellationTokenSource { get; set; }
 
-        public DataTable Preview { get; private set; }
         public DataTable Identifiers { get; private set; }
         public DataTable CumulativeIdentifiers { get; private set; }
 
@@ -48,9 +49,9 @@ namespace CohortManagerLibrary.Execution
                 throw new Exception("GetCohortAsync has already been called for this object");
 
             Identifiers = new DataTable();
-            
-            var server = DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.InternalDataProcessing, false);
 
+            var server = GetServerToExecuteQueryOn(accessPoints);
+            
             server.EnableAsync();
 
             using (var con = server.GetConnection())
@@ -59,9 +60,15 @@ namespace CohortManagerLibrary.Execution
                 var cmdCount = server.GetCommand(CountSQL, con);
                 cmdCount.CommandTimeout = commandTimeout;
                 
-                Task<DbDataReader> cumulativeIdentifiersRead = null;
-                
                 var identifiersReader =  cmdCount.ExecuteReaderAsync(CancellationTokenSource.Token);
+
+                identifiersReader.Wait(CancellationTokenSource.Token);
+                var rIds = identifiersReader.Result;
+                Identifiers.Load(rIds);
+                rIds.Close();
+                rIds.Dispose();
+
+                Task<DbDataReader> cumulativeIdentifiersRead = null;
 
                 //if there is cumulative SQL happening
                 if (!string.IsNullOrWhiteSpace(CumulativeSQL))
@@ -73,30 +80,30 @@ namespace CohortManagerLibrary.Execution
                     cumulativeIdentifiersRead = cmdCountCumulative.ExecuteReaderAsync(CancellationTokenSource.Token);
                 }
 
-                if(!string.IsNullOrWhiteSpace(SampleSQL))
-                {
-                    var cmdPreview = server.GetCommand(SampleSQL, con);
-                    cmdPreview.CommandTimeout = commandTimeout;
-
-                    var datasetSampleReader = cmdPreview.ExecuteReaderAsync(CancellationTokenSource.Token);
-                    IsExecuting = true;
-                    datasetSampleReader.Wait(CancellationTokenSource.Token);
-                    
-                    Preview = new DataTable();
-                    Preview.Load(datasetSampleReader.Result);
-                }
-
-                identifiersReader.Wait(CancellationTokenSource.Token);
-                Identifiers.Load(identifiersReader.Result);
-
                 if (cumulativeIdentifiersRead != null)
                 {
                     cumulativeIdentifiersRead.Wait(CancellationTokenSource.Token);
-                    CumulativeIdentifiers.Load(cumulativeIdentifiersRead.Result);
+                    var rCumulative = cumulativeIdentifiersRead.Result;
+                    CumulativeIdentifiers.Load(rCumulative);
+                    rCumulative.Close();
+                    rCumulative.Dispose();
                 }
 
                 IsExecuting = false;
             }
+        }
+
+        private DiscoveredServer GetServerToExecuteQueryOn(IDataAccessPoint[] accessPoints)
+        {
+            //if all queries are cached then we should just execute against the cache
+            if (SubQueries > 0 && SubQueries == SubqueriesCached && _cacheServerIfAny != null)
+                return DataAccessPortal.GetInstance().ExpectServer(_cacheServerIfAny,DataAccessContext.InternalDataProcessing,false); 
+
+            //if there are some cached but not all queries are cached
+            if(SubqueriesCached > 0 && _cacheServerIfAny != null)
+                return DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints.Union(new []{_cacheServerIfAny}).ToArray(), DataAccessContext.InternalDataProcessing, false);    
+
+            return DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.InternalDataProcessing, false);
         }
     }
 }

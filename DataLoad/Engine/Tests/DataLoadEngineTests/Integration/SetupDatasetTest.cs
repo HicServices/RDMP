@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using AnonymisationTests;
@@ -38,11 +39,11 @@ namespace DataLoadEngineTests.Integration
         public void TestTheTestDatasetSetup()
         {
             var testEnvironmentHelper = new UserAcceptanceTestEnvironmentHelper(
-                ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString,
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString,
                 CatalogueRepository.ConnectionString,
                 UnitTestLoggingConnectionString.ConnectionString,
-                ANOStore_ConnectionStringBuilder.ConnectionString,
-                IdentifierDump_ConnectionStringBuilder.ConnectionString,
+                ANOStore_Database.Server.Builder.ConnectionString,
+                IdentifierDump_Database.Server.Builder.ConnectionString,
                 RepositoryLocator
             );
 
@@ -68,10 +69,11 @@ namespace DataLoadEngineTests.Integration
             var testFolder = rootFolder.CreateSubdirectory("TestTheTestDatasetSetup");
             var datasetFolder = testFolder.CreateSubdirectory("TestDataset");
             
-            var stage1_setupCatalogue = new UserAcceptanceTestEnvironment(ServerICanCreateRandomDatabasesAndTablesOn,
+            var stage1_setupCatalogue = new UserAcceptanceTestEnvironment(
+                (SqlConnectionStringBuilder) DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder,
                 datasetFolder.FullName, UnitTestLoggingConnectionString, "Internal",
-                ANOStore_ConnectionStringBuilder,
-                IdentifierDump_ConnectionStringBuilder,
+                (SqlConnectionStringBuilder) ANOStore_Database.Server.Builder,
+                (SqlConnectionStringBuilder) IdentifierDump_Database.Server.Builder,
                 RepositoryLocator);
 
             stage1_setupCatalogue.SilentRunning = true;

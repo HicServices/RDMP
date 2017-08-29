@@ -14,6 +14,7 @@ using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
 using DataExportManager.ItemActivation;
 using RDMPStartup;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.Menus
 {

@@ -167,7 +167,7 @@ namespace DataExportLibrary.Checks
                         try
                         {
                             cmd = server.GetCommand(request.QueryBuilder.SQL, con,managedTransaction);
-                            notifier.OnCheckPerformed(new CheckEventArgs("--About to send Request SQL :" + Environment.NewLine + request.QueryBuilder.SQL,CheckResult.Success));
+                            notifier.OnCheckPerformed(new CheckEventArgs("/*About to send Request SQL :*/" + Environment.NewLine + request.QueryBuilder.SQL,CheckResult.Success));
                         }
                         catch (QueryBuildingException e)
                         {

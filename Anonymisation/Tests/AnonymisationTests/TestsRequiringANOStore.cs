@@ -14,15 +14,14 @@ namespace AnonymisationTests
     public class TestsRequiringANOStore:DatabaseTests
     {
         protected ExternalDatabaseServer ANOStore_ExternalDatabaseServer { get; set; }
-        protected SqlConnectionStringBuilder ANOStore_ConnectionStringBuilder { get; set; }
+        protected DiscoveredDatabase ANOStore_Database { get; set; }
         protected string ANOStore_DatabaseName = TestDatabaseNames.GetConsistentName("ANOStore");
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            ANOStore_ConnectionStringBuilder = new SqlConnectionStringBuilder(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString);
-            ANOStore_ConnectionStringBuilder.InitialCatalog = "";
-
+            ANOStore_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(ANOStore_DatabaseName);
+            
             CreateANODatabase();
 
             CreateReferenceInCatalogueToANODatabase();
@@ -33,9 +32,8 @@ namespace AnonymisationTests
 
         private void DropANODatabase()
         {
-            var database = new DiscoveredServer(ANOStore_ConnectionStringBuilder).ExpectDatabase(ANOStore_DatabaseName);
-            if (database != null && database.Exists())
-                database.ForceDrop();
+            if(ANOStore_Database.Exists())
+                ANOStore_Database.ForceDrop();
         }
 
         [TestFixtureTearDown]
@@ -54,9 +52,8 @@ namespace AnonymisationTests
             var ano = typeof(ANOStore.Database.Class1);
             Console.WriteLine("Was ANOStore.Database.dll also loaded into memory:" + ano);
 
-            var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_ConnectionStringBuilder.DataSource, ANOStore_DatabaseName, ANOStore_ConnectionStringBuilder.UserID, ANOStore_ConnectionStringBuilder.Password);
+            var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_Database);
             scriptCreate.CreateAndPatchDatabase(typeof(ANOStore.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
-            ANOStore_ConnectionStringBuilder.InitialCatalog = ANOStore_DatabaseName;
         }
 
         private void CreateReferenceInCatalogueToANODatabase()
@@ -65,15 +62,7 @@ namespace AnonymisationTests
 
             //now create a new reference!
             ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,typeof(ANOStore.Class1).Assembly);
-            ANOStore_ExternalDatabaseServer.Database = ANOStore_ConnectionStringBuilder.InitialCatalog;
-            ANOStore_ExternalDatabaseServer.Server = ANOStore_ConnectionStringBuilder.DataSource;
-
-            //may be null
-            ANOStore_ExternalDatabaseServer.Username = ANOStore_ConnectionStringBuilder.UserID;
-            ANOStore_ExternalDatabaseServer.Password = ANOStore_ConnectionStringBuilder.Password;
-
-            ANOStore_ExternalDatabaseServer.SaveToDatabase();
-            
+            ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
         }
 
         private void RemovePreExistingReference()
@@ -105,11 +94,15 @@ namespace AnonymisationTests
         protected void TruncateANOTable(ANOTable anoTable)
         {
             Console.WriteLine("Truncating table " + anoTable.TableName + " on server " + ANOStore_ExternalDatabaseServer);
-            SqlConnection con = new SqlConnection(ANOStore_ConnectionStringBuilder.ConnectionString);
-            con.Open();
-            SqlCommand cmdDelete = new SqlCommand("if exists (select top 1 * from sys.tables where name ='" + anoTable.TableName + "') TRUNCATE TABLE " + anoTable.TableName, con);
-            cmdDelete.ExecuteNonQuery();
-            con.Close();
+            
+            var server = ANOStore_Database.Server;
+            using (var con = server.GetConnection())
+            {
+                con.Open();
+                var cmdDelete = server.GetCommand("if exists (select top 1 * from sys.tables where name ='" + anoTable.TableName + "') TRUNCATE TABLE " + anoTable.TableName, con);
+                cmdDelete.ExecuteNonQuery();
+                con.Close();
+            }
         
         }
     }

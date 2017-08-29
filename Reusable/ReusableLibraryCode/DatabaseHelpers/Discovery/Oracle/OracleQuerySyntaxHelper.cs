@@ -1,7 +1,17 @@
-﻿namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
+﻿using System.Collections.Generic;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+
+namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {
     public class OracleQuerySyntaxHelper : QuerySyntaxHelper
     {
+        public OracleQuerySyntaxHelper() : base(new TypeTranslater(),new OracleAggregateHelper())//no custom translater
+        {
+        }
+
         public override string GetRuntimeName(string s)
         {
             //upper it because oracle is stupid
@@ -11,10 +21,19 @@
             return toReturn.Length > 30 ? toReturn.Substring(0, 30) : toReturn;
 
         }
-
-        public override string Escape(string sql)
+        public override TopXResponse HowDoWeAchieveTopX(int x)
         {
-            return sql.Replace("'", "''");
+            return new TopXResponse("ROWNUM <= " + x, QueryComponent.WHERE);
+        }
+
+        public override string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override string DatabaseTableSeparator

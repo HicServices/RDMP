@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -6,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents.Annotations;
 
@@ -85,5 +87,14 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;
         }
 
+        public bool IsOverridden(ISqlParameter sqlParameter)
+        {
+            return ParameterManager.GetOverrideIfAnyFor(sqlParameter) != null;
+        }
+
+        public bool ShouldBeDisabled(ISqlParameter p)
+        {
+            return IsOverridden(p) || IsHigherLevel(p) || p is SpontaneousObject;
+        }
     }
 }

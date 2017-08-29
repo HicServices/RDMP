@@ -76,7 +76,7 @@ namespace DataLoadEngineTests.Integration
                 cloner.CreateDatabaseForStage(LoadBubble.Raw);
 
                 //confirm database appeared
-                Assert.IsTrue(new DiscoveredServer(ServerICanCreateRandomDatabasesAndTablesOn).ExpectDatabase(testLiveDatabaseName+"_RAW").Exists());
+                Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName + "_RAW").Exists());
 
                 //now create a catalogue and wire it up to the table TEST on the test database server 
                 Catalogue cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1"); 

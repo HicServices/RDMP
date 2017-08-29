@@ -13,7 +13,7 @@ namespace CohortManagerTests.QueryTests
         [SetUp]
         public void CreateFunction()
         {
-            _function.Create(DatabaseICanCreateRandomTablesIn, CatalogueRepository);
+            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, CatalogueRepository);
         }
 
         [Test]
@@ -29,6 +29,9 @@ namespace CohortManagerTests.QueryTests
             config2.SaveToDatabase();
             
             var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
+            
+            cic.EnsureNamingConvention(config1);
+            cic.EnsureNamingConvention(config2);
 
             try
             {
@@ -54,7 +57,10 @@ namespace CohortManagerTests.QueryTests
                 container.AddChild(config2, 1);
 
                 CohortQueryBuilder builder = new CohortQueryBuilder(cic);
-                Assert.AreEqual(@"DECLARE @startNumber AS int;
+                Assert.AreEqual(
+                    CollapseWhitespace(
+                    string.Format(
+@"DECLARE @startNumber AS int;
 SET @startNumber=5;
 DECLARE @stopNumber AS int;
 SET @stopNumber=10;
@@ -62,34 +68,40 @@ DECLARE @name AS varchar(50);
 SET @name='fish';
 
 (
-	/*CohortGenerationDifferingTableValuedParametersTest_1*/
-	SELECT distinct
+	/*cic_{0}_CohortGenerationDifferingTableValuedParametersTest_1*/
+	SELECT
+	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+ @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 
 	INTERSECT
 
-	/*CohortGenerationDifferingTableValuedParametersTest_2*/
-	SELECT distinct
+	/*cic_{0}_CohortGenerationDifferingTableValuedParametersTest_2*/
+	SELECT
+	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-", builder.SQL);
+",cic.ID)), 
+ CollapseWhitespace(builder.SQL));
 
                 //now override JUST @name
-                var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50)");
+                var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);");
                 param1.Value = "'lobster'";
                 param1.SaveToDatabase();
                 
-                var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50)");
+                var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);");
                 param2.Value = "'monkey'";
                 param2.SaveToDatabase();
 
                 CohortQueryBuilder builder2 = new CohortQueryBuilder(cic);
 
-                Assert.AreEqual(@"DECLARE @startNumber AS int;
+                Assert.AreEqual(
+                    CollapseWhitespace(
+                    string.Format(
+@"DECLARE @startNumber AS int;
 SET @startNumber=5;
 DECLARE @stopNumber AS int;
 SET @stopNumber=10;
@@ -99,21 +111,24 @@ DECLARE @name_2 AS varchar(50);
 SET @name_2='monkey';
 
 (
-	/*CohortGenerationDifferingTableValuedParametersTest_1*/
-	SELECT distinct
+	/*cic_{0}_CohortGenerationDifferingTableValuedParametersTest_1*/
+	SELECT
+	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+ @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 
 	INTERSECT
 
-	/*CohortGenerationDifferingTableValuedParametersTest_2*/
-	SELECT distinct
+	/*cic_{0}_CohortGenerationDifferingTableValuedParametersTest_2*/
+	SELECT
+	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name_2) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name_2) AS MyAwesomeFunction
 )
-", builder2.SQL);
+",cic.ID)),
+ CollapseWhitespace(builder2.SQL));
             }
             finally
             {

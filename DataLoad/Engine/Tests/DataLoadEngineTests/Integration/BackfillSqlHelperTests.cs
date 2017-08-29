@@ -35,18 +35,14 @@ namespace DataLoadEngineTests.Integration
                 _catalogue.DeleteInDatabase();
             }
 
-            _stagingDatabaseHelper = new TestDatabaseHelper(DatabaseName + "_STAGING", ServerICanCreateRandomDatabasesAndTablesOn);
-            _stagingDatabaseHelper.SetUp();
-
-            _liveDatabaseHelper = new TestDatabaseHelper(DatabaseName, ServerICanCreateRandomDatabasesAndTablesOn);
-            _liveDatabaseHelper.SetUp();
-
+            _stagingDatabaseHelper = new TestDatabaseHelper(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName + "_STAGING"));
+            _liveDatabaseHelper = new TestDatabaseHelper(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName));
+            
             // ensure the test staging and live databases are empty
-            _stagingDatabaseHelper.DropAndRecreate();
-            _liveDatabaseHelper.DropAndRecreate();
-
+            _stagingDatabaseHelper.Create();
+            _liveDatabaseHelper.Create();
+            
             CleanCatalogueDatabase();
-
         }
 
         private void CleanCatalogueDatabase()
@@ -72,8 +68,8 @@ namespace DataLoadEngineTests.Integration
         [TearDown]
         public void AfterEachTest()
         {
-            _stagingDatabaseHelper.TearDown();
-            _liveDatabaseHelper.TearDown();
+            _stagingDatabaseHelper.Destroy();
+            _liveDatabaseHelper.Destroy();
 
             CleanCatalogueDatabase();
         }
@@ -168,9 +164,9 @@ LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON Ti
         {
             TableInfo ti;
 
-            var resultsImporter = new TableInfoImporter(CatalogueRepository, ServerICanCreateRandomDatabasesAndTablesOn.DataSource,
-                databaseName, tableName, DatabaseType.MicrosoftSQLServer, ServerICanCreateRandomDatabasesAndTablesOn.UserID, 
-                ServerICanCreateRandomDatabasesAndTablesOn.Password);
+            var expectedTable = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
+
+            var resultsImporter = new TableInfoImporter(CatalogueRepository, expectedTable);
 
             resultsImporter.DoImport(out ti, out ciList);
 

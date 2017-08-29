@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Oracle.ManagedDataAccess.Client;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {

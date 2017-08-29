@@ -203,12 +203,6 @@
       <DependentUpon>CohortCompilerUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Results\CohortIdentificationExecutionResultsUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Results\CohortIdentificationExecutionResultsUI.Designer.cs">
-      <DependentUpon>CohortIdentificationExecutionResultsUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="Wizard\CreateNewCohortIdentificationConfigurationUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -265,9 +259,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Results\CohortIdentificationExecutionResultsUI.resx">
-      <DependentUpon>CohortIdentificationExecutionResultsUI.cs</DependentUpon>
-    </EmbeddedResource>
     <Content Include="..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
       <Link>SourceCodeForSelfAwareness.zip</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -473,17 +473,6 @@ namespace CohortManager.SubComponents
                         AddSummaryGraphOptions(containerTask.Container,RightClickMenu,containerTask);
                     }
 
-                    try
-                    {
-                        string sql = Compiler.Tasks[compileable].SampleSQL;
-
-                        if (!string.IsNullOrWhiteSpace(sql))
-                            RightClickMenu.Items.Add("Copy Preview SQL To Clipboard", CatalogueIcons.Clipboard, (o, args) => Clipboard.SetText(sql));
-                    }
-                    catch (Exception exception)
-                    {
-                        ExceptionViewer.Show("Could not get SampleSQL from compileable " + compileable,exception);
-                    }
                 }
             
                 if(RightClickMenu.Items.Count >0)

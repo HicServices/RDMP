@@ -431,7 +431,11 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                             "The edit functionality will now open.");
 
             _activator.WindowArranger.SetupEditCatalogue(this, catalogue);
-            this.Close();
+
+            if (cbAutoClose.Checked)
+                this.Close();
+            else
+                MessageBox.Show("Creation completed successfully, close the Form when you are finished reviewing the output");
         }
 
         private void pbHelp_Click(object sender, EventArgs e)

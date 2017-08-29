@@ -198,5 +198,10 @@ end;
         {
             throw new NotImplementedException();
         }
+
+        public IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

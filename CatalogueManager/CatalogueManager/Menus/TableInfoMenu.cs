@@ -37,6 +37,7 @@ using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dependencies;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {

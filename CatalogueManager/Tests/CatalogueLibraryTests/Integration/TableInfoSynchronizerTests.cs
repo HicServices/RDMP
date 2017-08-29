@@ -28,12 +28,15 @@ namespace CatalogueLibraryTests.Integration
         {
             _server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
 
-            using (var con = DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+            using (var con = _server.GetConnection())
             {
                 con.Open();
                 _server.GetCommand("CREATE TABLE " + TABLE_NAME + "(Name varchar(10), Address varchar(500))",con).ExecuteNonQuery();
             }
-            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, _server.Name, DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName(), "TableInfoSynchronizerTests", DatabaseType.MicrosoftSQLServer, DatabaseICanCreateRandomTablesIn.UserID, DatabaseICanCreateRandomTablesIn.Password);
+
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TableInfoSynchronizerTests");
+            
+            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository,tbl);
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
         }
 

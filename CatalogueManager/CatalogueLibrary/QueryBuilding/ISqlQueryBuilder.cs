@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
     public interface ISqlQueryBuilder
     {
         string SQL { get; }
+        bool SQLOutOfDate { get; set; }
+
         string LimitationSQL { get;}
         int LineCount { get; }
         
@@ -33,6 +36,7 @@ namespace CatalogueLibrary.QueryBuilding
 
         string TakeNewLine();
         IEnumerable<Lookup> GetDistinctRequiredLookups();
-        CustomLine[] CustomLines { get; }
+        List<CustomLine> CustomLines { get; }
+        CustomLine TopXCustomLine { get; set; }
     }
 }

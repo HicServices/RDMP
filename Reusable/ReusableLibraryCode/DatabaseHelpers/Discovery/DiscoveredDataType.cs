@@ -131,9 +131,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
             using (var connection = Column.Table.Database.Server.GetManagedConnection(managedTransaction))
             {
-                string tableName = Column.Table.GetRuntimeName();
-                string sql = "ALTER TABLE " + tableName + " ALTER COLUMN " + Column.GetRuntimeName() + " " + newType + " " + (Column.AllowNulls ? "NULL" : "NOT NULL");
-
+                string sql = Column.Helper.GetAlterColumnToSql(Column, newType, Column.AllowNulls);
                 try
                 {
                     DatabaseCommandHelper.GetCommand(sql, connection.Connection, connection.Transaction).ExecuteNonQuery();
@@ -142,8 +140,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 {
                     throw new Exception("Failed to send resize SQL:" + sql, e);
                 }
-                SQLType = newType;
             }
+
+            SQLType = newType; 
         }
 
 

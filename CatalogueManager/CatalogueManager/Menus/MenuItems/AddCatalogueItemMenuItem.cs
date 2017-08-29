@@ -7,6 +7,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems
 {

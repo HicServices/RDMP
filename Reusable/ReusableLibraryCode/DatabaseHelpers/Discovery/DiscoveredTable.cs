@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -102,6 +104,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             {
                 Helper.DropColumn(connection.Connection, this, column, connection.Transaction);
             }
+        }
+        
+        public IBulkCopy BeginBulkInsert(IManagedTransaction transaction = null)
+        { 
+            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
+                return Helper.BeginBulkInsert(this, connection.Connection, connection.Transaction);
         }
     }
 

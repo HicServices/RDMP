@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
 using System.Reflection;
+using System.Web.UI.WebControls;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data
 {
@@ -161,5 +164,21 @@ namespace CatalogueLibrary.Data
             return _selfCertifyingDataAccessPoint.GetDecryptedPassword();
         }
 
+        /// <summary>
+        /// Sets server,database,username and password properties based on the supplied DiscoveredDatabase (which doesn't have to actually exist).  This method also optionally calls
+        /// SaveToDatabase which commits the changes to the Catalogue Repository 
+        /// </summary>
+        /// <param name="discoveredDatabase"></param>
+        /// <param name="save">true if you want to call SaveToDatabase after setting the properties</param>
+        public void SetProperties(DiscoveredDatabase discoveredDatabase, bool save = true)
+        {
+            Server = discoveredDatabase.Server.Name;
+            Database = discoveredDatabase.GetRuntimeName();
+            Username = discoveredDatabase.Server.ExplicitUsernameIfAny;
+            Password = discoveredDatabase.Server.ExplicitPasswordIfAny;
+
+            if(save)
+                SaveToDatabase();
+        }
     }
 }

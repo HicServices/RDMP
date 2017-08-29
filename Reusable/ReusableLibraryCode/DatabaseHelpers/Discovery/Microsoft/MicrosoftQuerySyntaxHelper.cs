@@ -1,18 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
     public class MicrosoftQuerySyntaxHelper : QuerySyntaxHelper
     {
-        public override string DatabaseTableSeparator
+        public MicrosoftQuerySyntaxHelper() : base(new MicrosoftSQLTypeTranslater(),new MicrosoftSQLAggregateHelper())
         {
-            get { return "."; }
         }
 
-        public override string Escape(string sql)
+        public override string DatabaseTableSeparator
         {
-            throw new NotImplementedException();
+           get { return "."; }
+        }
+        
+        public override TopXResponse HowDoWeAchieveTopX(int x)
+        {
+            return new TopXResponse("TOP " + x, QueryComponent.SELECT);
+        }
+
+        public override string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request)
+        {
+            return "DECLARE " + proposedNewParameterName + " AS " + TypeTranslater.GetSQLDBTypeForCSharpType(request) +";";
+        }
+
+        public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
+        {
+            switch (function)
+            {
+                case MandatoryScalarFunctions.GetTodaysDate:
+                    return "GETDATE()";
+                default:
+                    throw new ArgumentOutOfRangeException("function");
+            }
         }
 
         public override string EnsureFullyQualified(string databaseName, string schema, string tableName)

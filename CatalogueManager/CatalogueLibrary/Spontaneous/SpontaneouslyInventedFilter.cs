@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -51,6 +53,11 @@ namespace CatalogueLibrary.Spontaneous
         public Catalogue GetCatalogue()
         {
             return null;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            throw new NotImplementedException();
         }
     }
 }

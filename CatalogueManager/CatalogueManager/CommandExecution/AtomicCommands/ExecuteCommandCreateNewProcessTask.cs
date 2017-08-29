@@ -14,6 +14,7 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using ReusableUIComponents;
 using ReusableUIComponents.Copying;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -74,7 +75,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                     
                     //create it if it doesn't exist
                     if(!File.Exists(target))
-                        File.WriteAllText(target,"--todo Type some SQL");
+                        File.WriteAllText(target,"/*todo Type some SQL*/");
 
                     var task = new ProcessTask((ICatalogueRepository) _loadMetadata.Repository, _loadMetadata, _loadStage);
                     task.ProcessTaskType = ProcessTaskType.SQLFile;

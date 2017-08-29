@@ -13,6 +13,7 @@ using DataLoadEngine.DataFlowPipeline.Destinations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.DataTableExtension;
 using ReusableLibraryCode.Progress;
 
@@ -44,7 +45,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                     throw new Exception("First batch passed to this destination component was null! there is no data to submit apparently");
                 else
                     return null;
-
+            
+            _database = _cohort.GetDatabaseServer();
 
             //if destination is not already full of data or otherwise unprepared
             if (!CheckDataTable(toProcess, listener))
@@ -80,7 +82,6 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
         private void SetupDestination(DataTable toProcess, IDataLoadEventListener listener)
         {
-            _database = _cohort.GetDatabaseServer();
             _database.Server.EnableAsync();
 
             _destination = new DataTableUploadDestination();
@@ -101,15 +102,17 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
         public bool CheckDataTable(DataTable toProcess, IDataLoadEventListener listener)
         {
+            var syntaxHelper = _database.Server.Helper.GetQuerySyntaxHelper();
+
             try
             {
                 //Ensure that private identifier field EXISTS in DataTable
                 if(_privateIdentifier == null)
-                    _privateIdentifier = SqlSyntaxHelper.GetRuntimeName(_cohort.GetPrivateIdentifier());
+                    _privateIdentifier = syntaxHelper.GetRuntimeName(_cohort.GetPrivateIdentifier());
 
                 //Ensure that the release identifier field DOES NOT EXIST in DataTable
                 if (_releaseIdentifier == null)
-                    _releaseIdentifier = SqlSyntaxHelper.GetRuntimeName(_cohort.GetReleaseIdentifier());
+                    _releaseIdentifier = syntaxHelper.GetRuntimeName(_cohort.GetReleaseIdentifier());
 
                 bool filecontainsReleaseIdentifier = toProcess.Columns.Contains(_releaseIdentifier);
                 bool fileContainsPrivateIdentifier = toProcess.Columns.Contains(_privateIdentifier);
@@ -179,7 +182,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                 {
                     try
                     {
-                        SqlSyntaxHelper.GetRuntimeName(column.ColumnName);
+                        syntaxHelper.GetRuntimeName(column.ColumnName);
                     }
                     catch (Exception e)
                     {
@@ -189,16 +192,16 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
                     try
                     {
-                        UsefulStuff.GetSQLDBTypeForCSharpType(column.DataType);
+                        syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(column.DataType));
                     }
                     catch (Exception e)
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "UsefulStuff.GetSQLDBTypeForCSharpType could not process data type " + column.DataType, e));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "As a dry run we asked the destination database provider what datatype to use for the csharp column datatype '"+column.DataType+"' but it threw an Exception", e));
                     }
                 }
 
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    "We determined the following SQL to create this table:" + Environment.NewLine + helper.GetCreateTableSql(false,new MicrosoftSQLTableHelper())));
+                    "We determined the following SQL to create this table:" + Environment.NewLine + helper.GetCreateTableSql(_database.Server,false,new MicrosoftSQLTableHelper())));
                 return true;
             }
             catch (Exception e)

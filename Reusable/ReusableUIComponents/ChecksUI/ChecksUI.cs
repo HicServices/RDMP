@@ -262,6 +262,7 @@ namespace ReusableUIComponents.ChecksUI
         {
             _hiddenItems.Clear();
             listView1.Items.Clear();
+            yesNoYesToAllDialog = new YesNoYesToAllDialog();
         }
 
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)

@@ -18,13 +18,13 @@ namespace DataExportLibrary.Tests.DataExtraction
 
         private void TruncateDataTable()
         {
-            using (SqlConnection con = new SqlConnection(DatabaseICanCreateRandomTablesIn.ConnectionString))
+            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            using (var con = server.GetConnection())
             {
                 con.Open();
 
-                SqlCommand cmdTruncate = new SqlCommand("TRUNCATE TABLE TestTable", con);
+                var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable",con);
                 cmdTruncate.ExecuteNonQuery();
-
 
                 con.Close();
             }

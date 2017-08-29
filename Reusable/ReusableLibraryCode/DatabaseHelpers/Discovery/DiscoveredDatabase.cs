@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -101,5 +102,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return Helper.DescribeDatabase(Server.Builder, GetRuntimeName());
         }
 
+        public void Create(bool dropFirst = false)
+        {
+            if (dropFirst && Exists())
+                ForceDrop();
+
+            Server.CreateDatabase(GetRuntimeName());
+        }
     }
 }

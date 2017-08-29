@@ -21,7 +21,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         [Test]
         public void RetrieveChunks()
         {
-            var source = new DbDataCommandDataFlowSource("Select top 3 * from master.sys.tables", "Query Sys tables", ServerICanCreateRandomDatabasesAndTablesOn,30);
+            var source = new DbDataCommandDataFlowSource("Select top 3 * from master.sys.tables", "Query Sys tables", DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder, 30);
             Assert.AreEqual(3, source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken()).Rows.Count);
         }
 

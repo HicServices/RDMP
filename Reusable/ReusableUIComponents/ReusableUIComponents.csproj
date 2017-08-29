@@ -273,6 +273,14 @@
       <DependentUpon>HelpIcon.cs</DependentUpon>
     </Compile>
     <Compile Include="HelpSection.cs" />
+    <Compile Include="Icons\DatabaseProviderIcons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DatabaseProviderIcons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Icons\IconProvision\DatabaseTypeIconProvider.cs" />
+    <Compile Include="Icons\IconProvision\IIconProvider.cs" />
+    <Compile Include="Icons\IconProvision\OverlayKind.cs" />
     <Compile Include="IKnowIfImHostedByVisualStudio.cs" />
     <Compile Include="KeywordHelpTextListbox.cs">
       <SubType>UserControl</SubType>
@@ -442,6 +450,10 @@
     <EmbeddedResource Include="HelpIcon.resx">
       <DependentUpon>HelpIcon.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Icons\DatabaseProviderIcons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Images.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Images.Designer.cs</LastGenOutput>
@@ -526,6 +538,12 @@
     <Resource Include="Images\DependencyGraphToolbarInformation.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\DatabaseProviderIcons\Microsoft.png" />
+    <None Include="Icons\DatabaseProviderIcons\MicrosoftOverlay.png" />
+    <None Include="Icons\DatabaseProviderIcons\MySql.png" />
+    <None Include="Icons\DatabaseProviderIcons\MySqlOverlay.png" />
+    <None Include="Icons\DatabaseProviderIcons\Oracle.png" />
+    <None Include="Icons\DatabaseProviderIcons\OracleOverlay.png" />
     <Content Include="Pencil.cur">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

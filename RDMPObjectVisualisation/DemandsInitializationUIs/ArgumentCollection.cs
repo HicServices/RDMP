@@ -145,6 +145,16 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
                             }
 
                             newArgument.Description = attribute.Description;
+
+                            if (attribute.DefaultValue != null)
+                                try
+                                {
+                                    newArgument.SetValue(attribute.DefaultValue);
+                                }
+                                catch (Exception e)
+                                {
+                                    ExceptionViewer.Show("Problem setting DefaultValue argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName + " DefaultValue was '" + attribute.DefaultValue + "' (" + attribute.DefaultValue.GetType().Name+")", e);
+                                }
                             newArgument.SaveToDatabase();
                             existing.Add(newArgument);
                         }

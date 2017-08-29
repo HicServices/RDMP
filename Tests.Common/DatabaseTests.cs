@@ -33,7 +33,8 @@ namespace Tests.Common
     {
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         private static string _serverName;
-        
+        private static string _mySqlServer;
+
         public CatalogueRepository CatalogueRepository
         {
             get { return RepositoryLocator.CatalogueRepository; }
@@ -46,15 +47,12 @@ namespace Tests.Common
         
         protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
         protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
-
-        public SqlConnectionStringBuilder ServerICanCreateRandomDatabasesAndTablesOn;
-        protected SqlConnectionStringBuilder DatabaseICanCreateRandomTablesIn;
-
+        
         protected DiscoveredDatabase DiscoveredDatabaseICanCreateRandomTablesIn;
         protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
-        protected OracleConnectionStringBuilder OracleServer;
-        protected MySqlConnectionStringBuilder MySQlServer;
+        protected DiscoveredServer DiscoveredMySqlServer;
+        protected DiscoveredServer DiscoveredOracleServer;
 
         static private Startup _startup;
 
@@ -63,10 +61,10 @@ namespace Tests.Common
             if (CatalogueRepository.SuppressHelpLoading == null)
                 CatalogueRepository.SuppressHelpLoading = true;
             
-            ReadSettingsFile(out _serverName, out TestDatabaseNames.Prefix);
+            ReadSettingsFile(out _serverName, out TestDatabaseNames.Prefix,out _mySqlServer);
         }
 
-        private static void ReadSettingsFile(out string serverName,out string prefix)
+        private static void ReadSettingsFile(out string serverName,out string prefix, out string mysql)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Tests.Common.TestDatabases.txt";
@@ -78,13 +76,13 @@ namespace Tests.Common
             //there is a local text file so favour that one
             if (f != null)
             {
-                ReadSettingsFileFromStream(f.OpenRead(),out serverName,out prefix);
+                ReadSettingsFileFromStream(f.OpenRead(),out serverName,out prefix, out mysql);
                 return;
             }
 
             //otherwise use the embedded resource file
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                ReadSettingsFileFromStream(stream,out serverName,out prefix);
+                ReadSettingsFileFromStream(stream,out serverName,out prefix, out mysql);
             
         }
 
@@ -107,14 +105,21 @@ namespace Tests.Common
 
             DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultDQEDatabaseName, ServerDefaults.PermissableDefaults.DQE,typeof(DataQualityEngine.Database.Class1).Assembly);
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultLoggingDatabaseName, ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
-            ServerICanCreateRandomDatabasesAndTablesOn = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix,null,ServerDefaults.PermissableDefaults.RAWDataLoadServer,null);
+            DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, ServerDefaults.PermissableDefaults.RAWDataLoadServer, null));
 
             CreateScratchArea();
 
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(ServerICanCreateRandomDatabasesAndTablesOn);
+             
+            if(_mySqlServer != null)
+            {
+
+                DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer));
+            }
         }
 
-        private static void ReadSettingsFileFromStream(Stream stream,out string serverName, out string prefix)
+        
+
+        private static void ReadSettingsFileFromStream(Stream stream, out string serverName, out string prefix, out string mySql)
         {
             using (StreamReader reader = new StreamReader(stream))
             {
@@ -123,6 +128,8 @@ namespace Tests.Common
                 serverName = Regex.Match(result, "^ServerName:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase).Groups[1].Value.Trim();
                 prefix = Regex.Match(result, "^Prefix:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase).Groups[1].Value.Trim();
 
+                var mysqlMatch = Regex.Match(result, "^MySql:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                mySql = mysqlMatch.Success? mysqlMatch.Groups[1].Value.Trim():null;
             }
         }
 
@@ -210,39 +217,17 @@ namespace Tests.Common
         private void CreateScratchArea()
         {
             var scratchDatabaseName = TestDatabaseNames.GetConsistentName("ScratchArea");
-            DatabaseICanCreateRandomTablesIn = new SqlConnectionStringBuilder(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString)
-            {
-                InitialCatalog = scratchDatabaseName
-            };
 
+            DiscoveredDatabaseICanCreateRandomTablesIn = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(scratchDatabaseName);
 
-            using(SqlConnection con = new SqlConnection(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString))
-            {
-                con.Open();
+            //if it already exists drop it
+            if(DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
+                DiscoveredDatabaseICanCreateRandomTablesIn.ForceDrop();
 
-                SqlCommand cmd = new SqlCommand(@"IF EXISTS(select * from sys.databases where name='" + scratchDatabaseName + @"')
-begin
-ALTER DATABASE " + scratchDatabaseName + @" SET SINGLE_USER WITH ROLLBACK IMMEDIATE
-DROP DATABASE " + scratchDatabaseName + @" 
-end
-
-CREATE DATABASE " + scratchDatabaseName, con);
-
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-            
-            DiscoveredDatabaseICanCreateRandomTablesIn = new DiscoveredServer(DatabaseICanCreateRandomTablesIn).ExpectDatabase(DatabaseICanCreateRandomTablesIn.InitialCatalog);
+            //create it
+            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);
         }
         
-        protected DiscoveredDatabase ToDiscoveredDatabase(SqlConnectionStringBuilder builder)
-        {
-            if(string.IsNullOrWhiteSpace(builder.InitialCatalog) )
-                throw new NotSupportedException("Your builder must have an InitialCatalogue to be turned into a discovered database (and her-in lies the problem)");
-
-            return new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
-        }
-
         public const string BlitzDatabases = @"
 --If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
 
@@ -333,6 +318,19 @@ delete from {1}..ExtractableDataSetPackage
 delete from {1}..ExtractableDataSet
 
 ";
+
+        /// <summary>
+        /// returns a Trimmed string in which all whitespace including newlines have been replaced by single spaces.  Useful for checking the exact values of expected
+        /// queries built by query builders without having to worry about individual lines having leading/trailing whitespace etc.
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        protected string CollapseWhitespace(string sql)
+        {
+            //replace all whitespace with single spaces
+            return Regex.Replace(sql, @"\s+", " ").Trim();
+        }
+
     }
 
     public static class TestDatabaseNames

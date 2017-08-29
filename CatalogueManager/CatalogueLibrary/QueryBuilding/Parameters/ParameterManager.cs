@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.Office.Interop.Excel;
 using IFilter = CatalogueLibrary.Data.IFilter;
@@ -258,11 +259,15 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
                     //Add the rename operation to the audit
                     parameterNameSubstitutions.Add(toImportParameterName, parameterToImport + "_" + newSuffix);
 
-                    //do the rename operation
-                    parameterToImport.ParameterSQL = parameterToImport.ParameterSQL.Replace(toImportParameterName,parameterToImport + "_" + newSuffix);
+                    //do the rename operation into a spontaneous object because modifying the ISqlParameter directly could corrupt it for other users (especially if SuperCaching is on! See RDMPDEV-668)
+                    var spont = new SpontaneouslyInventedSqlParameter(
+                        parameterToImport.ParameterSQL.Replace(toImportParameterName,parameterToImport + "_" + newSuffix),
+                        parameterToImport.Value,
+                        parameterToImport.Comment
+                        );
                     
                     //now make it a composite query level parameter used by us
-                    ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Add(parameterToImport);      
+                    ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Add(spont);
                 }
             }
         }

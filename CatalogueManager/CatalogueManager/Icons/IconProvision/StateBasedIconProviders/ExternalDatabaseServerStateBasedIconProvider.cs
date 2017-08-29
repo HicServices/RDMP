@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using CatalogueLibrary.Data;
+using CatalogueManager.Icons.IconOverlays;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
     {
+        private readonly IconOverlayProvider _overlayProvider;
         private Bitmap _default;
 
         Dictionary<string,Bitmap> _assemblyToIconDictionary = new Dictionary<string, Bitmap>();
+        private DatabaseTypeIconProvider _typeSpecificIconsProvider;
 
-        public ExternalDatabaseServerStateBasedIconProvider()
+        public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
+            _overlayProvider = overlayProvider;
             _default = CatalogueIcons.ExternalDatabaseServer;
 
             _assemblyToIconDictionary.Add(typeof (DataQualityEngine.Database.Class1).Assembly.GetName().Name,CatalogueIcons.ExternalDatabaseServer_DQE);
@@ -20,6 +26,8 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             _assemblyToIconDictionary.Add(typeof(IdentifierDump.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
             _assemblyToIconDictionary.Add(typeof(QueryCaching.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_Cache);
             _assemblyToIconDictionary.Add(typeof(HIC.Logging.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_Logging);
+
+            _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
         }
 
         public Bitmap GetImageIfSupportedObject(object o)
@@ -28,14 +36,13 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 
             if (server == null)
                 return null;
-            
-            if (string.IsNullOrWhiteSpace(server.CreatedByAssembly))
-                return _default;
 
-            if (_assemblyToIconDictionary.ContainsKey(server.CreatedByAssembly))
-                return _assemblyToIconDictionary[server.CreatedByAssembly];
+            var toReturn = _default;
 
-            return _default;
+            if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.ContainsKey(server.CreatedByAssembly))
+                toReturn = _assemblyToIconDictionary[server.CreatedByAssembly];
+
+            return _overlayProvider.GetOverlay(toReturn,_typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
         }
     }
 }

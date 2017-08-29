@@ -315,7 +315,7 @@ END
             sqlToRun += ")" + Environment.NewLine;
             sqlToRun += "RETURNS @returntable TABLE" + Environment.NewLine;
             sqlToRun += "(" + Environment.NewLine;
-            sqlToRun += "--the return table will follow the structure of the Archive table" + Environment.NewLine;
+            sqlToRun += "/*the return table will follow the structure of the Archive table*/" + Environment.NewLine;
             sqlToRun += columnsInArchive;
 
             //these were added during transaction so we have to specify them again here because transaction will not have been committed yet

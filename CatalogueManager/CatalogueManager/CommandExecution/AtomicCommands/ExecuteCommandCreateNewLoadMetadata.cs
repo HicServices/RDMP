@@ -15,6 +15,7 @@ using CatalogueManager.Refreshing;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents.Copying;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

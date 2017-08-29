@@ -148,7 +148,7 @@ namespace CatalogueLibrary.Providers
 
         private void BuildServerNodes()
         {
-            Dictionary<string,List<TableInfo>> allServers = new Dictionary<string, List<TableInfo>>();
+            Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();
 
             //add a root node for all the servers to be children of
             AllServersNode = new AllServersNode();
@@ -156,26 +156,32 @@ namespace CatalogueLibrary.Providers
             //find the unique server names among TableInfos
             foreach (TableInfo t in AllTableInfos)
             {
-                if(!allServers.ContainsKey(t.Server))
-                    allServers.Add(t.Server,new List<TableInfo>());
-                
-                allServers[t.Server].Add(t);
+                //make sure we have the in our dictionary
+                if(!allServers.Keys.Any(k=>k.IsSameServer(t)))
+                    allServers.Add(new TableInfoServerNode(t.Server,t.DatabaseType),new List<TableInfo>());
+
+                var match = allServers.Single(kvp => kvp.Key.IsSameServer(t));
+                match.Value.Add(t);
             }
 
             //create the server nodes
-            AllServers = allServers.Select(kvp => new TableInfoServerNode(kvp.Key)).ToArray();
+            AllServers = allServers.Keys.ToArray();
 
             //document the children
-            foreach (var s in AllServers)
+            foreach (var kvp in allServers)
             {
-                var tableInfos = allServers[s.ServerName];
-                
-                //record the fact that the TableInfos are children of the all server node then the server specific
-                AddToDictionaries(new HashSet<object>(tableInfos), new DescendancyList(AllServersNode, s));
+                var tableInfos = kvp.Value;
+
+                //record the fact that the TableInfos are children of their specific TableInfoServerNode
+                AddToDictionaries(new HashSet<object>(tableInfos), new DescendancyList(AllServersNode, kvp.Key));
                 
                 //record the children of the table infos (mostly column infos)
                 foreach (var t in tableInfos)
-                    AddChildren(t, new DescendancyList(AllServersNode, s, t));
+                    AddChildren(t, 
+                        
+                        //t descends from :
+                        //the all servers node=>the TableInfoServerNode => the t
+                        new DescendancyList(AllServersNode, kvp.Key, t));
             }
 
             //record the fact that all the servers are children of the all servers node

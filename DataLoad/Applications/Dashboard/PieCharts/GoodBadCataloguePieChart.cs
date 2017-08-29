@@ -14,6 +14,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace Dashboard.PieCharts
 {

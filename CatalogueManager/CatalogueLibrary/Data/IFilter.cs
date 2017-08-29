@@ -3,6 +3,7 @@ using CatalogueLibrary.FilterImporting.Construction;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Microsoft.SqlServer.Management.Smo;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -23,5 +24,7 @@ namespace CatalogueLibrary.Data
         ColumnInfo GetColumnInfoIfExists();
         IFilterFactory GetFilterFactory();
         Catalogue GetCatalogue();
+
+        IQuerySyntaxHelper GetQuerySyntaxHelper();
     }
 }

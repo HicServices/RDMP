@@ -18,7 +18,7 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
         [SetUp]
         public void CreateTestData()
         {
-            _function.Create(DatabaseICanCreateRandomTablesIn, CatalogueRepository);
+            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, CatalogueRepository);
         }
         
         [Test]
@@ -61,8 +61,8 @@ SET @stopNumber=10;
 DECLARE @name AS varchar(50);
 SET @name='fish';
 /*MyExcitingAggregate*/
-SELECT 
-count(*)
+SELECT
+count(*) AS MyCount
 FROM 
 [" + TestDatabaseNames.Prefix +@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 HAVING
@@ -82,7 +82,7 @@ count(*)>1", queryBuilder.SQL);
 
             try
             {
-                var param = new AnyTableSqlParameter(CatalogueRepository, agg, "DECLARE @name AS varchar(50)");
+                var param = new AnyTableSqlParameter(CatalogueRepository, agg, "DECLARE @name AS varchar(50);");
                 param.Value = "'lobster'";
                 param.SaveToDatabase();
 

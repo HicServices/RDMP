@@ -20,7 +20,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
         [TestFixtureSetUp]
         public void SetupBulkTestData()
         {
-            _bulkTestData = new BulkTestsData(CatalogueRepository, DatabaseICanCreateRandomTablesIn);
+            _bulkTestData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             _bulkTestData.SetupTestData();
 
         }
@@ -34,7 +34,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
         [Test]
         public void BulkTestDataContainsExpectedNumberOfRows()
         {
-            var server = new DiscoveredServer(_bulkTestData.BulkDataBuilder);
+            var server = _bulkTestData.BulkDataDatabase.Server;
 
             using (DbConnection con = server.GetConnection())
             {
@@ -46,7 +46,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
                 Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,manualCount);
 
                 //now get the fast approximate rowcount
-                int fastRowcount = server.ExpectDatabase(_bulkTestData.BulkDataBuilder.InitialCatalog)
+                int fastRowcount = _bulkTestData.BulkDataDatabase
                     .ExpectTable(BulkTestsData.BulkDataTable)
                     .GetRowCount();
 
@@ -68,12 +68,13 @@ namespace DataLoadEngineTests.Integration.PipelineTests
             Console.WriteLine("Memory allocated at start:"+ Process.GetCurrentProcess().PagedMemorySize64 /(1024*1024) + " MB");
 
             DataTable dt = null;
-            using (SqlConnection con = new SqlConnection(_bulkTestData.BulkDataBuilder.ConnectionString))
+            var server = _bulkTestData.BulkDataDatabase.Server;
+            using (var con = server.GetConnection())
             {
                 con.Open();
                 
                 dt = new DataTable();
-                SqlDataAdapter da = new SqlDataAdapter("select * from " + tableName, con);
+                var da = server.GetDataAdapter("select * from " + tableName, con);
                 da.Fill(dt);
 
                 con.Close();
@@ -103,7 +104,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
 
             int linesRead = 0;
 
-            DbDataCommandDataFlowSource source = new DbDataCommandDataFlowSource("select * from " + tableName, "ignoreme", _bulkTestData.BulkDataBuilder, 30);
+            DbDataCommandDataFlowSource source = new DbDataCommandDataFlowSource("select * from " + tableName, "ignoreme", _bulkTestData.BulkDataDatabase.Server.Builder, 30);
                 
             DataTable chunk;
 

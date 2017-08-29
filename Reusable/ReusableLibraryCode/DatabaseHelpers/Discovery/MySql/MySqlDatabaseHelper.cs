@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using MySql.Data.MySqlClient;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
     public class MySqlDatabaseHelper : IDiscoveredDatabaseHelper
     {
-        public string[] ListTableValuedFunctions(DbConnection connection, string database, DbTransaction transaction = null)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<DiscoveredTableValuedFunction> ListTableValuedFunctions(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper,
             DbConnection connection, string database, DbTransaction transaction = null)
         {
-            throw new NotImplementedException();
+            return Enumerable.Empty<DiscoveredTableValuedFunction>();
         }
 
         public DiscoveredStoredprocedure[] ListStoredprocedures(DbConnectionStringBuilder builder, string database)
@@ -31,9 +28,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public void DropDatabase(DiscoveredDatabase database)
         {
-            //todo should I be worrying about dropping a database I am currently using (where server is pointed at)
-            MySqlCommand cmd = new MySqlCommand("DROP DATABASE " + database.GetRuntimeName(), (MySqlConnection)database.Server.GetConnection());
-            cmd.ExecuteNonQuery();
+            using (var con = (MySqlConnection) database.Server.GetConnection())
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand("DROP DATABASE " + database.GetRuntimeName(),con);
+                cmd.ExecuteNonQuery();
+            }
         }
 
         public Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)

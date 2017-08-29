@@ -33,10 +33,10 @@ namespace DataExportLibrary.Tests
         protected void TearDown()
         {
             if (_testDatabaseHelper != null)
-                _testDatabaseHelper.TearDown();
+                _testDatabaseHelper.Destroy();
 
             if (_extractedCatalogueDatabaseHelper != null)
-                _extractedCatalogueDatabaseHelper.TearDown();
+                _extractedCatalogueDatabaseHelper.Destroy();
         }
 
         [SetUp]
@@ -44,16 +44,15 @@ namespace DataExportLibrary.Tests
         {
             // We will drop and recreate the databases before ever test (as this was the previous functionality)
             if (_testDatabaseHelper != null)
-                _testDatabaseHelper.TearDown();
+                _testDatabaseHelper.Destroy();
 
-            _testDatabaseHelper = new TestDatabaseHelper("ExecuteExtractionToDatabaseTestDatabase", ServerICanCreateRandomDatabasesAndTablesOn);
-            _testDatabaseHelper.SetUp();
-
+            _testDatabaseHelper = new TestDatabaseHelper(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("ExecuteExtractionToDatabaseTestDatabase"));
+            
             if (_extractedCatalogueDatabaseHelper != null)
-                _extractedCatalogueDatabaseHelper.TearDown();
+                _extractedCatalogueDatabaseHelper.Destroy();
 
-            _extractedCatalogueDatabaseHelper = new TestDatabaseHelper("ExecuteExtractionToDatabaseTestCatalogue", ServerICanCreateRandomDatabasesAndTablesOn);
-            _extractedCatalogueDatabaseHelper.SetUp();
+            _extractedCatalogueDatabaseHelper = new TestDatabaseHelper(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("ExecuteExtractionToDatabaseTestCatalogue"));
+            _extractedCatalogueDatabaseHelper.Create();
         }
     }
 }

@@ -11,16 +11,13 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
-using Tests.Common;
 
 namespace Diagnostics.TestData.Relational
 {
     public class RelationalBulkTestData
     {
         private readonly CatalogueRepository _repository;
-        private readonly SqlConnectionStringBuilder _builder;
-
-        public readonly string BulkDataDatabase = ""+TestDatabaseNames.Prefix+@"ScratchArea";
+        public readonly DiscoveredDatabase Database;
         
         public const string BulkDataTable = "BulkData";
 
@@ -47,10 +44,10 @@ namespace Diagnostics.TestData.Relational
         public Catalogue CIATestReportCatalogue;
         public Catalogue CIATestInformantCatalogue;
 
-        public RelationalBulkTestData(CatalogueRepository repository, SqlConnectionStringBuilder builder, int? seed = null)
+        public RelationalBulkTestData(CatalogueRepository repository, DiscoveredDatabase database, int? seed = null)
         {
             _repository = repository;
-            _builder = builder;
+            Database = database;
 
             if(seed != null)
                 r = new Random((int) seed);
@@ -67,7 +64,7 @@ namespace Diagnostics.TestData.Relational
 
             DropTableIfExists("CIATestEvent");
 
-            using (SqlConnection con = new SqlConnection(_builder.ConnectionString))
+            using (var con = Database.Server.GetConnection())
             {
                 con.Open();
                 UsefulStuff.ExecuteBatchNonQuery(createTables,con);
@@ -76,21 +73,21 @@ namespace Diagnostics.TestData.Relational
 
         public void CommitToDatabase( CIATestEvent[] eventsToCommit,CIATestInformant[] allInformants)
         {
-            using (SqlConnection con = new SqlConnection(_builder.ConnectionString))
+            using (var con = Database.Server.GetConnection())
             {
                 con.Open();
 
                 foreach (CIATestInformant informant in allInformants)
-                    informant.CommitToDatabase(con);
+                    informant.CommitToDatabase(Database,con);
 
                 foreach (CIATestEvent ciaTestEvent in eventsToCommit)
-                    ciaTestEvent.CommitToDatabase(new DiscoveredServer(_builder),con);
+                    ciaTestEvent.CommitToDatabase(Database, con);
             }
             
         }
         private void DropTableIfExists(string name)
         {
-            DiscoveredTable table = new DiscoveredServer(_builder).ExpectDatabase(BulkDataDatabase).ExpectTable(name);
+            DiscoveredTable table = Database.ExpectTable(name);
 
             if(table.Exists())
                 table.Drop();
@@ -140,11 +137,13 @@ namespace Diagnostics.TestData.Relational
         List<Catalogue>  forCleanupCatalogues = new List<Catalogue>();
         List<TableInfo> forCleanupTableInfos = new List<TableInfo>();
         List<ExtractionInformation> forCleanupExtractionInformations = new List<ExtractionInformation>();
+        
 
 
         private void Import(string ciatestevent, ref Catalogue currentCatalogueBeingCreated)
         {
-            TableInfoImporter importer = new TableInfoImporter(_repository, _builder.DataSource, _builder.InitialCatalog, ciatestevent, DatabaseType.MicrosoftSQLServer,_builder.UserID,_builder.Password);
+
+            TableInfoImporter importer = new TableInfoImporter(_repository, Database.ExpectTable(ciatestevent));
             ColumnInfo[] cols;
             TableInfo tableInfoCreated;
 

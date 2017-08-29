@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -70,7 +72,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public DatabaseType DatabaseType { get; private set; }
         public abstract Dictionary<string, string> DescribeServer(DbConnectionStringBuilder builder);
         public abstract bool RespondsWithinTime(DbConnectionStringBuilder inSeconds, int timeoutInSeconds, out Exception exception);
-        
+        public abstract string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder);
+        public abstract string GetExplicitPasswordIfAny(DbConnectionStringBuilder builder);
 
         protected DiscoveredServerHelper(DatabaseType databaseType)
         {

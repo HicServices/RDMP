@@ -17,8 +17,6 @@ namespace CatalogueLibrary.DataHelper
         public static Regex ParameterSQLRegex = new Regex(ParameterSQLRegex_Pattern);
 
 
-        public const string AliasPrefix = " AS ";
-
         /// <summary>
         /// Looks for @something within the line of SQL and returns @something (including the @ symbol)
         /// </summary>
@@ -154,37 +152,6 @@ namespace CatalogueLibrary.DataHelper
             }
         }
 
-        public static bool SplitLineIntoSelectSQLAndAlias(string lineToSplit, out string SelectSQL, out string Alias)
-        {
-            StringComparison comparisonType = StringComparison.InvariantCultureIgnoreCase;
-
-            if (lineToSplit.IndexOf(AliasPrefix, comparisonType) == -1)
-            {
-                //doesn't have the alias prefix
-                SelectSQL = lineToSplit;
-                Alias = null;
-                return false;
-            }
-
-            if (lineToSplit.IndexOf(AliasPrefix, comparisonType) != lineToSplit.LastIndexOf(AliasPrefix, comparisonType))
-                throw new SyntaxErrorException("Found two instances of the alias prefix:\"" + AliasPrefix + "\"");
-
-            int splitPoint = lineToSplit.IndexOf(AliasPrefix, comparisonType);
-
-
-            SelectSQL = lineToSplit.Substring(0, splitPoint);
-
-            //could end with the alias and then be blank if the user is busy typing it all in a oner
-            if (splitPoint + AliasPrefix.Length < lineToSplit.Length)
-            {
-                Alias = lineToSplit.Substring(splitPoint + AliasPrefix.Length);
-
-                return true;
-            }
-
-            Alias = null;
-            return false;
-        }
 
         /*//this is very dodgy idea, what if the user inception joins, we don't want to suddenly link our main query to that!
         public static IEnumerable<TableInfo> GetRequiredTablesForFilterSql(string whereSql)

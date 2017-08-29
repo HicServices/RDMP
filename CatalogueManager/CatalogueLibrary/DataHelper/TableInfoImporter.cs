@@ -50,20 +50,15 @@ namespace CatalogueLibrary.DataHelper
         }
 
         public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table)
-            : this(catalogueRepository, table.Database.Server.Name, table.Database.GetRuntimeName(), table.GetRuntimeName(), table.Database.Server.DatabaseType)
+            : this(catalogueRepository,
+            table.Database.Server.Name,
+            table.Database.GetRuntimeName(),
+            table.GetRuntimeName(),
+            table.Database.Server.DatabaseType,
+            table.Database.Server.ExplicitUsernameIfAny,
+            table.Database.Server.ExplicitPasswordIfAny)
         {
-
-            var b = table.Database.Server.Builder as SqlConnectionStringBuilder;
-            if (b != null)
-            {
-                if (!string.IsNullOrWhiteSpace(b.UserID))
-                {
-                    _username = b.UserID;
-                    _password = b.Password;
-                    _usageContext = DataAccessContext.Any;
-                }
-            }
-            
+            _usageContext = DataAccessContext.Any;
             InitializeBuilder();
         }
 

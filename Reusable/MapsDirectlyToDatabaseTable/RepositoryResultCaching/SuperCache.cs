@@ -10,8 +10,7 @@ namespace MapsDirectlyToDatabaseTable.RepositoryResultCaching
         
         public T[] GetAllObjects<T>(string whereSQL)
         {
-           
-            if (_resultsDictionary.ContainsKey(typeof (T)))
+           if (_resultsDictionary.ContainsKey(typeof (T)))
             {
                 var resultIfAny = _resultsDictionary[typeof (T)].GetAllObjects(whereSQL);
 

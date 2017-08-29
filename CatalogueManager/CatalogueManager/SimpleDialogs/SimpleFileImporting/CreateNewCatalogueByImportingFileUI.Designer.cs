@@ -46,6 +46,7 @@
             this.btnPreview = new System.Windows.Forms.Button();
             this.btnAdvanced = new System.Windows.Forms.Button();
             this.pbHelp = new System.Windows.Forms.PictureBox();
+            this.cbAutoClose = new System.Windows.Forms.CheckBox();
             this.gbPickFile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFile)).BeginInit();
             this.gbPickDatabase.SuspendLayout();
@@ -186,7 +187,7 @@
             this.pSimplePanel.Controls.Add(this.gbPickPipeline);
             this.pSimplePanel.Location = new System.Drawing.Point(12, 244);
             this.pSimplePanel.Name = "pSimplePanel";
-            this.pSimplePanel.Size = new System.Drawing.Size(951, 409);
+            this.pSimplePanel.Size = new System.Drawing.Size(951, 419);
             this.pSimplePanel.TabIndex = 3;
             // 
             // gbExecute
@@ -252,11 +253,25 @@
             this.pbHelp.TabStop = false;
             this.pbHelp.Click += new System.EventHandler(this.pbHelp_Click);
             // 
+            // cbAutoClose
+            // 
+            this.cbAutoClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbAutoClose.AutoSize = true;
+            this.cbAutoClose.Checked = true;
+            this.cbAutoClose.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAutoClose.Location = new System.Drawing.Point(12, 669);
+            this.cbAutoClose.Name = "cbAutoClose";
+            this.cbAutoClose.Size = new System.Drawing.Size(131, 17);
+            this.cbAutoClose.TabIndex = 7;
+            this.cbAutoClose.Text = "Close When Complete";
+            this.cbAutoClose.UseVisualStyleBackColor = true;
+            // 
             // CreateNewCatalogueByImportingFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1040, 665);
+            this.ClientSize = new System.Drawing.Size(1040, 689);
+            this.Controls.Add(this.cbAutoClose);
             this.Controls.Add(this.pbHelp);
             this.Controls.Add(this.btnAdvanced);
             this.Controls.Add(this.gbPickFile);
@@ -298,5 +313,6 @@
         private System.Windows.Forms.Button btnExecute;
         private ReusableUIComponents.RAGSmiley ragSmileyExecute;
         private System.Windows.Forms.PictureBox pbHelp;
+        private System.Windows.Forms.CheckBox cbAutoClose;
     }
 }

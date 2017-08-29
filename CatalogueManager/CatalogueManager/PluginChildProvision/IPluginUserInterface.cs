@@ -10,6 +10,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPStartup;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.PluginChildProvision
 {

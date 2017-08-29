@@ -45,11 +45,14 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             _activator = activator;
             _autoCreateCatalogue = autoCreateCatalogue;
             InitializeComponent();
+
             serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = true;
             serverDatabaseTableSelector1.SelectionChanged += serverDatabaseTableSelector1_SelectionChanged;
 
             ddContext.DataSource = Enum.GetValues(typeof (DataAccessContext));
             ddContext.SelectedItem = DataAccessContext.Any;//default to any!
+
+            
         }
 
         protected override void OnLoad(EventArgs e)
@@ -98,7 +101,9 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                 else
                     if (!string.IsNullOrWhiteSpace(serverDatabaseTableSelector1.TableValuedFunction))
                     {
-                        Importer = new TableValuedFunctionImporter(cataRepo, serverDatabaseTableSelector1.GetBuilder().ConnectionString, serverDatabaseTableSelector1.Server, serverDatabaseTableSelector1.Database, serverDatabaseTableSelector1.TableValuedFunction, serverDatabaseTableSelector1.Username, serverDatabaseTableSelector1.Password, (DataAccessContext)ddContext.SelectedValue);
+                        var table = serverDatabaseTableSelector1.GetDiscoveredDatabase()
+                            .ExpectTableValuedFunction(serverDatabaseTableSelector1.TableValuedFunction);
+                        Importer = new TableValuedFunctionImporter(cataRepo, table, (DataAccessContext)ddContext.SelectedValue);
                         btnImport.Enabled = true;
                     }
                     else

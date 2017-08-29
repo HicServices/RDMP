@@ -7,7 +7,9 @@ using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using CatalogueLibrary.Spontaneous;
 using QueryCaching.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CohortManagerLibrary.QueryBuilding
 {
@@ -27,7 +29,7 @@ namespace CohortManagerLibrary.QueryBuilding
             CacheServer = cacheServer;
         }
 
-        public string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null)
+        public string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null, int topX = -1)
         {
             string toReturn ="";
 
@@ -70,7 +72,10 @@ namespace CohortManagerLibrary.QueryBuilding
 
                 //select list is either [chi] or [chi],[mycolumn],[myexcitingcol] (in the case of a patient index table)
                 builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
-                
+
+                if (topX != -1)
+                    builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(topX,AggregateTopXOrderByDirection.Descending,null);
+
                 //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select 
                 if(!isJoinAggregate)
                     builder.AddColumn(extractionIdentifier, false);
@@ -166,7 +171,7 @@ namespace CohortManagerLibrary.QueryBuilding
                 // will end up with something like this where 51 is the ID of the joinTable:
                 // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
 
-                builder.AddCustomJoinLine(" " + joinDirection + " Join (" + Environment.NewLine + joinSQL + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + identifierCol.SelectSQL + " = " + joinableTableAlias + "." + identifierColInJoinAggregate.GetRuntimeName());
+                builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + joinSQL + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + identifierCol.SelectSQL + " = " + joinableTableAlias + "." + identifierColInJoinAggregate.GetRuntimeName(),QueryComponent.JoinInfoJoin);
             }
         }
 

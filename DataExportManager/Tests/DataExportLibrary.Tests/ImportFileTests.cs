@@ -43,8 +43,7 @@ namespace DataExportLibrary.Tests
 
                 string tableName;
 
-                var databaseConnectionStringBuilder = new SqlConnectionStringBuilder(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString);
-                var server = new DiscoveredServer(databaseConnectionStringBuilder);
+                var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                 var database = server.ExpectDatabase(databaseName);
 
                 if(!database.Exists())

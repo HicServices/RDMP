@@ -35,7 +35,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         private DbTransaction _transaction;
         private DataTableHelper _helper;
         public string TargetTableName { get; private set; }
-        private SqlBulkCopy _bulkcopy;
+        private IBulkCopy _bulkcopy;
         private int _affectedRows = 0;
         Stopwatch swTimeSpentWritting = new Stopwatch();
 
@@ -55,12 +55,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
             string whoCares;//used for out parameters we are not using
 
-            StartAuditIfExists(TargetTableName);
-
-            if (_loggingDatabaseListener != null)
-                listener = new ForkDataLoadEventListener(listener, _loggingDatabaseListener);
-
-            if (_con == null)
+            //work out the table name for the table we are going to create
+            if (TargetTableName == null)
             {
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
@@ -69,7 +65,15 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 _helper.ExplicitWriteTypes = explicitWriteTypes;
 
                 TargetTableName = _helper.GetTableName();
+            }
 
+            StartAuditIfExists(TargetTableName);
+
+            if (_loggingDatabaseListener != null)
+                listener = new ForkDataLoadEventListener(listener, _loggingDatabaseListener);
+
+            if (_con == null)
+            {
                 bool tableAlreadyExistsButEmpty = false;
 
                 if (!_database.Exists())
@@ -105,28 +109,23 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 _transaction = _con.BeginTransaction();//begin a tansaction
 
                 _managedTransaction = new ManagedTransaction(_con, _transaction);
-
-
-                _bulkcopy = new SqlBulkCopy((SqlConnection)_con, SqlBulkCopyOptions.KeepIdentity, (SqlTransaction)_transaction);
-                _bulkcopy.BulkCopyTimeout = 50000;
-                _bulkcopy.DestinationTableName = TargetTableName;
-
-                foreach (DataColumn col in toProcess.Columns)
-                    _bulkcopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
+                
+                _bulkcopy = _database.ExpectTable(TargetTableName).BeginBulkInsert(_managedTransaction);
             }
 
             try
             {
+
+                if (AllowResizingColumnsAtUploadTime)
+                    ResizeColumnsIfRequired(toProcess, listener);
+
                 //push the data
                 if (toProcess != null)
                 {
                     swTimeSpentWritting.Start();
 
-                    if (AllowResizingColumnsAtUploadTime)
-                        ResizeColumnsIfRequired(toProcess, listener);
-
-                    _affectedRows += UsefulStuff.BulkInsertWithBetterErrorMessages(_bulkcopy, toProcess, _server);
-
+                    _affectedRows += _bulkcopy.Upload(toProcess);
+                    
                     swTimeSpentWritting.Stop();
                     listener.OnProgress(this, new ProgressEventArgs("Uploading to " + TargetTableName, new ProgressMeasurement(_affectedRows, ProgressType.Records), swTimeSpentWritting.Elapsed));
 
@@ -200,7 +199,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             foreach (KeyValuePair<string, DataTypeComputer> kvp in thisBatch)
             {
                 //handle type change from bit to more advanced type
-                var currentDatatype = kvp.Value.GetSqlDBType();
+                var currentDatatype = kvp.Value.GetSqlDBType(_database.Server);
 
 
                 //if it is currently a bit in the database and it isn't a bit in the DataTypeComputer (current batch)
@@ -273,6 +272,10 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             {
                 _transaction.Commit();
                 _con.Close();
+                
+                if (_bulkcopy != null)
+                    _bulkcopy.Dispose();
+
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
             }
             catch (Exception e)

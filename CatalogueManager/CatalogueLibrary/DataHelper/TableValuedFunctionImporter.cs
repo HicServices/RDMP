@@ -16,36 +16,31 @@ namespace CatalogueLibrary.DataHelper
         private readonly CatalogueRepository _repository;
         private readonly string _server;
         private readonly string _database;
-        private readonly string _tableValuedFunctionName;
-        private readonly string _username;
-        private readonly string _password;
         private readonly DataAccessContext _usageContext;
+        private readonly string _tableValuedFunctionName;
 
-        private DiscoveredTableValuedFunction _tableValuedFunction;
+        private readonly DiscoveredTableValuedFunction _tableValuedFunction;
         private DiscoveredParameter[] _parameters;
 
 
-        public TableValuedFunctionImporter(CatalogueRepository repository,string connection, string server, string database, string tableValuedFunctionName, string username = null, string password = null, DataAccessContext usageContext=DataAccessContext.Any)
+        public TableValuedFunctionImporter(CatalogueRepository repository, DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
         {
             _repository = repository;
-            _server = server;
-            _database = database;
-            _tableValuedFunctionName = tableValuedFunctionName;
+            _tableValuedFunction = tableValuedFunction;
+            _server = _tableValuedFunction.Database.Server.Name;
+            _database = _tableValuedFunction.Database.GetRuntimeName();
 
-            _username = string.IsNullOrWhiteSpace(username)?null:username;
-            _password = string.IsNullOrWhiteSpace(password) ? null : password;
             _usageContext = usageContext;
 
-            //should be ok because this only does microsoft sql stuff.... for now
-            DiscoveredServer discoveredServer = new DiscoveredServer(new SqlConnectionStringBuilder(connection));
-            _tableValuedFunction = discoveredServer.ExpectDatabase(_database).ExpectTableValuedFunction(tableValuedFunctionName);
+            if (!_tableValuedFunction.Exists())
+                throw new Exception("Could not find tableValuedFunction with name '" + _tableValuedFunction.GetRuntimeName() + "' (.Exists() returned false)");
 
-            if(!_tableValuedFunction.Exists())
-                throw new Exception("Could not find tableValuedFunction with name '" + _tableValuedFunctionName +"' (.Exists() returned false)");
-
+            _tableValuedFunctionName = _tableValuedFunction.GetRuntimeName();
+                 
             _parameters = _tableValuedFunction.DiscoverParameters();
 
             ParametersCreated = new List<AnyTableSqlParameter>();
+            
         }
 
         public List<AnyTableSqlParameter> ParametersCreated { get; private set; }
@@ -67,11 +62,11 @@ namespace CatalogueLibrary.DataHelper
 
             columnInfosCreated = CreateColumnInfosBasedOnReturnColumnsOfFunction(tableInfoCreated);
 
-
-            if(_username != null)
+            var server = _tableValuedFunction.Database.Server;
+            if (server.ExplicitUsernameIfAny != null)
             {
                 var credentialsFactory = new DataAccessCredentialsFactory(_repository);
-                credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
+                credentialsFactory.Create(tableInfoCreated, server.ExplicitUsernameIfAny, server.ExplicitPasswordIfAny, _usageContext);
             }
         }
 
@@ -111,7 +106,7 @@ namespace CatalogueLibrary.DataHelper
 
         public string GetParamaterDeclarationSQL(DiscoveredParameter parameter)
         {
-            return "DECLARE " + parameter.ParameterName + " AS " + parameter.DataType.SQLType;
+            return "DECLARE " + parameter.ParameterName + " AS " + parameter.DataType.SQLType + ";";
         }
    
     }

@@ -9,6 +9,7 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Spontaneous;
 using NUnit.Framework;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using Rhino.Mocks;
 
 namespace CatalogueLibraryTests.Integration.FilterImportingTests
@@ -34,10 +35,11 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         public void SingleParameterTest_NullReturnFromConstruct_Throws()
         {
             var f = MockRepository.GenerateStub<IFilter>();
+            f.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             f.WhereSQL = "@bob = 'bob'";
             
             var factory = MockRepository.GenerateStrictMock<IFilterFactory>();
-            factory.Expect(m => m.CreateNewParameter(f,"DECLARE @bob AS VARCHAR(50)")).Return(null);
+            factory.Expect(m => m.CreateNewParameter(f,"DECLARE @bob AS varchar(50);")).Return(null);
 
             var creator = new ParameterCreator(factory, null, null);
 
@@ -53,10 +55,11 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
             p.Expect(m => m.SaveToDatabase()).Repeat.Once();//save should be called because there is no VAlue on the parameter
 
             var f = MockRepository.GenerateStub<IFilter>();
+            f.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             f.WhereSQL = "@bob = 'bob'";
 
             var factory = MockRepository.GenerateMock<IFilterFactory>();
-            factory.Expect(m => m.CreateNewParameter(f,"DECLARE @bob AS VARCHAR(50)")).Return(p).Repeat.Once();
+            factory.Expect(m => m.CreateNewParameter(f,"DECLARE @bob AS varchar(50);")).Return(p).Repeat.Once();
             
             var creator = new ParameterCreator(factory, null, null);
             creator.CreateAll(f,null);
@@ -78,7 +81,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
             f.Expect(m => m.GetAllParameters()).Return(new[] {existingParameter});
 
             var factory = MockRepository.GenerateMock<IFilterFactory>();
-            factory.Expect(m => m.CreateNewParameter(f, "DECLARE @bob AS VARCHAR(50)")).Return(p).Repeat.Never(); //should never be called because the filter already has 
+            factory.Expect(m => m.CreateNewParameter(f, "")).IgnoreArguments().Return(p).Repeat.Never(); //should never be called because the filter already has 
 
             var creator = new ParameterCreator(factory, null, null);
             creator.CreateAll(f,null);
@@ -93,6 +96,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         public void SingleParameterTest_GlobalOverrides_CreateNotCalled()
         {
             var f = MockRepository.GenerateStub<IFilter>();
+            f.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             f.WhereSQL = "@bob = 'bob'";
 
             var global = MockRepository.GenerateStub<ISqlParameter>();
@@ -111,13 +115,14 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         public void SingleParameterTest_GlobalButNotSameName_CreateCalled()
         {
             var f = MockRepository.GenerateStub<IFilter>();
+            f.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             f.WhereSQL = "@bob = 'bob'";
 
             var global = MockRepository.GenerateStub<ISqlParameter>();
             global.Stub(x => x.ParameterName).Return("@bob");
             
             var factory = MockRepository.GenerateMock<IFilterFactory>();
-            factory.Expect(m => m.CreateNewParameter(f, "DECLARE @bob AS VARCHAR(50)")).Repeat.Once();
+            factory.Expect(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);")).Repeat.Once();
 
             var creator = new ParameterCreator(factory, null, null);
             creator.CreateAll(f,null);
@@ -135,6 +140,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
             
             //The filter that requires that the parameters be created
             var f = MockRepository.GenerateStub<IFilter>();
+            f.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             f.WhereSQL = "@bob = 'bob'";
 
             //The template which is an existing known about parameter from the master filter that is being duplicated.  This template will be spotted and used to make the new parameter match the cloned filter's one
@@ -179,13 +185,13 @@ b=@b")]
         public void SequentialReplacementSQL()
         {
             var haystack =
-                @"--Paracetamol
+                @"/*Paracetamol*/
 [test]..[prescribing].[approved_name] LIKE @drugName
 OR
---Ketamine
+/*Ketamine*/
 [test]..[prescribing].[approved_name] LIKE @drugName2
 OR
---Approved Name Like
+/*Approved Name Like*/
 [test]..[prescribing].[approved_name] LIKE @drugName3";
 
 
@@ -195,13 +201,13 @@ OR
 
 
             var expectedoutput =
-                @"--Paracetamol
+                @"/*Paracetamol*/
 [test]..[prescribing].[approved_name] LIKE @drugName_2
 OR
---Ketamine
+/*Ketamine*/
 [test]..[prescribing].[approved_name] LIKE @drugName2_2
 OR
---Approved Name Like
+/*Approved Name Like*/
 [test]..[prescribing].[approved_name] LIKE @drugName3_2";
 
 

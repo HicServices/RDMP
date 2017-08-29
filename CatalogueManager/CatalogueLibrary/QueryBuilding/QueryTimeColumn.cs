@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -161,7 +162,7 @@ namespace CatalogueLibrary.QueryBuilding
             }
 
       
-        public string GetSelectSQL(string hashingPattern, string salt)
+        public string GetSelectSQL(string hashingPattern, string salt,IQuerySyntaxHelper syntaxHelper)
         {
             string toReturn = this.IColumn.SelectSQL;
 
@@ -185,7 +186,7 @@ namespace CatalogueLibrary.QueryBuilding
                 
             //append alias to the end of the line if there is an alias
             if (!string.IsNullOrWhiteSpace(this.IColumn.Alias))
-                toReturn += RDMPQuerySyntaxHelper.AliasPrefix + this.IColumn.Alias.Trim();
+                toReturn += syntaxHelper.AliasPrefix + this.IColumn.Alias.Trim();
 
             //cannot be both, we check for this earlier (see SetLookupStatus)
             Debug.Assert(!(IsLookupDescription && IsLookupForeignKey));
@@ -233,24 +234,6 @@ namespace CatalogueLibrary.QueryBuilding
 
             //see if the description is used anywhere in the actual query columns!
             return selectColumns.Any(c => c.IsLookupDescription && c.LookupTable.ID == this.LookupTable.ID);
-        }
-
-        public void WrapIColumnSelectSql(string leftSql, string rightSql)
-        {
-            string selectSql;
-            string alias;
-            
-            RDMPQuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(IColumn.SelectSQL, out selectSql, out alias);
-
-            //doesn't have an alias
-            if (string.IsNullOrWhiteSpace(alias))
-            {
-                IColumn.SelectSQL = leftSql + selectSql + rightSql;
-                return;
-            }
-
-            //does have an alias
-            IColumn.SelectSQL = leftSql + selectSql + rightSql + RDMPQuerySyntaxHelper.AliasPrefix + alias;
         }
     }
 }

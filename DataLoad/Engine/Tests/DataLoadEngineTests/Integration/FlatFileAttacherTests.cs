@@ -8,6 +8,7 @@ using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
 using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
@@ -18,9 +19,8 @@ namespace DataLoadEngineTests.Integration
     public class FlatFileAttacherTests : DatabaseTests
     {
         private HICProjectDirectory hicProjectDirectory;
-        private string database;
-        SqlConnectionStringBuilder databaseBuilder;
         DirectoryInfo parentDir;
+        private DiscoveredDatabase _database;
 
         [SetUp]
         public void CreateTestDatabase()
@@ -34,32 +34,18 @@ namespace DataLoadEngineTests.Integration
 
             hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
             
-            database = TestDatabaseNames.GetConsistentName("FlatFileAttacher");
+            var database = TestDatabaseNames.GetConsistentName("FlatFileAttacher");
 
             // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
-            
-            databaseBuilder = new SqlConnectionStringBuilder(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString);
-            databaseBuilder.InitialCatalog = database;
 
-           
-            using (var con = new SqlConnection(ServerICanCreateRandomDatabasesAndTablesOn.ConnectionString))
+            _database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(database);
+            _database.Create(true);
+
+            using (var con = _database.Server.GetConnection())
             {
                 con.Open();
-
-                try
-                {
-                    var dbToDrop = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(database);
-                    dbToDrop.ForceDrop();
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Couldnt drop database " + database + " probably didnt exist in the first place, no problem");
-                }
                 
-                SqlCommand cmdCreateDatabase = new SqlCommand("CREATE DATABASE " + database,con);
-                cmdCreateDatabase.ExecuteNonQuery();
-                
-                SqlCommand cmdCreateTable = new SqlCommand("CREATE Table "+database+"..Bob([name] [varchar](500),[name2] [varchar](500))" ,con);
+                var cmdCreateTable = _database.Server.GetCommand("CREATE Table "+database+"..Bob([name] [varchar](500),[name2] [varchar](500))" ,con);
                 cmdCreateTable.ExecuteNonQuery();
             }
 
@@ -95,7 +81,7 @@ namespace DataLoadEngineTests.Integration
             sw2.Dispose();
 
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(hicProjectDirectory, ToDiscoveredDatabase(databaseBuilder));
+            attacher.Initialize(hicProjectDirectory, _database);
             attacher.Separator = separator;
             attacher.FilePattern = "bob*";
             attacher.TableName = "Bob";
@@ -120,18 +106,17 @@ namespace DataLoadEngineTests.Integration
                 throw;
             }
 
-            var db = ToDiscoveredDatabase(databaseBuilder);
-            var table = db.ExpectTable("Bob");
+            var table = _database.ExpectTable("Bob");
             Assert.IsTrue(table.Exists());
 
             table.DiscoverColumn("name");
             table.DiscoverColumn("name2");
 
-            using (SqlConnection con = new SqlConnection(databaseBuilder.ConnectionString))
+            using (var con = _database.Server.GetConnection())
             {
 
                 con.Open();
-                var r = new SqlCommand("Select * from Bob",con ).ExecuteReader();
+                var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
                 Assert.IsTrue(r.Read());
                 Assert.AreEqual("Bob",r["name"]);
                 Assert.AreEqual("Munchousain", r["name2"]);
@@ -164,7 +149,7 @@ namespace DataLoadEngineTests.Integration
             sw.Dispose();
 
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(hicProjectDirectory, ToDiscoveredDatabase(databaseBuilder));
+            attacher.Initialize(hicProjectDirectory, _database);
             attacher.Separator = "\\t";
             attacher.FilePattern = "bob*";
             attacher.TableName = "Bob";
@@ -173,11 +158,11 @@ namespace DataLoadEngineTests.Integration
             var exitCode = attacher.Attach(new ThrowImmediatelyDataLoadJob());
             Assert.AreEqual(ExitCodeType.Success,exitCode);
 
-            using (SqlConnection con = new SqlConnection(databaseBuilder.ConnectionString))
+            using (var con = _database.Server.GetConnection())
             {
 
                 con.Open();
-                var r = new SqlCommand("Select name,name2 from Bob", con).ExecuteReader();
+                var r = _database.Server.GetCommand("Select name,name2 from Bob", con).ExecuteReader();
                 Assert.IsTrue(r.Read());
                 Assert.AreEqual("Face", r["name"]);
                 Assert.AreEqual("Basher", r["name2"]);
@@ -198,19 +183,7 @@ namespace DataLoadEngineTests.Integration
         public void TearDown()
         {
             parentDir.Delete(true);
-
-            try
-            {
-                var dbToDrop = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(database);
-                dbToDrop.ForceDrop();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Couldn't drop the database nicely, pushing the red button on it now (Server.KillDatabase)...");
-
-                var server = new Server(ServerICanCreateRandomDatabasesAndTablesOn.DataSource);
-                server.KillDatabase(database);
-            }
+            _database.ForceDrop();
         }
     }
 }
