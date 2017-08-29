@@ -96,41 +96,6 @@ namespace ReusableLibraryCode.DataTableExtension
         }
 
 
-
-        /// <summary>
-        /// Commits the DataTable loaded from the CSV into TempDB in the cohort server, returns the name of the temp table.  This operates in a transaction meaning 
-        /// that if values are rejected by the database after the CREATE has happened the table is properly rollbacked to not existing.
-        /// </summary>
-        /// <param name="server"></param>
-        /// <param name="useOldDateTimes"></param>
-        /// <returns>The name of the table created in TempDB</returns>
-        public string CommitDataTableToTempDB(DiscoveredServer server, bool useOldDateTimes)
-        {
-            using (var con = (SqlConnection)server.GetConnection())
-            {
-                con.Open();
-                con.ChangeDatabase("tempdb");
-                
-                SqlTransaction transaction = con.BeginTransaction();
-             
-                string toReturn = CommitDataTableToTempDB(server, con, useOldDateTimes, transaction);
-                transaction.Commit();
-                return toReturn;
-            }
-        }
-        public string CommitDataTableToTempDB(DiscoveredServer server,SqlConnection con, bool useOldDateTimes, SqlTransaction transaction = null)
-        {
-            //we cannot submit it to a server until it has a name but the user wants to submit it to tempdb so it likely won't be hanging around forever so lets give it a nice GUID name
-            if(string.IsNullOrWhiteSpace(DataTable.TableName))
-                DataTable.TableName = "TT" + Guid.NewGuid().ToString().Replace("-", "");
-            
-            con.ChangeDatabase("tempdb");
-
-            string tableName;
-            UploadFileToConnection(server,con, out tableName, transaction, true, useOldDateTimes);
-            return tableName;
-        }
-
         public void CreateTables(DiscoveredServer server, DbConnection con, out string tableName, DbTransaction transaction,
             bool dropIfAlreadyExists, bool useOldDateTimes)
         {

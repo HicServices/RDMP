@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
+using ADOX;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CohortManagerLibrary.Execution;
 using CohortManagerLibrary.QueryBuilding;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -67,33 +71,49 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             if(listener != null)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to lookup which server to interrogate for CohortIdentificationConfiguration " + _cohortIdentificationConfiguration));
 
-            var server = DataAccessPortal.GetInstance()
-                .ExpectDistinctServer(_cohortIdentificationConfiguration.GetDistinctTableInfos(),
-                    DataAccessContext.DataExport, false);
+            if(_cohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "CohortIdentificationConfiguration '" + _cohortIdentificationConfiguration + "' has no RootCohortAggregateContainer_ID, is it empty?"));
 
-            using (var con = server.GetConnection())
+            var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
+            cohortCompiler.AddTask(_cohortIdentificationConfiguration.RootCohortAggregateContainer,_cohortIdentificationConfiguration.GetAllParameters());
+
+            var task = cohortCompiler.Tasks.Single();
+
+            cohortCompiler.LaunchSingleTask(task.Key,Timeout);
+
+            //timeout is in seconds
+            int countDown = Timeout * 1000;
+
+            while ( 
+                //hasn't timed out
+                countDown > 0 && 
+                (
+                    //state isn't a final state
+                    task.Key.State == CompilationState.Executing || task.Key.State == CompilationState.NotScheduled || task.Key.State == CompilationState.Scheduled)
+                )
             {
-                con.Open();
-
-                var sql = GetSQL();
-
-                if (listener != null)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened, ready to send the following SQL (with Timeout "+Timeout+"s):" + Environment.NewLine + sql));
-
-                var cmd = server.GetCommand(sql, con);
-                cmd.CommandTimeout = timeout;
-
-                var dt = new DataTable();
-                server.GetDataAdapter(cmd).Fill(dt);
-
-                dt.TableName = SqlSyntaxHelper.GetSensibleTableNameFromString(_cohortIdentificationConfiguration.Name +"_ID" + _cohortIdentificationConfiguration.ID);
-
-                if (listener != null)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "successfully read " +dt.Rows + " rows from source"));
-
-
-                return dt;
+                Thread.Sleep(100);
+                countDown -= 100;
             }
+
+
+            if(countDown <= 0)
+                try
+                {
+                    throw new Exception("Cohort failed to reach a final state (Finished/Crashed) after " + Timeout + " seconds. Current state is " + task.Key.State + ".  The task will be cancelled");
+                }
+                finally
+                {
+                    cohortCompiler.CancelAllTasks(true);
+                }
+
+            if(task.Key.State != CompilationState.Finished)
+                throw new Exception("CohortIdentificationCriteria execution resulted in state '" + task.Key.State +"'",task.Key.CrashMessage);
+
+            if(task.Value.Identifiers == null || task.Value.Identifiers.Rows.Count  == 0)
+                throw new Exception("CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
+            
+            return task.Value.Identifiers;
         }
 
         public void Check(ICheckNotifier notifier)
@@ -107,9 +127,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
                             " is Frozen (By " + _cohortIdentificationConfiguration.FrozenBy + " on " +
                             _cohortIdentificationConfiguration.FrozenDate + ").  It might have already been imported once before.", CheckResult.Warning));
 
-                var _sql = GetSQL();
-                notifier.OnCheckPerformed(new CheckEventArgs("successfully built extraction SQL:" + _sql, CheckResult.Success));
-
+                
                 var result = TryGetPreview();
                 
                 if(result.Rows.Count == 0)
@@ -122,11 +140,6 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             
         }
 
-        private string GetSQL()
-        {
-            CohortQueryBuilder builder = new CohortQueryBuilder(_cohortIdentificationConfiguration);
-            return builder.SQL;
-        }
 
         public void PreInitialize(CohortIdentificationConfiguration value, IDataLoadEventListener listener)
         {
