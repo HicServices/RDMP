@@ -24,12 +24,12 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.QueryBuilderTests
             
             var qb = new QueryBuilder(null, null);
             qb.AddColumn(extractionInfo);
-            Assert.AreEqual(
+            Assert.AreEqual(CollapseWhitespace(
                 @"SELECT 
 `db`.`tbl`.`col`
 FROM 
 `db`.`tbl`"
-                , qb.SQL.Trim());
+                ),CollapseWhitespace(qb.SQL));
 
         }
         [Test]

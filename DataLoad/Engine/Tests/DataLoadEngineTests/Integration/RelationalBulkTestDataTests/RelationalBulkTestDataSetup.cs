@@ -56,14 +56,14 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
                 var extractionInformations = bulkData.CIATestEventCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Cast<IColumn>().ToArray();
                 qb.AddColumnRange(extractionInformations);
 
-                Assert.AreEqual(@"SELECT 
+                Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[PKAgencyCodename],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[PKClearenceLevel],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[EventName],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[TypeOfEvent],
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent].[EstimatedEventDate]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent]", qb.SQL.Trim());
+["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestEvent]"),CollapseWhitespace(qb.SQL));
 
             }
             finally
