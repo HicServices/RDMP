@@ -288,7 +288,7 @@ namespace CatalogueLibrary.QueryBuilding
                 throw new IndexOutOfRangeException("line must be less than the number of lines in the query");
 
             string toReturn = "";
-            string[] queryLines = SQL.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            string[] queryLines = SQL.Split(new []{Environment.NewLine},StringSplitOptions.None);
 
 
             for (int i = line; i < queryLines.Length; i++)
@@ -400,6 +400,8 @@ namespace CatalogueLibrary.QueryBuilding
             toReturn += "SELECT " + LimitationSQL + TakeNewLine();
 
             toReturn = AppendCustomLines(toReturn, QueryComponent.SELECT);
+            toReturn += TakeNewLine();
+
             toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
             
             for (int i = 0; i < SelectColumns.Count;i++ )
@@ -451,9 +453,11 @@ namespace CatalogueLibrary.QueryBuilding
         {
             var lines = SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage).ToArray();
             if (lines.Any())
+            {
                 toReturn += TakeNewLine();
+                toReturn += string.Join(TakeNewLine(), lines.Select(l=>l.Text));
+            }
 
-            toReturn += string.Join(TakeNewLine(), lines.Select(l=>l.Text));
             return toReturn;
         }
 

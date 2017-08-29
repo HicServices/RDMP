@@ -102,11 +102,11 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(head, tablesUsed[0]);
             Assert.AreEqual(result, tablesUsed[1]);
 
-            Assert.AreEqual(@"SELECT 
+            Assert.AreEqual(CollapseWhitespace(@"SELECT 
 TestResultSetNumber,
 Code
 FROM 
-[biochemistry]..[Result] Right JOIN Head ON FK = PK", queryBuilder.SQL.Trim());
+[biochemistry]..[Result] Right JOIN Head ON FK = PK"),CollapseWhitespace(queryBuilder.SQL));
 
             var spontContainer = new SpontaneouslyInventedFilterContainer(null, null, FilterContainerOperation.AND);
 
