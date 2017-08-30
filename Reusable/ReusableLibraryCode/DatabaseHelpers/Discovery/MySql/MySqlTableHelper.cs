@@ -77,15 +77,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return new MySqlColumnHelper();
         }
 
-        public void DropTable(DbConnection connection, DiscoveredTable table, DbTransaction dbTransaction = null)
+        public void DropTable(DbConnection connection, DiscoveredTable table)
         {
             var cmd = new MySqlCommand("drop table " + table.GetFullyQualifiedName(), (MySqlConnection)connection);
-            cmd.Transaction = dbTransaction as MySqlTransaction;
             cmd.ExecuteNonQuery();
         }
 
-        public void DropColumn(DbConnection connection, DiscoveredTable discoveredTable, DiscoveredColumn columnToDrop,
-            DbTransaction dbTransaction)
+        public void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop)
         {
             throw new NotImplementedException();
         }
@@ -139,7 +137,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         }
 
 
-        public void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop, DbTransaction dbTransaction)
+        public void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop)
         {
             throw new NotImplementedException();
         }

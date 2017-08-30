@@ -77,18 +77,13 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
             return new OracleColumnHelper();
         }
 
-        public void DropTable(DbConnection connection, DiscoveredTable table, DbTransaction dbTransaction = null)
+        public void DropTable(DbConnection connection, DiscoveredTable table)
         {
-            if (dbTransaction != null)
-                throw new NotSupportedException("It looks like you are trying to drop a dataabase within a transaction, Oracle does not support transactions at the DDL layer.  If I were to drop this then it wouldn't ever be coming back");
-
             var cmd = new OracleCommand("DROP TABLE " +table.GetFullyQualifiedName(), (OracleConnection)connection);
-            cmd.Transaction = dbTransaction as OracleTransaction;
             cmd.ExecuteNonQuery();
         }
 
-        public void DropColumn(DbConnection connection, DiscoveredTable discoveredTable, DiscoveredColumn columnToDrop,
-            DbTransaction dbTransaction)
+        public void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop)
         {
             throw new NotImplementedException();
         }
@@ -114,7 +109,7 @@ nCount NUMBER;
 v_sql LONG;
 
 begin
-SELECT count(*) into nCount FROM dba_tables where table_name = '{0}';
+SELECT count(*) into nCount FROM all_tables where table_name = '{0}';
 IF(nCount {1} 0)
 THEN
 v_sql:='{2}';
@@ -182,7 +177,7 @@ end;
             return columnType + lengthQualifier;
         }
 
-        public void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop, DbTransaction dbTransaction)
+        public void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop)
         {
             throw new NotImplementedException();
         }

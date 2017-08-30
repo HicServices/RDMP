@@ -87,21 +87,24 @@ where object_id =OBJECT_ID('" + tableValuedFunctionName+"')", connection.Connect
             return new MicrosoftSQLColumnHelper();
         }
 
-        public void DropTable(DbConnection connection, DiscoveredTable tableToDrop, DbTransaction dbTransaction = null)
+        public void DropTable(DbConnection connection, DiscoveredTable tableToDrop)
         {
+            
             SqlCommand cmd;
 
             switch (tableToDrop.TableType)
             {
                 case TableType.View:
+                    if (connection.Database != tableToDrop.Database.GetRuntimeName())
+                        connection.ChangeDatabase(tableToDrop.GetRuntimeName());
 
                     if(!connection.Database.ToLower().Equals(tableToDrop.Database.GetRuntimeName().ToLower()))
                         throw new NotSupportedException("Cannot drop view "+tableToDrop +" because it exists in database "+ tableToDrop.Database.GetRuntimeName() +" while the current current database connection is pointed at database:" + connection.Database + " (use .ChangeDatabase on the connection first) - SQL Server does not support cross database view dropping");
 
-                    cmd = new SqlCommand("DROP VIEW " + tableToDrop.GetRuntimeName(), (SqlConnection)connection, dbTransaction as SqlTransaction);
+                    cmd = new SqlCommand("DROP VIEW " + tableToDrop.GetRuntimeName(), (SqlConnection)connection);
                     break;
                 case TableType.Table:
-                    cmd = new SqlCommand("DROP TABLE " + tableToDrop.GetFullyQualifiedName(), (SqlConnection)connection, dbTransaction as SqlTransaction);
+                    cmd = new SqlCommand("DROP TABLE " + tableToDrop.GetFullyQualifiedName(), (SqlConnection)connection);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -110,15 +113,15 @@ where object_id =OBJECT_ID('" + tableValuedFunctionName+"')", connection.Connect
             cmd.ExecuteNonQuery();
         }
 
-        public void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop, DbTransaction dbTransaction)
+        public void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop)
         {
-            SqlCommand cmd = new SqlCommand("DROP FUNCTION " + functionToDrop.GetRuntimeName(), (SqlConnection)connection, dbTransaction as SqlTransaction);
+            SqlCommand cmd = new SqlCommand("DROP FUNCTION " + functionToDrop.GetRuntimeName(), (SqlConnection)connection);
             cmd.ExecuteNonQuery();
         }
 
-        public void DropColumn(DbConnection connection, DiscoveredTable discoveredTable, DiscoveredColumn columnToDrop, DbTransaction dbTransaction)
+        public void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop)
         {
-            SqlCommand cmd = new SqlCommand("ALTER TABLE " + discoveredTable.GetFullyQualifiedName() + " DROP column " + columnToDrop.GetRuntimeName(), (SqlConnection)connection, dbTransaction as SqlTransaction);
+            SqlCommand cmd = new SqlCommand("ALTER TABLE " + columnToDrop.Table.GetFullyQualifiedName() + " DROP column " + columnToDrop.GetRuntimeName(), (SqlConnection)connection);
             cmd.ExecuteNonQuery();
         }
 

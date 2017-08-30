@@ -18,9 +18,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
         public void  DropDatabase(DiscoveredDatabase database)
         {
-            //todo should I be worrying about dropping a database I am currently using (where server is pointed at)
-            var cmd = new OracleCommand("DROP USER " + database.GetRuntimeName() + " CASCADE ", (OracleConnection)database.Server.GetConnection());
-            cmd.ExecuteNonQuery();
+             using(var con = (OracleConnection)database.Server.GetConnection())
+             {
+                 con.Open();
+                 var cmd = new OracleCommand("DROP USER " + database.GetRuntimeName() + " CASCADE ",con);
+                 cmd.ExecuteNonQuery();
+             }
         }
 
         public Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
@@ -32,7 +35,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
             List<DiscoveredTable> tables = new List<DiscoveredTable>();
             
-            var cmd = new OracleCommand("SELECT table_name FROM dba_tables where owner='" + database + "'", (OracleConnection) connection);
+            var cmd = new OracleCommand("SELECT table_name FROM all_tables where owner='" + database + "'", (OracleConnection) connection);
             cmd.Transaction = transaction as OracleTransaction;
 
             var r = cmd.ExecuteReader();

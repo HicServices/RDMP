@@ -177,36 +177,5 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
             Assert.IsFalse(cols.Single(c=>c.GetRuntimeName().Equals("CHIASNUMERIC")).IsPrimaryKey);
             Assert.IsFalse(cols.Single(c=>c.GetRuntimeName().Equals("TEENYNUMBER")).IsPrimaryKey);
         }
-
-        [Test]
-        [ExpectedException(ExpectedMessage = "It looks like you are trying to drop a dataabase within a transaction, Oracle does not support transactions at the DDL layer.  If I were to drop this then it wouldn't ever be coming back")]
-        public void CannotDelete()
-        {
-            var table = _database.ExpectTable("FISH");
-
-            Assert.IsTrue(table.Exists());
-
-            using (var connection = server.BeginNewTransactedConnection())
-            {
-                var t = connection.ManagedTransaction;
-
-                //table should be there
-                Assert.IsTrue(table.Exists(t));
-            
-                //drop it within transaction
-                table.Drop(t);
-
-                //shouldn't be there within transaction
-                Assert.IsFalse(table.Exists(t));
-            
-                //abandon transaction
-                connection.ManagedTransaction.AbandonAndCloseConnection();
-                
-            }
-            //table should be there still
-            Assert.IsTrue(table.Exists());
-
-            _database.Drop();
-        }
     }
 }

@@ -47,10 +47,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return _functionName;
         }
 
-        public override void Drop(IManagedTransaction transaction = null)
+        public override void Drop()
         {
-            using (var connection = Database.Server.GetManagedConnection(transaction))
-                Helper.DropFunction(connection.Connection, this, connection.Transaction);
+            using (var connection = Database.Server.GetManagedConnection())
+                Helper.DropFunction(connection.Connection, this);
         }
 
         public DiscoveredParameter[] DiscoverParameters(ManagedTransaction transaction = null)
