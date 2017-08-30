@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Events;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
@@ -51,6 +52,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
         private readonly ExtractableCohort _cohort;
 
         private CustomCohortDataDestination _destination;
+        private IExternalDatabaseServer _loggingServer;
 
         public ImportCustomDataFileUI(IActivateItems activator, ExtractableCohort cohort, params object[] initializationObjects)
         {
@@ -82,20 +84,25 @@ namespace DataExportManager.CohortUI.ImportCustomData
             
             configureAndExecutePipeline1.SetPipelineOptions(null, _destination, _context, cataRepository);
             configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += configureAndExecutePipeline1_PipelineExecutionFinishedsuccessfully;
-
+            configureAndExecutePipeline1.PipelineExecutionStarted += configureAndExecutePipeline1_PipelineExecutionStarted;
             var defaults = new ServerDefaults(cataRepository);
-            var loggingServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
 
-            if (loggingServer != null)
+        }
+
+        private void configureAndExecutePipeline1_PipelineExecutionStarted(object sender, PipelineEngineEventArgs args)
+        {
+            //only create the logging audit record once the user hits the go button (and again if he keeps hammering go again)
+            if (_loggingServer != null)
             {
-                var logManager = new LogManager(loggingServer);
+                var logManager = new LogManager(_loggingServer);
 
                 logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
-                var listener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, "Custom Data For Cohort " + cohort);
+                var listener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, "Custom Data For Cohort " + _cohort);
                 configureAndExecutePipeline1.SetAdditionalProgressListener(listener);
             }
         }
-        
+
         void configureAndExecutePipeline1_PipelineExecutionFinishedsuccessfully(object sender, CatalogueLibrary.DataFlowPipeline.Events.PipelineEngineEventArgs args)
         {
             MessageBox.Show("Pipeline reports it has successfully completed, inspect Progress tab for any warnings and confirm you are happy with the number of records loaded then close this form");
