@@ -91,7 +91,7 @@ namespace DataLoadEngineTests.Integration
             }
             finally
             {
-                cloner.LoadCompletedSoDispose(ExitCodeType.Success, new ToConsoleDataLoadEventReceiver());
+                cloner.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
                 while (toCleanUp.Count > 0)
                     try

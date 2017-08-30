@@ -6,6 +6,7 @@ using DataExportLibrary;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -62,7 +63,7 @@ namespace DataExportLibrary.Tests
                     con.Close();
                 }
 
-                csvDataTableHelper.Dispose(new ThrowImmediatelyEventsListener(), null);
+                csvDataTableHelper.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 
                 var tablesInDatabase = server.ExpectDatabase(databaseName).DiscoverTables(false);
 

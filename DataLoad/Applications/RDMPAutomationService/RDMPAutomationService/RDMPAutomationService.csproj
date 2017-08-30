@@ -82,7 +82,7 @@
     </Compile>
     <Compile Include="AutomationMEFLoadingCheckNotifier.cs" />
     <Compile Include="AutomationServiceOptions.cs" />
-    <Compile Include="EventHandlers\ToLocalFileDataLoadEventsReceiver.cs" />
+    <Compile Include="EventHandlers\ToLocalFileDataLoadEventsListener.cs" />
     <Compile Include="Logic\Cache\AutomatedCacheRun.cs" />
     <Compile Include="Logic\DLE\AutomatedDLELoadFromCache.cs" />
     <Compile Include="Logic\DLE\AutomatedDLELoad.cs" />

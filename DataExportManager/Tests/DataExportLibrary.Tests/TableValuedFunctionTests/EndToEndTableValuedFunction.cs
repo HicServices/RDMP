@@ -32,6 +32,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -164,7 +165,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
             
             var factory = new DataFlowPipelineEngineFactory<DataTable>(CatalogueRepository.MEF,CohortCreationRequest.Context);
 
-            var execution = factory.Create(_pipe, new ThrowImmediatelyEventsListener());
+            var execution = factory.Create(_pipe, new ThrowImmediatelyDataLoadEventListener());
             execution.Initialize(request,_cic);
 
             execution.ExecutePipeline(new GracefulCancellationToken());
@@ -442,9 +443,9 @@ end
 
             var source = new ExecuteDatasetExtractionSource();
 
-            source.PreInitialize(extractionCommand,new ThrowImmediatelyEventsListener());
+            source.PreInitialize(extractionCommand, new ThrowImmediatelyDataLoadEventListener());
 
-            var dt = source.GetChunk(new ThrowImmediatelyEventsListener(), new GracefulCancellationToken());
+            var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
             
             Assert.AreEqual(1,dt.Rows.Count);
 

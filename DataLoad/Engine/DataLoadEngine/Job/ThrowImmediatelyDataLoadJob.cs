@@ -8,13 +8,13 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
 {
-    public class ThrowImmediatelyDataLoadJob: IDataLoadEventListener,IDataLoadJob
+    public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     {
         private readonly IDataLoadEventListener _listener;
 
         public ThrowImmediatelyDataLoadJob()
         {
-            _listener = new ToConsoleDataLoadEventReceiver();
+            _listener = new ThrowImmediatelyDataLoadEventListener();
         }
 
         public ThrowImmediatelyDataLoadJob(IDataLoadEventListener listener)

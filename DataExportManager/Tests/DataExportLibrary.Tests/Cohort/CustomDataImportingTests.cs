@@ -58,7 +58,7 @@ namespace DataExportLibrary.Tests.Cohort
 
             var engine = GetEnginePointedAtFile("fish.txt");
 
-            ToMemoryDataLoadEventReceiver receiver = new ToMemoryDataLoadEventReceiver(true);
+            ToMemoryDataLoadEventListener listener = new ToMemoryDataLoadEventListener(true);
             
             Random r = new Random();
             var token = new GracefulCancellationTokenSource();
@@ -71,17 +71,17 @@ namespace DataExportLibrary.Tests.Cohort
                 dt.Columns.Add("Age");
 
                 dt.Rows.Add(_cohortKeysGenerated.Keys.First(),r.Next(100));
-                engine.Destination.ProcessPipelineData( dt,receiver,token.Token);
+                engine.Destination.ProcessPipelineData( dt,listener,token.Token);
             }
 
             //then give them the null
-            engine.Destination.ProcessPipelineData( null,receiver, token.Token);
+            engine.Destination.ProcessPipelineData( null,listener, token.Token);
 
-            engine.Source.Dispose(new ToConsoleDataLoadEventReceiver(false),null );
-            engine.Destination.Dispose(new ThrowImmediatelyEventsListener(),null);
+            engine.Source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null );
+            engine.Destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 
             //batches are 1 record each so 
-            Assert.AreEqual(numberOfBatches, receiver.LastProgressRecieivedByTaskName["Comitting rows to cohort 99_unitTestDataForCohort_V1fish"].Progress.Value);
+            Assert.AreEqual(numberOfBatches, listener.LastProgressRecieivedByTaskName["Comitting rows to cohort 99_unitTestDataForCohort_V1fish"].Progress.Value);
             
             var customTableNames = _extractableCohort.GetCustomTableNames().ToArray();
             Console.WriteLine("Found the following custom tables:");
@@ -122,7 +122,7 @@ namespace DataExportLibrary.Tests.Cohort
             }
             finally
             {
-                engine.Source.Dispose(new ThrowImmediatelyEventsListener(), ex);
+                engine.Source.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
                 File.Delete(filename);
             }
         }
@@ -146,7 +146,7 @@ namespace DataExportLibrary.Tests.Cohort
             }
             finally
             {
-                engine.Source.Dispose(new ThrowImmediatelyEventsListener(), ex);
+                engine.Source.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
                 File.Delete(filename);
             }
         }
@@ -165,7 +165,7 @@ namespace DataExportLibrary.Tests.Cohort
                 PipelineUsage.LoadsSingleTableInfo |
                 PipelineUsage.LoadsSingleFlatFile);
 
-            DataFlowPipelineEngine<DataTable> engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, new ToConsoleDataLoadEventReceiver());
+            DataFlowPipelineEngine<DataTable> engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, new ThrowImmediatelyDataLoadEventListener());
 
             engine.Initialize(_extractableCohort);
 

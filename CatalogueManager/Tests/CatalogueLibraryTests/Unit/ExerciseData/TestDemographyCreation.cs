@@ -23,7 +23,7 @@ namespace CatalogueLibraryTests.Unit.ExerciseData
 
             var f =new FileInfo("DeleteMeTestPeople.csv");
             
-            var messages = new ToMemoryDataLoadEventReceiver(true);
+            var messages = new ToMemoryDataLoadEventListener(true);
 
             DemographyExerciseTestData demog = new DemographyExerciseTestData();
             demog.GenerateTestDataFile(people, f, numberOfRecords, messages);

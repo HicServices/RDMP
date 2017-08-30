@@ -83,7 +83,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out Catalogue catalogue, out ExtractionInformation[] extractionInformations, out TableInfo tableinfo)
         {
             DiscoveredServer server = GetServer(type);
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
 
             if (server == null)
                 Assert.Inconclusive();

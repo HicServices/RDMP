@@ -299,9 +299,9 @@
     <Compile Include="Performance\QueryPerformed.cs" />
     <Compile Include="Progress\ForkDataLoadEventListener.cs" />
     <Compile Include="Progress\FromDataLoadEventListenerToCheckNotifier.cs" />
-    <Compile Include="Progress\ToMemoryDataLoadEventReceiver.cs" />
+    <Compile Include="Progress\ToMemoryDataLoadEventListener.cs" />
     <Compile Include="Progress\FromCheckNotifierToDataLoadEventListener.cs" />
-    <Compile Include="Progress\ToConsoleDataLoadEventReceiver.cs" />
+    <Compile Include="Progress\ThrowImmediatelyDataLoadEventListener.cs" />
     <Compile Include="Progress\EventType.cs" />
     <Compile Include="Progress\IDataLoadEventListener.cs" />
     <Compile Include="Progress\NotifyEventArgs.cs" />

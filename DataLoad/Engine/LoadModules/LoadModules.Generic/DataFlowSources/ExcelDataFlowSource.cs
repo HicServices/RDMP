@@ -391,7 +391,7 @@ namespace LoadModules.Generic.DataFlowSources
             DataTable dt;
             try
             {
-                dt = GetAllData(new ToConsoleDataLoadEventReceiver(),token);
+                dt = GetAllData(new ThrowImmediatelyDataLoadEventListener(),token);
             }
             catch (Exception e)
             {

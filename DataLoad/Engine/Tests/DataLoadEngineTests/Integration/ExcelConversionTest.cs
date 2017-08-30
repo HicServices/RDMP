@@ -102,7 +102,7 @@ namespace DataLoadEngineTests.Integration
                 ExcelToCsvConverter converter = new ExcelToCsvConverter();
 
                 converter.FilePatternToConvert = fileExtensionToConvert;
-                converter.Fetch(hicProjectDirectory, new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+                converter.Fetch(hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
                 FileInfo[] filesCreated = hicProjectDirectory.ForLoading.GetFiles("*.csv");
 

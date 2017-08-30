@@ -13,12 +13,12 @@ namespace RDMPAutomationService.EventHandlers
     /// Writes OnNotify messages to the supplied file, does not store OnProgress messages (wrote 100 records to table X etc).  This is because OnProgress is a steady stream of messages updating you 
     /// on progress of a given task and there could be 1 million messages a second so we don't really want to spray all that out to a file.
     /// </summary>
-    public class ToLocalFileDataLoadEventsReceiver:IDataLoadEventListener,IDisposable
+    public class ToLocalFileDataLoadEventsListener:IDataLoadEventListener,IDisposable
     {
         private readonly bool _throwOnErrors;
         private StreamWriter _sw;
 
-        public ToLocalFileDataLoadEventsReceiver(string filename, bool throwOnErrors = true)
+        public ToLocalFileDataLoadEventsListener(string filename, bool throwOnErrors = true)
         {
             _throwOnErrors = throwOnErrors;
 

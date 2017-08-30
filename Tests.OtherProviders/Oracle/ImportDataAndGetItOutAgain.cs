@@ -26,7 +26,7 @@ namespace Tests.OtherProviders.Oracle
             people.GeneratePeople(100);
 
             ExerciseTestDataGenerator generator = new BiochemistryExerciseTestData();
-            generator.GenerateTestDataFile(people, new FileInfo(testFile), 500, new ToMemoryDataLoadEventReceiver(true));
+            generator.GenerateTestDataFile(people, new FileInfo(testFile), 500, new ToMemoryDataLoadEventListener(true));
 
             Assert.IsTrue(File.Exists(testFile));
 
@@ -39,7 +39,7 @@ namespace Tests.OtherProviders.Oracle
         [Test]
         public void TestDataUpload()
         {
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
             var canceller = new GracefulCancellationTokenSource();
 
             CsvDataTableHelper source = new CsvDataTableHelper(testFile,0);
@@ -62,8 +62,8 @@ namespace Tests.OtherProviders.Oracle
             Assert.AreEqual(500,dt.Rows.Count);
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
-            destination.PreInitialize(db, new ToConsoleDataLoadEventReceiver());
-            destination.ProcessPipelineData( dt, new ToConsoleDataLoadEventReceiver(), canceller.Token);
+            destination.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+            destination.ProcessPipelineData( dt, new ThrowImmediatelyDataLoadEventListener(), canceller.Token);
 
             var finalTable = db.ExpectTable("OraTestBiochem");
             Assert.IsTrue(finalTable.Exists());

@@ -260,11 +260,11 @@ namespace DataLoadEngineTests.Integration
 
                 // Create and start pipeline
                 var pipelineFactory = new HICDataLoadFactory(catalogueEntities.LoadMetadata, databaseConfiguration, configurationFlags, CatalogueRepository, logManager);
-                var pipeline = pipelineFactory.Create(new ToConsoleDataLoadEventReceiver());
+                var pipeline = pipelineFactory.Create(new ThrowImmediatelyDataLoadEventListener());
                 var ctsPipeline = new GracefulCancellationTokenSource();
                 
                 // Configure job
-                var toMemory = new ToMemoryDataLoadEventReceiver(false);
+                var toMemory = new ToMemoryDataLoadEventListener(false);
 
                 var job = new ScheduledDataLoadJob("Test job", logManager, catalogueEntities.LoadMetadata, hicProjectDirectory, toMemory);
                 var result = pipeline.Run(job, ctsPipeline.Token);

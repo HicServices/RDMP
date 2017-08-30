@@ -79,7 +79,7 @@ namespace DataLoadEngine.Job.Scheduling
             
             try
             {
-                destination = factory.CreateDestinationOnly(cacheProgress,new ToConsoleDataLoadEventReceiver());
+                destination = factory.CreateDestinationOnly(cacheProgress,new ThrowImmediatelyDataLoadEventListener());
             }
             catch (Exception e)
             {

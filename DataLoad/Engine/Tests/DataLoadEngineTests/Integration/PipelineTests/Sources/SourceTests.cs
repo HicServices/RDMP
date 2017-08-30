@@ -22,7 +22,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         public void RetrieveChunks()
         {
             var source = new DbDataCommandDataFlowSource("Select top 3 * from master.sys.tables", "Query Sys tables", DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder, 30);
-            Assert.AreEqual(3, source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken()).Rows.Count);
+            Assert.AreEqual(3, source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()).Rows.Count);
         }
 
 
@@ -34,7 +34,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             var component = new TestObject_RequiresTableInfo();
             var ti = new TableInfo(CatalogueRepository, "TestTableInfo");
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(), component, ti);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti);
             
             Assert.AreEqual(component.PreInitToThis, ti);
             ti.DeleteInDatabase();
@@ -47,7 +47,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var context = contextFactory.Create(PipelineUsage.FixedDestination | PipelineUsage.LoadsSingleTableInfo);
             var ti = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "Foo");
             var component = new TestObjectNoRequirements();
-            Assert.DoesNotThrow(() => context.PreInitialize(new ToConsoleDataLoadEventReceiver(), component, ti));
+            Assert.DoesNotThrow(() => context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti));
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var ci = new ColumnInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "ColumnInfo", "Type", ti);
             ci.Name = "ColumnInfo"; // because we passed a stubbed repository, the name won't be set
 
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(), component, ci);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ci);
 
             Assert.AreEqual(component.PreInitToThis, ti);
         }
@@ -76,7 +76,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             var component = new TestObject_RequiresTableInfo();
             var ti = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "Foo");
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(), component, ti);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti);
 
             Assert.AreEqual(component.PreInitToThis, ti);
         }
@@ -94,7 +94,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var testTableInfo = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "");
             testTableInfo.Name = "Test Table Info";
 
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(), component, testTableInfo);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, testTableInfo);
         }
 
         [Test]

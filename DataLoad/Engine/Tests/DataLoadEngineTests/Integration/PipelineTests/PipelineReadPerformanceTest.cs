@@ -109,7 +109,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
             DataTable chunk;
 
             //read all chunks
-            while ((chunk = source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken())) != null)
+            while ((chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken())) != null)
             {
                 linesRead += chunk.Rows.Count;
                 chunk.Dispose();

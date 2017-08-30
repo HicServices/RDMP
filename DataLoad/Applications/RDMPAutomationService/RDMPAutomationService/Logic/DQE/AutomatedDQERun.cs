@@ -34,7 +34,7 @@ namespace RDMPAutomationService.Logic.DQE
         {
             try
             {
-                new CatalogueConstraintReport(_catalogueToRun, MigrationColumnSet.DataLoadRunField).GenerateReport(_catalogueToRun, new ToMemoryDataLoadEventReceiver(true), task.CancellationTokenSource.Token,task.Job);
+                new CatalogueConstraintReport(_catalogueToRun, MigrationColumnSet.DataLoadRunField).GenerateReport(_catalogueToRun, new ToMemoryDataLoadEventListener(true), task.CancellationTokenSource.Token,task.Job);
 
                 //if it suceeded
                 if (task.Job.LastKnownStatus == AutomationJobStatus.Finished)

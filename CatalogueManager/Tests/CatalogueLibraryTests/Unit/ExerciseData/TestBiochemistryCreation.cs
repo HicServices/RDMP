@@ -21,7 +21,7 @@ namespace CatalogueLibraryTests.Unit.ExerciseData
 
             var f = new FileInfo("DeleteMeTestBiochemistry.csv");
 
-            var messages = new ToMemoryDataLoadEventReceiver(true);
+            var messages = new ToMemoryDataLoadEventListener(true);
 
             BiochemistryExerciseTestData biochem = new BiochemistryExerciseTestData();
             biochem.GenerateTestDataFile(people, f, numberOfRecords, messages);

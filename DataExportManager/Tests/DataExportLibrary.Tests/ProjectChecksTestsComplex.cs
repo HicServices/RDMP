@@ -5,6 +5,7 @@ using DataExportLibrary.Checks;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Tests
 {
@@ -28,8 +29,8 @@ namespace DataExportLibrary.Tests
 
             //but if the user goes ahead and executes the extraction that should fail too
             var source = new ExecuteDatasetExtractionSource();
-            source.PreInitialize(_request,new ThrowImmediatelyEventsListener());
-            var exception2 = Assert.Throws<Exception>(() => source.GetChunk(new ThrowImmediatelyEventsListener(), new GracefulCancellationToken()));
+            source.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
+            var exception2 = Assert.Throws<Exception>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
 
             Assert.AreEqual("Cannot extract TestTable because DisableExtraction is set to true", exception2.Message);
         }

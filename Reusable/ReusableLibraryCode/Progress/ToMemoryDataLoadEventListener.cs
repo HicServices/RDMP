@@ -5,13 +5,13 @@ using System.Text;
 
 namespace ReusableLibraryCode.Progress
 {
-    public class ToMemoryDataLoadEventReceiver:IDataLoadEventListener
+    public class ToMemoryDataLoadEventListener:IDataLoadEventListener
     {
         private readonly bool _throwOnErrorEvents;
         public Dictionary<object,List<NotifyEventArgs>> EventsReceivedBySender = new Dictionary<object, List<NotifyEventArgs>>();
         public Dictionary<string,ProgressEventArgs> LastProgressRecieivedByTaskName = new Dictionary<string, ProgressEventArgs>();
 
-        public ToMemoryDataLoadEventReceiver(bool throwOnErrorEvents)
+        public ToMemoryDataLoadEventListener(bool throwOnErrorEvents)
         {
             _throwOnErrorEvents = throwOnErrorEvents;
         }

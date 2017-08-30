@@ -224,7 +224,7 @@ namespace LoadModules.Generic.DataFlowSources
             if(_headers == null)
             {
                 //get a chunk
-                DataTable toReturn = GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+                DataTable toReturn = GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
                 //clear these to close the file and reset state to 'I need to open the file again state'
                 CloseReader();

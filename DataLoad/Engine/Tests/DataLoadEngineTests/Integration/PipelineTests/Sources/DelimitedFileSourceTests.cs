@@ -35,7 +35,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         public void FileToLoadNotSet_Throws()
         {
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            DataTable chunk = source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            DataTable chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         }
         [Test]
         [ExpectedException(ExpectedMessage = "Separator has not been set", MatchType = MessageMatch.Contains)]
@@ -43,8 +43,8 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         {
             FileInfo testFile = CreateTestFile();
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(testFile),new ToConsoleDataLoadEventReceiver() );
-            source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            source.PreInitialize(new FlatFileToLoad(testFile),new ThrowImmediatelyDataLoadEventListener() );
+            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         }
         [Test]
         public void LoadCSVWithCorrectDatatypes_DatatypesAreCorrect()
@@ -52,11 +52,11 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             FileInfo testFile = CreateTestFile();
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(testFile), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
             source.StronglyTypeInput = true;//makes the source interpret the file types properly
 
-            var chunk = source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.AreEqual(3,chunk.Columns.Count);
             Assert.AreEqual(1, chunk.Rows.Count);
@@ -64,7 +64,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             Assert.AreEqual(5, chunk.Rows[0][1]);
             Assert.AreEqual(new DateTime(2001 , 1 , 5), chunk.Rows[0][2]);//notice the strong typing (we are not looking for strings here)
             
-            source.Dispose(new ToConsoleDataLoadEventReceiver(), null);
+            source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             FileInfo testFile = CreateTestFile();
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(testFile), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
             source.StronglyTypeInput = true;//makes the source interpret the file types properly
             
@@ -86,11 +86,11 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             Assert.AreEqual("5", preview.Rows[0]["StudyID"]);
 
             //as should live run
-            var chunk = source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
             Assert.AreEqual(typeof(string), chunk.Columns["StudyID"].DataType);
             Assert.AreEqual("5", chunk.Rows[0]["StudyID"]);
 
-            source.Dispose(new ToConsoleDataLoadEventReceiver(), null);
+            source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var testFile = new FileInfo(filename);
 
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(testFile), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
 
             if(behaviour.HasValue)
@@ -147,7 +147,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var testFile = new FileInfo(filename);
 
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(testFile), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
             source.ForceHeaders = "CHI\tStudyID\tDate";
 

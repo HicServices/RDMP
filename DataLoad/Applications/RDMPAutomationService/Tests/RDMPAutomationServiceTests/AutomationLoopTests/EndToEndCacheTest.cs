@@ -84,7 +84,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             var cpAsList = new ICacheProgress[] {_cp}.ToList();
 
             cachingHost.CacheProgressList = cpAsList;
-            cachingHost.Start(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             // should be numDaysToCache days in cache
             Assert.AreEqual(NumDaysToCache, _hicProjectDirectory.Cache.GetFiles("*.csv").Count());

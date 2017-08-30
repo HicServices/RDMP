@@ -7,6 +7,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using NUnit.Framework;
+using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
@@ -117,13 +118,13 @@ tempdb..[Cohort].[cohortDefinition_id]=69
             var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
             string origValue = e.Database;
 
-            e.Database = "Cohort";
+            e.Database = CohortDatabaseName;
             e.SaveToDatabase();
             try
             {
                 ExecuteCrossServerDatasetExtractionSource s = new ExecuteCrossServerDatasetExtractionSource();
-                s.PreInitialize(_request,new ThrowImmediatelyEventsListener());
-                string hacked = s.HackExtractionSQL(input, new ThrowImmediatelyEventsListener());
+                s.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
+                string hacked = s.HackExtractionSQL(input, new ThrowImmediatelyDataLoadEventListener());
 
                 Assert.AreEqual(expectedOutput.Trim(),hacked.Trim());
             }

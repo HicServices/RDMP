@@ -39,7 +39,7 @@ namespace CacheDaemon
                 CacheProgressList = cacheProgressList
             };
 
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
             var cancellationTokenSource = new GracefulCancellationTokenSource();
             var task = Task.Run(() => cachingHost.StartDaemon(listener, cancellationTokenSource.Token));
 

@@ -19,7 +19,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             var oldcohort = _configuration.Cohort;
             
-            var engine = new CohortRefreshEngine(new ToConsoleDataLoadEventReceiver(), _configuration, CatalogueRepository.MEF);
+            var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration, CatalogueRepository.MEF);
             
             Assert.NotNull(engine.Request.NewCohortDefinition);
             

@@ -155,7 +155,7 @@ namespace AnonymisationTests
             dt.Rows.Add("0101010102",DBNull.Value);
             dt.Rows.Add("0101010101",DBNull.Value);//duplicates
 
-            ANOTransformer transformer = new ANOTransformer(anoTable, new ToConsoleDataLoadEventReceiver());
+            ANOTransformer transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
             transformer.Transform(dt,dt.Columns["CHI"],dt.Columns["ANOCHI"]);
 
             Assert.IsTrue((string) dt.Rows[0][0] == "0101010101");
@@ -214,7 +214,7 @@ namespace AnonymisationTests
             dt.Columns.Add("CHI");
             dt.Columns.Add("ANOCHI");
             dt.Rows.Add("0101010101", DBNull.Value);
-            ANOTransformer transformer = new ANOTransformer(anoTable, new ToConsoleDataLoadEventReceiver());
+            ANOTransformer transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
             transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], true);
 
             Assert.IsTrue(_anochiPattern.IsMatch((string)dt.Rows[0][1]));//should be 10 digits and then _A
@@ -269,7 +269,7 @@ namespace AnonymisationTests
             sw.Reset();
             sw.Start();
 
-            ANOTransformer transformer = new ANOTransformer(anoTable, new ToConsoleDataLoadEventReceiver());
+            ANOTransformer transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
             transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"]);
             Console.WriteLine("Time to perform SQL transform and allocation:" + sw.Elapsed);
 

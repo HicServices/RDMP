@@ -20,7 +20,7 @@ namespace CachingEngineTests.Unit
             var engine1 = MockRepository.GenerateMock<IDataFlowPipelineEngine>();
             var engine2 = MockRepository.GenerateMock<IDataFlowPipelineEngine>();
             var tokenSource = new GracefulCancellationTokenSource();
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
 
             // set up the engine map
             var loadProgress1 = MockRepository.GenerateStub<ILoadProgress>();
@@ -61,7 +61,7 @@ namespace CachingEngineTests.Unit
             var engine1 = MockRepository.GenerateMock<IDataFlowPipelineEngine>();
             var engine2 = MockRepository.GenerateMock<IDataFlowPipelineEngine>();
             var tokenSource = new GracefulCancellationTokenSource();
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
 
             // first time both engines return that they have more data, second time they are both complete
             engine1.Stub(engine => engine.ExecuteSinglePass(Arg<GracefulCancellationToken>.Is.Anything)).Repeat.Once().Return(true);

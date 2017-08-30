@@ -155,7 +155,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 ExceptionViewer.Show("Could not generate/edit Cache Pipeline because of a problem with the LoadMetadata '"+lmd+"' project directory.  See Inner Exception for specifics" ,exception);
                 return;
             }
-            //var engine = engineFactory.Create(cacheProgress, new ToConsoleDataLoadEventreceiver());
+            //var engine = engineFactory.Create(cacheProgress, new ThrowImmediatelyDataLoadEventReceiver());
             var context = CachingPipelineEngineFactory.Context;
 
             var uiFactory = new ConfigurePipelineUIFactory(RepositoryLocator.CatalogueRepository.MEF, RepositoryLocator.CatalogueRepository);

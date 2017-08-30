@@ -170,7 +170,7 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
                 pipeline = SetupPipeline();
                 pipelineHost = new ExtractionPipelineHost(_request,CatalogueRepository.MEF, pipeline, d);
 
-                pipelineHost.Execute(new ThrowImmediatelyEventsListener());
+                pipelineHost.Execute(new ThrowImmediatelyDataLoadEventListener());
 
                 Assert.IsNotEmpty(pipelineHost.Source.Request.QueryBuilder.SQL);
 
@@ -216,26 +216,6 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
             pipeline.SaveToDatabase();
 
             return pipeline;
-        }
-    }
-
-
-    public class ThrowImmediatelyEventsListener : IDataLoadEventListener
-    {
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-
-            if (e.Exception != null)
-                throw e.Exception;
-
-            if(e.ProgressEventType == ProgressEventType.Error)
-                throw new Exception(e.Message);
-
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-           
         }
     }
 }

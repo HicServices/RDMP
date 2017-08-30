@@ -74,7 +74,7 @@ namespace DataExportLibrary.Tests.Cohort
         [Test]
         public void CommittingNewCohortFile_CallPipeline()
         {
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
 
             var proj = new Project(DataExportRepository, projName);
             proj.ProjectNumber = 999;

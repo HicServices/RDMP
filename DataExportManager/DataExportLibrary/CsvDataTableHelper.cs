@@ -34,7 +34,7 @@ namespace DataExportLibrary
                 StronglyTypeInput = true
             };
 
-            _hostedSource.PreInitialize(new FlatFileToLoad(new FileInfo(filename)),new ToConsoleDataLoadEventReceiver());//this is the file we want to load
+            _hostedSource.PreInitialize(new FlatFileToLoad(new FileInfo(filename)),new ThrowImmediatelyDataLoadEventListener());//this is the file we want to load
 
         }
 
@@ -86,7 +86,7 @@ namespace DataExportLibrary
 
         public void LoadDataTableFromFile()
         {
-            DataTable =  _hostedSource.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            DataTable =  _hostedSource.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         }
 
         public void Reset()
