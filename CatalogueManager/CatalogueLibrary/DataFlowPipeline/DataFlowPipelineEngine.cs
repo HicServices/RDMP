@@ -90,14 +90,37 @@ namespace CatalogueLibrary.DataFlowPipeline
                 foreach (IDataFlowComponent<T> dataLoadComponent in Components)
                 {
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + dataLoadComponent));
-                    dataLoadComponent.Dispose(_listener, exception);
+                    try
+                    {
+
+                        dataLoadComponent.Dispose(_listener, exception);
+                    }
+                    catch (Exception e)
+                    {
+                        _listener.OnNotify(dataLoadComponent,new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Component",e));
+                    }
                 }
 
                 _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + Source));
-                Source.Dispose(_listener, exception);
+                try
+                {
+                    Source.Dispose(_listener, exception);
+                }
+                catch (Exception e)
+                {
+                    _listener.OnNotify(Source, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Source Component", e));
+                }
 
                 _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + Destination));
-                Destination.Dispose(_listener, exception);
+                try
+                {
+
+                    Destination.Dispose(_listener, exception);
+                }
+                catch (Exception e)
+                {
+                    _listener.OnNotify(Destination, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Destination Component", e));
+                }
             }
 
             if (exception != null)
