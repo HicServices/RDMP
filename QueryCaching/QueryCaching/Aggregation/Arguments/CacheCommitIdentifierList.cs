@@ -26,7 +26,7 @@ namespace QueryCaching.Aggregation.Arguments
         public override void CommitTableDataCompleted(DiscoveredServer server, string tableName, DataTableHelper helper, DbConnection con, DbTransaction transaction)
         {
             //ask the helper what datatype it used for the identifier column
-            string sqlDbTypeForColumn = helper.GetTypeDictionary()[Results.Columns[0]].GetSqlDBType(server);
+            string sqlDbTypeForColumn = helper.GetTypeDictionary()[Results.Columns[0].ColumnName].GetSqlDBType(server);
             string colName = Results.Columns[0].ColumnName;
 
             //if user has an explicit type to use for the column (probably a good idea to have all extraction idetntifiers of the same data type

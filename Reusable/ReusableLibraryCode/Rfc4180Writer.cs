@@ -28,7 +28,7 @@ namespace ReusableLibraryCode
                 var line = new List<string>();
                 
                 foreach (DataColumn col in sourceTable.Columns)
-                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].CurrentEstimate == typeof(DateTime))));
+                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col.ColumnName].CurrentEstimate == typeof(DateTime))));
                 
                 writer.WriteLine(String.Join(",", line));
             }

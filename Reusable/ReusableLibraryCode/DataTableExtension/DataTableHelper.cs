@@ -21,7 +21,7 @@ namespace ReusableLibraryCode.DataTableExtension
         public DataTable DataTable { get; protected set; }
         
         protected int _padCharacterFieldsOutToMinimumLength;
-        protected Dictionary<DataColumn, DataTypeComputer> typeDictionary;
+        protected Dictionary<string, DataTypeComputer> typeDictionary;
 
         /// <summary>
         /// Dictionary of columns expected to be in DataTable and the datatype you want when writing them to a server e.g. you have a column called CHI which is System.Int but you force it to be varchar(10) in your database.
@@ -48,12 +48,12 @@ namespace ReusableLibraryCode.DataTableExtension
         /// <param name="ExplicitReadTypes">This lets you override the determinations of the DataTypeComputers by setting the DataTable to freaky types e.g. load 102 as a string</param>
         protected void AdjustDataTableTypes(bool alsoChangeDataTypesOfColumns, Dictionary<string, Type> ExplicitReadTypes)
         {
-            typeDictionary = new Dictionary<DataColumn, DataTypeComputer>();
+            typeDictionary = new Dictionary<string, DataTypeComputer>();
 
             foreach (DataColumn col in DataTable.Columns)
             {
                 DataTypeComputer dc = new DataTypeComputer(_padCharacterFieldsOutToMinimumLength);
-                typeDictionary.Add(col, dc);
+                typeDictionary.Add(col.ColumnName, dc);
 
                 //if we have an explicit read type
                 if (ExplicitReadTypes != null && ExplicitReadTypes.ContainsKey(col.ColumnName))
@@ -73,7 +73,7 @@ namespace ReusableLibraryCode.DataTableExtension
                     var clonedFromColumn = DataTable.Columns.Cast<DataColumn>().Single(c=>c.ColumnName.Equals(dataColumn.ColumnName));
                     
                     //set the datatype to the one the computer thinks it is (based on the above evaluation of it's contents)
-                    dataColumn.DataType = typeDictionary[clonedFromColumn].CurrentEstimate;
+                    dataColumn.DataType = typeDictionary[clonedFromColumn.ColumnName].CurrentEstimate;
                 }
 
                 foreach (DataRow row in DataTable.Rows)
@@ -144,7 +144,6 @@ namespace ReusableLibraryCode.DataTableExtension
 
         protected string GetCreateTableSql(DiscoveredServer server, string tableName, bool dropIfAlreadyExists, IDiscoveredTableHelper tableHelper)
         {
-
             if (typeDictionary == null)
                 AdjustDataTableTypes(false,null);
 
@@ -165,7 +164,7 @@ namespace ReusableLibraryCode.DataTableExtension
                 if (ExplicitWriteTypes != null && ExplicitWriteTypes.ContainsKey(col.ColumnName))
                     datatype = ExplicitWriteTypes[col.ColumnName];
                 else
-                    datatype = typeDictionary[col].GetSqlDBType(server);
+                    datatype = typeDictionary[col.ColumnName].GetSqlDBType(server);
                 
                 //add the column name and accompanying datatype
                 bodySql += SqlSyntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + "," + Environment.NewLine;
@@ -189,7 +188,7 @@ namespace ReusableLibraryCode.DataTableExtension
                 AdjustDataTableTypes(true, explicityTypes);
         }
 
-        public Dictionary<DataColumn, DataTypeComputer> GetTypeDictionary()
+        public Dictionary<string, DataTypeComputer> GetTypeDictionary()
         {
             return typeDictionary;
         }
