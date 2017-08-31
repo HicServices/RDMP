@@ -241,6 +241,7 @@
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\Aggregation\MicrosoftSQLAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\Aggregation\MySqlAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\Aggregation\OracleAggregateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleTypeTranslater.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Aggregation\AxisIncrement.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Aggregation\IAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Aggregation\IQueryAxis.cs" />

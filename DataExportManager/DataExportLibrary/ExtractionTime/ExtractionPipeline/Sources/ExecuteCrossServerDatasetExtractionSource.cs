@@ -93,6 +93,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             foreach (KeyValuePair<string, string> r in replacementStrings)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Replacing '" + r.Key + "' with '" + r.Value + "'", null));
+                
+                if(!sql.Contains(r.Key))
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "SQL extraction query string did not contain the text '" + r.Key +"' (which we expected to replace with '" + r.Value+""));
+
                 sql = sql.Replace(r.Key, r.Value);
             }
             
@@ -119,7 +123,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         private void SetServer()
         {
             if(_server == null)
+            {
                 _server = Request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+
+                //expect a database called called tempdb
+                _tempDb = _server.ExpectDatabase(TemporaryDatabaseName);
+            }
         }
 
 
@@ -141,9 +150,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 throw new Exception("An error occurred while trying to download the cohort from the Cohort server (in preparation for transfering it to the data server for linkage and extraction)",e);
             }
             
-            //expect a database called called tempdb
-            _tempDb = _server.ExpectDatabase(TemporaryDatabaseName);
-
             //make sure tempdb exists (this covers you for servers where it doesn't exist e.g. mysql or when user has specified a different database name)
             if (!_tempDb.Exists())
                 if (CreateAndDestroyTemporaryDatabaseIfNotExists)

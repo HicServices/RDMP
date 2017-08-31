@@ -63,57 +63,24 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void HackSQLTest_Normal()
         {
-            string input = @"
- DECLARE @CohortDefinitionID AS int;
-SET @CohortDefinitionID=69;
---The project number of project Project - 2387 GO Share
-DECLARE @ProjectNumber as int;
-SET @ProjectNumber=2387;
+            _request.GenerateQueryBuilder();
+
+            string expectedOutput = @"/*The ID of the cohort in [tempdb]..[Cohort]*/
+DECLARE @CohortDefinitionID AS int;
+SET @CohortDefinitionID=-599;
+/*The project number of project TEST_ExtractionConfiguration*/
+DECLARE @ProjectNumber AS int;
+SET @ProjectNumber=1;
 
 SELECT DISTINCT 
-Cohort.dbo.Cohort.PROCHI AS PROCHI,
-[Aggregation]..[PatientEvents].[Date],
-[Aggregation]..[PatientEvents].[Source_ID],
-lookup_1.[Name] AS Source_ID_Desc,
-[Aggregation]..[PatientEvents].[EventType],
-[Aggregation]..[PatientEvents].[Value]
+
+[tempdb]..[Cohort].[ReleaseID] AS ReleaseID,
+[TEST_ScratchArea]..[TestTable].[Result]
 FROM 
-[Aggregation]..[PatientEvents] Left JOIN [Aggregation]..[Source] AS lookup_1 ON [Aggregation]..[PatientEvents].[Source_ID] = lookup_1.[ID]
- INNER JOIN [Cohort]..[Cohort] ON [Aggregation]..[PatientEvents].[CHI]=[Cohort]..[Cohort].[CHI] collate Latin1_General_BIN
-
+[TEST_ScratchArea]..[TestTable]
+INNER JOIN [tempdb]..[Cohort] ON [TEST_ScratchArea]..[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID] collate Latin1_General_BIN
 WHERE
-(
---2001 data only
-YEAR([Aggregation]..[PatientEvents].[Date]) = 2001
-)
-AND
-[Cohort]..[Cohort].[cohortDefinition_id]=69
-";
-
-            string expectedOutput = @"DECLARE @CohortDefinitionID AS int;
-SET @CohortDefinitionID=69;
---The project number of project Project - 2387 GO Share
-DECLARE @ProjectNumber as int;
-SET @ProjectNumber=2387;
-
-SELECT DISTINCT 
-tempdb..Cohort.PROCHI AS PROCHI,
-[Aggregation]..[PatientEvents].[Date],
-[Aggregation]..[PatientEvents].[Source_ID],
-lookup_1.[Name] AS Source_ID_Desc,
-[Aggregation]..[PatientEvents].[EventType],
-[Aggregation]..[PatientEvents].[Value]
-FROM 
-[Aggregation]..[PatientEvents] Left JOIN [Aggregation]..[Source] AS lookup_1 ON [Aggregation]..[PatientEvents].[Source_ID] = lookup_1.[ID]
- INNER JOIN tempdb..[Cohort] ON [Aggregation]..[PatientEvents].[CHI]=tempdb..[Cohort].[CHI] collate Latin1_General_BIN
-
-WHERE
-(
---2001 data only
-YEAR([Aggregation]..[PatientEvents].[Date]) = 2001
-)
-AND
-tempdb..[Cohort].[cohortDefinition_id]=69
+[tempdb]..[Cohort].[cohortDefinition_id]=-599
 ";
             var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
             string origValue = e.Database;
@@ -123,8 +90,9 @@ tempdb..[Cohort].[cohortDefinition_id]=69
             try
             {
                 ExecuteCrossServerDatasetExtractionSource s = new ExecuteCrossServerDatasetExtractionSource();
+                s.TemporaryDatabaseName = "tempdb";
                 s.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-                string hacked = s.HackExtractionSQL(input, new ThrowImmediatelyDataLoadEventListener());
+                string hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener() { ThrowOnWarning = true });
 
                 Assert.AreEqual(expectedOutput.Trim(),hacked.Trim());
             }
