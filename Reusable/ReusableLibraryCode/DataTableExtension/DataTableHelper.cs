@@ -36,6 +36,7 @@ namespace ReusableLibraryCode.DataTableExtension
         public DataTableHelper(DataTable dt)
         {
             DataTable = dt;
+            SetDataTable(dt, true, null);
         }
 
 
