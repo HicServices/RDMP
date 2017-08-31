@@ -5,8 +5,8 @@
 
   <Target Name="Deploy">
     <CallTarget Targets="Build" />
-    
-	<!--
+	
+    <!--
         <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
            Text="Please pass 'ReleaseNugetPackageSource' in to this build task (/p:ReleaseNugetPackageSource=foo)" />
     
@@ -19,10 +19,10 @@
         </PropertyGroup>
     -->
 	
-  	<Exec Command="nuget pack Plugin.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName)" />    
+  	<Exec Command="nuget pack Plugin.Test.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName) -Suffix prerelease" />
   </Target>
   
   <Target Name="Build">
-    <MSBuild Projects="Plugin.csproj" Properties="Configuration=$(ConfigurationName)" />
+    <MSBuild Projects="Plugin.Test.csproj" Properties="Configuration=$(ConfigurationName)" />
   </Target>
 </Project>

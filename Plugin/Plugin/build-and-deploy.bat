@@ -61,6 +61,7 @@ SET PLUGIN_PROJECT_ROOT=%WORKSPACE%\Plugin\
 SET NUGET_SOURCE=%1
 SET NUGET_PUSH_PARAMS=%2
 
+
 :: Restore missing packages
 echo Restoring NuGet packages (need to do this at solution level)
 echo nuget restore %WORKSPACE%\HIC.DataManagementPlatform.sln
@@ -68,16 +69,25 @@ nuget restore %WORKSPACE%\HIC.DataManagementPlatform.sln
 if %ERRORLEVEL% NEQ 0 goto errors
 
 :: The supplied configuration flags command the build process to push the nuget package to the ctm nuget server
-echo Building the Plugin project in Release mode, if successful will push the Plugin NuGet package to the ctm server
+echo Building the Plugin project in Release mode, if successful will pack the Plugin NuGet package
 
 echo Now build the plugin project
 echo msbuild Plugin.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
-msbuild Plugin.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+
+IF "%3"=="PRERELEASE" (
+    msbuild Plugin-dev.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+) ELSE (
+    msbuild Plugin.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+)
 
 echo Now building the assembly to create plugin tests
 cd ..\Plugin.Test
 echo msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
-msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+IF "%3"=="PRERELEASE" (
+    msbuild PluginTest-dev.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:Suffix=%SUFFIX% /p:ConfigurationName=Release
+) ELSE (
+    msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:Suffix=%SUFFIX% /p:ConfigurationName=Release
+)
 
 goto finish
 

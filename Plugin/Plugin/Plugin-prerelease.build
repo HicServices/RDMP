@@ -19,7 +19,7 @@
         </PropertyGroup>
     -->
 	
-  	<Exec Command="nuget pack Plugin.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName)" />    
+  	<Exec Command="nuget pack Plugin.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName) -Suffix prerelease" />    
   </Target>
   
   <Target Name="Build">
