@@ -14,6 +14,11 @@ using ReusableUIComponents;
 
 namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 {
+
+    /// <summary>
+    /// Displays the open source license for RDMP and so shows the license for all the third party plugins.  You must either accept or decline the license .
+    /// Declining will close the Form.  This form is shown for the first time on startup or again any time you have declined the conditions.
+    /// </summary>
     public partial class LicenseUI : Form
     {
         public LicenseUI()

@@ -8,6 +8,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
+using Tests.Common;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
@@ -63,25 +64,28 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void HackSQLTest_Normal()
         {
-            _request.GenerateQueryBuilder();
+            if (_request.QueryBuilder == null)
+                _request.GenerateQueryBuilder();
 
-            string expectedOutput = @"/*The ID of the cohort in [tempdb]..[Cohort]*/
+            string expectedOutput = 
+string.Format(@"/*The ID of the cohort in [tempdb]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
 SET @CohortDefinitionID=-599;
-/*The project number of project TEST_ExtractionConfiguration*/
+/*The project number of project {0}ExtractionConfiguration*/
 DECLARE @ProjectNumber AS int;
 SET @ProjectNumber=1;
 
 SELECT DISTINCT 
 
 [tempdb]..[Cohort].[ReleaseID] AS ReleaseID,
-[TEST_ScratchArea]..[TestTable].[Result]
+[{0}ScratchArea]..[TestTable].[Result]
 FROM 
-[TEST_ScratchArea]..[TestTable]
-INNER JOIN [tempdb]..[Cohort] ON [TEST_ScratchArea]..[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID] collate Latin1_General_BIN
+[{0}ScratchArea]..[TestTable]
+INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID] collate Latin1_General_BIN
 WHERE
 [tempdb]..[Cohort].[cohortDefinition_id]=-599
-";
+",TestDatabaseNames.Prefix);
+
             var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
             string origValue = e.Database;
 
