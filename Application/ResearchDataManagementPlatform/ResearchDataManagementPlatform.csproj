@@ -158,6 +158,12 @@
     <Compile Include="WindowManagement\HomePane\HomeUI.Designer.cs">
       <DependentUpon>HomeUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="WindowManagement\Licenses\LicenseUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowManagement\Licenses\LicenseUI.Designer.cs">
+      <DependentUpon>LicenseUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="WindowManagement\RDMPCollection.cs" />
     <Compile Include="WindowManagement\ExtenderFunctionality\CustomFloatWindow.cs" />
     <Compile Include="WindowManagement\ExtenderFunctionality\CustomFloatWindowFactory.cs" />
@@ -211,6 +217,9 @@
     <EmbeddedResource Include="WindowManagement\HomePane\HomeUI.resx">
       <DependentUpon>HomeUI.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WindowManagement\Licenses\LicenseUI.resx">
+      <DependentUpon>LicenseUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WindowManagement\TopBar\RDMPTaskBar.resx">
       <DependentUpon>RDMPTaskBar.cs</DependentUpon>
     </EmbeddedResource>
@@ -219,6 +228,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="WindowManagement\UserSettings\UserSettingsFileUI.resx">
       <DependentUpon>UserSettingsFileUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\LICENSE">
+      <Link>WindowManagement\Licenses\LICENSE</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\LIBRARYLICENSES">
+      <Link>WindowManagement\Licenses\LIBRARYLICENSES</Link>
     </EmbeddedResource>
     <None Include="DockingInfrastructure.cd" />
     <None Include="packages.config" />
@@ -774,6 +790,7 @@
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

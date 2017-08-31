@@ -42,6 +42,7 @@
             this.governanceManagementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.automationManagementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.userSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.issuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.issueReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,7 +54,6 @@
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.launchDiagnosticsScreenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateTestDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.generateMockarooFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.managePluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +71,7 @@
             this.showHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tutorialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBar();
-            this.userSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -200,6 +200,13 @@
             this.automationManagementToolStripMenuItem.Text = "Automation Management...";
             this.automationManagementToolStripMenuItem.Click += new System.EventHandler(this.automationManagementToolStripMenuItem_Click);
             // 
+            // userSettingsToolStripMenuItem
+            // 
+            this.userSettingsToolStripMenuItem.Name = "userSettingsToolStripMenuItem";
+            this.userSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.userSettingsToolStripMenuItem.Text = "User Settings...";
+            this.userSettingsToolStripMenuItem.Click += new System.EventHandler(this.userSettingsToolStripMenuItem_Click);
+            // 
             // issuesToolStripMenuItem
             // 
             this.issuesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -268,7 +275,6 @@
             this.testsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.launchDiagnosticsScreenToolStripMenuItem,
             this.generateTestDataToolStripMenuItem,
-            this.generateMockarooFilesToolStripMenuItem,
             this.pluginsToolStripMenuItem,
             this.toolStripSeparator1,
             this.showPerformanceCounterToolStripMenuItem,
@@ -294,13 +300,6 @@
             this.generateTestDataToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
             this.generateTestDataToolStripMenuItem.Text = "Generate Test Data...";
             this.generateTestDataToolStripMenuItem.Click += new System.EventHandler(this.generateTestDataToolStripMenuItem_Click);
-            // 
-            // generateMockarooFilesToolStripMenuItem
-            // 
-            this.generateMockarooFilesToolStripMenuItem.Name = "generateMockarooFilesToolStripMenuItem";
-            this.generateMockarooFilesToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
-            this.generateMockarooFilesToolStripMenuItem.Text = "Generate Mockaroo Files...";
-            this.generateMockarooFilesToolStripMenuItem.Click += new System.EventHandler(this.generateMockarooFilesToolStripMenuItem_Click);
             // 
             // pluginsToolStripMenuItem
             // 
@@ -382,7 +381,8 @@
             this.generateClassTableSummaryToolStripMenuItem,
             this.generateUserInterfaceDocumentationToolStripMenuItem,
             this.showHelpToolStripMenuItem,
-            this.tutorialsToolStripMenuItem});
+            this.tutorialsToolStripMenuItem,
+            this.licenseToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -431,12 +431,12 @@
             this.rdmpTaskBar1.Size = new System.Drawing.Size(655, 25);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // userSettingsToolStripMenuItem
+            // licenseToolStripMenuItem
             // 
-            this.userSettingsToolStripMenuItem.Name = "userSettingsToolStripMenuItem";
-            this.userSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.userSettingsToolStripMenuItem.Text = "User Settings...";
-            this.userSettingsToolStripMenuItem.Click += new System.EventHandler(this.userSettingsToolStripMenuItem_Click);
+            this.licenseToolStripMenuItem.Name = "licenseToolStripMenuItem";
+            this.licenseToolStripMenuItem.Size = new System.Drawing.Size(291, 22);
+            this.licenseToolStripMenuItem.Text = "License";
+            this.licenseToolStripMenuItem.Click += new System.EventHandler(this.licenseToolStripMenuItem_Click);
             // 
             // RDMPMenuStrip
             // 
@@ -487,7 +487,6 @@
         private System.Windows.Forms.ToolStripMenuItem userManualToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateClassTableSummaryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateUserInterfaceDocumentationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem generateMockarooFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
@@ -499,6 +498,7 @@
         private System.Windows.Forms.ToolStripMenuItem tutorialsToolStripMenuItem;
         private TopBar.RDMPTaskBar rdmpTaskBar1;
         private System.Windows.Forms.ToolStripMenuItem userSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
 
     }
 }

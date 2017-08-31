@@ -71,6 +71,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.UserSettings
             }
         }
 
+        public bool LicenseAccepted
+        {
+            get
+            {
+                return GetBoolean("LicenseAccepted", false);
+            }
+            set
+            {
+                SetBoolean("LicenseAccepted", value);
+            }
+        }
+
         private void SetBoolean(string key, bool value)
         {
             if (!_dictionary.ContainsKey(key))

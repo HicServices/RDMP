@@ -237,6 +237,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
+        //[TestCase(DatabaseType.Oracle)]// doesn't quite work yet :) needs full implementation of database abstraction layer for Oracle to work
         public void Count_CorrectNumberOfRowsCalculated(DatabaseType type)
         {
             Catalogue catalogue;

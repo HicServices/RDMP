@@ -32,6 +32,7 @@ using CatalogueManager.Tutorials;
 using DataQualityEngine;
 using MapsDirectlyToDatabaseTableUI;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ResearchDataManagementPlatform.WindowManagement.TopMenu.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableLibraryCode;
@@ -300,13 +301,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
             }
         }
         
-        private void generateMockarooFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new MockarooFileGeneratorUI(_activator);
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.ShowDialog();
-        }
-
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if(currentTab == null)
@@ -421,6 +415,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
             var settings = new UserSettingsFileUI();
             settings.Show();
 
+        }
+
+        private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var l = new LicenseUI();
+            l.ShowDialog();
         }
     }
 }

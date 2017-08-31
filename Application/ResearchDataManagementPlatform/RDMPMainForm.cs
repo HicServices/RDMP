@@ -7,6 +7,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
@@ -28,6 +29,9 @@ namespace ResearchDataManagementPlatform
 
             dockPanel1.DocumentStyle = DocumentStyle.DockingWindow;
             WindowState = FormWindowState.Maximized;
+
+            if(!UserSettingsFile.GetInstance().LicenseAccepted)
+                new LicenseUI().ShowDialog();
         }
 
         ToolboxWindowManager _windowManager;
