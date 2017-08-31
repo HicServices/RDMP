@@ -20,6 +20,7 @@
     -->
 	
   	<Exec Command="nuget pack Plugin.Test.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName) -Suffix prerelease" />
+    <Exec Command="nuget push HIC.RDMP.Plugin.Test.*.nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />
   </Target>
   
   <Target Name="Build">
