@@ -75,7 +75,7 @@ echo Now build the plugin project
 echo msbuild Plugin.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
 
 IF "%3"=="PRERELEASE" (
-    msbuild Plugin-dev.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+    msbuild Plugin-prerelease.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
 ) ELSE (
     msbuild Plugin.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
 )
@@ -84,9 +84,9 @@ echo Now building the assembly to create plugin tests
 cd ..\Plugin.Test
 echo msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
 IF "%3"=="PRERELEASE" (
-    msbuild PluginTest-dev.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:Suffix=%SUFFIX% /p:ConfigurationName=Release
+    msbuild PluginTest-prerelease.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
 ) ELSE (
-    msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:Suffix=%SUFFIX% /p:ConfigurationName=Release
+    msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
 )
 
 goto finish
