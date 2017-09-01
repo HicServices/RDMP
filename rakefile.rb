@@ -36,16 +36,17 @@ desc "Sets the version number from GIT"
 assemblyinfo :assemblyinfo do |asm|
 	asm.input_file = "SharedAssemblyInfo.cs"
     asm.output_file = "SharedAssemblyInfo.cs"
+    version = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
     describe = `git describe`.strip
     tag, rev, hash = describe.split(/-/)
-    major, minor, build = tag.split(/\./).map {|x| x[/\d+/]}
-    puts "version: #{major}.#{minor}.#{build}.#{rev}-#{hash}"
-    asm.version = "#{major}.#{minor}.#{build}.#{rev}"
-    asm.file_version = "#{major}.#{minor}.#{build}.#{rev}"
+    major, minor, patch, build = version.split(/\./)
+    puts "version: #{major}.#{minor}.#{patch}.#{rev} build:#{build}"
+    asm.version = "#{major}.#{minor}.#{patch}.#{rev}"
+    asm.file_version = "#{major}.#{minor}.#{patch}.#{rev}"
     if PRERELEASE == "true"
-        asm.informational_version = "#{major}.#{minor}.#{build}.#{rev}-develop+#{hash}"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{rev}-develop"
     else
-        asm.informational_version = "#{major}.#{minor}.#{build}.#{rev}+#{hash}"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{rev}"
     end
 end
 
