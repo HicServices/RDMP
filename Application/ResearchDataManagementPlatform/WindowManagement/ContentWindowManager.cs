@@ -107,7 +107,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             UpdateChildProviders();
             RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
             
-            CoreIconProvider = new DataExportIconProvider(PluginUserInterfaces.Where(i=>!i.Exceptions.Any()).ToArray());
+            CoreIconProvider = new DataExportIconProvider(
+                // Only provide icons for user interfaces
+                PluginUserInterfaces
+                // That do not have any exceptions
+                .Where(i=> i.Exceptions == null || !i.Exceptions.Any()).ToArray());
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 
             DocumentationStore = new RDMPDocumentationStore(RepositoryLocator);
