@@ -2,7 +2,7 @@ require 'albacore'
 
 load 'rakeconfig.rb'
 
-task :ci_continuous, [:config] => [:setup_connection, :deploy]
+task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :deploy]
 
 task :restorepackages do
     sh "nuget restore HIC.DataManagementPlatform.sln"
@@ -30,6 +30,23 @@ msbuild :deploy, [:config] => :restorepackages do |msb, args|
         :outdir => "#{PUBLISH_DIR}/"
     }
     msb.solution = SOLUTION
+end
+
+desc "Sets the version number from GIT"    
+assemblyinfo :assemblyinfo do |asm|
+	asm.input_file = "SharedAssemblyInfo.cs"
+    asm.output_file = "SharedAssemblyInfo.cs"
+    describe = `git describe`.strip
+    tag, rev, hash = describe.split(/-/)
+    major, minor, build = tag.split(/\./).map {|x| x[/\d+/]}
+    puts "version: #{major}.#{minor}.#{build}.#{rev}-#{hash}"
+    asm.version = "#{major}.#{minor}.#{build}.#{rev}"
+    asm.file_version = "#{major}.#{minor}.#{build}.#{rev}"
+    if PRERELEASE == "true"
+        asm.informational_version = "#{major}.#{minor}.#{build}.#{rev}-develop+#{hash}"
+    else
+        asm.informational_version = "#{major}.#{minor}.#{build}.#{rev}+#{hash}"
+    end
 end
 
 # task :link do
