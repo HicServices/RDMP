@@ -6,12 +6,12 @@
   <Target Name="Deploy">
     <CallTarget Targets="Build" />
 	
+    <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
+       Text="Please pass 'ReleaseNugetPackageSource' in to this build task (/p:ReleaseNugetPackageSource=foo)" />
+
+    <Message Text="Pushing to nuget server at $(ReleaseNugetPackageSource) after build" />
+
     <!--
-        <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
-           Text="Please pass 'ReleaseNugetPackageSource' in to this build task (/p:ReleaseNugetPackageSource=foo)" />
-    
-        <Message Text="Pushing to nuget server at $(ReleaseNugetPackageSource) after build" />
-	
         <PropertyGroup Condition="'$(ConfigurationName)'=='Release' And '$(PushRelease)'!='' And '$(PushRelease)'==1">
             <ReleaseNugetPackage>true</ReleaseNugetPackage>
             <ReleaseNugetPackageSource>http://adp-hicci-01/nuget/</ReleaseNugetPackageSource>
