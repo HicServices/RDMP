@@ -14,7 +14,6 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
-using ReusableLibraryCode.DataTableExtension;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations
@@ -175,9 +174,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
                 if (duplicateName)
                     return false;
-
-                DataTableHelper helper =new DataTableHelper(toProcess);
-
+                
                 foreach (DataColumn column in toProcess.Columns)
                 {
                     try
@@ -200,8 +197,6 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                     }
                 }
 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    "We determined the following SQL to create this table:" + Environment.NewLine + helper.GetCreateTableSql(_database.Server,false,new MicrosoftSQLTableHelper())));
                 return true;
             }
             catch (Exception e)

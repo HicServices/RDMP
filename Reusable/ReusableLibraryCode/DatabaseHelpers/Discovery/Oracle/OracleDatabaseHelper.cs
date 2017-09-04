@@ -9,14 +9,14 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {
-    public class OracleDatabaseHelper : IDiscoveredDatabaseHelper
+    public class OracleDatabaseHelper : DiscoveredDatabaseHelper
     {
-        public IDiscoveredTableHelper GetTableHelper()
+        public override IDiscoveredTableHelper GetTableHelper()
         {
             return new OracleTableHelper();
         }
 
-        public void  DropDatabase(DiscoveredDatabase database)
+        public override void DropDatabase(DiscoveredDatabase database)
         {
              using(var con = (OracleConnection)database.Server.GetConnection())
              {
@@ -26,12 +26,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
              }
         }
 
-        public Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
+        public override Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
         {
             throw new NotImplementedException();
         }
-        
-        public IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
+
+        public override IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
         {
             List<DiscoveredTable> tables = new List<DiscoveredTable>();
             
@@ -46,21 +46,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             return tables.ToArray();
         }
 
-        public IEnumerable<DiscoveredTableValuedFunction> ListTableValuedFunctions(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper,
+        public override IEnumerable<DiscoveredTableValuedFunction> ListTableValuedFunctions(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper,
             DbConnection connection, string database, DbTransaction transaction = null)
         {
-            throw new NotImplementedException();
+            return new DiscoveredTableValuedFunction[0];
         }
-
-        public string[] ListTableValuedFunctions(DbConnectionStringBuilder builder, string database)
+        
+        public override DiscoveredStoredprocedure[] ListStoredprocedures(DbConnectionStringBuilder builder, string database)
         {
-            return new string[0];
-        }
-
-
-        public DiscoveredStoredprocedure[] ListStoredprocedures(DbConnectionStringBuilder builder, string database)
-        {
-            throw new NotImplementedException();
+            return new DiscoveredStoredprocedure[0];
         }
 
 

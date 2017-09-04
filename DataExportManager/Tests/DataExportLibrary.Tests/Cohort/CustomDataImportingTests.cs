@@ -154,7 +154,7 @@ namespace DataExportLibrary.Tests.Cohort
         #region Helper methods
         private DataFlowPipelineEngine<DataTable> GetEnginePointedAtFile(string filename)
         {
-            CsvDataTableHelper source = new CsvDataTableHelper(filename, 0);
+            CsvDataTableHelper source = new CsvDataTableHelper(filename);
             source.Check(new ThrowImmediatelyCheckNotifier());
 
             CustomCohortDataDestination destination = new CustomCohortDataDestination();

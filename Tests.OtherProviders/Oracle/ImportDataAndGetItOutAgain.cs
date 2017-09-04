@@ -42,7 +42,7 @@ namespace Tests.OtherProviders.Oracle
             var listener = new ThrowImmediatelyDataLoadEventListener();
             var canceller = new GracefulCancellationTokenSource();
 
-            CsvDataTableHelper source = new CsvDataTableHelper(testFile,0);
+            CsvDataTableHelper source = new CsvDataTableHelper(testFile);
             DiscoveredDatabase db = server.ExpectDatabase(dbName);
 
             //cleanup

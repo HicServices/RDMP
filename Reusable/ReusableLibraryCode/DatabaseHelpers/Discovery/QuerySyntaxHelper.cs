@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation;
@@ -163,6 +164,37 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 contents = ""; //it's something like count()
             else
                 contents = lineToSplit.Substring(firstBracket + 1, length).Trim();
+        }
+
+        public static string MakeHeaderNameSane(string header)
+        {
+            if (string.IsNullOrWhiteSpace(header))
+                return header;
+
+            //replace anything that isn't a digit, letter or underscore with emptiness (except spaces - these will go but first...)
+            Regex r = new Regex("[^A-Za-z0-9_ ]");
+
+            string adjustedHeader = r.Replace(header, "");
+
+            StringBuilder sb = new StringBuilder(adjustedHeader);
+
+            //Camel case after spaces
+            for (int i = 0; i < sb.Length; i++)
+            {
+                //if we are looking at a space
+                if (sb[i] == ' ')
+                    if (i + 1 < sb.Length) //and there is another character 
+                        if (sb[i + 1] >= 'a' && sb[i + 1] <= 'z') //and that character is a lower case letter
+                            sb[i + 1] = char.ToUpper(sb[i + 1]);
+            }
+
+            adjustedHeader = sb.ToString().Replace(" ", "");
+
+            //if it starts with a digit (illegal) put an underscore before it
+            if (Regex.IsMatch(adjustedHeader, "^[0-9]"))
+                adjustedHeader = "_" + adjustedHeader;
+
+            return adjustedHeader;
         }
     }
 

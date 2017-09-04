@@ -7,6 +7,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataLoadEngine.Job;
 using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngineTests.Integration.PipelineTests.Sources
@@ -176,7 +177,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         [TestCase("once #upon", "onceUpon")] //Dodgy characters are stripped before cammel casing after spaces so 'u' gets cammeled even though it has a symbol before it.
         public void TestMakingHeaderNamesSane(string bad, string expectedGood)
         {
-            Assert.AreEqual(expectedGood,DelimitedFlatFileDataFlowSource.MakeHeaderNameSane(bad));
+            Assert.AreEqual(expectedGood,QuerySyntaxHelper.MakeHeaderNameSane(bad));
         }
 
     }

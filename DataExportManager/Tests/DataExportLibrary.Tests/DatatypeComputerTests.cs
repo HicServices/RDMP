@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
-using ReusableLibraryCode.DataTableExtension;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace DataExportLibrary.Tests
 {

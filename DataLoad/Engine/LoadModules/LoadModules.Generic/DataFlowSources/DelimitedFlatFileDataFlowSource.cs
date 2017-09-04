@@ -16,7 +16,8 @@ using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataTableExtension;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowSources
@@ -25,7 +26,6 @@ namespace LoadModules.Generic.DataFlowSources
     public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
     {
         private CsvReader _reader;
-        private DataTableHelper _helper;
 
         private bool _dataAvailable;
         private IDataLoadEventListener _listener;
@@ -75,6 +75,8 @@ namespace LoadModules.Generic.DataFlowSources
         [DemandsInitialization("A collection of column names that are expected to be found in the input file which you want to specify as explicit types (e.g. you load barcodes like 0110 and 1111 and want these all loaded as char(4) instead of int)")]
         public ExplicitTypingCollection ExplicitlyTypedColumns { get; set; }
 
+        private DataTable _workingTable;
+
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             try
@@ -91,14 +93,11 @@ namespace LoadModules.Generic.DataFlowSources
                     LoadHeaders();
 
                 //if we do not yet have a data table to load
-                if (_helper == null)
+                if (_workingTable == null)
                 {
-                    //create the helper
-                    _helper = new DataTableHelper();
-                
                     //create a table with the name of the file
-                    DataTable dt = new DataTable();
-                    dt.TableName = MakeHeaderNameSane(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+                    _workingTable = new DataTable();
+                    _workingTable.TableName = QuerySyntaxHelper.MakeHeaderNameSane(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
                     List<string> duplicateHeaders = new List<string>();
 
@@ -108,9 +107,9 @@ namespace LoadModules.Generic.DataFlowSources
                         string h = header;
 
                         //watch for duplicate columns
-                        if (dt.Columns.Contains(header))
+                        if (_workingTable.Columns.Contains(header))
                             if (MakeHeaderNamesSane)
-                                h = MakeHeaderUnique(header, dt.Columns, listener, this);
+                                h = MakeHeaderUnique(header, _workingTable.Columns, listener, this);
                             else
                             {
                                 duplicateHeaders.Add(header);
@@ -119,16 +118,16 @@ namespace LoadModules.Generic.DataFlowSources
                         
                         //override type
                         if (ExplicitlyTypedColumns != null && ExplicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(h))
-                            dt.Columns.Add(h, ExplicitlyTypedColumns.ExplicitTypesCSharp[h]);
+                            _workingTable.Columns.Add(h, ExplicitlyTypedColumns.ExplicitTypesCSharp[h]);
                         else
-                            dt.Columns.Add(h);
+                            _workingTable.Columns.Add(h);
                     }
           
                     if (duplicateHeaders.Any())
                         throw new FlatFileLoadException("Found the following duplicate headers in file '" + _fileToLoad.File + "':" + string.Join(",", duplicateHeaders));
           
                     //set the data table to the new untyped but correctly headered table
-                    SetDataTable(dt);
+                    SetDataTable(_workingTable);
 
                     //Now we must read some data
                     if (StronglyTypeInput && StronglyTypeInputBatchSize != 0)
@@ -144,25 +143,25 @@ namespace LoadModules.Generic.DataFlowSources
                         }
 
                         //user want's to strongly type input with a custom batch size
-                        rowsRead = IterativelyBatchLoadDataIntoDataTable(dt,batchSizeToLoad);
-                        
+                        rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
                     }
                     else
                         //user does not want to strongly type or is strongly typing with regular batch size
-                        rowsRead = IterativelyBatchLoadDataIntoDataTable(dt, MaxBatchSize);
+                        rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, MaxBatchSize);
 
-                    //convert columns from string to strongly typed if required by the user
-                    _helper.SetDataTable(dt, StronglyTypeInput, ExplicitlyTypedColumns != null?ExplicitlyTypedColumns.ExplicitTypesCSharp:null);
+                    if (StronglyTypeInput)
+                        StronglyTypeWorkingTable();
                 }
                 else
                 {
                     //this isn't the first pass, so we have everything set up and can just read more data
 
                     //data table has been set so has a good schema or no schema depending on what user wanted, at least it has all the headers etc setup correctly
-                    _helper.DataTable.Rows.Clear();
+                    //so just clear the rows we loaded last chunk and load more
+                    _workingTable.Rows.Clear();
 
                     //get more rows
-                    rowsRead = IterativelyBatchLoadDataIntoDataTable(_helper.DataTable, MaxBatchSize);
+                    rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, MaxBatchSize);
                 }
 
                 //however we read
@@ -172,7 +171,7 @@ namespace LoadModules.Generic.DataFlowSources
                     return null;//we are done
 
                 //rows were read so return a copy of the DataTable, because we will continually reload the same DataTable schema throughout the file we don't want to give up our reference to good headers incase someone mutlates it
-                return _helper.DataTable.Copy();
+                return _workingTable.Copy();
             }
             catch (Exception )
             {
@@ -180,6 +179,39 @@ namespace LoadModules.Generic.DataFlowSources
                 if(_reader != null)
                     _reader.Dispose();
                 throw;
+            }
+
+        }
+
+        private void StronglyTypeWorkingTable()
+        {
+            DataTable dtCloned = _workingTable.Clone();
+
+            bool typeChangeNeeded = false;
+
+            foreach (DataColumn col in _workingTable.Columns)
+            {
+                //if we have already handled it
+                if (ExplicitlyTypedColumns != null && ExplicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(col.ColumnName))
+                    continue;
+
+                //let's make a decision about the data type to use based on the contents
+                var computedType = new DataTypeComputer(col);
+
+                //Type based on the contents of the column 
+                if (computedType.ShouldDowngradeColumnTypeToMatchCurrentEstimate(col))
+                {
+                    dtCloned.Columns[col.ColumnName].DataType = computedType.CurrentEstimate;
+                    typeChangeNeeded = true;
+                }
+            }
+
+            if (typeChangeNeeded)
+            {
+                foreach (DataRow row in _workingTable.Rows)
+                    dtCloned.ImportRow(row);
+
+                _workingTable = dtCloned;
             }
 
         }
@@ -217,8 +249,8 @@ namespace LoadModules.Generic.DataFlowSources
         public DataTable TryGetPreview()
         {
             //there is already a data table in memory
-            if (_helper != null)
-                return _helper.DataTable;
+            if (_workingTable != null)
+                return _workingTable;
 
             //we have not loaded anything yet
             if(_headers == null)
@@ -230,7 +262,7 @@ namespace LoadModules.Generic.DataFlowSources
                 CloseReader();
                 
                 _headers = null;
-                _helper = null;
+                _workingTable = null;
                 _reader = null;
                 _haveComplainedAboutColumnMismatch = false;
 
@@ -457,7 +489,7 @@ namespace LoadModules.Generic.DataFlowSources
 
             if(MakeHeaderNamesSane)
                 for (int i = 0; i < _headers.Length; i++)
-                    _headers[i] = MakeHeaderNameSane(_headers[i]);
+                    _headers[i] = QuerySyntaxHelper.MakeHeaderNameSane(_headers[i]);
         }
 
         public static string MakeHeaderUnique(string newColumnName, DataColumnCollection columnsSoFar, IDataLoadEventListener listener, object sender)
@@ -477,39 +509,7 @@ namespace LoadModules.Generic.DataFlowSources
             listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Warning, "Renamed duplicate column '" + newColumnName + "' to '" + newName + "'"));
             return newName;
         }
-
-        public static string MakeHeaderNameSane(string header)
-        {
-            if (string.IsNullOrWhiteSpace(header))
-                return header;
-
-            //replace anything that isn't a digit, letter or underscore with emptiness (except spaces - these will go but first...)
-            Regex r = new Regex("[^A-Za-z0-9_ ]");
-            
-            string adjustedHeader = r.Replace(header, "");
-
-            StringBuilder sb = new StringBuilder(adjustedHeader);
-            
-            //Camel case after spaces
-            for (int i = 0; i < sb.Length; i++)
-            {
-                //if we are looking at a space
-                if (sb[i] == ' ')
-                    if (i + 1 < sb.Length) //and there is another character 
-                        if (sb[i + 1] >= 'a' && sb[i + 1] <= 'z') //and that character is a lower case letter
-                            sb[i + 1] = char.ToUpper(sb[i + 1]);
-            }
-            
-            adjustedHeader = sb.ToString().Replace(" ","");
-            
-            //if it starts with a digit (illegal) put an underscore before it
-            if (Regex.IsMatch(adjustedHeader, "^[0-9]"))
-                adjustedHeader = "_" + adjustedHeader;
-
-            return adjustedHeader;
-        }
-
-
+        
         /// <summary>
         /// Trims the null elements off of the end of a reader.CurrentRecord array (e.g. sometimes you get "bob","frank",null,null,null -- usually occurs when you don't have any headers or have a newline in the middle of a row and are trying to resolve this
         /// </summary>
@@ -580,6 +580,7 @@ namespace LoadModules.Generic.DataFlowSources
         //used to advise user if he has selected the wrong separator
         private string[] _commonSeparators = new []{"|",",","    ","#"};
         private string _separator;
+        
 
         private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, int lineNumber, DataRow currentRow, string[] headers)
         {
@@ -665,10 +666,7 @@ namespace LoadModules.Generic.DataFlowSources
             //we have been given a new file we no longer know the headers.
             _headers = null;
             _haveDiscardedFirstLineInFileDueToReplacementHeaders = false;
-
-            //and we will need a new helper
-            _helper = null;
-
+            
             _fileToLoad = value;
             _listener = listener;
         }
@@ -684,6 +682,10 @@ namespace LoadModules.Generic.DataFlowSources
             return s;
         }
 
+        /// <summary>
+        /// Sets the target DataTable that we are loading from the csv/tsv etc
+        /// </summary>
+        /// <param name="dt"></param>
         public void SetDataTable(DataTable dt)
         {
             if(_headers == null)
@@ -692,9 +694,7 @@ namespace LoadModules.Generic.DataFlowSources
                 _headers = FixFlatFileNameToDatabaseTableMismatchedColumnNames(dt, _headers);
             }
 
-            if(_helper == null)
-                _helper = new DataTableHelper(dt);
-
+            _workingTable = dt;
         }
 
 

@@ -3,18 +3,17 @@ using System.Data;
 using System.Data.Common;
 using CatalogueLibrary.Data.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DataTableExtension;
 
 namespace QueryCaching.Aggregation.Arguments
 {
     public class CacheCommitJoinableInceptionQuery:CacheCommitArguments
     {
-        public CacheCommitJoinableInceptionQuery(AggregateConfiguration configuration, string sql, DataTable results, Dictionary<string, string> explicitTypesDictionary,int timeout) 
-            : base(AggregateOperation.JoinableInceptionQuery, configuration, sql, results, explicitTypesDictionary,timeout)
+        public CacheCommitJoinableInceptionQuery(AggregateConfiguration configuration, string sql, DataTable results, DatabaseColumnRequest[] explicitTypes,int timeout)
+            : base(AggregateOperation.JoinableInceptionQuery, configuration, sql, results, timeout, explicitTypes)
         {
         }
 
-        public override void CommitTableDataCompleted(DiscoveredServer server,string tableName, DataTableHelper helper, DbConnection con, DbTransaction transaction)
+        public override void CommitTableDataCompleted(DiscoveredTable resultingTable)
         {
             
         }

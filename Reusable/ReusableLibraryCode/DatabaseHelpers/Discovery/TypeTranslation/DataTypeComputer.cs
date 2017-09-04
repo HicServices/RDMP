@@ -1,10 +1,9 @@
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
-namespace ReusableLibraryCode.DataTableExtension
+namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
     public class DataTypeComputer
     {
@@ -34,11 +33,16 @@ namespace ReusableLibraryCode.DataTableExtension
             CurrentEstimate = preferenceOrder[0];
         }
 
-
-
         public DataTypeComputer():this(-1)
         {
             
+        }
+
+        public DataTypeComputer(DataColumn column):this(-1)
+        {
+            var dt = column.Table;
+            foreach (DataRow row in dt.Rows)
+                AdjustToCompensateForValue(row[column]);
         }
 
         private bool havereceivedBonafideType = false;
@@ -247,12 +251,39 @@ namespace ReusableLibraryCode.DataTableExtension
 
         public string GetSqlDBType(ITypeTranslater translater)
         {
-            return translater.GetSQLDBTypeForCSharpType(
-                new DatabaseTypeRequest(
-                    CurrentEstimate,
-                    Length == -1 ? (int?) null : Length,
-                    new Tuple<int, int>(numbersBeforeDecimalPlace, numbersAfterDecimalPlace)
-                    ));
+            return translater.GetSQLDBTypeForCSharpType(GetTypeRequest());
+        }
+
+        public DatabaseTypeRequest GetTypeRequest()
+        {
+            return new DatabaseTypeRequest(
+                CurrentEstimate,
+                Length == -1 ? (int?) null : Length,
+                new Tuple<int, int>(numbersBeforeDecimalPlace, numbersAfterDecimalPlace));
+        }
+
+        /// <summary>
+        /// Returns true if the DataTypeComputer CurrentEstimate is considered to be an improvement on the DataColumn provided. Use only when you actually want to
+        /// consider changing the value.  For example if you have read a CSV file into a DataTable and all current columns string/object then you can call this method
+        /// to determine whether the DataTypeComputer found a more appropriate Type or not.  
+        /// 
+        /// Note that if you want to change the Type you need to clone the DataTable, see: https://stackoverflow.com/questions/9028029/how-to-change-datatype-of-a-datacolumn-in-a-datatable
+        /// </summary>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        public bool ShouldDowngradeColumnTypeToMatchCurrentEstimate(DataColumn col)
+        {
+            if(col.DataType == typeof(object) || col.DataType == typeof(string))
+            {
+                int indexOfCurrentPreference = Array.IndexOf(preferenceOrder, CurrentEstimate);
+                int indexOfCurrentColumn = Array.IndexOf(preferenceOrder, typeof(string));
+                
+                //e.g. if current preference based on data is DateTime/integer and col is a string then we SHOULD downgrade
+                return indexOfCurrentPreference < indexOfCurrentColumn;
+            }
+
+            //it's not a string or an object, user probably has a type in mind for his DataColumn, let's not change that
+            return false;
         }
     }
 }

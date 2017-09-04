@@ -61,7 +61,7 @@ namespace QueryCachingTests
         [Test]
         public void BasicCase()
         {
-           var ex = Assert.Throws<ArgumentException>(()=>_manager.CommitResults(new CacheCommitExtractableAggregate(_config,"I've got a lovely bunch of coconuts",new DataTable(),null,30 )));
+           var ex = Assert.Throws<ArgumentException>(()=>_manager.CommitResults(new CacheCommitExtractableAggregate(_config,"I've got a lovely bunch of coconuts",new DataTable(),30 )));
 
                 
             Assert.IsTrue(ex.Message.StartsWith("The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
@@ -70,7 +70,7 @@ namespace QueryCachingTests
             dt.Columns.Add("Col1");
             dt.Rows.Add("fishy!");
 
-            var ex2 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, null, 30)));
+            var ex2 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
             Assert.IsTrue(
                 ex2.Message.StartsWith(
@@ -88,7 +88,7 @@ namespace QueryCachingTests
 
             AggregateDimension dim = new AggregateDimension(CatalogueRepository, _extractionInformation, _config);
 
-            var ex3 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, null, 30)));
+            var ex3 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
             Assert.IsTrue(
                 ex3.Message.StartsWith(
@@ -97,7 +97,7 @@ namespace QueryCachingTests
             _extractionInformation.IsExtractionIdentifier = false;
             _extractionInformation.SaveToDatabase();
 
-            Assert.DoesNotThrow(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, null, 30)));
+            Assert.DoesNotThrow(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
             dim.DeleteInDatabase();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
+using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Tests.DataExtraction;
 using DataExportLibrary;
 using NUnit.Framework;
@@ -36,13 +37,11 @@ namespace DataExportLibrary.Tests
                 }
 
 
-                csvDataTableHelper = new CsvDataTableHelper(file, -1);
+                csvDataTableHelper = new CsvDataTableHelper(file);
 
                 csvDataTableHelper.LoadDataTableFromFile();
 
                 csvDataTableHelper.Check(new ThrowImmediatelyCheckNotifier());
-
-                string tableName;
 
                 var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                 var database = server.ExpectDatabase(databaseName);
@@ -52,16 +51,10 @@ namespace DataExportLibrary.Tests
                 
                 server.ChangeDatabase(databaseName);
 
-                using (var con = (SqlConnection) server.GetConnection())
-                {
-                    con.Open();
-                    SqlTransaction transaction = con.BeginTransaction();
-
-                    csvDataTableHelper.UploadFileToConnection(server, con, out tableName, transaction, false, false);
-
-                    transaction.Commit();
-                    con.Close();
-                }
+                var dt = csvDataTableHelper.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                
+                var tbl = database.CreateTable(dt.TableName, dt);
+                string tableName = tbl.GetRuntimeName();
 
                 csvDataTableHelper.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 

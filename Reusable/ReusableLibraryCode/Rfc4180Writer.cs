@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using ReusableLibraryCode.DataTableExtension;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode
 {
@@ -20,15 +20,14 @@ namespace ReusableLibraryCode
                 writer.WriteLine(String.Join(",", headerValues));
             }
             
-            var helper = new DataTableHelper(sourceTable);
-            var typeDictionary = helper.GetTypeDictionary();
-            
+            var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new DataTypeComputer(c));
+
             foreach (DataRow row in sourceTable.Rows)
             {
                 var line = new List<string>();
                 
                 foreach (DataColumn col in sourceTable.Columns)
-                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col.ColumnName].CurrentEstimate == typeof(DateTime))));
+                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].CurrentEstimate == typeof(DateTime))));
                 
                 writer.WriteLine(String.Join(",", line));
             }
@@ -50,7 +49,7 @@ namespace ReusableLibraryCode
             }
 
             if (o is DateTime)
-                GetStringRepresentation((DateTime) o);
+                return GetStringRepresentation((DateTime) o);
 
             return o.ToString();
         }
@@ -60,7 +59,7 @@ namespace ReusableLibraryCode
             if (dt.TimeOfDay == TimeSpan.Zero)
                 return dt.ToString("yyyy-MM-dd");
 
-            return dt.ToString("yyyy-MM-dd HH:mm:ss");
+            return dt.ToString("yyyy-MM-dd HH:mm:ss.fff");
         }
 
         private static string QuoteValue(string value)

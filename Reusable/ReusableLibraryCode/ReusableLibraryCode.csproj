@@ -224,6 +224,8 @@
     <Compile Include="DataAccess\IDataAccessPoint.cs" />
     <Compile Include="DataAccess\IEncryptedPasswordHost.cs" />
     <Compile Include="DatabaseCommandHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\DatabaseColumnRequest.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\DiscoveredDatabaseHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredParameter.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredServerHelper.cs" />
     <Compile Include="DatabaseHelpers\DatabaseHelperFactory.cs" />
@@ -282,8 +284,7 @@
     <Compile Include="IManagedTransaction.cs" />
     <Compile Include="ManagedTransaction.cs" />
     <Compile Include="DatabaseType.cs" />
-    <Compile Include="DataTableExtension\DataTableHelper.cs" />
-    <Compile Include="DataTableExtension\DataTypeComputer.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\DataTypeComputer.cs" />
     <Compile Include="Diff.cs" />
     <Compile Include="Checks\ICheckable.cs" />
     <Compile Include="Checks\ICheckNotifier.cs" />

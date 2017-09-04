@@ -2,16 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DataTableExtension;
 
 namespace QueryCaching.Aggregation.Arguments
 {
     public class CacheCommitIdentifierList : CacheCommitArguments
     {
-        public CacheCommitIdentifierList(AggregateConfiguration configuration,string sql, DataTable results, Dictionary<string, string> explicitTypesDictionary,int timeout) : base(AggregateOperation.IndexedExtractionIdentifierList,configuration,sql,results,explicitTypesDictionary,timeout)
+        private DatabaseColumnRequest _identifierColumn;
+
+        public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results, DatabaseColumnRequest[] identifierColumn, int timeout)
+            : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout, identifierColumn)
         {
             //advise them if they are trying to cache an identifier list but the DataTable has more than 1 column
             if (results.Columns.Count != 1)
@@ -21,45 +24,44 @@ namespace QueryCaching.Aggregation.Arguments
             if (sql.Trim().StartsWith(CachedAggregateConfigurationResultsManager.CachingPrefix))
                 throw new NotSupportedException("Sql for the query started with '" + CachedAggregateConfigurationResultsManager.CachingPrefix + "' which implies you ran some SQL code to fetch some stuff from the cache and then committed it back into the cache (obliterating the record of what the originally executed query was).  This is referred to as Inception Caching and isn't allowed.  Note to developers: this happens if user caches a query then runs the query again (fetching it from the cache) and somehow tries to commit the cache fetch request back into the cache as an overwrite");
 
+            if (results.Rows.Cast<DataRow>().Any(r=>r[0] == null || r[0] == DBNull.Value))
+                throw new Exception("DataTable for '" + configuration + "' contains nulls so cannot be cached");
+
+            if(!identifierColumn.Any())
+                throw new Exception("identifierColumn should be strongly typed i.e. the array should include a single column which is the patient identifier column with a specific database type to use e.g. varchar(10)");
+
+            if (identifierColumn.Count() != 1)
+                throw new Exception("there cannot be multiple identifierColumns in an IdentifierList cache commit");
+
+            _identifierColumn = identifierColumn.Single();
+            _identifierColumn.AllowNulls = false;
+            _identifierColumn.ColumnName = results.Columns[0].ColumnName;
         }
 
-        public override void CommitTableDataCompleted(DiscoveredServer server, string tableName, DataTableHelper helper, DbConnection con, DbTransaction transaction)
+        public override void CommitTableDataCompleted(DiscoveredTable resultingTable)
         {
-            //ask the helper what datatype it used for the identifier column
-            string sqlDbTypeForColumn = helper.GetTypeDictionary()[Results.Columns[0].ColumnName].GetSqlDBType(server);
-            string colName = Results.Columns[0].ColumnName;
-
             //if user has an explicit type to use for the column (probably a good idea to have all extraction idetntifiers of the same data type
-            if (ExplicitTypesDictionary != null && ExplicitTypesDictionary.ContainsKey(colName))
-                sqlDbTypeForColumn = ExplicitTypesDictionary[colName];//use that instead
+            var col = resultingTable.DiscoverColumn(_identifierColumn.ColumnName);
 
-            CreateIndex(tableName, colName, sqlDbTypeForColumn, Configuration.ToString(), con, transaction);
+            CreateIndex(resultingTable,col, Configuration.ToString());
         }
 
 
-        private void CreateIndex(string tableName, string columnName, string sqlDbTypeForColumn, string configurationName, DbConnection con, DbTransaction transaction)
+        private void CreateIndex(DiscoveredTable table, DiscoveredColumn onColumn, string configurationName)
         {
-            string notNull = "ALTER TABLE " + tableName + " ALTER COLUMN " + columnName + " " + sqlDbTypeForColumn + " NOT NULL";
+            
+            string pkCreationSql = "ALTER TABLE " + table.GetRuntimeName() + " ADD CONSTRAINT PK_" + table.GetRuntimeName() + " PRIMARY KEY CLUSTERED (" + onColumn.GetRuntimeName() + ")";
             try
             {
-                var cmdMakeNotNull = DatabaseCommandHelper.GetCommand(notNull, con, transaction);
-                cmdMakeNotNull.CommandTimeout = Timeout;
-                cmdMakeNotNull.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-                throw new Exception(
-                    "Failed when trying to make column " + columnName +
-                    " into NotNull for AggregateConfiguration " + configurationName + ".  The SQL that failed was:" +
-                    Environment.NewLine + notNull, e);
-            }
+                var server = table.Database.Server;
+                using (var con = server.GetConnection())
+                {
+                    con.Open();
 
-            string pkCreationSql = "ALTER TABLE " + tableName + " ADD CONSTRAINT PK_" + tableName + " PRIMARY KEY CLUSTERED (" + columnName + ")";
-            try
-            {
-                var cmdCreateIndex = DatabaseCommandHelper.GetCommand(pkCreationSql, con, transaction);
-                cmdCreateIndex.CommandTimeout = Timeout;
-                cmdCreateIndex.ExecuteNonQuery();
+                    var cmd = server.GetCommand(pkCreationSql, con);
+                    cmd.CommandTimeout = Timeout;
+                    cmd.ExecuteNonQuery();
+                }
             }
             catch (Exception e)
             {

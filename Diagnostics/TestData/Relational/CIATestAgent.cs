@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DataTableExtension;
 
 namespace Diagnostics.TestData.Relational
 {
