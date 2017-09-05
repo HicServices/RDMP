@@ -98,9 +98,13 @@ namespace QueryCaching.Aggregation
                 arguments.Results.TableName = nameWeWillGiveTableInCache;
 
                 //add explicit types
-                var resultingTable = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results,arguments.ExplicitColumns);
+                var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
+                if(tbl.Exists())
+                    tbl.Drop();
 
-                if(!resultingTable.Exists())
+                tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
+
+                if (!tbl.Exists())
                     throw new Exception("Cache table did not exist even after CreateTable completed without error!");
 
                 var cmdCreateNew =
@@ -120,11 +124,11 @@ namespace QueryCaching.Aggregation
                 cmdCreateNew.Parameters["@Operation"].Value = operation.ToString();
 
                 cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@TableName", cmdCreateNew));
-                cmdCreateNew.Parameters["@TableName"].Value = resultingTable.GetRuntimeName();
+                cmdCreateNew.Parameters["@TableName"].Value = tbl.GetRuntimeName();
 
                 cmdCreateNew.ExecuteNonQuery();
 
-                arguments.CommitTableDataCompleted(resultingTable);
+                arguments.CommitTableDataCompleted(tbl);
             }
         }
 

@@ -102,9 +102,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
         
         public IBulkCopy BeginBulkInsert(IManagedTransaction transaction = null)
-        { 
-            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
-                return Helper.BeginBulkInsert(this, connection.Connection, connection.Transaction);
+        {
+            IManagedConnection connection = Database.Server.GetManagedConnection(transaction);
+            return Helper.BeginBulkInsert(this, connection);
+        }
+
+        public void Truncate()
+        {
+            Helper.TruncateTable(this);
         }
     }
 

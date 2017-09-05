@@ -136,11 +136,8 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
             //now rows to start with
             Assert.AreEqual(0, table.GetRowCount());
 
-            using (var con = server.GetConnection())
+            using (var i = table.BeginBulkInsert())
             {
-                con.Open();
-                var i = table.BeginBulkInsert();
-
                 var dt = new DataTable();
                 dt.Columns.Add("id");
                 dt.Columns.Add("name");
@@ -150,18 +147,20 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
                 dt.Columns.Add("mydouble");
                 dt.Columns.Add("chiAsNumeric");
                 dt.Columns.Add("teenynumber");
-                
+
                 dt.Rows.Add("10", "flibble", 1.5, "0101010101", 2.5, 1.1, 1000, 5);
                 dt.Rows.Add("11", "bandycoot", 1.1, "0202020202", 1.5, 1.2, 2000, 8);
                 i.Upload(dt);
-                i.Dispose();
+            }
 
-                Assert.AreEqual(2, table.GetRowCount());
+            Assert.AreEqual(2, table.GetRowCount());
 
-                var r = new MySqlCommand("select * from Fish", (MySqlConnection) con).ExecuteReader();
+            using (var con = table.Database.Server.GetConnection())
+            {
+                var r = new MySqlCommand("select * from Fish", (MySqlConnection)con).ExecuteReader();
                 Assert.IsTrue(r.Read());
 
-                Assert.AreEqual(10,r["id"]);
+                Assert.AreEqual(10, r["id"]);
                 Assert.AreEqual("flibble", r["name"]);
                 Assert.AreEqual(1.5, r["height"]);
                 Assert.AreEqual("0101010101", r["chi"]);
@@ -181,9 +180,9 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
                 Assert.AreEqual(2000, r["chiAsNumeric"]);
                 Assert.AreEqual(8, r["teenynumber"]);
                 r.Close();
-
-                new MySqlCommand("truncate table Fish", (MySqlConnection)con).ExecuteNonQuery();
             }
+            
+            table.Truncate();
 
             Assert.AreEqual(0, table.GetRowCount());
 

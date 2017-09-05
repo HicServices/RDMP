@@ -25,6 +25,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection, DiscoveredTableValuedFunction discoveredTableValuedFunction, DbTransaction transaction);
 
-        IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction);
+        IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection);
+        
+        void TruncateTable(DiscoveredTable discoveredTable);
     }
 }

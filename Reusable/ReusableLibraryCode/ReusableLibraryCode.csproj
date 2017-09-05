@@ -232,6 +232,7 @@
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredColumn.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredDataType.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredStoredprocedure.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\DiscoveredTableHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredTableValuedFunction.cs" />
     <Compile Include="DatabaseHelpers\Discovery\IBulkCopy.cs" />
     <Compile Include="DatabaseHelpers\Discovery\IDiscoveredDatabaseHelper.cs" />
