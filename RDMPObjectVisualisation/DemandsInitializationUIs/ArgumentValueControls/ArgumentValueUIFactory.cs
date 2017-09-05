@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -20,13 +21,17 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             try
             {
                 //if it is a bool
-                if (typeof (bool) == argumentType)
+                if (typeof (Pipeline).IsAssignableFrom(argumentType))
+                    toReturn = new ArgumentValuePipelineUI(catalogueRepository,parent, argumentType);
+                else if (typeof (bool) == argumentType)
                     toReturn = new ArgumentValueBoolUI();
                 else if (demand.DemandType == DemandType.SQL) //if it is SQL
                 {
-                    if (typeof(string) != argumentType)
-                        throw new NotSupportedException("Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type " + argumentType + " (Expected String)");
-                
+                    if (typeof (string) != argumentType)
+                        throw new NotSupportedException(
+                            "Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type " +
+                            argumentType + " (Expected String)");
+
                     toReturn = new ArgumentValueSqlUI();
                 }
                 else if (typeof (ICustomUIDrivenClass).IsAssignableFrom(argumentType))
@@ -43,15 +48,22 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                                                         argumentType +
                                                         "' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
 
-                    toReturn = new ArgumentValueComboBoxUI(catalogueRepository.MEF.GetAllTypes().Where(t => demand.TypeOf.IsAssignableFrom(t)).ToArray());
+                    toReturn =
+                        new ArgumentValueComboBoxUI(
+                            catalogueRepository.MEF.GetAllTypes()
+                                .Where(t => demand.TypeOf.IsAssignableFrom(t))
+                                .ToArray());
                 }
-                else if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
+                else if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
                 {
-                    toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(catalogueRepository,parent,argumentType,true);
+                    toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(catalogueRepository, parent, argumentType,
+                        true);
                 }
-                else if (typeof(Enum).IsAssignableFrom(argument.GetSystemType()))
+                else if (typeof (Enum).IsAssignableFrom(argument.GetSystemType()))
                 {
-                    toReturn = new ArgumentValueComboBoxUI(Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray(),true);
+                    toReturn =
+                        new ArgumentValueComboBoxUI(Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray(),
+                            true);
                 }
                 else if (typeof (CatalogueRepository).IsAssignableFrom(argumentType))
                 {
@@ -60,7 +72,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 else //type is simple
                 {
                     toReturn = new ArgumentValueTextUI();
-                }  
+                }
             }
             catch (Exception e)
             {

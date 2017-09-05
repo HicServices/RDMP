@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using ReusableUIComponents.Annotations;
 
 namespace RDMPObjectVisualisation.Pipelines
 {
@@ -195,6 +198,37 @@ namespace RDMPObjectVisualisation.Pipelines
                 //select the clone
                 ddPipelines.SelectedItem = clone;
             }
+        }
+
+        
+        /// <summary>
+        /// Turns the control into a single line ui control
+        /// </summary>
+        [UsedImplicitly]
+        public void CollapseToSingleLineMode()
+        {
+            this.Height = 28;
+
+            this.Controls.Remove(gbPrompt);
+
+            this.Controls.Add(ddPipelines);
+            ddPipelines.Location = new Point(2, 2);
+            ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right; 
+
+            foreach (var button in new[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline })
+            {
+                this.Controls.Add(button);
+                button.Location = new Point(2, 2);
+                button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            }
+
+            btnDeletePipeline.Left = this.Width - btnDeletePipeline.Width;
+            btnClonePipeline.Left = btnDeletePipeline.Left - btnClonePipeline.Width;
+            btnCreateNewPipeline.Left = btnClonePipeline.Left - btnCreateNewPipeline.Width;
+            btnEditPipeline.Left = btnCreateNewPipeline.Left - btnEditPipeline.Width;
+
+            ddPipelines.Width = btnEditPipeline.Left - 2;
+
         }
     }
 }

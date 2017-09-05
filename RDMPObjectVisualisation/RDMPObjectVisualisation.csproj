@@ -192,17 +192,17 @@
     <Compile Include="DemandsInitializationUIs\ArgumentCollection.Designer.cs">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
     </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentUI.Designer.cs">
-      <DependentUpon>ArgumentUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.Designer.cs">
       <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.Designer.cs">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.cs">
       <SubType>UserControl</SubType>
@@ -323,11 +323,11 @@
     <EmbeddedResource Include="DemandsInitializationUIs\ArgumentCollection.resx">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentUI.resx">
-      <DependentUpon>ArgumentUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
       <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.resx">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.resx">
       <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
