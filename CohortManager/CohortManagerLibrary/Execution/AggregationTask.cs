@@ -70,7 +70,7 @@ namespace CohortManagerLibrary.Execution
 
         public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
         {
-            return new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes, Timeout);
+            return new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes.Single(), Timeout);
         }
 
         public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)

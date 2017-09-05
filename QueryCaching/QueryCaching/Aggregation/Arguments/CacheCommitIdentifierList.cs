@@ -13,8 +13,8 @@ namespace QueryCaching.Aggregation.Arguments
     {
         private DatabaseColumnRequest _identifierColumn;
 
-        public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results, DatabaseColumnRequest[] identifierColumn, int timeout)
-            : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout, identifierColumn)
+        public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results, DatabaseColumnRequest identifierColumn, int timeout)
+            : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout, new []{identifierColumn})
         {
             //advise them if they are trying to cache an identifier list but the DataTable has more than 1 column
             if (results.Columns.Count != 1)
@@ -27,13 +27,10 @@ namespace QueryCaching.Aggregation.Arguments
             if (results.Rows.Cast<DataRow>().Any(r=>r[0] == null || r[0] == DBNull.Value))
                 throw new Exception("DataTable for '" + configuration + "' contains nulls so cannot be cached");
 
-            if(!identifierColumn.Any())
-                throw new Exception("identifierColumn should be strongly typed i.e. the array should include a single column which is the patient identifier column with a specific database type to use e.g. varchar(10)");
+            if (identifierColumn == null)
+                throw new Exception("You must specify the data type of the identifier column, identifierColumn was null");
 
-            if (identifierColumn.Count() != 1)
-                throw new Exception("there cannot be multiple identifierColumns in an IdentifierList cache commit");
-
-            _identifierColumn = identifierColumn.Single();
+            _identifierColumn = identifierColumn;
             _identifierColumn.AllowNulls = false;
             _identifierColumn.ColumnName = results.Columns[0].ColumnName;
         }

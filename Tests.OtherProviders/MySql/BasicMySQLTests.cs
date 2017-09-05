@@ -157,6 +157,7 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
 
             using (var con = table.Database.Server.GetConnection())
             {
+                con.Open();
                 var r = new MySqlCommand("select * from Fish", (MySqlConnection)con).ExecuteReader();
                 Assert.IsTrue(r.Read());
 

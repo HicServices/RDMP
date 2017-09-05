@@ -46,8 +46,8 @@ namespace DataExportLibrary.Tests
                 var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                 var database = server.ExpectDatabase(databaseName);
 
-                if(!database.Exists())
-                    server.CreateDatabase(databaseName);
+                //recreate it
+                database.Create(true);
                 
                 server.ChangeDatabase(databaseName);
 

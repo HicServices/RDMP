@@ -7,6 +7,7 @@ using NUnit.Framework;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace QueryCachingTests
@@ -16,8 +17,9 @@ namespace QueryCachingTests
         private Catalogue _cata;
         private AggregateConfiguration _config;
         private CachedAggregateConfigurationResultsManager _manager;
+        private DatabaseColumnRequest _myColSpecification = new DatabaseColumnRequest("MyCol","varchar(10)");
 
-        
+
         [SetUp]
         public void CreateEntities()
         {
@@ -50,9 +52,9 @@ namespace QueryCachingTests
             dt.Rows.Add("0101310101");
 
             //commit it 3 times, should just overwrite
-            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt,null,30));
-            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, null, 30));
-            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, null, 30));
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification, 30));
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification, 30));
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification, 30));
 
             var resultsTableName = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.IndexedExtractionIdentifierList);
 
@@ -99,7 +101,7 @@ namespace QueryCachingTests
             dt.Rows.Add("0101010101");
             dt.Rows.Add("0101010101");
 
-            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, null, 30)));
+            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30)));
             Assert.IsTrue(ex.Message.Contains("Failed to create unique primary key on the results of AggregateConfiguration CachedAggregateConfigurationResultsManagerTests."));
         }
 
@@ -117,7 +119,7 @@ namespace QueryCachingTests
             string sql = @"/*Cached:cic_65_People in DMPTestCatalogue*/
 	select * from [cache]..[IndexedExtractionIdentifierList_AggregateConfiguration217]";
 
-            var ex = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, null, 30)));
+            var ex = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
             Assert.IsTrue(ex.Message.Contains("This is referred to as Inception Caching and isn't allowed"));
 
             
@@ -133,17 +135,10 @@ namespace QueryCachingTests
             dt.Rows.Add("0101010102");
 
 
-            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, null, 30)));
-            Assert.IsTrue(ex.Message.Contains("Failed when trying to make column MyCol into NotNull for AggregateConfiguration CachedAggregateConfigurationResultsManagerTests."));
+            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30)));
+            Assert.AreEqual("DataTable for 'CachedAggregateConfigurationResultsManagerTests' contains nulls so cannot be cached",ex.Message);
         }
-
-
-        private void GetConfigAndManager()
-        {
-            
-        }
-
-
+        
         private const string SomeComplexBitOfSqlCode =
             @"USE [QueryCachingDatabase]
 GO

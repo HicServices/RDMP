@@ -12,7 +12,6 @@ using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
-using AcceptAllCheckNotifier = ReusableLibraryCode.Checks.AcceptAllCheckNotifier;
 
 namespace QueryCachingTests
 {
@@ -26,6 +25,9 @@ namespace QueryCachingTests
         public void Setup()
         {
             DiscoveredQueryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
+
+            if(DiscoveredQueryCachingDatabase.Exists())
+                DiscoveredQueryCachingDatabase.ForceDrop();
 
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
             scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
