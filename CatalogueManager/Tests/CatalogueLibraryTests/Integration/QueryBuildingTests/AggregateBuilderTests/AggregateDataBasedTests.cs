@@ -177,7 +177,9 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
             var ORContainer = new SpontaneouslyInventedFilterContainer(null, null, FilterContainerOperation.OR);
             var constParam = new ConstantParameter(declaration, "'T'", "T Category Only");
-            var filter1 = new SpontaneouslyInventedFilter(ORContainer, "Category=@category", "Category Is @category",
+            
+            //this is deliberately duplication, it tests that the parameter compiles as well as that any dynamic sql doesn't get thrown by quotes
+            var filter1 = new SpontaneouslyInventedFilter(ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",
                 "ensures the records belong to the category @category", new ISqlParameter[] { constParam });
             var filter2 = new SpontaneouslyInventedFilter(ORContainer, "NumberInTrouble > 42",
                 "number in trouble greater than 42", "See above", null);
