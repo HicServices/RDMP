@@ -346,6 +346,7 @@
     <Compile Include="Providers\CatalogueChildProvider.cs" />
     <Compile Include="Data\PerformanceImprovement\CohortHierarchy.cs" />
     <Compile Include="Nodes\ParametersNode.cs" />
+    <Compile Include="Providers\DecryptionPrivateKeyNode.cs" />
     <Compile Include="Providers\DescendancyList.cs" />
     <Compile Include="Providers\IChildProvider.cs" />
     <Compile Include="Providers\ICoreChildProvider.cs" />

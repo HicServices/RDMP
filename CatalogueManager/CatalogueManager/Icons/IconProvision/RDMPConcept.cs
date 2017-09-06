@@ -105,7 +105,8 @@ namespace CatalogueManager.Icons.IconProvision
         LoadBubble,
         LoadFinalDatabase,
 
-        AllExternalServersNode
+        AllExternalServersNode,
+        DecryptionPrivateKeyNode
 
     }
 }

@@ -1310,6 +1310,7 @@
     <None Include="Icons\Exe.png" />
     <None Include="Icons\Executable.png" />
     <None Include="Icons\AllExternalServersNode.png" />
+    <None Include="Icons\DecryptionPrivateKeyNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

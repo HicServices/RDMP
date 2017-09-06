@@ -203,7 +203,15 @@ namespace CatalogueLibrary.Providers
 
         private void AddChildren(DataAccessCredentialsNode dataAccessCredentialsNode)
         {
-            AddToDictionaries(new HashSet<object>(AllDataAccessCredentials), new DescendancyList(dataAccessCredentialsNode));
+            HashSet<object> children = new HashSet<object>();
+            
+            children.Add(new DecryptionPrivateKeyNode());
+
+            foreach (var creds in AllDataAccessCredentials)
+                children.Add(creds);
+
+
+            AddToDictionaries(children, new DescendancyList(dataAccessCredentialsNode));
         }
 
         private void AddChildren(ANOTablesNode anoTablesNode)
