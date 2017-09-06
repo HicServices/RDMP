@@ -50,11 +50,13 @@ namespace CatalogueLibrary.Providers
         public ANOTablesNode ANOTablesNode { get; private set; }
         public ANOTable[] AllANOTables { get; set; }
 
+        public ExternalDatabaseServer[] AllExternalServers { get; private set; }
         public TableInfoServerNode[] AllServers { get;private set; }
         public TableInfo[] AllTableInfos { get; private set; }
 
         public DataAccessCredentialsNode DataAccessCredentialsNode { get; set; }
-        
+
+        public AllExternalServersNode AllExternalServersNode { get; private set; }
         public AllServersNode AllServersNode { get; private set; }
 
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
@@ -95,7 +97,9 @@ namespace CatalogueLibrary.Providers
             AllLoadProgresses = repository.GetAllObjects<LoadProgress>();
             AllCacheProgresses = repository.GetAllObjects<CacheProgress>();
             AllLoadPeriodicallies = repository.GetAllObjects<LoadPeriodically>();
-            
+
+            AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
+
             AllTableInfos = repository.GetAllObjects<TableInfo>();
             AllDataAccessCredentials = repository.GetAllObjects<DataAccessCredentials>();
             DataAccessCredentialsNode = new DataAccessCredentialsNode();
@@ -134,6 +138,9 @@ namespace CatalogueLibrary.Providers
             foreach (JoinInfo j in AllJoinInfos)
                 j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
 
+            AllExternalServersNode = new AllExternalServersNode();
+            AddChildren(AllExternalServersNode);
+
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
 
@@ -144,6 +151,11 @@ namespace CatalogueLibrary.Providers
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
+        }
+
+        private void AddChildren(AllExternalServersNode allExternalServersNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
         }
 
         private void BuildServerNodes()

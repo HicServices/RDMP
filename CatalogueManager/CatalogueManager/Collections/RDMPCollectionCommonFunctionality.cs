@@ -309,9 +309,12 @@ namespace CatalogueManager.Collections
             OnRefreshChildProvider(_activator.CoreChildProvider);
             
             //now tell tree view to refresh the object
-            
-            //so get parent
-            var parent = Tree.GetParent(e.Object);
+            object parent = null; 
+
+            //or from known descendancy
+            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+            if (knownDescendancy != null)
+                parent = knownDescendancy.Last();
             
             //item deleted?
             if (!e.Object.Exists())
@@ -344,9 +347,15 @@ namespace CatalogueManager.Collections
                 if (IsHiddenByFilter(e.Object))
                     return;
 
-                //it's not hidden so refresh it
+                //is parent in tree?
+                if(parent != null && Tree.IndexOf(parent) != -1)
+                    Tree.RefreshObject(parent);//refresh parent
+                else
+                //parent isn't in tree, could be a root object? try to refresh the object anyway
                 if(Tree.IndexOf(e.Object) != -1)
                     Tree.RefreshObject(e.Object);
+
+
             }
         }
 

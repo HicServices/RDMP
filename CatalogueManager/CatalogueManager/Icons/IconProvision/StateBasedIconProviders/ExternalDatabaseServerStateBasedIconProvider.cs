@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -28,6 +29,15 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             _assemblyToIconDictionary.Add(typeof(HIC.Logging.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_Logging);
 
             _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
+        }
+
+        public Bitmap GetIconForAssembly(Assembly assembly)
+        {
+            var assemblyName = assembly.GetName().Name;
+            if (_assemblyToIconDictionary.ContainsKey(assemblyName))
+                return _assemblyToIconDictionary[assemblyName];
+
+            throw new ArgumentOutOfRangeException("Did not know what icon to use for '" + assemblyName + "'.dll");
         }
 
         public Bitmap GetImageIfSupportedObject(object o)

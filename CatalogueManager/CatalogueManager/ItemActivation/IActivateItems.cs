@@ -117,5 +117,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateExecuteDQE(object sender, Catalogue catalogue);
         void ActivateLoadProgress(object sender, LoadProgress loadProgress);
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
+        void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
     }
 }

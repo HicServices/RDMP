@@ -482,7 +482,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FamFamFamIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\IconConcept.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionality.cs" />
     <Compile Include="Collections\RDMPCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -665,8 +664,15 @@
     <Compile Include="ItemActivation\Emphasis\EmphasiseItemHandler.cs" />
     <Compile Include="ItemActivation\Emphasis\EmphasiseRequest.cs" />
     <Compile Include="ItemActivation\IActivateItems.cs" />
+    <Compile Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.Designer.cs">
+      <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Menus\AggregateFilterContainerMenu.cs" />
     <Compile Include="Menus\AggregatesNodeMenu.cs" />
+    <Compile Include="Menus\AllExternalServersNodeMenu.cs" />
     <Compile Include="Menus\CatalogueItemsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
@@ -1303,6 +1309,7 @@
     <None Include="Icons\AllCataloguesUsedByLoadMetadataNode.png" />
     <None Include="Icons\Exe.png" />
     <None Include="Icons\Executable.png" />
+    <None Include="Icons\AllExternalServersNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1538,6 +1545,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.resx">
+      <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectVisualisation\RDMPObjectsRibbonUI.resx">
       <DependentUpon>RDMPObjectsRibbonUI.cs</DependentUpon>

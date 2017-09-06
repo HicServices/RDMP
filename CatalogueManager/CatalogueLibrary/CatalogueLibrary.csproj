@@ -320,6 +320,7 @@
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
+    <Compile Include="Nodes\AllExternalServersNode.cs" />
     <Compile Include="Nodes\ANOTablesNode.cs" />
     <Compile Include="Nodes\CatalogueItemsNode.cs" />
     <Compile Include="Nodes\CohortSetsNode.cs" />

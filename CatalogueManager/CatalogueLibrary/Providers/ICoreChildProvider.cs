@@ -22,6 +22,7 @@ namespace CatalogueLibrary.Providers
         DataAccessCredentialsNode DataAccessCredentialsNode { get; }
         AllServersNode AllServersNode { get;}
         ColumnInfo[] AllColumnInfos { get;}
+        AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
         
         object[] GetAllDescendableObjects();

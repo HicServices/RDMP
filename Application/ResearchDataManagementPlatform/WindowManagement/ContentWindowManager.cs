@@ -35,6 +35,7 @@ using CatalogueManager.Issues;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.MainFormUITabs;
+using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
@@ -432,6 +433,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
         {
             return Activate<LoadDiagram, LoadMetadata>(loadMetadata);
+        }
+
+        public void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer)
+        {
+            Activate<ExternalDatabaseServerUI,ExternalDatabaseServer>(externalDatabaseServer);
         }
 
         public void ExecuteCohortSummaryGraph(object sender,CohortSummaryAggregateGraphObjectCollection objectCollection)

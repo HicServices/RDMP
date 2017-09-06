@@ -14,6 +14,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 using ContentAlignment = System.Drawing.ContentAlignment;
 
@@ -239,7 +240,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()), demandsInitialization.Description);
             helpIcon.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            string spaceSeparatedArgumentName = Regex.Replace(argument.Name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
+            string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
             name.Height = helpIcon.Height;
             name.Text = spaceSeparatedArgumentName;
             name.TextAlign = ContentAlignment.MiddleLeft;

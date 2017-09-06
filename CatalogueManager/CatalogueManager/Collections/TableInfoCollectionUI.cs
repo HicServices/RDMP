@@ -91,10 +91,13 @@ namespace CatalogueManager.Collections
         private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
         {
             var credentials = tlvTableInfos.SelectedObject as DataAccessCredentials;
+            var externalDatabaseServer = tlvTableInfos.SelectedObject as ExternalDatabaseServer;
 
             if (credentials != null)
                 _activator.ActivateDataAccessCredentials(this,credentials);
 
+            if (externalDatabaseServer != null)
+                _activator.ActivateExternalDatabaseServer(this, externalDatabaseServer);
         }
         
         public void SelectTableInfo(TableInfo toSelect)
@@ -143,6 +146,8 @@ namespace CatalogueManager.Collections
             TableInfo tableInfo = e.Model as TableInfo;
             ColumnInfo columnInfo = e.Model as ColumnInfo;
 
+            if (e.Model is AllExternalServersNode)
+                e.MenuStrip = new AllExternalServersNodeMenu(_activator);
             if (tableInfo != null)
                 e.MenuStrip = new TableInfoMenu( _activator, tableInfo);
             else if (columnInfo != null)
@@ -208,9 +213,11 @@ namespace CatalogueManager.Collections
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.DataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.ANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
+            
 
         }
 
@@ -240,7 +247,8 @@ namespace CatalogueManager.Collections
         {
             return root is DataAccessCredentialsNode ||
             root is ANOTablesNode || 
-            root is AllServersNode;
+            root is AllServersNode || 
+            root is AllExternalServersNode;
         }
     }
 }

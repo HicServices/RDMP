@@ -1004,5 +1004,10 @@ c.name = @column_name", con);
 
             return IsAssignableToGenericType(baseType, genericType);
         }
+
+        public static string PascalCaseStringToHumanReadable(string pascalCaseString)
+        {
+            return Regex.Replace(pascalCaseString, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
+        }
     }
 }

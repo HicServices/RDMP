@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using ReusableLibraryCode;
 
 namespace ReusableUIComponents.Copying
 {
@@ -18,7 +19,7 @@ namespace ReusableUIComponents.Copying
         {
             var name = GetType().Name;
             var adjusted = name.Replace("ExecuteCommand", "");
-            return Regex.Replace(adjusted, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
+            return UsefulStuff.PascalCaseStringToHumanReadable(adjusted);
         
         }
 

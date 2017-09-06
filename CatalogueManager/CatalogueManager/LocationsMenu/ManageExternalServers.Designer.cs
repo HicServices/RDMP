@@ -29,35 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManageExternalServers));
-            this.gbEdit = new System.Windows.Forms.GroupBox();
-            this.pbServer = new System.Windows.Forms.PictureBox();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
-            this.btnClearKnownType = new System.Windows.Forms.Button();
-            this.ddSetKnownType = new System.Windows.Forms.ComboBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.lblPasswordError = new System.Windows.Forms.Label();
-            this.lblUsernameError = new System.Windows.Forms.Label();
-            this.lblState = new System.Windows.Forms.Label();
-            this.btnDeleteServer = new System.Windows.Forms.Button();
-            this.btnCheckState = new System.Windows.Forms.Button();
-            this.btnSaveChanges = new System.Windows.Forms.Button();
-            this.tbPassword = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbUsername = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbDatabaseName = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tbID = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.tbName = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.tbServerName = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnCreate = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ddKnownServers = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnCreateNewANOStore = new System.Windows.Forms.Button();
@@ -93,332 +64,11 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.btnClearRAWServer = new System.Windows.Forms.Button();
             this.ddOverrideRawServer = new System.Windows.Forms.ComboBox();
-            this.gbEdit.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbServer)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // gbEdit
-            // 
-            this.gbEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbEdit.Controls.Add(this.pbServer);
-            this.gbEdit.Controls.Add(this.ragSmiley1);
-            this.gbEdit.Controls.Add(this.btnClearKnownType);
-            this.gbEdit.Controls.Add(this.ddSetKnownType);
-            this.gbEdit.Controls.Add(this.label15);
-            this.gbEdit.Controls.Add(this.label14);
-            this.gbEdit.Controls.Add(this.label8);
-            this.gbEdit.Controls.Add(this.lblPasswordError);
-            this.gbEdit.Controls.Add(this.lblUsernameError);
-            this.gbEdit.Controls.Add(this.lblState);
-            this.gbEdit.Controls.Add(this.btnDeleteServer);
-            this.gbEdit.Controls.Add(this.btnCheckState);
-            this.gbEdit.Controls.Add(this.btnSaveChanges);
-            this.gbEdit.Controls.Add(this.tbPassword);
-            this.gbEdit.Controls.Add(this.label2);
-            this.gbEdit.Controls.Add(this.tbUsername);
-            this.gbEdit.Controls.Add(this.label1);
-            this.gbEdit.Controls.Add(this.tbDatabaseName);
-            this.gbEdit.Controls.Add(this.label4);
-            this.gbEdit.Controls.Add(this.tbID);
-            this.gbEdit.Controls.Add(this.label7);
-            this.gbEdit.Controls.Add(this.tbName);
-            this.gbEdit.Controls.Add(this.label5);
-            this.gbEdit.Controls.Add(this.tbServerName);
-            this.gbEdit.Controls.Add(this.label3);
-            this.gbEdit.Enabled = false;
-            this.gbEdit.Location = new System.Drawing.Point(12, 157);
-            this.gbEdit.Name = "gbEdit";
-            this.gbEdit.Size = new System.Drawing.Size(1124, 269);
-            this.gbEdit.TabIndex = 9;
-            this.gbEdit.TabStop = false;
-            this.gbEdit.Text = "Create New";
-            // 
-            // pbServer
-            // 
-            this.pbServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbServer.Location = new System.Drawing.Point(527, 176);
-            this.pbServer.Name = "pbServer";
-            this.pbServer.Size = new System.Drawing.Size(22, 22);
-            this.pbServer.TabIndex = 23;
-            this.pbServer.TabStop = false;
-            // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(6, 238);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 22;
-            this.ragSmiley1.Visible = false;
-            // 
-            // btnClearKnownType
-            // 
-            this.btnClearKnownType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearKnownType.Location = new System.Drawing.Point(555, 176);
-            this.btnClearKnownType.Name = "btnClearKnownType";
-            this.btnClearKnownType.Size = new System.Drawing.Size(65, 23);
-            this.btnClearKnownType.TabIndex = 21;
-            this.btnClearKnownType.Text = "Clear";
-            this.btnClearKnownType.UseVisualStyleBackColor = true;
-            this.btnClearKnownType.Click += new System.EventHandler(this.btnClearKnownType_Click);
-            // 
-            // ddSetKnownType
-            // 
-            this.ddSetKnownType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddSetKnownType.FormattingEnabled = true;
-            this.ddSetKnownType.Location = new System.Drawing.Point(85, 175);
-            this.ddSetKnownType.Name = "ddSetKnownType";
-            this.ddSetKnownType.Size = new System.Drawing.Size(436, 21);
-            this.ddSetKnownType.TabIndex = 20;
-            this.ddSetKnownType.SelectedIndexChanged += new System.EventHandler(this.ddSetKnownType_SelectedIndexChanged);
-            this.ddSetKnownType.Leave += new System.EventHandler(this.ddSetKnownType_Leave);
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(-4, 199);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(617, 13);
-            this.label15.TabIndex = 19;
-            this.label15.Text = "(Only choose if you are sure the database is of an RDMP known type, it\'s ok to no" +
-    "t have one e.g. for RAW or untyped databases)";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(-4, 178);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(83, 13);
-            this.label14.TabIndex = 19;
-            this.label14.Text = "Database Type:";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(721, 248);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(130, 13);
-            this.label8.TabIndex = 18;
-            this.label8.Text = "*Indicates Required Fields";
-            // 
-            // lblPasswordError
-            // 
-            this.lblPasswordError.AutoSize = true;
-            this.lblPasswordError.BackColor = System.Drawing.Color.Red;
-            this.lblPasswordError.Location = new System.Drawing.Point(497, 152);
-            this.lblPasswordError.Name = "lblPasswordError";
-            this.lblPasswordError.Size = new System.Drawing.Size(0, 13);
-            this.lblPasswordError.TabIndex = 18;
-            // 
-            // lblUsernameError
-            // 
-            this.lblUsernameError.AutoSize = true;
-            this.lblUsernameError.BackColor = System.Drawing.Color.Red;
-            this.lblUsernameError.Location = new System.Drawing.Point(497, 126);
-            this.lblUsernameError.Name = "lblUsernameError";
-            this.lblUsernameError.Size = new System.Drawing.Size(0, 13);
-            this.lblUsernameError.TabIndex = 18;
-            // 
-            // lblState
-            // 
-            this.lblState.AutoSize = true;
-            this.lblState.Location = new System.Drawing.Point(37, 248);
-            this.lblState.Name = "lblState";
-            this.lblState.Size = new System.Drawing.Size(35, 13);
-            this.lblState.TabIndex = 17;
-            this.lblState.Text = "State:";
-            // 
-            // btnDeleteServer
-            // 
-            this.btnDeleteServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteServer.Location = new System.Drawing.Point(1036, 175);
-            this.btnDeleteServer.Name = "btnDeleteServer";
-            this.btnDeleteServer.Size = new System.Drawing.Size(82, 23);
-            this.btnDeleteServer.TabIndex = 8;
-            this.btnDeleteServer.Text = "Delete Server";
-            this.btnDeleteServer.UseVisualStyleBackColor = true;
-            this.btnDeleteServer.Click += new System.EventHandler(this.btnDeleteServer_Click);
-            // 
-            // btnCheckState
-            // 
-            this.btnCheckState.Location = new System.Drawing.Point(165, 217);
-            this.btnCheckState.Name = "btnCheckState";
-            this.btnCheckState.Size = new System.Drawing.Size(82, 23);
-            this.btnCheckState.TabIndex = 7;
-            this.btnCheckState.Text = "Check State";
-            this.btnCheckState.UseVisualStyleBackColor = true;
-            this.btnCheckState.Click += new System.EventHandler(this.btnCheckState_Click);
-            // 
-            // btnSaveChanges
-            // 
-            this.btnSaveChanges.Location = new System.Drawing.Point(84, 217);
-            this.btnSaveChanges.Name = "btnSaveChanges";
-            this.btnSaveChanges.Size = new System.Drawing.Size(75, 23);
-            this.btnSaveChanges.TabIndex = 6;
-            this.btnSaveChanges.Text = "Save";
-            this.btnSaveChanges.UseVisualStyleBackColor = true;
-            this.btnSaveChanges.Click += new System.EventHandler(this.btnSaveChanges_Click);
-            // 
-            // tbPassword
-            // 
-            this.tbPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbPassword.Location = new System.Drawing.Point(85, 149);
-            this.tbPassword.Name = "tbPassword";
-            this.tbPassword.PasswordChar = '*';
-            this.tbPassword.Size = new System.Drawing.Size(673, 20);
-            this.tbPassword.TabIndex = 5;
-            this.tbPassword.TextChanged += new System.EventHandler(this.tbPassword_TextChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(22, 152);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Password:";
-            // 
-            // tbUsername
-            // 
-            this.tbUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbUsername.Location = new System.Drawing.Point(85, 123);
-            this.tbUsername.Name = "tbUsername";
-            this.tbUsername.Size = new System.Drawing.Size(673, 20);
-            this.tbUsername.TabIndex = 4;
-            this.tbUsername.TextChanged += new System.EventHandler(this.tbUsername_TextChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(22, 126);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(58, 13);
-            this.label1.TabIndex = 9;
-            this.label1.Text = "Username:";
-            // 
-            // tbDatabaseName
-            // 
-            this.tbDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDatabaseName.Location = new System.Drawing.Point(85, 97);
-            this.tbDatabaseName.Name = "tbDatabaseName";
-            this.tbDatabaseName.Size = new System.Drawing.Size(673, 20);
-            this.tbDatabaseName.TabIndex = 3;
-            this.tbDatabaseName.TextChanged += new System.EventHandler(this.tbDatabaseName_TextChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(22, 100);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(56, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Database:";
-            // 
-            // tbID
-            // 
-            this.tbID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbID.Location = new System.Drawing.Point(85, 19);
-            this.tbID.Name = "tbID";
-            this.tbID.ReadOnly = true;
-            this.tbID.Size = new System.Drawing.Size(673, 20);
-            this.tbID.TabIndex = 0;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(54, 22);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(21, 13);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "ID:";
-            // 
-            // tbName
-            // 
-            this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbName.Location = new System.Drawing.Point(85, 45);
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(673, 20);
-            this.tbName.TabIndex = 1;
-            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(37, 48);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(42, 13);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Name*:";
-            // 
-            // tbServerName
-            // 
-            this.tbServerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbServerName.Location = new System.Drawing.Point(85, 71);
-            this.tbServerName.Name = "tbServerName";
-            this.tbServerName.Size = new System.Drawing.Size(673, 20);
-            this.tbServerName.TabIndex = 2;
-            this.tbServerName.TextChanged += new System.EventHandler(this.tbServerName_TextChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(37, 74);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 13);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "Server*:";
-            // 
-            // btnCreate
-            // 
-            this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.Location = new System.Drawing.Point(533, 18);
-            this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(75, 23);
-            this.btnCreate.TabIndex = 1;
-            this.btnCreate.Text = "Create New";
-            this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.btnCreate);
-            this.groupBox1.Controls.Add(this.ddKnownServers);
-            this.groupBox1.Location = new System.Drawing.Point(16, 95);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(621, 56);
-            this.groupBox1.TabIndex = 10;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Edit Existing";
-            // 
-            // ddKnownServers
-            // 
-            this.ddKnownServers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddKnownServers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddKnownServers.FormattingEnabled = true;
-            this.ddKnownServers.Location = new System.Drawing.Point(19, 20);
-            this.ddKnownServers.Name = "ddKnownServers";
-            this.ddKnownServers.Size = new System.Drawing.Size(508, 21);
-            this.ddKnownServers.TabIndex = 0;
-            this.ddKnownServers.SelectedIndexChanged += new System.EventHandler(this.ddKnownServers_SelectedIndexChanged);
             // 
             // label6
             // 
@@ -448,7 +98,7 @@
             this.groupBox3.Controls.Add(this.ddDefaultIdentifierDump);
             this.groupBox3.Controls.Add(this.ddDefaultTestLoggingServer);
             this.groupBox3.Controls.Add(this.ddDefaultLoggingServer);
-            this.groupBox3.Location = new System.Drawing.Point(12, 432);
+            this.groupBox3.Location = new System.Drawing.Point(14, 153);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(1124, 137);
             this.groupBox3.TabIndex = 13;
@@ -634,7 +284,7 @@
             this.groupBox4.Controls.Add(this.btnCreateNewDQEServer);
             this.groupBox4.Controls.Add(this.btnClearDQEServer);
             this.groupBox4.Controls.Add(this.ddDQEServer);
-            this.groupBox4.Location = new System.Drawing.Point(12, 575);
+            this.groupBox4.Location = new System.Drawing.Point(14, 296);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(1126, 62);
             this.groupBox4.TabIndex = 14;
@@ -687,7 +337,7 @@
             this.groupBox5.Controls.Add(this.btnCreateNewWebServiceQueryCache);
             this.groupBox5.Controls.Add(this.btnClearWebServiceQueryCache);
             this.groupBox5.Controls.Add(this.ddWebServiceQueryCacheServer);
-            this.groupBox5.Location = new System.Drawing.Point(12, 643);
+            this.groupBox5.Location = new System.Drawing.Point(14, 364);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(1126, 99);
             this.groupBox5.TabIndex = 15;
@@ -794,7 +444,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox6.Controls.Add(this.btnClearRAWServer);
             this.groupBox6.Controls.Add(this.ddOverrideRawServer);
-            this.groupBox6.Location = new System.Drawing.Point(12, 748);
+            this.groupBox6.Location = new System.Drawing.Point(14, 469);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(1126, 62);
             this.groupBox6.TabIndex = 16;
@@ -831,21 +481,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1148, 822);
+            this.ClientSize = new System.Drawing.Size(1148, 542);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.passwordEncryptionKeyLocationUI1);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.gbEdit);
-            this.Controls.Add(this.groupBox1);
             this.Name = "ManageExternalServers";
             this.Text = "ManageExternalServers";
-            this.gbEdit.ResumeLayout(false);
-            this.gbEdit.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbServer)).EndInit();
-            this.groupBox1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -858,27 +502,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox gbEdit;
-        private System.Windows.Forms.TextBox tbPassword;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbUsername;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox tbDatabaseName;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox tbName;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox tbServerName;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnCreate;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ComboBox ddKnownServers;
-        private System.Windows.Forms.Button btnSaveChanges;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox tbID;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label lblState;
-        private System.Windows.Forms.Button btnCheckState;
-        private System.Windows.Forms.Button btnDeleteServer;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
@@ -900,9 +524,6 @@
         private System.Windows.Forms.Button btnCreateNewIdentifierDump;
         private System.Windows.Forms.Button btnCreateNewTestLoggingServer;
         private System.Windows.Forms.Button btnCreateNewLoggingServer;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label lblUsernameError;
-        private System.Windows.Forms.Label lblPasswordError;
         private PasswordEncryptionKeyLocationUI passwordEncryptionKeyLocationUI1;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Button btnClearRAWServer;
@@ -911,16 +532,10 @@
         private System.Windows.Forms.Button btnClearANOStore;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox ddDefaultANOStore;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Button btnClearKnownType;
-        private System.Windows.Forms.ComboBox ddSetKnownType;
-        private System.Windows.Forms.Label label15;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnCreateNewCohortIdentificationQueryCache;
         private System.Windows.Forms.Button btnClearCohortIdentificationQueryCache;
         private System.Windows.Forms.ComboBox ddCohortIdentificationQueryCacheServer;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.PictureBox pbServer;
     }
 }

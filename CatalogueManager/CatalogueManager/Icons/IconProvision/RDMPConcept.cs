@@ -103,6 +103,9 @@ namespace CatalogueManager.Icons.IconProvision
         GetFilesStage,
         LoadBubbleMounting,
         LoadBubble,
-        LoadFinalDatabase
+        LoadFinalDatabase,
+
+        AllExternalServersNode
+
     }
 }
