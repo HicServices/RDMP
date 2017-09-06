@@ -229,9 +229,17 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
                 lengthQualifier = "(" + r["PRECISION"] + "," + r["SCALE"] + ")";
             else
                 if (UsefulStuff.RequiresLength(columnType))
-                    lengthQualifier = "(" + r["LENGTH"] + ")";
+                    lengthQualifier = "(" + AdjustForUnicode(columnType,Convert.ToInt32(r["LENGTH"])) + ")";
 
             return columnType + lengthQualifier;
+        }
+
+        private int AdjustForUnicode(string columnType, int length)
+        {
+            if (columnType.Contains("nvarchar") || columnType.Contains("nchar") || columnType.Contains("ntext"))
+                return length/2;
+
+            return length;
         }
 
 
