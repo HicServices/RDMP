@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
@@ -17,6 +19,18 @@ namespace DataExportLibrary.DataRelease
         public Project Project { get; private set; }
         public bool Releasesuccessful { get; private set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
+        
+        
+        public static DataFlowPipelineContext<FileInfo[]> Context { get; set; }
+
+        static ReleaseEngine()
+        {
+            DataFlowPipelineContextFactory<FileInfo[]> contextFactory = new DataFlowPipelineContextFactory<FileInfo[]>();
+            Context = contextFactory.Create(PipelineUsage.None);
+            Context.MustHaveSource = typeof (IDataFlowSource<FileInfo[]>);
+            Context.MustHaveDestination = typeof(IDataFlowDestination<FileInfo[]>);
+
+        }
 
         public ReleaseEngine(Project project)
         {

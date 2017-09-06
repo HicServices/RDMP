@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
@@ -12,6 +14,7 @@ using DataExportManager.ProjectUI;
 using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
+using Microsoft.Office.Interop.Word;
 using ReusableUIComponents;
 using Ticketing;
 
@@ -23,8 +26,9 @@ namespace DataExportManager.DataRelease
     /// 
     ///  Once you have selected all the configurations you want to release click Release.
     /// </summary>
-    public partial class DataReleaseUI : DataReleaseUI_Design
+    public partial class DataReleaseUI : Form
     {
+        private readonly IActivateItems _activator;
         private Project _project;
         
         public Project Project
@@ -38,9 +42,29 @@ namespace DataExportManager.DataRelease
             }
         }
 
-        public DataReleaseUI()
+        public FileInfo[] FinalFiles
         {
+            get
+            {
+                List<FileInfo> toReturn = new List<FileInfo>();
+
+                foreach (var kvp in doReleaseAndAuditUI1.ConfigurationsForRelease)
+                    foreach (ReleasePotential potential in kvp.Value)
+                        toReturn.AddRange(potential.ExtractDirectory.GetFiles());
+                
+                return toReturn.ToArray();
+            }
+        }
+
+        public DataReleaseUI(IActivateItems activator,Project project)
+        {
+            _activator = activator;
             InitializeComponent();
+
+            Project = project;
+
+            //tell children controls about the project
+            doReleaseAndAuditUI1.SetProject((IActivateDataExportItems)activator, Project);
         }
         
 
@@ -82,7 +106,7 @@ namespace DataExportManager.DataRelease
                     };
 
                     configurationReleasePotentialUI.SetConfiguration((IActivateDataExportItems)_activator, (ExtractionConfiguration) configuration);
-                    configurationReleasePotentialUI.RepositoryLocator = RepositoryLocator;
+                    configurationReleasePotentialUI.RepositoryLocator = _activator.RepositoryLocator;
                     configurationReleasePotentialUI.Anchor = AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;
                     configurationReleasePotentialUI.RequestRelease += ConfigurationReleasePotentialUIOnRequestRelease;
                     configurationReleasePotentialUI.RequestPatchRelease += configurationReleasePotentialUI_RequestPatchRelease;
@@ -134,28 +158,18 @@ namespace DataExportManager.DataRelease
                 c.Width = flowLayoutPanel1.Width - 20;//allow scroll bar visibility
         }
 
-
-        public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
-            base.SetDatabaseObject(activator,databaseObject);
-            Project = databaseObject;
-            
-            //tell children controls about the project
-            doReleaseAndAuditUI1.SetProject((IActivateDataExportItems)activator,Project);
-
+            DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
-        public override string GetTabName()
+        private void btnFinalise_Click(object sender, EventArgs e)
         {
-            return "Release:"+base.GetTabName();
-            
+            DialogResult = DialogResult.OK;
+            this.Close();
         }
-    }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
-    public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
-    {
-        
     }
 }
 

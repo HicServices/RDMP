@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -11,9 +12,13 @@ using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Audit;
+using DataExportLibrary.Repositories;
 using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Revertable;
+using RDMPObjectVisualisation.Pipelines;
+using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
+using ReusableUIComponents.Progress;
 
 namespace DataExportManager.DataRelease
 {
@@ -23,6 +28,7 @@ namespace DataExportManager.DataRelease
     /// </summary>
     public partial class DoReleaseAndAuditUI : UserControl
     {
+
         public Project Project
         {
             get { return _project; }
@@ -30,12 +36,11 @@ namespace DataExportManager.DataRelease
             {
                 _project = value; 
 
-                configurationsForRelease.Clear();
+                ConfigurationsForRelease.Clear();
                 ReloadTreeView();
 
                 if (_project != null)
                 {
-
                     _releaseEngine = new ReleaseEngine(value);
                     
                     var intendedReleaseDirectory = _releaseEngine.GetIntendedReleaseDirectory();
@@ -52,20 +57,27 @@ namespace DataExportManager.DataRelease
                 }
             }
         }
+        
 
-        Dictionary<IExtractionConfiguration, List<ReleasePotential>> configurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
+        public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; private set;}
+
+
         private Project _project;
         ReleaseEngine _releaseEngine;
         
         public DoReleaseAndAuditUI()
         {
             InitializeComponent();
+
+            ConfigurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
+
         }
 
         private ReleaseEnvironmentPotential _environmentPotential;
 
         private ReleaseState _releaseState = ReleaseState.Nothing;
         private IActivateDataExportItems _activator;
+        
 
 
         public void AddToRelease(ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
@@ -90,7 +102,7 @@ namespace DataExportManager.DataRelease
             if(toAdd.Project_ID != Project.ID)
                 throw new Exception("Mismatch between ProjectID of datasets selected for release and what this UI component recons the project is");
 
-            if (configurationsForRelease.Keys.Any(config=>config.ID == toAdd.ID))
+            if (ConfigurationsForRelease.Keys.Any(config=>config.ID == toAdd.ID))
             {
                 MessageBox.Show("Configuration already added!");
                 return;
@@ -104,7 +116,7 @@ namespace DataExportManager.DataRelease
 
             _environmentPotential = environmentPotential;
 
-            configurationsForRelease.Add((ExtractionConfiguration) toAdd, datasetReleasePotentials.ToList());
+            ConfigurationsForRelease.Add((ExtractionConfiguration) toAdd, datasetReleasePotentials.ToList());
             _releaseState = ReleaseState.DoingProperRelease;
 
             ReloadTreeView();
@@ -140,16 +152,16 @@ namespace DataExportManager.DataRelease
             if (toPatchIn.Configuration.Project_ID != Project.ID)
                 throw new Exception("Mismatch between ProjectID of datasets selected for release and what this UI component recons the project is");
 
-            if (configurationsForRelease.Values.Any(array => array.Any(releasePotential => releasePotential.DataSet.ID == toPatchIn.DataSet.ID)))
+            if (ConfigurationsForRelease.Values.Any(array => array.Any(releasePotential => releasePotential.DataSet.ID == toPatchIn.DataSet.ID)))
             {
                 MessageBox.Show("Dataset already included in the patch");
                 return;
             }
 
-            if (!configurationsForRelease.ContainsKey(toPatchIn.Configuration))
-                configurationsForRelease.Add(toPatchIn.Configuration,new List<ReleasePotential>());
+            if (!ConfigurationsForRelease.ContainsKey(toPatchIn.Configuration))
+                ConfigurationsForRelease.Add(toPatchIn.Configuration,new List<ReleasePotential>());
 
-            configurationsForRelease[toPatchIn.Configuration].Add(toPatchIn);
+            ConfigurationsForRelease[toPatchIn.Configuration].Add(toPatchIn);
             _releaseState = ReleaseState.DoingPatch;
             ReloadTreeView();
         }
@@ -158,7 +170,7 @@ namespace DataExportManager.DataRelease
         {
             treeView1.Nodes.Clear();
 
-            foreach (var kvp in configurationsForRelease)
+            foreach (var kvp in ConfigurationsForRelease)
             {
                 TreeNode configurationNode = new TreeNode();
                 configurationNode.Tag = kvp.Key;
@@ -195,13 +207,13 @@ namespace DataExportManager.DataRelease
 
         private void btnRelease_Click(object sender, EventArgs e)
         {
-            if (configurationsForRelease.Count == 0)
+            if (ConfigurationsForRelease.Count == 0)
             {
                 MessageBox.Show("Nothing yet selected for release");
                 return;
             }
 
-            CheckForCumulativeExtractionResults(configurationsForRelease.SelectMany(c=>c.Value).ToArray());
+            CheckForCumulativeExtractionResults(ConfigurationsForRelease.SelectMany(c=>c.Value).ToArray());
 
             ReleaseEngine engine = new ReleaseEngine(Project);
             try
@@ -219,13 +231,13 @@ namespace DataExportManager.DataRelease
 
                     int recordsDeleted = 0;
 
-                    foreach (ExtractionConfiguration configuration in configurationsForRelease.Keys)
+                    foreach (ExtractionConfiguration configuration in ConfigurationsForRelease.Keys)
                     {
                         ExtractionConfiguration current = configuration;
                         var currentResults = configuration.CumulativeExtractionResults;
 
                         //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-                        foreach (var redundantResult in currentResults.Where(r => configurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+                        foreach (var redundantResult in currentResults.Where(r => ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
                         {
                             redundantResult.DeleteInDatabase();
                             recordsDeleted++;
@@ -236,13 +248,13 @@ namespace DataExportManager.DataRelease
                         MessageBox.Show("Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)");
                 }
 
-                engine.DoRelease(configurationsForRelease, _environmentPotential, _releaseState == ReleaseState.DoingPatch);
+                engine.DoRelease(ConfigurationsForRelease, _environmentPotential, _releaseState == ReleaseState.DoingPatch);
                 MessageBox.Show("Release Successful - Proceeding to Cleanup Dialog");
 
                 CleanupConfirmationDialog cleanup = new CleanupConfirmationDialog(engine);
                 cleanup.ShowDialog(this);
 
-                configurationsForRelease.Clear();
+                ConfigurationsForRelease.Clear();
                 ReloadTreeView();
 
                 //fire release complete event
@@ -256,7 +268,7 @@ namespace DataExportManager.DataRelease
                 {
                     int remnantsDeleted = 0;
 
-                    foreach (ExtractionConfiguration configuration in configurationsForRelease.Keys)
+                    foreach (ExtractionConfiguration configuration in ConfigurationsForRelease.Keys)
                         foreach (ReleaseLogEntry remnant in configuration.ReleaseLogEntries)
                         {
                             remnant.DeleteInDatabase();
@@ -284,7 +296,7 @@ namespace DataExportManager.DataRelease
 
                     if(toDelete != null)
                     {
-                        configurationsForRelease.Remove(toDelete);
+                        ConfigurationsForRelease.Remove(toDelete);
                         ReloadTreeView();
                     }
                 }
@@ -303,6 +315,7 @@ namespace DataExportManager.DataRelease
             DoingPatch,
             DoingProperRelease
         }
+
     }
 
     

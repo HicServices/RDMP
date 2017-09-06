@@ -47,7 +47,7 @@
             // btnRelease
             // 
             this.btnRelease.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRelease.Location = new System.Drawing.Point(209, 532);
+            this.btnRelease.Location = new System.Drawing.Point(210, 516);
             this.btnRelease.Name = "btnRelease";
             this.btnRelease.Size = new System.Drawing.Size(135, 23);
             this.btnRelease.TabIndex = 2;
@@ -62,7 +62,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.Location = new System.Drawing.Point(7, 20);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(525, 477);
+            this.treeView1.Size = new System.Drawing.Size(525, 469);
             this.treeView1.TabIndex = 3;
             this.treeView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.treeView1_KeyUp);
             // 
@@ -70,7 +70,7 @@
             // 
             this.lblReleaseRootDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblReleaseRootDirectory.AutoSize = true;
-            this.lblReleaseRootDirectory.Location = new System.Drawing.Point(7, 504);
+            this.lblReleaseRootDirectory.Location = new System.Drawing.Point(4, 505);
             this.lblReleaseRootDirectory.Name = "lblReleaseRootDirectory";
             this.lblReleaseRootDirectory.Size = new System.Drawing.Size(94, 13);
             this.lblReleaseRootDirectory.TabIndex = 4;
@@ -79,7 +79,7 @@
             // btnShowReleaseDirectory
             // 
             this.btnShowReleaseDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnShowReleaseDirectory.Location = new System.Drawing.Point(473, 504);
+            this.btnShowReleaseDirectory.Location = new System.Drawing.Point(461, 495);
             this.btnShowReleaseDirectory.Name = "btnShowReleaseDirectory";
             this.btnShowReleaseDirectory.Size = new System.Drawing.Size(71, 23);
             this.btnShowReleaseDirectory.TabIndex = 5;
@@ -97,7 +97,7 @@
             this.Controls.Add(this.btnRelease);
             this.Controls.Add(this.label1);
             this.Name = "DoReleaseAndAuditUI";
-            this.Size = new System.Drawing.Size(547, 558);
+            this.Size = new System.Drawing.Size(547, 542);
             this.ResumeLayout(false);
             this.PerformLayout();
 
