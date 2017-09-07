@@ -7,12 +7,14 @@ using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Repositories;
+using DataExportManager.DataRelease.PipelineSource;
 using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using RDMPObjectVisualisation.Pipelines;
@@ -28,7 +30,6 @@ namespace DataExportManager.DataRelease
     /// </summary>
     public partial class DoReleaseAndAuditUI : UserControl
     {
-
         public Project Project
         {
             get { return _project; }
@@ -42,25 +43,11 @@ namespace DataExportManager.DataRelease
                 if (_project != null)
                 {
                     _releaseEngine = new ReleaseEngine(value);
-                    
-                    var intendedReleaseDirectory = _releaseEngine.GetIntendedReleaseDirectory();
-
-
-                    if (intendedReleaseDirectory == null)
-                        lblReleaseRootDirectory.Text = "Release Directory:NotSetYet";
-                    else
-                        lblReleaseRootDirectory.Text = "Release Directory:" + intendedReleaseDirectory.FullName;
-                }
-                else
-                {
-                    lblReleaseRootDirectory.Text = "Release Directory:";
                 }
             }
         }
-        
-
+     
         public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; private set;}
-
 
         private Project _project;
         ReleaseEngine _releaseEngine;
@@ -70,15 +57,12 @@ namespace DataExportManager.DataRelease
             InitializeComponent();
 
             ConfigurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
-
         }
 
         private ReleaseEnvironmentPotential _environmentPotential;
 
         private ReleaseState _releaseState = ReleaseState.Nothing;
         private IActivateDataExportItems _activator;
-        
-
 
         public void AddToRelease(ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
         {
@@ -119,6 +103,11 @@ namespace DataExportManager.DataRelease
             ConfigurationsForRelease.Add((ExtractionConfiguration) toAdd, datasetReleasePotentials.ToList());
             _releaseState = ReleaseState.DoingProperRelease;
 
+            foreach (FileInfo result in ConfigurationsForRelease.Values.SelectMany(v => v).SelectMany(p => p.ExtractDirectory.EnumerateFiles()))
+            {
+                FixedDataReleaseSource.FilesToRelease.Add(result);   
+            }
+
             ReloadTreeView();
         }
 
@@ -133,7 +122,6 @@ namespace DataExportManager.DataRelease
                     "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
                     string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
         }
-
 
         public void AddPatchRelease(ReleasePotential toPatchIn, ReleaseEnvironmentPotential environmentPotential)
         {
@@ -212,6 +200,18 @@ namespace DataExportManager.DataRelease
                 MessageBox.Show("Nothing yet selected for release");
                 return;
             }
+
+            if (_pipelineUI.Pipeline == null)
+                return;
+
+            var factory = new DataFlowPipelineEngineFactory<FileInfo[]>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
+            factory.ExplicitSource = FixedDataReleaseSource;
+            var pipelineEngine = factory.Create(_pipelineUI.Pipeline, new ThrowImmediatelyDataLoadEventListener());
+
+            pipelineEngine.Initialize(_project, _activator);
+            pipelineEngine.ExecutePipeline(new GracefulCancellationToken());
+
+            return;
 
             CheckForCumulativeExtractionResults(ConfigurationsForRelease.SelectMany(c=>c.Value).ToArray());
 
@@ -307,6 +307,30 @@ namespace DataExportManager.DataRelease
         {
             _activator = activator;
             Project = project;
+            this.FixedDataReleaseSource = new FixedDataReleaseSource();
+
+            SetupPipeline();
+        }
+
+        public FixedDataReleaseSource FixedDataReleaseSource { get; set; }
+
+        private PipelineSelectionUI<FileInfo[]> _pipelineUI;
+
+        private void SetupPipeline()
+        {
+            if (_pipelineUI == null)
+            {
+                var cataRepository = _activator.RepositoryLocator.CatalogueRepository;
+                _pipelineUI = new PipelineSelectionUI<FileInfo[]>(FixedDataReleaseSource, null, cataRepository);
+                _pipelineUI.Context = ReleaseEngine.Context;
+                _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_project);
+                _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_activator);
+
+                _pipelineUI.CollapseToSingleLineMode();
+                
+                _pipelineUI.Dock = DockStyle.Fill;
+                pnlPipeline.Controls.Add(_pipelineUI);
+            }
         }
 
         private enum ReleaseState
@@ -315,7 +339,6 @@ namespace DataExportManager.DataRelease
             DoingPatch,
             DoingProperRelease
         }
-
     }
 
     

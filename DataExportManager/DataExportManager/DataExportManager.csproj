@@ -375,7 +375,7 @@
       <DependentUpon>DataReleaseKeyUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataRelease\DataReleaseUI.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DataRelease\DataReleaseUI.Designer.cs">
       <DependentUpon>DataReleaseUI.cs</DependentUpon>

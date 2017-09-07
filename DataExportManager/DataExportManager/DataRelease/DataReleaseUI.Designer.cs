@@ -29,13 +29,11 @@
         private void InitializeComponent()
         {
             this.scLeft = new System.Windows.Forms.SplitContainer();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.lblLoading = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnFinalise = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.dataReleaseKeyUI1 = new DataExportManager.DataRelease.DataReleaseKeyUI();
             this.doReleaseAndAuditUI1 = new DataExportManager.DataRelease.DoReleaseAndAuditUI();
             ((System.ComponentModel.ISupportInitialize)(this.scLeft)).BeginInit();
@@ -66,24 +64,14 @@
             this.scLeft.Panel2.Controls.Add(this.lblLoading);
             this.scLeft.Panel2.Controls.Add(this.label2);
             this.scLeft.Panel2.Controls.Add(this.dataReleaseKeyUI1);
-            this.scLeft.Size = new System.Drawing.Size(569, 562);
-            this.scLeft.SplitterDistance = 413;
+            this.scLeft.Size = new System.Drawing.Size(579, 653);
+            this.scLeft.SplitterDistance = 481;
             this.scLeft.TabIndex = 1;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(565, 409);
-            this.flowLayoutPanel1.TabIndex = 0;
-            this.flowLayoutPanel1.Resize += new System.EventHandler(this.flowLayoutPanel1_Resize);
             // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRefresh.Location = new System.Drawing.Point(5, 118);
+            this.btnRefresh.Location = new System.Drawing.Point(5, 141);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(53, 23);
             this.btnRefresh.TabIndex = 3;
@@ -113,10 +101,8 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -127,31 +113,19 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.doReleaseAndAuditUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(1074, 562);
-            this.splitContainer1.SplitterDistance = 569;
+            this.splitContainer1.Size = new System.Drawing.Size(1092, 653);
+            this.splitContainer1.SplitterDistance = 579;
             this.splitContainer1.TabIndex = 2;
             // 
-            // btnFinalise
+            // flowLayoutPanel1
             // 
-            this.btnFinalise.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnFinalise.Location = new System.Drawing.Point(314, 579);
-            this.btnFinalise.Name = "btnFinalise";
-            this.btnFinalise.Size = new System.Drawing.Size(186, 23);
-            this.btnFinalise.TabIndex = 3;
-            this.btnFinalise.Text = "Finalise Selection";
-            this.btnFinalise.UseVisualStyleBackColor = true;
-            this.btnFinalise.Click += new System.EventHandler(this.btnFinalise_Click);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancel.Location = new System.Drawing.Point(520, 579);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(186, 23);
-            this.btnCancel.TabIndex = 3;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.flowLayoutPanel1.AutoScroll = true;
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(575, 477);
+            this.flowLayoutPanel1.TabIndex = 0;
+            this.flowLayoutPanel1.Resize += new System.EventHandler(this.flowLayoutPanel1_Resize);
             // 
             // dataReleaseKeyUI1
             // 
@@ -166,18 +140,16 @@
             this.doReleaseAndAuditUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.doReleaseAndAuditUI1.Location = new System.Drawing.Point(0, 0);
             this.doReleaseAndAuditUI1.Name = "doReleaseAndAuditUI1";
-            this.doReleaseAndAuditUI1.Size = new System.Drawing.Size(497, 558);
+            this.doReleaseAndAuditUI1.Size = new System.Drawing.Size(505, 649);
             this.doReleaseAndAuditUI1.TabIndex = 0;
             // 
             // DataReleaseUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1076, 614);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnFinalise);
             this.Controls.Add(this.splitContainer1);
             this.Name = "DataReleaseUI";
+            this.Size = new System.Drawing.Size(1092, 653);
             this.Load += new System.EventHandler(this.DataReleaseManagementUI_Load);
             this.scLeft.Panel1.ResumeLayout(false);
             this.scLeft.Panel2.ResumeLayout(false);
@@ -202,8 +174,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private DoReleaseAndAuditUI doReleaseAndAuditUI1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Button btnFinalise;
-        private System.Windows.Forms.Button btnCancel;
 
     }
 }

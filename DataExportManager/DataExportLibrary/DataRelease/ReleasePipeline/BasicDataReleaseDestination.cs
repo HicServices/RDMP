@@ -21,6 +21,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         [DemandsInitialization("Delete the released files from the origin location if release is succesful",defaultValue:true)]
         public bool DeleteFilesOnSuccess { get; set; }
 
+        [DemandsInitialization("Output folder")]
+        public string OutputBaseFolder { get; set; }
 
         private readonly List<FileInfo> _processedFiles = new List<FileInfo>();
         private string _zipLocation;
@@ -43,7 +45,13 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             if(_zip != null)
                 return;
 
-            _zipLocation = Path.Combine(_project.ExtractionDirectory, "Release",DateTime.Now.ToString("yyMMddhhmmss") + ".zip");
+            var basePath = String.IsNullOrWhiteSpace(OutputBaseFolder)
+                                ? _project.ExtractionDirectory
+                                : OutputBaseFolder;
+
+            //_project.MasterTicket + "-" + 
+
+            _zipLocation = Path.Combine(basePath, DateTime.Now.ToString("yyMMddhhmmss") + ".zip");
             _zip = ZipFile.Open(_zipLocation, ZipArchiveMode.Create);
         }
 
@@ -82,7 +90,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public void Check(ICheckNotifier notifier)
         {
-            throw new NotImplementedException();
         }
 
         public void PreInitialize(IProject value, IDataLoadEventListener listener)

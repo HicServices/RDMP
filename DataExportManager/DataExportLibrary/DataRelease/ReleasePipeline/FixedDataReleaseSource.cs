@@ -13,35 +13,35 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
-    public class BasicDataReleaseSource : IPluginDataFlowSource<FileInfo[]>,IPipelineRequirement<IProject>
+    public class FixedDataReleaseSource : IPluginDataFlowSource<FileInfo[]>
     {
-        private IProject _project;
-
-
         private bool firstTime = true;
+
+        public HashSet<FileInfo> FilesToRelease { get; set; }
+
+        public FixedDataReleaseSource()
+        {
+            FilesToRelease = new HashSet<FileInfo>();
+        }
 
         public FileInfo[] GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if(firstTime)
             {
                 firstTime = false;
-
-                return new FileInfo[0];
+                return FilesToRelease.ToArray();
             }
-            
-            
 
             return null;
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            
+            firstTime = true;
         }
 
         public void Abort(IDataLoadEventListener listener)
-        {
-            
+        {   
         }
 
         public FileInfo[] TryGetPreview()
@@ -51,13 +51,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public void Check(ICheckNotifier notifier)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("About to check releasability of Project '" + _project + "'",
-                CheckResult.Success));
-        }
-
-        public void PreInitialize(IProject value, IDataLoadEventListener listener)
-        {
-            _project = value;
         }
     }
 }

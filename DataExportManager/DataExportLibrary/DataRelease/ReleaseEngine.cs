@@ -20,16 +20,15 @@ namespace DataExportLibrary.DataRelease
         public bool Releasesuccessful { get; private set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
         
-        
         public static DataFlowPipelineContext<FileInfo[]> Context { get; set; }
 
         static ReleaseEngine()
         {
             DataFlowPipelineContextFactory<FileInfo[]> contextFactory = new DataFlowPipelineContextFactory<FileInfo[]>();
             Context = contextFactory.Create(PipelineUsage.None);
-            Context.MustHaveSource = typeof (IDataFlowSource<FileInfo[]>);
+            Context.CannotHave.Add(typeof (IDataFlowSource<FileInfo[]>));
+            
             Context.MustHaveDestination = typeof(IDataFlowDestination<FileInfo[]>);
-
         }
 
         public ReleaseEngine(Project project)

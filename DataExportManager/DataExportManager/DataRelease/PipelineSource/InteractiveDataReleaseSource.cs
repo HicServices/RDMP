@@ -29,9 +29,9 @@ namespace DataExportManager.DataRelease.PipelineSource
 
             isFirstTime = false;
 
-            var ui = new DataReleaseUI(_activator,(Project)_project);
-            if (ui.ShowDialog() == DialogResult.OK)
-                return ui.FinalFiles;
+            var ui = new DataReleaseUI(_activator, (Project)_project);
+            //if (ui.ShowDialog() == DialogResult.OK)
+            //    return ui.FinalFiles;
             
             throw new Exception("User cancelled executing the Release");
         }

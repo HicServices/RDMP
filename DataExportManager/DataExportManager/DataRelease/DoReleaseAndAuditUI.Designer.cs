@@ -1,4 +1,7 @@
-﻿namespace DataExportManager.DataRelease
+﻿using System.IO;
+using CatalogueLibrary.DataFlowPipeline;
+
+namespace DataExportManager.DataRelease
 {
     partial class DoReleaseAndAuditUI
     {
@@ -31,8 +34,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.btnRelease = new System.Windows.Forms.Button();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.lblReleaseRootDirectory = new System.Windows.Forms.Label();
-            this.btnShowReleaseDirectory = new System.Windows.Forms.Button();
+            this.lblDestination = new System.Windows.Forms.Label();
+            this.pnlPipeline = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // label1
@@ -47,7 +50,7 @@
             // btnRelease
             // 
             this.btnRelease.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRelease.Location = new System.Drawing.Point(210, 516);
+            this.btnRelease.Location = new System.Drawing.Point(209, 532);
             this.btnRelease.Name = "btnRelease";
             this.btnRelease.Size = new System.Drawing.Size(135, 23);
             this.btnRelease.TabIndex = 2;
@@ -57,47 +60,43 @@
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.Location = new System.Drawing.Point(7, 20);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(525, 469);
+            this.treeView1.Size = new System.Drawing.Size(525, 399);
             this.treeView1.TabIndex = 3;
             this.treeView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.treeView1_KeyUp);
             // 
-            // lblReleaseRootDirectory
+            // lblDestination
             // 
-            this.lblReleaseRootDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblReleaseRootDirectory.AutoSize = true;
-            this.lblReleaseRootDirectory.Location = new System.Drawing.Point(4, 505);
-            this.lblReleaseRootDirectory.Name = "lblReleaseRootDirectory";
-            this.lblReleaseRootDirectory.Size = new System.Drawing.Size(94, 13);
-            this.lblReleaseRootDirectory.TabIndex = 4;
-            this.lblReleaseRootDirectory.Text = "Release Directory:";
+            this.lblDestination.AutoSize = true;
+            this.lblDestination.Location = new System.Drawing.Point(10, 426);
+            this.lblDestination.Name = "lblDestination";
+            this.lblDestination.Size = new System.Drawing.Size(47, 13);
+            this.lblDestination.TabIndex = 6;
+            this.lblDestination.Text = "Pipeline:";
             // 
-            // btnShowReleaseDirectory
+            // pnlPipeline
             // 
-            this.btnShowReleaseDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnShowReleaseDirectory.Location = new System.Drawing.Point(461, 495);
-            this.btnShowReleaseDirectory.Name = "btnShowReleaseDirectory";
-            this.btnShowReleaseDirectory.Size = new System.Drawing.Size(71, 23);
-            this.btnShowReleaseDirectory.TabIndex = 5;
-            this.btnShowReleaseDirectory.Text = "Show";
-            this.btnShowReleaseDirectory.UseVisualStyleBackColor = true;
-            this.btnShowReleaseDirectory.Click += new System.EventHandler(this.btnShowReleaseDirectory_Click);
+            this.pnlPipeline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlPipeline.Location = new System.Drawing.Point(7, 443);
+            this.pnlPipeline.Name = "pnlPipeline";
+            this.pnlPipeline.Size = new System.Drawing.Size(525, 83);
+            this.pnlPipeline.TabIndex = 7;
             // 
             // DoReleaseAndAuditUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnShowReleaseDirectory);
-            this.Controls.Add(this.lblReleaseRootDirectory);
+            this.Controls.Add(this.pnlPipeline);
+            this.Controls.Add(this.lblDestination);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.btnRelease);
             this.Controls.Add(this.label1);
             this.Name = "DoReleaseAndAuditUI";
-            this.Size = new System.Drawing.Size(547, 542);
+            this.Size = new System.Drawing.Size(547, 558);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -108,7 +107,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnRelease;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.Label lblReleaseRootDirectory;
-        private System.Windows.Forms.Button btnShowReleaseDirectory;
+        private System.Windows.Forms.Label lblDestination;
+        private System.Windows.Forms.Panel pnlPipeline;
     }
 }

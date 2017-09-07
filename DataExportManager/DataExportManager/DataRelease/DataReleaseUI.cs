@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.Collections.Providers;
 using DataExportManager.Icons.IconProvision;
@@ -26,18 +27,17 @@ namespace DataExportManager.DataRelease
     /// 
     ///  Once you have selected all the configurations you want to release click Release.
     /// </summary>
-    public partial class DataReleaseUI : Form
+    public partial class DataReleaseUI : DataReleaseUI_Design
     {
-        private readonly IActivateItems _activator;
         private Project _project;
-        
+
         public Project Project
         {
             get { return _project; }
             private set
             {
-                _project = value; 
-                
+                _project = value;
+
                 SetupUIForProject(value);
             }
         }
@@ -51,12 +51,17 @@ namespace DataExportManager.DataRelease
                 foreach (var kvp in doReleaseAndAuditUI1.ConfigurationsForRelease)
                     foreach (ReleasePotential potential in kvp.Value)
                         toReturn.AddRange(potential.ExtractDirectory.GetFiles());
-                
+
                 return toReturn.ToArray();
             }
         }
 
-        public DataReleaseUI(IActivateItems activator,Project project)
+        public DataReleaseUI()
+        {
+            InitializeComponent();
+        }
+
+        public DataReleaseUI(IActivateItems activator, Project project)
         {
             _activator = activator;
             InitializeComponent();
@@ -64,9 +69,8 @@ namespace DataExportManager.DataRelease
             Project = project;
 
             //tell children controls about the project
-            doReleaseAndAuditUI1.SetProject((IActivateDataExportItems)activator, Project);
+            doReleaseAndAuditUI1.SetProject((IActivateDataExportItems) activator, Project);
         }
-        
 
         private void SetupUIForProject(Project project)
         {
@@ -87,13 +91,13 @@ namespace DataExportManager.DataRelease
             if (project == null)
             {
                 //clear other stuff here 
-                flowLayoutPanel1.Controls.Add(new Label() { Text = "No Project Selected" });
+                flowLayoutPanel1.Controls.Add(new Label() {Text = "No Project Selected"});
             }
             else
             {
                 //show all unreleased configurations
-                var configurations = project.ExtractionConfigurations.Where(c=>!c.IsReleased).ToArray();
-                
+                var configurations = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
+
                 //for each configuration defined in the project
                 for (int index = 0; index < configurations.Length; index++)
                 {
@@ -105,9 +109,9 @@ namespace DataExportManager.DataRelease
                         Width = flowLayoutPanel1.Width - 20
                     };
 
-                    configurationReleasePotentialUI.SetConfiguration((IActivateDataExportItems)_activator, (ExtractionConfiguration) configuration);
-                    configurationReleasePotentialUI.RepositoryLocator = _activator.RepositoryLocator;
-                    configurationReleasePotentialUI.Anchor = AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;
+                    configurationReleasePotentialUI.SetConfiguration((IActivateDataExportItems) _activator, (ExtractionConfiguration) configuration);
+                    configurationReleasePotentialUI.RepositoryLocator = RepositoryLocator;
+                    configurationReleasePotentialUI.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                     configurationReleasePotentialUI.RequestRelease += ConfigurationReleasePotentialUIOnRequestRelease;
                     configurationReleasePotentialUI.RequestPatchRelease += configurationReleasePotentialUI_RequestPatchRelease;
 
@@ -118,33 +122,42 @@ namespace DataExportManager.DataRelease
             lblLoading.Visible = false;
         }
 
-        void configurationReleasePotentialUI_RequestPatchRelease(object sender, ReleasePotential datasetReleasePotential, ReleaseEnvironmentPotential environmentPotential)
+        private void configurationReleasePotentialUI_RequestPatchRelease(object sender,
+            ReleasePotential datasetReleasePotential, ReleaseEnvironmentPotential environmentPotential)
         {
             doReleaseAndAuditUI1.AddPatchRelease(datasetReleasePotential, environmentPotential);
         }
 
-        private void ConfigurationReleasePotentialUIOnRequestRelease(object sender, ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
+        private void ConfigurationReleasePotentialUIOnRequestRelease(object sender,
+            ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
         {
-            if(!datasetReleasePotentials.All(p => p.Assesment == Releaseability.Releaseable || p.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
-                throw new Exception("Attempt made to release one or more datasets that are not assessed as being Releaseable (or ColumnDifferencesVsCatalogue)");
-             
-            if(environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
+            if (
+                !datasetReleasePotentials.All(
+                    p =>
+                        p.Assesment == Releaseability.Releaseable ||
+                        p.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
+                throw new Exception(
+                    "Attempt made to release one or more datasets that are not assessed as being Releaseable (or ColumnDifferencesVsCatalogue)");
+
+            if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable &&
+                environmentPotential.Assesment !=
+                TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
                 throw new Exception("Ticketing system decided that Environment was not ready for release");
 
             doReleaseAndAuditUI1.AddToRelease(datasetReleasePotentials, environmentPotential);
-
         }
-        
+
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             SetupUIForProject(Project);
         }
+
         /// <summary>
         /// Refreshes the state of the configurations 
         /// </summary>
         public void Reload()
         {
-            btnRefresh_Click(null,null);
+            btnRefresh_Click(null, null);
         }
 
         private void DataReleaseManagementUI_Load(object sender, EventArgs e)
@@ -155,20 +168,28 @@ namespace DataExportManager.DataRelease
         private void flowLayoutPanel1_Resize(object sender, EventArgs e)
         {
             foreach (Control c in flowLayoutPanel1.Controls)
-                c.Width = flowLayoutPanel1.Width - 20;//allow scroll bar visibility
+                c.Width = flowLayoutPanel1.Width - 20; //allow scroll bar visibility
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
-            DialogResult = DialogResult.Cancel;
-            this.Close();
+            base.SetDatabaseObject(activator, databaseObject);
+            Project = databaseObject;
+
+            //tell children controls about the project
+            doReleaseAndAuditUI1.SetProject((IActivateDataExportItems) activator, Project);
         }
 
-        private void btnFinalise_Click(object sender, EventArgs e)
+        public override string GetTabName()
         {
-            DialogResult = DialogResult.OK;
-            this.Close();
+            return "Release:" + base.GetTabName();
         }
+
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
+    public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
+    {
 
     }
 }

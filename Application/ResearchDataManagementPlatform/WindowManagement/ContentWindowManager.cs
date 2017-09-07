@@ -488,7 +488,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ExecuteRelease(object sender, Project project)
         {
-            Activate<ConfigureAndExecuteDataReleaseUI, Project>(project,CatalogueIcons.Release);
+            Activate<DataReleaseUI, Project>(project, CatalogueIcons.Release);
+            //Activate<ConfigureAndExecuteDataReleaseUI, Project>(project,CatalogueIcons.Release);
         }
 
         public void ActivateEditExtractionConfigurationDataset(SelectedDataSets selectedDataSets)
