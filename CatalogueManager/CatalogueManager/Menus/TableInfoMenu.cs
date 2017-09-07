@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,68 +79,13 @@ namespace CatalogueManager.Menus
 
             Items.Add(new ToolStripSeparator());
 
-
-            AddDiscardedColumnsOptions(activator,tableInfo);
+            Items.Add(new SetDumpServerMenuItem(activator, tableInfo));
+            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, tableInfo)));
 
             if (tableInfo != null && tableInfo.IsTableValuedFunction)
                 Items.Add("Configure Parameters...", activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
 
             AddCommonMenuItems();
-        }
-
-        private void AddDiscardedColumnsOptions(IActivateItems activator, TableInfo tableInfo)
-        {
-            var dumpServerOptions = new ToolStripMenuItem("Set Dump Server");
-
-            var cataRepo = activator.RepositoryLocator.CatalogueRepository;
-
-            var iddServers = cataRepo.GetAllObjects<ExternalDatabaseServer>()
-                .Where(
-                    s =>
-                        s.CreatedByAssembly != null &&
-                        s.CreatedByAssembly.Equals(typeof (IdentifierDump.Database.Class1).Assembly.GetName().Name)).ToArray();
-
-            //cannot change server if 
-            dumpServerOptions.Enabled = tableInfo.IdentifierDumpServer_ID == null;
-
-            foreach (ExternalDatabaseServer v in iddServers)
-            {
-                var server = v;
-                dumpServerOptions.DropDownItems.Add(
-                    new ToolStripMenuItem(server.Name, 
-                        null,
-                    (s, e) => SetDiscardedColumnTo(tableInfo, server)));
-            }
-
-            dumpServerOptions.DropDownItems.Add(new ToolStripSeparator());
-            dumpServerOptions.DropDownItems.Add("Create New...",null,(s,e)=>CreateNewIdentifierDumpServer(tableInfo));
-
-            Items.Add(dumpServerOptions);
-
-            //todo get rid of this:
-            Items.Add("Configure Discarded Columns ", activator.CoreIconProvider.GetImage(RDMPConcept.PreLoadDiscardedColumn), delegate { ConfigureDiscardedColumns_Click(tableInfo); });
-        }
-
-        private void CreateNewIdentifierDumpServer(TableInfo tableInfo)
-        {
-            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(IdentifierDump.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID);
-            cmd.Execute();
-
-            if(cmd.ServerCreatedIfAny != null)
-            {
-                tableInfo.IdentifierDumpServer_ID = cmd.ServerCreatedIfAny.ID;
-                tableInfo.SaveToDatabase();
-
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(tableInfo));
-            }
-        }
-
-        private void SetDiscardedColumnTo(TableInfo tableInfo, ExternalDatabaseServer server)
-        {
-            tableInfo.IdentifierDumpServer_ID = server.ID;
-            tableInfo.SaveToDatabase();
-
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(tableInfo));
         }
 
         private void AddCredentialPermission(TableInfo tableInfo)
@@ -167,11 +113,6 @@ namespace CatalogueManager.Menus
             dialog.ShowDialog(this);
         }
 
-        private void ConfigureDiscardedColumns_Click(TableInfo tableInfo)
-        {
-            var dialog = new ConfigurePreLoadDiscardedColumns(tableInfo);
-            dialog.ShowDialog(this);
-        }
 
         private void SynchronizeANOConfiguration_Click(TableInfo tableInfo)
         {
@@ -278,8 +219,5 @@ namespace CatalogueManager.Menus
                 ExceptionViewer.Show(e);
             }
         }
-
-
-        
     }
 }

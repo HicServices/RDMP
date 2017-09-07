@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnSave = new System.Windows.Forms.Button();
             this.tbRuntimeColumnName = new System.Windows.Forms.TextBox();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -38,17 +37,11 @@
             this.tbSqlDataType = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.lblErrorInType = new System.Windows.Forms.Label();
+            this.btnCheck = new System.Windows.Forms.Button();
+            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.label5 = new System.Windows.Forms.Label();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(132, 133);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 4;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // tbRuntimeColumnName
             // 
@@ -56,7 +49,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbRuntimeColumnName.Location = new System.Drawing.Point(132, 38);
             this.tbRuntimeColumnName.Name = "tbRuntimeColumnName";
-            this.tbRuntimeColumnName.Size = new System.Drawing.Size(325, 20);
+            this.tbRuntimeColumnName.Size = new System.Drawing.Size(760, 20);
             this.tbRuntimeColumnName.TabIndex = 1;
             this.tbRuntimeColumnName.TextChanged += new System.EventHandler(this.tbRuntimeColumnName_TextChanged);
             // 
@@ -111,7 +104,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSqlDataType.Location = new System.Drawing.Point(132, 64);
             this.tbSqlDataType.Name = "tbSqlDataType";
-            this.tbSqlDataType.Size = new System.Drawing.Size(325, 20);
+            this.tbSqlDataType.Size = new System.Drawing.Size(760, 20);
             this.tbSqlDataType.TabIndex = 2;
             this.tbSqlDataType.TextChanged += new System.EventHandler(this.tbSqlDataType_TextChanged);
             // 
@@ -135,22 +128,63 @@
             this.lblErrorInType.Text = "lblErrorInType";
             this.lblErrorInType.Visible = false;
             // 
+            // btnCheck
+            // 
+            this.btnCheck.Location = new System.Drawing.Point(3, 173);
+            this.btnCheck.Name = "btnCheck";
+            this.btnCheck.Size = new System.Drawing.Size(82, 23);
+            this.btnCheck.TabIndex = 15;
+            this.btnCheck.Text = "Check All";
+            this.btnCheck.UseVisualStyleBackColor = true;
+            this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
+            // 
+            // checksUI1
+            // 
+            this.checksUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checksUI1.Location = new System.Drawing.Point(0, 213);
+            this.checksUI1.Name = "checksUI1";
+            this.checksUI1.Size = new System.Drawing.Size(917, 348);
+            this.checksUI1.TabIndex = 14;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(0, 197);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(252, 13);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "(Checks all PreLoadDiscardedColumns in TableInfo)";
+            // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(132, 133);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.TabIndex = 17;
+            this.objectSaverButton1.Text = "objectSaverButton1";
+            this.objectSaverButton1.UseVisualStyleBackColor = true;
+            // 
             // PreLoadDiscardedColumnUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.btnCheck);
+            this.Controls.Add(this.checksUI1);
             this.Controls.Add(this.lblErrorInType);
             this.Controls.Add(this.tbSqlDataType);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.ddDestination);
-            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tbRuntimeColumnName);
             this.Controls.Add(this.tbID);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "PreLoadDiscardedColumnUI";
-            this.Size = new System.Drawing.Size(494, 160);
+            this.Size = new System.Drawing.Size(929, 564);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -158,7 +192,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox tbRuntimeColumnName;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label label2;
@@ -168,5 +201,9 @@
         private System.Windows.Forms.TextBox tbSqlDataType;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblErrorInType;
+        private System.Windows.Forms.Button btnCheck;
+        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private System.Windows.Forms.Label label5;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

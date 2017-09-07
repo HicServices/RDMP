@@ -18,6 +18,7 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
+using CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
@@ -443,6 +444,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void ActivateTableInfo(object sender, TableInfo tableInfo)
         {
             Activate<TableInfoUI, TableInfo>(tableInfo);
+        }
+
+        public void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn)
+        {
+            Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
         }
 
         public void ExecuteCohortSummaryGraph(object sender,CohortSummaryAggregateGraphObjectCollection objectCollection)

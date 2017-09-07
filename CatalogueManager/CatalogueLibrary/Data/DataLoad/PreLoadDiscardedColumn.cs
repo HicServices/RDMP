@@ -118,7 +118,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         public override string ToString()
         {
-            return RuntimeColumnName + " (ID=" + ID+ ", TableInfo_ID=" + TableInfo_ID + ")";
+            return RuntimeColumnName + " (" + Destination + ")";
         }
 
         public string GetRuntimeName()

@@ -22,5 +22,23 @@ namespace CatalogueLibrary.Nodes
         {
             return "Discarded Columns" + (IdentifierDumpServerIfAny == null?"":" (" + IdentifierDumpServerIfAny.Name+")");
         }
+
+        protected bool Equals(PreLoadDiscardedColumnsCollection other)
+        {
+            return Equals(TableInfo, other.TableInfo);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PreLoadDiscardedColumnsCollection) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (TableInfo != null ? TableInfo.GetHashCode() : 0);
+        }
     }
 }

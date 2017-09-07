@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -84,8 +85,13 @@ namespace CatalogueManager.Collections
         private object tlvTableInfos_DataTypeAspectGetter(object rowobject)
         {
             var c = rowobject as ColumnInfo;
+            var p = rowobject as PreLoadDiscardedColumn;
+
             if (c != null)
                 return c.Data_type;
+
+            if (p != null)
+                return p.Data_type;
 
             return null;
         }
@@ -96,7 +102,9 @@ namespace CatalogueManager.Collections
             var credentials = o as DataAccessCredentials;
             var externalDatabaseServer = o as ExternalDatabaseServer;
             var tableInfo = o as TableInfo;
+            var preLoadDiscardedColumn = o as PreLoadDiscardedColumn;
             
+
             if (credentials != null)
                 _activator.ActivateDataAccessCredentials(this,credentials);
 
@@ -108,6 +116,10 @@ namespace CatalogueManager.Collections
 
             if (tableInfo != null)
                 _activator.ActivateTableInfo(this, tableInfo);
+
+            if (preLoadDiscardedColumn != null)
+                _activator.ActivatePreLoadDiscardedColumn(this, preLoadDiscardedColumn);
+
         }
         
         public void SelectTableInfo(TableInfo toSelect)
@@ -155,9 +167,11 @@ namespace CatalogueManager.Collections
         {
             TableInfo tableInfo = e.Model as TableInfo;
             ColumnInfo columnInfo = e.Model as ColumnInfo;
-
+            var discardCollection = e.Model as PreLoadDiscardedColumnsCollection;
+            
             if (e.Model is AllExternalServersNode)
                 e.MenuStrip = new AllExternalServersNodeMenu(_activator);
+            else
             if (tableInfo != null)
                 e.MenuStrip = new TableInfoMenu( _activator, tableInfo);
             else if (columnInfo != null)
@@ -166,6 +180,8 @@ namespace CatalogueManager.Collections
                 e.MenuStrip = new DataAccessCredentialsNodeMenu(_activator);
             else if (e.Model is DataAccessCredentialUsageNode)
                 e.MenuStrip = new DataAccessCredentialUsageNodeMenu( _activator,(DataAccessCredentialUsageNode)e.Model);
+            else if (discardCollection != null)
+                e.MenuStrip = new PreLoadDiscardedColumnsCollectionMenu(_activator, discardCollection);
             else
             if(e.Model == null)
             {
