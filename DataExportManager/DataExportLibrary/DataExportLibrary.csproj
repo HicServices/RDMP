@@ -238,6 +238,7 @@
     <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FixedDataReleaseSource.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="Data\ConfigurationProperties.cs" />
     <Compile Include="Data\DataTables\CohortCustomColumn.cs" />
     <Compile Include="Data\DataTables\CohortDefinition.cs" />

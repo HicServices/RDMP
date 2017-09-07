@@ -103,11 +103,6 @@ namespace DataExportManager.DataRelease
             ConfigurationsForRelease.Add((ExtractionConfiguration) toAdd, datasetReleasePotentials.ToList());
             _releaseState = ReleaseState.DoingProperRelease;
 
-            foreach (FileInfo result in ConfigurationsForRelease.Values.SelectMany(v => v).SelectMany(p => p.ExtractDirectory.EnumerateFiles()))
-            {
-                FixedDataReleaseSource.FilesToRelease.Add(result);   
-            }
-
             ReloadTreeView();
         }
 
@@ -179,20 +174,7 @@ namespace DataExportManager.DataRelease
                 _releaseState = ReleaseState.Nothing;
             
         }
-
-        private void btnShowReleaseDirectory_Click(object sender, EventArgs e)
-        {
-            if (_releaseEngine != null)
-            {
-                DirectoryInfo d = _releaseEngine.GetIntendedReleaseDirectory();
-
-                if (!d.Exists)
-                    d.Create();
-
-                Process.Start(d.FullName);
-            }
-        }
-
+        
         private void btnRelease_Click(object sender, EventArgs e)
         {
             if (ConfigurationsForRelease.Count == 0)
@@ -204,85 +186,20 @@ namespace DataExportManager.DataRelease
             if (_pipelineUI.Pipeline == null)
                 return;
 
-            var factory = new DataFlowPipelineEngineFactory<FileInfo[]>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
+            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
+
+            FixedDataReleaseSource.CurrentRelease = new ReleaseData
+            {
+                ConfigurationsForRelease = ConfigurationsForRelease,
+                EnvironmentPotential = _environmentPotential
+            };
+
             factory.ExplicitSource = FixedDataReleaseSource;
+            
             var pipelineEngine = factory.Create(_pipelineUI.Pipeline, new ThrowImmediatelyDataLoadEventListener());
 
             pipelineEngine.Initialize(_project, _activator);
             pipelineEngine.ExecutePipeline(new GracefulCancellationToken());
-
-            return;
-
-            CheckForCumulativeExtractionResults(ConfigurationsForRelease.SelectMany(c=>c.Value).ToArray());
-
-            ReleaseEngine engine = new ReleaseEngine(Project);
-            try
-            {
-                if(_releaseState== ReleaseState.Nothing)
-                    throw new Exception("ReleaseState was Nothing... is this a patch or a proper release?");
-
-                if(_releaseState== ReleaseState.DoingPatch)
-                {
-
-                    if(MessageBox.Show(
-                        "CumulativeExtractionResults for datasets not included in the Patch will now be erased.","Erase redundant extraction results",MessageBoxButtons.OKCancel) 
-                        == DialogResult.Cancel)
-                        return;
-
-                    int recordsDeleted = 0;
-
-                    foreach (ExtractionConfiguration configuration in ConfigurationsForRelease.Keys)
-                    {
-                        ExtractionConfiguration current = configuration;
-                        var currentResults = configuration.CumulativeExtractionResults;
-
-                        //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-                        foreach (var redundantResult in currentResults.Where(r => ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
-                        {
-                            redundantResult.DeleteInDatabase();
-                            recordsDeleted++;
-                        }
-                    }
-
-                    if(recordsDeleted != 0)
-                        MessageBox.Show("Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)");
-                }
-
-                engine.DoRelease(ConfigurationsForRelease, _environmentPotential, _releaseState == ReleaseState.DoingPatch);
-                MessageBox.Show("Release Successful - Proceeding to Cleanup Dialog");
-
-                CleanupConfirmationDialog cleanup = new CleanupConfirmationDialog(engine);
-                cleanup.ShowDialog(this);
-
-                ConfigurationsForRelease.Clear();
-                ReloadTreeView();
-
-                //fire release complete event
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(Project));
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-
-                try
-                {
-                    int remnantsDeleted = 0;
-
-                    foreach (ExtractionConfiguration configuration in ConfigurationsForRelease.Keys)
-                        foreach (ReleaseLogEntry remnant in configuration.ReleaseLogEntries)
-                        {
-                            remnant.DeleteInDatabase();
-                            remnantsDeleted++;
-                        }
-
-                    if(remnantsDeleted > 0)
-                        MessageBox.Show("Because release failed we are deleting ReleaseLogEntries, this resulted in " + remnantsDeleted + " deleted records, you will likely need to rextract these datasets or retrieve them from the Release directory");
-                }
-                catch (Exception e1)
-                {
-                    ExceptionViewer.Show("Error occurred when trying to clean up remnant ReleaseLogEntries",e1);
-                }
-            }
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)
@@ -314,14 +231,14 @@ namespace DataExportManager.DataRelease
 
         public FixedDataReleaseSource FixedDataReleaseSource { get; set; }
 
-        private PipelineSelectionUI<FileInfo[]> _pipelineUI;
+        private PipelineSelectionUI<ReleaseData> _pipelineUI;
 
         private void SetupPipeline()
         {
             if (_pipelineUI == null)
             {
                 var cataRepository = _activator.RepositoryLocator.CatalogueRepository;
-                _pipelineUI = new PipelineSelectionUI<FileInfo[]>(FixedDataReleaseSource, null, cataRepository);
+                _pipelineUI = new PipelineSelectionUI<ReleaseData>(FixedDataReleaseSource, null, cataRepository);
                 _pipelineUI.Context = ReleaseEngine.Context;
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_project);
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_activator);

@@ -128,20 +128,12 @@ namespace DataExportManager.DataRelease
             doReleaseAndAuditUI1.AddPatchRelease(datasetReleasePotential, environmentPotential);
         }
 
-        private void ConfigurationReleasePotentialUIOnRequestRelease(object sender,
-            ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
+        private void ConfigurationReleasePotentialUIOnRequestRelease(object sender, ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
         {
-            if (
-                !datasetReleasePotentials.All(
-                    p =>
-                        p.Assesment == Releaseability.Releaseable ||
-                        p.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
-                throw new Exception(
-                    "Attempt made to release one or more datasets that are not assessed as being Releaseable (or ColumnDifferencesVsCatalogue)");
+            if (!datasetReleasePotentials.All(p => p.Assesment == Releaseability.Releaseable || p.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
+                throw new Exception("Attempt made to release one or more datasets that are not assessed as being Releaseable (or ColumnDifferencesVsCatalogue)");
 
-            if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable &&
-                environmentPotential.Assesment !=
-                TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
+            if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
                 throw new Exception("Ticketing system decided that Environment was not ready for release");
 
             doReleaseAndAuditUI1.AddToRelease(datasetReleasePotentials, environmentPotential);

@@ -14,6 +14,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using RDMPObjectVisualisation.Pipelines;
 using ReusableUIComponents;
 using ReusableUIComponents.Progress;
@@ -48,14 +49,14 @@ namespace DataExportManager.DataRelease
             
         }
 
-        private PipelineSelectionUI<FileInfo[]> _pipelineUI;
+        private PipelineSelectionUI<ReleaseData> _pipelineUI;
 
         private void SetupPipeline()
         {
             if (_pipelineUI == null)
             {
                 var cataRepository = _activator.RepositoryLocator.CatalogueRepository;
-                _pipelineUI = new PipelineSelectionUI<FileInfo[]>(null, null, cataRepository);
+                _pipelineUI = new PipelineSelectionUI<ReleaseData>(null, null, cataRepository);
                 _pipelineUI.Context = ReleaseEngine.Context;
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_project);
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_activator);
@@ -72,7 +73,7 @@ namespace DataExportManager.DataRelease
             if (_pipelineUI.Pipeline == null)
                 return;
 
-            var factory = new DataFlowPipelineEngineFactory<FileInfo[]>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
+            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
             var engine = factory.Create(_pipelineUI.Pipeline, progressUI1);
 
             engine.Initialize(_project, _activator);
