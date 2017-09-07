@@ -17,7 +17,9 @@ using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LocationsMenu;
 using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
@@ -90,14 +92,22 @@ namespace CatalogueManager.Collections
 
         private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
         {
-            var credentials = tlvTableInfos.SelectedObject as DataAccessCredentials;
-            var externalDatabaseServer = tlvTableInfos.SelectedObject as ExternalDatabaseServer;
-
+            var o = tlvTableInfos.SelectedObject;
+            var credentials = o as DataAccessCredentials;
+            var externalDatabaseServer = o as ExternalDatabaseServer;
+            var tableInfo = o as TableInfo;
+            
             if (credentials != null)
                 _activator.ActivateDataAccessCredentials(this,credentials);
 
+            if (o is DecryptionPrivateKeyNode)
+                _activator.ShowWindow(new PasswordEncryptionKeyLocationUI(), true);
+
             if (externalDatabaseServer != null)
                 _activator.ActivateExternalDatabaseServer(this, externalDatabaseServer);
+
+            if (tableInfo != null)
+                _activator.ActivateTableInfo(this, tableInfo);
         }
         
         public void SelectTableInfo(TableInfo toSelect)

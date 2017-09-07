@@ -118,5 +118,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateLoadProgress(object sender, LoadProgress loadProgress);
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
+        void ActivateTableInfo(object sender, TableInfo tableInfo);
     }
 }

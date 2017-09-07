@@ -440,6 +440,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<ExternalDatabaseServerUI,ExternalDatabaseServer>(externalDatabaseServer);
         }
 
+        public void ActivateTableInfo(object sender, TableInfo tableInfo)
+        {
+            Activate<TableInfoUI, TableInfo>(tableInfo);
+        }
+
         public void ExecuteCohortSummaryGraph(object sender,CohortSummaryAggregateGraphObjectCollection objectCollection)
         {
             Activate<CohortSummaryAggregateGraph>(objectCollection);

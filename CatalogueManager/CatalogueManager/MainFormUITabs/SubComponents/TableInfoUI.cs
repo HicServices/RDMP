@@ -11,6 +11,8 @@ using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Validation;
 using MapsDirectlyToDatabaseTable;
@@ -38,22 +40,20 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     /// This interface also allows you to mark a TableInfo 'Is Primary Extraction Table' which means that the QueryBuilder will start JOIN statements with this table where it is part of a complex
     /// multi table query.
     /// </summary>
-    public partial class TableInfoUI : RDMPForm
+    public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
     {
         private TableInfo _tableInfo;
 
-        public event EventHandler Saved;
-        private bool bLoading = false;
-
-        public TableInfoUI(TableInfo t)
+        public TableInfoUI()
         {
             InitializeComponent();
+        }
 
-            Text = "TableInfoUI: editing " + t;
-            _tableInfo = t;
+        public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)
+        {
+            base.SetDatabaseObject(activator, databaseObject);
 
-            if (VisualStudioDesignMode || t == null)
-                return;
+            _tableInfo = databaseObject;
 
             tbTableInfoID.Text = _tableInfo.ID.ToString();
             cbIsPrimaryExtractionTable.Checked = _tableInfo.IsPrimaryExtractionTable;
@@ -62,8 +62,9 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             tbTableInfoDatabaseName.Text = _tableInfo.Database;
 
             btnParameters.Enabled = _tableInfo.IsTableValuedFunction;
-        }
 
+            objectSaverButton1.SetupFor(_tableInfo,activator.RefreshBus);
+        }
 
         protected override bool ProcessKeyPreview(ref Message m)
         {
@@ -78,8 +79,6 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
             return base.ProcessKeyPreview(ref m);
         }
-
-
 
         private void cbIsPrimaryExtractionTable_CheckedChanged(object sender, EventArgs e)
         {
@@ -100,18 +99,12 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                         return;
 
                     DoRefactoring(nameChange);
-
-                    if (Saved != null)
-                        Saved(this, new EventArgs());
                 }
             }
             finally
             {
                 tableInfoInMemory.SaveToDatabase();
             }
-
-            if (Saved != null)
-                Saved(this, new EventArgs());
         }
 
         private void DoRefactoring(RevertablePropertyDifference nameChange)
@@ -158,35 +151,24 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         }
 
-       private void tbTableInfoName_TextChanged(object sender, EventArgs e)
+        private void tbTableInfoName_TextChanged(object sender, EventArgs e)
         {
-            if (bLoading)
-                return;
-
            _tableInfo.Name = tbTableInfoName.Text;
-           btnSaveChanges.Enabled = true;
         }
         
         private void tbTableInfoDatabaseAccess_TextChanged(object sender, EventArgs e)
         {
-            if (bLoading)
-                return;
             _tableInfo.Server = tbTableInfoDatabaseAccess.Text;
-            btnSaveChanges.Enabled = true;
         }
 
         private void tbTableInfoDatabaseName_TextChanged(object sender, EventArgs e)
         {
-            if (bLoading)
-                return;
             _tableInfo.Database = ((TextBox) sender).Text;
-            btnSaveChanges.Enabled = true;
         }
 
         private void btnTableInfoSave_Click(object sender, EventArgs e)
         {
             SaveTableInfoAndOfferRefactoring(_tableInfo);
-            btnSaveChanges.Enabled = false;
         }
 
         private void btnParameters_Click(object sender, EventArgs e)
@@ -202,14 +184,22 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
                 if (isSync)
                     MessageBox.Show("TableInfo is synchronized");
-
-                if(Saved != null)
-                    Saved(this,new EventArgs());
             }
             catch (Exception exception)
             {
                 ExceptionViewer.Show(exception);
             }
         }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<TableInfoUI_Design, UserControl>))]
+    public abstract class TableInfoUI_Design : RDMPSingleDatabaseObjectControl<TableInfo>
+    {
+        
     }
 }

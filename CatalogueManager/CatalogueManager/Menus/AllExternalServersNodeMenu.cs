@@ -5,12 +5,12 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -68,35 +68,7 @@ namespace CatalogueManager.Menus
 
         private void CreateNewExternalServer(ServerDefaults.PermissableDefaults defaultToSet, Assembly databaseAssembly)
         {
-            //user wants to create a new server e.g. a new Logging server
-
-            //do we already have a default server for this?
-            var defaults = new ServerDefaults(_activator.RepositoryLocator.CatalogueRepository);
-            var existingDefault = defaults.GetDefaultFor(defaultToSet);
-
-
-            //create the new server
-            var newServer = CreatePlatformDatabase.CreateNewExternalServer(
-                _activator.RepositoryLocator.CatalogueRepository,
-
-                //if we already have an existing default of this type then don't set the default yet
-                existingDefault  != null? ServerDefaults.PermissableDefaults.None : defaultToSet,
-                databaseAssembly);
-
-            //user cancelled creating a server
-            if (newServer == null)
-                return;
-
-            if (existingDefault != null)
-            {
-                if(MessageBox.Show(
-                    "Would you like the new default '" + defaultToSet +
-                    "' server to the newly created server? The current default is '" + existingDefault + "'",
-                    "Overwrite Default", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    defaults.SetDefault(defaultToSet,newServer);
-            }
-
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(newServer));
+            new ExecuteCommandCreateNewExternalDatabaseServer(_activator, databaseAssembly, defaultToSet).Execute();
         }
 
     }

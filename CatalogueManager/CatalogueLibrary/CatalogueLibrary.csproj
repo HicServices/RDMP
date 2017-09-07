@@ -327,6 +327,7 @@
     <Compile Include="Nodes\DataAccessCredentialUsageNode.cs" />
     <Compile Include="Nodes\DataAccessCredentialsNode.cs" />
     <Compile Include="Nodes\DocumentationNode.cs" />
+    <Compile Include="Nodes\PreLoadDiscardedColumnsCollection.cs" />
     <Compile Include="Nodes\JoinableCollectionNode.cs" />
     <Compile Include="Nodes\LinkedColumnInfoNode.cs" />
     <Compile Include="Nodes\AllServersNode.cs" />
@@ -346,6 +347,7 @@
     <Compile Include="Providers\CatalogueChildProvider.cs" />
     <Compile Include="Data\PerformanceImprovement\CohortHierarchy.cs" />
     <Compile Include="Nodes\ParametersNode.cs" />
+    <Compile Include="Providers\DecryptionPrivateKeyNode.cs" />
     <Compile Include="Providers\DescendancyList.cs" />
     <Compile Include="Providers\IChildProvider.cs" />
     <Compile Include="Providers\ICoreChildProvider.cs" />

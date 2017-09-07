@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManageExternalServers));
-            this.label6 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnCreateNewANOStore = new System.Windows.Forms.Button();
             this.btnClearANOStore = new System.Windows.Forms.Button();
@@ -60,7 +58,6 @@
             this.btnCreateNewWebServiceQueryCache = new System.Windows.Forms.Button();
             this.btnClearWebServiceQueryCache = new System.Windows.Forms.Button();
             this.ddWebServiceQueryCacheServer = new System.Windows.Forms.ComboBox();
-            this.passwordEncryptionKeyLocationUI1 = new CatalogueManager.LocationsMenu.PasswordEncryptionKeyLocationUI();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.btnClearRAWServer = new System.Windows.Forms.Button();
             this.ddOverrideRawServer = new System.Windows.Forms.ComboBox();
@@ -69,14 +66,6 @@
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(18, 9);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(608, 83);
-            this.label6.TabIndex = 11;
-            this.label6.Text = resources.GetString("label6.Text");
             // 
             // groupBox3
             // 
@@ -98,7 +87,7 @@
             this.groupBox3.Controls.Add(this.ddDefaultIdentifierDump);
             this.groupBox3.Controls.Add(this.ddDefaultTestLoggingServer);
             this.groupBox3.Controls.Add(this.ddDefaultLoggingServer);
-            this.groupBox3.Location = new System.Drawing.Point(14, 153);
+            this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(1124, 137);
             this.groupBox3.TabIndex = 13;
@@ -284,7 +273,7 @@
             this.groupBox4.Controls.Add(this.btnCreateNewDQEServer);
             this.groupBox4.Controls.Add(this.btnClearDQEServer);
             this.groupBox4.Controls.Add(this.ddDQEServer);
-            this.groupBox4.Location = new System.Drawing.Point(14, 296);
+            this.groupBox4.Location = new System.Drawing.Point(12, 155);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(1126, 62);
             this.groupBox4.TabIndex = 14;
@@ -337,7 +326,7 @@
             this.groupBox5.Controls.Add(this.btnCreateNewWebServiceQueryCache);
             this.groupBox5.Controls.Add(this.btnClearWebServiceQueryCache);
             this.groupBox5.Controls.Add(this.ddWebServiceQueryCacheServer);
-            this.groupBox5.Location = new System.Drawing.Point(14, 364);
+            this.groupBox5.Location = new System.Drawing.Point(12, 223);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(1126, 99);
             this.groupBox5.TabIndex = 15;
@@ -430,21 +419,13 @@
             this.ddWebServiceQueryCacheServer.TabIndex = 4;
             this.ddWebServiceQueryCacheServer.SelectedIndexChanged += new System.EventHandler(this.ddDefault_SelectedIndexChanged);
             // 
-            // passwordEncryptionKeyLocationUI1
-            // 
-            this.passwordEncryptionKeyLocationUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.passwordEncryptionKeyLocationUI1.Location = new System.Drawing.Point(643, 9);
-            this.passwordEncryptionKeyLocationUI1.Name = "passwordEncryptionKeyLocationUI1";
-            this.passwordEncryptionKeyLocationUI1.Size = new System.Drawing.Size(495, 138);
-            this.passwordEncryptionKeyLocationUI1.TabIndex = 16;
-            // 
             // groupBox6
             // 
             this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox6.Controls.Add(this.btnClearRAWServer);
             this.groupBox6.Controls.Add(this.ddOverrideRawServer);
-            this.groupBox6.Location = new System.Drawing.Point(14, 469);
+            this.groupBox6.Location = new System.Drawing.Point(12, 328);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(1126, 62);
             this.groupBox6.TabIndex = 16;
@@ -481,13 +462,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1148, 542);
+            this.ClientSize = new System.Drawing.Size(1148, 404);
             this.Controls.Add(this.groupBox6);
-            this.Controls.Add(this.passwordEncryptionKeyLocationUI1);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.label6);
             this.Name = "ManageExternalServers";
             this.Text = "ManageExternalServers";
             this.groupBox3.ResumeLayout(false);
@@ -502,7 +481,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
@@ -524,7 +502,6 @@
         private System.Windows.Forms.Button btnCreateNewIdentifierDump;
         private System.Windows.Forms.Button btnCreateNewTestLoggingServer;
         private System.Windows.Forms.Button btnCreateNewLoggingServer;
-        private PasswordEncryptionKeyLocationUI passwordEncryptionKeyLocationUI1;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Button btnClearRAWServer;
         private System.Windows.Forms.ComboBox ddOverrideRawServer;

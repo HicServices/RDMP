@@ -368,6 +368,7 @@
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
+    <Compile Include="CommandExecution\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
     <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
     <Compile Include="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />
@@ -845,7 +846,7 @@
       <DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="MainFormUITabs\SubComponents\TableInfoUI.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MainFormUITabs\SubComponents\TableInfoUI.Designer.cs">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
@@ -1310,6 +1311,8 @@
     <None Include="Icons\Exe.png" />
     <None Include="Icons\Executable.png" />
     <None Include="Icons\AllExternalServersNode.png" />
+    <None Include="Icons\DecryptionPrivateKeyNode.png" />
+    <None Include="Icons\AllPreLoadDiscardedColumns.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1379,6 +1382,7 @@
     <None Include="Icons\LoadBubbleMounting.png" />
     <None Include="Icons\PreLoadDiscardedColumn.png" />
     <None Include="Icons\Warning.png" />
+    <None Include="Icons\PreLoadDiscardedColumnsCollection.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

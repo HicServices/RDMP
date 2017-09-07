@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Nodes;
 using CatalogueManager.Icons.IconOverlays;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -16,15 +17,15 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 
         Dictionary<string,Bitmap> _assemblyToIconDictionary = new Dictionary<string, Bitmap>();
         private DatabaseTypeIconProvider _typeSpecificIconsProvider;
-
+        
         public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _overlayProvider = overlayProvider;
             _default = CatalogueIcons.ExternalDatabaseServer;
-
+            
             _assemblyToIconDictionary.Add(typeof (DataQualityEngine.Database.Class1).Assembly.GetName().Name,CatalogueIcons.ExternalDatabaseServer_DQE);
             _assemblyToIconDictionary.Add(typeof(ANOStore.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_ANO);
-            _assemblyToIconDictionary.Add(typeof(IdentifierDump.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
+            _assemblyToIconDictionary.Add(typeof (IdentifierDump.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
             _assemblyToIconDictionary.Add(typeof(QueryCaching.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_Cache);
             _assemblyToIconDictionary.Add(typeof(HIC.Logging.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_Logging);
 
@@ -44,15 +45,21 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
         {
             var server = o as ExternalDatabaseServer;
 
+            //if its not a server we aren't responsible for providing an icon for it
             if (server == null)
                 return null;
 
+            //the untyped server icon (e.g. user creates a reference to a server that he is going to use but isn't created/managed by a .Datbase assembly)
             var toReturn = _default;
 
+            //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
             if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.ContainsKey(server.CreatedByAssembly))
                 toReturn = _assemblyToIconDictionary[server.CreatedByAssembly];
+                
+            //add the database type overlay
+            toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
 
-            return _overlayProvider.GetOverlay(toReturn,_typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
+            return toReturn;
         }
     }
 }
