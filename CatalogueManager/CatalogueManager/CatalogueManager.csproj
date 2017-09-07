@@ -368,6 +368,7 @@
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
+    <Compile Include="CommandExecution\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
     <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
     <Compile Include="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />
