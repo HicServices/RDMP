@@ -191,7 +191,8 @@ namespace DataExportManager.DataRelease
             FixedDataReleaseSource.CurrentRelease = new ReleaseData
             {
                 ConfigurationsForRelease = ConfigurationsForRelease,
-                EnvironmentPotential = _environmentPotential
+                EnvironmentPotential = _environmentPotential,
+                ReleaseState = _releaseState
             };
 
             factory.ExplicitSource = FixedDataReleaseSource;
@@ -250,12 +251,7 @@ namespace DataExportManager.DataRelease
             }
         }
 
-        private enum ReleaseState
-        {
-            Nothing,
-            DoingPatch,
-            DoingProperRelease
-        }
+        
     }
 
     

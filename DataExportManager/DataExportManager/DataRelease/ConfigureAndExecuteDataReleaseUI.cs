@@ -78,7 +78,6 @@ namespace DataExportManager.DataRelease
 
             engine.Initialize(_project, _activator);
             engine.ExecutePipeline(new GracefulCancellationToken());
-
         }
 
     }

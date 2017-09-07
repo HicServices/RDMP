@@ -9,5 +9,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public HashSet<FileInfo> FilesToRelease { get; set; }
         public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; set; }
         public ReleaseEnvironmentPotential EnvironmentPotential { get; set; }
+        public ReleaseState ReleaseState { get; set; }
     }
 }

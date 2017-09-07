@@ -38,7 +38,29 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                                                     ? _project.ExtractionDirectory
                                                     : OutputBaseFolder;
 
-                engine.DoRelease(currentRelease.ConfigurationsForRelease, currentRelease.EnvironmentPotential, isPatch: false);
+                if (currentRelease.ReleaseState == ReleaseState.DoingPatch)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
+                    
+                    int recordsDeleted = 0;
+                
+                    foreach (var configuration in currentRelease.ConfigurationsForRelease.Keys)
+                    {
+                        IExtractionConfiguration current = configuration;
+                        var currentResults = configuration.CumulativeExtractionResults;
+                
+                        //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
+                        foreach (var redundantResult in currentResults.Where(r => currentRelease.ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+                        {
+                            redundantResult.DeleteInDatabase();
+                            recordsDeleted++;
+                        }
+                    }
+                
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
+                }
+
+                engine.DoRelease(currentRelease.ConfigurationsForRelease, currentRelease.EnvironmentPotential, isPatch: currentRelease.ReleaseState == ReleaseState.DoingPatch);
             }
             catch (Exception exception)
             {
@@ -68,30 +90,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            //if(pipelineFailureExceptionIfAny == null)
-            //{
-            //    if(DeleteFilesOnSuccess)
-            //        foreach (var file in _processedFiles)
-            //        {
-            //            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to cleanup '" + file.Name + "'"));
-            //            file.Delete();
-            //        }
-
-            //    _zip.Dispose();
-            //}
-            //else
-            //{
-            //    if(_zip != null)
-            //        try
-            //        {
-            //            File.Delete(_zipLocation);
-            //            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted '" + _zipLocation + "'"));
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Failed to delete file '" + _zipLocation +  "'",e));
-            //        }
-            //}
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -101,68 +99,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public void Check(ICheckNotifier notifier)
         {
-        }
-
-        private void DoRelease(ReleaseData currentRelease)
-        {
-            //ReleaseEngine engine = new ReleaseEngine(_project);
-            //try
-            //{
-            //    //if (_releaseState == ReleaseState.Nothing)
-            //    //    throw new Exception("ReleaseState was Nothing... is this a patch or a proper release?");
-
-            //    //if (_releaseState == ReleaseState.DoingPatch)
-            //    //{
-
-            //    //    if (MessageBox.Show(
-            //    //        "CumulativeExtractionResults for datasets not included in the Patch will now be erased.", "Erase redundant extraction results", MessageBoxButtons.OKCancel)
-            //    //        == DialogResult.Cancel)
-            //    //        return;
-
-            //    //    int recordsDeleted = 0;
-
-            //    //    foreach (ExtractionConfiguration configuration in ConfigurationsForRelease.Keys)
-            //    //    {
-            //    //        ExtractionConfiguration current = configuration;
-            //    //        var currentResults = configuration.CumulativeExtractionResults;
-
-            //    //        //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-            //    //        foreach (var redundantResult in currentResults.Where(r => ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
-            //    //        {
-            //    //            redundantResult.DeleteInDatabase();
-            //    //            recordsDeleted++;
-            //    //        }
-            //    //    }
-
-            //    //    if (recordsDeleted != 0)
-            //    //        MessageBox.Show("Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)");
-            //    //}
-
-            //    engine.DoRelease(currentRelease.ConfigurationsForRelease, currentRelease.EnvironmentPotential, false);
-            //}
-            //catch (Exception exception)
-            //{
-            //    ExceptionViewer.Show(exception);
-
-            //    try
-            //    {
-            //        int remnantsDeleted = 0;
-
-            //        foreach (ExtractionConfiguration configuration in ConfigurationsForRelease.Keys)
-            //            foreach (ReleaseLogEntry remnant in configuration.ReleaseLogEntries)
-            //            {
-            //                remnant.DeleteInDatabase();
-            //                remnantsDeleted++;
-            //            }
-
-            //        if (remnantsDeleted > 0)
-            //            MessageBox.Show("Because release failed we are deleting ReleaseLogEntries, this resulted in " + remnantsDeleted + " deleted records, you will likely need to rextract these datasets or retrieve them from the Release directory");
-            //    }
-            //    catch (Exception e1)
-            //    {
-            //        ExceptionViewer.Show("Error occurred when trying to clean up remnant ReleaseLogEntries", e1);
-            //    }
-            //}
         }
 
         public void PreInitialize(Project value, IDataLoadEventListener listener)
