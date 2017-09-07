@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnSaveChanges = new System.Windows.Forms.Button();
             this.btnSynchronize = new System.Windows.Forms.Button();
             this.cbIsPrimaryExtractionTable = new System.Windows.Forms.CheckBox();
             this.btnParameters = new System.Windows.Forms.Button();
@@ -40,26 +39,15 @@
             this.label37 = new System.Windows.Forms.Label();
             this.tbTableInfoID = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
-            // 
-            // btnSaveChanges
-            // 
-            this.btnSaveChanges.Enabled = false;
-            this.btnSaveChanges.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.btnSaveChanges.Location = new System.Drawing.Point(4, 106);
-            this.btnSaveChanges.Name = "btnSaveChanges";
-            this.btnSaveChanges.Size = new System.Drawing.Size(136, 27);
-            this.btnSaveChanges.TabIndex = 156;
-            this.btnSaveChanges.Text = "Save Changes (Ctrl + S)";
-            this.btnSaveChanges.UseVisualStyleBackColor = true;
-            this.btnSaveChanges.Click += new System.EventHandler(this.btnTableInfoSave_Click);
             // 
             // btnSynchronize
             // 
             this.btnSynchronize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.btnSynchronize.Location = new System.Drawing.Point(146, 106);
+            this.btnSynchronize.Location = new System.Drawing.Point(146, 108);
             this.btnSynchronize.Name = "btnSynchronize";
-            this.btnSynchronize.Size = new System.Drawing.Size(73, 27);
+            this.btnSynchronize.Size = new System.Drawing.Size(73, 23);
             this.btnSynchronize.TabIndex = 155;
             this.btnSynchronize.Text = "Synchronize";
             this.btnSynchronize.UseVisualStyleBackColor = true;
@@ -81,9 +69,9 @@
             // 
             this.btnParameters.Enabled = false;
             this.btnParameters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.btnParameters.Location = new System.Drawing.Point(225, 106);
+            this.btnParameters.Location = new System.Drawing.Point(225, 108);
             this.btnParameters.Name = "btnParameters";
-            this.btnParameters.Size = new System.Drawing.Size(233, 27);
+            this.btnParameters.Size = new System.Drawing.Size(233, 23);
             this.btnParameters.TabIndex = 8;
             this.btnParameters.Text = "Default Table Valued Function Parameters...";
             this.btnParameters.UseVisualStyleBackColor = true;
@@ -171,12 +159,20 @@
             this.label38.TabIndex = 141;
             this.label38.Text = "TableInfo ID";
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(65, 108);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.TabIndex = 156;
+            this.objectSaverButton1.Text = "objectSaverButton1";
+            this.objectSaverButton1.UseVisualStyleBackColor = true;
+            // 
             // TableInfoUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(780, 143);
-            this.Controls.Add(this.btnSaveChanges);
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.btnSynchronize);
             this.Controls.Add(this.label38);
             this.Controls.Add(this.cbIsPrimaryExtractionTable);
@@ -189,7 +185,7 @@
             this.Controls.Add(this.label40);
             this.Controls.Add(this.tbTableInfoDatabaseAccess);
             this.Name = "TableInfoUI";
-            this.Text = "TableInfoUI";
+            this.Size = new System.Drawing.Size(780, 143);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -208,6 +204,6 @@
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.Button btnParameters;
         private System.Windows.Forms.Button btnSynchronize;
-        private System.Windows.Forms.Button btnSaveChanges;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

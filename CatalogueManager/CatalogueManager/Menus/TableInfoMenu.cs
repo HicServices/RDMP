@@ -52,8 +52,6 @@ namespace CatalogueManager.Menus
 
             Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, false)));
 
-            Items.Add("Edit TableInfo", null, delegate { EditTableInfo_Click(tableInfo); });
-            
             Items.Add(new ToolStripSeparator());
             Items.Add(new AddLookupMenuItem(activator, "Add new Lookup Table Relationship", null, tableInfo));
             Items.Add(new AddJoinInfoMenuItem(activator, tableInfo));
@@ -188,15 +186,6 @@ namespace CatalogueManager.Menus
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(newColumnInfo));
         }
         
-        private void EditTableInfo_Click(TableInfo tableInfo)
-        {
-            var t = new TableInfoUI(tableInfo);
-            t.RepositoryLocator = RepositoryLocator;
-            t.ShowDialog();
-
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(tableInfo));
-        }
-
         private void ConfigureTableInfoParameters(TableInfo tableInfo)
         {
             ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptionsFactory().Create(tableInfo));

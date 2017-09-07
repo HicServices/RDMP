@@ -63,6 +63,7 @@ namespace CatalogueLibrary.Providers
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
         public ColumnInfo[] AllColumnInfos { get; private set; }
+        public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
         public Lookup[] AllLookups { get; set; }
 
@@ -109,6 +110,7 @@ namespace CatalogueLibrary.Providers
             AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             
             AllColumnInfos = repository.GetAllObjects<ColumnInfo>();
+            AllPreLoadDiscardedColumns = repository.GetAllObjects<PreLoadDiscardedColumn>();
 
             AllSupportingDocuments = repository.GetAllObjects<SupportingDocument>();
             AllSupportingSQL = repository.GetAllObjects<SupportingSQLTable>();
@@ -623,6 +625,30 @@ namespace CatalogueLibrary.Providers
         {
             //add empty hashset
             var children =  new HashSet<object>();
+
+            //get the discarded columns in this table
+            var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
+
+            //if there are discarded columns or a dump server
+            if (discardedCols.Any() || tableInfo.IdentifierDumpServer_ID != null)
+            {
+                //there might or might not be an identifier dump server (You can have PreLoadDiscarded columns which are targetted at Oblivion - thrown away).
+                ExternalDatabaseServer server = null;
+
+                //if there is a dump (e.g. for dillution and dumping - not appearing in the live table)
+                if(tableInfo.IdentifierDumpServer_ID != null)
+                    //find the dump server with the corresponding ID
+                    server = AllExternalServers.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
+
+                //create a new usage node (TableInfo x uses dump server y)
+                var identifierDumpNode = new PreLoadDiscardedColumnsCollection(tableInfo, server);
+                //record that the usage is a child of TableInfo
+                children.Add(identifierDumpNode);
+                
+                //record that the discarded columns are children of identifier dump usage node
+                AddToDictionaries(discardedCols, descendancy.Add(identifierDumpNode));
+
+            }
 
             //if it is a table valued function
             if (tableInfo.IsTableValuedFunction)

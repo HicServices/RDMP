@@ -327,6 +327,7 @@
     <Compile Include="Nodes\DataAccessCredentialUsageNode.cs" />
     <Compile Include="Nodes\DataAccessCredentialsNode.cs" />
     <Compile Include="Nodes\DocumentationNode.cs" />
+    <Compile Include="Nodes\PreLoadDiscardedColumnsCollection.cs" />
     <Compile Include="Nodes\JoinableCollectionNode.cs" />
     <Compile Include="Nodes\LinkedColumnInfoNode.cs" />
     <Compile Include="Nodes\AllServersNode.cs" />

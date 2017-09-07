@@ -95,6 +95,7 @@ namespace CatalogueManager.Collections
             var o = tlvTableInfos.SelectedObject;
             var credentials = o as DataAccessCredentials;
             var externalDatabaseServer = o as ExternalDatabaseServer;
+            var tableInfo = o as TableInfo;
             
             if (credentials != null)
                 _activator.ActivateDataAccessCredentials(this,credentials);
@@ -104,6 +105,9 @@ namespace CatalogueManager.Collections
 
             if (externalDatabaseServer != null)
                 _activator.ActivateExternalDatabaseServer(this, externalDatabaseServer);
+
+            if (tableInfo != null)
+                _activator.ActivateTableInfo(this, tableInfo);
         }
         
         public void SelectTableInfo(TableInfo toSelect)
