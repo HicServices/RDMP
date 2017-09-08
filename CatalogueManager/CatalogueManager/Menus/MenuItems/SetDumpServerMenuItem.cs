@@ -7,6 +7,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems
@@ -15,74 +16,66 @@ namespace CatalogueManager.Menus.MenuItems
     {
         private readonly IActivateItems _activator;
         private readonly TableInfo _tableInfo;
+        private ExternalDatabaseServer[] _availableServers;
 
-        public SetDumpServerMenuItem(IActivateItems activator, TableInfo tableInfo): base("Set Dump Server")
+        public SetDumpServerMenuItem(IActivateItems activator, TableInfo tableInfo): base("Add Dump Server")
         {
             _activator = activator;
             _tableInfo = tableInfo;
+
+            //cannot set server if we already have one
+            Enabled = tableInfo.IdentifierDumpServer_ID == null;
+            Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
 
             var img = CatalogueIcons.ExternalDatabaseServer_IdentifierDump;
             var overlay = new IconOverlayProvider();
 
             var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 
-            var iddServers = cataRepo.GetAllObjects<ExternalDatabaseServer>()
+            _availableServers = cataRepo.GetAllObjects<ExternalDatabaseServer>()
                 .Where(
                     s =>
                         s.CreatedByAssembly != null &&
                         s.CreatedByAssembly.Equals(typeof(IdentifierDump.Database.Class1).Assembly.GetName().Name)).ToArray();
 
-            //cannot change server if 
-            Enabled = tableInfo.IdentifierDumpServer_ID == null;
 
-            foreach (ExternalDatabaseServer v in iddServers)
-            {
-                var server = v;
-                DropDownItems.Add(
-                    new ToolStripMenuItem(server.Name,
-                        overlay.GetOverlayNoCache(img,OverlayKind.Link),
-                        (s, e) => SetDiscardedColumnTo(server)));
-            }
+            var miUseExisting = new ToolStripMenuItem("Use Existing...", overlay.GetOverlayNoCache(img, OverlayKind.Link),UseExisting);
+            miUseExisting.Enabled = _availableServers.Any();
 
-            DropDownItems.Add(new ToolStripSeparator());
-            DropDownItems.Add("Create New...", overlay.GetOverlayNoCache(img, OverlayKind.Add), (s, e) => CreateNewIdentifierDumpServer(tableInfo));
-
-            DropDownItems.Add(new ToolStripSeparator());
-
-
-            var clearDumpMenuItem = new ToolStripMenuItem("Clear Dump Server", null, ClearDumpServer);
-            clearDumpMenuItem.Enabled = _tableInfo.IdentifierDumpServer_ID != null;
-            DropDownItems.Add(clearDumpMenuItem);
+            DropDownItems.Add(miUseExisting);
+            DropDownItems.Add("Create New...", overlay.GetOverlayNoCache(img, OverlayKind.Add), CreateNewIdentifierDumpServer);
 
         }
-        private void CreateNewIdentifierDumpServer(TableInfo tableInfo)
+
+        private void UseExisting(object sender, EventArgs e)
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableServers, false, false);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var selected = (ExternalDatabaseServer) dialog.Selected;
+
+                if(selected != null)
+                {
+                    _tableInfo.IdentifierDumpServer_ID = selected.ID;
+                    _tableInfo.SaveToDatabase();
+
+                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
+                }
+            }
+        }
+
+        private void CreateNewIdentifierDumpServer(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(IdentifierDump.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID);
             cmd.Execute();
 
             if (cmd.ServerCreatedIfAny != null)
             {
-                tableInfo.IdentifierDumpServer_ID = cmd.ServerCreatedIfAny.ID;
-                tableInfo.SaveToDatabase();
+                _tableInfo.IdentifierDumpServer_ID = cmd.ServerCreatedIfAny.ID;
+                _tableInfo.SaveToDatabase();
 
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(tableInfo));
+                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
             }
-        }
-
-        private void SetDiscardedColumnTo(ExternalDatabaseServer server)
-        {
-            _tableInfo.IdentifierDumpServer_ID = server.ID;
-
-            _tableInfo.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
-        }
-
-        private void ClearDumpServer(object sender, EventArgs e)
-        {
-            _tableInfo.IdentifierDumpServer_ID = null;
-
-            _tableInfo.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
         }
     }
 }

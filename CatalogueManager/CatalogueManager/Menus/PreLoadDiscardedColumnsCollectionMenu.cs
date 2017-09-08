@@ -13,20 +13,18 @@ namespace CatalogueManager.Menus
     internal class PreLoadDiscardedColumnsCollectionMenu : ContextMenuStrip
     {
         private readonly IActivateItems _activator;
-        private readonly PreLoadDiscardedColumnsCollection _discardCollection;
+        private readonly PreLoadDiscardedColumnsNode _discardNode;
 
-        public PreLoadDiscardedColumnsCollectionMenu(IActivateItems activator, PreLoadDiscardedColumnsCollection discardCollection)
+        public PreLoadDiscardedColumnsCollectionMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode)
         {
             _activator = activator;
-            _discardCollection = discardCollection;
+            _discardNode = discardNode;
 
             AtomicCommandUIFactory uiFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
             
-            Items.Add(new SetDumpServerMenuItem(activator, discardCollection.TableInfo));
-
             Items.Add(
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator,
-                    _discardCollection.TableInfo)));
+                    _discardNode.TableInfo)));
 
 
         }

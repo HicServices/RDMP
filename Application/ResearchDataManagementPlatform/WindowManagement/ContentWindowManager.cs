@@ -240,12 +240,21 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (result == DialogResult.Yes)
             {
                 deleteable.DeleteInDatabase();
+                
+                var databaseObject = deleteable as DatabaseEntity;
 
-                var j = deleteable as JoinInfo;
-                if (j != null)
-                    RefreshBus.Publish(this, new RefreshObjectEventArgs(j.PrimaryKey));//JoinInfo is a special snowflake in that it is IDeletable and basically a database object but lacks an ID so isn't IMapsDirectlyToDatabaseTable
-                else
-                    RefreshBus.Publish(this,new RefreshObjectEventArgs((DatabaseEntity)deleteable));
+                if (databaseObject == null)
+                {
+                    var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
+                    if(descendancy != null)
+                        databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+                }
+
+                if(databaseObject == null)
+                    throw new NotSupportedException("IDeletable " + deleteable + " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
+                
+                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject));
+
                 return true;
             }
 

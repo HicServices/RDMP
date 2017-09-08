@@ -44,6 +44,10 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
         public Bitmap GetImageIfSupportedObject(object o)
         {
             var server = o as ExternalDatabaseServer;
+            var dumpServerUsage = o as IdentifierDumpServerUsageNode;
+
+            if (dumpServerUsage != null)
+                server = dumpServerUsage.IdentifierDumpServer;
 
             //if its not a server we aren't responsible for providing an icon for it
             if (server == null)
@@ -58,6 +62,9 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
                 
             //add the database type overlay
             toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
+
+            if (dumpServerUsage != null)
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Link);
 
             return toReturn;
         }

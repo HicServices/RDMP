@@ -7,23 +7,21 @@ using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.Nodes
 {
-    public class PreLoadDiscardedColumnsCollection
+    public class PreLoadDiscardedColumnsNode
     {
         public TableInfo TableInfo { get; private set; }
-        public ExternalDatabaseServer IdentifierDumpServerIfAny { get; private set; }
 
-        public PreLoadDiscardedColumnsCollection(TableInfo tableInfo, ExternalDatabaseServer identifierDumpServerIfAny)
+        public PreLoadDiscardedColumnsNode(TableInfo tableInfo)
         {
             TableInfo = tableInfo;
-            IdentifierDumpServerIfAny = identifierDumpServerIfAny;
         }
 
         public override string ToString()
         {
-            return "Discarded Columns" + (IdentifierDumpServerIfAny == null?"":" (" + IdentifierDumpServerIfAny.Name+")");
+            return "Discarded Columns";
         }
 
-        protected bool Equals(PreLoadDiscardedColumnsCollection other)
+        protected bool Equals(PreLoadDiscardedColumnsNode other)
         {
             return Equals(TableInfo, other.TableInfo);
         }
@@ -33,12 +31,14 @@ namespace CatalogueLibrary.Nodes
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((PreLoadDiscardedColumnsCollection) obj);
+            return Equals((PreLoadDiscardedColumnsNode) obj);
         }
 
         public override int GetHashCode()
         {
             return (TableInfo != null ? TableInfo.GetHashCode() : 0);
         }
+
+     
     }
 }

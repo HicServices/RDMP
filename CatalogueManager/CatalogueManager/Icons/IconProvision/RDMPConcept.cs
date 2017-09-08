@@ -107,7 +107,7 @@ namespace CatalogueManager.Icons.IconProvision
 
         AllExternalServersNode,
         DecryptionPrivateKeyNode,
-        PreLoadDiscardedColumnsCollection
+        PreLoadDiscardedColumnsNode
 
     }
 }

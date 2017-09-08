@@ -1063,9 +1063,9 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap PreLoadDiscardedColumnsCollection {
+        public static System.Drawing.Bitmap PreLoadDiscardedColumnsNode {
             get {
-                object obj = ResourceManager.GetObject("PreLoadDiscardedColumnsCollection", resourceCulture);
+                object obj = ResourceManager.GetObject("PreLoadDiscardedColumnsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

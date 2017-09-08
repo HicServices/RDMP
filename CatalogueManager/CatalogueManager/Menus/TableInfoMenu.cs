@@ -78,9 +78,9 @@ namespace CatalogueManager.Menus
             Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution, delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
             Items.Add(new ToolStripSeparator());
-
             Items.Add(new SetDumpServerMenuItem(activator, tableInfo));
             Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, tableInfo)));
+            Items.Add(new ToolStripSeparator());
 
             if (tableInfo != null && tableInfo.IsTableValuedFunction)
                 Items.Add("Configure Parameters...", activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });

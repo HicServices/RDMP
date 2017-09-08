@@ -39,6 +39,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             }
         }
 
+        public override string GetCommandName()
+        {
+            return "Add New Load Discarded Column";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.PreLoadDiscardedColumn, OverlayKind.Add);

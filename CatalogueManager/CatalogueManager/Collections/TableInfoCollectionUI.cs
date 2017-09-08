@@ -167,7 +167,7 @@ namespace CatalogueManager.Collections
         {
             TableInfo tableInfo = e.Model as TableInfo;
             ColumnInfo columnInfo = e.Model as ColumnInfo;
-            var discardCollection = e.Model as PreLoadDiscardedColumnsCollection;
+            var discardCollection = e.Model as PreLoadDiscardedColumnsNode;
             
             if (e.Model is AllExternalServersNode)
                 e.MenuStrip = new AllExternalServersNodeMenu(_activator);

@@ -625,29 +625,29 @@ namespace CatalogueLibrary.Providers
         {
             //add empty hashset
             var children =  new HashSet<object>();
+            
+            //if the table has an identifier dump listed
+            if (tableInfo.IdentifierDumpServer_ID != null)
+            {
+                //if there is a dump (e.g. for dillution and dumping - not appearing in the live table)
+                ExternalDatabaseServer server = AllExternalServers.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
 
+                children.Add(new IdentifierDumpServerUsageNode(tableInfo, server));
+            }
+            
             //get the discarded columns in this table
             var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
 
-            //if there are discarded columns or a dump server
-            if (discardedCols.Any() || tableInfo.IdentifierDumpServer_ID != null)
+            //if there are discarded columns
+            if (discardedCols.Any())
             {
-                //there might or might not be an identifier dump server (You can have PreLoadDiscarded columns which are targetted at Oblivion - thrown away).
-                ExternalDatabaseServer server = null;
-
-                //if there is a dump (e.g. for dillution and dumping - not appearing in the live table)
-                if(tableInfo.IdentifierDumpServer_ID != null)
-                    //find the dump server with the corresponding ID
-                    server = AllExternalServers.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
-
-                //create a new usage node (TableInfo x uses dump server y)
-                var identifierDumpNode = new PreLoadDiscardedColumnsCollection(tableInfo, server);
+                var identifierDumpNode = new PreLoadDiscardedColumnsNode(tableInfo);
+                
                 //record that the usage is a child of TableInfo
                 children.Add(identifierDumpNode);
-                
+
                 //record that the discarded columns are children of identifier dump usage node
                 AddToDictionaries(discardedCols, descendancy.Add(identifierDumpNode));
-
             }
 
             //if it is a table valued function
