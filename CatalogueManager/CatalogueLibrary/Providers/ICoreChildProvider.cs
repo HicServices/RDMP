@@ -25,7 +25,6 @@ namespace CatalogueLibrary.Providers
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
         
-        object[] GetAllDescendableObjects();
-        object[] GetAllSearchables();
+        Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
     }
 }

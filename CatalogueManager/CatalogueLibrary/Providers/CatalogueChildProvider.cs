@@ -740,16 +740,24 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        public object[] GetAllDescendableObjects()
+        public Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
-            return _descendancyDictionary.Keys.ToArray();
+            var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
+
+            foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
+                toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
+
+            AddToReturnSearchablesWithNoDecendancy(toReturn,AllLoadMetadatas);
+            AddToReturnSearchablesWithNoDecendancy(toReturn,AllCohortIdentificationConfigurations);
+            
+            return toReturn;
         }
 
-        public object[] GetAllSearchables()
+        private void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {
-
-            return
-                AllLoadMetadatas.Cast<object>().Union(AllCohortIdentificationConfigurations).Union(GetAllDescendableObjects()).ToArray();
+            foreach (IMapsDirectlyToDatabaseTable m in toAdd)
+                toReturn.Add(m, null);
         }
     }
+
 }

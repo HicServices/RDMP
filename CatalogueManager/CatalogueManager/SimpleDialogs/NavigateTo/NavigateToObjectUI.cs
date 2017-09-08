@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Providers;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
@@ -29,7 +30,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
     public partial class NavigateToObjectUI : Form
     {
         private readonly IActivateItems _activator;
-        private readonly Tuple<string, IMapsDirectlyToDatabaseTable>[] _searchables;
+        private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
         private ICoreIconProvider _coreIconProvider;
         private FavouritesProvider _favouriteProvider;
 
@@ -51,8 +52,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             typeof(LoadMetadataScheduleNode),
             typeof(AllCataloguesUsedByLoadMetadataNode),
             typeof(AllProcessTasksUsedByLoadMetadataNode),
-            typeof(LoadStageNode)
-
+            typeof(LoadStageNode),
+            typeof(PreLoadDiscardedColumnsNode)
         };
 
         public NavigateToObjectUI(IActivateItems activator)
@@ -63,7 +64,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             _magnifier = FamFamFamIcons.magnifier;
             InitializeComponent();
 
-            _searchables = _activator.CoreChildProvider.GetAllSearchables().OfType<IMapsDirectlyToDatabaseTable>().Select(k => new Tuple<string, IMapsDirectlyToDatabaseTable>(k.ToString() + k.GetType().Name, k)).ToArray();
+            _searchables = _activator.CoreChildProvider.GetAllSearchables();
 
             tbFind.Focus();
             FetchMatches();
@@ -178,25 +179,122 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         {
             if (string.IsNullOrWhiteSpace(tbFind.Text))
             {
-                _matches = _searchables.Take(MaxMatches).Select(t => t.Item2).ToList();
+                _matches = _searchables.Take(MaxMatches).Select(t => t.Key).ToList();
                 return;
             }
 
             var tokens = tbFind.Text.Split(new char[]{' '},StringSplitOptions.RemoveEmptyEntries);
+
+
+            List<int> integerTokens = new List<int>();
+
+            foreach (string token in tokens)
+            {
+                int i;
+                if(int.TryParse(token,out i))
+                    integerTokens.Add(i);
+            }
+            
             var regexes = new List<Regex>();
 
             foreach (string token in tokens)
                 regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
 
-            _matches = new List<IMapsDirectlyToDatabaseTable>();
+            _matches = 
+                _searchables.ToDictionary(
+                    s=>s,
+                    score=>ScoreMatches(score,integerTokens,regexes)
+                    )
+                .Where(score => score.Value > 0)
+                .OrderByDescending(score => score.Value)
+                .Take(MaxMatches)
+                .Select(score => score.Key.Key)
+                .ToList();
 
-            for (int i = 0; _matches.Count < MaxMatches && i < _searchables.Length; i++)
-                if (regexes.All(r => r.IsMatch(_searchables[i].Item1)))
-                    _matches.Add(_searchables[i].Item2);
-            
             Height = (int) ((_matches.Count*RowHeight) + DrawMatchesStartingAtY);
 
             Invalidate();
+        }
+
+        private static readonly int[] Weights = new int[] {64, 32, 16, 8, 4, 2, 1};
+
+        private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<int> integerTokens, List<Regex> regexes)
+        {
+            int score = 0;
+
+            //make a new list so we can destructively read it
+            regexes = new List<Regex>(regexes);
+
+            //match on ID of the head only
+            foreach (int integerToken in integerTokens)
+                if (kvp.Key.ID == integerToken)
+                {
+                    //matched on the ID (we could also match this in the tostring e.g. "project 132 my fishing project" where 132 is a number that is meaningful to the user only
+                    var regex = regexes.SingleOrDefault(r => r.ToString().Equals(integerToken.ToString()));
+                    if (regex != null)
+                        regexes.Remove(regex);
+
+                    score += Weights[0];
+                }
+
+            //match on the head vs the regex tokens
+            if (IsMatchToString(regexes, kvp.Key))
+                score += Weights[0];
+
+            if (IsMatchType(regexes, kvp.Key))
+                score += Weights[0];
+
+            //match on the parents if theres a decendancy list
+            if(kvp.Value != null)
+            {
+                var parents = kvp.Value.Parents;
+                int numberOfParents = parents.Length;
+
+                 //for each prime after the first apply it as a multiple of the parent match
+                for (int i = 1 ; i< Weights.Length; i++)
+                {
+                    //if we have run out of parents
+                    if (i > numberOfParents)
+                        break;
+
+                    var parent = parents[parents.Length - i];
+
+                    if(parent != null)
+                    {
+                        if (IsMatchToString(regexes, parent))
+                            score += Weights[i];
+
+                        if (IsMatchType(regexes, parent))
+                            score += Weights[i];
+                    }
+                }
+            }
+
+            //if there were unmatched regexes
+            if (regexes.Any())
+                return 0;
+
+            return score;
+        }
+
+        private bool IsMatchType(List<Regex> regexes, object key)
+        {
+            return IsMatch(regexes, key.GetType().Name);
+        }
+        private bool IsMatchToString(List<Regex> regexes, object key)
+        {
+            return IsMatch(regexes, key.ToString());
+        }
+        private bool IsMatch(List<Regex> regexes, string str)
+        {
+            var match = regexes.FirstOrDefault(r => r.IsMatch(str));
+
+            if (match != null)
+            {
+                regexes.Remove(match);
+                return true;
+            }
+            return false;
         }
 
         protected override void OnPaint(PaintEventArgs e)
