@@ -28,7 +28,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
     /// </summary>
     public partial class ArgumentCollection : UserControl 
     {
-        public Dictionary<string, DemandsInitialization> DemandDictionary = new Dictionary<string, DemandsInitialization>();
+        public Dictionary<string, DemandsInitializationAttribute> DemandDictionary = new Dictionary<string, DemandsInitializationAttribute>();
         private Type _argumentsAreFor;
         private IArgumentHost _parent;
         private CatalogueRepository _catalogueRepository;
@@ -120,7 +120,29 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
                 List<string> required = new List<string>();
 
                 foreach (PropertyInfo propertyInfo in _argumentsAreFor.GetProperties())
-                    foreach (DemandsInitialization attribute in propertyInfo.GetCustomAttributes(typeof(DemandsInitialization), true))
+                {
+                    if (propertyInfo.GetCustomAttributes(typeof(DemandsNestedInitializationAttribute), true).Any())
+                    {
+                        var allNested = propertyInfo.PropertyType.GetProperties();
+                        foreach (var nestedPropInfo in allNested)
+                        {
+                            //found a tagged attribute - it might already exist though
+                            required.Add(nestedPropInfo.Name);
+
+                            //record the name of the property and the type it requires
+                            var attribute = nestedPropInfo.GetCustomAttribute<DemandsInitializationAttribute>();
+                            if (attribute == null)
+                                continue;
+
+                            DemandDictionary.Add(nestedPropInfo.Name, attribute);
+
+                            var argument = existing.SingleOrDefault(arg => arg.Name.Equals(nestedPropInfo.Name));
+
+                            ProcessArgument(argument, nestedPropInfo, attribute, existing);
+                        }
+                    }
+
+                    foreach (DemandsInitializationAttribute attribute in propertyInfo.GetCustomAttributes(typeof(DemandsInitializationAttribute), true))
                     {
                         //found a tagged attribute - it might already exist though
                         required.Add(propertyInfo.Name);
@@ -130,53 +152,9 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
 
                         var argument = existing.SingleOrDefault(arg => arg.Name.Equals(propertyInfo.Name));
 
-                        if (argument == null)//it doesnt exist - so create it
-                        {
-                            var newArgument = (Argument)_parent.CreateNewArgument();
-
-                            newArgument.Name = propertyInfo.Name;
-                                
-                            try
-                            {
-                                newArgument.SetType(propertyInfo.PropertyType);
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionViewer.Show("Problem determining argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName,e);
-                            }
-
-                            newArgument.Description = attribute.Description;
-
-                            if (attribute.DefaultValue != null)
-                                try
-                                {
-                                    newArgument.SetValue(attribute.DefaultValue);
-                                }
-                                catch (Exception e)
-                                {
-                                    ExceptionViewer.Show("Problem setting DefaultValue argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName + " DefaultValue was '" + attribute.DefaultValue + "' (" + attribute.DefaultValue.GetType().Name+")", e);
-                                }
-                            newArgument.SaveToDatabase();
-                            existing.Add(newArgument);
-                        }
-                        else
-                        {
-                            //it does exist but check it hasn't had a type descync
-                            if (argument.GetSystemType() != propertyInfo.PropertyType)
-                                if (MessageBox.Show("Argument '" + argument.Name + "' is of Type '" +
-                                                    argument.GetSystemType() + "' in Catalogue but is of Type '" +
-                                                    propertyInfo.PropertyType + "' in underlying class '" +
-                                                    _argumentsAreFor.Name +
-                                                    "'.  Do you want to resolve this by changing the type of argument " +
-                                                    argument.Name + " to Type " + propertyInfo.PropertyType + "?",
-                                    "Fix Argument Type Desynchronisation?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                                {
-                                    //user wants to fix the problem
-                                    argument.SetType(propertyInfo.PropertyType);
-                                    argument.SaveToDatabase();
-                                }
-                        }
+                        ProcessArgument(argument, propertyInfo, attribute, existing);
                     }
+                }
 
                 foreach (var argumentsNotRequired in existing.Where(e => !required.Any(r => r.Equals(e.Name))))
                 {
@@ -217,6 +195,56 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             pArguments.ResumeLayout(true);
         }
 
+        private void ProcessArgument(Argument argument, PropertyInfo propertyInfo, DemandsInitializationAttribute attribute, List<Argument> existing)
+        {
+            if (argument == null)//it doesnt exist - so create it
+            {
+                var newArgument = (Argument)_parent.CreateNewArgument();
+
+                newArgument.Name = propertyInfo.Name;
+
+                try
+                {
+                    newArgument.SetType(propertyInfo.PropertyType);
+                }
+                catch (Exception e)
+                {
+                    ExceptionViewer.Show("Problem determining argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName, e);
+                }
+
+                newArgument.Description = attribute.Description;
+
+                if (attribute.DefaultValue != null)
+                    try
+                    {
+                        newArgument.SetValue(attribute.DefaultValue);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionViewer.Show("Problem setting DefaultValue argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName + " DefaultValue was '" + attribute.DefaultValue + "' (" + attribute.DefaultValue.GetType().Name + ")", e);
+                    }
+                newArgument.SaveToDatabase();
+                existing.Add(newArgument);
+            }
+            else
+            {
+                //it does exist but check it hasn't had a type descync
+                if (argument.GetSystemType() != propertyInfo.PropertyType)
+                    if (MessageBox.Show("Argument '" + argument.Name + "' is of Type '" +
+                                        argument.GetSystemType() + "' in Catalogue but is of Type '" +
+                                        propertyInfo.PropertyType + "' in underlying class '" +
+                                        _argumentsAreFor.Name +
+                                        "'.  Do you want to resolve this by changing the type of argument " +
+                                        argument.Name + " to Type " + propertyInfo.PropertyType + "?",
+                        "Fix Argument Type Desynchronisation?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        //user wants to fix the problem
+                        argument.SetType(propertyInfo.PropertyType);
+                        argument.SaveToDatabase();
+                    }
+            }
+        }
+
 
         private Label GetLabelHeader(string caption)
         {
@@ -231,7 +259,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             return label;
         }
 
-        private void CreateLine(IArgumentHost parent, Argument argument, DemandsInitialization demandsInitialization)
+        private void CreateLine(IArgumentHost parent, Argument argument, DemandsInitializationAttribute demandsInitialization)
         {
 
             Label name = new Label();
@@ -304,7 +332,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
                 //get all properties
                 argumentsAreForUnderlyingType.GetProperties()
                 //any of them have custom attribute collections which contain a [DemandsInitialization]?
-                .Any(p => p.GetCustomAttributes(typeof (CatalogueLibrary.Data.DemandsInitialization)).Any());
+                .Any(p => p.GetCustomAttributes(typeof (CatalogueLibrary.Data.DemandsInitializationAttribute)).Any());
 
             if (!areAnyDemandsInitializations)
                 return;

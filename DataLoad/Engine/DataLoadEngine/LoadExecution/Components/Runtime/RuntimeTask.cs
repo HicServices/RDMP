@@ -57,7 +57,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             foreach (var propertyInfo in toSetPropertiesOf.GetType().GetProperties())
             {
                 //see if any demand initialization
-                Attribute initialization = System.Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitialization);
+                Attribute initialization = System.Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitializationAttribute);
 
                 //this one does
                 if (initialization != null)

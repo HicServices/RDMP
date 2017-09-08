@@ -126,7 +126,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                 //see if any demand initialization
                 Attribute initialization =
                     System.Attribute.GetCustomAttributes(propertyInfo)
-                        .FirstOrDefault(a => a is DemandsInitialization);
+                        .FirstOrDefault(a => a is DemandsInitializationAttribute);
 
                 //this one does
                 if (initialization != null)

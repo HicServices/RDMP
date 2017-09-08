@@ -30,7 +30,7 @@ namespace CatalogueLibrary.Data.DataLoad
             //get all the properties that must be set on AnySeparatorFileAttacher (Those marked with the attribute DemandsInitialization
             var propertiesWeHaveToSet =
                 classType.GetProperties()
-                    .Where(p => p.GetCustomAttributes(typeof(DemandsInitialization), true).Any())
+                    .Where(p => p.GetCustomAttributes(typeof(DemandsInitializationAttribute), true).Any())
                     .ToArray();
 
             if (!propertiesWeHaveToSet.Any())
@@ -50,10 +50,10 @@ namespace CatalogueLibrary.Data.DataLoad
                 argument.SetType(propertyInfo.PropertyType);
                 argument.Name = propertyInfo.Name;
 
-                DemandsInitialization attribute;
+                DemandsInitializationAttribute attribute;
                 try
                 {
-                    attribute = (DemandsInitialization)propertyInfo.GetCustomAttributes(typeof(DemandsInitialization)).Single();
+                    attribute = (DemandsInitializationAttribute)propertyInfo.GetCustomAttributes(typeof(DemandsInitializationAttribute)).Single();
                 }
                 catch (Exception e)
                 {

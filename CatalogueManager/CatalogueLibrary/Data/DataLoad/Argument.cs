@@ -189,11 +189,12 @@ namespace CatalogueLibrary.Data.DataLoad
         {
             return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Type);
         }
+
         public void SetType(Type t)
         {
             //anything that is a child of a permissable type
-            if (!PermissableTypes.Any(tp => tp.IsAssignableFrom(t)))
-                    throw new NotSupportedException("Type " + t + " is not a permissable type for ProcessTaskArguments");
+            //if (!PermissableTypes.Any(tp => tp.IsAssignableFrom(t)))
+            //        throw new NotSupportedException("Type " + t + " is not a permissable type for ProcessTaskArguments");
 
             Type = t.ToString();
         }

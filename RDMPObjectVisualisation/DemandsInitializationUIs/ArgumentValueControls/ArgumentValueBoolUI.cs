@@ -22,7 +22,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
         {
             _bLoading = true;
             _argument = argument;

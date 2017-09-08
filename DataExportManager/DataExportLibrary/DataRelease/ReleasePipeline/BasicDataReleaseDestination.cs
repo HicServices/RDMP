@@ -19,11 +19,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
     public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseData>, IDataFlowDestination<ReleaseData>, IPipelineRequirement<Project>
     {
-        [DemandsInitialization("Delete the released files from the origin location if release is succesful",defaultValue:true)]
+        [DemandsInitialization("Delete the released files from the origin location if release is succesful", DefaultValue = true)]
         public bool DeleteFilesOnSuccess { get; set; }
 
         [DemandsInitialization("Output folder")]
-        public string OutputBaseFolder { get; set; }
+        public DirectoryInfo OutputBaseFolder { get; set; }
+
+        [DemandsNestedInitialization()]
+        public ReleaseEngineSettings ReleaseSettings { get; set; }
 
         public ReleaseData CurrentRelease { get; set; }
         private Project _project;
@@ -34,9 +37,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             ReleaseEngine engine = new ReleaseEngine(_project);
 
-            _project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder)
+            _project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder.FullName)
                                                 ? _project.ExtractionDirectory
-                                                : OutputBaseFolder;
+                                                : OutputBaseFolder.FullName;
 
             if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
             {

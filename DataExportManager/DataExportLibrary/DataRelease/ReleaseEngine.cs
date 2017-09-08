@@ -22,7 +22,7 @@ namespace DataExportLibrary.DataRelease
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
         
         public static DataFlowPipelineContext<ReleaseData> Context { get; set; }
-        public ReleaseEngineConfiguration ReleaseConfig { get; set; }
+        public ReleaseEngineSettings ReleaseConfig { get; set; }
 
         static ReleaseEngine()
         {
@@ -33,7 +33,7 @@ namespace DataExportLibrary.DataRelease
             Context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
         }
 
-        public ReleaseEngine(Project project, ReleaseEngineConfiguration config = null)
+        public ReleaseEngine(Project project, ReleaseEngineSettings config = null)
         {
             _repository = project.Repository;
             Project = project;
@@ -42,7 +42,7 @@ namespace DataExportLibrary.DataRelease
 
             ReleaseConfig = config;
             if (ReleaseConfig == null)
-                ReleaseConfig = new ReleaseEngineConfiguration();
+                ReleaseConfig = new ReleaseEngineSettings();
                 
         }
 

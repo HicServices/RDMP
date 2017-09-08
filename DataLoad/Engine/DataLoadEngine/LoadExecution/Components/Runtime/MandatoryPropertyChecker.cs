@@ -19,7 +19,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             foreach (var propertyInfo in _classInstanceToCheck.GetType().GetProperties())
             {
                 //see if any demand initialization
-                DemandsInitialization demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitialization>().FirstOrDefault();
+                DemandsInitializationAttribute demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
 
                 //this one does
                 if (demand != null)

@@ -13,7 +13,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 {
     public class ArgumentValueUIFactory
     {
-        public IArgumentValueUI Create(IArgumentHost parent, Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public IArgumentValueUI Create(IArgumentHost parent, Argument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
         {
             var argumentType = argument.GetSystemType();
             IArgumentValueUI toReturn;

@@ -272,6 +272,8 @@
     <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
     <Compile Include="Data\DataLoad\IHasStageSpecificRuntimeName.cs" />
     <Compile Include="Data\DataLoad\IPreLoadDiscardedColumn.cs" />
+    <Compile Include="Data\DemandsNestedInitializationAttribute.cs" />
+    <Compile Include="Data\DemandType.cs" />
     <Compile Include="Data\ExtractionFilterParameterSet.cs" />
     <Compile Include="Data\ExtractionFilterParameterSetValue.cs" />
     <Compile Include="Data\Favourite.cs" />
@@ -413,7 +415,7 @@
     <Compile Include="Data\DataLoad\IResolveDuplication.cs" />
     <Compile Include="Data\AutomationServiceException.cs" />
     <Compile Include="DataHelper\RDMPQuerySyntaxHelper.cs" />
-    <Compile Include="Data\DemandsInitialization.cs" />
+    <Compile Include="Data\DemandsInitializationAttribute.cs" />
     <Compile Include="Data\EncryptedPasswordHost.cs" />
     <Compile Include="Data\EncryptedString.cs" />
     <Compile Include="Data\EntityNaming\INameDatabasesAndTablesDuringLoads.cs" />
