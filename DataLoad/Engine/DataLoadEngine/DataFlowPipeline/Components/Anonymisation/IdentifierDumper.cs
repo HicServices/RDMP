@@ -46,7 +46,7 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
         {
             TableInfo = tableInfo;
             var columnsToDump = tableInfo.PreLoadDiscardedColumns;
-
+            
             //something is destined for the identifier dump
             HasAtLeastOneColumnToStoreInDump = columnsToDump.Any(c => c.GoesIntoIdentifierDump());
             
@@ -229,6 +229,16 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 
         public void Check(ICheckNotifier notifier)
         {
+
+            var columnsToDump = TableInfo.PreLoadDiscardedColumns;
+            var duplicates = columnsToDump.GroupBy(k => k.GetRuntimeName()).Where(c => c.Count() > 1).ToArray();
+
+            foreach (var duplicate in duplicates)
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        "There are " + duplicate.Count() + " PreLoadDiscardedColumns called '" + duplicate.Key + "' for TableInfo '" +
+                        TableInfo + "'", CheckResult.Fail));
+                
             if(!HasAtLeastOneColumnToStoreInDump)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("No columns require dumping from TableInfo " + _tableInfo + " so checking is not needed", CheckResult.Success, null));

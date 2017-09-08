@@ -67,9 +67,14 @@ namespace RDMPObjectVisualisation.Copying
             //table column pointers (not extractable)
             var columnInfo = modelObject as ColumnInfo;
             var linkedColumnInfo = modelObject as LinkedColumnInfoNode;
+            
             if (columnInfo != null || linkedColumnInfo != null)
                 return new ColumnInfoCommand(columnInfo ?? linkedColumnInfo.ColumnInfo);
 
+            var columnInfoArray = IsArrayOf<ColumnInfo>(modelObject);
+            if(columnInfoArray != null)
+                return new ColumnInfoCommand(columnInfoArray);
+            
             var tableInfo = modelObject as TableInfo;
             if (tableInfo != null)
                 return new TableInfoCommand(tableInfo);

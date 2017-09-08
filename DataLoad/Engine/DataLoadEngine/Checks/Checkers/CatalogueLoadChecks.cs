@@ -90,10 +90,11 @@ namespace DataLoadEngine.Checks.Checkers
             ColumnInfo[] columnInfos;
             ColumnInfo[] columnInfosWhichArePrimaryKeys;
 
-
             //check whether the live database and staging databases have appropriate columns and triggers etc on them
             DiscoveredDatabase staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             DiscoveredDatabase live = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
+
+            var liveCols = live.ExpectTable(tableInfo.GetRuntimeName()).DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
 
             CheckTableInfoSynchronization(tableInfo,notifier);
 
@@ -108,16 +109,7 @@ namespace DataLoadEngine.Checks.Checkers
 
                 if(runSynchronizationAgain)
                     CheckTableInfoSynchronization(tableInfo, notifier);
-
-                DiscoveredTable liveTable = live.ExpectTable(tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, LoadBubble.Live));
-                DiscoveredTable archiveTable = live.ExpectTable(tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer,LoadBubble.Archive));
-
-
-                string[] liveCols = liveTable.DiscoverColumns().Select(c=>c.GetRuntimeName()).ToArray();
-                string[] archiveCols = archiveTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
-
-                CheckColumnOrderInTablesAndArchiveMatch(liveCols, archiveCols, tableInfo.GetRuntimeName(),notifier);
-
+                
                 if (!_databaseConfiguration.RequiresStagingTableCreation)
                 {
                     //Important:
@@ -224,22 +216,6 @@ namespace DataLoadEngine.Checks.Checkers
             runSynchronizationAgain = checker.TriggerCreated;
         }
         
-        private void CheckColumnOrderInTablesAndArchiveMatch(string[] liveCols, string[] archiveCols, string tableName, ICheckNotifier notifier)
-        {
-            foreach (var requiredArchiveColumns in new[] {"hic_validTo", "hic_userID", "hic_status"})
-                if (!archiveCols.Contains(requiredArchiveColumns))
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Column " + requiredArchiveColumns + " was not found in " + tableName + "_Archive",
-                            CheckResult.Fail));
-
-
-            foreach (var missingColumn in liveCols.Except(archiveCols))
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                            "Column " + missingColumn + " in table " + tableName +
-                            " was not found in the  _Archive table",
-                            CheckResult.Fail, null));
-        }
 
         private void ConfirmStagingAndLiveHaveSameColumns(string tableName, string[] stagingCols, string[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
         {

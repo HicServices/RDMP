@@ -85,9 +85,16 @@ namespace CatalogueManager.CommandExecution
             if (targetStage != null)
                 return CreateWhenTargetIsLoadStage(cmd, targetStage);
 
+            /////////////Table Info Collection Drop Targets////////////////////
+
+            var targetPreLoadDiscardedColumnsNode = targetModel as PreLoadDiscardedColumnsNode;
+            if (targetPreLoadDiscardedColumnsNode != null)
+                return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
+
             //no valid combinations
             return null;
         }
+
 
         private ICommandExecution CreateWhenTargetIsLoadStage(ICommand cmd, LoadStageNode targetStage)
         {
@@ -327,6 +334,17 @@ namespace CatalogueManager.CommandExecution
             if(sourceAggregateConfigurationCommand != null)
                 if (sourceAggregateConfigurationCommand.Aggregate.IsCohortIdentificationAggregate)
                     return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode);
+
+            return null;
+        }
+
+
+        private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICommand cmd, PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
+        {
+            var sourceColumnInfoCommand = cmd as ColumnInfoCommand;
+
+            if(sourceColumnInfoCommand != null)
+                return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,targetPreLoadDiscardedColumnsNode.TableInfo,sourceColumnInfoCommand);
 
             return null;
         }

@@ -27,10 +27,27 @@ namespace DataLoadEngine.Checks.Checkers
             _primaryKeys = primaryKeys ?? new string[0];
         }
 
-        
 
         public void Check(ICheckNotifier notifier)
         {
+
+
+            DiscoveredTable liveTable = _dbInfo.ExpectTable(_tableName);
+            DiscoveredTable archiveTable = _dbInfo.ExpectTable(_tableName +"_Archive");
+
+
+            if(liveTable.Exists() && archiveTable.Exists())
+            {
+                string[] liveCols = liveTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
+                string[] archiveCols = archiveTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
+
+                var passed = CheckColumnOrderInTablesAndArchiveMatch(liveCols, archiveCols, notifier);
+
+                if(!passed)
+                    return;
+            }
+
+
             TriggerImplementer trigger = new TriggerImplementer(_dbInfo, _tableName);
 
             bool present;
@@ -86,6 +103,35 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
+
+        private bool CheckColumnOrderInTablesAndArchiveMatch(string[] liveCols, string[] archiveCols, ICheckNotifier notifier)
+        {
+            bool passed = true;
+
+            foreach (var requiredArchiveColumns in new[] { "hic_validTo", "hic_userID", "hic_status" })
+                if (!archiveCols.Contains(requiredArchiveColumns))
+                {
+
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Column " + requiredArchiveColumns + " was not found in " + _tableName + "_Archive",
+                            CheckResult.Fail));
+                    passed = false;
+                }
+
+
+            foreach (var missingColumn in liveCols.Except(archiveCols))
+            {
+
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "Column " + missingColumn + " in table " + _tableName +
+                    " was not found in the  _Archive table",
+                    CheckResult.Fail, null));
+                passed = false;
+            }
+
+            return passed;
+        }
         private void NotifyFail(Exception e, ICheckNotifier notifier,TriggerImplementer trigger)
         {
             //if they expected it not to be there then it shouldn't be crashing trying to find it
