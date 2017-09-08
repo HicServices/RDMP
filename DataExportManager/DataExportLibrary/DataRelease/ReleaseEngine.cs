@@ -22,6 +22,7 @@ namespace DataExportLibrary.DataRelease
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
         
         public static DataFlowPipelineContext<ReleaseData> Context { get; set; }
+        public ReleaseEngineConfiguration ReleaseConfig { get; set; }
 
         static ReleaseEngine()
         {
@@ -32,20 +33,36 @@ namespace DataExportLibrary.DataRelease
             Context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
         }
 
-        public ReleaseEngine(Project project)
+        public ReleaseEngine(Project project, ReleaseEngineConfiguration config = null)
         {
             _repository = project.Repository;
             Project = project;
             Releasesuccessful = false;
-            ConfigurationsReleased= new List<IExtractionConfiguration>();
+            ConfigurationsReleased = new List<IExtractionConfiguration>();
+
+            ReleaseConfig = config;
+            if (ReleaseConfig == null)
+                ReleaseConfig = new ReleaseEngineConfiguration();
+                
         }
 
         public DirectoryInfo GetIntendedReleaseDirectory()
         {
-            if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-                return null;
+            if (ReleaseConfig.UseProjectExtractionFolder)
+            {
+                if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
+                    return null;
 
-            return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory,"Release")); 
+                var suffix = "";
+                if (String.IsNullOrWhiteSpace(Project.MasterTicket))
+                    suffix = Project.ID + "_" + Project.Name;
+                else
+                    suffix = "LINK-" + Project.MasterTicket;
+
+                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, "Release-" + suffix)); 
+            }
+            
+            return new DirectoryInfo(ReleaseConfig.CustomExtractionDirectory);
         }
 
         public void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment,bool isPatch)
@@ -61,11 +78,16 @@ namespace DataExportLibrary.DataRelease
             DirectoryInfo intendedReleaseDirectory = GetIntendedReleaseDirectory();
 
             if (!intendedReleaseDirectory.Exists)
-                intendedReleaseDirectory.Create();
+            {
+                if (ReleaseConfig.CreateReleaseDirectoryIfNotFound)
+                    intendedReleaseDirectory.Create();
+                else
+                    throw new Exception("Intended release directory was not found and I was forbidden to create it: " + intendedReleaseDirectory.FullName);
+            }
 
             //make sure user isn't sneaking any pollution into this directory
             if(intendedReleaseDirectory.EnumerateDirectories().Any() || intendedReleaseDirectory.EnumerateFiles().Any()) 
-                throw new Exception("Intended release directory is not empty:" +intendedReleaseDirectory.FullName );
+                throw new Exception("Intended release directory is not empty:" + intendedReleaseDirectory.FullName );
 
             StreamWriter sw = new StreamWriter(Path.Combine(intendedReleaseDirectory.FullName,"contents.txt"));
             
@@ -90,14 +112,21 @@ namespace DataExportLibrary.DataRelease
             //for each configuration, all the release potentials can be released
             foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in toRelease)
             {
+                var extractionIdentifier = "";
+                if (!String.IsNullOrWhiteSpace(kvp.Key.RequestTicket) && !String.IsNullOrWhiteSpace(kvp.Key.ReleaseTicket))
+                    extractionIdentifier = String.Format("REQ-{0}_REL-{1}", kvp.Key.RequestTicket, kvp.Key.ReleaseTicket);
+                else
+                    extractionIdentifier = kvp.Key.Name + "_" + kvp.Key.ID;
+
                 //create a root folder with the same name as the configuration (e.g. controls folder then next loop iteration a cases folder - with a different cohort)
-                DirectoryInfo configurationSubDirectory = intendedReleaseDirectory.CreateSubdirectory("Configuration " +  kvp.Key.ID);
+                DirectoryInfo configurationSubDirectory = intendedReleaseDirectory.CreateSubdirectory("Configuration-" + extractionIdentifier);
 
                 //audit in contents.txt
                 sw.WriteLine("Folder:" + configurationSubDirectory.Name);
                 sw.WriteLine("ConfigurationName:" + kvp.Key.Name);
                 sw.WriteLine("ConfigurationDescription:" + kvp.Key.Description);
                 sw.WriteLine("ExtractionConfiguration.ID:" + kvp.Key.ID);
+                sw.WriteLine("ExtractionConfiguration Identifier:" + extractionIdentifier);
                 sw.WriteLine("CumulativeExtractionResult.ID(s):" + kvp.Value.Select(v=>v.ExtractionResults.ID).Distinct().Aggregate("",(s,n)=>s+n+",").TrimEnd(','));
                 sw.WriteLine("CohortName:" + _repository.GetObjectByID<ExtractableCohort>((int) kvp.Key.Cohort_ID));
                 sw.WriteLine("CohortID:" + kvp.Key.Cohort_ID);
@@ -116,8 +145,8 @@ namespace DataExportLibrary.DataRelease
                 WordDataReleaseFileGenerator generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
                 if(generator.RequirementsMet())
                 {
-                    generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName,"ReleaseDocument_"+kvp.Key.ID+".docx"));
-                    AuditFileCreation("ReleaseDocument" + kvp.Key.ID + ".docx", sw, 1);
+                    generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
+                    AuditFileCreation("ReleaseDocument" + extractionIdentifier + ".docx", sw, 1);
                 }
                 else
                     sw.WriteLine("Release Document Not Generated Because Office Not Installed");

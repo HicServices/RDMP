@@ -25,52 +25,55 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         [DemandsInitialization("Output folder")]
         public string OutputBaseFolder { get; set; }
 
-        private readonly List<FileInfo> _processedFiles = new List<FileInfo>();
+        public ReleaseData CurrentRelease { get; set; }
         private Project _project;
 
         public ReleaseData ProcessPipelineData(ReleaseData currentRelease, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            try
+            this.CurrentRelease = currentRelease;
+
+            ReleaseEngine engine = new ReleaseEngine(_project);
+
+            _project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder)
+                                                ? _project.ExtractionDirectory
+                                                : OutputBaseFolder;
+
+            if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
             {
-                ReleaseEngine engine = new ReleaseEngine(_project);
-
-                _project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder)
-                                                    ? _project.ExtractionDirectory
-                                                    : OutputBaseFolder;
-
-                if (currentRelease.ReleaseState == ReleaseState.DoingPatch)
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
                     
-                    int recordsDeleted = 0;
-                
-                    foreach (var configuration in currentRelease.ConfigurationsForRelease.Keys)
-                    {
-                        IExtractionConfiguration current = configuration;
-                        var currentResults = configuration.CumulativeExtractionResults;
-                
-                        //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-                        foreach (var redundantResult in currentResults.Where(r => currentRelease.ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
-                        {
-                            redundantResult.DeleteInDatabase();
-                            recordsDeleted++;
-                        }
-                    }
-                
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
-                }
+                int recordsDeleted = 0;
 
-                engine.DoRelease(currentRelease.ConfigurationsForRelease, currentRelease.EnvironmentPotential, isPatch: currentRelease.ReleaseState == ReleaseState.DoingPatch);
-            }
-            catch (Exception exception)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to start the engine", exception));
+                foreach (var configuration in this.CurrentRelease.ConfigurationsForRelease.Keys)
+                {
+                    IExtractionConfiguration current = configuration;
+                    var currentResults = configuration.CumulativeExtractionResults;
                 
+                    //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
+                    foreach (var redundantResult in currentResults.Where(r => CurrentRelease.ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+                    {
+                        redundantResult.DeleteInDatabase();
+                        recordsDeleted++;
+                    }
+                }
+                
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
+            }
+
+            engine.DoRelease(CurrentRelease.ConfigurationsForRelease, CurrentRelease.EnvironmentPotential, isPatch: CurrentRelease.ReleaseState == ReleaseState.DoingPatch);
+            
+            return CurrentRelease;
+        }
+
+        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        {
+            if (pipelineFailureExceptionIfAny != null && CurrentRelease != null)
+            {
                 try
                 {
                     int remnantsDeleted = 0;
 
-                    foreach (ExtractionConfiguration configuration in currentRelease.ConfigurationsForRelease.Keys)
+                    foreach (ExtractionConfiguration configuration in CurrentRelease.ConfigurationsForRelease.Keys)
                         foreach (ReleaseLogEntry remnant in configuration.ReleaseLogEntries)
                         {
                             remnant.DeleteInDatabase();
@@ -85,11 +88,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error occurred when trying to clean up remnant ReleaseLogEntries", e1));
                 }
             }
-            return currentRelease;
-        }
-        
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
         }
 
         public void Abort(IDataLoadEventListener listener)

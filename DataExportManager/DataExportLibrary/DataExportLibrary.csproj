@@ -235,6 +235,7 @@
     <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
     <Compile Include="DataRelease\ReleaseEngine.cs" />
+    <Compile Include="DataRelease\ReleaseEngineConfiguration.cs" />
     <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FixedDataReleaseSource.cs" />

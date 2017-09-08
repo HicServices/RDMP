@@ -108,7 +108,6 @@ namespace DataExportManager.DataRelease
 
         private void CheckForCumulativeExtractionResults(ReleasePotential[] datasetReleasePotentials)
         {
-
             var staleDatasets = datasetReleasePotentials.Where(
                 p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
 
@@ -196,8 +195,11 @@ namespace DataExportManager.DataRelease
             };
 
             factory.ExplicitSource = FixedDataReleaseSource;
-            
-            var pipelineEngine = factory.Create(_pipelineUI.Pipeline, new ThrowImmediatelyDataLoadEventListener());
+
+            var progressUI = new ProgressUI();
+            _activator.ShowWindow(progressUI, false);
+
+            var pipelineEngine = factory.Create(_pipelineUI.Pipeline, progressUI);
 
             pipelineEngine.Initialize(_project, _activator);
             pipelineEngine.ExecutePipeline(new GracefulCancellationToken());
