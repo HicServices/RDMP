@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Nodes;
@@ -67,7 +68,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             _searchables = _activator.CoreChildProvider.GetAllSearchables();
 
             tbFind.Focus();
-            FetchMatches();
+            FetchMatches(CancellationToken.None);
             StartPosition = FormStartPosition.CenterScreen;
             DoubleBuffered = true;
         }
@@ -170,13 +171,30 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             this.Close();
         }
 
+        Task _lastFetchTask = null;
+        private CancellationTokenSource _lastCancellationToken;
+
         private void tbFind_TextChanged(object sender, EventArgs e)
         {
-            FetchMatches();
+            //cancel the last execution if it has not completed yet
+            if (_lastFetchTask != null && !_lastFetchTask.IsCompleted)
+                _lastCancellationToken.Cancel();
+
+            _lastCancellationToken = new CancellationTokenSource();
+
+            _lastFetchTask = Task.Run(() => FetchMatches(_lastCancellationToken.Token))
+                .ContinueWith(
+                    (s) =>
+                    {
+                        Height = (int) ((_matches.Count*RowHeight) + DrawMatchesStartingAtY);
+                        Invalidate();
+                    },
+                    TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private void FetchMatches()
+        private void FetchMatches(CancellationToken cancellationToken)
         {
+
             if (string.IsNullOrWhiteSpace(tbFind.Text))
             {
                 _matches = _searchables.Take(MaxMatches).Select(t => t.Key).ToList();
@@ -200,10 +218,13 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             foreach (string token in tokens)
                 regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
 
+            if (cancellationToken.IsCancellationRequested)
+                return;
+
             _matches = 
                 _searchables.ToDictionary(
                     s=>s,
-                    score=>ScoreMatches(score,integerTokens,regexes)
+                    score => ScoreMatches(score, integerTokens, regexes, cancellationToken)
                     )
                 .Where(score => score.Value > 0)
                 .OrderByDescending(score => score.Value)
@@ -211,16 +232,17 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 .Select(score => score.Key.Key)
                 .ToList();
 
-            Height = (int) ((_matches.Count*RowHeight) + DrawMatchesStartingAtY);
-
-            Invalidate();
         }
 
         private static readonly int[] Weights = new int[] {64, 32, 16, 8, 4, 2, 1};
+        
 
-        private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<int> integerTokens, List<Regex> regexes)
+        private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<int> integerTokens, List<Regex> regexes, CancellationToken cancellationToken)
         {
             int score = 0;
+
+            if (cancellationToken.IsCancellationRequested)
+                return 0;
 
             //make a new list so we can destructively read it
             regexes = new List<Regex>(regexes);
