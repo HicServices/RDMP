@@ -29,7 +29,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         {
             this.CurrentRelease = currentRelease;
 
-            ReleaseEngine engine = new ReleaseEngine(_project, ReleaseSettings);
+            var engine = new ReleaseEngine(_project, ReleaseSettings);
 
             //_project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder.FullName)
             //                                    ? _project.ExtractionDirectory

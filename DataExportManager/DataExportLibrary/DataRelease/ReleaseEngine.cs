@@ -18,7 +18,7 @@ namespace DataExportLibrary.DataRelease
     {
         private readonly IRepository _repository;
         public Project Project { get; private set; }
-        public bool Releasesuccessful { get; private set; }
+        public bool Releasesuccessful { get; protected set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
         
         public static DataFlowPipelineContext<ReleaseData> Context { get; set; }
@@ -65,7 +65,7 @@ namespace DataExportLibrary.DataRelease
             return new DirectoryInfo(ReleaseSettings.CustomExtractionDirectory);
         }
 
-        public void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment,bool isPatch)
+        public virtual void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment,bool isPatch)
         {
             //make sure everything is releasable
             if (toRelease.Any(kvp => kvp.Value.Any(p=>p.Assesment != Releaseability.Releaseable && p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)))//these are the only permissable release states
@@ -174,7 +174,7 @@ namespace DataExportLibrary.DataRelease
             Releasesuccessful = true;
         }
 
-        private void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
+        protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
         {
             ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
 
@@ -189,7 +189,7 @@ namespace DataExportLibrary.DataRelease
         }
 
 
-        private DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+        protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
             List<DirectoryInfo> customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CustomCohortDataFolderName, toRelease,new List<DirectoryInfo>());
             return GetUniqueDirectoryFrom(customDirectoriesFound);
@@ -265,7 +265,7 @@ namespace DataExportLibrary.DataRelease
             }
         }
 
-        private void CutTreeRecursive(DirectoryInfo from, DirectoryInfo into, StreamWriter audit, int tabDepth)
+        protected void CutTreeRecursive(DirectoryInfo from, DirectoryInfo into, StreamWriter audit, int tabDepth)
         {
             //found files in current directory
             foreach (FileInfo file in from.GetFiles())
@@ -293,7 +293,7 @@ namespace DataExportLibrary.DataRelease
 
         }
 
-        private void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
+        protected void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
         {
             for (int i = 0; i < tabDepth; i++)
                 audit.Write("\t");
@@ -301,7 +301,7 @@ namespace DataExportLibrary.DataRelease
             audit.WriteLine("-" + name);
         }
 
-        private void AuditDirectoryCreation(string dir, StreamWriter audit, int tabDepth)
+        protected void AuditDirectoryCreation(string dir, StreamWriter audit, int tabDepth)
         {
             for (int i = 0; i < tabDepth; i++)
                 audit.Write("\t");
