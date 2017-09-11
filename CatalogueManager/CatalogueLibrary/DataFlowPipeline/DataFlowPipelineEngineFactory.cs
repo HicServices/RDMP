@@ -133,7 +133,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                 {
                     try
                     {
-                        //get the approrpriate value from arguments
+                        //get the appropriate value from arguments
                         var value = allArguments.SingleOrDefault(n => n.Name.Equals(propertyInfo.Name));
 
                         if (value == null)
@@ -148,6 +148,55 @@ namespace CatalogueLibrary.DataFlowPipeline
                         throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
                                             " but is of unexpected/unsupported type " + propertyInfo.GetType(), e);
                     }
+                }
+
+                //see if any demand nested initialization
+                Attribute nestedInit =
+                    System.Attribute.GetCustomAttributes(propertyInfo)
+                        .FirstOrDefault(a => a is DemandsNestedInitializationAttribute);
+
+                //this one does
+                if (nestedInit != null)
+                {
+                    // initialise the container before nesting-setting all properties
+                    var container = Activator.CreateInstance(propertyInfo.PropertyType);
+
+                    foreach (var nestedProp in propertyInfo.PropertyType.GetProperties())
+                    {
+                        //see if any demand initialization
+                        initialization = System.Attribute.GetCustomAttributes(nestedProp)
+                                            .FirstOrDefault(a => a is DemandsInitializationAttribute);
+
+                        //this one does
+                        if (initialization != null)
+                        {
+                            var dottedName = propertyInfo.Name + "." + nestedProp.Name;
+
+                            try
+                            {
+                                //get the appropriate value from arguments
+                                var value = allArguments.SingleOrDefault(n => n.Name.Equals(dottedName));
+
+                                if (value == null)
+                                    throw new Exception("Class " + toReturn.GetType().Name + " has a property " +
+                                                        dottedName +
+                                                        " marked with DemandsNestedInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called " +
+                                                        toBuild.Name);
+
+                                //use reflection to set the value
+                                nestedProp.SetValue(container, value.GetValueAsSystemType(), null);
+                            }
+                            catch (NotSupportedException e)
+                            {
+                                throw new Exception(
+                                    "Class " + toReturn.GetType().Name + " has a nested property " + dottedName +
+                                    " but is of unexpected/unsupported type " + nestedProp.GetType(), e);
+                            }
+                        }
+                    }
+
+                    //use reflection to set the container
+                    propertyInfo.SetValue(toReturn, container, null);
                 }
             }
 

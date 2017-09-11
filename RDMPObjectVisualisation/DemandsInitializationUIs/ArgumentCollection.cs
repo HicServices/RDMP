@@ -71,7 +71,6 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             helpIcon1.SetHelpText( _argumentsAreFor.Name,GetDescriptionForTypeIncludingBaseTypes(_argumentsAreFor, true));
 
             RefreshArgumentList();
-            
         }
         
         /// <summary>
@@ -106,6 +105,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             }
             return message;
         }
+
         private void RefreshArgumentList()
         {
             if (_parent == null)
@@ -126,19 +126,20 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
                         var allNested = propertyInfo.PropertyType.GetProperties();
                         foreach (var nestedPropInfo in allNested)
                         {
+                            var dottedName = propertyInfo.Name + "." + nestedPropInfo.Name;
                             //found a tagged attribute - it might already exist though
-                            required.Add(nestedPropInfo.Name);
+                            required.Add(dottedName);
 
                             //record the name of the property and the type it requires
                             var attribute = nestedPropInfo.GetCustomAttribute<DemandsInitializationAttribute>();
                             if (attribute == null)
                                 continue;
 
-                            DemandDictionary.Add(nestedPropInfo.Name, attribute);
+                            DemandDictionary.Add(dottedName, attribute);
 
-                            var argument = existing.SingleOrDefault(arg => arg.Name.Equals(nestedPropInfo.Name));
+                            var argument = existing.SingleOrDefault(arg => arg.Name.Equals(dottedName));
 
-                            ProcessArgument(argument, nestedPropInfo, attribute, existing);
+                            ProcessArgument(argument, nestedPropInfo.PropertyType, dottedName, attribute, existing);
                         }
                     }
 
@@ -152,7 +153,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
 
                         var argument = existing.SingleOrDefault(arg => arg.Name.Equals(propertyInfo.Name));
 
-                        ProcessArgument(argument, propertyInfo, attribute, existing);
+                        ProcessArgument(argument, propertyInfo.PropertyType, propertyInfo.Name, attribute, existing);
                     }
                 }
 
@@ -195,21 +196,21 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             pArguments.ResumeLayout(true);
         }
 
-        private void ProcessArgument(Argument argument, PropertyInfo propertyInfo, DemandsInitializationAttribute attribute, List<Argument> existing)
+        private void ProcessArgument(Argument argument, Type propertyType, string propertyName, DemandsInitializationAttribute attribute, List<Argument> existing)
         {
             if (argument == null)//it doesnt exist - so create it
             {
                 var newArgument = (Argument)_parent.CreateNewArgument();
 
-                newArgument.Name = propertyInfo.Name;
+                newArgument.Name = propertyName;
 
                 try
                 {
-                    newArgument.SetType(propertyInfo.PropertyType);
+                    newArgument.SetType(propertyType);
                 }
                 catch (Exception e)
                 {
-                    ExceptionViewer.Show("Problem determining argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName, e);
+                    ExceptionViewer.Show("Problem determining argument " + propertyName + " on class " + _argumentsAreFor.FullName, e);
                 }
 
                 newArgument.Description = attribute.Description;
@@ -221,7 +222,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
                     }
                     catch (Exception e)
                     {
-                        ExceptionViewer.Show("Problem setting DefaultValue argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName + " DefaultValue was '" + attribute.DefaultValue + "' (" + attribute.DefaultValue.GetType().Name + ")", e);
+                        ExceptionViewer.Show("Problem setting DefaultValue argument " + propertyName + " on class " + _argumentsAreFor.FullName + " DefaultValue was '" + attribute.DefaultValue + "' (" + attribute.DefaultValue.GetType().Name + ")", e);
                     }
                 newArgument.SaveToDatabase();
                 existing.Add(newArgument);
@@ -229,22 +230,21 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             else
             {
                 //it does exist but check it hasn't had a type descync
-                if (argument.GetSystemType() != propertyInfo.PropertyType)
+                if (argument.GetSystemType() != propertyType)
                     if (MessageBox.Show("Argument '" + argument.Name + "' is of Type '" +
                                         argument.GetSystemType() + "' in Catalogue but is of Type '" +
-                                        propertyInfo.PropertyType + "' in underlying class '" +
+                                        propertyType + "' in underlying class '" +
                                         _argumentsAreFor.Name +
                                         "'.  Do you want to resolve this by changing the type of argument " +
-                                        argument.Name + " to Type " + propertyInfo.PropertyType + "?",
+                                        argument.Name + " to Type " + propertyType + "?",
                         "Fix Argument Type Desynchronisation?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         //user wants to fix the problem
-                        argument.SetType(propertyInfo.PropertyType);
+                        argument.SetType(propertyType);
                         argument.SaveToDatabase();
                     }
             }
         }
-
 
         private Label GetLabelHeader(string caption)
         {

@@ -22,9 +22,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         [DemandsInitialization("Delete the released files from the origin location if release is succesful", DefaultValue = true)]
         public bool DeleteFilesOnSuccess { get; set; }
 
-        [DemandsInitialization("Output folder")]
-        public DirectoryInfo OutputBaseFolder { get; set; }
-
         [DemandsNestedInitialization()]
         public ReleaseEngineSettings ReleaseSettings { get; set; }
 
@@ -35,11 +32,11 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         {
             this.CurrentRelease = currentRelease;
 
-            ReleaseEngine engine = new ReleaseEngine(_project);
+            ReleaseEngine engine = new ReleaseEngine(_project, ReleaseSettings);
 
-            _project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder.FullName)
-                                                ? _project.ExtractionDirectory
-                                                : OutputBaseFolder.FullName;
+            //_project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder.FullName)
+            //                                    ? _project.ExtractionDirectory
+            //                                    : OutputBaseFolder.FullName;
 
             if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
             {
