@@ -16,7 +16,7 @@ namespace DataExportLibrary.DataRelease
 {
     public class ReleaseEngine
     {
-        private readonly IRepository _repository;
+        protected readonly IRepository _repository;
         public Project Project { get; private set; }
         public bool Releasesuccessful { get; protected set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
@@ -195,7 +195,7 @@ namespace DataExportLibrary.DataRelease
             return GetUniqueDirectoryFrom(customDirectoriesFound);
         }
 
-        private List<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease, List<DirectoryInfo> alreadySeenBefore)
+        protected List<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease, List<DirectoryInfo> alreadySeenBefore)
         {
             foreach (ReleasePotential releasePotential in toRelease.Value)
             {
@@ -212,7 +212,7 @@ namespace DataExportLibrary.DataRelease
             return alreadySeenBefore;
         }
 
-        private DirectoryInfo ThrowIfGlobalConflictElseReturnFirstGlobalFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+        protected DirectoryInfo ThrowIfGlobalConflictElseReturnFirstGlobalFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
             List<DirectoryInfo> GlobalDirectoriesFound = new List<DirectoryInfo>();
 
@@ -222,7 +222,7 @@ namespace DataExportLibrary.DataRelease
             return GetUniqueDirectoryFrom(GlobalDirectoriesFound);
         }
 
-        private DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)
+        protected DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)
         {
             if (!directoryInfos.Any())
                 return null;
@@ -239,13 +239,13 @@ namespace DataExportLibrary.DataRelease
         }
 
 
-        private void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
+        protected void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
         {
             if(globalsDirectoryInfo.EnumerateDirectories().Any())
                 throw new Exception("Folder \"" + globalsDirectoryInfo.FullName + "\" contains subdirectories, this is not permitted");
         }
 
-        private void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
+        protected void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
         {
             if(first.EnumerateFiles().Count()!= other.EnumerateFiles().Count())
                 throw new Exception("found different number of files in Globals directory " + first.FullName + " and " + other.FullName);

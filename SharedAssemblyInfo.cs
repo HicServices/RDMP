@@ -8,6 +8,6 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 // These should be replaced with correct values by the release process
-[assembly: AssemblyVersion("2.3.1.67")]
-[assembly: AssemblyFileVersion("2.3.1.67")]
-[assembly: AssemblyInformationalVersion("2.3.1.67-develop")]
+[assembly: AssemblyVersion("2.3.1.69")]
+[assembly: AssemblyFileVersion("2.3.1.69")]
+[assembly: AssemblyInformationalVersion("2.3.1.69")]
