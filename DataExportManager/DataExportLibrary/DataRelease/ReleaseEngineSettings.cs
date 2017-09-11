@@ -13,12 +13,16 @@ namespace DataExportLibrary.DataRelease
 
         [DemandsInitialization("If unchecked, it will report an error if the destination folder does not exists", DefaultValue = true)]
         public bool CreateReleaseDirectoryIfNotFound { get; set; }
+        
+        [DemandsInitialization("Delete the released files from the origin location if release is succesful", DefaultValue = true)]
+        public bool DeleteFilesOnSuccess { get; set; }
 
         public ReleaseEngineSettings()
         {
             UseProjectExtractionFolder = true;
             CreateReleaseDirectoryIfNotFound = true;
             CustomExtractionDirectory = String.Empty;
+            DeleteFilesOnSuccess = true;
         }
     }
 }

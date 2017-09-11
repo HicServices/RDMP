@@ -22,7 +22,7 @@ namespace DataExportLibrary.DataRelease
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
         
         public static DataFlowPipelineContext<ReleaseData> Context { get; set; }
-        public ReleaseEngineSettings ReleaseConfig { get; set; }
+        public ReleaseEngineSettings ReleaseSettings { get; set; }
 
         static ReleaseEngine()
         {
@@ -33,22 +33,22 @@ namespace DataExportLibrary.DataRelease
             Context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
         }
 
-        public ReleaseEngine(Project project, ReleaseEngineSettings config = null)
+        public ReleaseEngine(Project project, ReleaseEngineSettings settings = null)
         {
             _repository = project.Repository;
             Project = project;
             Releasesuccessful = false;
             ConfigurationsReleased = new List<IExtractionConfiguration>();
 
-            ReleaseConfig = config;
-            if (ReleaseConfig == null)
-                ReleaseConfig = new ReleaseEngineSettings();
+            ReleaseSettings = settings;
+            if (ReleaseSettings == null)
+                ReleaseSettings = new ReleaseEngineSettings();
                 
         }
 
         public DirectoryInfo GetIntendedReleaseDirectory()
         {
-            if (ReleaseConfig.UseProjectExtractionFolder)
+            if (ReleaseSettings.UseProjectExtractionFolder)
             {
                 if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
                     return null;
@@ -57,12 +57,12 @@ namespace DataExportLibrary.DataRelease
                 if (String.IsNullOrWhiteSpace(Project.MasterTicket))
                     suffix = Project.ID + "_" + Project.Name;
                 else
-                    suffix = "LINK-" + Project.MasterTicket;
+                    suffix = Project.MasterTicket;
 
                 return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, "Release-" + suffix)); 
             }
             
-            return new DirectoryInfo(ReleaseConfig.CustomExtractionDirectory);
+            return new DirectoryInfo(ReleaseSettings.CustomExtractionDirectory);
         }
 
         public void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment,bool isPatch)
@@ -79,7 +79,7 @@ namespace DataExportLibrary.DataRelease
 
             if (!intendedReleaseDirectory.Exists)
             {
-                if (ReleaseConfig.CreateReleaseDirectoryIfNotFound)
+                if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
                     intendedReleaseDirectory.Create();
                 else
                     throw new Exception("Intended release directory was not found and I was forbidden to create it: " + intendedReleaseDirectory.FullName);
@@ -114,7 +114,7 @@ namespace DataExportLibrary.DataRelease
             {
                 var extractionIdentifier = "";
                 if (!String.IsNullOrWhiteSpace(kvp.Key.RequestTicket) && !String.IsNullOrWhiteSpace(kvp.Key.ReleaseTicket))
-                    extractionIdentifier = String.Format("REQ-{0}_REL-{1}", kvp.Key.RequestTicket, kvp.Key.ReleaseTicket);
+                    extractionIdentifier = String.Format("{0}_{1}", kvp.Key.RequestTicket, kvp.Key.ReleaseTicket);
                 else
                     extractionIdentifier = kvp.Key.Name + "_" + kvp.Key.ID;
 
@@ -272,7 +272,10 @@ namespace DataExportLibrary.DataRelease
             {
                 //audit as -Filename at tab indent 
                 AuditFileCreation(file.Name, audit, tabDepth);
-                file.MoveTo(Path.Combine(into.FullName, file.Name));
+                if (ReleaseSettings.DeleteFilesOnSuccess)
+                    file.MoveTo(Path.Combine(into.FullName, file.Name));
+                else
+                    file.CopyTo(Path.Combine(into.FullName, file.Name));
             }
 
             //found subdirectory

@@ -19,9 +19,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
     public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseData>, IDataFlowDestination<ReleaseData>, IPipelineRequirement<Project>
     {
-        [DemandsInitialization("Delete the released files from the origin location if release is succesful", DefaultValue = true)]
-        public bool DeleteFilesOnSuccess { get; set; }
-
         [DemandsNestedInitialization()]
         public ReleaseEngineSettings ReleaseSettings { get; set; }
 
