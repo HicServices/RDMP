@@ -66,8 +66,6 @@ namespace DataExportManager.ProjectUI
             get { return _project; }
             set
             {
-                OfferChanceToSave();
-
                 //now load the UI form 
                 _project = value;
 
@@ -96,14 +94,6 @@ namespace DataExportManager.ProjectUI
                 .Where(c => c.GetExternalData().ExternalProjectNumber == _project.ProjectNumber).ToArray();
 
             extractableCohortCollection1.SetupFor(cohorts);
-        }
-
-        private void OfferChanceToSave()
-        {
-            
-            if(OfferChanceToSaveDialog.ShowIfRequired(_project) == DialogResult.No)
-                if (GlobalChangesIncurred != null)//user rejected saving it
-                    GlobalChangesIncurred(this, new EventArgs());
         }
 
         //menu item setup
@@ -397,6 +387,12 @@ namespace DataExportManager.ProjectUI
         {
             if (Project != null)
             {
+                if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
+                {
+                    Project.ProjectNumber = null;
+                    return;
+                }
+
                 try
                 {
                     Project.ProjectNumber = int.Parse(tbProjectNumber.Text);

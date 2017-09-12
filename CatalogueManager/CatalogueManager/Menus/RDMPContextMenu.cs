@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +6,8 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ObjectVisualisation;
@@ -34,11 +35,10 @@ namespace CatalogueManager.Menus
             _databaseEntity = databaseEntity;
             RepositoryLocator = _activator.RepositoryLocator;
 
-            RefreshObjectMenuItem = new ToolStripMenuItem("Refresh",FamFamFamIcons.arrow_refresh,(s,e)=>RefreshDatabaseObject(databaseEntity));
-            RefreshObjectMenuItem.ShortcutKeys = Keys.F5;
-            RefreshObjectMenuItem.ShowShortcutKeys = true;
-            RefreshObjectMenuItem.Enabled = databaseEntity != null;
+            var uiFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
 
+            RefreshObjectMenuItem  = uiFactory.CreateMenuItem(new ExecuteCommandRefreshObject(activator, databaseEntity));
+            
             var dependencies = databaseEntity as IHasDependencies;
 
             if (dependencies != null)
@@ -67,12 +67,6 @@ namespace CatalogueManager.Menus
 
                 Items.Add(new ExpandAllTreeNodesMenuItem(_activator, _databaseEntity));
             }
-        }
-        
-
-        private void RefreshDatabaseObject(DatabaseEntity databaseEntity)
-        {
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
         }
     }
 }
