@@ -272,6 +272,7 @@
     <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
     <Compile Include="Data\DataLoad\IHasStageSpecificRuntimeName.cs" />
     <Compile Include="Data\DataLoad\IPreLoadDiscardedColumn.cs" />
+    <Compile Include="Data\DataLoad\RequiredPropertyInfo.cs" />
     <Compile Include="Data\DemandsNestedInitializationAttribute.cs" />
     <Compile Include="Data\DemandType.cs" />
     <Compile Include="Data\ExtractionFilterParameterSet.cs" />

@@ -152,7 +152,7 @@ namespace CatalogueLibrary.Data.Pipelines
             return argFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
 
                 //tell it how to create new instances of us related to parent
-                () => new PipelineComponentArgument((ICatalogueRepository) Repository, this),
+                this,
 
                 //what arguments already exist
                 PipelineComponentArguments.ToArray())

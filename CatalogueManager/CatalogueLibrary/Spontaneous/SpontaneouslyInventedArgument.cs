@@ -18,6 +18,8 @@ namespace CatalogueLibrary.Spontaneous
         public string Value { get { return _value.ToString(); }}
 
 
+        public string Type { get { return _value.GetType().FullName; }}
+
         public void SetValue(object o)
         {
             throw new NotSupportedException();
