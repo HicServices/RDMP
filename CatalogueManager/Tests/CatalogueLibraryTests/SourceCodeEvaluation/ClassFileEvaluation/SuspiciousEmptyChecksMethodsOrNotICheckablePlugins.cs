@@ -25,7 +25,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                 var contents = File.ReadAllText(file);
 
-                if (!contents.Contains("[DemandsInitialization(\""))
+                if (!contents.Contains("[DemandsInitialization(\"") && !contents.Contains("[DemandsNestedInitialization(\""))
                     continue;
 
                 Console.WriteLine("Found Demander:" + file);

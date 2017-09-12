@@ -1,9 +1,10 @@
 using System;
 using CatalogueLibrary.Data;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease
 {
-    public class ReleaseEngineSettings
+    public class ReleaseEngineSettings : ICheckable
     {
         [DemandsInitialization("Check to release to the project extraction folder insted of specifying a custom one")]
         public bool UseProjectExtractionFolder { get; set; }
@@ -23,6 +24,12 @@ namespace DataExportLibrary.DataRelease
             CreateReleaseDirectoryIfNotFound = true;
             CustomExtractionDirectory = String.Empty;
             DeleteFilesOnSuccess = true;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            // test if release is a valid folder;
+            //                                  ^- IMPORTANT semicolon or test will fail!  
         }
     }
 }
