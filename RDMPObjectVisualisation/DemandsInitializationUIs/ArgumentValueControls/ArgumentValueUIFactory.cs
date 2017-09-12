@@ -13,7 +13,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 {
     public class ArgumentValueUIFactory
     {
-        public IArgumentValueUI Create(IArgumentHost parent, Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public IArgumentValueUI Create(IArgumentHost parent, IArgument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
         {
             var argumentType = argument.GetSystemType();
             IArgumentValueUI toReturn;
@@ -80,7 +80,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             }
 
             ((Control)toReturn).Dock = DockStyle.Fill;
-            toReturn.SetUp(argument, demand, previewIfAny);
+            toReturn.SetUp((Argument)argument, demand, previewIfAny);
             return toReturn;
         }
 

@@ -17,7 +17,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
     {
         private Argument _argument;
-        private DemandsInitialization _demand;
+        private DemandsInitializationAttribute _demand;
         private bool _bLoading = true;
 
         public ArgumentValueTextUI()
@@ -25,7 +25,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
         {
             _bLoading = true;
             _argument = argument;

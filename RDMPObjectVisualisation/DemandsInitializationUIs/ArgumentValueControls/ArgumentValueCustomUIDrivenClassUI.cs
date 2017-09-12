@@ -27,14 +27,14 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
         private DataTable _previewIfAny;
 
         Type _uiType;
-        private DemandsInitialization _demand;
+        private DemandsInitializationAttribute _demand;
 
         public ArgumentValueCustomUIDrivenClassUI()
         {
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
         {
             _argument = argument;
             _previewIfAny = previewIfAny;

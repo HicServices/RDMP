@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
@@ -13,28 +16,37 @@ namespace DataExportLibrary.DataRelease
 {
     public class ReleaseEngine
     {
-        private readonly IRepository _repository;
+        protected readonly IRepository _repository;
         public Project Project { get; private set; }
-        public bool Releasesuccessful { get; private set; }
+        public bool Releasesuccessful { get; protected set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
+        
+        public static DataFlowPipelineContext<ReleaseData> Context { get; set; }
+        public ReleaseEngineSettings ReleaseSettings { get; set; }
 
-        public ReleaseEngine(Project project)
+        static ReleaseEngine()
+        {
+            var contextFactory = new DataFlowPipelineContextFactory<ReleaseData>();
+            Context = contextFactory.Create(PipelineUsage.None);
+            Context.CannotHave.Add(typeof(IDataFlowSource<ReleaseData>));
+
+            Context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
+        }
+
+        public ReleaseEngine(Project project, ReleaseEngineSettings settings = null)
         {
             _repository = project.Repository;
             Project = project;
             Releasesuccessful = false;
-            ConfigurationsReleased= new List<IExtractionConfiguration>();
+            ConfigurationsReleased = new List<IExtractionConfiguration>();
+
+            ReleaseSettings = settings;
+            if (ReleaseSettings == null)
+                ReleaseSettings = new ReleaseEngineSettings();
+                
         }
 
-        public DirectoryInfo GetIntendedReleaseDirectory()
-        {
-            if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-                return null;
-
-            return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory,"Release")); 
-        }
-
-        public void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment,bool isPatch)
+        public virtual void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment,bool isPatch)
         {
             //make sure everything is releasable
             if (toRelease.Any(kvp => kvp.Value.Any(p=>p.Assesment != Releaseability.Releaseable && p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)))//these are the only permissable release states
@@ -47,11 +59,16 @@ namespace DataExportLibrary.DataRelease
             DirectoryInfo intendedReleaseDirectory = GetIntendedReleaseDirectory();
 
             if (!intendedReleaseDirectory.Exists)
-                intendedReleaseDirectory.Create();
+            {
+                if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
+                    intendedReleaseDirectory.Create();
+                else
+                    throw new Exception("Intended release directory was not found and I was forbidden to create it: " + intendedReleaseDirectory.FullName);
+            }
 
             //make sure user isn't sneaking any pollution into this directory
             if(intendedReleaseDirectory.EnumerateDirectories().Any() || intendedReleaseDirectory.EnumerateFiles().Any()) 
-                throw new Exception("Intended release directory is not empty:" +intendedReleaseDirectory.FullName );
+                throw new Exception("Intended release directory is not empty:" + intendedReleaseDirectory.FullName );
 
             StreamWriter sw = new StreamWriter(Path.Combine(intendedReleaseDirectory.FullName,"contents.txt"));
             
@@ -76,14 +93,21 @@ namespace DataExportLibrary.DataRelease
             //for each configuration, all the release potentials can be released
             foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in toRelease)
             {
+                var extractionIdentifier = "";
+                if (!String.IsNullOrWhiteSpace(kvp.Key.RequestTicket) && !String.IsNullOrWhiteSpace(kvp.Key.ReleaseTicket))
+                    extractionIdentifier = String.Format("{0}_{1}", kvp.Key.RequestTicket, kvp.Key.ReleaseTicket);
+                else
+                    extractionIdentifier = kvp.Key.Name + "_" + kvp.Key.ID;
+
                 //create a root folder with the same name as the configuration (e.g. controls folder then next loop iteration a cases folder - with a different cohort)
-                DirectoryInfo configurationSubDirectory = intendedReleaseDirectory.CreateSubdirectory("Configuration " +  kvp.Key.ID);
+                DirectoryInfo configurationSubDirectory = intendedReleaseDirectory.CreateSubdirectory("Configuration-" + extractionIdentifier);
 
                 //audit in contents.txt
                 sw.WriteLine("Folder:" + configurationSubDirectory.Name);
                 sw.WriteLine("ConfigurationName:" + kvp.Key.Name);
                 sw.WriteLine("ConfigurationDescription:" + kvp.Key.Description);
                 sw.WriteLine("ExtractionConfiguration.ID:" + kvp.Key.ID);
+                sw.WriteLine("ExtractionConfiguration Identifier:" + extractionIdentifier);
                 sw.WriteLine("CumulativeExtractionResult.ID(s):" + kvp.Value.Select(v=>v.ExtractionResults.ID).Distinct().Aggregate("",(s,n)=>s+n+",").TrimEnd(','));
                 sw.WriteLine("CohortName:" + _repository.GetObjectByID<ExtractableCohort>((int) kvp.Key.Cohort_ID));
                 sw.WriteLine("CohortID:" + kvp.Key.Cohort_ID);
@@ -102,8 +126,8 @@ namespace DataExportLibrary.DataRelease
                 WordDataReleaseFileGenerator generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
                 if(generator.RequirementsMet())
                 {
-                    generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName,"ReleaseDocument_"+kvp.Key.ID+".docx"));
-                    AuditFileCreation("ReleaseDocument" + kvp.Key.ID + ".docx", sw, 1);
+                    generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
+                    AuditFileCreation("ReleaseDocument" + extractionIdentifier + ".docx", sw, 1);
                 }
                 else
                     sw.WriteLine("Release Document Not Generated Because Office Not Installed");
@@ -131,7 +155,26 @@ namespace DataExportLibrary.DataRelease
             Releasesuccessful = true;
         }
 
-        private void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
+        protected DirectoryInfo GetIntendedReleaseDirectory()
+        {
+            if (ReleaseSettings.UseProjectExtractionFolder)
+            {
+                if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
+                    return null;
+
+                var suffix = "";
+                if (String.IsNullOrWhiteSpace(Project.MasterTicket))
+                    suffix = Project.ID + "_" + Project.Name;
+                else
+                    suffix = Project.MasterTicket;
+
+                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, "Release-" + suffix)); 
+            }
+            
+            return new DirectoryInfo(ReleaseSettings.CustomExtractionDirectory);
+        }
+
+        protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
         {
             ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
 
@@ -145,14 +188,13 @@ namespace DataExportLibrary.DataRelease
             logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
         }
 
-
-        private DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+        protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
             List<DirectoryInfo> customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CustomCohortDataFolderName, toRelease,new List<DirectoryInfo>());
             return GetUniqueDirectoryFrom(customDirectoriesFound);
         }
 
-        private List<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease, List<DirectoryInfo> alreadySeenBefore)
+        protected List<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease, List<DirectoryInfo> alreadySeenBefore)
         {
             foreach (ReleasePotential releasePotential in toRelease.Value)
             {
@@ -169,7 +211,7 @@ namespace DataExportLibrary.DataRelease
             return alreadySeenBefore;
         }
 
-        private DirectoryInfo ThrowIfGlobalConflictElseReturnFirstGlobalFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+        protected DirectoryInfo ThrowIfGlobalConflictElseReturnFirstGlobalFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
             List<DirectoryInfo> GlobalDirectoriesFound = new List<DirectoryInfo>();
 
@@ -179,7 +221,7 @@ namespace DataExportLibrary.DataRelease
             return GetUniqueDirectoryFrom(GlobalDirectoriesFound);
         }
 
-        private DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)
+        protected DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)
         {
             if (!directoryInfos.Any())
                 return null;
@@ -195,14 +237,13 @@ namespace DataExportLibrary.DataRelease
             return first;
         }
 
-
-        private void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
+        protected void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
         {
             if(globalsDirectoryInfo.EnumerateDirectories().Any())
                 throw new Exception("Folder \"" + globalsDirectoryInfo.FullName + "\" contains subdirectories, this is not permitted");
         }
 
-        private void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
+        protected void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
         {
             if(first.EnumerateFiles().Count()!= other.EnumerateFiles().Count())
                 throw new Exception("found different number of files in Globals directory " + first.FullName + " and " + other.FullName);
@@ -222,14 +263,17 @@ namespace DataExportLibrary.DataRelease
             }
         }
 
-        private void CutTreeRecursive(DirectoryInfo from, DirectoryInfo into, StreamWriter audit, int tabDepth)
+        protected void CutTreeRecursive(DirectoryInfo from, DirectoryInfo into, StreamWriter audit, int tabDepth)
         {
             //found files in current directory
             foreach (FileInfo file in from.GetFiles())
             {
                 //audit as -Filename at tab indent 
                 AuditFileCreation(file.Name, audit, tabDepth);
-                file.MoveTo(Path.Combine(into.FullName, file.Name));
+                if (ReleaseSettings.DeleteFilesOnSuccess)
+                    file.MoveTo(Path.Combine(into.FullName, file.Name));
+                else
+                    file.CopyTo(Path.Combine(into.FullName, file.Name));
             }
 
             //found subdirectory
@@ -247,7 +291,7 @@ namespace DataExportLibrary.DataRelease
 
         }
 
-        private void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
+        protected void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
         {
             for (int i = 0; i < tabDepth; i++)
                 audit.Write("\t");
@@ -255,7 +299,7 @@ namespace DataExportLibrary.DataRelease
             audit.WriteLine("-" + name);
         }
 
-        private void AuditDirectoryCreation(string dir, StreamWriter audit, int tabDepth)
+        protected void AuditDirectoryCreation(string dir, StreamWriter audit, int tabDepth)
         {
             for (int i = 0; i < tabDepth; i++)
                 audit.Write("\t");

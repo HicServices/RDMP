@@ -29,7 +29,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             lbl.Text = readonlyText;
         }
 
-        public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
         {
             
         }

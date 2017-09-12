@@ -213,20 +213,25 @@ namespace RDMPObjectVisualisation.Pipelines
 
             this.Controls.Add(ddPipelines);
             ddPipelines.Location = new Point(2, 2);
-            ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right; 
+            ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
-            foreach (var button in new[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline })
+            foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline, cbOnlyShowCompatiblePipelines })
             {
                 this.Controls.Add(button);
                 button.Location = new Point(2, 2);
                 button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             }
 
-            btnDeletePipeline.Left = this.Width - btnDeletePipeline.Width;
+            cbOnlyShowCompatiblePipelines.Text = "";
+            cbOnlyShowCompatiblePipelines.Left = Width - cbOnlyShowCompatiblePipelines.Width;
+
+            btnDeletePipeline.Left = cbOnlyShowCompatiblePipelines.Left- btnDeletePipeline.Width;
             btnClonePipeline.Left = btnDeletePipeline.Left - btnClonePipeline.Width;
             btnCreateNewPipeline.Left = btnClonePipeline.Left - btnCreateNewPipeline.Width;
             btnEditPipeline.Left = btnCreateNewPipeline.Left - btnEditPipeline.Width;
 
+            
+            
             ddPipelines.Width = btnEditPipeline.Left - 2;
 
         }

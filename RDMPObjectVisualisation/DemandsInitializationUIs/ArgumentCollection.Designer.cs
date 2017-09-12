@@ -37,6 +37,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.lblNoArguments = new System.Windows.Forms.Label();
             this.pArguments = new System.Windows.Forms.Panel();
+            this.lblTypeUnloadable = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -99,11 +100,23 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             this.pArguments.Size = new System.Drawing.Size(713, 438);
             this.pArguments.TabIndex = 9;
             // 
+            // lblTypeUnloadable
+            // 
+            this.lblTypeUnloadable.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lblTypeUnloadable.AutoSize = true;
+            this.lblTypeUnloadable.ForeColor = System.Drawing.Color.Red;
+            this.lblTypeUnloadable.Location = new System.Drawing.Point(273, 70);
+            this.lblTypeUnloadable.Name = "lblTypeUnloadable";
+            this.lblTypeUnloadable.Size = new System.Drawing.Size(141, 13);
+            this.lblTypeUnloadable.TabIndex = 10;
+            this.lblTypeUnloadable.Text = "Component Type Not Found";
+            // 
             // ArgumentCollection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.Controls.Add(this.lblTypeUnloadable);
             this.Controls.Add(this.lblNoArguments);
             this.Controls.Add(this.helpIcon1);
             this.Controls.Add(this.btnViewSourceCode);
@@ -126,5 +139,6 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
         private ReusableUIComponents.HelpIcon helpIcon1;
         private System.Windows.Forms.Label lblNoArguments;
         private System.Windows.Forms.Panel pArguments;
+        private System.Windows.Forms.Label lblTypeUnloadable;
     }
 }

@@ -4,6 +4,8 @@ load 'rakeconfig.rb'
 
 task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :deploy]
 
+task :pluginbuild, [:folder] => [:assemblyinfo, :deployplugins]
+
 task :restorepackages do
     sh "nuget restore HIC.DataManagementPlatform.sln"
 end
@@ -47,6 +49,12 @@ assemblyinfo :assemblyinfo do |asm|
         asm.informational_version = "#{major}.#{minor}.#{patch}.#{rev}-develop"
     else
         asm.informational_version = "#{major}.#{minor}.#{patch}.#{rev}"
+    end
+end
+
+task :deployplugins, [:folder] do |t, args|
+    Dir.chdir('Plugin/Plugin') do
+        sh "./build-and-deploy-local.bat #{args.folder}"
     end
 end
 

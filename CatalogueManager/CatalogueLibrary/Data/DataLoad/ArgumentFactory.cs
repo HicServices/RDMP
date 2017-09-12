@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data.DataLoad.Exceptions;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Exceptions;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
@@ -16,50 +17,37 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <typeparam name="T">A class with one or more Properties marked with DemandsInitialization</typeparam>
         /// <param name="parent">The ProcessTask that owns the wrapper class, e.g. AttacherRuntimeTask would host AnySeparatorFileAttacher (which would be T) </param>
         /// <returns>Each new ProcessTaskArgument created - note that this is not the same as GetAllCustomProcessTaskArgumentsForProcess(parent) because it will not return existing ones that were already present (and therefore not created)</returns>
-        public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( Func<IArgument> CreateNewArgumentUnderParent, IArgument[] existingArguments)
+        public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
         {
-            return CreateArgumentsForClassIfNotExistsGeneric(typeof (T),CreateNewArgumentUnderParent,existingArguments);
+            return CreateArgumentsForClassIfNotExistsGeneric(typeof (T),host,existingArguments);
         }
 
         public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
-            Type underlyingClassTypeForWhichArgumentsWillPopulate, Func<IArgument> CreateNewArgumentUnderParent,
+            Type underlyingClassTypeForWhichArgumentsWillPopulate,IArgumentHost host,
             IArgument[] existingArguments)
         {
             var classType = underlyingClassTypeForWhichArgumentsWillPopulate;
 
             //get all the properties that must be set on AnySeparatorFileAttacher (Those marked with the attribute DemandsInitialization
-            var propertiesWeHaveToSet =
-                classType.GetProperties()
-                    .Where(p => p.GetCustomAttributes(typeof(DemandsInitialization), true).Any())
-                    .ToArray();
+            var propertiesWeHaveToSet = GetRequiredProperties(classType);
 
             if (!propertiesWeHaveToSet.Any())
                 throw new NoDemandsException("Data Class " + classType.Name + " does not have any attributes marked with DemandsInitialization");
-
-
-            foreach (PropertyInfo propertyInfo in propertiesWeHaveToSet)
+            
+            foreach (var required in propertiesWeHaveToSet)
             {
                 //theres already a property with the same name
-                if (existingArguments.Any(a => a.Name.Equals(propertyInfo.Name)))
+                if (existingArguments.Any(a => a.Name.Equals(required.Name)))
                     continue;
 
                 //create a new one
-                var argument = CreateNewArgumentUnderParent();
+                var argument = host.CreateNewArgument();
 
                 //set the type and name
-                argument.SetType(propertyInfo.PropertyType);
-                argument.Name = propertyInfo.Name;
+                argument.SetType(required.PropertyInfo.PropertyType);
+                argument.Name = required.Name;
 
-                DemandsInitialization attribute;
-                try
-                {
-                    attribute = (DemandsInitialization)propertyInfo.GetCustomAttributes(typeof(DemandsInitialization)).Single();
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Property " + propertyInfo.Name + " has multiple [DemandsInitialization] attributes?!", e);
-                }
-
+                DemandsInitializationAttribute attribute = required.Demand;
                 argument.Description = attribute.Description;
 
                 if (attribute.DefaultValue != null)
@@ -72,6 +60,87 @@ namespace CatalogueLibrary.Data.DataLoad
 
                 yield return argument;
             }
+        }
+
+        public List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
+        {
+            List<RequiredPropertyInfo> required = new List<RequiredPropertyInfo>();
+            
+            foreach (PropertyInfo propertyInfo in classType.GetProperties())
+            {
+                if (propertyInfo.GetCustomAttributes(typeof(DemandsNestedInitializationAttribute), true).Any())
+                {
+                    var allNested = propertyInfo.PropertyType.GetProperties();
+                    foreach (var nestedPropInfo in allNested)
+                    {
+                        //found a tagged attribute
+                        //record the name of the property and the type it requires
+                        var attribute = nestedPropInfo.GetCustomAttribute<DemandsInitializationAttribute>();
+
+                        if (attribute != null)
+                            required.Add(new RequiredPropertyInfo(attribute,nestedPropInfo,propertyInfo));
+                    }
+                }
+
+                var demands = propertyInfo.GetCustomAttributes(typeof (DemandsInitializationAttribute), true);
+
+                if (demands.Length > 1)
+                    throw new Exception("Property " + propertyInfo + " on class " + classType +" has multiple declarations of DemandsInitializationAttribute");
+
+                var demand = (DemandsInitializationAttribute)demands.SingleOrDefault();
+
+                //found a tagged attribute
+                if(demand != null)
+                    required.Add(new RequiredPropertyInfo(demand, propertyInfo));
+            }
+
+            return required;
+        }
+        
+        public void SyncArgumentsForClass(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
+        {
+            if(host.GetClassNameWhoArgumentsAreFor() != underlyingClassTypeForWhichArgumentsWillPopulate.FullName)
+                throw new ExpectedIdenticalStringsException("IArgumentHost is not currently hosting the Type requested for sync", host.GetClassNameWhoArgumentsAreFor(), underlyingClassTypeForWhichArgumentsWillPopulate.FullName);
+
+            var existingArguments = host.GetAllArguments().ToList();
+            var required = GetRequiredProperties(underlyingClassTypeForWhichArgumentsWillPopulate);
+            
+            //get rid of arguments that are no longer required
+            foreach (var argumentsNotRequired in existingArguments.Where(e => required.All(r => r.Name != e.Name)))
+                ((IDeleteable) argumentsNotRequired).DeleteInDatabase();
+
+            //create new arguments
+            existingArguments.AddRange(CreateArgumentsForClassIfNotExistsGeneric(underlyingClassTypeForWhichArgumentsWillPopulate,host, existingArguments.ToArray()));
+
+            //handle mismatches of Type/incompatible values / unloaded Types etc
+            foreach (var r in required)
+            {
+                var existing = existingArguments.SingleOrDefault(e => e.Name == r.Name);
+
+                if(existing == null)
+                    throw new Exception("Despite creating new Arguments for class '" + underlyingClassTypeForWhichArgumentsWillPopulate + "' we do not have an IArgument called '" + r.Name + "' in the database (host='" + host + "')");
+
+                if (existing.GetSystemType() != r.PropertyInfo.PropertyType)
+                {
+                    //user wants to fix the problem
+                    existing.SetType(r.PropertyInfo.PropertyType);
+                    ((ISaveable)existing).SaveToDatabase();
+                }
+            }
+        }
+
+        public Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
+        {
+            var toReturn = new Dictionary<IArgument, RequiredPropertyInfo>();
+
+            SyncArgumentsForClass(host, underlyingClassTypeForWhichArgumentsWillPopulate);
+
+            var required = GetRequiredProperties(underlyingClassTypeForWhichArgumentsWillPopulate);
+
+            foreach (var key in host.GetAllArguments())
+                toReturn.Add(key,required.Single(e => e.Name == key.Name));
+
+            return toReturn;
         }
     }
 }

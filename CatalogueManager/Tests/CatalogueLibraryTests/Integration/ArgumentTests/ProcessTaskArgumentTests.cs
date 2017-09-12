@@ -1,9 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
+using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using NUnit.Framework;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.ArgumentTests
@@ -251,6 +258,40 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 pt.DeleteInDatabase();
                 lmd.DeleteInDatabase();
             }
+        }
+
+        [Test]
+        public void TestNestedDemandsGetPutIntoDatabaseAndCanBeBroughtBack()
+        {
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicDataReleaseDestination), -1,
+                "Coconuts");
+            pipe.DestinationPipelineComponent_ID = pc.ID;
+            pipe.SaveToDatabase();
+
+            //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
+            var f = new ArgumentFactory();
+            Assert.True(
+                f.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
+
+            //new pc should have no arguments
+            Assert.That(pc.GetAllArguments(), Is.Empty);
+
+            //we create them (the root and nested ones!)
+            var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
+            
+            //and get all arguments / create arguments for class should have handled that 
+            Assert.That(pc.GetAllArguments().Count(), Is.GreaterThanOrEqualTo(4));
+
+            var match = args.Single(a => a.Name == "ReleaseSettings.CustomExtractionDirectory");
+            match.Value = "coconuts";
+            match.SaveToDatabase();
+
+            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
+            var destInstance = factory.CreateDestinationIfExists(pipe);
+
+            Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomExtractionDirectory);
+            
         }
     }
 }
