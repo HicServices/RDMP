@@ -22,6 +22,7 @@ using CatalogueManager.ItemActivation.Emphasis;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
+using IContainer = CatalogueLibrary.Data.IContainer;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
 {
@@ -42,7 +43,11 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private int selectedIndex = 0;
         private const float DrawMatchesStartingAtY = 25;
         private const float RowHeight = 20;
+        
+        const int DiagramTabDistance = 20;
+
         private Bitmap _magnifier;
+        private int _diagramBottom;
 
         private static readonly Type[] TypesThatAreNotUsefulParents =
         {
@@ -56,7 +61,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             typeof(LoadStageNode),
             typeof(PreLoadDiscardedColumnsNode)
         };
-
+        
         public NavigateToObjectUI(IActivateItems activator)
         {
             _activator = activator;
@@ -139,7 +144,17 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             selectedIndex = RowIndexFromPoint(e.X, e.Y);
             
             if(before != selectedIndex)
+            {
+                AdjustHeight();
                 Invalidate();
+            }
+        }
+
+        private void AdjustHeight()
+        {
+            Height =
+                    Math.Max(_diagramBottom,
+                    (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY));
         }
 
         private int RowIndexFromPoint(int x, int y)
@@ -186,7 +201,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 .ContinueWith(
                     (s) =>
                     {
-                        Height = (int) ((_matches.Count*RowHeight) + DrawMatchesStartingAtY);
+                        AdjustHeight();
                         Invalidate();
                     },
                     TaskScheduler.FromCurrentSynchronizationContext());
@@ -236,12 +251,15 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private static readonly int[] Weights = new int[] {64, 32, 16, 8, 4, 2, 1};
         
-
         private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<int> integerTokens, List<Regex> regexes, CancellationToken cancellationToken)
         {
             int score = 0;
 
             if (cancellationToken.IsCancellationRequested)
+                return 0;
+
+            //don't suggest AND/OR containers it's not helpful to navigate to these
+            if (kvp.Key is CatalogueLibrary.Data.IContainer)
                 return 0;
 
             //make a new list so we can destructively read it
@@ -272,7 +290,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 var parents = kvp.Value.Parents;
                 int numberOfParents = parents.Length;
 
-                 //for each prime after the first apply it as a multiple of the parent match
+                //for each prime after the first apply it as a multiple of the parent match
                 for (int i = 1 ; i< Weights.Length; i++)
                 {
                     //if we have run out of parents
@@ -283,11 +301,14 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
                     if(parent != null)
                     {
-                        if (IsMatchToString(regexes, parent))
-                            score += Weights[i];
+                        if (!(parent is CatalogueLibrary.Data.IContainer))
+                        {
+                            if (IsMatchToString(regexes, parent))
+                                score += Weights[i];
 
-                        if (IsMatchType(regexes, parent))
-                            score += Weights[i];
+                            if (IsMatchType(regexes, parent))
+                                score += Weights[i];
+                        }
                     }
                 }
             }
@@ -322,21 +343,35 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            
-            e.Graphics.DrawImage(_magnifier,0,0);
+
 
             float maxWidthUsedDuringRender = 0;
+            int renderWidth = tbFind.Right;
 
+            //the descendancy diagram
+            int diagramStartX = renderWidth + 10;
+            int diagramStartY = tbFind.Bottom;
+            int diagramWidth = Right - diagramStartX;
+
+
+            //draw Form background
+            e.Graphics.FillRectangle(new SolidBrush(SystemColors.Control), 0, 0, renderWidth, (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY));
+
+            //draw the search icon
+            e.Graphics.DrawImage(_magnifier,0,0);
+            
+            //the match diagram
             if(_matches != null)
             {
+                //draw the icon that represents the object being displayed and it's name on the right
                 for (int i = 0; i < _matches.Count; i++)
                 {
                     bool isFavourite = _favouriteProvider.IsFavourite(_matches[i]);
                     float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
 
                     var img = _coreIconProvider.GetImage(_matches[i],isFavourite?OverlayKind.FavouredItem:OverlayKind.None);
-                    
-                    e.Graphics.FillRectangle(i == selectedIndex ? new SolidBrush(SystemColors.Highlight) : Brushes.White, 1, currentRowStartY,Width, RowHeight);
+
+                    e.Graphics.FillRectangle(i == selectedIndex ? new SolidBrush(SystemColors.Highlight) : Brushes.White, 1, currentRowStartY, renderWidth, RowHeight);
 
                     string text = _matches[i].ToString();
 
@@ -346,24 +381,32 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     e.Graphics.DrawImage(img,1,currentRowStartY);
                     e.Graphics.DrawString(text,Font,Brushes.Black,20,currentRowStartY );
                 }
-
-                //now draw parents
+                
+                //now draw parent string and icon on the right
                 for (int i = 0; i < _matches.Count; i++)
                 {
                     //get first parent that isn't one of the explicitly useless parent types (I'd rather know the Catalogue of an AggregateGraph than to know it's an under an AggregatesGraphNode)                
                     var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
-
-
+                
                     object lastParent = null;
+                    int H = -1;
+
                     if(descendancy != null)
+                    {
+
                         lastParent = descendancy.Parents.LastOrDefault(parent => 
                             !TypesThatAreNotUsefulParents.Contains(parent.GetType())
-                             &&
-                            !(parent is CatalogueLibrary.Data.IContainer)
-                           );
+                            &&
+                            !(parent is IContainer)
+                            );
+
+                        //if it is the selected node draw the parents diagram too
+                        if (i == selectedIndex)
+                            DrawDescendancyDiagram(e, _matches[i], descendancy, diagramStartX, diagramStartY,diagramWidth);
+                    }
 
                     float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
-
+                    
                     if (lastParent != null)
                     {
 
@@ -372,21 +415,71 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                         ImageAttributes ia = new ImageAttributes();
                         ia.SetColorMatrix(cm);
 
-                        var rect = new Rectangle(Width - 20, (int)currentRowStartY, 19, 19);
+                        var rect = new Rectangle(renderWidth - 20, (int)currentRowStartY, 19, 19);
                         var img = _coreIconProvider.GetImage(lastParent);
 
                         //draw the parents image on the right
                         e.Graphics.DrawImage(img, rect, 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia);
 
-                        var horizontalSpaceAvailableToDrawTextInto = Width - (maxWidthUsedDuringRender + 20); 
+                        var horizontalSpaceAvailableToDrawTextInto = renderWidth - (maxWidthUsedDuringRender + 20); 
 
                         string text = ShrinkTextToFitWidth(lastParent.ToString(),horizontalSpaceAvailableToDrawTextInto,e.Graphics);
                         var spaceRequiredForCurrentText = e.Graphics.MeasureString(text, Font).Width;
 
-                        e.Graphics.DrawString(text,Font,Brushes.DarkGray,Width - (spaceRequiredForCurrentText+20) ,currentRowStartY);
+                        e.Graphics.DrawString(text, Font, Brushes.DarkGray, renderWidth - (spaceRequiredForCurrentText + 20), currentRowStartY);
                     }
                 }
             }
+        }
+        
+
+        private void DrawDescendancyDiagram(PaintEventArgs e, IMapsDirectlyToDatabaseTable match, DescendancyList descendancy, int diagramStartX, int diagramStartY, int diagramWidth)
+        {
+            
+
+            int diagramHeight = (int)(RowHeight * (descendancy.Parents.Length + 1));
+
+            //draw diagram of descendancy 
+            e.Graphics.FillRectangle(Brushes.White, diagramStartX, diagramStartY, diagramWidth, diagramHeight);
+
+            //draw the parents
+            for (int i = 0; i < descendancy.Parents.Length; i++)
+            {
+                var lineStartX = diagramStartX + (DiagramTabDistance*i);
+                var lineStartY = diagramStartY + (RowHeight*i);
+
+                var img = _activator.CoreIconProvider.GetImage(descendancy.Parents[i]);
+                e.Graphics.DrawImage(img, lineStartX, lineStartY);
+                e.Graphics.DrawString(descendancy.Parents[i].ToString(), Font, Brushes.Black, lineStartX + 21, lineStartY);
+
+                if (i > 0)
+                    DrawTreeNodeIsChildOfBlueLines(e, lineStartX, lineStartY);
+            }
+
+            //now draw the last object
+            var lastLineStartX = diagramStartX + (DiagramTabDistance * descendancy.Parents.Length);
+            var lastLineStartY = diagramStartY + (diagramHeight - RowHeight);
+            
+            var matchImg = _activator.CoreIconProvider.GetImage(match);
+            e.Graphics.DrawImage(matchImg, lastLineStartX, lastLineStartY);
+            e.Graphics.DrawString(match.ToString(), Font, Brushes.Black, lastLineStartX + 21, lastLineStartY);
+
+            _diagramBottom = diagramStartY + diagramHeight;
+
+            DrawTreeNodeIsChildOfBlueLines(e, lastLineStartX, lastLineStartY);
+
+        }
+
+        private static void DrawTreeNodeIsChildOfBlueLines(PaintEventArgs e, int lineStartX, float lineStartY)
+        {
+            //draw the |_ lines
+            var midPointX = lineStartX - (DiagramTabDistance/2);
+            var midPointY = lineStartY + (RowHeight/2);
+
+            //straight down
+            e.Graphics.DrawLine(Pens.Blue, midPointX, lineStartY, midPointX, midPointY);
+            //then across
+            e.Graphics.DrawLine(Pens.Blue, midPointX, midPointY, lineStartX - 1, midPointY);
         }
 
         private string ShrinkTextToFitWidth(string originalText, float horizontalSpaceAvailableToDrawTextInto, Graphics g)
