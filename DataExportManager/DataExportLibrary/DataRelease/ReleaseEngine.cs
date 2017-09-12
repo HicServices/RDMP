@@ -46,25 +46,6 @@ namespace DataExportLibrary.DataRelease
                 
         }
 
-        public DirectoryInfo GetIntendedReleaseDirectory()
-        {
-            if (ReleaseSettings.UseProjectExtractionFolder)
-            {
-                if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-                    return null;
-
-                var suffix = "";
-                if (String.IsNullOrWhiteSpace(Project.MasterTicket))
-                    suffix = Project.ID + "_" + Project.Name;
-                else
-                    suffix = Project.MasterTicket;
-
-                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, "Release-" + suffix)); 
-            }
-            
-            return new DirectoryInfo(ReleaseSettings.CustomExtractionDirectory);
-        }
-
         public virtual void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment,bool isPatch)
         {
             //make sure everything is releasable
@@ -174,6 +155,25 @@ namespace DataExportLibrary.DataRelease
             Releasesuccessful = true;
         }
 
+        protected DirectoryInfo GetIntendedReleaseDirectory()
+        {
+            if (ReleaseSettings.UseProjectExtractionFolder)
+            {
+                if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
+                    return null;
+
+                var suffix = "";
+                if (String.IsNullOrWhiteSpace(Project.MasterTicket))
+                    suffix = Project.ID + "_" + Project.Name;
+                else
+                    suffix = Project.MasterTicket;
+
+                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, "Release-" + suffix)); 
+            }
+            
+            return new DirectoryInfo(ReleaseSettings.CustomExtractionDirectory);
+        }
+
         protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
         {
             ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
@@ -187,7 +187,6 @@ namespace DataExportLibrary.DataRelease
 
             logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
         }
-
 
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
@@ -237,7 +236,6 @@ namespace DataExportLibrary.DataRelease
 
             return first;
         }
-
 
         protected void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
         {

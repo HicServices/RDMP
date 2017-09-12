@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Pipelines;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -251,6 +253,20 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 pt.DeleteInDatabase();
                 lmd.DeleteInDatabase();
             }
+        }
+
+        [Test]
+        public void TestNested()
+        {
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicDataReleaseDestination), -1,
+                "Coconuts");
+
+            Assert.That(pc.GetAllArguments(), Is.Empty);
+
+            var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
+
+            Assert.That(pc.GetAllArguments(), Is.GreaterThan(25));
         }
     }
 }
