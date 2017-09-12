@@ -24,15 +24,6 @@ namespace DataExportLibrary.DataRelease
         public static DataFlowPipelineContext<ReleaseData> Context { get; set; }
         public ReleaseEngineSettings ReleaseSettings { get; set; }
 
-        static ReleaseEngine()
-        {
-            var contextFactory = new DataFlowPipelineContextFactory<ReleaseData>();
-            Context = contextFactory.Create(PipelineUsage.None);
-            Context.CannotHave.Add(typeof(IDataFlowSource<ReleaseData>));
-
-            Context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
-        }
-
         public ReleaseEngine(Project project, ReleaseEngineSettings settings = null)
         {
             _repository = project.Repository;
@@ -171,7 +162,7 @@ namespace DataExportLibrary.DataRelease
                 return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, "Release-" + suffix)); 
             }
             
-            return new DirectoryInfo(ReleaseSettings.CustomExtractionDirectory);
+            return ReleaseSettings.CustomExtractionDirectory;
         }
 
         protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
