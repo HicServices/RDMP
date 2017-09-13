@@ -152,9 +152,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void AdjustHeight()
         {
-            Height =
+            SetClientSizeCore(ClientSize.Width, 
                     Math.Max(_diagramBottom,
-                    (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY));
+                    (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY)));
         }
 
         private int RowIndexFromPoint(int x, int y)
