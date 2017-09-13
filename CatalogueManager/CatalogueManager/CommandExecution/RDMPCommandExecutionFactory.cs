@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Collections.Generic;
+using System.Windows.Media;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
@@ -13,19 +14,44 @@ using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableUIComponents.Copying;
 using ReusableUIComponents.TreeHelper;
+using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution
 {
     public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         private readonly IActivateItems _activator;
+        private Dictionary<ICommand,Dictionary<object,ICommandExecution>> _cachedAnswers = new Dictionary<ICommand, Dictionary<object, ICommandExecution>>();
+        private object oLockCachedAnswers = new object();
+
 
         public RDMPCommandExecutionFactory(IActivateItems activator)
         {
             _activator = activator;
         }
-        
+
         public ICommandExecution Create(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
+        {
+            lock (oLockCachedAnswers)
+            {
+                //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
+                if (_cachedAnswers.ContainsKey(cmd))
+                {
+                    //if we already have a cached execution for the command and the target
+                    if (_cachedAnswers[cmd].ContainsKey(targetModel))
+                        return _cachedAnswers[cmd][targetModel];//return from cache
+                }
+                else
+                    _cachedAnswers.Add(cmd,new Dictionary<object, ICommandExecution>()); //novel command
+
+                var result  = CreateNoCache(cmd, targetModel, insertOption);
+                _cachedAnswers[cmd].Add(targetModel,result);
+
+                return result;
+            }
+        }
+
+        private ICommandExecution CreateNoCache(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
         {
             ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
             var targetCatalogueFolder = targetModel as CatalogueFolder;
