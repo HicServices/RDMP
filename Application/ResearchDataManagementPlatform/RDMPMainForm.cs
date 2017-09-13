@@ -44,6 +44,7 @@ namespace ResearchDataManagementPlatform
                 return;
 
             _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator);
+            rdmpMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
@@ -78,7 +79,6 @@ namespace ResearchDataManagementPlatform
             }
          
             FormClosing += CloseForm;
-            rdmpMenuStrip1.SetWindowManager(_windowManager);
         }
 
         private void CloseForm(object sender, FormClosingEventArgs e)
