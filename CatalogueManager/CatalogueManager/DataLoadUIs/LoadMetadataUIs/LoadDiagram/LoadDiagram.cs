@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
@@ -307,32 +308,56 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return "Load Diagram (" + _loadMetadata + ")";
         }
 
+        private Task taskDiscoverState;
         private void btnDiscoverTables_Click(object sender, EventArgs e)
+        {
+            //execution is already underway
+            if(taskDiscoverState != null && !taskDiscoverState.IsCompleted)
+                return;
+
+            ragSmiley1.Reset();
+            btnDiscoverTables.Enabled = false;
+            pbLoading.Visible = true;
+            taskDiscoverState = Task.Run(() => DiscoverStates()).ContinueWith(UpdateStatesUI,TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void UpdateStatesUI(Task task)
         {
             try
             {
-                Cursor.Current = Cursors.WaitCursor;
+                if (task.Exception != null)
+                    throw task.Exception;
+
                 foreach (LoadDiagramServerNode root in tlvLoadedTables.Objects)
-                {
-                    root.DiscoverState();
                     tlvLoadedTables.RefreshObject(root);
-                }
-                
+
                 //if RAW is not found then the load has tidied up and is completed / not started
-                if(_raw.Children.All(n=>n.State == LoadDiagramState.NotFound))
+                if (_raw.Children.All(n => n.State == LoadDiagramState.NotFound))
                     loadStateUI1.SetStatus(LoadStateUI.LoadState.NotStarted);
-                else
-                if (_raw.Children.All(n => n.State == LoadDiagramState.Anticipated)) //we have not checked the state yet
+                else if (_raw.Children.All(n => n.State == LoadDiagramState.Anticipated))
+                    //we have not checked the state yet
                     loadStateUI1.SetStatus(LoadStateUI.LoadState.Unknown);
                 else
-                    loadStateUI1.SetStatus(LoadStateUI.LoadState.StartedOrCrashed);  //it exists or is different etc... basically if RAW exists then a load is underway or crashed
-                
-                Cursor.Current = Cursors.Default;
+                    loadStateUI1.SetStatus(LoadStateUI.LoadState.StartedOrCrashed);
+                        //it exists or is different etc... basically if RAW exists then a load is underway or crashed
             }
             catch (Exception exception)
             {
                 ragSmiley1.Fatal(exception);
             }
+            finally
+            {
+                pbLoading.Visible = false;
+                btnDiscoverTables.Enabled = true;
+            }
+
+        }
+
+        private void DiscoverStates()
+        {
+            //update the states of the objects (do UI code happens here)
+            foreach (LoadDiagramServerNode root in tlvLoadedTables.Objects)
+                root.DiscoverState();
         }
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
