@@ -31,9 +31,6 @@ namespace CatalogueLibrary.Data.DataLoad
             //get all the properties that must be set on AnySeparatorFileAttacher (Those marked with the attribute DemandsInitialization
             var propertiesWeHaveToSet = GetRequiredProperties(classType);
 
-            if (!propertiesWeHaveToSet.Any())
-                throw new NoDemandsException("Data Class " + classType.Name + " does not have any attributes marked with DemandsInitialization");
-            
             foreach (var required in propertiesWeHaveToSet)
             {
                 //theres already a property with the same name

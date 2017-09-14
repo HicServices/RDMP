@@ -143,11 +143,13 @@ namespace CachingEngine
             catch (OperationCanceledException e)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Operation cancelled", e));
+                throw;
             }
             catch (AggregateException e)
             {
                 listener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Error, "Exception in downloader task whilst caching data", e));
+                throw;
             }
         }
 

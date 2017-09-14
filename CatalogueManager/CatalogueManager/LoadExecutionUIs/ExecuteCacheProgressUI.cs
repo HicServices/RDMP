@@ -39,8 +39,9 @@ namespace CatalogueManager.LoadExecutionUIs
         
         private CancellationTokenSource _abortTokenSource;
         private CancellationTokenSource _stopTokenSource;
-        private Task _currentTask;
         private bool _checksPassed;
+        private bool _dataLoadAttempted;
+        private bool _dataLoadRunning;
 
         public ExecuteCacheProgressUI()
         {
@@ -65,15 +66,15 @@ namespace CatalogueManager.LoadExecutionUIs
         private void SetButtonStates()
         {
             //if there is a task underway (caching)
-            if (_currentTask != null && !_currentTask.IsCompleted)
+            if (_dataLoadAttempted)
             {
                 //there is a task underway so promote the UI
                 progressUI.Visible = true;
                 checksUI.Visible = false;
 
-                btnAbortLoad.Enabled = true;
+                btnRunChecks.Enabled = !_dataLoadRunning;
                 btnExecute.Enabled = false;
-                btnRunChecks.Enabled = false;
+                btnAbortLoad.Enabled = _dataLoadRunning;
             }
             else if (!_checksPassed) 
             {
@@ -81,6 +82,7 @@ namespace CatalogueManager.LoadExecutionUIs
                 checksUI.Visible = true;
                 progressUI.Visible = false;
 
+                btnRunChecks.Enabled = true;
                 btnAbortLoad.Enabled = false;
                 btnExecute.Enabled = false;
             }
@@ -110,18 +112,28 @@ namespace CatalogueManager.LoadExecutionUIs
             //checks are now out of date because cache load attempt has been made
             _checksPassed = false;
 
-            _currentTask = Task.Run(() => {
-                try
-                {
-                    action(cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
-                    _stopTokenSource.Cancel();
-                    _abortTokenSource.Cancel();
-                }
-            }).ContinueWith( s => SetButtonStates(), TaskScheduler.FromCurrentSynchronizationContext());
+            progressUI.Clear();
+            
+            _dataLoadAttempted = true;
+            _dataLoadRunning = true;
+
+            Task.Run(() => {
+                                              try
+                                              {
+                                                  action(cancellationToken);
+                                              }
+                                              catch (Exception e)
+                                              {
+                                                  progressUI.OnNotify(this,
+                                                      new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
+                                                  _stopTokenSource.Cancel();
+                                                  _abortTokenSource.Cancel();
+                                              }
+                                              finally
+                                              {
+                                                  _dataLoadRunning = false;
+                                              }
+            }).ContinueWith(s => SetButtonStates(), TaskScheduler.FromCurrentSynchronizationContext());
 
             // update UI
             SetButtonStates();
@@ -136,12 +148,6 @@ namespace CatalogueManager.LoadExecutionUIs
             progressUI.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Information,
                     "Stopping...this may take some time depending on what the pipeline is up to (and where the next cancellation check is)"));
-
-            await _currentTask;
-
-            progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Caching stopped"));
-
-            SetButtonStates();
         }
 
         private async void AbortCachingJob()
@@ -153,12 +159,6 @@ namespace CatalogueManager.LoadExecutionUIs
             progressUI.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Information,
                     "Aborting...this may take some time depending on what the pipeline is up to (and where the next cancellation check is)"));
-
-            await _currentTask;
-
-            progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Caching aborted"));
-
-            SetButtonStates();
         }
 
         private void RunSingleCacheJob(GracefulCancellationToken cancellationToken)
@@ -177,6 +177,10 @@ namespace CatalogueManager.LoadExecutionUIs
         {
             ragChecks.Reset();
             checksUI.Clear();
+
+            _checksPassed = false;
+            _dataLoadAttempted = false;
+            SetButtonStates();
 
             btnRunChecks.Enabled = false;
             
@@ -277,7 +281,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // If the user has asked to ignore the permission window, use a blank one (means 'can download at any time') otherwise set to null (uses the window belonging to the CacheProgress)
             var permissionWindowOverride = cbIgnorePermissionWindow.Checked ? new PermissionWindow() : null;
 
-            _currentTask = customDateCaching.Fetch(dtpStartDateToRetrieve.Value, dtpEndDateToRetrieve.Value, token, progressUI, permissionWindowOverride);
+            customDateCaching.Fetch(dtpStartDateToRetrieve.Value, dtpEndDateToRetrieve.Value, token, progressUI, permissionWindowOverride);
         }
         
         private void btnAbortLoad_Click(object sender, EventArgs e)

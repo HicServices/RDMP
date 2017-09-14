@@ -43,28 +43,22 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.btnRunChecks = new System.Windows.Forms.Button();
-            this.pNextDates = new System.Windows.Forms.Panel();
             this.rbNextDates = new System.Windows.Forms.RadioButton();
-            this.pFailedDates = new System.Windows.Forms.Panel();
+            this.lblNextDateToLoad = new System.Windows.Forms.Label();
             this.rbRetryFailures = new System.Windows.Forms.RadioButton();
-            this.pSpecificDates = new System.Windows.Forms.Panel();
             this.rbSpecificDates = new System.Windows.Forms.RadioButton();
             this.checksUI = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.progressUI = new ReusableUIComponents.Progress.ProgressUI();
             this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.gbLoad = new System.Windows.Forms.GroupBox();
-            this.lblNextDateToLoad = new System.Windows.Forms.Label();
             this.gbControls.SuspendLayout();
-            this.pNextDates.SuspendLayout();
-            this.pFailedDates.SuspendLayout();
-            this.pSpecificDates.SuspendLayout();
             this.gbLoad.SuspendLayout();
             this.SuspendLayout();
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 29);
+            this.label2.Location = new System.Drawing.Point(500, 50);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 7;
@@ -72,7 +66,7 @@
             // 
             // dtpStartDateToRetrieve
             // 
-            this.dtpStartDateToRetrieve.Location = new System.Drawing.Point(86, 26);
+            this.dtpStartDateToRetrieve.Location = new System.Drawing.Point(562, 47);
             this.dtpStartDateToRetrieve.Name = "dtpStartDateToRetrieve";
             this.dtpStartDateToRetrieve.Size = new System.Drawing.Size(152, 20);
             this.dtpStartDateToRetrieve.TabIndex = 8;
@@ -81,7 +75,7 @@
             // cbIgnorePermissionWindow
             // 
             this.cbIgnorePermissionWindow.AutoSize = true;
-            this.cbIgnorePermissionWindow.Location = new System.Drawing.Point(86, 78);
+            this.cbIgnorePermissionWindow.Location = new System.Drawing.Point(562, 99);
             this.cbIgnorePermissionWindow.Name = "cbIgnorePermissionWindow";
             this.cbIgnorePermissionWindow.Size = new System.Drawing.Size(151, 17);
             this.cbIgnorePermissionWindow.TabIndex = 13;
@@ -91,7 +85,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(27, 55);
+            this.label6.Location = new System.Drawing.Point(503, 76);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 13);
             this.label6.TabIndex = 11;
@@ -99,7 +93,7 @@
             // 
             // dtpEndDateToRetrieve
             // 
-            this.dtpEndDateToRetrieve.Location = new System.Drawing.Point(86, 52);
+            this.dtpEndDateToRetrieve.Location = new System.Drawing.Point(562, 73);
             this.dtpEndDateToRetrieve.Name = "dtpEndDateToRetrieve";
             this.dtpEndDateToRetrieve.Size = new System.Drawing.Size(152, 20);
             this.dtpEndDateToRetrieve.TabIndex = 12;
@@ -107,7 +101,7 @@
             // 
             // btnViewFailures
             // 
-            this.btnViewFailures.Location = new System.Drawing.Point(34, 23);
+            this.btnViewFailures.Location = new System.Drawing.Point(367, 48);
             this.btnViewFailures.Name = "btnViewFailures";
             this.btnViewFailures.Size = new System.Drawing.Size(81, 23);
             this.btnViewFailures.TabIndex = 0;
@@ -198,20 +192,11 @@
             this.btnRunChecks.UseVisualStyleBackColor = true;
             this.btnRunChecks.Click += new System.EventHandler(this.btnRunChecks_Click);
             // 
-            // pNextDates
-            // 
-            this.pNextDates.Controls.Add(this.rbNextDates);
-            this.pNextDates.Controls.Add(this.lblNextDateToLoad);
-            this.pNextDates.Location = new System.Drawing.Point(196, 25);
-            this.pNextDates.Name = "pNextDates";
-            this.pNextDates.Size = new System.Drawing.Size(187, 63);
-            this.pNextDates.TabIndex = 62;
-            // 
             // rbNextDates
             // 
             this.rbNextDates.AutoSize = true;
             this.rbNextDates.Checked = true;
-            this.rbNextDates.Location = new System.Drawing.Point(3, 3);
+            this.rbNextDates.Location = new System.Drawing.Point(217, 28);
             this.rbNextDates.Name = "rbNextDates";
             this.rbNextDates.Size = new System.Drawing.Size(78, 17);
             this.rbNextDates.TabIndex = 58;
@@ -219,42 +204,29 @@
             this.rbNextDates.Text = "Next Dates";
             this.rbNextDates.UseVisualStyleBackColor = true;
             // 
-            // pFailedDates
+            // lblNextDateToLoad
             // 
-            this.pFailedDates.Controls.Add(this.rbRetryFailures);
-            this.pFailedDates.Controls.Add(this.btnViewFailures);
-            this.pFailedDates.Location = new System.Drawing.Point(389, 25);
-            this.pFailedDates.Name = "pFailedDates";
-            this.pFailedDates.Size = new System.Drawing.Size(127, 54);
-            this.pFailedDates.TabIndex = 62;
+            this.lblNextDateToLoad.AutoSize = true;
+            this.lblNextDateToLoad.Location = new System.Drawing.Point(238, 48);
+            this.lblNextDateToLoad.Name = "lblNextDateToLoad";
+            this.lblNextDateToLoad.Size = new System.Drawing.Size(75, 13);
+            this.lblNextDateToLoad.TabIndex = 59;
+            this.lblNextDateToLoad.Text = "Next Date is X";
             // 
             // rbRetryFailures
             // 
             this.rbRetryFailures.AutoSize = true;
-            this.rbRetryFailures.Location = new System.Drawing.Point(3, 3);
+            this.rbRetryFailures.Location = new System.Drawing.Point(336, 28);
             this.rbRetryFailures.Name = "rbRetryFailures";
             this.rbRetryFailures.Size = new System.Drawing.Size(112, 17);
             this.rbRetryFailures.TabIndex = 58;
             this.rbRetryFailures.Text = "Retry Failed Dates";
             this.rbRetryFailures.UseVisualStyleBackColor = true;
             // 
-            // pSpecificDates
-            // 
-            this.pSpecificDates.Controls.Add(this.rbSpecificDates);
-            this.pSpecificDates.Controls.Add(this.dtpStartDateToRetrieve);
-            this.pSpecificDates.Controls.Add(this.label2);
-            this.pSpecificDates.Controls.Add(this.dtpEndDateToRetrieve);
-            this.pSpecificDates.Controls.Add(this.cbIgnorePermissionWindow);
-            this.pSpecificDates.Controls.Add(this.label6);
-            this.pSpecificDates.Location = new System.Drawing.Point(522, 25);
-            this.pSpecificDates.Name = "pSpecificDates";
-            this.pSpecificDates.Size = new System.Drawing.Size(257, 100);
-            this.pSpecificDates.TabIndex = 62;
-            // 
             // rbSpecificDates
             // 
             this.rbSpecificDates.AutoSize = true;
-            this.rbSpecificDates.Location = new System.Drawing.Point(3, 7);
+            this.rbSpecificDates.Location = new System.Drawing.Point(479, 28);
             this.rbSpecificDates.Name = "rbSpecificDates";
             this.rbSpecificDates.Size = new System.Drawing.Size(94, 17);
             this.rbSpecificDates.TabIndex = 58;
@@ -300,37 +272,30 @@
             this.gbLoad.TabStop = false;
             this.gbLoad.Text = "Load Execution";
             // 
-            // lblNextDateToLoad
-            // 
-            this.lblNextDateToLoad.AutoSize = true;
-            this.lblNextDateToLoad.Location = new System.Drawing.Point(24, 23);
-            this.lblNextDateToLoad.Name = "lblNextDateToLoad";
-            this.lblNextDateToLoad.Size = new System.Drawing.Size(75, 13);
-            this.lblNextDateToLoad.TabIndex = 59;
-            this.lblNextDateToLoad.Text = "Next Date is X";
-            // 
             // ExecuteCacheProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.rbNextDates);
+            this.Controls.Add(this.lblNextDateToLoad);
+            this.Controls.Add(this.rbRetryFailures);
+            this.Controls.Add(this.btnViewFailures);
+            this.Controls.Add(this.rbSpecificDates);
+            this.Controls.Add(this.dtpStartDateToRetrieve);
             this.Controls.Add(this.gbControls);
-            this.Controls.Add(this.pNextDates);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.dtpEndDateToRetrieve);
             this.Controls.Add(this.gbLoad);
-            this.Controls.Add(this.pFailedDates);
+            this.Controls.Add(this.cbIgnorePermissionWindow);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.rdmpObjectsRibbonUI1);
-            this.Controls.Add(this.pSpecificDates);
             this.Name = "ExecuteCacheProgressUI";
             this.Size = new System.Drawing.Size(900, 747);
             this.gbControls.ResumeLayout(false);
             this.gbControls.PerformLayout();
-            this.pNextDates.ResumeLayout(false);
-            this.pNextDates.PerformLayout();
-            this.pFailedDates.ResumeLayout(false);
-            this.pFailedDates.PerformLayout();
-            this.pSpecificDates.ResumeLayout(false);
-            this.pSpecificDates.PerformLayout();
             this.gbLoad.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -356,9 +321,6 @@
         private System.Windows.Forms.RadioButton rbNextDates;
         private System.Windows.Forms.RadioButton rbSpecificDates;
         private System.Windows.Forms.RadioButton rbRetryFailures;
-        private System.Windows.Forms.Panel pNextDates;
-        private System.Windows.Forms.Panel pFailedDates;
-        private System.Windows.Forms.Panel pSpecificDates;
         private System.Windows.Forms.GroupBox gbLoad;
         private System.Windows.Forms.Label lblNextDateToLoad;
     }

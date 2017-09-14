@@ -397,6 +397,7 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CacheProgressStateBasedIconProvider.cs" />
     <Compile Include="LoadExecutionUIs\CachingDashboard\CacheProgressTreeNode.cs" />
     <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.cs">
       <SubType>Form</SubType>

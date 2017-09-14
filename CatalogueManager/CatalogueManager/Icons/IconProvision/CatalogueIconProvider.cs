@@ -61,6 +61,7 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
             StateBasedIconProviders.Add(new HICProjectDirectoryStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
+            StateBasedIconProviders.Add(new CacheProgressStateBasedIconProvider(OverlayProvider));
             
             
             _catalogueItemStateBasedIconProvider = new CatalogueItemStateBasedIconProvider(OverlayProvider);

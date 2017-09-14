@@ -152,12 +152,15 @@ namespace CachingEngine.DataRetrievers
             var executionCancellationTokenSource = new GracefulCancellationTokenSource();
 
             // We want to be able to stop the engine if we pass outside the permission window, however the execution strategy objects should not know about PermissionWindows
-            var executionTask = new Task(() => _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token, _listener));
-            executionTask.Start();
-
+            var executionTask = new Task(() => 
+                _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token, _listener));
+            
             // Block waiting on task completion or signalling of the cancellation token
             while (!executionTask.IsCompleted)
             {
+                if (executionTask.Status == TaskStatus.Created)
+                    executionTask.Start();
+
                 Task.Delay(1000).Wait();
 
                 // We need to handle stop and abort as we have used our own cancellation token with the child task
