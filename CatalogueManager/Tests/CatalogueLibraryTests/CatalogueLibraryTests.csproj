@@ -342,10 +342,6 @@
       <Project>{550988FD-F1FA-41D8-BE0F-00B4DE47D320}</Project>
       <Name>ResearchDataManagementPlatform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Caching\CachingDashboard\CachingDashboard.csproj">
-      <Project>{6e95249b-3cbf-4a24-89de-7a714ed6ba08}</Project>
-      <Name>CachingDashboard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Caching\Engine\CachingEngine\CachingEngine.csproj">
       <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
       <Name>CachingEngine</Name>
@@ -369,10 +365,6 @@
     <ProjectReference Include="..\..\..\DataLoad\Applications\Dashboard\Dashboard.csproj">
       <Project>{66dcb9f0-41a3-4b14-acc8-2036383a79c2}</Project>
       <Name>Dashboard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataLoad\Applications\DatasetLoaderUI\DatasetLoaderUI.csproj">
-      <Project>{1a5e2349-bca6-4df6-886c-ad92dfbed600}</Project>
-      <Name>DatasetLoaderUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>

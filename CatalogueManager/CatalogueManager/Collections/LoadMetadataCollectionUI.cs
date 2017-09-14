@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
@@ -133,7 +134,7 @@ namespace CatalogueManager.Collections
             var schedulingNode = e.Model as LoadMetadataScheduleNode;
             
             var loadProgress = e.Model as LoadProgress;
-            
+            var cacheProgress = e.Model as CacheProgress;
 
             var loadStageNode = e.Model as LoadStageNode;
 
@@ -157,6 +158,12 @@ namespace CatalogueManager.Collections
 
             if (loadProgress != null)
                 e.MenuStrip = new LoadProgressMenu(_activator, loadProgress);
+
+            if (cacheProgress != null)
+                e.MenuStrip = new CacheProgressMenu(_activator, cacheProgress);
+
+
+
         }
         
         public override void SetItemActivator(IActivateItems activator) 

@@ -6,11 +6,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.MainFormUITabs;
 using CohortManager.SubComponents;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
-using DatasetLoaderUI;
 using NUnit.Framework;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
@@ -81,7 +81,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             toReturn.AddRange(typeof (CatalogueTab).Assembly.GetTypes());
             toReturn.AddRange(typeof(ProjectUI).Assembly.GetTypes());
-            toReturn.AddRange(typeof(DatasetLoadControl).Assembly.GetTypes());
             toReturn.AddRange(typeof(RacewayRenderAreaUI).Assembly.GetTypes());
             toReturn.AddRange(typeof(CohortCompilerUI).Assembly.GetTypes());
 

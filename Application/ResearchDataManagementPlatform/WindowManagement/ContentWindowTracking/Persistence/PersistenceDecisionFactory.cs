@@ -4,9 +4,9 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueManager.LoadExecutionUIs;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
-using DatasetLoaderUI;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 
@@ -23,7 +23,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
             //ensure data export UI assembly is loaded
             Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
             //ensure DLE UI assembly is loaded
-            Assembly.Load(typeof(DatasetLoadControl).Assembly.FullName);
+            Assembly.Load(typeof(ExecuteLoadMetadataUI).Assembly.FullName);
         }
 
         public RDMPCollection? ShouldCreateCollection(string persistString)

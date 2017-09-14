@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
@@ -35,6 +36,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Issues;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.PluginChildProvision;
@@ -59,7 +61,6 @@ using DataExportManager.Icons.IconProvision;
 using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
-using DatasetLoaderUI;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
@@ -227,7 +228,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public void ExecuteLoadMetadata(object sender, LoadMetadata lmd)
         {
-            Activate<DatasetLoadControl, LoadMetadata>(lmd, CatalogueIcons.ExecuteArrow);
+            Activate<ExecuteLoadMetadataUI, LoadMetadata>(lmd, CatalogueIcons.ExecuteArrow);
+        }
+
+        public void ExecuteCacheProgress(object sender, CacheProgress cp)
+        {
+            Activate<ExecuteCacheProgressUI, CacheProgress>(cp);
         }
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable, string overrideConfirmationText = null)
