@@ -331,6 +331,7 @@
     <Compile Include="Nodes\DataAccessCredentialsNode.cs" />
     <Compile Include="Nodes\DocumentationNode.cs" />
     <Compile Include="Nodes\IdentifierDumpServerUsageNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\PermissionWindowUsedByCacheProgress.cs" />
     <Compile Include="Nodes\PreLoadDiscardedColumnsNode.cs" />
     <Compile Include="Nodes\JoinableCollectionNode.cs" />
     <Compile Include="Nodes\LinkedColumnInfoNode.cs" />

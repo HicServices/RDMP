@@ -135,6 +135,7 @@ namespace CatalogueManager.Collections
             
             var loadProgress = e.Model as LoadProgress;
             var cacheProgress = e.Model as CacheProgress;
+            var permissionWindowUsage = e.Model as PermissionWindowUsedByCacheProgress;
 
             var loadStageNode = e.Model as LoadStageNode;
 
@@ -163,7 +164,8 @@ namespace CatalogueManager.Collections
                 e.MenuStrip = new CacheProgressMenu(_activator, cacheProgress);
 
 
-
+            if (permissionWindowUsage != null)
+                e.MenuStrip = new PermissionWindowUsageMenu(_activator, permissionWindowUsage);
         }
         
         public override void SetItemActivator(IActivateItems activator) 

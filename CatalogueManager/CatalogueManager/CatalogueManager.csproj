@@ -351,6 +351,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditCacheProgressPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
@@ -397,7 +398,6 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CacheProgressStateBasedIconProvider.cs" />
     <Compile Include="LoadExecutionUIs\CachingDashboard\CacheProgressTreeNode.cs" />
     <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.cs">
       <SubType>Form</SubType>
@@ -721,6 +721,7 @@
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
@@ -1417,6 +1418,7 @@
     <None Include="Icons\PreLoadDiscardedColumnsNode.png" />
     <None Include="Icons\lock_break.png" />
     <None Include="Icons\Overlays\locked.png" />
+    <None Include="Icons\PermissionWindow.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

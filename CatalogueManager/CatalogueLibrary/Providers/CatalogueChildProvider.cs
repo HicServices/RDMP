@@ -26,6 +26,8 @@ namespace CatalogueLibrary.Providers
         public CacheProgress[] AllCacheProgresses { get; set; }
         public LoadPeriodically[] AllLoadPeriodicallies { get; set; }
 
+        public PermissionWindow[] AllPermissionWindows { get; set; }
+
         //Catalogue side of things
         public Catalogue[] AllCatalogues { get; set; }
 
@@ -98,6 +100,8 @@ namespace CatalogueLibrary.Providers
             AllLoadProgresses = repository.GetAllObjects<LoadProgress>();
             AllCacheProgresses = repository.GetAllObjects<CacheProgress>();
             AllLoadPeriodicallies = repository.GetAllObjects<LoadPeriodically>();
+
+            AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
 
             AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
 
@@ -291,8 +295,27 @@ namespace CatalogueLibrary.Providers
         {
             var cacheProgresses = AllCacheProgresses.Where(cp => cp.LoadProgress_ID == loadProgress.ID).ToArray();
 
+            foreach (CacheProgress cacheProgress in cacheProgresses)
+                AddChildren(cacheProgress, descendancy.Add(cacheProgress));
+
             if (cacheProgresses.Any())
                 AddToDictionaries(new HashSet<object>(cacheProgresses),descendancy);
+        }
+
+        private void AddChildren(CacheProgress cacheProgress, DescendancyList descendancy)
+        {
+            var children = new HashSet<object>();
+
+            if(cacheProgress.PermissionWindow_ID != null)
+            {
+                var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
+                var windowNode = new PermissionWindowUsedByCacheProgress(cacheProgress, window);
+
+                children.Add(windowNode);
+            }
+
+            if(children.Any())
+                AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(AllProcessTasksUsedByLoadMetadataNode allProcessTasksUsedByLoadMetadataNode, DescendancyList descendancy)

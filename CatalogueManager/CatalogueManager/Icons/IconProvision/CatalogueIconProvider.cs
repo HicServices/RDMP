@@ -61,8 +61,6 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
             StateBasedIconProviders.Add(new HICProjectDirectoryStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
-            StateBasedIconProviders.Add(new CacheProgressStateBasedIconProvider(OverlayProvider));
-            
             
             _catalogueItemStateBasedIconProvider = new CatalogueItemStateBasedIconProvider(OverlayProvider);
             StateBasedIconProviders.Add(_catalogueItemStateBasedIconProvider);
@@ -75,7 +73,7 @@ namespace CatalogueManager.Icons.IconProvision
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
-            if(IsLockedLockable(concept) && kind == OverlayKind.None)
+            if(IsLockedLockable(concept) && (kind == OverlayKind.None || kind == OverlayKind.Link))
                 kind = OverlayKind.Locked;
 
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
@@ -107,6 +105,9 @@ namespace CatalogueManager.Icons.IconProvision
 
             if (concept is IContainer)
                 return GetImage(RDMPConcept.FilterContainer, kind);
+            
+            if (concept is PermissionWindowUsedByCacheProgress)
+                return GetImage(((PermissionWindowUsedByCacheProgress)concept).PermissionWindow,OverlayKind.Link);
 
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
