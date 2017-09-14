@@ -350,6 +350,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
@@ -686,6 +687,7 @@
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
     <Compile Include="Menus\MenuItems\AddAggregateMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddJoinInfoMenuItem.cs" />
@@ -1390,6 +1392,8 @@
     <None Include="Icons\Warning.png" />
     <None Include="Icons\PreLoadDiscardedColumnsCollection.png" />
     <None Include="Icons\PreLoadDiscardedColumnsNode.png" />
+    <None Include="Icons\lock_break.png" />
+    <None Include="Icons\Overlays\locked.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

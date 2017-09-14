@@ -16,6 +16,7 @@
         Deprecated,
         Internal,
         Delete,
-        Edit
+        Edit,
+        Locked
     }
 }

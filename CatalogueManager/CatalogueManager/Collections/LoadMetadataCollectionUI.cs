@@ -131,6 +131,9 @@ namespace CatalogueManager.Collections
             var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
             var hicProjectDirectory = e.Model as HICProjectDirectoryNode;
             var schedulingNode = e.Model as LoadMetadataScheduleNode;
+            
+            var loadProgress = e.Model as LoadProgress;
+            
 
             var loadStageNode = e.Model as LoadStageNode;
 
@@ -151,6 +154,9 @@ namespace CatalogueManager.Collections
 
             if (lmd != null)
                 e.MenuStrip = new LoadMetadataMenu(_activator, lmd);
+
+            if (loadProgress != null)
+                e.MenuStrip = new LoadProgressMenu(_activator, loadProgress);
         }
         
         public override void SetItemActivator(IActivateItems activator) 
