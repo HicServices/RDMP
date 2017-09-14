@@ -348,6 +348,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingExistingDataTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditCacheProgressPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />

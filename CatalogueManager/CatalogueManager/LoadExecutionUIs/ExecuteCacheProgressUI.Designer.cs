@@ -29,140 +29,42 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExecuteCacheProgressUI));
-            this.label1 = new System.Windows.Forms.Label();
-            this.ddLoadProgress = new System.Windows.Forms.ComboBox();
-            this.btnStartCaching = new System.Windows.Forms.Button();
-            this.btnRunChecks = new System.Windows.Forms.Button();
-            this.btnAbort = new System.Windows.Forms.Button();
-            this.btnStopCaching = new System.Windows.Forms.Button();
-            this.btnOpenFolder = new System.Windows.Forms.Button();
-            this.btnStartCacheDaemon = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.dtpStartDateToRetrieve = new System.Windows.Forms.DateTimePicker();
-            this.btnStartSingleDateRetrieve = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabSingleJob = new System.Windows.Forms.TabPage();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tabDaemon = new System.Windows.Forms.TabPage();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tabCustomDate = new System.Windows.Forms.TabPage();
             this.cbIgnorePermissionWindow = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.dtpEndDateToRetrieve = new System.Windows.Forms.DateTimePicker();
-            this.label5 = new System.Windows.Forms.Label();
-            this.tabFailures = new System.Windows.Forms.TabPage();
-            this.btnRetryFailures = new System.Windows.Forms.Button();
             this.btnViewFailures = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnShowConfiguration = new System.Windows.Forms.Button();
-            this.btnShowCachingPipeline = new System.Windows.Forms.Button();
+            this.gbControls = new System.Windows.Forms.GroupBox();
+            this.btnAbortLoad = new System.Windows.Forms.Button();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.ragChecks = new ReusableUIComponents.RAGSmiley();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.btnRunChecks = new System.Windows.Forms.Button();
+            this.pNextDates = new System.Windows.Forms.Panel();
+            this.rbNextDates = new System.Windows.Forms.RadioButton();
+            this.pFailedDates = new System.Windows.Forms.Panel();
+            this.rbRetryFailures = new System.Windows.Forms.RadioButton();
+            this.pSpecificDates = new System.Windows.Forms.Panel();
+            this.rbSpecificDates = new System.Windows.Forms.RadioButton();
             this.checksUI = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.progressUI = new ReusableUIComponents.Progress.ProgressUI();
-            this.tabControl1.SuspendLayout();
-            this.tabSingleJob.SuspendLayout();
-            this.tabDaemon.SuspendLayout();
-            this.tabCustomDate.SuspendLayout();
-            this.tabFailures.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
+            this.gbLoad = new System.Windows.Forms.GroupBox();
+            this.lblNextDateToLoad = new System.Windows.Forms.Label();
+            this.gbControls.SuspendLayout();
+            this.pNextDates.SuspendLayout();
+            this.pFailedDates.SuspendLayout();
+            this.pSpecificDates.SuspendLayout();
+            this.gbLoad.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Load Schedule:";
-            // 
-            // ddLoadProgress
-            // 
-            this.ddLoadProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddLoadProgress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddLoadProgress.FormattingEnabled = true;
-            this.ddLoadProgress.Location = new System.Drawing.Point(96, 5);
-            this.ddLoadProgress.Name = "ddLoadProgress";
-            this.ddLoadProgress.Size = new System.Drawing.Size(611, 21);
-            this.ddLoadProgress.Sorted = true;
-            this.ddLoadProgress.TabIndex = 1;
-            this.ddLoadProgress.SelectedIndexChanged += new System.EventHandler(this.ddLoadProgress_SelectedIndexChanged);
-            // 
-            // btnStartCaching
-            // 
-            this.btnStartCaching.Location = new System.Drawing.Point(182, 66);
-            this.btnStartCaching.Name = "btnStartCaching";
-            this.btnStartCaching.Size = new System.Drawing.Size(153, 23);
-            this.btnStartCaching.TabIndex = 2;
-            this.btnStartCaching.Text = "Start Single Cache Job";
-            this.btnStartCaching.UseVisualStyleBackColor = true;
-            this.btnStartCaching.Click += new System.EventHandler(this.btnStartCaching_Click);
-            // 
-            // btnRunChecks
-            // 
-            this.btnRunChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRunChecks.Location = new System.Drawing.Point(703, 464);
-            this.btnRunChecks.Name = "btnRunChecks";
-            this.btnRunChecks.Size = new System.Drawing.Size(129, 23);
-            this.btnRunChecks.TabIndex = 2;
-            this.btnRunChecks.Text = "Re-run Checks";
-            this.btnRunChecks.UseVisualStyleBackColor = true;
-            this.btnRunChecks.Click += new System.EventHandler(this.btnRunChecks_Click);
-            // 
-            // btnAbort
-            // 
-            this.btnAbort.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnAbort.Enabled = false;
-            this.btnAbort.Location = new System.Drawing.Point(431, 201);
-            this.btnAbort.Name = "btnAbort";
-            this.btnAbort.Size = new System.Drawing.Size(129, 23);
-            this.btnAbort.TabIndex = 2;
-            this.btnAbort.Text = "Abort";
-            this.btnAbort.UseVisualStyleBackColor = true;
-            this.btnAbort.Click += new System.EventHandler(this.btnAbort_Click);
-            // 
-            // btnStopCaching
-            // 
-            this.btnStopCaching.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnStopCaching.Enabled = false;
-            this.btnStopCaching.Location = new System.Drawing.Point(265, 201);
-            this.btnStopCaching.Name = "btnStopCaching";
-            this.btnStopCaching.Size = new System.Drawing.Size(129, 23);
-            this.btnStopCaching.TabIndex = 2;
-            this.btnStopCaching.Text = "Stop";
-            this.btnStopCaching.UseVisualStyleBackColor = true;
-            this.btnStopCaching.Click += new System.EventHandler(this.btnStopCaching_Click);
-            // 
-            // btnOpenFolder
-            // 
-            this.btnOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenFolder.Location = new System.Drawing.Point(713, 3);
-            this.btnOpenFolder.Name = "btnOpenFolder";
-            this.btnOpenFolder.Size = new System.Drawing.Size(113, 23);
-            this.btnOpenFolder.TabIndex = 5;
-            this.btnOpenFolder.Text = "Open Folder";
-            this.btnOpenFolder.UseVisualStyleBackColor = true;
-            this.btnOpenFolder.Click += new System.EventHandler(this.btnOpenFolder_Click);
-            // 
-            // btnStartCacheDaemon
-            // 
-            this.btnStartCacheDaemon.Location = new System.Drawing.Point(191, 68);
-            this.btnStartCacheDaemon.Name = "btnStartCacheDaemon";
-            this.btnStartCacheDaemon.Size = new System.Drawing.Size(140, 23);
-            this.btnStartCacheDaemon.TabIndex = 6;
-            this.btnStartCacheDaemon.Text = "Start Cache Daemon";
-            this.btnStartCacheDaemon.UseVisualStyleBackColor = true;
-            this.btnStartCacheDaemon.Click += new System.EventHandler(this.btnStartCacheDaemon_Click);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(116, 40);
+            this.label2.Location = new System.Drawing.Point(24, 29);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 7;
@@ -170,112 +72,26 @@
             // 
             // dtpStartDateToRetrieve
             // 
-            this.dtpStartDateToRetrieve.Location = new System.Drawing.Point(178, 37);
+            this.dtpStartDateToRetrieve.Location = new System.Drawing.Point(86, 26);
             this.dtpStartDateToRetrieve.Name = "dtpStartDateToRetrieve";
             this.dtpStartDateToRetrieve.Size = new System.Drawing.Size(152, 20);
             this.dtpStartDateToRetrieve.TabIndex = 8;
             this.dtpStartDateToRetrieve.ValueChanged += new System.EventHandler(this.dtpStartDateToRetrieve_ValueChanged);
             // 
-            // btnStartSingleDateRetrieve
-            // 
-            this.btnStartSingleDateRetrieve.Location = new System.Drawing.Point(178, 120);
-            this.btnStartSingleDateRetrieve.Name = "btnStartSingleDateRetrieve";
-            this.btnStartSingleDateRetrieve.Size = new System.Drawing.Size(103, 23);
-            this.btnStartSingleDateRetrieve.TabIndex = 9;
-            this.btnStartSingleDateRetrieve.Text = "Start";
-            this.btnStartSingleDateRetrieve.UseVisualStyleBackColor = true;
-            this.btnStartSingleDateRetrieve.Click += new System.EventHandler(this.btnStartSingleDateRetrieve_Click);
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabSingleJob);
-            this.tabControl1.Controls.Add(this.tabDaemon);
-            this.tabControl1.Controls.Add(this.tabCustomDate);
-            this.tabControl1.Controls.Add(this.tabFailures);
-            this.tabControl1.Location = new System.Drawing.Point(6, 19);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(808, 176);
-            this.tabControl1.TabIndex = 11;
-            // 
-            // tabSingleJob
-            // 
-            this.tabSingleJob.BackColor = System.Drawing.SystemColors.Control;
-            this.tabSingleJob.Controls.Add(this.label3);
-            this.tabSingleJob.Controls.Add(this.btnStartCaching);
-            this.tabSingleJob.Location = new System.Drawing.Point(4, 22);
-            this.tabSingleJob.Name = "tabSingleJob";
-            this.tabSingleJob.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSingleJob.Size = new System.Drawing.Size(800, 150);
-            this.tabSingleJob.TabIndex = 0;
-            this.tabSingleJob.Text = "Single Job";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(72, 38);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(363, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Starts a single cache fetch, determined by the chunk size in CacheProgress";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tabDaemon
-            // 
-            this.tabDaemon.BackColor = System.Drawing.SystemColors.Control;
-            this.tabDaemon.Controls.Add(this.label4);
-            this.tabDaemon.Controls.Add(this.btnStartCacheDaemon);
-            this.tabDaemon.Location = new System.Drawing.Point(4, 22);
-            this.tabDaemon.Name = "tabDaemon";
-            this.tabDaemon.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDaemon.Size = new System.Drawing.Size(800, 150);
-            this.tabDaemon.TabIndex = 1;
-            this.tabDaemon.Text = "Daemon";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(83, 11);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(365, 54);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Starts the Cache Daemon, which will consecutively fetch cache chunks until the be" +
-    "ginning of the lag period is reached (i.e. caching is finished)";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tabCustomDate
-            // 
-            this.tabCustomDate.BackColor = System.Drawing.SystemColors.Control;
-            this.tabCustomDate.Controls.Add(this.cbIgnorePermissionWindow);
-            this.tabCustomDate.Controls.Add(this.label6);
-            this.tabCustomDate.Controls.Add(this.dtpEndDateToRetrieve);
-            this.tabCustomDate.Controls.Add(this.label5);
-            this.tabCustomDate.Controls.Add(this.btnStartSingleDateRetrieve);
-            this.tabCustomDate.Controls.Add(this.label2);
-            this.tabCustomDate.Controls.Add(this.dtpStartDateToRetrieve);
-            this.tabCustomDate.Location = new System.Drawing.Point(4, 22);
-            this.tabCustomDate.Name = "tabCustomDate";
-            this.tabCustomDate.Size = new System.Drawing.Size(800, 150);
-            this.tabCustomDate.TabIndex = 2;
-            this.tabCustomDate.Text = "Custom Date";
-            // 
             // cbIgnorePermissionWindow
             // 
             this.cbIgnorePermissionWindow.AutoSize = true;
-            this.cbIgnorePermissionWindow.Location = new System.Drawing.Point(178, 89);
+            this.cbIgnorePermissionWindow.Location = new System.Drawing.Point(86, 78);
             this.cbIgnorePermissionWindow.Name = "cbIgnorePermissionWindow";
-            this.cbIgnorePermissionWindow.Size = new System.Drawing.Size(303, 17);
+            this.cbIgnorePermissionWindow.Size = new System.Drawing.Size(151, 17);
             this.cbIgnorePermissionWindow.TabIndex = 13;
-            this.cbIgnorePermissionWindow.Text = "Ignore Permission Window (only use for testing/debugging)";
+            this.cbIgnorePermissionWindow.Text = "Ignore Permission Window";
             this.cbIgnorePermissionWindow.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(119, 66);
+            this.label6.Location = new System.Drawing.Point(27, 55);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 13);
             this.label6.TabIndex = 11;
@@ -283,197 +99,268 @@
             // 
             // dtpEndDateToRetrieve
             // 
-            this.dtpEndDateToRetrieve.Location = new System.Drawing.Point(178, 63);
+            this.dtpEndDateToRetrieve.Location = new System.Drawing.Point(86, 52);
             this.dtpEndDateToRetrieve.Name = "dtpEndDateToRetrieve";
             this.dtpEndDateToRetrieve.Size = new System.Drawing.Size(152, 20);
             this.dtpEndDateToRetrieve.TabIndex = 12;
             this.dtpEndDateToRetrieve.ValueChanged += new System.EventHandler(this.dtpEndDateToRetrieve_ValueChanged);
             // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(-4, 7);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(506, 23);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Overrides the CacheFillProgress date and fetches chunks for the provided range of" +
-    " dates.";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tabFailures
-            // 
-            this.tabFailures.BackColor = System.Drawing.SystemColors.Control;
-            this.tabFailures.Controls.Add(this.btnRetryFailures);
-            this.tabFailures.Controls.Add(this.btnViewFailures);
-            this.tabFailures.Location = new System.Drawing.Point(4, 22);
-            this.tabFailures.Name = "tabFailures";
-            this.tabFailures.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFailures.Size = new System.Drawing.Size(800, 150);
-            this.tabFailures.TabIndex = 3;
-            this.tabFailures.Text = "Failures";
-            // 
-            // btnRetryFailures
-            // 
-            this.btnRetryFailures.Location = new System.Drawing.Point(168, 81);
-            this.btnRetryFailures.Name = "btnRetryFailures";
-            this.btnRetryFailures.Size = new System.Drawing.Size(139, 23);
-            this.btnRetryFailures.TabIndex = 1;
-            this.btnRetryFailures.Text = "Retry Failures";
-            this.btnRetryFailures.UseVisualStyleBackColor = true;
-            this.btnRetryFailures.Click += new System.EventHandler(this.btnRetryFailures_Click);
-            // 
             // btnViewFailures
             // 
-            this.btnViewFailures.Location = new System.Drawing.Point(168, 30);
+            this.btnViewFailures.Location = new System.Drawing.Point(34, 23);
             this.btnViewFailures.Name = "btnViewFailures";
-            this.btnViewFailures.Size = new System.Drawing.Size(139, 23);
+            this.btnViewFailures.Size = new System.Drawing.Size(81, 23);
             this.btnViewFailures.TabIndex = 0;
             this.btnViewFailures.Text = "View Failures";
             this.btnViewFailures.UseVisualStyleBackColor = true;
             this.btnViewFailures.Click += new System.EventHandler(this.btnViewFailures_Click);
             // 
-            // groupBox1
+            // gbControls
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.tabControl1);
-            this.groupBox1.Controls.Add(this.btnAbort);
-            this.groupBox1.Controls.Add(this.btnStopCaching);
-            this.groupBox1.Enabled = false;
-            this.groupBox1.Location = new System.Drawing.Point(12, 522);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(820, 232);
-            this.groupBox1.TabIndex = 12;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Job Control";
+            this.gbControls.Controls.Add(this.btnAbortLoad);
+            this.gbControls.Controls.Add(this.btnExecute);
+            this.gbControls.Controls.Add(this.ragChecks);
+            this.gbControls.Controls.Add(this.label1);
+            this.gbControls.Controls.Add(this.label3);
+            this.gbControls.Controls.Add(this.label4);
+            this.gbControls.Controls.Add(this.btnRunChecks);
+            this.gbControls.Location = new System.Drawing.Point(3, 25);
+            this.gbControls.Name = "gbControls";
+            this.gbControls.Size = new System.Drawing.Size(187, 90);
+            this.gbControls.TabIndex = 57;
+            this.gbControls.TabStop = false;
+            this.gbControls.Text = "Controls";
             // 
-            // splitContainer1
+            // btnAbortLoad
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 1);
-            this.splitContainer1.Name = "splitContainer1";
+            this.btnAbortLoad.Image = ((System.Drawing.Image)(resources.GetObject("btnAbortLoad.Image")));
+            this.btnAbortLoad.Location = new System.Drawing.Point(148, 42);
+            this.btnAbortLoad.Name = "btnAbortLoad";
+            this.btnAbortLoad.Size = new System.Drawing.Size(29, 23);
+            this.btnAbortLoad.TabIndex = 58;
+            this.btnAbortLoad.UseVisualStyleBackColor = true;
+            this.btnAbortLoad.Click += new System.EventHandler(this.btnAbortLoad_Click);
             // 
-            // splitContainer1.Panel1
+            // btnExecute
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.btnShowConfiguration);
-            this.splitContainer1.Panel1.Controls.Add(this.btnShowCachingPipeline);
-            this.splitContainer1.Panel1.Controls.Add(this.btnRunChecks);
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
-            this.splitContainer1.Panel1.Controls.Add(this.btnOpenFolder);
-            this.splitContainer1.Panel1.Controls.Add(this.ddLoadProgress);
-            this.splitContainer1.Panel1.Controls.Add(this.checksUI);
+            this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
+            this.btnExecute.Location = new System.Drawing.Point(56, 42);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(86, 23);
+            this.btnExecute.TabIndex = 58;
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
-            // splitContainer1.Panel2
+            // ragChecks
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.progressUI);
-            this.splitContainer1.Size = new System.Drawing.Size(1484, 744);
-            this.splitContainer1.SplitterDistance = 839;
-            this.splitContainer1.SplitterWidth = 6;
-            this.splitContainer1.TabIndex = 13;
+            this.ragChecks.AlwaysShowHandCursor = false;
+            this.ragChecks.BackColor = System.Drawing.Color.Transparent;
+            this.ragChecks.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragChecks.Location = new System.Drawing.Point(22, 16);
+            this.ragChecks.Name = "ragChecks";
+            this.ragChecks.Size = new System.Drawing.Size(25, 25);
+            this.ragChecks.TabIndex = 3;
             // 
-            // btnShowConfiguration
+            // label1
             // 
-            this.btnShowConfiguration.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnShowConfiguration.Location = new System.Drawing.Point(306, 493);
-            this.btnShowConfiguration.Name = "btnShowConfiguration";
-            this.btnShowConfiguration.Size = new System.Drawing.Size(143, 23);
-            this.btnShowConfiguration.TabIndex = 14;
-            this.btnShowConfiguration.Text = "Show Configuration";
-            this.btnShowConfiguration.UseVisualStyleBackColor = true;
-            this.btnShowConfiguration.Click += new System.EventHandler(this.btnShowConfiguration_Click);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(147, 68);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Abort";
             // 
-            // btnShowCachingPipeline
+            // label3
             // 
-            this.btnShowCachingPipeline.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnShowCachingPipeline.Location = new System.Drawing.Point(157, 493);
-            this.btnShowCachingPipeline.Name = "btnShowCachingPipeline";
-            this.btnShowCachingPipeline.Size = new System.Drawing.Size(143, 23);
-            this.btnShowCachingPipeline.TabIndex = 13;
-            this.btnShowCachingPipeline.Text = "Show Caching Pipeline";
-            this.btnShowCachingPipeline.UseVisualStyleBackColor = true;
-            this.btnShowCachingPipeline.Click += new System.EventHandler(this.btnShowCachingPipeline_Click);
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(75, 69);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(46, 13);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Execute";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(17, 68);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(43, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Checks";
+            // 
+            // btnRunChecks
+            // 
+            this.btnRunChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRunChecks.Image")));
+            this.btnRunChecks.Location = new System.Drawing.Point(20, 42);
+            this.btnRunChecks.Name = "btnRunChecks";
+            this.btnRunChecks.Size = new System.Drawing.Size(30, 23);
+            this.btnRunChecks.TabIndex = 1;
+            this.btnRunChecks.UseVisualStyleBackColor = true;
+            this.btnRunChecks.Click += new System.EventHandler(this.btnRunChecks_Click);
+            // 
+            // pNextDates
+            // 
+            this.pNextDates.Controls.Add(this.rbNextDates);
+            this.pNextDates.Controls.Add(this.lblNextDateToLoad);
+            this.pNextDates.Location = new System.Drawing.Point(196, 25);
+            this.pNextDates.Name = "pNextDates";
+            this.pNextDates.Size = new System.Drawing.Size(187, 63);
+            this.pNextDates.TabIndex = 62;
+            // 
+            // rbNextDates
+            // 
+            this.rbNextDates.AutoSize = true;
+            this.rbNextDates.Checked = true;
+            this.rbNextDates.Location = new System.Drawing.Point(3, 3);
+            this.rbNextDates.Name = "rbNextDates";
+            this.rbNextDates.Size = new System.Drawing.Size(78, 17);
+            this.rbNextDates.TabIndex = 58;
+            this.rbNextDates.TabStop = true;
+            this.rbNextDates.Text = "Next Dates";
+            this.rbNextDates.UseVisualStyleBackColor = true;
+            // 
+            // pFailedDates
+            // 
+            this.pFailedDates.Controls.Add(this.rbRetryFailures);
+            this.pFailedDates.Controls.Add(this.btnViewFailures);
+            this.pFailedDates.Location = new System.Drawing.Point(389, 25);
+            this.pFailedDates.Name = "pFailedDates";
+            this.pFailedDates.Size = new System.Drawing.Size(127, 54);
+            this.pFailedDates.TabIndex = 62;
+            // 
+            // rbRetryFailures
+            // 
+            this.rbRetryFailures.AutoSize = true;
+            this.rbRetryFailures.Location = new System.Drawing.Point(3, 3);
+            this.rbRetryFailures.Name = "rbRetryFailures";
+            this.rbRetryFailures.Size = new System.Drawing.Size(112, 17);
+            this.rbRetryFailures.TabIndex = 58;
+            this.rbRetryFailures.Text = "Retry Failed Dates";
+            this.rbRetryFailures.UseVisualStyleBackColor = true;
+            // 
+            // pSpecificDates
+            // 
+            this.pSpecificDates.Controls.Add(this.rbSpecificDates);
+            this.pSpecificDates.Controls.Add(this.dtpStartDateToRetrieve);
+            this.pSpecificDates.Controls.Add(this.label2);
+            this.pSpecificDates.Controls.Add(this.dtpEndDateToRetrieve);
+            this.pSpecificDates.Controls.Add(this.cbIgnorePermissionWindow);
+            this.pSpecificDates.Controls.Add(this.label6);
+            this.pSpecificDates.Location = new System.Drawing.Point(522, 25);
+            this.pSpecificDates.Name = "pSpecificDates";
+            this.pSpecificDates.Size = new System.Drawing.Size(257, 100);
+            this.pSpecificDates.TabIndex = 62;
+            // 
+            // rbSpecificDates
+            // 
+            this.rbSpecificDates.AutoSize = true;
+            this.rbSpecificDates.Location = new System.Drawing.Point(3, 7);
+            this.rbSpecificDates.Name = "rbSpecificDates";
+            this.rbSpecificDates.Size = new System.Drawing.Size(94, 17);
+            this.rbSpecificDates.TabIndex = 58;
+            this.rbSpecificDates.Text = "Specific Dates";
+            this.rbSpecificDates.UseVisualStyleBackColor = true;
             // 
             // checksUI
             // 
-            this.checksUI.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.checksUI.Location = new System.Drawing.Point(12, 32);
+            this.checksUI.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checksUI.Location = new System.Drawing.Point(3, 16);
             this.checksUI.Name = "checksUI";
-            this.checksUI.Size = new System.Drawing.Size(820, 455);
+            this.checksUI.Size = new System.Drawing.Size(888, 594);
             this.checksUI.TabIndex = 3;
             // 
             // progressUI
             // 
-            this.progressUI.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressUI.Location = new System.Drawing.Point(3, 0);
+            this.progressUI.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.progressUI.Location = new System.Drawing.Point(3, 16);
             this.progressUI.Name = "progressUI";
-            this.progressUI.Size = new System.Drawing.Size(605, 754);
+            this.progressUI.Size = new System.Drawing.Size(888, 594);
             this.progressUI.TabIndex = 4;
             // 
-            // CachingEngineUI
+            // rdmpObjectsRibbonUI1
+            // 
+            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
+            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
+            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
+            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(900, 22);
+            this.rdmpObjectsRibbonUI1.TabIndex = 58;
+            // 
+            // gbLoad
+            // 
+            this.gbLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbLoad.Controls.Add(this.progressUI);
+            this.gbLoad.Controls.Add(this.checksUI);
+            this.gbLoad.Location = new System.Drawing.Point(3, 131);
+            this.gbLoad.Name = "gbLoad";
+            this.gbLoad.Size = new System.Drawing.Size(894, 613);
+            this.gbLoad.TabIndex = 59;
+            this.gbLoad.TabStop = false;
+            this.gbLoad.Text = "Load Execution";
+            // 
+            // lblNextDateToLoad
+            // 
+            this.lblNextDateToLoad.AutoSize = true;
+            this.lblNextDateToLoad.Location = new System.Drawing.Point(24, 23);
+            this.lblNextDateToLoad.Name = "lblNextDateToLoad";
+            this.lblNextDateToLoad.Size = new System.Drawing.Size(75, 13);
+            this.lblNextDateToLoad.TabIndex = 59;
+            this.lblNextDateToLoad.Text = "Next Date is X";
+            // 
+            // ExecuteCacheProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1484, 747);
-            this.Controls.Add(this.splitContainer1);
-            this.Name = "CachingEngineUI";
-            this.Text = "Caching Engine UI";
-            this.Load += new System.EventHandler(this.CachingEngineUI_Load);
-            this.tabControl1.ResumeLayout(false);
-            this.tabSingleJob.ResumeLayout(false);
-            this.tabSingleJob.PerformLayout();
-            this.tabDaemon.ResumeLayout(false);
-            this.tabCustomDate.ResumeLayout(false);
-            this.tabCustomDate.PerformLayout();
-            this.tabFailures.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.Controls.Add(this.gbControls);
+            this.Controls.Add(this.pNextDates);
+            this.Controls.Add(this.gbLoad);
+            this.Controls.Add(this.pFailedDates);
+            this.Controls.Add(this.rdmpObjectsRibbonUI1);
+            this.Controls.Add(this.pSpecificDates);
+            this.Name = "ExecuteCacheProgressUI";
+            this.Size = new System.Drawing.Size(900, 747);
+            this.gbControls.ResumeLayout(false);
+            this.gbControls.PerformLayout();
+            this.pNextDates.ResumeLayout(false);
+            this.pNextDates.PerformLayout();
+            this.pFailedDates.ResumeLayout(false);
+            this.pFailedDates.PerformLayout();
+            this.pSpecificDates.ResumeLayout(false);
+            this.pSpecificDates.PerformLayout();
+            this.gbLoad.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox ddLoadProgress;
-        private System.Windows.Forms.Button btnStartCaching;
         private ReusableUIComponents.ChecksUI.ChecksUI checksUI;
         private ReusableUIComponents.Progress.ProgressUI progressUI;
-        private System.Windows.Forms.Button btnRunChecks;
-        private System.Windows.Forms.Button btnAbort;
-        private System.Windows.Forms.Button btnStopCaching;
-        private System.Windows.Forms.Button btnOpenFolder;
-        private System.Windows.Forms.Button btnStartCacheDaemon;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DateTimePicker dtpStartDateToRetrieve;
-        private System.Windows.Forms.Button btnStartSingleDateRetrieve;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabSingleJob;
-        private System.Windows.Forms.TabPage tabDaemon;
-        private System.Windows.Forms.TabPage tabCustomDate;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button btnShowCachingPipeline;
-        private System.Windows.Forms.Button btnShowConfiguration;
-        private System.Windows.Forms.TabPage tabFailures;
-        private System.Windows.Forms.Button btnRetryFailures;
         private System.Windows.Forms.Button btnViewFailures;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.DateTimePicker dtpEndDateToRetrieve;
         private System.Windows.Forms.CheckBox cbIgnorePermissionWindow;
+        private System.Windows.Forms.GroupBox gbControls;
+        private System.Windows.Forms.Button btnAbortLoad;
+        private System.Windows.Forms.Button btnExecute;
+        private ReusableUIComponents.RAGSmiley ragChecks;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnRunChecks;
+        private ObjectVisualisation.RDMPObjectsRibbonUI rdmpObjectsRibbonUI1;
+        private System.Windows.Forms.RadioButton rbNextDates;
+        private System.Windows.Forms.RadioButton rbSpecificDates;
+        private System.Windows.Forms.RadioButton rbRetryFailures;
+        private System.Windows.Forms.Panel pNextDates;
+        private System.Windows.Forms.Panel pFailedDates;
+        private System.Windows.Forms.Panel pSpecificDates;
+        private System.Windows.Forms.GroupBox gbLoad;
+        private System.Windows.Forms.Label lblNextDateToLoad;
     }
 }
 

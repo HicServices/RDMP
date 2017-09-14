@@ -11,21 +11,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CachingEngine;
-using CachingEngine.Factories;
 using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPStartup;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
@@ -34,79 +34,67 @@ namespace CatalogueManager.LoadExecutionUIs
     public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
     {
         private CachingHost _cachingHost;
-        private CacheProgressUI _cacheProgressUI;
-        private LoadProgress _selectedLoadProgress;
-        private ICacheProgress _cacheProgress;
+        private LoadProgress _loadProgress;
+        private CacheProgress _cacheProgress;
         
         private CancellationTokenSource _abortTokenSource;
         private CancellationTokenSource _stopTokenSource;
         private Task _currentTask;
+        private bool _checksPassed;
 
         public ExecuteCacheProgressUI()
         {
             InitializeComponent();
         }
 
-        protected override void OnLoad(EventArgs e)
+        public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)
         {
-            base.OnLoad(e);
+            base.SetDatabaseObject(activator, databaseObject);
 
-            if (VisualStudioDesignMode)
-                return;
+            _loadProgress = databaseObject.LoadProgress;
+            _cacheProgress = databaseObject;
 
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-            this.Text = "CachingEngine UI - v" + version;
+            rdmpObjectsRibbonUI1.Clear();
+            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
+            rdmpObjectsRibbonUI1.Add(_loadProgress);
+            rdmpObjectsRibbonUI1.Add(_cacheProgress);
 
-            InitializeCatalogConnection();
-            PopulateAvailableLoadProgress();
-
+            SetButtonStates();
         }
 
-        private void PopulateAvailableLoadProgress()
+        private void SetButtonStates()
         {
-            try
+            //if there is a task underway (caching)
+            if (_currentTask != null && !_currentTask.IsCompleted)
             {
-                //clear any old values
-                ddLoadProgress.Items.Clear();
+                //there is a task underway so promote the UI
+                progressUI.Visible = true;
+                checksUI.Visible = false;
 
-                //get all load progresses that have associated cache progress
-                var loadProgresses = RepositoryLocator.CatalogueRepository.GetAllObjects<CacheProgress>().Select(c => c.LoadProgress).ToArray();
-                ddLoadProgress.Items.AddRange(loadProgresses);
+                btnAbortLoad.Enabled = true;
+                btnExecute.Enabled = false;
+                btnRunChecks.Enabled = false;
             }
-            catch (Exception exception)
+            else if (!_checksPassed) 
             {
-                MessageBox.Show(exception.Message, "Catalogue interrogation error");
-                return;
+                //checks failed to, do not let them run a cache job
+                checksUI.Visible = true;
+                progressUI.Visible = false;
+
+                btnAbortLoad.Enabled = false;
+                btnExecute.Enabled = false;
             }
-
-            ddLoadProgress.Enabled = true;
-            ddLoadProgress.Sorted = true;
-        }
-
-        private void InitializeCatalogConnection()
-        {
-            //make sure the connection to the Catalogue is configured on the users profile (registry)
-            try
+            else
             {
-                new RegistryRepositoryFinder().CatalogueRepository.TestConnection();
-            }
-            catch (Exception e)
-            {
-                //user does not have Catalogue connection configured, make him configure it!
-                MessageBox.Show("Problem with Catalogue Connection Settings:" + e.Message);
-                
-                new ExecuteCommandChoosePlatformDatabase(RepositoryLocator).Execute();
-            }
-        }
+                //checks have passed, user can execute
+                checksUI.Visible = true;
+                progressUI.Visible = false;
 
-        private void btnStartCaching_Click(object sender, EventArgs e)
-        {
-            StartCachingJob(RunSingleCacheJob);
-        }
+                btnRunChecks.Enabled = true;
+                btnExecute.Enabled = true;
+                btnAbortLoad.Enabled = false;
+            }
 
-        private void btnStartCacheDaemon_Click(object sender, EventArgs e)
-        {
-            StartCachingJob(RunCacheDaemon);
         }
 
         private void StartCachingJob(Action<GracefulCancellationToken> action)
@@ -118,11 +106,9 @@ namespace CatalogueManager.LoadExecutionUIs
             _abortTokenSource = new CancellationTokenSource();
             _stopTokenSource = new CancellationTokenSource();
             var cancellationToken = new GracefulCancellationToken(_stopTokenSource.Token, _abortTokenSource.Token);
-
-            // update UI
-            btnStopCaching.Enabled = true;
-            btnAbort.Enabled = true;
-            btnStartCaching.Enabled = false;
+            
+            //checks are now out of date because cache load attempt has been made
+            _checksPassed = false;
 
             _currentTask = Task.Run(() => {
                 try
@@ -132,8 +118,13 @@ namespace CatalogueManager.LoadExecutionUIs
                 catch (Exception e)
                 {
                     progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
+                    _stopTokenSource.Cancel();
+                    _abortTokenSource.Cancel();
                 }
-            });
+            }).ContinueWith( s => SetButtonStates(), TaskScheduler.FromCurrentSynchronizationContext());
+
+            // update UI
+            SetButtonStates();
         }
 
         private async void StopCachingJob()
@@ -150,9 +141,7 @@ namespace CatalogueManager.LoadExecutionUIs
 
             progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Caching stopped"));
 
-            btnStopCaching.Enabled = false;
-            btnAbort.Enabled = false;
-            btnStartCaching.Enabled = true;
+            SetButtonStates();
         }
 
         private async void AbortCachingJob()
@@ -169,9 +158,7 @@ namespace CatalogueManager.LoadExecutionUIs
 
             progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Caching aborted"));
 
-            btnStopCaching.Enabled = false;
-            btnAbort.Enabled = false;
-            btnStartCaching.Enabled = true;
+            SetButtonStates();
         }
 
         private void RunSingleCacheJob(GracefulCancellationToken cancellationToken)
@@ -180,208 +167,62 @@ namespace CatalogueManager.LoadExecutionUIs
             _cachingHost.Start(progressUI, cancellationToken);
         }
 
-        private void RunCacheDaemon(GracefulCancellationToken cancellationToken)
-        {
-            _cachingHost.RetryMode = false;
-
-            try
-            {
-                _cachingHost.StartDaemon(progressUI, cancellationToken);
-            }
-            catch (Exception e)
-            {
-                progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
-            }
-        }
-
-        private void LoadCacheProgress()
-        {
-            _cacheProgress = _selectedLoadProgress.CacheProgress;
-            if (_cacheProgress == null)
-                progressUI.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Error,
-                        "The load schedule does not have a CacheProgress (so shouldn't have appeared in the drop-down in the first place...)"));
-
-            ProcessCacheProgressFailures();
-        }
-
-        private void btnStopCaching_Click(object sender, EventArgs e)
-        {
-            StopCachingJob();
-        }
-
-        private void btnAbort_Click(object sender, EventArgs e)
-        {
-            AbortCachingJob();
-        }
-
-        private void btnOpenFolder_Click(object sender, EventArgs e)
-        {
-            var selectedLoadProgress = (LoadProgress)ddLoadProgress.SelectedItem;
-            if (selectedLoadProgress == null)
-                return;
-
-            var loadMetadata = selectedLoadProgress.LoadMetadata;
-            Process.Start(loadMetadata.LocationOfFlatFiles);
-        }
-
         private void btnRunChecks_Click(object sender, EventArgs e)
         {
-            LoadCacheProgress();
+            ProcessCacheProgressFailures();
             RunPipelineChecks();
         }
         
         private void RunPipelineChecks()
         {
-            progressUI.Clear();
+            ragChecks.Reset();
             checksUI.Clear();
+
             btnRunChecks.Enabled = false;
-            ddLoadProgress.Enabled = false;
-
-            progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Running Cache Pipeline checks, disabling job control"));
-            groupBox1.Enabled = false;
-
-            var checkable = new CachingPreExecutionChecker(_selectedLoadProgress.CacheProgress);
-            checksUI.StartChecking(checkable);
-
-            PostPipelineCheck();
-        }
-
-        private void PostPipelineCheck()
-        {
-            progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cache Pipeline checks complete, re-enabling job control"));
-            groupBox1.Enabled = true;
-            btnRunChecks.Enabled = true;
-            ddLoadProgress.Enabled = true;
-        }
-
-        private void btnStartSingleDateRetrieve_Click(object sender, EventArgs e)
-        {
-            _abortTokenSource = new CancellationTokenSource();
-            _stopTokenSource = new CancellationTokenSource();
-            var token = new GracefulCancellationToken(_stopTokenSource.Token, _abortTokenSource.Token);
-
-            var loadMetadata = _cacheProgress.GetLoadProgress().GetLoadMetadata();
-            var hicProjectDirectory = new HICProjectDirectory(loadMetadata.LocationOfFlatFiles, false);
-            var customDateCaching = new CustomDateCaching(_cacheProgress, RepositoryLocator.CatalogueRepository, hicProjectDirectory);
             
-            // If the user has asked to ignore the permission window, use a blank one (means 'can download at any time') otherwise set to null (uses the window belonging to the CacheProgress)
-            var permissionWindowOverride = cbIgnorePermissionWindow.Checked ? new PermissionWindow() : null;
+            //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
+            var toMemory = new ToMemoryCheckNotifier(checksUI);
 
-            _currentTask = customDateCaching.Fetch(dtpStartDateToRetrieve.Value, dtpEndDateToRetrieve.Value, token, progressUI, permissionWindowOverride);
+            Task.Factory.StartNew(() =>
+            {
+                //run the checks into toMemory / checksUI in a Thread
+                var checkable = new CachingPreExecutionChecker(_loadProgress.CacheProgress);
+                checkable.Check(toMemory);
+
+            }).ContinueWith(
+                t =>
+                {
+                    //once Thread completes do this on the main UI Thread
+
+                    //find the worst check state
+                    var worst = toMemory.GetWorst();
+                    //update the rag smiley to reflect whether it has passed
+                    ragChecks.OnCheckPerformed(new CheckEventArgs("Checks resulted in " + worst, worst));
+                    
+                    //update the bit flag
+                    _checksPassed = worst <= CheckResult.Warning;
+
+                    //enable other buttons now based on the new state
+                    SetButtonStates();
+
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private void CachingEngineUI_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ddLoadProgress_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _selectedLoadProgress = (LoadProgress)ddLoadProgress.SelectedItem;
-            LoadCacheProgress();
-            RunPipelineChecks();
-        }
-
+        
         private void ProcessCacheProgressFailures()
         {
             // Check if there are any failures
-            var fetchFailures = _cacheProgress.GetAllFetchFailures().Where(f => f.ResolvedOn == null).ToList();
-            if (fetchFailures.Any())
-            {
-                tabFailures.Enabled = true;
-                tabFailures.ToolTipText = fetchFailures.Count + " cache fetch failures";
-            }
-            else
-            {
-                tabFailures.Enabled = false;
-                tabFailures.ToolTipText = "No failed cache fetch requests";
-            }
+            var anyFailures = _cacheProgress.GetAllFetchFailures().Any(f => f.ResolvedOn == null);
+
+            rbRetryFailures.Enabled = anyFailures;
+            btnViewFailures.Enabled = anyFailures;
         }
-
-        private void btnShowCachingPipeline_Click(object sender, EventArgs e)
-        {
-            var mef = RepositoryLocator.CatalogueRepository.MEF;
-
-            var context = CachingPipelineEngineFactory.Context;
-            var loadMetadata = _cacheProgress.GetLoadProgress().GetLoadMetadata();
-
-            var uiFactory = new ConfigurePipelineUIFactory(mef, RepositoryLocator.CatalogueRepository);
-            var permissionWindow = _cacheProgress.GetPermissionWindow() ?? new PermissionWindow();
-            var pipelineForm = uiFactory.Create(context.GetType().GenericTypeArguments[0].FullName,
-                _cacheProgress.Pipeline, null, null, context,
-                new List<object>
-                {
-                    new CacheFetchRequestProvider(new CacheFetchRequest(RepositoryLocator.CatalogueRepository)),
-                    permissionWindow,
-                    new HICProjectDirectory(loadMetadata.LocationOfFlatFiles, false),
-                    RepositoryLocator.CatalogueRepository.MEF
-                });
-
-            pipelineForm.ShowDialog();
-        }
-
-        private void btnShowConfiguration_Click(object sender, EventArgs e)
-        {
-            _cacheProgressUI = new CacheProgressUI
-            {
-                Dock = DockStyle.Fill,
-                RepositoryLocator = RepositoryLocator
-            };
-
-            var form = new Form();
-            form.Controls.Add(_cacheProgressUI);
-            form.Text = "Cache Configuration";
-            form.Size = new Size(_cacheProgressUI.Size.Width + 80, _cacheProgressUI.Size.Height + 80);
-            form.MinimumSize = new Size(_cacheProgressUI.MinimumSize.Width + 80, _cacheProgressUI.MinimumSize.Height + 80);
-
-            var saveButton = new Button
-            {
-                Text = "Save"
-            };
-            saveButton.Location = new Point(form.Width/2 - saveButton.Width/2, form.Height - saveButton.Height);
-            saveButton.Click += OnCacheConfigurationSave;
-            form.Controls.Add(saveButton);
-
-            _cacheProgressUI.CacheProgress = (CacheProgress) _cacheProgress;
-            
-            form.ShowDialog();
-        }
-
-        private void OnCacheConfigurationSave(object sender, EventArgs e)
-        {
-            _cacheProgressUI.CacheProgress.SaveToDatabase();
-        }
-
-        private void changeCatalogueToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new ExecuteCommandChoosePlatformDatabase(RepositoryLocator).Execute();
-        }
-
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PopulateAvailableLoadProgress();
-        }
-
-        private void launchDiagnosticsScreenToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new DiagnosticsScreen(null);
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.ShowDialog();
-        }
-
-        private void showPerformanceCounterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new PerformanceCounterUI().Show();
-        }
-
+        
         private void btnViewFailures_Click(object sender, EventArgs e)
         {
             // for now just show a modal dialog with a data grid view of all the failure rows
             var dt = new DataTable("CacheFetchFailure");
-
-
-
+            
             using (var con = RepositoryLocator.CatalogueRepository.GetConnection())
             {
                 var cmd = (SqlCommand)DatabaseCommandHelper.GetCommand("SELECT * FROM CacheFetchFailure WHERE CacheProgress_ID=@CacheProgressID AND ResolvedOn IS NULL", con.Connection);
@@ -391,16 +232,11 @@ namespace CatalogueManager.LoadExecutionUIs
             }
 
             var dgv = new DataGridView {DataSource = dt, Dock = DockStyle.Fill};
-            var form = new Form {Text = "Cache Fetch Failures for " + _selectedLoadProgress.Name};
+            var form = new Form {Text = "Cache Fetch Failures for " + _loadProgress.Name};
             form.Controls.Add(dgv);
             form.Show();
         }
-
-        private void btnRetryFailures_Click(object sender, EventArgs e)
-        {
-            StartCachingJob(RetryFailures);
-        }
-
+        
         private void RetryFailures(GracefulCancellationToken cancellationToken)
         {
             progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Setting cache retry mode to true."));
@@ -420,7 +256,35 @@ namespace CatalogueManager.LoadExecutionUIs
                 dtpStartDateToRetrieve.Value = dtpEndDateToRetrieve.Value;
         }
 
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            if(rbRetryFailures.Checked)
+                StartCachingJob(RetryFailures);
+
+            if (rbSpecificDates.Checked)
+                StartCachingJob(SpecificDates);
+
+            if (rbNextDates.Checked)
+                StartCachingJob(RunSingleCacheJob);
+        }
+
+        private void SpecificDates(GracefulCancellationToken token)
+        {
+            var loadMetadata = _cacheProgress.GetLoadProgress().GetLoadMetadata();
+            var hicProjectDirectory = new HICProjectDirectory(loadMetadata.LocationOfFlatFiles, false);
+            var customDateCaching = new CustomDateCaching(_cacheProgress, RepositoryLocator.CatalogueRepository, hicProjectDirectory);
+
+            // If the user has asked to ignore the permission window, use a blank one (means 'can download at any time') otherwise set to null (uses the window belonging to the CacheProgress)
+            var permissionWindowOverride = cbIgnorePermissionWindow.Checked ? new PermissionWindow() : null;
+
+            _currentTask = customDateCaching.Fetch(dtpStartDateToRetrieve.Value, dtpEndDateToRetrieve.Value, token, progressUI, permissionWindowOverride);
+        }
         
+        private void btnAbortLoad_Click(object sender, EventArgs e)
+        {
+            StopCachingJob();
+        }
+
     }
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CachingEngineUI_Design, UserControl>))]
     public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
@@ -428,3 +292,4 @@ namespace CatalogueManager.LoadExecutionUIs
         
     }
 }
+

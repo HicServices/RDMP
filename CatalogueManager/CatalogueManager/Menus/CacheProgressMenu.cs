@@ -21,6 +21,7 @@ namespace CatalogueManager.Menus
             if(window != null)
                 Items.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandUnlockLockable(activator, window)));
 
+            Items.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandEditCacheProgressPipeline(activator, cacheProgress)));
 
             AddCommonMenuItems();
         }
