@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CachingEngine.Factories;
@@ -14,6 +15,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
@@ -60,7 +62,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             gbCacheProgress.Enabled = true; 
             tbCacheProgressID.Text = cacheProgress.ID.ToString();
-            tbCacheProgress.Text = cacheProgress.CacheFillProgress.HasValue ? cacheProgress.CacheFillProgress.ToString() : "Caching not started";
+            SetCacheProgressTextBox();
             
             var cacheLagPeriod = cacheProgress.GetCacheLagPeriod();
             if (cacheLagPeriod != null)
@@ -76,9 +78,15 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             _bLoading = false;
         }
 
+        private void SetCacheProgressTextBox()
+        {
+            tbCacheProgress.Text = _cacheProgress.CacheFillProgress.HasValue ? _cacheProgress.CacheFillProgress.ToString() : "Caching not started";
+        }
+
         private void UpdateCacheLagPeriodControl()
         {
             var cacheLagPeriod = _cacheProgress.GetCacheLagPeriod();
+
             if (cacheLagPeriod == null)
             {
                 udCacheLagDuration.Value = 0;
@@ -142,6 +150,37 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            _cacheProgress.RevertToDatabaseState();
+            SetCacheProgressTextBox();
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            tbCacheProgress.ReadOnly = false;
+        }
+
+        private void tbCacheProgress_TextChanged(object sender, EventArgs e)
+        {
+
+            FormsHelper.DoActionAndRedIfThrows(tbCacheProgress, () =>
+            {
+                var dt = DateTime.Parse(tbCacheProgress.Text);
+                _cacheProgress.CacheFillProgress = dt;
+            });
+
+        }
+
+        private void tbChunkPeriod_TextChanged(object sender, EventArgs e)
+        {
+            FormsHelper.DoActionAndRedIfThrows(tbChunkPeriod, () =>
+            {
+                _cacheProgress.ChunkPeriod = TimeSpan.Parse(tbChunkPeriod.Text);
+            });
+
         }
     }
 
