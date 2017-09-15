@@ -256,7 +256,7 @@ namespace DataExportLibrary.Data.DataTables
         private ExtractionConfiguration()
         {
         }
-
+        
         public ExtractionConfiguration(IDataExportRepository repository, Project project)
         {
             Repository = repository;
