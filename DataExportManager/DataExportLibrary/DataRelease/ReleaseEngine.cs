@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
@@ -22,8 +20,7 @@ namespace DataExportLibrary.DataRelease
         public Project Project { get; private set; }
         public bool ReleaseSuccessful { get; protected set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
-        
-        public static DataFlowPipelineContext<ReleaseData> Context { get; set; }
+
         public ReleaseEngineSettings ReleaseSettings { get; set; }
 
         public DirectoryInfo SourceGlobalFolder { get; set; }
@@ -84,7 +81,8 @@ namespace DataExportLibrary.DataRelease
                 AuditDirectoryCreation(configurationSubDirectory.Name, sw, 0);
 
                 var customDataFolder = ReleaseCustomData(kvp, configurationSubDirectory);
-                AuditDirectoryCreation(customDataFolder.FullName, sw, 1);
+                if (customDataFolder != null)
+                    AuditDirectoryCreation(customDataFolder.FullName, sw, 1);
 
                 //generate release document
                 var generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
