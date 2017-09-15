@@ -122,5 +122,7 @@ namespace CatalogueManager.ItemActivation
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
         void ActivateTableInfo(object sender, TableInfo tableInfo);
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
+        void ActivateCacheProgress(object sender, CacheProgress cacheProgress);
+        void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
     }
 }

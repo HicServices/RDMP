@@ -10,9 +10,10 @@ namespace CatalogueLibrary.Data
         string Name { get; set; }
         string Description { get; set; }
         bool RequiresSynchronousAccess { get; set; }
-        List<PermissionWindowPeriod> PermissionWindowPeriods { get; set; }
+        List<PermissionWindowPeriod> PermissionWindowPeriods { get; }
 
         bool CurrentlyWithinPermissionWindow();
         IEnumerable<ICacheProgress> GetAllCacheProgresses();
+        void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods);
     }
 }

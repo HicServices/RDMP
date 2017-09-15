@@ -466,6 +466,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
         }
 
+        public void ActivateCacheProgress(object sender, CacheProgress cacheProgress)
+        {
+            Activate<CacheProgressUI, CacheProgress>(cacheProgress);
+        }
+
+        public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
+        {
+            Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
+        }
+
         public void ExecuteCohortSummaryGraph(object sender,CohortSummaryAggregateGraphObjectCollection objectCollection)
         {
             Activate<CohortSummaryAggregateGraph>(objectCollection);

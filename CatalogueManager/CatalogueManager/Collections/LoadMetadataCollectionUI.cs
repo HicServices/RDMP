@@ -80,7 +80,11 @@ namespace CatalogueManager.Collections
             var hicDir = o as HICProjectDirectoryNode;
             var processTask = o as ProcessTask;
             var loadProgress = o as LoadProgress;
+            var cacheProgress = o as CacheProgress;
             
+            var permissionWindow = o as PermissionWindow;
+            var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
+
             if(lmd != null)
                 _activator.ActivateLoadMetadata(this,lmd);
 
@@ -92,6 +96,15 @@ namespace CatalogueManager.Collections
 
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
+
+            if (cacheProgress != null)
+                _activator.ActivateCacheProgress(this, cacheProgress);
+
+            if (permissionWindowUsage != null)
+                permissionWindow = permissionWindowUsage.PermissionWindow;
+
+            if (permissionWindow != null)
+                _activator.ActivatePermissionWindow(this, permissionWindow);
         }
         private void otvLoadMetadata_KeyUp(object sender, KeyEventArgs e)
         {

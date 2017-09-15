@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
+using ReusableUIComponents;
 
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
@@ -13,7 +18,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     /// a comma and then another TimeSpan format e.g.  '10:20:00-10:40:00,11:20:00-11:40:00' would create a permission window that could download from the cache between 10:20 AM and 10:40 AM then
     /// caching wouldn't be allowed again until 11:20am to 11:40am.
     /// </summary>
-    public partial class PermissionWindowUI : Form
+    public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
     {
         private IPermissionWindow _permissionWindow;
 
@@ -22,9 +27,10 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             InitializeComponent();
         }
 
-        public void SetPermissionWindow(IPermissionWindow permissionWindow)
+        public override void SetDatabaseObject(IActivateItems activator, PermissionWindow databaseObject)
         {
-            _permissionWindow = permissionWindow;
+            base.SetDatabaseObject(activator, databaseObject);
+            _permissionWindow = databaseObject;
 
             tbName.Text = _permissionWindow.Name;
             tbDescription.Text = _permissionWindow.Description;
@@ -39,11 +45,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 periodsByDay[period.DayOfWeek].Add(period);
             }
 
-            var textBoxes = new[] {tbSunday, tbMonday, tbTuesday, tbWednesday, tbThursday, tbFriday, tbSaturday};
+            var textBoxes = new[] { tbSunday, tbMonday, tbTuesday, tbWednesday, tbThursday, tbFriday, tbSaturday };
             for (var i = 0; i < 7; ++i)
                 PopulatePeriodTextBoxForDay(textBoxes[i], i, periodsByDay);
-        }
 
+            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+
+        }
+        
         private void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
         {
             if (periodsByDay.ContainsKey(dayNum)) PopulateTextBox(textBox, periodsByDay[dayNum]);
@@ -74,12 +83,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             return periodList;
         }
-
-        private void btnSaveAndClose_Click(object sender, EventArgs e)
+        
+        public void RebuildPermissionWindowPeriods()
         {
-            _permissionWindow.Name = tbName.Text;
-            _permissionWindow.Description = tbDescription.Text;
-
             var periodList = new List<PermissionWindowPeriod>();
             periodList.AddRange(CreatePeriodListFromTextBox(0, tbSunday));
             periodList.AddRange(CreatePeriodListFromTextBox(1, tbMonday));
@@ -89,11 +95,41 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             periodList.AddRange(CreatePeriodListFromTextBox(5, tbFriday));
             periodList.AddRange(CreatePeriodListFromTextBox(6, tbSaturday));
 
-            _permissionWindow.PermissionWindowPeriods = periodList;
-            _permissionWindow.SaveToDatabase();
-
-            DialogResult = DialogResult.OK;
-            Close();
+            _permissionWindow.SetPermissionWindowPeriods(periodList);
         }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
+        }
+
+        private void tbName_TextChanged(object sender, EventArgs e)
+        {
+            _permissionWindow.Name = tbName.Text;
+        }
+
+        private void tbDescription_TextChanged(object sender, EventArgs e)
+        {
+            _permissionWindow.Description = tbDescription.Text;
+        }
+
+        private void tbDay_TextChanged(object sender, EventArgs e)
+        {
+            ragSmiley1.Reset();
+            try
+            {
+                RebuildPermissionWindowPeriods();
+            }
+            catch (Exception exception)
+            {
+                ragSmiley1.Fatal(exception);
+            }
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PermissionWindowUI_Design, UserControl>))]
+    public abstract class PermissionWindowUI_Design:RDMPSingleDatabaseObjectControl<PermissionWindow>
+    {
+
     }
 }

@@ -372,6 +372,7 @@
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
+    <Compile Include="CommandExecution\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
     <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
     <Compile Include="CommandExecution\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
@@ -604,7 +605,7 @@
       <DependentUpon>LoadMetadataUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.Designer.cs">
       <DependentUpon>PermissionWindowUI.cs</DependentUpon>

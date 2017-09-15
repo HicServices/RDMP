@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using CachingEngine.Factories;
@@ -6,6 +7,7 @@ using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
@@ -29,23 +31,34 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
+            var cataRepo = _activator.RepositoryLocator.CatalogueRepository;
+            var mef = cataRepo.MEF;
 
             var context = CachingPipelineEngineFactory.Context;
             var loadMetadata = _cacheProgress.GetLoadProgress().GetLoadMetadata();
 
-            var uiFactory = new ConfigurePipelineUIFactory(mef, _activator.RepositoryLocator.CatalogueRepository);
+            IPipeline pipeline;
+            if (_cacheProgress.Pipeline_ID == null)
+            {
+                pipeline = new Pipeline(cataRepo, "CachingPipeline_" + Guid.NewGuid());
+                _cacheProgress.Pipeline_ID = pipeline.ID;
+                _cacheProgress.SaveToDatabase();
+            }
+            else
+                pipeline = _cacheProgress.Pipeline;
+
+            var uiFactory = new ConfigurePipelineUIFactory(mef, cataRepo);
             var permissionWindow = _cacheProgress.GetPermissionWindow() ?? new PermissionWindow();
             var pipelineForm = uiFactory.Create(context.GetType().GenericTypeArguments[0].FullName,
-                _cacheProgress.Pipeline, null, null, context,
+                pipeline, null, null, context,
                 new List<object>
                 {
-                    new CacheFetchRequestProvider(new CacheFetchRequest(_activator.RepositoryLocator.CatalogueRepository)),
+                    new CacheFetchRequestProvider(new CacheFetchRequest(cataRepo)),
                     permissionWindow,
                     new HICProjectDirectory(loadMetadata.LocationOfFlatFiles, false),
                     mef
                 });
-
+            
             pipelineForm.ShowDialog();
         }
 

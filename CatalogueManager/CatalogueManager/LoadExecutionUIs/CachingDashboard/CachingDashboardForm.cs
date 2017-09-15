@@ -210,13 +210,10 @@ namespace CatalogueManager.LoadExecutionUIs.CachingDashboard
                 ExceptionViewer.Show(e);
             }
         }
-
+        
         private void btnShowPermissionWindow_Click(object sender, EventArgs e)
         {
-            var permissionWindow = _cacheProgress.PermissionWindow;
-            var form = new PermissionWindowUI();
-            form.SetPermissionWindow(permissionWindow);
-            form.ShowDialog();
+            throw new NotImplementedException();
         }
 
         private void dgvCacheFetchErrors_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
