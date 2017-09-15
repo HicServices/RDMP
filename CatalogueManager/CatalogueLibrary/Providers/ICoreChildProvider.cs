@@ -24,7 +24,8 @@ namespace CatalogueLibrary.Providers
         ColumnInfo[] AllColumnInfos { get;}
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
-        
+        PermissionWindow[] AllPermissionWindows { get;}
+
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
     }
 }

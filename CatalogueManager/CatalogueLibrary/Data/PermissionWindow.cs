@@ -75,7 +75,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         [NoMappingToDatabase]
-        public List<PermissionWindowPeriod> PermissionWindowPeriods { get; set; }
+        public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
         private string SerializePermissionWindowPeriods()
         {
@@ -155,7 +155,13 @@ namespace CatalogueLibrary.Data
         {
             return CacheProgresses;
         }
-        
+
+        public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
+        {
+            PermissionWindowPeriods = windowPeriods;
+            PermissionPeriodConfig = SerializePermissionWindowPeriods();
+        }
+
         public void Lock()
         {
             LockedBecauseRunning = true;

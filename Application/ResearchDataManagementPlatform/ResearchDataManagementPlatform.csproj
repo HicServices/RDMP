@@ -86,6 +86,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -283,10 +284,6 @@
     <ProjectReference Include="..\..\DataLoad\Applications\Dashboard\Dashboard.csproj">
       <Project>{66DCB9F0-41A3-4B14-ACC8-2036383A79C2}</Project>
       <Name>Dashboard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Applications\DatasetLoaderUI\DatasetLoaderUI.csproj">
-      <Project>{1A5E2349-BCA6-4DF6-886C-AD92DFBED600}</Project>
-      <Name>DatasetLoaderUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
       <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>

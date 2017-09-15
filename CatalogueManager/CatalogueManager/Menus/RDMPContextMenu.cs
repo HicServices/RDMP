@@ -28,16 +28,17 @@ namespace CatalogueManager.Menus
         protected ToolStripMenuItem RefreshObjectMenuItem;
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
+        protected AtomicCommandUIFactory AtomicCommandUIFactory;
 
         public RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
         {
             _activator = activator;
             _databaseEntity = databaseEntity;
             RepositoryLocator = _activator.RepositoryLocator;
+            
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
 
-            var uiFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-
-            RefreshObjectMenuItem  = uiFactory.CreateMenuItem(new ExecuteCommandRefreshObject(activator, databaseEntity));
+            RefreshObjectMenuItem = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandRefreshObject(activator, databaseEntity));
             
             var dependencies = databaseEntity as IHasDependencies;
 

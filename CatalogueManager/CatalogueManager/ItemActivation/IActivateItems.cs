@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
@@ -69,6 +70,7 @@ namespace CatalogueManager.ItemActivation
 
         void ExecuteAggregate(object sender, AggregateConfiguration aggregate);
         void ExecuteLoadMetadata(object sender, LoadMetadata lmd);
+        void ExecuteCacheProgress(object sender, CacheProgress cp);
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);
         bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
@@ -120,5 +122,7 @@ namespace CatalogueManager.ItemActivation
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
         void ActivateTableInfo(object sender, TableInfo tableInfo);
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
+        void ActivateCacheProgress(object sender, CacheProgress cacheProgress);
+        void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
     }
 }

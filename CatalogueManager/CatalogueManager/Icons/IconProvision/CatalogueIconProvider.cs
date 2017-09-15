@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net.Mime;
 using System.Windows.Forms;
+using CachingEngine;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -17,6 +18,7 @@ using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.PluginChildProvision;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.Icons.IconProvision;
 using ScintillaNET;
@@ -71,6 +73,9 @@ namespace CatalogueManager.Icons.IconProvision
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
+            if(IsLockedLockable(concept) && (kind == OverlayKind.None || kind == OverlayKind.Link))
+                kind = OverlayKind.Locked;
+
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
             if (_pluginIconProviders != null)
                 foreach (IIconProvider plugin in _pluginIconProviders)
@@ -100,6 +105,9 @@ namespace CatalogueManager.Icons.IconProvision
 
             if (concept is IContainer)
                 return GetImage(RDMPConcept.FilterContainer, kind);
+            
+            if (concept is PermissionWindowUsedByCacheProgress)
+                return GetImage(((PermissionWindowUsedByCacheProgress)concept).PermissionWindow,OverlayKind.Link);
 
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
@@ -117,6 +125,12 @@ namespace CatalogueManager.Icons.IconProvision
 
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
+        }
+
+        private bool IsLockedLockable(object concept)
+        {
+            var lockable = concept as ILockable;
+            return lockable != null && lockable.LockedBecauseRunning;
         }
 
         /// <summary>

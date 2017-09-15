@@ -27,6 +27,17 @@ namespace ReusableUIComponents
         private ExceptionViewer(string message, Exception exception)
         {
             _exception = exception;
+
+            var aggregateException = _exception as AggregateException;
+
+            if (aggregateException != null)
+            {
+                _exception = aggregateException.Flatten();
+
+                if(aggregateException.InnerExceptions.Count == 1)
+                    _exception = aggregateException.InnerExceptions[0];
+            }
+
             InitializeComponent();
             
             richTextBox1.Text = message;

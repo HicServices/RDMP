@@ -30,27 +30,20 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CacheProgressUI));
             this.gbCacheProgress = new System.Windows.Forms.GroupBox();
-            this.btnDeleteCaching = new System.Windows.Forms.Button();
-            this.btnDeletePermissionWindow = new System.Windows.Forms.Button();
             this.ddCacheLagDelayDurationType = new System.Windows.Forms.ComboBox();
             this.udCacheLagDelayPeriodDuration = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.cbPermissionWindowRequired = new System.Windows.Forms.CheckBox();
-            this.btnEditPermissionWindow = new System.Windows.Forms.Button();
-            this.btnAddNewPermissionWindow = new System.Windows.Forms.Button();
-            this.ddPermissionWindow = new System.Windows.Forms.ComboBox();
             this.tbCacheProgress = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.btnConfigureCachingPipeline = new System.Windows.Forms.Button();
             this.ddCacheLagDurationType = new System.Windows.Forms.ComboBox();
             this.udCacheLagDuration = new System.Windows.Forms.NumericUpDown();
-            this.label10 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.tbChunkPeriod = new System.Windows.Forms.TextBox();
             this.tbCacheProgressID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.gbCacheProgress.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDuration)).BeginInit();
@@ -59,22 +52,15 @@
             // gbCacheProgress
             // 
             this.gbCacheProgress.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.gbCacheProgress.Controls.Add(this.btnDeleteCaching);
-            this.gbCacheProgress.Controls.Add(this.btnDeletePermissionWindow);
+            this.gbCacheProgress.Controls.Add(this.objectSaverButton1);
             this.gbCacheProgress.Controls.Add(this.ddCacheLagDelayDurationType);
             this.gbCacheProgress.Controls.Add(this.udCacheLagDelayPeriodDuration);
             this.gbCacheProgress.Controls.Add(this.label2);
             this.gbCacheProgress.Controls.Add(this.label1);
-            this.gbCacheProgress.Controls.Add(this.cbPermissionWindowRequired);
-            this.gbCacheProgress.Controls.Add(this.btnEditPermissionWindow);
-            this.gbCacheProgress.Controls.Add(this.btnAddNewPermissionWindow);
-            this.gbCacheProgress.Controls.Add(this.ddPermissionWindow);
             this.gbCacheProgress.Controls.Add(this.tbCacheProgress);
             this.gbCacheProgress.Controls.Add(this.label4);
-            this.gbCacheProgress.Controls.Add(this.btnConfigureCachingPipeline);
             this.gbCacheProgress.Controls.Add(this.ddCacheLagDurationType);
             this.gbCacheProgress.Controls.Add(this.udCacheLagDuration);
-            this.gbCacheProgress.Controls.Add(this.label10);
             this.gbCacheProgress.Controls.Add(this.label8);
             this.gbCacheProgress.Controls.Add(this.label13);
             this.gbCacheProgress.Controls.Add(this.tbChunkPeriod);
@@ -83,32 +69,10 @@
             this.gbCacheProgress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbCacheProgress.Location = new System.Drawing.Point(0, 0);
             this.gbCacheProgress.Name = "gbCacheProgress";
-            this.gbCacheProgress.Size = new System.Drawing.Size(676, 218);
+            this.gbCacheProgress.Size = new System.Drawing.Size(676, 174);
             this.gbCacheProgress.TabIndex = 32;
             this.gbCacheProgress.TabStop = false;
             this.gbCacheProgress.Text = "Cache Progress:";
-            // 
-            // btnDeleteCaching
-            // 
-            this.btnDeleteCaching.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteCaching.Location = new System.Drawing.Point(582, 10);
-            this.btnDeleteCaching.Name = "btnDeleteCaching";
-            this.btnDeleteCaching.Size = new System.Drawing.Size(91, 23);
-            this.btnDeleteCaching.TabIndex = 1;
-            this.btnDeleteCaching.Text = "Delete Caching";
-            this.btnDeleteCaching.UseVisualStyleBackColor = true;
-            this.btnDeleteCaching.Click += new System.EventHandler(this.btnDeleteCaching_Click);
-            // 
-            // btnDeletePermissionWindow
-            // 
-            this.btnDeletePermissionWindow.Enabled = false;
-            this.btnDeletePermissionWindow.Location = new System.Drawing.Point(287, 192);
-            this.btnDeletePermissionWindow.Name = "btnDeletePermissionWindow";
-            this.btnDeletePermissionWindow.Size = new System.Drawing.Size(141, 23);
-            this.btnDeletePermissionWindow.TabIndex = 15;
-            this.btnDeletePermissionWindow.Text = "Delete Permission Window";
-            this.btnDeletePermissionWindow.UseVisualStyleBackColor = true;
-            this.btnDeletePermissionWindow.Click += new System.EventHandler(this.btnDeletePermissionWindow_Click);
             // 
             // ddCacheLagDelayDurationType
             // 
@@ -146,55 +110,6 @@
             this.label1.TabIndex = 43;
             this.label1.Text = "Load Delay";
             // 
-            // cbPermissionWindowRequired
-            // 
-            this.cbPermissionWindowRequired.AutoSize = true;
-            this.cbPermissionWindowRequired.Location = new System.Drawing.Point(10, 142);
-            this.cbPermissionWindowRequired.Name = "cbPermissionWindowRequired";
-            this.cbPermissionWindowRequired.Size = new System.Drawing.Size(458, 17);
-            this.cbPermissionWindowRequired.TabIndex = 11;
-            this.cbPermissionWindowRequired.Text = "Use A PermissionWindow (Can only execute caching at certain times of day e.g. 10p" +
-    "m-4am)";
-            this.cbPermissionWindowRequired.UseVisualStyleBackColor = true;
-            this.cbPermissionWindowRequired.CheckedChanged += new System.EventHandler(this.cbPermissionWindowRequired_CheckedChanged);
-            // 
-            // btnEditPermissionWindow
-            // 
-            this.btnEditPermissionWindow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEditPermissionWindow.Enabled = false;
-            this.btnEditPermissionWindow.Location = new System.Drawing.Point(538, 165);
-            this.btnEditPermissionWindow.Name = "btnEditPermissionWindow";
-            this.btnEditPermissionWindow.Size = new System.Drawing.Size(91, 23);
-            this.btnEditPermissionWindow.TabIndex = 13;
-            this.btnEditPermissionWindow.Text = "Edit...";
-            this.btnEditPermissionWindow.UseVisualStyleBackColor = true;
-            this.btnEditPermissionWindow.Click += new System.EventHandler(this.btnEditPermissionWindow_Click);
-            // 
-            // btnAddNewPermissionWindow
-            // 
-            this.btnAddNewPermissionWindow.Enabled = false;
-            this.btnAddNewPermissionWindow.Location = new System.Drawing.Point(118, 192);
-            this.btnAddNewPermissionWindow.Name = "btnAddNewPermissionWindow";
-            this.btnAddNewPermissionWindow.Size = new System.Drawing.Size(163, 23);
-            this.btnAddNewPermissionWindow.TabIndex = 14;
-            this.btnAddNewPermissionWindow.Text = "Add New Permision Window...";
-            this.btnAddNewPermissionWindow.UseVisualStyleBackColor = true;
-            this.btnAddNewPermissionWindow.Click += new System.EventHandler(this.btnAddNewPermissionWindow_Click);
-            // 
-            // ddPermissionWindow
-            // 
-            this.ddPermissionWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddPermissionWindow.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddPermissionWindow.Enabled = false;
-            this.ddPermissionWindow.FormattingEnabled = true;
-            this.ddPermissionWindow.Location = new System.Drawing.Point(118, 165);
-            this.ddPermissionWindow.Name = "ddPermissionWindow";
-            this.ddPermissionWindow.Size = new System.Drawing.Size(414, 21);
-            this.ddPermissionWindow.Sorted = true;
-            this.ddPermissionWindow.TabIndex = 12;
-            this.ddPermissionWindow.SelectedIndexChanged += new System.EventHandler(this.ddPermissionWindow_SelectedIndexChanged);
-            // 
             // tbCacheProgress
             // 
             this.tbCacheProgress.Location = new System.Drawing.Point(260, 19);
@@ -211,16 +126,6 @@
             this.label4.Size = new System.Drawing.Size(85, 13);
             this.label4.TabIndex = 21;
             this.label4.Text = "Cache Progress:";
-            // 
-            // btnConfigureCachingPipeline
-            // 
-            this.btnConfigureCachingPipeline.Location = new System.Drawing.Point(10, 113);
-            this.btnConfigureCachingPipeline.Name = "btnConfigureCachingPipeline";
-            this.btnConfigureCachingPipeline.Size = new System.Drawing.Size(156, 23);
-            this.btnConfigureCachingPipeline.TabIndex = 10;
-            this.btnConfigureCachingPipeline.Text = "Configure Caching Pipeline";
-            this.btnConfigureCachingPipeline.UseVisualStyleBackColor = true;
-            this.btnConfigureCachingPipeline.Click += new System.EventHandler(this.btnConfigureCachingPipeline_Click);
             // 
             // ddCacheLagDurationType
             // 
@@ -239,15 +144,6 @@
             this.udCacheLagDuration.Size = new System.Drawing.Size(38, 20);
             this.udCacheLagDuration.TabIndex = 3;
             this.udCacheLagDuration.ValueChanged += new System.EventHandler(this.udCacheLagDuration_ValueChanged);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(10, 168);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(102, 13);
-            this.label10.TabIndex = 30;
-            this.label10.Text = "Permission Window:";
             // 
             // label8
             // 
@@ -291,13 +187,22 @@
             this.label9.TabIndex = 21;
             this.label9.Text = "ID:";
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(10, 113);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.TabIndex = 44;
+            this.objectSaverButton1.Text = "objectSaverButton1";
+            this.objectSaverButton1.UseVisualStyleBackColor = true;
+            // 
             // CacheProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbCacheProgress);
             this.Name = "CacheProgressUI";
-            this.Size = new System.Drawing.Size(676, 218);
+            this.Size = new System.Drawing.Size(676, 174);
             this.gbCacheProgress.ResumeLayout(false);
             this.gbCacheProgress.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).EndInit();
@@ -309,16 +214,10 @@
         #endregion
 
         private System.Windows.Forms.GroupBox gbCacheProgress;
-        private System.Windows.Forms.CheckBox cbPermissionWindowRequired;
-        private System.Windows.Forms.Button btnEditPermissionWindow;
-        private System.Windows.Forms.Button btnAddNewPermissionWindow;
-        private System.Windows.Forms.ComboBox ddPermissionWindow;
         private System.Windows.Forms.TextBox tbCacheProgress;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button btnConfigureCachingPipeline;
         private System.Windows.Forms.ComboBox ddCacheLagDurationType;
         private System.Windows.Forms.NumericUpDown udCacheLagDuration;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox tbChunkPeriod;
@@ -328,7 +227,6 @@
         private System.Windows.Forms.NumericUpDown udCacheLagDelayPeriodDuration;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnDeletePermissionWindow;
-        private System.Windows.Forms.Button btnDeleteCaching;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }
