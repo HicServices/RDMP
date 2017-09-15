@@ -189,6 +189,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public void PreInitialize(IExtractCommand request, IDataLoadEventListener listener)
         {
             _request = request;
+            
+            if (_request == ExtractDatasetCommand.EmptyCommand)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out"));
+                return;
+            }
 
             LinesWritten = 0;
 
@@ -302,6 +308,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public void Check(ICheckNotifier notifier)
         {
+            if (_request == ExtractDatasetCommand.EmptyCommand)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out",CheckResult.Warning));
+                return;
+            }
             try
             {
                 string result = DateTime.Now.ToString(DateFormat);

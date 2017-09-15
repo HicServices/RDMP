@@ -30,7 +30,7 @@ namespace DataExportManager.DataRelease
             if (releaser == null)
                 return;
 
-            if (!releaser.Releasesuccessful)
+            if (!releaser.ReleaseSuccessful)
                 throw new Exception("Cannot perform cleanup because ReleaseEngine reports that it was not successful");
 
             

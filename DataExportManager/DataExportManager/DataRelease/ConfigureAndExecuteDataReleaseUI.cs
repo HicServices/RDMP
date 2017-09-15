@@ -57,7 +57,7 @@ namespace DataExportManager.DataRelease
             {
                 var cataRepository = _activator.RepositoryLocator.CatalogueRepository;
                 _pipelineUI = new PipelineSelectionUI<ReleaseData>(null, null, cataRepository);
-                _pipelineUI.Context = ReleaseEngine.Context;
+                _pipelineUI.Context = ReleaseContext.Context;
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_project);
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_activator);
 
@@ -73,7 +73,7 @@ namespace DataExportManager.DataRelease
             if (_pipelineUI.Pipeline == null)
                 return;
 
-            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
+            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseContext.Context);
             var engine = factory.Create(_pipelineUI.Pipeline, progressUI1);
 
             engine.Initialize(_project, _activator);

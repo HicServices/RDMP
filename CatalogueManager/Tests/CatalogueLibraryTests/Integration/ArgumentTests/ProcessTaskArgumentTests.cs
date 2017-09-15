@@ -287,10 +287,10 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             match.Value = "coconuts";
             match.SaveToDatabase();
 
-            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(RepositoryLocator.CatalogueRepository.MEF, ReleaseEngine.Context);
+            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(RepositoryLocator.CatalogueRepository.MEF, ReleaseContext.Context);
             var destInstance = factory.CreateDestinationIfExists(pipe);
 
-            Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomExtractionDirectory);
+            Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomExtractionDirectory.Name);
             
         }
     }
