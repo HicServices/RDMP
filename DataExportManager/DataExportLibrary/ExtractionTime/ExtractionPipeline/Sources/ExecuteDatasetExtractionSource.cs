@@ -424,7 +424,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             else
                 _customTablePair = value as ExtractCohortCustomTableCommand;
         }
-
         
         public virtual void Check(ICheckNotifier notifier)
         {
