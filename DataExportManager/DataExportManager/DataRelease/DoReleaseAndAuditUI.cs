@@ -246,7 +246,7 @@ namespace DataExportManager.DataRelease
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_project);
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_activator);
 
-                _pipelineUI.CollapseToSingleLineMode();
+                // _pipelineUI.CollapseToSingleLineMode();
                 
                 _pipelineUI.Dock = DockStyle.Fill;
                 pnlPipeline.Controls.Add(_pipelineUI);
