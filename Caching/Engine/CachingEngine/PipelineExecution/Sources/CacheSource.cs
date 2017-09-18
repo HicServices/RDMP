@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using CachingEngine.Requests;
 using CachingEngine.Requests.FetchRequestProvider;
@@ -52,7 +53,12 @@ namespace CachingEngine.PipelineExecution.Sources
             }
 
             DoGetChunk(listener, cancellationToken);
-            
+
+            if (Chunk != null && Chunk.Request == null && Request != null)
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Error,
+                        "DoGetChunk completed and set a Chunk succesfully but the Chunk.Request was null.  Try respecting the Request property in your class when creating your Chunk."));
+
             return Chunk;
         }
 

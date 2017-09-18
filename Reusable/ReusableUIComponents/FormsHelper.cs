@@ -78,5 +78,18 @@ namespace ReusableUIComponents
             comboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
             return problemsDuringLoad;
         }
+
+        public static void DoActionAndRedIfThrows(TextBox tb, Action action)
+        {
+            tb.ForeColor = Color.Black;
+            try
+            {
+                action();
+            }
+            catch (Exception)
+            {
+                tb.ForeColor = Color.Red;
+            }
+        }
     }
 }

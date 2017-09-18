@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CacheProgressUI));
             this.gbCacheProgress = new System.Windows.Forms.GroupBox();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
             this.ddCacheLagDelayDurationType = new System.Windows.Forms.ComboBox();
             this.udCacheLagDelayPeriodDuration = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
@@ -52,6 +54,8 @@
             // gbCacheProgress
             // 
             this.gbCacheProgress.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.gbCacheProgress.Controls.Add(this.btnRefresh);
+            this.gbCacheProgress.Controls.Add(this.btnEdit);
             this.gbCacheProgress.Controls.Add(this.objectSaverButton1);
             this.gbCacheProgress.Controls.Add(this.ddCacheLagDelayDurationType);
             this.gbCacheProgress.Controls.Add(this.udCacheLagDelayPeriodDuration);
@@ -69,16 +73,36 @@
             this.gbCacheProgress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbCacheProgress.Location = new System.Drawing.Point(0, 0);
             this.gbCacheProgress.Name = "gbCacheProgress";
-            this.gbCacheProgress.Size = new System.Drawing.Size(676, 174);
+            this.gbCacheProgress.Size = new System.Drawing.Size(878, 303);
             this.gbCacheProgress.TabIndex = 32;
             this.gbCacheProgress.TabStop = false;
             this.gbCacheProgress.Text = "Cache Progress:";
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
+            this.btnRefresh.Location = new System.Drawing.Point(396, 17);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(26, 26);
+            this.btnRefresh.TabIndex = 45;
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Location = new System.Drawing.Point(260, 41);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(35, 20);
+            this.btnEdit.TabIndex = 45;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // ddCacheLagDelayDurationType
             // 
             this.ddCacheLagDelayDurationType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddCacheLagDelayDurationType.FormattingEnabled = true;
-            this.ddCacheLagDelayDurationType.Location = new System.Drawing.Point(340, 43);
+            this.ddCacheLagDelayDurationType.Location = new System.Drawing.Point(340, 89);
             this.ddCacheLagDelayDurationType.Name = "ddCacheLagDelayDurationType";
             this.ddCacheLagDelayDurationType.Size = new System.Drawing.Size(71, 21);
             this.ddCacheLagDelayDurationType.TabIndex = 6;
@@ -86,7 +110,7 @@
             // 
             // udCacheLagDelayPeriodDuration
             // 
-            this.udCacheLagDelayPeriodDuration.Location = new System.Drawing.Point(296, 45);
+            this.udCacheLagDelayPeriodDuration.Location = new System.Drawing.Point(296, 91);
             this.udCacheLagDelayPeriodDuration.Name = "udCacheLagDelayPeriodDuration";
             this.udCacheLagDelayPeriodDuration.Size = new System.Drawing.Size(38, 20);
             this.udCacheLagDelayPeriodDuration.TabIndex = 5;
@@ -95,7 +119,7 @@
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(7, 68);
+            this.label2.Location = new System.Drawing.Point(7, 114);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(663, 42);
             this.label2.TabIndex = 43;
@@ -104,7 +128,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(229, 48);
+            this.label1.Location = new System.Drawing.Point(229, 94);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 13);
             this.label1.TabIndex = 43;
@@ -117,6 +141,7 @@
             this.tbCacheProgress.ReadOnly = true;
             this.tbCacheProgress.Size = new System.Drawing.Size(130, 20);
             this.tbCacheProgress.TabIndex = 2;
+            this.tbCacheProgress.TextChanged += new System.EventHandler(this.tbCacheProgress_TextChanged);
             // 
             // label4
             // 
@@ -131,7 +156,7 @@
             // 
             this.ddCacheLagDurationType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddCacheLagDurationType.FormattingEnabled = true;
-            this.ddCacheLagDurationType.Location = new System.Drawing.Point(152, 44);
+            this.ddCacheLagDurationType.Location = new System.Drawing.Point(152, 90);
             this.ddCacheLagDurationType.Name = "ddCacheLagDurationType";
             this.ddCacheLagDurationType.Size = new System.Drawing.Size(71, 21);
             this.ddCacheLagDurationType.TabIndex = 4;
@@ -139,7 +164,7 @@
             // 
             // udCacheLagDuration
             // 
-            this.udCacheLagDuration.Location = new System.Drawing.Point(108, 44);
+            this.udCacheLagDuration.Location = new System.Drawing.Point(108, 90);
             this.udCacheLagDuration.Name = "udCacheLagDuration";
             this.udCacheLagDuration.Size = new System.Drawing.Size(38, 20);
             this.udCacheLagDuration.TabIndex = 3;
@@ -148,7 +173,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(417, 48);
+            this.label8.Location = new System.Drawing.Point(417, 94);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(74, 13);
             this.label8.TabIndex = 30;
@@ -157,7 +182,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(7, 48);
+            this.label13.Location = new System.Drawing.Point(7, 94);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(95, 13);
             this.label13.TabIndex = 30;
@@ -165,10 +190,11 @@
             // 
             // tbChunkPeriod
             // 
-            this.tbChunkPeriod.Location = new System.Drawing.Point(497, 45);
+            this.tbChunkPeriod.Location = new System.Drawing.Point(497, 91);
             this.tbChunkPeriod.Name = "tbChunkPeriod";
             this.tbChunkPeriod.Size = new System.Drawing.Size(120, 20);
             this.tbChunkPeriod.TabIndex = 7;
+            this.tbChunkPeriod.TextChanged += new System.EventHandler(this.tbChunkPeriod_TextChanged);
             // 
             // tbCacheProgressID
             // 
@@ -189,7 +215,7 @@
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(10, 113);
+            this.objectSaverButton1.Location = new System.Drawing.Point(10, 159);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
             this.objectSaverButton1.TabIndex = 44;
@@ -202,7 +228,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbCacheProgress);
             this.Name = "CacheProgressUI";
-            this.Size = new System.Drawing.Size(676, 174);
+            this.Size = new System.Drawing.Size(878, 303);
             this.gbCacheProgress.ResumeLayout(false);
             this.gbCacheProgress.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).EndInit();
@@ -228,5 +254,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnEdit;
     }
 }
