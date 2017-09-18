@@ -62,6 +62,91 @@ namespace DataExportLibrary.DataRelease
             ReleaseSuccessful = true;
         }
 
+        protected virtual void VerifyReleasability(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment)
+        {
+            //make sure everything is releasable
+            if (toRelease.Any(kvp => kvp.Value.Any(p => p.Assesment != Releaseability.Releaseable && p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)))//these are the only permissable release states
+                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable");
+
+            if (toRelease.Any(kvp => kvp.Key.Project_ID != Project.ID))
+                throw new Exception("Mismatch between project passed into constructor and DoRelease projects");
+
+            if (environment.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environment.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
+                throw new Exception("Ticketing system decided that the Environment is not ready for release. Reason: " + environment.Reason);
+        }
+
+        protected virtual DirectoryInfo PrepareAndVerifySourceGlobalFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+        {
+            var globalDirectoriesFound = new List<DirectoryInfo>();
+
+            foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> releasePotentials in toRelease)
+                globalDirectoriesFound.AddRange(GetAllFoldersCalled(ExtractionDirectory.GlobalsDataFolderName, releasePotentials));
+
+            if (globalDirectoriesFound.Any())
+            {
+                var firstGlobal = globalDirectoriesFound.First();
+
+                foreach (var directoryInfo in globalDirectoriesFound.Distinct(new DirectoryInfoComparer()))
+                {
+                    ConfirmContentsOfDirectoryAreTheSame(firstGlobal, directoryInfo);
+                }
+
+                return firstGlobal;
+            }
+
+            return null;
+        }
+
+        protected virtual DirectoryInfo PrepareAndVerifyReleaseFolder()
+        {
+            var folder = GetIntendedReleaseDirectory();
+            if (!folder.Exists)
+            {
+                if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
+                    folder.Create();
+                else
+                    throw new Exception("Intended release directory was not found and I was forbidden to create it: " + folder.FullName);
+            }
+
+            //make sure user isn't sneaking any pollution into this directory
+            if (folder.EnumerateDirectories().Any() || folder.EnumerateFiles().Any())
+                throw new Exception("Intended release directory is not empty:" + folder.FullName);
+
+            return folder;
+        }
+
+        protected virtual StreamWriter PrepareAuditFile()
+        {
+            var sw = new StreamWriter(Path.Combine(ReleaseFolder.FullName, "contents.txt"));
+
+            sw.WriteLine("----------Details Of Release---------:" + DateTime.Now);
+            sw.WriteLine("ProjectName:" + Project.Name);
+            sw.WriteLine("ProjectNumber:" + Project.ProjectNumber);
+            sw.WriteLine("Project.ID:" + Project.ID);
+            sw.WriteLine("ThisFileWasCreated:" + DateTime.Now);
+
+            sw.WriteLine("----------Contents Of Directory---------:" + DateTime.Now);
+
+            return sw;
+        }
+
+        protected virtual void ReleaseGlobalFolder()
+        {
+            //if we found at least one global folder and all the global folders we did find had the same contents
+            if (SourceGlobalFolder != null)
+            {
+                if (ReleaseSettings.DeleteFilesOnSuccess)
+                {
+                    SourceGlobalFolder.MoveTo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
+                }
+                else
+                {
+                    var destination = new DirectoryInfo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
+                    SourceGlobalFolder.CopyAll(destination);
+                }
+            }
+        }
+
         protected virtual void ReleaseAllExtractionConfigurations(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw, ReleaseEnvironmentPotential environment, bool isPatch)
         {
             //for each configuration, all the release potentials can be released
@@ -142,99 +227,25 @@ namespace DataExportLibrary.DataRelease
                              .Distinct()
                              .Aggregate("", (s, n) => s + n + ",")
                              .TrimEnd(','));
-            sw.WriteLine("CohortName:" + _repository.GetObjectByID<ExtractableCohort>((int) kvp.Key.Cohort_ID));
+            sw.WriteLine("CohortName:" + _repository.GetObjectByID<ExtractableCohort>((int)kvp.Key.Cohort_ID));
             sw.WriteLine("CohortID:" + kvp.Key.Cohort_ID);
         }
 
-        protected virtual void ReleaseGlobalFolder()
+        protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
         {
-            //if we found at least one global folder and all the global folders we did find had the same contents
-            if (SourceGlobalFolder != null)
+            ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
+
+            var expectedFilename = rp.DataSet + ".csv";
+            var datasetFile = rpDirectory.EnumerateFiles().SingleOrDefault(f => f.Name.Equals(expectedFilename));
+            if (datasetFile == null)
             {
-                if (ReleaseSettings.DeleteFilesOnSuccess)
-                {
-                    SourceGlobalFolder.MoveTo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
-                }
-                else
-                {
-                    var destination = new DirectoryInfo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
-                    SourceGlobalFolder.CopyAll(destination);
-                }
-            }
-        }
-
-        protected virtual void VerifyReleasability(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment)
-        {
-            //make sure everything is releasable
-            if (toRelease.Any(kvp => kvp.Value.Any(p => p.Assesment != Releaseability.Releaseable && p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)))//these are the only permissable release states
-                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable");
-
-            if (toRelease.Any(kvp => kvp.Key.Project_ID != Project.ID))
-                throw new Exception("Mismatch between project passed into constructor and DoRelease projects");
-
-            if (environment.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environment.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
-                throw new Exception("Ticketing system decided that the Environment is not ready for release. Reason: " + environment.Reason);
-        }
-
-        protected virtual DirectoryInfo PrepareAndVerifySourceGlobalFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease)
-        {
-            var globalDirectoriesFound = new List<DirectoryInfo>();
-
-            foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> releasePotentials in toRelease)
-                globalDirectoriesFound.AddRange(GetAllFoldersCalled(ExtractionDirectory.GlobalsDataFolderName, releasePotentials));
-
-            if (globalDirectoriesFound.Any())
-            {
-                var firstGlobal = globalDirectoriesFound.First();
-
-                foreach (var directoryInfo in globalDirectoriesFound.Distinct(new DirectoryInfoComparer()))
-                {
-                    //if (directoryInfo.EnumerateDirectories().Any())
-                    //    throw new Exception("Folder \"" + directoryInfo.FullName + "\" contains subdirectories, this is not permitted");
-
-                    ConfirmContentsOfDirectoryAreTheSame(firstGlobal, directoryInfo);
-                }
-
-                return firstGlobal;
+                throw new Exception("Expected to find file called " + expectedFilename + " in directory " + rpDirectory.FullName + ", but could not");
             }
 
-            return null;
+            logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
         }
 
-        protected virtual DirectoryInfo PrepareAndVerifyReleaseFolder()
-        {
-            var folder = GetIntendedReleaseDirectory();
-            if (!folder.Exists)
-            {
-                if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
-                    folder.Create();
-                else
-                    throw new Exception("Intended release directory was not found and I was forbidden to create it: " + folder.FullName);
-            }
-
-            //make sure user isn't sneaking any pollution into this directory
-            if (folder.EnumerateDirectories().Any() || folder.EnumerateFiles().Any())
-                throw new Exception("Intended release directory is not empty:" + folder.FullName);
-
-            return folder;
-        }
-
-        protected virtual StreamWriter PrepareAuditFile()
-        {
-            var sw = new StreamWriter(Path.Combine(ReleaseFolder.FullName, "contents.txt"));
-
-            sw.WriteLine("----------Details Of Release---------:" + DateTime.Now);
-            sw.WriteLine("ProjectName:" + Project.Name);
-            sw.WriteLine("ProjectNumber:" + Project.ProjectNumber);
-            sw.WriteLine("Project.ID:" + Project.ID);
-            sw.WriteLine("ThisFileWasCreated:" + DateTime.Now);
-
-            sw.WriteLine("----------Contents Of Directory---------:" + DateTime.Now);
-
-            return sw;
-        }
-
-        protected virtual DirectoryInfo GetIntendedReleaseDirectory()
+        protected DirectoryInfo GetIntendedReleaseDirectory()
         {
             if (ReleaseSettings.UseProjectExtractionFolder)
             {
@@ -251,20 +262,6 @@ namespace DataExportLibrary.DataRelease
             }
             
             return ReleaseSettings.CustomExtractionDirectory;
-        }
-
-        protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
-        {
-            ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
-
-            var expectedFilename = rp.DataSet + ".csv";
-            var datasetFile = rpDirectory.EnumerateFiles().SingleOrDefault(f=>f.Name.Equals(expectedFilename));
-            if (datasetFile == null)
-            {
-                throw new Exception("Expected to find file called " + expectedFilename + " in directory " + rpDirectory.FullName + ", but could not");
-            }
-
-            logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
         }
 
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
