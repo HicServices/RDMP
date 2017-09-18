@@ -178,7 +178,6 @@ namespace CatalogueLibrary.Data.DataLoad
 
                 answer =  result;
                 return true;
-
             }
 
             //it is not a custom ui driven type
@@ -214,12 +213,20 @@ namespace CatalogueLibrary.Data.DataLoad
                 return;
             }
 
+            //get the system type
+            Type type = GetSystemType();
+
+            if (o is String && typeof(IEncryptedString).IsAssignableFrom(type))
+            {
+                var encryptor = new EncryptedString((CatalogueRepository)Repository);
+                encryptor.Value = o.ToString();
+                Value = encryptor.Value;
+                return;
+            }
+
             //if we already have a known type set on us
             if (!String.IsNullOrWhiteSpace(Type))
             {
-                //get the system type
-                Type type = GetSystemType();
-
                 //if we are not being passed an Enum
                 if (!typeof(Enum).IsAssignableFrom(type))
                 {
@@ -228,14 +235,11 @@ namespace CatalogueLibrary.Data.DataLoad
                         throw new NotSupportedException("Type " + o.GetType() + " is not one of the permissable types for ProcessTaskArgument, argument must be one of:" + PermissableTypes.Aggregate("", (s, n) => s + n + ",").TrimEnd(','));
 
                     //if we are passed something o of differing type to the known requested type then someone is lying to someone!
-                    if (o.GetType() != GetSystemType())
-                        throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + GetSystemType().FullName + ")");
-
+                    if (o.GetType() != type)
+                        throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");                        
                 }
             }
-
             
-
             if (o is IMapsDirectlyToDatabaseTable)
                 Value = ((IMapsDirectlyToDatabaseTable)o).ID.ToString();
             else

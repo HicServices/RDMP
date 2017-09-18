@@ -20,8 +20,11 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
         private DemandsInitializationAttribute _demand;
         private bool _bLoading = true;
 
-        public ArgumentValueTextUI()
+        private bool _isPassword = false;
+
+        public ArgumentValueTextUI(bool isPassword)
         {
+            _isPassword = isPassword;
             InitializeComponent();
         }
 
@@ -31,6 +34,13 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             _argument = argument;
             _demand = demand;
             tbText.Text = argument.Value;
+
+            if (_isPassword)
+            {
+                tbText.UseSystemPasswordChar = true;
+                var val = _argument.GetValueAsSystemType();
+                tbText.Text = val != null ? ((IEncryptedString)val).GetDecryptedValue() : "";
+            }
 
             BombIfMandatoryAndEmpty();
             _bLoading = false;
@@ -42,17 +52,21 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 return;
 
             ragSmiley1.Reset();
-
-            _argument.Value = tbText.Text;
+            
+            _argument.SetValue(tbText.Text);
+            
             _argument.SaveToDatabase();
 
             try
             {
                 var val = _argument.GetValueAsSystemType();
-                tbText.Text = val != null?val.ToString():"";
+                
+                if (!_isPassword) // we don't want to show the hex value for the pwd.
+                    tbText.Text = val != null ? val.ToString() : "";
+                else
+                    tbText.Text = val != null ? ((IEncryptedString)val).GetDecryptedValue() : "";
 
                 BombIfMandatoryAndEmpty();
-
             }
             catch (Exception exception)
             {

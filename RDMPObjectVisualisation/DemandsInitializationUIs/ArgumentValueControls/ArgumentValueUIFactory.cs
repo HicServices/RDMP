@@ -71,7 +71,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 }
                 else //type is simple
                 {
-                    toReturn = new ArgumentValueTextUI();
+                    toReturn = new ArgumentValueTextUI(isPassword: typeof(IEncryptedString).IsAssignableFrom(argumentType));
                 }
             }
             catch (Exception e)
