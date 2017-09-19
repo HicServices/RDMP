@@ -54,10 +54,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public IDataFlowPipelineEngine GetEngine(IPipeline pipeline,IDataLoadEventListener listener)
         {
-            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_catalogueRepository.MEF, _context);
-            factory.ExplicitSource = _explicitSource;
-
-            var engine = factory.Create(pipeline, listener);
+            var engine = new DataFlowPipelineEngineFactory(this).Create(pipeline,listener);
             engine.Initialize(_initObjects);
 
             return engine;
