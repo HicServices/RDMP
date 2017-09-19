@@ -232,16 +232,16 @@ namespace CachingEngine.DataRetrievers
 
         private IDataFlowPipelineEngine CreateCachingEngine(ICacheProgress cacheProgress)
         {
-            var cachingPipelineEngineFactory = new CachingPipelineEngineFactory();
-            var engine = cachingPipelineEngineFactory.CreateCachingPipelineEngine(cacheProgress, _repository, _listener);
+            var cachingPipelineEngineFactory = new CachingPipelineEngineFactory(cacheProgress);
+            var engine = cachingPipelineEngineFactory.CreateCachingPipelineEngine(_repository, _listener);
             _engineMap.Add(engine, cacheProgress.GetLoadProgress());
             return engine;
         }
 
         private IDataFlowPipelineEngine CreateRetryCachingEngine(ICacheProgress cacheProgress)
         {
-            var cachingPipelineEngineFactory = new CachingPipelineEngineFactory();
-            var engine = cachingPipelineEngineFactory.CreateRetryCachingPipelineEngine(cacheProgress, _repository, _listener);
+            var cachingPipelineEngineFactory = new CachingPipelineEngineFactory(cacheProgress);
+            var engine = cachingPipelineEngineFactory.CreateRetryCachingPipelineEngine(_repository, _listener);
             _engineMap.Add(engine, cacheProgress.GetLoadProgress());
             return engine;
         }

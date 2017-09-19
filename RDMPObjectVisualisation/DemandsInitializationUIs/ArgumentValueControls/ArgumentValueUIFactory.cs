@@ -13,7 +13,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 {
     public class ArgumentValueUIFactory
     {
-        public IArgumentValueUI Create(IArgumentHost parent, IArgument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
+        public IArgumentValueUI Create(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, DataTable previewIfAny)
         {
             var argumentType = argument.GetSystemType();
             IArgumentValueUI toReturn;
@@ -25,7 +25,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                     toReturn = new ArgumentValuePipelineUI(catalogueRepository,parent, argumentType);
                 else if (typeof (bool) == argumentType)
                     toReturn = new ArgumentValueBoolUI();
-                else if (demand.DemandType == DemandType.SQL) //if it is SQL
+                else if (required.Demand.DemandType == DemandType.SQL) //if it is SQL
                 {
                     if (typeof (string) != argumentType)
                         throw new NotSupportedException(
@@ -43,7 +43,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                     //Handle case where Demand is for the user to pick a Type (derived from a given parent Type/Interface).  Use case for this is when you want them to pick e.g. a IDilutionOperation where these are a list of classes corrupt data to greater or lesser degree and can be plugin Types but all share the same parent interface IDilutionOperation
 
                     //There must be a shared parent Type for the user to  pick from
-                    if (demand.TypeOf == null)
+                    if (required.Demand.TypeOf == null)
                         throw new NotSupportedException("Property " + argument.Name + " has Property Type '" +
                                                         argumentType +
                                                         "' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
@@ -51,7 +51,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                     toReturn =
                         new ArgumentValueComboBoxUI(
                             catalogueRepository.MEF.GetAllTypes()
-                                .Where(t => demand.TypeOf.IsAssignableFrom(t))
+                                .Where(t => required.Demand.TypeOf.IsAssignableFrom(t))
                                 .ToArray());
                 }
                 else if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
@@ -80,7 +80,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             }
 
             ((Control)toReturn).Dock = DockStyle.Fill;
-            toReturn.SetUp((Argument)argument, demand, previewIfAny);
+            toReturn.SetUp((Argument)argument, required, previewIfAny);
             return toReturn;
         }
 

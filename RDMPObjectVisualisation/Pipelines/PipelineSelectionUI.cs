@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -22,7 +23,7 @@ namespace RDMPObjectVisualisation.Pipelines
     /// chance they will execute succesfully if they are not compatible with the DataFlowPipelineContext.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public partial class PipelineSelectionUI<T> : UserControl
+    public partial class PipelineSelectionUI<T> : UserControl, IPipelineSelectionUI
     {
         private readonly IDataFlowSource<T> _sourceIfExists;
         private readonly IDataFlowDestination<T> _destinationIfExists;
@@ -30,7 +31,8 @@ namespace RDMPObjectVisualisation.Pipelines
         private DataFlowPipelineContext<T> _context;
         private IPipeline _pipeline;
         public event Action PipelineDeleted = delegate { };
-
+        
+        public event EventHandler PipelineChanged;
         public event EventHandler OnBeforeLaunchEdit;
 
         public IPipeline Pipeline
@@ -44,10 +46,7 @@ namespace RDMPObjectVisualisation.Pipelines
                     ddPipelines.SelectedItem = value;
             }
         }
-
-
-        public event EventHandler PipelineChanged;
-
+        
         public DataFlowPipelineContext<T> Context
         {
             get { return _context; }
@@ -56,6 +55,11 @@ namespace RDMPObjectVisualisation.Pipelines
                 _context = value;
                 RefreshPipelineList();
             }
+        }
+
+        public void SetContext(IDataFlowPipelineContext context)
+        {
+            Context = (DataFlowPipelineContext<T>)context;
         }
 
         public override string Text
@@ -230,8 +234,6 @@ namespace RDMPObjectVisualisation.Pipelines
             btnCreateNewPipeline.Left = btnClonePipeline.Left - btnCreateNewPipeline.Width;
             btnEditPipeline.Left = btnCreateNewPipeline.Left - btnEditPipeline.Width;
 
-            
-            
             ddPipelines.Width = btnEditPipeline.Left - 2;
 
         }

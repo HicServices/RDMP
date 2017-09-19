@@ -15,6 +15,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
@@ -35,7 +36,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
     {
         private CacheProgress _cacheProgress;
-
         
         public CacheProgressUI()
         {
@@ -46,6 +46,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         }
 
         private bool _bLoading = false;
+        private Control _pipelineSelectionUI;
 
         public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)
         {
@@ -75,7 +76,22 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             UpdateCacheLagPeriodControl();
 
+            SetupPipelineUI();
+
             _bLoading = false;
+        }
+
+        private void SetupPipelineUI()
+        {
+            if(_pipelineSelectionUI == null)
+            {
+                var user = new PipelineUser(_cacheProgress);
+                var useCase = new CachingPipelineEngineFactory(_cacheProgress);
+
+                var selectionFactory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
+                _pipelineSelectionUI = (Control)selectionFactory.Create();
+                pPipeline.Controls.Add(_pipelineSelectionUI);
+            }
         }
 
         private void SetCacheProgressTextBox()

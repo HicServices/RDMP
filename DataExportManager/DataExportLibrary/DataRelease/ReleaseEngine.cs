@@ -50,10 +50,14 @@ namespace DataExportLibrary.DataRelease
             
             ReleaseGlobalFolder();
             
-            // Audit Global Folder
-            AuditDirectoryCreation(SourceGlobalFolder.FullName, sw, 0);
-            foreach (FileInfo fileInfo in SourceGlobalFolder.GetFiles())
-                AuditFileCreation(fileInfo.Name, sw, 1);
+            // Audit Global Folder if there are any
+            if (SourceGlobalFolder != null)
+            {
+                AuditDirectoryCreation(SourceGlobalFolder.FullName, sw, 0);
+
+                foreach (FileInfo fileInfo in SourceGlobalFolder.GetFiles())
+                    AuditFileCreation(fileInfo.Name, sw, 1);
+            }
 
             ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
             

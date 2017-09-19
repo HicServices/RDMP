@@ -1,10 +1,13 @@
 using System;
 using System.Windows.Forms;
+using CachingEngine.Factories;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Menus.MenuItems;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -25,7 +28,6 @@ namespace CatalogueManager.Menus
 
 
             var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
-            setWindow.Enabled = cacheProgress.PermissionWindow_ID == null;
 
             foreach (var window in activator.CoreChildProvider.AllPermissionWindows)
                 setWindow.DropDownItems.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window)));
@@ -36,8 +38,13 @@ namespace CatalogueManager.Menus
 
             Items.Add(setWindow);
 
-            Items.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandEditCacheProgressPipeline(activator, cacheProgress)));
-
+            Items.Add(new ChoosePipelineMenuItem(
+                activator,
+                new PipelineUser(_cacheProgress),
+                new CachingPipelineEngineFactory(_cacheProgress),
+                "Set Caching Pipeline")
+                );
+            
             AddCommonMenuItems();
         }
 
@@ -58,4 +65,6 @@ namespace CatalogueManager.Menus
             }
         }
     }
+
+    
 }

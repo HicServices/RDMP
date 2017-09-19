@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CachingEngine.PipelineExecution.Destinations;
 using CachingEngine.PipelineExecution.Sources;
 using CachingEngine.Requests;
 using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -14,8 +17,9 @@ using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Factories
 {
-    public class CachingPipelineEngineFactory
+    public class CachingPipelineEngineFactory:IPipelineUseCase
     {
+        private readonly ICacheProgress _cacheProgress;
         public static DataFlowPipelineContext<ICacheChunk> Context;
 
         static CachingPipelineEngineFactory()
@@ -28,34 +32,39 @@ namespace CachingEngine.Factories
             Context.MustHaveDestination = typeof(ICacheFileSystemDestination);//we want this freaky destination type
             Context.MustHaveSource = typeof (ICacheSource);
         }
-        
-        public IDataFlowPipelineEngine CreateCachingPipelineEngine(ICacheProgress cacheProgress, ICatalogueRepository repository, IDataLoadEventListener listener)
+
+        public CachingPipelineEngineFactory(ICacheProgress cacheProgress)
         {
-            return CreateCachingPipelineEngineWithProvider(cacheProgress,repository,listener);
+            _cacheProgress = cacheProgress;
+        }
+
+        public IDataFlowPipelineEngine CreateCachingPipelineEngine(ICatalogueRepository repository, IDataLoadEventListener listener)
+        {
+            return CreateCachingPipelineEngineWithProvider(repository,listener);
          
         }
-        public IDataFlowPipelineEngine CreateRetryCachingPipelineEngine(ICacheProgress cacheProgress, ICatalogueRepository repository, IDataLoadEventListener listener)
+        public IDataFlowPipelineEngine CreateRetryCachingPipelineEngine(ICatalogueRepository repository, IDataLoadEventListener listener)
         {
-            return CreateCachingPipelineEngineWithProvider(cacheProgress,repository,listener,new FailedCacheFetchRequestProvider(cacheProgress));
+            return CreateCachingPipelineEngineWithProvider(repository, listener, new FailedCacheFetchRequestProvider(_cacheProgress));
         }
 
-        public ICacheFileSystemDestination CreateDestinationOnly(ICacheProgress cacheProgress, IDataLoadEventListener listener)
+        public ICacheFileSystemDestination CreateDestinationOnly( IDataLoadEventListener listener)
         {
-            ConfirmCacheProgressCompatibility(cacheProgress);
+            ConfirmCacheProgressCompatibility();
 
-            ICatalogueRepository repo = (ICatalogueRepository)cacheProgress.Repository;
+            ICatalogueRepository repo = (ICatalogueRepository)_cacheProgress.Repository;
 
-            var initObjects = GetInitializationObjects(cacheProgress, repo);
+            var initObjects = GetInitializationObjects(repo);
             
             // Create the pipeline engine factory and use it to stamp out a pipeline instance from the CacheProgress
             var factory = new DataFlowPipelineEngineFactory<ICacheChunk>(repo.MEF, Context);
-            var destination = factory.CreateDestinationIfExists(cacheProgress.Pipeline);
+            var destination = factory.CreateDestinationIfExists(_cacheProgress.Pipeline);
 
             if(destination == null)
-                throw new Exception( cacheProgress + " does not have a DestinationComponent in it's Pipeline");
+                throw new Exception(_cacheProgress + " does not have a DestinationComponent in it's Pipeline");
 
             if(!(destination is ICacheFileSystemDestination))
-                throw new NotSupportedException(cacheProgress + " pipeline destination is not an ICacheFileSystemDestination, it was " + cacheProgress.GetType().FullName);
+                throw new NotSupportedException(_cacheProgress + " pipeline destination is not an ICacheFileSystemDestination, it was " + _cacheProgress.GetType().FullName);
 
             Context.PreInitialize(listener, destination, initObjects[0],initObjects[1],initObjects[2],initObjects[3]);
 
@@ -63,23 +72,22 @@ namespace CachingEngine.Factories
 
         }
 
-
-        private void ConfirmCacheProgressCompatibility(ICacheProgress cacheProgress)
+        private void ConfirmCacheProgressCompatibility()
         {
-            if(cacheProgress.Pipeline_ID == null)
-                throw new Exception("CacheProgress " + cacheProgress + " does not have a Pipeline configured on it");
+            if (_cacheProgress.Pipeline_ID == null)
+                throw new Exception("CacheProgress " + _cacheProgress + " does not have a Pipeline configured on it");
         }
 
 
-        private IDataFlowPipelineEngine CreateCachingPipelineEngineWithProvider(ICacheProgress cacheProgress, ICatalogueRepository repository, IDataLoadEventListener listener, ICacheFetchRequestProvider providerIfAny = null)
+        private IDataFlowPipelineEngine CreateCachingPipelineEngineWithProvider( ICatalogueRepository repository, IDataLoadEventListener listener, ICacheFetchRequestProvider providerIfAny = null)
         {
-            ConfirmCacheProgressCompatibility(cacheProgress);
+            ConfirmCacheProgressCompatibility();
 
-            object[] initObjects = GetInitializationObjects(cacheProgress, repository);
+            object[] initObjects = GetInitializationObjects(repository);
 
             // Create the pipeline engine factory and use it to stamp out a pipeline instance from the CacheProgress
             var factory = new DataFlowPipelineEngineFactory<ICacheChunk>(repository.MEF, Context);
-            var instance = factory.Create(cacheProgress.Pipeline, listener);
+            var instance = factory.Create(_cacheProgress.Pipeline, listener);
 
             //initialize it
             instance.Initialize(initObjects[0], initObjects[1], initObjects[2], initObjects[3]);
@@ -101,17 +109,17 @@ namespace CachingEngine.Factories
         /// <param name="cacheProgress"></param>
         /// <param name="repository"></param>
         /// <returns></returns>
-        private object[] GetInitializationObjects(ICacheProgress cacheProgress, ICatalogueRepository repository)
+        public object[] GetInitializationObjects(ICatalogueRepository repository)
         {
             object[] toReturn = new object[4];
 
-            var loadProgress = cacheProgress.GetLoadProgress();
+            var loadProgress = _cacheProgress.GetLoadProgress();
 
             var cacheFetchRequestFactory = new CacheFetchRequestFactory();
-            var initialFetchRequest = cacheFetchRequestFactory.Create(cacheProgress, loadProgress);
+            var initialFetchRequest = cacheFetchRequestFactory.Create(_cacheProgress, loadProgress);
             toReturn[0] = new CacheFetchRequestProvider(initialFetchRequest);
 
-            toReturn[1] = initialFetchRequest.PermissionWindow;
+            toReturn[1] = initialFetchRequest.PermissionWindow?? new PermissionWindow();
 
 
             // Get the HICProjectDirectory for the engine initialization
@@ -125,5 +133,18 @@ namespace CachingEngine.Factories
             return toReturn;
         }
 
+        public IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
+        {
+            return pipelines.Where(Context.IsAllowable);
+        }
+
+        public IDataFlowPipelineContext GetContext()
+        {
+            return Context;
+        }
+
+        public object ExplicitSource { get { return null; } }
+        public object ExplicitDestination{ get { return null; } }
     }
+
 }

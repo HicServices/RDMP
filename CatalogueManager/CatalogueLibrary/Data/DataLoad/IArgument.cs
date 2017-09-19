@@ -4,7 +4,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
-    public interface IArgument
+    public interface IArgument:ISaveable
     {
         string Name { get; set; }
         string Description { get; set; }

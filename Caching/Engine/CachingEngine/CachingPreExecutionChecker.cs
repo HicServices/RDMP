@@ -90,13 +90,13 @@ namespace CachingEngine
                                 " which means we are not due to load any cached data yet.", CheckResult.Fail));
 
 
-                var factory = new CachingPipelineEngineFactory();
+                var factory = new CachingPipelineEngineFactory(_cacheProgress);
                 IDataFlowPipelineEngine engine = null;
                 try
                 {
                     var loadMetadata = _cacheProgress.LoadProgress.GetLoadMetadata();
 
-                    engine = factory.CreateCachingPipelineEngine(_cacheProgress,_repository, new FromCheckNotifierToDataLoadEventListener(notifier));
+                    engine = factory.CreateCachingPipelineEngine(_repository, new FromCheckNotifierToDataLoadEventListener(notifier));
                     engine.Initialize(new object[]
                     {
                         _repository.MEF,

@@ -58,5 +58,26 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
         {
             PermissionWindow.RefreshLockPropertiesFromDatabase();
         }
+
+        protected bool Equals(PermissionWindowUsedByCacheProgress other)
+        {
+            return Equals(CacheProgress, other.CacheProgress) && Equals(PermissionWindow, other.PermissionWindow);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PermissionWindowUsedByCacheProgress) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((CacheProgress != null ? CacheProgress.GetHashCode() : 0)*397) ^ (PermissionWindow != null ? PermissionWindow.GetHashCode() : 0);
+            }
+        }
     }
 }

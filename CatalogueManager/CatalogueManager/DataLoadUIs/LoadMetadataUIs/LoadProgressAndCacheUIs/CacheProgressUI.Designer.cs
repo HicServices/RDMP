@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CacheProgressUI));
             this.gbCacheProgress = new System.Windows.Forms.GroupBox();
-            this.btnRefresh = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.ddCacheLagDelayDurationType = new System.Windows.Forms.ComboBox();
             this.udCacheLagDelayPeriodDuration = new System.Windows.Forms.NumericUpDown();
@@ -45,7 +44,9 @@
             this.tbChunkPeriod = new System.Windows.Forms.TextBox();
             this.tbCacheProgressID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.pPipeline = new System.Windows.Forms.Panel();
             this.gbCacheProgress.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDuration)).BeginInit();
@@ -54,6 +55,7 @@
             // gbCacheProgress
             // 
             this.gbCacheProgress.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.gbCacheProgress.Controls.Add(this.pPipeline);
             this.gbCacheProgress.Controls.Add(this.btnRefresh);
             this.gbCacheProgress.Controls.Add(this.btnEdit);
             this.gbCacheProgress.Controls.Add(this.objectSaverButton1);
@@ -73,20 +75,10 @@
             this.gbCacheProgress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbCacheProgress.Location = new System.Drawing.Point(0, 0);
             this.gbCacheProgress.Name = "gbCacheProgress";
-            this.gbCacheProgress.Size = new System.Drawing.Size(878, 303);
+            this.gbCacheProgress.Size = new System.Drawing.Size(878, 334);
             this.gbCacheProgress.TabIndex = 32;
             this.gbCacheProgress.TabStop = false;
             this.gbCacheProgress.Text = "Cache Progress:";
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
-            this.btnRefresh.Location = new System.Drawing.Point(396, 17);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(26, 26);
-            this.btnRefresh.TabIndex = 45;
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // btnEdit
             // 
@@ -213,6 +205,16 @@
             this.label9.TabIndex = 21;
             this.label9.Text = "ID:";
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
+            this.btnRefresh.Location = new System.Drawing.Point(396, 17);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(26, 26);
+            this.btnRefresh.TabIndex = 45;
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // objectSaverButton1
             // 
             this.objectSaverButton1.Location = new System.Drawing.Point(10, 159);
@@ -222,13 +224,20 @@
             this.objectSaverButton1.Text = "objectSaverButton1";
             this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
+            // pPipeline
+            // 
+            this.pPipeline.Location = new System.Drawing.Point(95, 159);
+            this.pPipeline.Name = "pPipeline";
+            this.pPipeline.Size = new System.Drawing.Size(777, 169);
+            this.pPipeline.TabIndex = 46;
+            // 
             // CacheProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbCacheProgress);
             this.Name = "CacheProgressUI";
-            this.Size = new System.Drawing.Size(878, 303);
+            this.Size = new System.Drawing.Size(878, 334);
             this.gbCacheProgress.ResumeLayout(false);
             this.gbCacheProgress.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).EndInit();
@@ -256,5 +265,6 @@
         private SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnEdit;
+        private System.Windows.Forms.Panel pPipeline;
     }
 }

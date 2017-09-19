@@ -38,11 +38,11 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             }
         }
 
-        public void SetUp(Argument argument, DemandsInitializationAttribute demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
         {
             _bLoading = true;
             _argument = argument;
-            _demand = demand;
+            _demand = requirement.Demand;
 
             object currentValue = null;
 

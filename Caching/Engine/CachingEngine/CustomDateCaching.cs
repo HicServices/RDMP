@@ -33,9 +33,9 @@ namespace CachingEngine
             // todo: in general need better semantics around null PermissionWindows
             permissionWindow = permissionWindow ?? new PermissionWindow();
 
-            var factory = new CachingPipelineEngineFactory();
+            var factory = new CachingPipelineEngineFactory(_cacheProgress);
             
-            var engine = factory.CreateCachingPipelineEngine(_cacheProgress,(ICatalogueRepository) _cacheProgress.Repository,listener);
+            var engine = factory.CreateCachingPipelineEngine((ICatalogueRepository) _cacheProgress.Repository,listener);
             var dateToRetrieve = new DateTime(startDate.Year, startDate.Month, startDate.Day);
             var initialFetchRequest = new BackfillCacheFetchRequest(_catalogueRepository, dateToRetrieve)
             {
