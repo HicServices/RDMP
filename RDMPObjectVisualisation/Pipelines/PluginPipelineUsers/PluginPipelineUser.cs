@@ -10,6 +10,9 @@ using ReusableLibraryCode.Reflection;
 
 namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
 {
+    /// <summary>
+    /// Turns an IDemandToUseAPipeline plugin class into an IPipelineUser and IPipelineUseCase (both) for use with PipelineSelectionUIFactory
+    /// </summary>
     public class PluginPipelineUser : IPipelineUser,IPipelineUseCase
     {
         private Type _flowType;
@@ -26,9 +29,8 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
                 return p;
             };
 
-            Setter = (v) =>
+            Setter = v =>
             {
-
                 argument.SetValue(v);
                 demand.PropertyInfo.SetValue(demanderInstance, v);
                 argument.SaveToDatabase();
@@ -54,7 +56,6 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
             _source = interfaces[0].GetMethod(nfDemander.GetMethod(x => x.GetFixedSourceIfAny())).Invoke(demanderInstance, null);
             _destination = interfaces[0].GetMethod(nfDemander.GetMethod(x => x.GetFixedDestinationIfAny())).Invoke(demanderInstance, null);
             _inputObjects = (List<object>)interfaces[0].GetMethod(nfDemander.GetMethod(x => x.GetInputObjectsForPreviewPipeline())).Invoke(demanderInstance, null);
-            
         }
 
         public object[] GetInitializationObjects(ICatalogueRepository repository)

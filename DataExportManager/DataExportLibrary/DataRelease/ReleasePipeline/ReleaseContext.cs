@@ -13,24 +13,30 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     public class ReleaseContext:IPipelineUseCase
     {
         private readonly Project _project;
-        private IDataFlowSource<ReleaseData> _explicitSource;
-        private DataFlowPipelineContext<ReleaseData> _context { get; set; }
+        private readonly IDataFlowSource<ReleaseData> _explicitSource;
+        private readonly DataFlowPipelineContext<ReleaseData> _context;
+        private readonly object[] _initObjects;
+        private CatalogueRepository _catalogueRepository;
 
         public ReleaseContext(Project project, IDataFlowSource<ReleaseData> explicitSource)
         {
             _explicitSource = explicitSource;
             _project = project;
+            _catalogueRepository = ((IDataExportRepository)project.Repository).CatalogueRepository;
+
             var contextFactory = new DataFlowPipelineContextFactory<ReleaseData>();
             _context = contextFactory.Create(PipelineUsage.None);
             _context.CannotHave.Add(typeof(IDataFlowSource<ReleaseData>));
             
             _context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
             ExplicitDestination = null;
+
+            _initObjects = new object[] {_project,_catalogueRepository};
         }
 
         public object[] GetInitializationObjects(ICatalogueRepository repository)
         {
-            return new []{_project};
+            return _initObjects;
         }
 
         public IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
@@ -48,14 +54,11 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public IDataFlowPipelineEngine GetEngine(IPipeline pipeline,IDataLoadEventListener listener)
         {
-            var repo = (CatalogueRepository)pipeline.Repository;
-
-            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(repo.MEF, _context);
+            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_catalogueRepository.MEF, _context);
             factory.ExplicitSource = _explicitSource;
 
             var engine = factory.Create(pipeline, listener);
-            
-            engine.Initialize(_project);
+            engine.Initialize(_initObjects);
 
             return engine;
         }
