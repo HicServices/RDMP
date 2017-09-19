@@ -216,12 +216,20 @@ namespace CatalogueLibrary.Data.DataLoad
             //get the system type
             Type type = GetSystemType();
 
-            if (o is String && typeof(IEncryptedString).IsAssignableFrom(type))
+            if (o is String)
             {
-                var encryptor = new EncryptedString((CatalogueRepository)Repository);
-                encryptor.Value = o.ToString();
-                Value = encryptor.Value;
-                return;
+                if (typeof (IEncryptedString).IsAssignableFrom(type))
+                {
+                    var encryptor = new EncryptedString((CatalogueRepository) Repository);
+                    encryptor.Value = o.ToString();
+                    Value = encryptor.Value;
+                    return;
+                }
+                else
+                {
+                    Value = o.ToString();
+                    return;
+                }
             }
 
             //if we already have a known type set on us
