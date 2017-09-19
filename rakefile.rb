@@ -47,7 +47,7 @@ assemblyinfo :assemblyinfo do |asm|
         asm.version = "#{major}.#{minor}.#{patch}.#{rev}"
         asm.file_version = "#{major}.#{minor}.#{patch}.#{rev}"
         asm.informational_version = "#{major}.#{minor}.#{patch}.#{rev}-#{SUFFIX}"
-    else if CANDIDATE == "true"
+    elsif CANDIDATE == "true"
         puts "version: #{major}.#{minor}.#{patch}.0 build:#{build} suffix:#{SUFFIX}"
         asm.version = "#{major}.#{minor}.#{patch}.0"
         asm.file_version = "#{major}.#{minor}.#{patch}.0"
