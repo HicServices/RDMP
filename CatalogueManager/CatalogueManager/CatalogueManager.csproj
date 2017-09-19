@@ -341,6 +341,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewProcessTask.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCatalogueWithLoadMetadata.cs" />
@@ -348,9 +349,10 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingExistingDataTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditCacheProgressPipeline.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
@@ -719,6 +721,9 @@
     <Compile Include="Menus\MenuItems\AddSupportingDocumentMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddSupportingSqlTableMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddCatalogueItemMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1420,6 +1425,7 @@
     <None Include="Icons\lock_break.png" />
     <None Include="Icons\Overlays\locked.png" />
     <None Include="Icons\PermissionWindow.png" />
+    <None Include="Icons\Pipeline.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

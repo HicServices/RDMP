@@ -261,6 +261,7 @@
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowContextProvider.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
@@ -281,6 +282,9 @@
     <Compile Include="Data\IAggregateTopX.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
+    <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
+    <Compile Include="Data\Pipelines\IPipelineUser.cs" />
+    <Compile Include="Data\Pipelines\PipelineUser.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />

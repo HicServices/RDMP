@@ -13,7 +13,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
 {
     public delegate void ContextInitialzedObjectEventHandler(object componentBeingInitialized, object valueBeingConsumed);
 
-    public class DataFlowPipelineContext<T>
+    public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     {
         public Type MustHaveSource { get; set; }
         public Type MustHaveDestination { get; set; }
@@ -308,6 +308,11 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         public IEnumerable<Type> GetIPipelineRequirementsForType(Type t)
         {
             return t.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPipelineRequirement<>)).Select(r=>r.GetGenericArguments()[0]);
+        }
+
+        public Type GetFlowType()
+        {
+            return typeof (T);
         }
     }
 }

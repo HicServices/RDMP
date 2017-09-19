@@ -74,12 +74,12 @@ namespace DataLoadEngine.Job.Scheduling
             if (cacheProgress.Pipeline_ID == null)
                 throw new InvalidOperationException("This CacheProgress does not have a caching pipeline, please configure one.");
 
-            var factory = new CachingPipelineEngineFactory();
+            var factory = new CachingPipelineEngineFactory(cacheProgress);
             ICacheFileSystemDestination destination;
             
             try
             {
-                destination = factory.CreateDestinationOnly(cacheProgress,new ThrowImmediatelyDataLoadEventListener());
+                destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
             }
             catch (Exception e)
             {

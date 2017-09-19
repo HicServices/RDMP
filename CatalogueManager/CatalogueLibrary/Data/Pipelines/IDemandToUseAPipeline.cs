@@ -11,7 +11,5 @@ namespace CatalogueLibrary.Data.Pipelines
         IDataFlowDestination<T> GetFixedDestinationIfAny();
 
         List<object> GetInputObjectsForPreviewPipeline();
-
-
     }
 }
