@@ -48,17 +48,18 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
             _pipelineSelectionUIInstance.SetContext(context);
             _pipelineSelectionUIInstance.InitializationObjectsForPreviewPipeline =  initObjects;
 
-            _pipelineSelectionUIInstance.Pipeline = _user.Getter();
+            if (_user != null)
+            {
+                _pipelineSelectionUIInstance.Pipeline = _user.Getter();
 
-            _pipelineSelectionUIInstance.PipelineChanged += 
-                (sender, args) =>
-                    _user.Setter(((IPipelineSelectionUI)sender).Pipeline as Pipeline);
+                _pipelineSelectionUIInstance.PipelineChanged += 
+                    (sender, args) =>
+                        _user.Setter(((IPipelineSelectionUI)sender).Pipeline as Pipeline);
+            }
 
             var c = (Control)_pipelineSelectionUIInstance;
             c.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-
-            pipelineSelectionUIType.GetMethod("CollapseToSingleLineMode").Invoke(_pipelineSelectionUIInstance, new object[0]);
-
+            
             return _pipelineSelectionUIInstance;
         }
 

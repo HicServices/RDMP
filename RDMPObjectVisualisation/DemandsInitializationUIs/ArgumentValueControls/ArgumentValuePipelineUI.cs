@@ -59,6 +59,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
             var factory = new PipelineSelectionUIFactory(_catalogueRepository,requirement,argument, instanceOfParentType);
             _pipelineSelectionUIInstance = factory.Create();
+            _pipelineSelectionUIInstance.CollapseToSingleLineMode();
             _pipelineSelectionUIInstance.PipelineChanged += (s, e) => BombIfMandatoryAndEmpty();
 
             var c = (Control)_pipelineSelectionUIInstance;

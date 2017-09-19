@@ -12,5 +12,7 @@ namespace RDMPObjectVisualisation.Pipelines
         void SetContext(IDataFlowPipelineContext context);
 
         List<object> InitializationObjectsForPreviewPipeline { get; set; }
+
+        void CollapseToSingleLineMode();
     }
 }
