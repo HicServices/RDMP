@@ -136,7 +136,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             _valueUIs.Clear();
 
             foreach (var kvp in DemandDictionary)
-                CreateLine(_parent, kvp.Key, kvp.Value.Demand);
+                CreateLine(_parent, kvp.Key, kvp.Value);
 
             foreach (Control control in _valueUIs)
             {
@@ -162,13 +162,13 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             return label;
         }
 
-        private void CreateLine(IArgumentHost parent, IArgument argument, DemandsInitializationAttribute demandsInitialization)
+        private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required)
         {
 
             Label name = new Label();
 
             HelpIcon helpIcon = new HelpIcon();
-            helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()), demandsInitialization.Description);
+            helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()), required.Demand.Description);
             helpIcon.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
             string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
@@ -178,7 +178,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             name.AutoSize = true;
             name.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            var valueui = (Control)_valueUisFactory.Create(parent, argument, demandsInitialization, Preview);
+            var valueui = (Control)_valueUisFactory.Create(parent, argument, required, Preview);
             valueui.MinimumSize = new Size(valueui.Width/4, valueui.Height);
             valueui.MaximumSize = new Size(valueui.Width, valueui.Height);
             valueui.Anchor = name.Anchor = AnchorStyles.Top |  AnchorStyles.Left | AnchorStyles.Right;

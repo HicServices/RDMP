@@ -207,6 +207,12 @@ namespace CatalogueLibrary.Data.DataLoad
                 return;
             }
 
+            if (o == null)
+            {
+                Value = null;
+                return;
+            }
+
             if (o is Type)
             {
                 Value = o.ToString();//We are being asked to store a Type e.g. MyPlugins.MyCustomSQLHacker instead of an instance so easy, we just store the Type as a full name

@@ -20,9 +20,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _activator = activator;
             _cacheProgress = cacheProgress;
             _window = window;
-            
-            if(cacheProgress.PermissionWindow_ID == window.ID)
-                SetImpossible("CacheProgress already uses this PermissionWindow");
         }
 
         public override string GetCommandName()

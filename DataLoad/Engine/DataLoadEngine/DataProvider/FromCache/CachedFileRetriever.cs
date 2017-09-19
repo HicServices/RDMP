@@ -44,8 +44,8 @@ namespace DataLoadEngine.DataProvider.FromCache
             if(cacheProgress == null)
                 throw new NullReferenceException("cacheProgress cannot be null");
 
-            var pipelineFactory = new CachingPipelineEngineFactory();
-            var destination = pipelineFactory.CreateDestinationOnly(cacheProgress,job);
+            var pipelineFactory = new CachingPipelineEngineFactory(cacheProgress);
+            var destination = pipelineFactory.CreateDestinationOnly(job);
             return destination.CreateCacheLayout();
         }
 

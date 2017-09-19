@@ -15,4 +15,6 @@ namespace CatalogueLibrary.Data.Pipelines
         IPipelineComponent Destination { get; }
         IPipelineComponent Source { get; }
     }
+
+    
 }

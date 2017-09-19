@@ -342,13 +342,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
-    <Compile Include="DataRelease\ConfigureAndExecuteDataReleaseUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataRelease\ConfigureAndExecuteDataReleaseUI.Designer.cs">
-      <DependentUpon>ConfigureAndExecuteDataReleaseUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DataRelease\PipelineSource\InteractiveDataReleaseSource.cs" />
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />
@@ -539,9 +532,6 @@
     <EmbeddedResource Include="DataRelease\ConfigurationReleasePotentialUI.resx">
       <DependentUpon>ConfigurationReleasePotentialUI.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DataRelease\ConfigureAndExecuteDataReleaseUI.resx">
-      <DependentUpon>ConfigureAndExecuteDataReleaseUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataRelease\DataReleaseKeyUI.resx">
       <DependentUpon>DataReleaseKeyUI.cs</DependentUpon>

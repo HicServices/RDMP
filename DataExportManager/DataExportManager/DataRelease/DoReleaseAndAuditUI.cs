@@ -14,10 +14,10 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Repositories;
-using DataExportManager.DataRelease.PipelineSource;
 using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using RDMPObjectVisualisation.Pipelines;
+using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.Progress;
@@ -184,9 +184,8 @@ namespace DataExportManager.DataRelease
 
             if (_pipelineUI.Pipeline == null)
                 return;
-
-            var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseContext.Context);
-
+            
+            //the data we are trying to extract
             FixedDataReleaseSource.CurrentRelease = new ReleaseData
             {
                 ConfigurationsForRelease = ConfigurationsForRelease,
@@ -194,15 +193,18 @@ namespace DataExportManager.DataRelease
                 ReleaseState = _releaseState
             };
 
-            factory.ExplicitSource = FixedDataReleaseSource;
-
+            //a window for monitoring the progress
             var progressUI = new ProgressUI();
             _activator.ShowWindow(progressUI, false);
+            
+            //the release context for the project
+            var context = new ReleaseContext(_project, FixedDataReleaseSource);
 
-            var pipelineEngine = factory.Create(_pipelineUI.Pipeline, progressUI);
-
-            pipelineEngine.Initialize(_project, _activator);
-            pipelineEngine.ExecutePipeline(new GracefulCancellationToken());
+            //translated into an engine
+            var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
+            
+            //and executed
+            engine.ExecutePipeline(new GracefulCancellationToken());
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)
@@ -234,22 +236,15 @@ namespace DataExportManager.DataRelease
 
         public FixedDataReleaseSource FixedDataReleaseSource { get; set; }
 
-        private PipelineSelectionUI<ReleaseData> _pipelineUI;
+        private IPipelineSelectionUI _pipelineUI;
 
         private void SetupPipeline()
         {
             if (_pipelineUI == null)
             {
-                var cataRepository = _activator.RepositoryLocator.CatalogueRepository;
-                _pipelineUI = new PipelineSelectionUI<ReleaseData>(FixedDataReleaseSource, null, cataRepository);
-                _pipelineUI.Context = ReleaseContext.Context;
-                _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_project);
-                _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_activator);
-
-                // _pipelineUI.CollapseToSingleLineMode();
-                
-                _pipelineUI.Dock = DockStyle.Fill;
-                pnlPipeline.Controls.Add(_pipelineUI);
+                var context = new ReleaseContext(_project, FixedDataReleaseSource);
+                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create();
+                pnlPipeline.Controls.Add((Control)_pipelineUI);
             }
         }
 

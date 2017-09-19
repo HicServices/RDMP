@@ -109,7 +109,7 @@ namespace CatalogueManager.Icons.IconProvision
         DecryptionPrivateKeyNode,
         PreLoadDiscardedColumnsNode,
 
-        PermissionWindow
-
+        PermissionWindow,
+        Pipeline
     }
 }
