@@ -348,7 +348,6 @@
     <Compile Include="DataRelease\ConfigureAndExecuteDataReleaseUI.Designer.cs">
       <DependentUpon>ConfigureAndExecuteDataReleaseUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataRelease\PipelineSource\InteractiveDataReleaseSource.cs" />
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />

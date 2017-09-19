@@ -59,7 +59,6 @@ namespace DataExportManager.DataRelease
                 _pipelineUI = new PipelineSelectionUI<ReleaseData>(null, null, cataRepository);
                 _pipelineUI.Context = ReleaseContext.Context;
                 _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_project);
-                _pipelineUI.InitializationObjectsForPreviewPipeline.Add(_activator);
 
                 _pipelineUI.Dock = DockStyle.Fill;
                 pPipeline.Controls.Add(_pipelineUI);
@@ -76,7 +75,7 @@ namespace DataExportManager.DataRelease
             var factory = new DataFlowPipelineEngineFactory<ReleaseData>(_activator.RepositoryLocator.CatalogueRepository.MEF, ReleaseContext.Context);
             var engine = factory.Create(_pipelineUI.Pipeline, progressUI1);
 
-            engine.Initialize(_project, _activator);
+            engine.Initialize(_project);
             engine.ExecutePipeline(new GracefulCancellationToken());
         }
 

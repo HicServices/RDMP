@@ -14,7 +14,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Repositories;
-using DataExportManager.DataRelease.PipelineSource;
 using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using RDMPObjectVisualisation.Pipelines;
