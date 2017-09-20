@@ -244,7 +244,10 @@ namespace DataExportManager.DataRelease
             {
                 var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
                 _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create();
-                pnlPipeline.Controls.Add((Control)_pipelineUI);
+
+                var c = (Control) _pipelineUI;
+                c.Dock = DockStyle.Fill;
+                pnlPipeline.Controls.Add(c);
             }
         }
 

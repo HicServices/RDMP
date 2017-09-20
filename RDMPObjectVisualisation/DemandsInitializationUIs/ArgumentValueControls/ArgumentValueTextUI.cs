@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -35,6 +36,18 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             _demand = requirement.Demand;
             tbText.Text = argument.Value;
 
+            if(argument.GetSystemType() == typeof(DirectoryInfo))
+            {
+                tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                tbText.AutoCompleteSource = AutoCompleteSource.FileSystemDirectories;
+            }
+
+            if (argument.GetSystemType() == typeof(FileInfo))
+            {
+                tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                tbText.AutoCompleteSource = AutoCompleteSource.FileSystem;
+            }
+            
             if (_isPassword)
             {
                 tbText.UseSystemPasswordChar = true;
@@ -59,13 +72,8 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
             try
             {
-                var val = _argument.GetValueAsSystemType();
+                _argument.GetValueAsSystemType();
                 
-                if (!_isPassword) // we don't want to show the hex value for the pwd.
-                    tbText.Text = val != null ? val.ToString() : "";
-                else
-                    tbText.Text = val != null ? ((IEncryptedString)val).GetDecryptedValue() : "";
-
                 BombIfMandatoryAndEmpty();
             }
             catch (Exception exception)
