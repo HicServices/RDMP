@@ -69,11 +69,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         public Dictionary<ExtractableColumn, ExtractTimeTransformationObserved> ExtractTimeTransformationsObserved;
         private DbDataCommandDataFlowSource _hostedSource;
 
-        private bool _initialized = false;
         private void Initialize(ExtractDatasetCommand request)
         {
             Request = request;
-            
+
             if (request == ExtractDatasetCommand.EmptyCommand)
                 return;
 
@@ -104,7 +103,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 ExtractionTimeTimeCoverageAggregator = null;
          
 
-            _initialized = true;
         }
 
         public bool WasCancelled
@@ -127,9 +125,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         {
             if (_customTablePair != null)
                 return _customTablePairDataSent ? null : SendCustomTableData(listener);
-
-
-            if (!_initialized)
+            
+            if (Request == null)
                  listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Component has not been initialized before being asked to GetChunk(s)"));
 
             if(_cancel)

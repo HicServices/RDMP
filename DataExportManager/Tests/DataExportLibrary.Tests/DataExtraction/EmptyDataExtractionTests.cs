@@ -10,6 +10,7 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
+using HIC.Logging;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 
@@ -42,7 +43,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             
             TruncateDataTable();
 
-            var host = new ExtractionPipelineHost();
+            var host = new ExtractionPipelineHost(_request,p,DataLoadInfo.Empty);
 
             var engine = host.GetEngine(p, new ThrowImmediatelyDataLoadEventListener());
             host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
