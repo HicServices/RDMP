@@ -42,7 +42,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             
             TruncateDataTable();
 
-            var host = new ExtractionPipelineHost(_request, p, null);
+            var host = new ExtractionPipelineHost();
 
             var engine = host.GetEngine(p, new ThrowImmediatelyDataLoadEventListener());
             host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;

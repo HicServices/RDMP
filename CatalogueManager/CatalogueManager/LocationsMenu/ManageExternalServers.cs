@@ -22,17 +22,8 @@ namespace CatalogueManager.LocationsMenu
     /// keeping track of the locations of other servers such as the Logging server/database, Data Quality Engine reporting database, anonymisation databases, query caching databases
     /// etc. 
     /// 
-    /// This dialog lets you do 3 things:
-    /// 
-    /// 1. Create references to servers (ExternalDatabaseServer) this requires logistical name (what you want to call it) and servername.  Optionally you can specify a database (required
-    /// in the case of references to specific databases e.g. Logging Database), if you omit it then the 'master' database will be used.  If you do not specify a username/password then
-    /// Integrated Security will be used when connecting (the preferred method).  Usernames and passwords are stored in encrypted form (See PasswordEncryptionKeyLocationUI).
-    /// 
-    /// 2. Create an encryption key for the usernames/passwords stored in your Data Catalogue Database (See PasswordEncryptionKeyLocationUI)
-    /// 
-    /// 3. Configure/Create default servers required for certain parts of the RDMP software to work (e.g. Logging servers, a Data Quality Engine Reporting Databases etc).  If you are not
-    /// sure what a database is (e.g. Identifier Dump) then don't create one! 
-    /// 
+    /// This dialog lets you set which server references (ExternalDatabaseServer) are used for each of the defaults that RDMP has (e.g. which logging server should be used by default)
+    ///  
     /// </summary>
     public partial class ManageExternalServers : RDMPForm
     {

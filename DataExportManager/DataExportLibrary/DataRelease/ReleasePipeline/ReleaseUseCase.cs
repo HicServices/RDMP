@@ -20,15 +20,19 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public ReleaseUseCase(Project project, IDataFlowSource<ReleaseData> explicitSource)
         {
             ExplicitSource = explicitSource;
+            ExplicitDestination = null;
+
             _project = project;
-            _catalogueRepository = ((IDataExportRepository)project.Repository).CatalogueRepository;
+
+            if(_project != null)
+                _catalogueRepository = ((IDataExportRepository)project.Repository).CatalogueRepository;
 
             var contextFactory = new DataFlowPipelineContextFactory<ReleaseData>();
             _context = contextFactory.Create(PipelineUsage.None);
             _context.CannotHave.Add(typeof(IDataFlowSource<ReleaseData>));
             
             _context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
-            ExplicitDestination = null;
+            
 
             _initObjects = new object[] {_project,_catalogueRepository};
         }

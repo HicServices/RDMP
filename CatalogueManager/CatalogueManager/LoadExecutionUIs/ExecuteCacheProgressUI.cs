@@ -31,6 +31,11 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.LoadExecutionUIs
 {
+    /// <summary>
+    /// Allows you to execute a Caching pipeline for a series of days.  For example this might download files from a web service by date and store them in a cache directory
+    /// for later loading.  Caching is independent of data loading and only required if you have a long running fetch process which is time based and not suitable for
+    /// execution as part of the load (due to the length of time it takes or the volatility of the load or just because you want to decouple the two processes).
+    /// </summary>
     public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
     {
         private CachingHost _cachingHost;

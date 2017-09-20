@@ -17,6 +17,9 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.LoadExecutionUIs.CachingDashboard
 {
+    /// <summary>
+    /// Allows you to view the state of CacheProgresses in RDMP
+    /// </summary>
     public partial class CachingDashboardForm : RDMPForm
     {
         private ICacheProgress _cacheProgress;

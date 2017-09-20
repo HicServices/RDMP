@@ -379,7 +379,10 @@ namespace DataExportManager.ProjectUI
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
                 _pipelineSelectionUI1 = factory.Create();
-                panel1.Controls.Add((Control) _pipelineSelectionUI1);
+                
+                var c = (Control) _pipelineSelectionUI1;
+                c.Dock = DockStyle.Fill;
+                panel1.Controls.Add(c);
 
                 //if the configuration has a default then use that pipeline
                 if (configuration.DefaultPipeline_ID != null)
