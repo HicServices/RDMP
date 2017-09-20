@@ -168,7 +168,7 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
             try
             {
                 pipeline = SetupPipeline();
-                pipelineHost = new ExtractionPipelineHost(_request,CatalogueRepository.MEF, pipeline, d);
+                pipelineHost = new ExtractionPipelineHost(_request, pipeline, d);
 
                 pipelineHost.Execute(new ThrowImmediatelyDataLoadEventListener());
 

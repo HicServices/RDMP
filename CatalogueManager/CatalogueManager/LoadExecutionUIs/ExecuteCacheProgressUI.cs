@@ -276,12 +276,10 @@ namespace CatalogueManager.LoadExecutionUIs
         {
             var loadMetadata = _cacheProgress.GetLoadProgress().GetLoadMetadata();
             var hicProjectDirectory = new HICProjectDirectory(loadMetadata.LocationOfFlatFiles, false);
-            var customDateCaching = new CustomDateCaching(_cacheProgress, RepositoryLocator.CatalogueRepository, hicProjectDirectory);
+            var customDateCaching = new CustomDateCaching(_cacheProgress, RepositoryLocator.CatalogueRepository);
 
             // If the user has asked to ignore the permission window, use a blank one (means 'can download at any time') otherwise set to null (uses the window belonging to the CacheProgress)
-            var permissionWindowOverride = cbIgnorePermissionWindow.Checked ? new PermissionWindow() : null;
-
-            customDateCaching.Fetch(dtpStartDateToRetrieve.Value, dtpEndDateToRetrieve.Value, token, progressUI, permissionWindowOverride);
+            customDateCaching.Fetch(dtpStartDateToRetrieve.Value, dtpEndDateToRetrieve.Value, token, progressUI, cbIgnorePermissionWindow.Checked);
         }
         
         private void btnAbortLoad_Click(object sender, EventArgs e)

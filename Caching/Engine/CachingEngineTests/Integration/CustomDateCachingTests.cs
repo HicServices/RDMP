@@ -70,8 +70,7 @@ namespace CachingEngineTests.Integration
             cacheProgress.Expect(m => m.GetLoadProgress()).Return(loadProgress);
 
 
-            var hicProjectDirectory = MockRepository.GenerateStub<IHICProjectDirectory>();
-            var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository, hicProjectDirectory);
+            var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);
             var startDate = new DateTime(2016, 1, 1);
             var endDate = new DateTime(2016, 1, 3);
 

@@ -10,17 +10,16 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
-    public class ReleaseContext:IPipelineUseCase
+    public class ReleaseUseCase:PipelineUseCase
     {
         private readonly Project _project;
-        private readonly IDataFlowSource<ReleaseData> _explicitSource;
         private readonly DataFlowPipelineContext<ReleaseData> _context;
         private readonly object[] _initObjects;
         private CatalogueRepository _catalogueRepository;
 
-        public ReleaseContext(Project project, IDataFlowSource<ReleaseData> explicitSource)
+        public ReleaseUseCase(Project project, IDataFlowSource<ReleaseData> explicitSource)
         {
-            _explicitSource = explicitSource;
+            ExplicitSource = explicitSource;
             _project = project;
             _catalogueRepository = ((IDataExportRepository)project.Repository).CatalogueRepository;
 
@@ -34,30 +33,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             _initObjects = new object[] {_project,_catalogueRepository};
         }
 
-        public object[] GetInitializationObjects(ICatalogueRepository repository)
+        public override object[] GetInitializationObjects(ICatalogueRepository repository)
         {
             return _initObjects;
         }
 
-        public IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
-        {
-            return pipelines.Where(_context.IsAllowable);
-        }
-
-        public IDataFlowPipelineContext GetContext()
+        public override IDataFlowPipelineContext GetContext()
         {
             return _context;
-        }
-
-        public object ExplicitSource { get { return _explicitSource; }}
-        public object ExplicitDestination { get; private set; }
-
-        public IDataFlowPipelineEngine GetEngine(IPipeline pipeline,IDataLoadEventListener listener)
-        {
-            var engine = new DataFlowPipelineEngineFactory(this).Create(pipeline,listener);
-            engine.Initialize(_initObjects);
-
-            return engine;
         }
     }
 }

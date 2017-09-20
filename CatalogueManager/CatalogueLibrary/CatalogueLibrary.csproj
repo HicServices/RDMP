@@ -284,6 +284,7 @@
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
+    <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />

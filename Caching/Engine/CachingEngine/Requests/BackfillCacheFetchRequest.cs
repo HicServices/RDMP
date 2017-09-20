@@ -5,7 +5,6 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CachingEngine.Requests
 {
-    // todo: this is probably obsolete now? Investigate.
     public class BackfillCacheFetchRequest : ICacheFetchRequest
     {
         [NoMappingToDatabase]
@@ -51,7 +50,7 @@ namespace CachingEngine.Requests
         public ICacheFetchRequest GetNext()
         {
             var nextStart = Start.Add(ChunkPeriod);
-            return new CacheFetchRequest(Repository, nextStart)
+            return new BackfillCacheFetchRequest(Repository, nextStart)
             {
                 CacheProgress = CacheProgress,
                 PermissionWindow = PermissionWindow,

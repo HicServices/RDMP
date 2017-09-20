@@ -68,7 +68,7 @@ namespace DataLoadEngine.Job.Scheduling
 
             var cp = loadProgress.GetCacheProgress();
 
-            var factory = new CachingPipelineEngineFactory(cp);
+            var factory = new CachingPipelineUseCase(cp);
             var destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
             
             return destination.CreateCacheLayout();

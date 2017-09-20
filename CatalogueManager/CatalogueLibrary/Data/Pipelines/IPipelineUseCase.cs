@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using ReusableLibraryCode.Progress;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
@@ -11,5 +12,7 @@ namespace CatalogueLibrary.Data.Pipelines
         IDataFlowPipelineContext GetContext();
         object ExplicitSource { get; }
         object ExplicitDestination { get; }
+
+        IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener);
     }
 }

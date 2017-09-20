@@ -17,39 +17,30 @@ namespace CachingEngine
     {
         private readonly ICacheProgress _cacheProgress;
         private readonly ICatalogueRepository _catalogueRepository;
-        private readonly IHICProjectDirectory _hicProjectDirectory;
 
-        public CustomDateCaching(ICacheProgress cacheProgress, ICatalogueRepository catalogueRepository, IHICProjectDirectory hicProjectDirectory)
+        public CustomDateCaching(ICacheProgress cacheProgress, ICatalogueRepository catalogueRepository)
         {
             _cacheProgress = cacheProgress;
             _catalogueRepository = catalogueRepository;
-            _hicProjectDirectory = hicProjectDirectory;
         }
 
-        public Task Fetch(DateTime startDate, DateTime endDate, GracefulCancellationToken token, IDataLoadEventListener listener, IPermissionWindow permissionWindowOverride = null)
+        public Task Fetch(DateTime startDate, DateTime endDate, GracefulCancellationToken token, IDataLoadEventListener listener, bool ignorePermissionWindow = false)
         {
-            var permissionWindow = permissionWindowOverride ?? _cacheProgress.GetPermissionWindow();
-
-            // todo: in general need better semantics around null PermissionWindows
-            permissionWindow = permissionWindow ?? new PermissionWindow();
-
-            var factory = new CachingPipelineEngineFactory(_cacheProgress);
-            
-            var engine = factory.CreateCachingPipelineEngine((ICatalogueRepository) _cacheProgress.Repository,listener);
             var dateToRetrieve = new DateTime(startDate.Year, startDate.Month, startDate.Day);
             var initialFetchRequest = new BackfillCacheFetchRequest(_catalogueRepository, dateToRetrieve)
             {
                 CacheProgress = _cacheProgress,
-                ChunkPeriod = _cacheProgress.ChunkPeriod,
-                PermissionWindow = permissionWindow
+                ChunkPeriod = _cacheProgress.ChunkPeriod
             };
 
             var requestProvider = (startDate == endDate)
                 ? (ICacheFetchRequestProvider) new SingleDayCacheFetchRequestProvider(initialFetchRequest)
                 : new MultiDayCacheFetchRequestProvider(initialFetchRequest, endDate);
+            
+            var factory = new CachingPipelineUseCase(_cacheProgress, ignorePermissionWindow, requestProvider);
 
-            engine.Initialize(requestProvider, permissionWindow, _hicProjectDirectory, _catalogueRepository.MEF);
-
+            var engine = factory.GetEngine(listener);
+            
             return Task.Factory.StartNew(() => engine.ExecutePipeline(token));
         }
     }

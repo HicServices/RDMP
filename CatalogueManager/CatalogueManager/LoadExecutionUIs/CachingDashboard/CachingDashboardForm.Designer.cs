@@ -40,7 +40,6 @@
             this.lblCacheFillProgress = new System.Windows.Forms.Label();
             this.lblCacheLagPeriod = new System.Windows.Forms.Label();
             this.lblChunkPeriod = new System.Windows.Forms.Label();
-            this.btnShowPipeline = new System.Windows.Forms.Button();
             this.btnShowPermissionWindow = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -149,16 +148,6 @@
             this.lblChunkPeriod.Size = new System.Drawing.Size(36, 13);
             this.lblChunkPeriod.TabIndex = 11;
             this.lblChunkPeriod.Text = "<info>";
-            // 
-            // btnShowPipeline
-            // 
-            this.btnShowPipeline.Location = new System.Drawing.Point(222, 202);
-            this.btnShowPipeline.Name = "btnShowPipeline";
-            this.btnShowPipeline.Size = new System.Drawing.Size(128, 23);
-            this.btnShowPipeline.TabIndex = 12;
-            this.btnShowPipeline.Text = "Show Pipeline";
-            this.btnShowPipeline.UseVisualStyleBackColor = true;
-            this.btnShowPipeline.Click += new System.EventHandler(this.btnShowPipeline_Click);
             // 
             // btnShowPermissionWindow
             // 
@@ -304,7 +293,6 @@
             this.Controls.Add(this.dgvCacheFetchErrors);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.btnShowPermissionWindow);
-            this.Controls.Add(this.btnShowPipeline);
             this.Controls.Add(this.lblChunkPeriod);
             this.Controls.Add(this.lblCacheLagPeriod);
             this.Controls.Add(this.lblCacheFillProgress);
@@ -339,7 +327,6 @@
         private System.Windows.Forms.Label lblCacheFillProgress;
         private System.Windows.Forms.Label lblCacheLagPeriod;
         private System.Windows.Forms.Label lblChunkPeriod;
-        private System.Windows.Forms.Button btnShowPipeline;
         private System.Windows.Forms.Button btnShowPermissionWindow;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.QueryBuilding;
@@ -30,6 +31,7 @@ using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Pipelines;
+using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
@@ -56,7 +58,7 @@ namespace DataExportManager.ProjectUI
     public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Design, ISaveableUI
     {
         private ExtractionConfiguration _extractionConfiguration;
-        private PipelineSelectionUI<DataTable> _extractionPipelineSelectionUI;
+        private IPipelineSelectionUI _extractionPipelineSelectionUI;
 
         private PipelineSelectionUI<DataTable> _cohortRefreshingPipelineSelectionUI;
 
@@ -190,23 +192,19 @@ namespace DataExportManager.ProjectUI
             if (_extractionPipelineSelectionUI != null)
                 return;
 
-            _extractionPipelineSelectionUI = new PipelineSelectionUI<DataTable>(null, null, _activator.RepositoryLocator.CatalogueRepository);
-            _extractionPipelineSelectionUI.Context = ExtractionPipelineHost.Context;
-            _extractionPipelineSelectionUI.Dock = DockStyle.Fill;
-            _extractionPipelineSelectionUI.PipelineChanged += ExtractionPipelineSelectionUIOnPipelineChanged;
-            pChooseExtractionPipeline.Controls.Add(_extractionPipelineSelectionUI);
+            //the use case is extracting a dataset
+            var useCase = new ExtractionPipelineHost();
 
-            _extractionPipelineSelectionUI.InitializationObjectsForPreviewPipeline.Add(ExtractDatasetCommand.EmptyCommand);
-            _extractionPipelineSelectionUI.InitializationObjectsForPreviewPipeline.Add(DataLoadInfo.Empty);
-            try
-            {
-                _extractionPipelineSelectionUI.Pipeline = ExtractionConfiguration.DefaultPipeline;
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
-            }
-            _extractionPipelineSelectionUI.Text = "Extraction Pipeline";
+            //the user is DefaultPipeline_ID field of ExtractionConfiguration
+            var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),ExtractionConfiguration);
+
+            //create the UI for this situation
+            var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
+            _extractionPipelineSelectionUI = factory.Create();
+            
+            //add it to the user interface
+            pChooseExtractionPipeline.Controls.Add((Control) _extractionPipelineSelectionUI);
+            ((Control)_extractionPipelineSelectionUI).Text = "Extraction Pipeline";
 
             
             _cohortRefreshingPipelineSelectionUI = new PipelineSelectionUI<DataTable>(null, null, _activator.RepositoryLocator.CatalogueRepository);
@@ -234,18 +232,6 @@ namespace DataExportManager.ProjectUI
                 return;
 
             ExtractionConfiguration.CohortRefreshPipeline_ID = newValue;
-        }
-
-        private void ExtractionPipelineSelectionUIOnPipelineChanged(object sender, EventArgs e)
-        {
-            var newValue = _extractionPipelineSelectionUI.Pipeline != null ? _extractionPipelineSelectionUI.Pipeline.ID : (int?)null;
-
-            if (newValue == ExtractionConfiguration.DefaultPipeline_ID)
-                return;
-
-            ExtractionConfiguration.DefaultPipeline_ID = newValue;
-
-
         }
 
         public ObjectSaverButton GetObjectSaverButton()

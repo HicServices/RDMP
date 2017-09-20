@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CachingEngine.Factories;
 using CachingEngine.Locking;
 using CachingEngine.PipelineExecution;
+using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
@@ -232,16 +233,16 @@ namespace CachingEngine.DataRetrievers
 
         private IDataFlowPipelineEngine CreateCachingEngine(ICacheProgress cacheProgress)
         {
-            var cachingPipelineEngineFactory = new CachingPipelineEngineFactory(cacheProgress);
-            var engine = cachingPipelineEngineFactory.CreateCachingPipelineEngine(_repository, _listener);
+            var cachingPipelineEngineFactory = new CachingPipelineUseCase(cacheProgress);
+            var engine = cachingPipelineEngineFactory.GetEngine(_listener);
             _engineMap.Add(engine, cacheProgress.GetLoadProgress());
             return engine;
         }
 
         private IDataFlowPipelineEngine CreateRetryCachingEngine(ICacheProgress cacheProgress)
         {
-            var cachingPipelineEngineFactory = new CachingPipelineEngineFactory(cacheProgress);
-            var engine = cachingPipelineEngineFactory.CreateRetryCachingPipelineEngine(_repository, _listener);
+            var cachingPipelineEngineFactory = new CachingPipelineUseCase(cacheProgress, true,new FailedCacheFetchRequestProvider(cacheProgress));
+            var engine = cachingPipelineEngineFactory.GetEngine(_listener);
             _engineMap.Add(engine, cacheProgress.GetLoadProgress());
             return engine;
         }

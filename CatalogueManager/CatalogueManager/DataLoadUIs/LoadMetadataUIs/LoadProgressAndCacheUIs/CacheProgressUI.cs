@@ -86,7 +86,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             if(_pipelineSelectionUI == null)
             {
                 var user = new PipelineUser(_cacheProgress);
-                var useCase = new CachingPipelineEngineFactory(_cacheProgress);
+                var useCase = new CachingPipelineUseCase(_cacheProgress);
 
                 var selectionFactory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
                 _pipelineSelectionUI = (Control)selectionFactory.Create();

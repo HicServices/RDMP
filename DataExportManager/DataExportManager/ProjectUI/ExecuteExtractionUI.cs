@@ -32,6 +32,7 @@ using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Pipelines;
+using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
@@ -53,7 +54,7 @@ namespace DataExportManager.ProjectUI
     /// </summary>
     public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design, IConsultableBeforeClosing
     {
-        private PipelineSelectionUI<System.Data.DataTable> _pipelineSelectionUI1;
+        private IPipelineSelectionUI _pipelineSelectionUI1;
             
         public Project Project { get; set; }
         public int TopX { get; set; }
@@ -154,10 +155,11 @@ namespace DataExportManager.ProjectUI
                     progressUI.Dock = DockStyle.Fill;
                     globalsTab.Controls.Add(progressUI);
 
+                    var globalExtractor = new ExtractionPipelineHost(ExtractDatasetCommand.EmptyCommand,_pipelineSelectionUI1.Pipeline,_dataLoadInfo);
+
                     Thread t = new Thread(() =>
-                        ExtractionPipelineHost.ExtractGlobalsForDestination(Project, 
+                        globalExtractor.ExtractGlobalsForDestination(Project, 
                         _configurationToExecute,
-                        _pipelineSelectionUI1.Pipeline,
                         globals,
                         progressUI,
                         _dataLoadInfo));
@@ -343,43 +345,7 @@ namespace DataExportManager.ProjectUI
                 }
             }
         }
-
-        void PipelineSelectionUI1OnBeforeLaunchEdit(object sender, EventArgs e)
-        {
-            var datasets = chooseExtractablesUI1.GetCheckedDatasets();
-
-            if (!datasets.Any())
-            {
-                MessageBox.Show("There are no datasets in this configuration, you cannot edit the pipeline without at least 1 (for preview generation etc)");
-                return;
-            }
-
-
-            ExtractableDataSet selected = null;
-            
-            //unlikely but possible, if there is only 1 don't fire up a dialogue asking him to pick the only one!
-            if (datasets.Length == 1)
-                selected = (ExtractableDataSet) datasets[0];
-            else
-            {
-                MessageBox.Show(
-                    "Some pipeline components require a preview of the data they will receive at runtime, you will now be asked to pick a dataset to use for preview generation","Choose dataset to generate preview with");
-
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(datasets, false, false);
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    selected = dialog.Selected  as ExtractableDataSet;
-            }
-            if(selected != null)
-            {
-                _pipelineSelectionUI1.InitializationObjectsForPreviewPipeline.Clear();
-                    
-                //create a request for an empty bundle (just the dataset) and just top 100 so that user can preview what is going on in his pipeline
-                _pipelineSelectionUI1.InitializationObjectsForPreviewPipeline.Add(new ExtractDatasetCommand(RepositoryLocator,_configurationToExecute, new ExtractableDatasetBundle(selected), " TOP 100 "));
-                _pipelineSelectionUI1.InitializationObjectsForPreviewPipeline.Add(DataLoadInfo.Empty);
-            }
-        }
-
+        
         private void chooseExtractablesUI1_BundleSelected(object sender, IExtractCommand command)
         {
             var toSelect = tabPagesDictionary.Seconds.SingleOrDefault(ui => ui.ExtractCommand  == command);
@@ -400,32 +366,31 @@ namespace DataExportManager.ProjectUI
             chooseExtractablesUI1.Setup(_configurationToExecute);
         }
 
-        private bool _firstTime = true;
         private void SetupFor(ExtractionConfiguration configuration)
         {
            
             Project = (Project) configuration.Project;
             _configurationToExecute = configuration;
 
-            if (_firstTime)
+            if (_pipelineSelectionUI1 == null)
             {
-                this._pipelineSelectionUI1 = new PipelineSelectionUI<DataTable>(null, null, RepositoryLocator.CatalogueRepository);
-                this._pipelineSelectionUI1.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
-                this._pipelineSelectionUI1.Location = new Point(12, 621);
-                this._pipelineSelectionUI1.Name = "_pipelineSelectionUI1";
-                this._pipelineSelectionUI1.Dock = DockStyle.Fill;
-                this._pipelineSelectionUI1.TabIndex = 25;
-                panel1.Controls.Add(_pipelineSelectionUI1);
+                //create a new selection UI (pick an extraction pipeliene UI)
+                var useCase = new ExtractionPipelineHost();
+                var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
+
+                _pipelineSelectionUI1 = factory.Create();
+                panel1.Controls.Add((Control) _pipelineSelectionUI1);
+
+                //if the configuration has a default then use that pipeline
+                if (configuration.DefaultPipeline_ID != null)
+                    _pipelineSelectionUI1.Pipeline = configuration.DefaultPipeline;
+
             }
-            _firstTime = false;
 
             TopX = -1;
             
             if (_configurationToExecute.Cohort_ID == null)
                 throw new Exception("There is no cohort associated with this extraction!");
-
-            _pipelineSelectionUI1.Context = ExtractionPipelineHost.Context;
-            _pipelineSelectionUI1.OnBeforeLaunchEdit += PipelineSelectionUI1OnBeforeLaunchEdit;
 
             if (HasConfigurationPreviouslyBeenReleased(_configurationToExecute))
             {
