@@ -244,6 +244,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="Menus\MenuItems\OpenContainingFolderMenuItem.cs" />
     <Compile Include="Pipelines\ConfigureAndExecutePipeline.cs">
       <SubType>UserControl</SubType>
     </Compile>
