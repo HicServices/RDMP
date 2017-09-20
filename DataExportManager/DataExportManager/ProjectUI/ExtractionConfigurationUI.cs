@@ -203,9 +203,10 @@ namespace DataExportManager.ProjectUI
             _extractionPipelineSelectionUI = factory.Create();
             
             //add it to the user interface
-            pChooseExtractionPipeline.Controls.Add((Control) _extractionPipelineSelectionUI);
-            ((Control)_extractionPipelineSelectionUI).Text = "Extraction Pipeline";
-
+            var c = (Control) _extractionPipelineSelectionUI;
+            c.Text = "Extraction Pipeline";
+            c.Dock = DockStyle.Fill;
+            pChooseExtractionPipeline.Controls.Add(c);
             
             _cohortRefreshingPipelineSelectionUI = new PipelineSelectionUI<DataTable>(null, null, _activator.RepositoryLocator.CatalogueRepository);
             _cohortRefreshingPipelineSelectionUI.Context = CohortCreationRequest.Context;
