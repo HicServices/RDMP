@@ -90,52 +90,19 @@ namespace CachingEngine
                                 " which means we are not due to load any cached data yet.", CheckResult.Fail));
 
 
-                var factory = new CachingPipelineEngineFactory(_cacheProgress);
+                var factory = new CachingPipelineUseCase(_cacheProgress);
                 IDataFlowPipelineEngine engine = null;
                 try
                 {
-                    var loadMetadata = _cacheProgress.LoadProgress.GetLoadMetadata();
-
-                    engine = factory.CreateCachingPipelineEngine(_repository, new FromCheckNotifierToDataLoadEventListener(notifier));
-                    engine.Initialize(new object[]
-                    {
-                        _repository.MEF,
-                        new HICProjectDirectory(loadMetadata.LocationOfFlatFiles, false),
-                        new PermissionWindow(),
-                        new CacheFetchRequestProvider(new CacheFetchRequest(_repository, DateTime.Now))
-                    });
+                    engine = factory.GetEngine(new FromCheckNotifierToDataLoadEventListener(notifier));
                 }
                 catch (Exception e)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not create IDataFlowPipelineEngine", CheckResult.Fail, e));
                 }
 
-                if (engine == null)
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not run further PipelineEngine checks due to previous errors", CheckResult.Fail));
-                else
-                {
-                    var source = engine.SourceObject as ICheckable;
-                    if (source != null)
-                        source.Check(notifier);
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs("Could not check Source as it doesn't implement ICheckable", CheckResult.Warning));
-
-
-                    var destination = engine.DestinationObject as ICheckable;
-                    if (destination != null)
-                        destination.Check(notifier);
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs("Could not check Destination as it doesn't implement ICheckable", CheckResult.Warning));
-
-                    foreach (var component in engine.ComponentObjects)
-                    {
-                        var checkable = component as ICheckable;
-                        if (checkable != null)
-                            checkable.Check(notifier);
-                        else
-                            notifier.OnCheckPerformed(new CheckEventArgs("Could not check Component as it doesn't implement ICheckable", CheckResult.Warning));
-                    }
-                }
+                if(engine != null)
+                    engine.Check(notifier);
             }
             catch (Exception e)
             {

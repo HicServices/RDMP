@@ -287,7 +287,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             match.Value = "coconuts";
             match.SaveToDatabase();
 
-            var context = new ReleaseContext(null, null).GetContext();
+            var context = new ReleaseUseCase(null, null).GetContext();
 
             var factory = new DataFlowPipelineEngineFactory<ReleaseData>(RepositoryLocator.CatalogueRepository.MEF, (DataFlowPipelineContext<ReleaseData>) context);
             var destInstance = factory.CreateDestinationIfExists(pipe);

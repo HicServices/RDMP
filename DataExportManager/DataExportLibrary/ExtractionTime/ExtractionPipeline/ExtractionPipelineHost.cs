@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
@@ -22,56 +24,42 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
 {
-    public class ExtractionPipelineHost
+    public class ExtractionPipelineHost:PipelineUseCase
     {
         private readonly IPipeline _pipeline;
-        private DataFlowPipelineEngine<DataTable> _engine;
-
         public IExtractCommand ExtractCommand { get; set; }
         public ExecuteDatasetExtractionSource Source { get; private set; }
 
+        private DataFlowPipelineContext<DataTable> _context;
+        
         /// <summary>
         /// If Destination is a ExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly 
         /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissable destination for an ExtractionPipeline
         /// </summary>
         public IExecuteDatasetExtractionDestination Destination { get; private set; }
         
-        public static DataFlowPipelineContext<DataTable> Context;
+        DataLoadInfo _dataLoadInfo;
 
-        static ExtractionPipelineHost()
+        public ExtractionPipelineHost() : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
         {
-            //create the context using the standard context factory
-            var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
-            Context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo);
-
-            //adjust context: we want a destination requirement of IExecuteDatasetExtractionDestination
-            Context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
-
-            Context.MustHaveSource = typeof (ExecuteDatasetExtractionSource);
+            
         }
 
-        DataLoadInfo _dataLoadInfo;
-        private readonly MEF _mef;
-
-        public ExtractionPipelineHost(IExtractCommand extractCommand,MEF mef, IPipeline pipeline, DataLoadInfo dataLoadInfo)
+        public ExtractionPipelineHost(IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
         {
             _dataLoadInfo = dataLoadInfo;
-            _mef = mef;
             ExtractCommand = extractCommand;
             _pipeline = pipeline;
+
+            //create the context using the standard context factory
+            var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
+            _context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo);
+
+            //adjust context: we want a destination requirement of IExecuteDatasetExtractionDestination
+            _context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
+            _context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
         }
-
-        private void SetupPipeline(IDataLoadEventListener listener)
-        {
-           //now create the engine factory giving it the context so that it can validate the pipeline for us
-            var factory = new DataFlowPipelineEngineFactory<DataTable>(_mef, Context);
-
-            //ask the engine factory to create an engine for our pipeline (and check it against the context)
-            _engine = factory.Create(_pipeline, listener) as DataFlowPipelineEngine<DataTable>;
-            Destination = (IExecuteDatasetExtractionDestination) _engine.Destination; //record the destination that was created as part of the Pipeline configured            
-            Source = (ExecuteDatasetExtractionSource)_engine.Source;
-        }
-
+        
         public bool Crashed = false;
         private CancellationTokenSource _cancelToken;
 
@@ -79,22 +67,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         {
             try
             {
-                if (Destination == null)
-                    SetupPipeline(listener);
-
-                //initialize it with the extraction configuration request object and the audit object (this will initialize all objects in pipeline which implement IPipelineRequirement<ExtractionRequest> and IPipelineRequirement<TableLoadInfo>
-                _engine.Initialize(ExtractCommand, _dataLoadInfo);
-
+                var engine = GetEngine(_pipeline, listener);
 
                 try
                 {
                     _cancelToken = new CancellationTokenSource();
-                    _engine.ExecutePipeline(new GracefulCancellationToken(_cancelToken.Token, _cancelToken.Token));
+                    engine.ExecutePipeline(new GracefulCancellationToken(_cancelToken.Token, _cancelToken.Token));
                 }
                 catch (Exception e)
                 {
-                    if (_engine.Source is ExecuteDatasetExtractionSource &&
-                        ((ExecuteDatasetExtractionSource) _engine.Source).CumulativeExtractionResults != null)
+                    if (Source.CumulativeExtractionResults != null)
                     {
                         //audit to logging architecture
                         FatalErrorLogging.GetInstance()
@@ -102,7 +84,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                                 ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
                         //audit to extraction results
-                        var audit = ((ExecuteDatasetExtractionSource) _engine.Source).CumulativeExtractionResults;
+                        var audit = Source.CumulativeExtractionResults;
                         audit.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
                         audit.SaveToDatabase();
                     }
@@ -111,12 +93,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                     throw new Exception("An error occurred while executing pipeline", e);
                 }
 
-                if (_engine.Source == null)
+                if (Source == null)
                     throw new Exception("Execute Pipeline completed without Exception but Source was null somehow" +
                                         "?!");
 
                 //Deal with finishing off the Cumulative Extraction Results (only applies to IExtractCommand objects of type IExtractDatasetCommand)
-                var successAudit = ((ExecuteDatasetExtractionSource) _engine.Source).CumulativeExtractionResults;
+                var successAudit = Source.CumulativeExtractionResults;
 
                 if (successAudit == null)
                     return;
@@ -150,33 +132,48 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             _cancelToken.Cancel();
         }
 
-        public static void ExtractGlobalsForDestination(IProject project, ExtractionConfiguration configuration, IPipeline pipeline, GlobalsBundle globalsBundle,IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        public override IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
         {
-
+            var engine = base.GetEngine(pipeline, listener);
             
-            var mef = ((DataExportRepository) project.Repository).CatalogueRepository.MEF;
-            var factory = new DataFlowPipelineEngineFactory<DataTable>(mef, Context);
+            Destination = (IExecuteDatasetExtractionDestination)engine.DestinationObject; //record the destination that was created as part of the Pipeline configured            
+            Source = (ExecuteDatasetExtractionSource)engine.SourceObject;
             
+            return engine;
+        }
 
+        public void ExtractGlobalsForDestination(IProject project, ExtractionConfiguration configuration, GlobalsBundle globalsBundle,IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        {
+            
             try
             {
-                var destination = factory.CreateDestinationIfExists(pipeline);
-                var destinationAsExtractionDestination = destination as IExecuteDatasetExtractionDestination;
+                //if we don't yet know the destination create an engine which populates Destination/Source as a byproduct
+                if (Destination == null)
+                    GetEngine(_pipeline,listener);
+                
+                if (Destination == null)
+                    throw new Exception("There is no destination configured on Pipeline " + _pipeline + " so we cannot extract globals!");
 
-                if(destination == null)
-                    throw new Exception("There is no destination configured on Pipeline " + pipeline + " so we cannot extract globals!");
-
-                if (destinationAsExtractionDestination == null)
-                    throw new Exception("Destination " + destination.GetType() + " is not a valid destination type (IExecuteDatasetExtractionDestination)");
-
-                listener.OnNotify("ExtractGlobalsForDestination", new NotifyEventArgs(ProgressEventType.Information, "successfully created " + destination.GetType()));
-                destinationAsExtractionDestination.ExtractGlobals((Project)project, configuration, globalsBundle, listener, dataLoadInfo);
+                listener.OnNotify("ExtractGlobalsForDestination", new NotifyEventArgs(ProgressEventType.Information, "successfully created " + Destination.GetType()));
+                Destination.ExtractGlobals((Project)project, configuration, globalsBundle, listener, dataLoadInfo);
             }
             catch (Exception e)
             {
                 listener.OnNotify("ExtractGlobalsForDestination",new NotifyEventArgs(ProgressEventType.Error,"Fatal error occurred while trying to extract globals",e));
             }
         }
+
+        public override object[] GetInitializationObjects(ICatalogueRepository repository)
+        {
+            //initialize it with the extraction configuration request object and the audit object (this will initialize all objects in pipeline which implement IPipelineRequirement<ExtractionRequest> and IPipelineRequirement<TableLoadInfo>
+            return new object[]{ExtractCommand, _dataLoadInfo,repository};
+        }
+
+        public override IDataFlowPipelineContext GetContext()
+        {
+            return _context;
+        }
     }
+
 }
 

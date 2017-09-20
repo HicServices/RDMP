@@ -41,11 +41,6 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.DataRelease.ReleasePipeline.ReleaseContext" Collapsed="true">
-    <Position X="5.75" Y="6.25" Width="2.25" />
-    <TypeIdentifier />
-    <Lollipop Position="0.2" />
-  </Class>
   <Interface Name="CatalogueLibrary.Data.Pipelines.IPipeline" Collapsed="true">
     <Position X="3.75" Y="0.75" Width="2.5" />
     <TypeIdentifier />

@@ -198,7 +198,7 @@ namespace DataExportManager.DataRelease
             _activator.ShowWindow(progressUI, false);
             
             //the release context for the project
-            var context = new ReleaseContext(_project, FixedDataReleaseSource);
+            var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
@@ -242,7 +242,7 @@ namespace DataExportManager.DataRelease
         {
             if (_pipelineUI == null)
             {
-                var context = new ReleaseContext(_project, FixedDataReleaseSource);
+                var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
                 _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create();
                 pnlPipeline.Controls.Add((Control)_pipelineUI);
             }

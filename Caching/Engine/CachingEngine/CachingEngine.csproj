@@ -146,7 +146,7 @@
     <Compile Include="CachingPreExecutionChecker.cs" />
     <Compile Include="CustomDateCaching.cs" />
     <Compile Include="Factories\CacheFetchRequestFactory.cs" />
-    <Compile Include="Factories\CachingPipelineEngineFactory.cs" />
+    <Compile Include="Factories\CachingPipelineUseCase.cs" />
     <Compile Include="DataRetrievers\DownloadStatus.cs" />
     <Compile Include="BasicCache\BasicCacheLayout.cs" />
     <Compile Include="Layouts\ICacheLayout.cs" />

@@ -17,6 +17,9 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.LoadExecutionUIs.CachingDashboard
 {
+    /// <summary>
+    /// Allows you to view the state of CacheProgresses in RDMP
+    /// </summary>
     public partial class CachingDashboardForm : RDMPForm
     {
         private ICacheProgress _cacheProgress;
@@ -114,18 +117,7 @@ namespace CatalogueManager.LoadExecutionUIs.CachingDashboard
                 ExceptionViewer.Show(e);
                 btnShowPermissionWindow.Enabled = false;
             }
-
-            try
-            {
-                var pipeline = cacheProgress.Pipeline_ID == null ? null : cacheProgress.Pipeline;
-                btnShowPipeline.Enabled = (pipeline != null);
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
-                btnShowPipeline.Enabled = false;
-            }
-
+            
             PopulateCacheFetchErrors(_cacheProgress, _loadProgress);
             CalculateLagShortfall(_cacheProgress);
         }
@@ -159,58 +151,6 @@ namespace CatalogueManager.LoadExecutionUIs.CachingDashboard
             }
         }
 
-        private async void btnShowPipeline_Click(object sender, EventArgs e)
-        {
-            if (_cts != null)
-                _cts.Cancel();
-
-            var newCTS = new CancellationTokenSource();
-            _cts = newCTS;
-
-            await ShowPipelineDialog(_cts.Token);
-
-            statusLabel.Text = "Showing PipelineUI";
-
-            // If this call isn't from the latest click of 'Show Pipeline' then let it go
-            if (_cts != newCTS) return;
-
-            _cts = null;
-
-            if (_pipelineForm != null)
-                _pipelineForm.ShowDialog();
-
-            statusLabel.Text = "";
-        }
-
-        private async Task ShowPipelineDialog(CancellationToken cancellationToken)
-        {
-            _pipelineForm = null;
-            statusLabel.Text = "Loading pipeline...";
-
-            try
-            {
-                await Task.Run(() =>
-                {
-                    AppDomain.CurrentDomain.AssemblyLoad += (sender, args) => statusLabel.Text = "Loading assembly: " + args.LoadedAssembly.FullName;
-
-                    var context = CachingPipelineEngineFactory.Context;
-
-                    var uiFactory = new ConfigurePipelineUIFactory(RepositoryLocator.CatalogueRepository.MEF, RepositoryLocator.CatalogueRepository);
-                    _pipelineForm = uiFactory.Create(context.GetType().GenericTypeArguments[0].FullName,
-                        _cacheProgress.Pipeline, null, null, context,
-                        new List<object>());
-
-                }, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
-            }
-        }
-        
         private void btnShowPermissionWindow_Click(object sender, EventArgs e)
         {
             throw new NotImplementedException();

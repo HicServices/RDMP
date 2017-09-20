@@ -41,7 +41,7 @@ namespace CatalogueManager.Menus
             Items.Add(new ChoosePipelineMenuItem(
                 activator,
                 new PipelineUser(_cacheProgress),
-                new CachingPipelineEngineFactory(_cacheProgress),
+                new CachingPipelineUseCase(_cacheProgress),
                 "Set Caching Pipeline")
                 );
             
