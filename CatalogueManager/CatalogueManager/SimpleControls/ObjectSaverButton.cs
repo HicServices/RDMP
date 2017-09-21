@@ -29,20 +29,30 @@ namespace CatalogueManager.SimpleControls
             _refreshBus = refreshBus;
             _refreshBus.Subscribe(this);
             o.PropertyChanged += PropertyChanged;
-            Enabled = false;
+            Enable(false);
             Text = "&Save";
         }
         
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.Enabled = true;
+            Enable(true);
+        }
+
+        private void Enable(bool b)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => Enable(b)));
+                return;
+            }
+
+            Enabled = b;
         }
 
         protected override void OnClick(EventArgs e)
         {
             Save();
             base.OnClick(e);
-            
         }
 
         protected override void Dispose(bool disposing)
@@ -61,7 +71,7 @@ namespace CatalogueManager.SimpleControls
 
             _o.SaveToDatabase();
             _refreshBus.Publish(this,new RefreshObjectEventArgs(_o));
-            Enabled = false;
+            Enable(false);
             
             if(AfterSave != null)
                 AfterSave();
@@ -80,7 +90,7 @@ namespace CatalogueManager.SimpleControls
 
         public void ForceDirty()
         {
-            Enabled = true;
+            Enable(true);
         }
     }
 }
