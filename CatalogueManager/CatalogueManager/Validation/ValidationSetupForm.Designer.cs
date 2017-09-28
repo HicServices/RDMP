@@ -48,8 +48,8 @@ namespace CatalogueManager.Validation
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnConfigureStandardRegex = new System.Windows.Forms.ToolStripButton();
-            this.btnSave = new System.Windows.Forms.ToolStripButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -233,8 +233,7 @@ namespace CatalogueManager.Validation
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnConfigureStandardRegex,
-            this.btnSave});
+            this.btnConfigureStandardRegex});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1183, 25);
@@ -251,26 +250,26 @@ namespace CatalogueManager.Validation
             this.btnConfigureStandardRegex.Text = "Configure Standard Regexes";
             this.btnConfigureStandardRegex.Click += new System.EventHandler(this.btnConfigureStandardRegex_Click);
             // 
-            // btnSave
-            // 
-            this.btnSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
-            this.btnSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(23, 22);
-            this.btnSave.Text = "Save Validation";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
             // timer1
             // 
             this.timer1.Enabled = true;
             this.timer1.Interval = 500;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(38, 1);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.TabIndex = 11;
+            this.objectSaverButton1.Text = "objectSaverButton1";
+            this.objectSaverButton1.UseVisualStyleBackColor = true;
+            // 
             // ValidationSetupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label5);
@@ -306,10 +305,10 @@ namespace CatalogueManager.Validation
         private OLVColumn olvName;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnConfigureStandardRegex;
-        private System.Windows.Forms.ToolStripButton btnSave;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }
 
