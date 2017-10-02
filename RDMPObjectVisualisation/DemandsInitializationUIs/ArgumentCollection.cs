@@ -168,7 +168,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             Label name = new Label();
 
             HelpIcon helpIcon = new HelpIcon();
-            helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()), required.Demand.Description);
+            helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())??"Unrecognised Type:" + argument.Type, required.Demand.Description);
             helpIcon.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
             string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
@@ -212,6 +212,9 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
         {
             if (typeof(Enum).IsAssignableFrom(type))
                 return "Enum";
+
+            if (type == null)
+                return null;
 
             return type.Name;
         }

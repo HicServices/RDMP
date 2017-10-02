@@ -15,7 +15,34 @@ namespace CatalogueLibrary.Data.DataLoad
 {
     public abstract class Argument : VersionedDatabaseEntity, IArgument
     {
-        public static readonly Type[] PermissableTypes = { typeof(char?), typeof(int?), typeof(int), typeof(string), typeof(DateTime), typeof(FileInfo), typeof(DirectoryInfo), typeof(Enum), typeof(Uri), typeof(Regex), typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(bool), typeof(ICustomUIDrivenClass), typeof(EncryptedString), typeof(CatalogueRepository), typeof(Pipeline), typeof(StandardRegex), typeof(Type),typeof(CohortIdentificationConfiguration)};
+        public static readonly Type[] PermissableTypes =
+        {
+            typeof(char?),typeof(char),
+            typeof(int?), typeof(int),
+            typeof(DateTime?), typeof(DateTime),
+            typeof(double?), typeof(double),
+            typeof(float?), typeof(float),
+
+            typeof(bool), //no nullable bools please
+
+            typeof(string), typeof(FileInfo),
+            typeof(DirectoryInfo),
+            typeof(Enum), typeof(Uri), typeof(Regex),
+            
+            typeof(Type),
+
+            //IMapsDirectlyToDatabaseTable
+            typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),typeof(CohortIdentificationConfiguration),
+           
+            //wierd special cases
+            typeof(ICustomUIDrivenClass), typeof(EncryptedString),
+            
+            //special static argument type, always gets the same value never has a database persisted value
+            typeof(CatalogueRepository), 
+            
+            //user must be IDemandToUseAPipeline<T>
+            typeof(Pipeline)
+        };
 
         #region Database Properties
 
@@ -84,6 +111,21 @@ namespace CatalogueLibrary.Data.DataLoad
             if (Type.Equals(typeof (CatalogueRepository).ToString()))
                 return Repository;
 
+
+            //float?
+            if (Type.Equals(typeof(float?).ToString()) || Type.Equals(typeof(float).ToString()))
+                if (string.IsNullOrWhiteSpace(Value))
+                    return null;
+                else
+                    return float.Parse(Value);
+
+            //double?
+            if (Type.Equals(typeof(double?).ToString()) || Type.Equals(typeof(double).ToString()))
+                if (string.IsNullOrWhiteSpace(Value))
+                    return null;
+                else
+                    return double.Parse(Value);
+
             //int?
             if (Type.Equals(typeof(int?).ToString()) || Type.Equals(typeof(int).ToString()))
                 if (string.IsNullOrWhiteSpace(Value))
@@ -98,6 +140,13 @@ namespace CatalogueLibrary.Data.DataLoad
                 else
                     return char.Parse(Value);
 
+            //DateTime?
+            if (Type.Equals(typeof(DateTime?).ToString()) || Type.Equals(typeof(DateTime).ToString()))
+                if (string.IsNullOrWhiteSpace(Value))
+                    return null;
+                else
+                    return DateTime.Parse(Value);
+
             //null
             if (String.IsNullOrWhiteSpace(Value))
                 return null;
@@ -107,9 +156,6 @@ namespace CatalogueLibrary.Data.DataLoad
 
             if (Type.Equals(typeof(string).ToString()))
                 return Value;
-
-            if (Type.Equals(typeof(DateTime).ToString()))
-                return DateTime.Parse(Value);
 
             if (Type.Equals(typeof(FileInfo).ToString()))
                 return new FileInfo(Value);
@@ -186,6 +232,11 @@ namespace CatalogueLibrary.Data.DataLoad
 
         public Type GetSystemType()
         {
+            var basicType = PermissableTypes.SingleOrDefault(t => t.ToString().Equals(Type));
+            
+            if (basicType != null)
+                return basicType;
+            
             return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Type);
         }
 
@@ -237,6 +288,10 @@ namespace CatalogueLibrary.Data.DataLoad
                     return;
                 }
             }
+
+            //if it's a nullable type find the underlying Type
+            if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                type = Nullable.GetUnderlyingType(type);
 
             //if we already have a known type set on us
             if (!String.IsNullOrWhiteSpace(Type))
