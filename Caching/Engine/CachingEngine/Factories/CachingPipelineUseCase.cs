@@ -33,7 +33,7 @@ namespace CachingEngine.Factories
         /// <param name="cacheProgress">The cache that will be run</param>
         /// <param name="ignorePermissionWindow">Set to true to ignore the CacheProgress.PermissionWindow (if any)</param>
         /// <param name="providerIfAny">The strategy for figuring out what dates to load the cache with e.g. failed cache fetches or new jobs from head of que?</param>
-        public CachingPipelineUseCase(ICacheProgress cacheProgress,bool ignorePermissionWindow=false,ICacheFetchRequestProvider providerIfAny = null)
+        public CachingPipelineUseCase(ICacheProgress cacheProgress,bool ignorePermissionWindow=false,ICacheFetchRequestProvider providerIfAny = null,bool throwIfNoPipeline = true)
         {
             _cacheProgress = cacheProgress;
             _providerIfAny = providerIfAny;
@@ -55,7 +55,7 @@ namespace CachingEngine.Factories
 
             _pipeline = _cacheProgress.Pipeline;
 
-            if (_pipeline == null)
+            if (_pipeline == null && throwIfNoPipeline)
                 throw new Exception("CacheProgress " + _cacheProgress + " does not have a Pipeline configured on it");
 
             _catalogueRepository = (ICatalogueRepository)_cacheProgress.Repository;
