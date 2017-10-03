@@ -134,18 +134,13 @@ namespace CatalogueLibrary.Data
             LockHeldBy = r["LockHeldBy"].ToString();
         }
 
-        public PermissionWindow()
-        {
-            PermissionWindowPeriods = new List<PermissionWindowPeriod>();
-            RequiresSynchronousAccess = true;
-        }
-
         public PermissionWindow(List<PermissionWindowPeriod> permissionPeriods)
         {
             PermissionWindowPeriods = permissionPeriods;
             RequiresSynchronousAccess = true;
         }
 
+        
         public override string ToString()
         {
             return (string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name) + "(ID = " + ID + ")";

@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Spontaneous;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -24,7 +25,7 @@ namespace CachingEngine.Factories
         private DataFlowPipelineContext<ICacheChunk> _context;
         private IPipeline _pipeline;
         private ICatalogueRepository _catalogueRepository;
-        private PermissionWindow _permissionWindow;
+        private IPermissionWindow _permissionWindow;
         private HICProjectDirectory _hicProjectDirectory;
 
         /// <summary>
@@ -38,6 +39,11 @@ namespace CachingEngine.Factories
             _cacheProgress = cacheProgress;
             _providerIfAny = providerIfAny;
 
+            if (ignorePermissionWindow)
+                _permissionWindow = new SpontaneouslyInventedPermissionWindow(_cacheProgress);
+            else
+                _permissionWindow = cacheProgress.PermissionWindow;
+
             //create the context using the standard context factory
             var contextFactory = new DataFlowPipelineContextFactory<ICacheChunk>();
             _context = contextFactory.Create(PipelineUsage.None);
@@ -49,7 +55,7 @@ namespace CachingEngine.Factories
             if(_providerIfAny == null)
             {
                 var cacheFetchRequestFactory = new CacheFetchRequestFactory();
-                var initialFetchRequest = cacheFetchRequestFactory.Create(_cacheProgress, _cacheProgress.LoadProgress);
+                var initialFetchRequest = cacheFetchRequestFactory.Create(_cacheProgress, _cacheProgress.LoadProgress,_permissionWindow);
                 _providerIfAny = new CacheFetchRequestProvider(initialFetchRequest);
             }
 
@@ -59,9 +65,6 @@ namespace CachingEngine.Factories
                 throw new Exception("CacheProgress " + _cacheProgress + " does not have a Pipeline configured on it");
 
             _catalogueRepository = (ICatalogueRepository)_cacheProgress.Repository;
-
-            if(!ignorePermissionWindow)
-                _permissionWindow = cacheProgress.PermissionWindow??new PermissionWindow();
 
             // Get the HICProjectDirectory for the engine initialization
             var lmd = _cacheProgress.GetLoadProgress().GetLoadMetadata();
@@ -90,10 +93,13 @@ namespace CachingEngine.Factories
         
         public override object[] GetInitializationObjects(ICatalogueRepository repository)
         {
-            return new object[]{_providerIfAny,
-            _permissionWindow,
-            _hicProjectDirectory,
-            _catalogueRepository};
+            return new object[]
+            {
+                _providerIfAny,
+                _permissionWindow,
+                _hicProjectDirectory,
+                _catalogueRepository
+            };
         }
 
         public override IDataFlowPipelineContext GetContext()

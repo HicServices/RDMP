@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Menus.MenuItems;
 using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -24,15 +25,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 
         public ToolStripMenuItem CreateMenuItem(IAtomicCommand command)
         {
-            var toReturn = new ToolStripMenuItem(command.GetCommandName(), command.GetImage(_iconProvider));
-            toReturn.Tag = command;
-            toReturn.Click += (s,e) => command.Execute();
-
-            //disable if impossible command
-            if (command.IsImpossible)
-                toReturn.Enabled = false;
-
-            return toReturn;
+             return new AtomicCommandMenuItem(command,_iconProvider);
         }
 
         public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command)

@@ -7,7 +7,7 @@ namespace CachingEngine.Factories
 {
     public class CacheFetchRequestFactory
     {
-        public ICacheFetchRequest Create(ICacheProgress cacheProgress, ILoadProgress loadProgress)
+        public ICacheFetchRequest Create(ICacheProgress cacheProgress, ILoadProgress loadProgress, IPermissionWindow permissionWindow)
         {
             // Figure out when to start loading from
             DateTime startDate;
@@ -22,7 +22,7 @@ namespace CachingEngine.Factories
             {
                 CacheProgress = cacheProgress,
                 ChunkPeriod = cacheProgress.ChunkPeriod,
-                PermissionWindow = cacheProgress.GetPermissionWindow() ?? new PermissionWindow(),
+                PermissionWindow = permissionWindow,
                 Start = startDate
             };
 

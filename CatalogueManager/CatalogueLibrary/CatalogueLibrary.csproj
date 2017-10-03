@@ -518,6 +518,7 @@
     <Compile Include="Spontaneous\SpontaneouslyInventedArgument.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedFilter.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedFilterContainer.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedPermissionWindow.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedSqlParameter.cs" />
     <Compile Include="Spontaneous\SpontaneousObject.cs" />
     <Compile Include="SupportingDocumentsFetcher.cs" />
