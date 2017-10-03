@@ -279,8 +279,6 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private void SpecificDates(GracefulCancellationToken token)
         {
-            var loadMetadata = _cacheProgress.GetLoadProgress().GetLoadMetadata();
-            var hicProjectDirectory = new HICProjectDirectory(loadMetadata.LocationOfFlatFiles, false);
             var customDateCaching = new CustomDateCaching(_cacheProgress, RepositoryLocator.CatalogueRepository);
 
             // If the user has asked to ignore the permission window, use a blank one (means 'can download at any time') otherwise set to null (uses the window belonging to the CacheProgress)
