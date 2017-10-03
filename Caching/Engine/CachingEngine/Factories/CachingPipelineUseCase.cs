@@ -39,7 +39,8 @@ namespace CachingEngine.Factories
             _cacheProgress = cacheProgress;
             _providerIfAny = providerIfAny;
 
-            if (ignorePermissionWindow)
+            //if there is no permission window or we are ignoring it
+            if (ignorePermissionWindow || cacheProgress.PermissionWindow_ID == null)
                 _permissionWindow = new SpontaneouslyInventedPermissionWindow(_cacheProgress);
             else
                 _permissionWindow = cacheProgress.PermissionWindow;
