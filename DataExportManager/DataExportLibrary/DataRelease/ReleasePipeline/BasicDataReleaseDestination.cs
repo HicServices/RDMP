@@ -78,7 +78,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                         }
 
                     if (remnantsDeleted > 0)
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Because release failed we are deleting ReleaseLogEntries, this resulted in " + remnantsDeleted + " deleted records, you will likely need to rextract these datasets or retrieve them from the Release directory"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Because release failed we are deleting ReleaseLogEntries, this resulted in " + remnantsDeleted + " deleted records, you will likely need to re-extract these datasets or retrieve them from the Release directory"));
                 }
                 catch (Exception e1)
                 {
@@ -89,11 +89,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public void Abort(IDataLoadEventListener listener)
         {
-            throw new NotImplementedException();
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "This component cannot Abort!"));
         }
 
         public void Check(ICheckNotifier notifier)
         {
+            ((ICheckable)ReleaseSettings).Check(notifier);
         }
 
         public void PreInitialize(Project value, IDataLoadEventListener listener)
