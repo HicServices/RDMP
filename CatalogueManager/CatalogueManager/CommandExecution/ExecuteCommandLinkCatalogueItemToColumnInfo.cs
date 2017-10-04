@@ -21,13 +21,17 @@ namespace CatalogueManager.CommandExecution
             
             if (targetModel.ColumnInfo_ID != null)
                 SetImpossible( "CatalogueItem " + targetModel + " is already associated with a different ColumnInfo");
+
+            if(cmd.ColumnInfos.Length >1)
+                SetImpossible("Only one ColumnInfo can be associated with a CatalogueItem at a time");
+
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            var columnInfo = _cmd.ColumnInfo;
+            var columnInfo = _cmd.ColumnInfos[0];
             _targetModel.SetColumnInfo(columnInfo);
                     
             //if it did not have a name before

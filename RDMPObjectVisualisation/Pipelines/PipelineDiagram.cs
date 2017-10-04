@@ -120,7 +120,7 @@ namespace RDMPObjectVisualisation.Pipelines
                     try
                     {
                         //create it
-                        pipelineInstance = pipelineFactory.Create(pipeline, new ToConsoleDataLoadEventReceiver());
+                        pipelineInstance = pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
                     
                         try
                         {
@@ -265,7 +265,7 @@ namespace RDMPObjectVisualisation.Pipelines
             if (value != null)
                 try
                 {
-                    _pipelineFactory.Context.PreInitializeGeneric(new ToConsoleDataLoadEventReceiver(), value, _initializationObjects);
+                    _pipelineFactory.Context.PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), value, _initializationObjects);
                     component.ExInitialization = null;//initialization worked, changes N/A to Successful
                     component.Check();
                 }
@@ -323,7 +323,7 @@ namespace RDMPObjectVisualisation.Pipelines
             component.IsLocked = true;
             try
             {
-                _pipelineFactory.Context.PreInitializeGeneric(new ToConsoleDataLoadEventReceiver(),component.Value,_initializationObjects);
+                _pipelineFactory.Context.PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(),component.Value,_initializationObjects);
             }
             catch (Exception e)
             {

@@ -60,7 +60,7 @@ namespace DataLoadEngineTests.Unit
         {
             DelimitedFlatFileDataFlowSource invalid = new DelimitedFlatFileDataFlowSource();
             invalid.Separator = ",";
-            invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), new ToConsoleDataLoadEventReceiver());
+            invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), new ThrowImmediatelyDataLoadEventListener());
             invalid.Check(new ThrowImmediatelyCheckNotifier());
         }
 
@@ -74,8 +74,8 @@ namespace DataLoadEngineTests.Unit
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ToConsoleDataLoadEventReceiver());
-            DataTable dt = source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
+            DataTable dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.AreEqual(6,dt.Columns.Count);
             Assert.AreEqual("Participant", dt.Columns[0].ColumnName);
@@ -105,7 +105,7 @@ namespace DataLoadEngineTests.Unit
             if (!officeInstalled)
                 Assert.Inconclusive();
 
-            var listener = new ToMemoryDataLoadEventReceiver(true);
+            var listener = new ToMemoryDataLoadEventListener(true);
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
@@ -141,7 +141,7 @@ namespace DataLoadEngineTests.Unit
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var listener = new ToMemoryDataLoadEventReceiver(true);
+            var listener = new ToMemoryDataLoadEventListener(true);
 
             source.PreInitialize(new FlatFileToLoad(_fileLocations[TestFile]), listener);
             DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
@@ -155,11 +155,11 @@ namespace DataLoadEngineTests.Unit
             if (!officeInstalled)
                 Assert.Inconclusive();
 
-            var messages = new ToMemoryDataLoadEventReceiver(true);
+            var messages = new ToMemoryDataLoadEventListener(true);
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]), new ThrowImmediatelyDataLoadEventListener());
             DataTable dt = source.GetChunk(messages, new GracefulCancellationToken());
             
             var args = messages.EventsReceivedBySender[source];
@@ -184,10 +184,10 @@ namespace DataLoadEngineTests.Unit
             var fi = new FileInfo(@".\Resources\BlankLineBook.xlsx");
             Assert.IsTrue(fi.Exists);
 
-            source.PreInitialize(new FlatFileToLoad(fi), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
             
             
-            DataTable dt = source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken());
+            DataTable dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             
             Assert.AreEqual(3,dt.Rows.Count);
@@ -208,10 +208,10 @@ namespace DataLoadEngineTests.Unit
             var fi = new FileInfo(@".\Resources\BlankBook.xlsx");
             Assert.IsTrue(fi.Exists);
 
-            source.PreInitialize(new FlatFileToLoad(fi), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
 
 
-            var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(new ToConsoleDataLoadEventReceiver(), new GracefulCancellationToken()));
+            var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
             Assert.AreEqual("The Excel sheet 'Sheet1' in workbook 'BlankBook.xlsx' is empty", ex.Message);
 
         }
@@ -222,7 +222,7 @@ namespace DataLoadEngineTests.Unit
                 Assert.Inconclusive();
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ToConsoleDataLoadEventReceiver() );
+            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
             source.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
         }
         [Test]
@@ -230,7 +230,7 @@ namespace DataLoadEngineTests.Unit
         public void Checks_ValidFileExtension_InvalidExtensionPass()
         {
             ExcelDataFlowSource source = new ExcelDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), new ToConsoleDataLoadEventReceiver());
+            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), new ThrowImmediatelyDataLoadEventListener());
             source.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
         }
 
@@ -238,7 +238,7 @@ namespace DataLoadEngineTests.Unit
         public void Checks_ExcelInstalled()
         {
             ExcelDataFlowSource source = new ExcelDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ToConsoleDataLoadEventReceiver() );
+            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
             try
             {
                 //check it

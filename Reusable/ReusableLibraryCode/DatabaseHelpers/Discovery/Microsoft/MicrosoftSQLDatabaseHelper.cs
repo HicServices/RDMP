@@ -8,9 +8,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
-    public class MicrosoftSQLDatabaseHelper: IDiscoveredDatabaseHelper
+    public class MicrosoftSQLDatabaseHelper: DiscoveredDatabaseHelper
     {
-        public IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
+        public override IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
         {
             if (connection.State == ConnectionState.Closed)
                 throw new InvalidOperationException("Expected connection to be open");
@@ -42,7 +42,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return tables.ToArray();
         }
 
-        public IEnumerable<DiscoveredTableValuedFunction> ListTableValuedFunctions(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, DbTransaction transaction = null)
+        public override IEnumerable<DiscoveredTableValuedFunction> ListTableValuedFunctions(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, DbTransaction transaction = null)
         {
             List<DiscoveredTableValuedFunction> functionsToReturn = new List<DiscoveredTableValuedFunction>();
 
@@ -58,8 +58,8 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
 
             return functionsToReturn.ToArray();
         }
-        
-        public  DiscoveredStoredprocedure[] ListStoredprocedures(DbConnectionStringBuilder builder, string database)
+
+        public override DiscoveredStoredprocedure[] ListStoredprocedures(DbConnectionStringBuilder builder, string database)
         {
             List<DiscoveredStoredprocedure> toReturn = new List<DiscoveredStoredprocedure>();
 
@@ -77,12 +77,12 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
             return toReturn.ToArray();
         }
 
-        public IDiscoveredTableHelper GetTableHelper()
+        public override IDiscoveredTableHelper GetTableHelper()
         {
             return new MicrosoftSQLTableHelper();
         }
 
-        public void DropDatabase(DiscoveredDatabase database)
+        public override void DropDatabase(DiscoveredDatabase database)
         {
             bool userIsCurrentlyInDatabase = database.Server.GetCurrentDatabase().GetRuntimeName().Equals(database.GetRuntimeName());
 
@@ -105,7 +105,7 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
             }
         }
 
-        public Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
+        public override Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
         {
             using (var con = new SqlConnection(builder.ConnectionString))
             {

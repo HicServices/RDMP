@@ -192,17 +192,17 @@
     <Compile Include="DemandsInitializationUIs\ArgumentCollection.Designer.cs">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
     </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentUI.Designer.cs">
-      <DependentUpon>ArgumentUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.Designer.cs">
       <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.Designer.cs">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.cs">
       <SubType>UserControl</SubType>
@@ -244,6 +244,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="Menus\MenuItems\OpenContainingFolderMenuItem.cs" />
     <Compile Include="Pipelines\ConfigureAndExecutePipeline.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -269,6 +270,7 @@
     <Compile Include="Pipelines\ConfigurePipelineUI.Designer.cs">
       <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pipelines\IPipelineSelectionUI.cs" />
     <Compile Include="Pipelines\Models\AdvertisedPipelineComponentTypeUnderContext.cs" />
     <Compile Include="Pipelines\Models\DividerLineControl.cs">
       <SubType>UserControl</SubType>
@@ -294,6 +296,8 @@
     <Compile Include="Pipelines\PipelineSelectionUI.Designer.cs">
       <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
+    <Compile Include="Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -323,11 +327,11 @@
     <EmbeddedResource Include="DemandsInitializationUIs\ArgumentCollection.resx">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentUI.resx">
-      <DependentUpon>ArgumentUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
       <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.resx">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.resx">
       <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
@@ -422,6 +426,7 @@
   <ItemGroup>
     <Content Include="Images\ExtractableCohort.png" />
     <None Include="packages.config" />
+    <None Include="Pipelines\Pipelines.cd" />
     <None Include="Resources\DragFrom.png" />
   </ItemGroup>
   <ItemGroup>

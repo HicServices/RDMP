@@ -6,7 +6,6 @@ using CachingService.Properties;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
-using Common.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
@@ -17,7 +16,6 @@ namespace CachingService
         private readonly CatalogueRepository _repository;
         private GracefulCancellationTokenSource _cancellationTokenSource;
         public Task Task { get; private set; }
-        private readonly ILog _log = LogManager.GetLogger<CachingServiceProvider>();
 
         public CachingServiceProvider(CatalogueRepository repository)
         {
@@ -26,8 +24,8 @@ namespace CachingService
 
         public void Start(string[] args, IDataLoadEventListener listener)
         {
-            _log.Info("Starting the caching provider");
-            _log.Info("Using database connection '" + _repository.ConnectionString);
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Starting the caching provider"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Using database connection '" + _repository.ConnectionString));
 
             var settings = Settings.Default;
 

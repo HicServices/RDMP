@@ -119,7 +119,7 @@ namespace DataExportManager.ProjectUI
         private void DoExtractionAsync(ExtractCohortCustomTableCommand extractCohortCustomTableCommandCohortPair)
         {
             extractCohortCustomTableCommandCohortPair.State = ExtractCommandState.WaitingForSQLServer;
-            _pipelineHost = new ExtractionPipelineHost(extractCohortCustomTableCommandCohortPair, RepositoryLocator.CatalogueRepository.MEF, _pipeline, _dataLoadInfo);
+            _pipelineHost = new ExtractionPipelineHost(extractCohortCustomTableCommandCohortPair, _pipeline, _dataLoadInfo);
             _pipelineHost.Execute(progressUI1);
 
             if (_pipelineHost.Source.WasCancelled)
@@ -132,7 +132,7 @@ namespace DataExportManager.ProjectUI
         {
             request.State = ExtractCommandState.WaitingForSQLServer;
                 
-            _pipelineHost = new ExtractionPipelineHost(request,RepositoryLocator.CatalogueRepository.MEF, _pipeline, _dataLoadInfo);
+            _pipelineHost = new ExtractionPipelineHost(request, _pipeline, _dataLoadInfo);
             _pipelineHost.Execute(progressUI1);
 
             if (_pipelineHost.Crashed)

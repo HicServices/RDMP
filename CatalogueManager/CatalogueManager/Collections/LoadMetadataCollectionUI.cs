@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
@@ -79,7 +80,11 @@ namespace CatalogueManager.Collections
             var hicDir = o as HICProjectDirectoryNode;
             var processTask = o as ProcessTask;
             var loadProgress = o as LoadProgress;
+            var cacheProgress = o as CacheProgress;
             
+            var permissionWindow = o as PermissionWindow;
+            var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
+
             if(lmd != null)
                 _activator.ActivateLoadMetadata(this,lmd);
 
@@ -91,6 +96,15 @@ namespace CatalogueManager.Collections
 
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
+
+            if (cacheProgress != null)
+                _activator.ActivateCacheProgress(this, cacheProgress);
+
+            if (permissionWindowUsage != null)
+                permissionWindow = permissionWindowUsage.PermissionWindow;
+
+            if (permissionWindow != null)
+                _activator.ActivatePermissionWindow(this, permissionWindow);
         }
         private void otvLoadMetadata_KeyUp(object sender, KeyEventArgs e)
         {
@@ -131,6 +145,10 @@ namespace CatalogueManager.Collections
             var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
             var hicProjectDirectory = e.Model as HICProjectDirectoryNode;
             var schedulingNode = e.Model as LoadMetadataScheduleNode;
+            
+            var loadProgress = e.Model as LoadProgress;
+            var cacheProgress = e.Model as CacheProgress;
+            var permissionWindowUsage = e.Model as PermissionWindowUsedByCacheProgress;
 
             var loadStageNode = e.Model as LoadStageNode;
 
@@ -151,6 +169,16 @@ namespace CatalogueManager.Collections
 
             if (lmd != null)
                 e.MenuStrip = new LoadMetadataMenu(_activator, lmd);
+
+            if (loadProgress != null)
+                e.MenuStrip = new LoadProgressMenu(_activator, loadProgress);
+
+            if (cacheProgress != null)
+                e.MenuStrip = new CacheProgressMenu(_activator, cacheProgress);
+
+
+            if (permissionWindowUsage != null)
+                e.MenuStrip = new PermissionWindowUsageMenu(_activator, permissionWindowUsage);
         }
         
         public override void SetItemActivator(IActivateItems activator) 

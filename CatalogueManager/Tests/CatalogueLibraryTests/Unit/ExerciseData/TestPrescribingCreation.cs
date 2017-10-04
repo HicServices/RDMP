@@ -21,7 +21,7 @@ namespace CatalogueLibraryTests.Unit.ExerciseData
 
             var f = new FileInfo("DeleteMeTestPrescribing.csv");
 
-            var messages = new ToMemoryDataLoadEventReceiver(true);
+            var messages = new ToMemoryDataLoadEventListener(true);
 
             PrescribingExerciseTestData prescribing = new PrescribingExerciseTestData();
             prescribing.GenerateTestDataFile(people, f, numberOfRecords, messages);

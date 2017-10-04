@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -12,7 +13,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 {
     public class ArgumentValueUIFactory
     {
-        public IArgumentValueUI Create(IArgumentHost parent, Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public IArgumentValueUI Create(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, DataTable previewIfAny)
         {
             var argumentType = argument.GetSystemType();
             IArgumentValueUI toReturn;
@@ -20,13 +21,17 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             try
             {
                 //if it is a bool
-                if (typeof (bool) == argumentType)
+                if (typeof (Pipeline).IsAssignableFrom(argumentType))
+                    toReturn = new ArgumentValuePipelineUI(catalogueRepository,parent, argumentType);
+                else if (typeof (bool) == argumentType)
                     toReturn = new ArgumentValueBoolUI();
-                else if (demand.DemandType == DemandType.SQL) //if it is SQL
+                else if (required.Demand.DemandType == DemandType.SQL) //if it is SQL
                 {
-                    if (typeof(string) != argumentType)
-                        throw new NotSupportedException("Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type " + argumentType + " (Expected String)");
-                
+                    if (typeof (string) != argumentType)
+                        throw new NotSupportedException(
+                            "Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type " +
+                            argumentType + " (Expected String)");
+
                     toReturn = new ArgumentValueSqlUI();
                 }
                 else if (typeof (ICustomUIDrivenClass).IsAssignableFrom(argumentType))
@@ -38,20 +43,27 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                     //Handle case where Demand is for the user to pick a Type (derived from a given parent Type/Interface).  Use case for this is when you want them to pick e.g. a IDilutionOperation where these are a list of classes corrupt data to greater or lesser degree and can be plugin Types but all share the same parent interface IDilutionOperation
 
                     //There must be a shared parent Type for the user to  pick from
-                    if (demand.TypeOf == null)
+                    if (required.Demand.TypeOf == null)
                         throw new NotSupportedException("Property " + argument.Name + " has Property Type '" +
                                                         argumentType +
                                                         "' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
 
-                    toReturn = new ArgumentValueComboBoxUI(catalogueRepository.MEF.GetAllTypes().Where(t => demand.TypeOf.IsAssignableFrom(t)).ToArray());
+                    toReturn =
+                        new ArgumentValueComboBoxUI(
+                            catalogueRepository.MEF.GetAllTypes()
+                                .Where(t => required.Demand.TypeOf.IsAssignableFrom(t))
+                                .ToArray());
                 }
-                else if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
+                else if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
                 {
-                    toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(catalogueRepository,parent,argumentType,true);
+                    toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(catalogueRepository, parent, argumentType,
+                        true);
                 }
-                else if (typeof(Enum).IsAssignableFrom(argument.GetSystemType()))
+                else if (typeof (Enum).IsAssignableFrom(argument.GetSystemType()))
                 {
-                    toReturn = new ArgumentValueComboBoxUI(Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray(),true);
+                    toReturn =
+                        new ArgumentValueComboBoxUI(Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray(),
+                            true);
                 }
                 else if (typeof (CatalogueRepository).IsAssignableFrom(argumentType))
                 {
@@ -59,8 +71,8 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 }
                 else //type is simple
                 {
-                    toReturn = new ArgumentValueTextUI();
-                }  
+                    toReturn = new ArgumentValueTextUI(isPassword: typeof(IEncryptedString).IsAssignableFrom(argumentType));
+                }
             }
             catch (Exception e)
             {
@@ -68,7 +80,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             }
 
             ((Control)toReturn).Dock = DockStyle.Fill;
-            toReturn.SetUp(argument, demand, previewIfAny);
+            toReturn.SetUp((Argument)argument, required, previewIfAny);
             return toReturn;
         }
 

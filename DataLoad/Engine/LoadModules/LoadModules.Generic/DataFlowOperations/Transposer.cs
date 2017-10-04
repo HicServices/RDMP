@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using LoadModules.Generic.DataFlowSources;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowOperations
@@ -63,7 +64,7 @@ namespace LoadModules.Generic.DataFlowOperations
                 string newColName = inRow[0].ToString();
 
                 if (MakeHeaderNamesSane)
-                    newColName = DelimitedFlatFileDataFlowSource.MakeHeaderNameSane(newColName);
+                    newColName = QuerySyntaxHelper.MakeHeaderNameSane(newColName);
 
                 outputTable.Columns.Add(newColName);
             }

@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Oracle.ManagedDataAccess.Client;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {
-    public class OracleTableHelper : IDiscoveredTableHelper
+    public class OracleTableHelper : DiscoveredTableHelper
     {
 
-        public string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)
+        public override string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)
         {
             return "SELECT * FROM " + table.GetFullyQualifiedName() + " WHERE ROWNUM <= " + topX;
         }
 
-        public DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
+        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
         {
             List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
 
@@ -72,35 +73,30 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
         }
 
 
-        public IDiscoveredColumnHelper GetColumnHelper()
+        public override IDiscoveredColumnHelper GetColumnHelper()
         {
             return new OracleColumnHelper();
         }
 
-        public void DropTable(DbConnection connection, DiscoveredTable table, DbTransaction dbTransaction = null)
+        public override void DropTable(DbConnection connection, DiscoveredTable table)
         {
-            if (dbTransaction != null)
-                throw new NotSupportedException("It looks like you are trying to drop a dataabase within a transaction, Oracle does not support transactions at the DDL layer.  If I were to drop this then it wouldn't ever be coming back");
-
             var cmd = new OracleCommand("DROP TABLE " +table.GetFullyQualifiedName(), (OracleConnection)connection);
-            cmd.Transaction = dbTransaction as OracleTransaction;
             cmd.ExecuteNonQuery();
         }
 
-        public void DropColumn(DbConnection connection, DiscoveredTable discoveredTable, DiscoveredColumn columnToDrop,
-            DbTransaction dbTransaction)
+        public override void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop)
         {
             throw new NotImplementedException();
         }
 
-        public int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null)
+        public override int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null)
         {
             var cmd = new OracleCommand("select count(*) from " + table.GetFullyQualifiedName(), (OracleConnection) connection);
             cmd.Transaction = dbTransaction as OracleTransaction;
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
-        public string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName)
+        public override string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName)
         {
             //make it dynamic if it isn't already
             bodySql.Escape(new OracleQuerySyntaxHelper());
@@ -114,7 +110,7 @@ nCount NUMBER;
 v_sql LONG;
 
 begin
-SELECT count(*) into nCount FROM dba_tables where table_name = '{0}';
+SELECT count(*) into nCount FROM all_tables where table_name = '{0}';
 IF(nCount {1} 0)
 THEN
 v_sql:='{2}';
@@ -182,24 +178,24 @@ end;
             return columnType + lengthQualifier;
         }
 
-        public void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop, DbTransaction dbTransaction)
+        public override void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop)
         {
             throw new NotImplementedException();
         }
 
-        public DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction,
+        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction,
             IManagedConnection connection, string database, string tableName)
         {
             throw new NotImplementedException();
         }
 
-        public DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection,
+        public override DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection,
             DiscoveredTableValuedFunction discoveredTableValuedFunction, DbTransaction transaction)
         {
             throw new NotImplementedException();
         }
 
-        public IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction)
+        public override IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection)
         {
             throw new NotImplementedException();
         }

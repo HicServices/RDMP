@@ -281,7 +281,6 @@
     <Compile Include="Integration\ToMemoryDataLoadJob.cs" />
     <Compile Include="Integration\WebFileDownloaderTests.cs" />
     <Compile Include="Integration\WebServiceConfigurationTests.cs" />
-    <Compile Include="SimpleFileImportingTests.cs" />
     <Compile Include="Integration\DatabaseOperationTests.cs" />
     <Compile Include="Integration\ExcelConversionTest.cs" />
     <Compile Include="Integration\FixedWidthTests.cs" />

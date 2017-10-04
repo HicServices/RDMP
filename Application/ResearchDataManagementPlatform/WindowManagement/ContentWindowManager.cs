@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
@@ -18,6 +19,7 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
+using CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
@@ -34,7 +36,9 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Issues;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.MainFormUITabs;
+using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
@@ -57,7 +61,6 @@ using DataExportManager.Icons.IconProvision;
 using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
-using DatasetLoaderUI;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
@@ -107,7 +110,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             UpdateChildProviders();
             RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
             
-            CoreIconProvider = new DataExportIconProvider(PluginUserInterfaces.Where(i=>!i.Exceptions.Any()).ToArray());
+            CoreIconProvider = new DataExportIconProvider(
+                
+                //handle custom icons from plugin user interfaces in which
+                PluginUserInterfaces.Where(i=>
+                
+                    //there are no exceptions
+                    i.Exceptions == null || !i.Exceptions.Any()
+
+                    ).ToArray());
+
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 
             DocumentationStore = new RDMPDocumentationStore(RepositoryLocator);
@@ -216,7 +228,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public void ExecuteLoadMetadata(object sender, LoadMetadata lmd)
         {
-            Activate<DatasetLoadControl, LoadMetadata>(lmd, CatalogueIcons.ExecuteArrow);
+            Activate<ExecuteLoadMetadataUI, LoadMetadata>(lmd, CatalogueIcons.ExecuteArrow);
+        }
+
+        public void ExecuteCacheProgress(object sender, CacheProgress cp)
+        {
+            Activate<ExecuteCacheProgressUI, CacheProgress>(cp);
         }
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable, string overrideConfirmationText = null)
@@ -229,12 +246,21 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (result == DialogResult.Yes)
             {
                 deleteable.DeleteInDatabase();
+                
+                var databaseObject = deleteable as DatabaseEntity;
 
-                var j = deleteable as JoinInfo;
-                if (j != null)
-                    RefreshBus.Publish(this, new RefreshObjectEventArgs(j.PrimaryKey));//JoinInfo is a special snowflake in that it is IDeletable and basically a database object but lacks an ID so isn't IMapsDirectlyToDatabaseTable
-                else
-                    RefreshBus.Publish(this,new RefreshObjectEventArgs((DatabaseEntity)deleteable));
+                if (databaseObject == null)
+                {
+                    var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
+                    if(descendancy != null)
+                        databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+                }
+
+                if(databaseObject == null)
+                    throw new NotSupportedException("IDeletable " + deleteable + " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
+                
+                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject));
+
                 return true;
             }
 
@@ -425,6 +451,31 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return Activate<LoadDiagram, LoadMetadata>(loadMetadata);
         }
 
+        public void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer)
+        {
+            Activate<ExternalDatabaseServerUI,ExternalDatabaseServer>(externalDatabaseServer);
+        }
+
+        public void ActivateTableInfo(object sender, TableInfo tableInfo)
+        {
+            Activate<TableInfoUI, TableInfo>(tableInfo);
+        }
+
+        public void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn)
+        {
+            Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
+        }
+
+        public void ActivateCacheProgress(object sender, CacheProgress cacheProgress)
+        {
+            Activate<CacheProgressUI, CacheProgress>(cacheProgress);
+        }
+
+        public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
+        {
+            Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
+        }
+
         public void ExecuteCohortSummaryGraph(object sender,CohortSummaryAggregateGraphObjectCollection objectCollection)
         {
             Activate<CohortSummaryAggregateGraph>(objectCollection);
@@ -468,7 +519,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ExecuteRelease(object sender, Project project)
         {
-            Activate<DataReleaseUI, Project>(project,CatalogueIcons.Release);
+            Activate<DataReleaseUI, Project>(project, CatalogueIcons.Release);
+            //Activate<ConfigureAndExecuteDataReleaseUI, Project>(project,CatalogueIcons.Release);
         }
 
         public void ActivateEditExtractionConfigurationDataset(SelectedDataSets selectedDataSets)

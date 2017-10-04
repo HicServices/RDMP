@@ -11,7 +11,7 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngineTests.Integration
 {
-    public class ToMemoryDataLoadJob : ToMemoryDataLoadEventReceiver, IDataLoadJob
+    public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     {
         public ToMemoryDataLoadJob(bool throwOnErrorEvents = true): base(throwOnErrorEvents)
         {

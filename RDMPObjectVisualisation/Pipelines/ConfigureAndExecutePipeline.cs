@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Pipelines;
@@ -41,6 +42,8 @@ namespace RDMPObjectVisualisation.Pipelines
         private PipelineSelectionUI<DataTable> _pipelineSelectionUI;
         private PipelineDiagram<DataTable> pipelineDiagram1;
 
+
+        public event PipelineEngineEventHandler PipelineExecutionStarted;
         public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
         private ForkDataLoadEventListener fork = null;
@@ -171,7 +174,9 @@ namespace RDMPObjectVisualisation.Pipelines
                 //clear any old results
                 progressUI1.Clear();
                 tabControl2.SelectTab(tpExecute);
-                
+
+                if(PipelineExecutionStarted != null)
+                    PipelineExecutionStarted(this,new PipelineEngineEventArgs(pipeline));
 
                 //start a new thread
                 Thread threadExecute = new Thread(() =>

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using RDMPObjectVisualisation.Etier.IconHelper;
+using RDMPObjectVisualisation.Menus.MenuItems;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
@@ -36,7 +37,11 @@ namespace RDMPObjectVisualisation.DataObjects
             lblFileSize.Text = GetFileSizeSensible();
 
             this.Width = 10 + lblFilename.PreferredWidth;
-            
+
+            var menu = new ContextMenuStrip();
+            menu.Items.Add(new OpenContainingFolderMenuItem(_value.File));
+
+            pictureBox1.ContextMenuStrip = menu;
         }
 
         private string GetFileSizeSensible()
@@ -48,7 +53,10 @@ namespace RDMPObjectVisualisation.DataObjects
         {
             try
             {
-                Process.Start(_value.File.FullName);
+                // combine the arguments together
+                string argument = "/select, \"" + _value.File.FullName + "\"";
+
+                Process.Start("explorer.exe", argument);
             }
             catch (Exception exception)
             {

@@ -36,8 +36,6 @@
             this.btnNewColumn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.preLoadDiscardedColumnUI1 = new CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding.PreLoadDiscardedColumnUI();
-            this.btnCheck = new System.Windows.Forms.Button();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.ddIdentifierDump = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.lblMustSpecifyIdentifierDump = new System.Windows.Forms.Label();
@@ -99,8 +97,6 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
-            this.splitContainer1.Panel2.Controls.Add(this.btnCheck);
-            this.splitContainer1.Panel2.Controls.Add(this.checksUI1);
             this.splitContainer1.Size = new System.Drawing.Size(853, 563);
             this.splitContainer1.SplitterDistance = 189;
             this.splitContainer1.TabIndex = 2;
@@ -145,31 +141,9 @@
             // 
             this.preLoadDiscardedColumnUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.preLoadDiscardedColumnUI1.Location = new System.Drawing.Point(3, 16);
-            this.preLoadDiscardedColumnUI1.MultiSelectMode = false;
             this.preLoadDiscardedColumnUI1.Name = "preLoadDiscardedColumnUI1";
-            this.preLoadDiscardedColumnUI1.PreLoadDiscardedColumn = null;
             this.preLoadDiscardedColumnUI1.Size = new System.Drawing.Size(648, 155);
             this.preLoadDiscardedColumnUI1.TabIndex = 0;
-            // 
-            // btnCheck
-            // 
-            this.btnCheck.Location = new System.Drawing.Point(6, 183);
-            this.btnCheck.Name = "btnCheck";
-            this.btnCheck.Size = new System.Drawing.Size(75, 23);
-            this.btnCheck.TabIndex = 2;
-            this.btnCheck.Text = "Check";
-            this.btnCheck.UseVisualStyleBackColor = true;
-            this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
-            // 
-            // checksUI1
-            // 
-            this.checksUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.checksUI1.Location = new System.Drawing.Point(3, 212);
-            this.checksUI1.Name = "checksUI1";
-            this.checksUI1.Size = new System.Drawing.Size(643, 348);
-            this.checksUI1.TabIndex = 1;
             // 
             // ddIdentifierDump
             // 
@@ -240,9 +214,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox ddIdentifierDump;
         private System.Windows.Forms.Label label3;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCheck;
         private System.Windows.Forms.Label lblMustSpecifyIdentifierDump;
     }
 }

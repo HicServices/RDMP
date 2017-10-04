@@ -26,6 +26,8 @@ namespace CatalogueLibrary.Providers
         public CacheProgress[] AllCacheProgresses { get; set; }
         public LoadPeriodically[] AllLoadPeriodicallies { get; set; }
 
+        public PermissionWindow[] AllPermissionWindows { get; set; }
+
         //Catalogue side of things
         public Catalogue[] AllCatalogues { get; set; }
 
@@ -50,17 +52,20 @@ namespace CatalogueLibrary.Providers
         public ANOTablesNode ANOTablesNode { get; private set; }
         public ANOTable[] AllANOTables { get; set; }
 
+        public ExternalDatabaseServer[] AllExternalServers { get; private set; }
         public TableInfoServerNode[] AllServers { get;private set; }
         public TableInfo[] AllTableInfos { get; private set; }
 
         public DataAccessCredentialsNode DataAccessCredentialsNode { get; set; }
-        
+
+        public AllExternalServersNode AllExternalServersNode { get; private set; }
         public AllServersNode AllServersNode { get; private set; }
 
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
         public ColumnInfo[] AllColumnInfos { get; private set; }
+        public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
         public Lookup[] AllLookups { get; set; }
 
@@ -95,7 +100,11 @@ namespace CatalogueLibrary.Providers
             AllLoadProgresses = repository.GetAllObjects<LoadProgress>();
             AllCacheProgresses = repository.GetAllObjects<CacheProgress>();
             AllLoadPeriodicallies = repository.GetAllObjects<LoadPeriodically>();
-            
+
+            AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
+
+            AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
+
             AllTableInfos = repository.GetAllObjects<TableInfo>();
             AllDataAccessCredentials = repository.GetAllObjects<DataAccessCredentials>();
             DataAccessCredentialsNode = new DataAccessCredentialsNode();
@@ -105,6 +114,7 @@ namespace CatalogueLibrary.Providers
             AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             
             AllColumnInfos = repository.GetAllObjects<ColumnInfo>();
+            AllPreLoadDiscardedColumns = repository.GetAllObjects<PreLoadDiscardedColumn>();
 
             AllSupportingDocuments = repository.GetAllObjects<SupportingDocument>();
             AllSupportingSQL = repository.GetAllObjects<SupportingSQLTable>();
@@ -134,6 +144,9 @@ namespace CatalogueLibrary.Providers
             foreach (JoinInfo j in AllJoinInfos)
                 j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
 
+            AllExternalServersNode = new AllExternalServersNode();
+            AddChildren(AllExternalServersNode);
+
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
 
@@ -144,6 +157,11 @@ namespace CatalogueLibrary.Providers
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
+        }
+
+        private void AddChildren(AllExternalServersNode allExternalServersNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
         }
 
         private void BuildServerNodes()
@@ -191,7 +209,15 @@ namespace CatalogueLibrary.Providers
 
         private void AddChildren(DataAccessCredentialsNode dataAccessCredentialsNode)
         {
-            AddToDictionaries(new HashSet<object>(AllDataAccessCredentials), new DescendancyList(dataAccessCredentialsNode));
+            HashSet<object> children = new HashSet<object>();
+            
+            children.Add(new DecryptionPrivateKeyNode());
+
+            foreach (var creds in AllDataAccessCredentials)
+                children.Add(creds);
+
+
+            AddToDictionaries(children, new DescendancyList(dataAccessCredentialsNode));
         }
 
         private void AddChildren(ANOTablesNode anoTablesNode)
@@ -269,8 +295,27 @@ namespace CatalogueLibrary.Providers
         {
             var cacheProgresses = AllCacheProgresses.Where(cp => cp.LoadProgress_ID == loadProgress.ID).ToArray();
 
+            foreach (CacheProgress cacheProgress in cacheProgresses)
+                AddChildren(cacheProgress, descendancy.Add(cacheProgress));
+
             if (cacheProgresses.Any())
                 AddToDictionaries(new HashSet<object>(cacheProgresses),descendancy);
+        }
+
+        private void AddChildren(CacheProgress cacheProgress, DescendancyList descendancy)
+        {
+            var children = new HashSet<object>();
+
+            if(cacheProgress.PermissionWindow_ID != null)
+            {
+                var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
+                var windowNode = new PermissionWindowUsedByCacheProgress(cacheProgress, window);
+
+                children.Add(windowNode);
+            }
+
+            if(children.Any())
+                AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(AllProcessTasksUsedByLoadMetadataNode allProcessTasksUsedByLoadMetadataNode, DescendancyList descendancy)
@@ -603,6 +648,30 @@ namespace CatalogueLibrary.Providers
         {
             //add empty hashset
             var children =  new HashSet<object>();
+            
+            //if the table has an identifier dump listed
+            if (tableInfo.IdentifierDumpServer_ID != null)
+            {
+                //if there is a dump (e.g. for dillution and dumping - not appearing in the live table)
+                ExternalDatabaseServer server = AllExternalServers.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
+
+                children.Add(new IdentifierDumpServerUsageNode(tableInfo, server));
+            }
+            
+            //get the discarded columns in this table
+            var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
+
+            //if there are discarded columns
+            if (discardedCols.Any())
+            {
+                var identifierDumpNode = new PreLoadDiscardedColumnsNode(tableInfo);
+                
+                //record that the usage is a child of TableInfo
+                children.Add(identifierDumpNode);
+
+                //record that the discarded columns are children of identifier dump usage node
+                AddToDictionaries(discardedCols, descendancy.Add(identifierDumpNode));
+            }
 
             //if it is a table valued function
             if (tableInfo.IsTableValuedFunction)
@@ -694,16 +763,24 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        public object[] GetAllDescendableObjects()
+        public Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
-            return _descendancyDictionary.Keys.ToArray();
+            var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
+
+            foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
+                toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
+
+            AddToReturnSearchablesWithNoDecendancy(toReturn,AllLoadMetadatas);
+            AddToReturnSearchablesWithNoDecendancy(toReturn,AllCohortIdentificationConfigurations);
+            
+            return toReturn;
         }
 
-        public object[] GetAllSearchables()
+        private void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {
-
-            return
-                AllLoadMetadatas.Cast<object>().Union(AllCohortIdentificationConfigurations).Union(GetAllDescendableObjects()).ToArray();
+            foreach (IMapsDirectlyToDatabaseTable m in toAdd)
+                toReturn.Add(m, null);
         }
     }
+
 }

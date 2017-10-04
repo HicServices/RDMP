@@ -22,17 +22,8 @@ namespace CatalogueManager.LocationsMenu
     /// keeping track of the locations of other servers such as the Logging server/database, Data Quality Engine reporting database, anonymisation databases, query caching databases
     /// etc. 
     /// 
-    /// This dialog lets you do 3 things:
-    /// 
-    /// 1. Create references to servers (ExternalDatabaseServer) this requires logistical name (what you want to call it) and servername.  Optionally you can specify a database (required
-    /// in the case of references to specific databases e.g. Logging Database), if you omit it then the 'master' database will be used.  If you do not specify a username/password then
-    /// Integrated Security will be used when connecting (the preferred method).  Usernames and passwords are stored in encrypted form (See PasswordEncryptionKeyLocationUI).
-    /// 
-    /// 2. Create an encryption key for the usernames/passwords stored in your Data Catalogue Database (See PasswordEncryptionKeyLocationUI)
-    /// 
-    /// 3. Configure/Create default servers required for certain parts of the RDMP software to work (e.g. Logging servers, a Data Quality Engine Reporting Databases etc).  If you are not
-    /// sure what a database is (e.g. Identifier Dump) then don't create one! 
-    /// 
+    /// This dialog lets you set which server references (ExternalDatabaseServer) are used for each of the defaults that RDMP has (e.g. which logging server should be used by default)
+    ///  
     /// </summary>
     public partial class ManageExternalServers : RDMPForm
     {
@@ -43,42 +34,6 @@ namespace CatalogueManager.LocationsMenu
 
 
         bool bloading;
-
-        private ExternalDatabaseServer ExternalDatabaseServer
-        {
-            get { return _externalDatabaseServer; }
-            set
-            {
-                _externalDatabaseServer = value;
-                
-                gbEdit.Enabled = _externalDatabaseServer != null;
-                bloading = true;
-                if (value != null)
-                {
-                    tbID.Text = value.ID.ToString();
-                    tbName.Text = value.Name;
-                    tbServerName.Text = value.Server;
-                    tbDatabaseName.Text = value.Database;
-                    tbUsername.Text = value.Username;
-                    tbPassword.Text = value.GetDecryptedPassword();
-                    ddSetKnownType.Text = value.CreatedByAssembly;
-
-                    pbServer.Image = _coreIconProvider.GetImage(value);
-                }
-                else
-                {
-                    pbServer.Image = null;
-                    tbID.Text = "";
-                    tbName.Text = "";
-                    tbServerName.Text = "";
-                    tbDatabaseName.Text = "";
-                    tbName.Text = "";
-                    tbPassword.Text = "";
-                    ddSetKnownType.Text = null;
-                }
-                bloading = false;
-            }
-        }
 
         public ManageExternalServers(ICoreIconProvider coreIconProvider)
         {
@@ -95,11 +50,6 @@ namespace CatalogueManager.LocationsMenu
 
             RefreshUIFromDatabase();
 
-            ddSetKnownType.Items.AddRange(
-                AppDomain.CurrentDomain.GetAssemblies() //get all current assemblies that are loaded
-                .Select(n=>n.GetName().Name)//get the name of the assembly
-                .Where(s => s.EndsWith(".Database") && //if it is a .Database assembly advertise it to the user as a known type of database
-                    !(s.EndsWith("CatalogueLibrary.Database") || s.EndsWith("DataExportManager.Database"))).ToArray()); //unless it's one of the core ones (catalogue/data export)
 
         }
 
@@ -110,9 +60,6 @@ namespace CatalogueManager.LocationsMenu
                 defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
 
                 var allServers = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
-
-                ddKnownServers.Items.Clear();
-                ddKnownServers.Items.AddRange(allServers);
                 
                 InitializeServerDropdown(ddDefaultLoggingServer, ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, allServers);
                 InitializeServerDropdown(ddDefaultTestLoggingServer, ServerDefaults.PermissableDefaults.TestLoggingServer_ID, allServers);
@@ -165,117 +112,7 @@ namespace CatalogueManager.LocationsMenu
                 comboBox.SelectedItem = comboBox.Items.Cast<ExternalDatabaseServer>().Single(s => s.ID == currentDefault.ID);
         }
 
-
-        private void ddKnownServers_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ExternalDatabaseServer = ddKnownServers.SelectedItem as ExternalDatabaseServer;
-        }
-
-        private void btnCheckState_Click(object sender, EventArgs e)
-        {
-            if (ExternalDatabaseServer != null)
-                try
-                {
-                    ragSmiley1.Reset();
-                    ragSmiley1.Visible = true;
-
-                    DataAccessPortal.GetInstance().ExpectServer(ExternalDatabaseServer,DataAccessContext.InternalDataProcessing).TestConnection();
-                    lblState.Text = "State:OK";
-                    lblState.ForeColor = Color.Green;
-                }
-                catch (Exception exception)
-                {
-                    lblState.Text = "State" + exception.Message;
-                    lblState.ForeColor = Color.Red;
-                    ragSmiley1.Fatal(exception);
-                }
-        }
-
-        private void btnSaveChanges_Click(object sender, EventArgs e)
-        {
-            if(ExternalDatabaseServer != null)
-            {
-                try
-                {
-                    pbServer.Image = _coreIconProvider.GetImage(ExternalDatabaseServer);
-                    ExternalDatabaseServer.SaveToDatabase();
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.Message);
-                }
-                RefreshUIFromDatabase();
-            }
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            if (ExternalDatabaseServer != null)
-                ExternalDatabaseServer.Name = ((TextBox)(sender)).Text;
-        }
-
-        private void tbServerName_TextChanged(object sender, EventArgs e)
-        {
-            if (ExternalDatabaseServer != null)
-                ExternalDatabaseServer.Server = ((TextBox)(sender)).Text;
-
-        }
-
-        private void tbDatabaseName_TextChanged(object sender, EventArgs e)
-        {
-            if (ExternalDatabaseServer != null)
-                ExternalDatabaseServer.Database = ((TextBox)(sender)).Text;
-
-        }
-
-        private void tbUsername_TextChanged(object sender, EventArgs e)
-        {
-            var str = ((TextBox) (sender)).Text;
-            if (ExternalDatabaseServer != null)
-                ExternalDatabaseServer.Username = str;
-
-            lblUsernameError.Text = !str.Trim().Equals(str) ? "Username has leading/trailing whitespace!" : "";
-        }
-
-        private void tbPassword_TextChanged(object sender, EventArgs e)
-        {
-            var str = ((TextBox) (sender)).Text;
-            if (ExternalDatabaseServer != null)
-                ExternalDatabaseServer.Password = str;
-
-
-            lblPasswordError.Text = !str.Trim().Equals(str) ? "Password has leading/trailing whitespace!" : "";
-        }
-
-        private void btnCreate_Click(object sender, EventArgs e)
-        {
-            int toSelect = new ExternalDatabaseServer(RepositoryLocator.CatalogueRepository,"New ExternalDatabaseServer " + Guid.NewGuid()).ID;
-            RefreshUIFromDatabase();
-            ddKnownServers.SelectedItem =ddKnownServers.Items.Cast<ExternalDatabaseServer>().Single(eds => eds.ID == toSelect);
-            
-            tbName.Focus();
-            tbName.SelectAll();
-
-        }
-
-        private void btnDeleteServer_Click(object sender, EventArgs e)
-        {
-            if(ExternalDatabaseServer != null)
-            {
-                try
-                {
-                    ExternalDatabaseServer.DeleteInDatabase();
-                    ExternalDatabaseServer = null;
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show("Cannot delete (it is probably referenced use by one or more Entities):" + Environment.NewLine + "\t" + exception.Message);
-
-                }
-                RefreshUIFromDatabase();
-            }
-        }
-
+        
         private void ddDefault_SelectedIndexChanged(object sender, EventArgs e)
         {
             ServerDefaults.PermissableDefaults toChange;
@@ -409,40 +246,6 @@ namespace CatalogueManager.LocationsMenu
         {
             CreateNewExternalServer(ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
         }
-
-        private void ddSetKnownType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if(bloading)
-                return;
-            
-            if(ExternalDatabaseServer != null)
-            {
-                ExternalDatabaseServer.CreatedByAssembly = ddSetKnownType.SelectedItem as string;
-                btnSaveChanges_Click(null,null);
-
-                
-            }
-        }
-
-        private void btnClearKnownType_Click(object sender, EventArgs e)
-        {
-            if (ExternalDatabaseServer != null)
-            {
-                ExternalDatabaseServer.CreatedByAssembly = null;
-                ddSetKnownType.SelectedItem = null;
-                ddSetKnownType.Text = null;
-            }
-        }
-
-        private void ddSetKnownType_Leave(object sender, EventArgs e)
-        {
-            if (ExternalDatabaseServer != null)
-            {
-                ExternalDatabaseServer.CreatedByAssembly = ddSetKnownType.Text;
-            }
-        }
-
-
 
 
     }

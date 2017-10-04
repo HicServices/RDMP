@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -17,20 +18,42 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
     {
         private Argument _argument;
-        private DemandsInitialization _demand;
+        private DemandsInitializationAttribute _demand;
         private bool _bLoading = true;
 
-        public ArgumentValueTextUI()
+        private bool _isPassword = false;
+
+        public ArgumentValueTextUI(bool isPassword)
         {
+            _isPassword = isPassword;
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
         {
             _bLoading = true;
             _argument = argument;
-            _demand = demand;
+            _demand = requirement.Demand;
             tbText.Text = argument.Value;
+
+            if(argument.GetSystemType() == typeof(DirectoryInfo))
+            {
+                tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                tbText.AutoCompleteSource = AutoCompleteSource.FileSystemDirectories;
+            }
+
+            if (argument.GetSystemType() == typeof(FileInfo))
+            {
+                tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                tbText.AutoCompleteSource = AutoCompleteSource.FileSystem;
+            }
+            
+            if (_isPassword)
+            {
+                tbText.UseSystemPasswordChar = true;
+                var val = _argument.GetValueAsSystemType();
+                tbText.Text = val != null ? ((IEncryptedString)val).GetDecryptedValue() : "";
+            }
 
             BombIfMandatoryAndEmpty();
             _bLoading = false;
@@ -42,17 +65,16 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 return;
 
             ragSmiley1.Reset();
-
-            _argument.Value = tbText.Text;
+            
+            _argument.SetValue(tbText.Text);
+            
             _argument.SaveToDatabase();
 
             try
             {
-                var val = _argument.GetValueAsSystemType();
-                tbText.Text = val != null?val.ToString():"";
-
+                _argument.GetValueAsSystemType();
+                
                 BombIfMandatoryAndEmpty();
-
             }
             catch (Exception exception)
             {

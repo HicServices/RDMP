@@ -16,16 +16,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         IDiscoveredColumnHelper GetColumnHelper();
         
-        void DropTable(DbConnection connection, DiscoveredTable tableToDrop, DbTransaction dbTransaction = null);
-        void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop, DbTransaction dbTransaction);
-
-        void DropColumn(DbConnection connection, DiscoveredTable discoveredTable, DiscoveredColumn columnToDrop,DbTransaction dbTransaction);
+        void DropTable(DbConnection connection, DiscoveredTable tableToDrop);
+        void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
+        void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop);
 
         int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null);
         string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName);
 
         DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection, DiscoveredTableValuedFunction discoveredTableValuedFunction, DbTransaction transaction);
 
-        IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction);
+        IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection);
+        
+        void TruncateTable(DiscoveredTable discoveredTable);
     }
 }

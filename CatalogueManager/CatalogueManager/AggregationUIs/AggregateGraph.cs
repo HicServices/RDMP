@@ -631,7 +631,7 @@ namespace CatalogueManager.AggregationUIs
             {
                 CachedAggregateConfigurationResultsManager cacheManager = GetCacheManager();
 
-                var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource, null,Timeout);
+                var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
                 cacheManager.CommitResults(args);
 
                 var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text);

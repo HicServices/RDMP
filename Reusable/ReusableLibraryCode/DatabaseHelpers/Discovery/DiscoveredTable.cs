@@ -74,16 +74,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return Helper.GetTopXSqlForTable(this, topX);
         }
 
-        public virtual void Drop(IManagedTransaction transaction = null)
+        public virtual void Drop()
         {
-            using(var connection = Database.Server.GetManagedConnection(transaction))
+            using(var connection = Database.Server.GetManagedConnection())
             {
-                //assuming we aren't in the middle of a horrible transaction, then we created a new connection and can safely switch to the correct database for the table being dropped
-                if(transaction == null)
-                    if(connection.Connection.Database != Database.GetRuntimeName())
-                        connection.Connection.ChangeDatabase(Database.GetRuntimeName());
-
-                Helper.DropTable(connection.Connection,this, dbTransaction: connection.Transaction);
+                Helper.DropTable(connection.Connection,this);
             }
         }
 
@@ -98,18 +93,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 return Helper.GetRowCount(connection.Connection, this, connection.Transaction);
         }
 
-        public void DropColumn(DiscoveredColumn column, IManagedTransaction transaction = null)
+        public void DropColumn(DiscoveredColumn column)
         {
-            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
+            using (IManagedConnection connection = Database.Server.GetManagedConnection())
             {
-                Helper.DropColumn(connection.Connection, this, column, connection.Transaction);
+                Helper.DropColumn(connection.Connection, column);
             }
         }
         
         public IBulkCopy BeginBulkInsert(IManagedTransaction transaction = null)
-        { 
-            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
-                return Helper.BeginBulkInsert(this, connection.Connection, connection.Transaction);
+        {
+            IManagedConnection connection = Database.Server.GetManagedConnection(transaction);
+            return Helper.BeginBulkInsert(this, connection);
+        }
+
+        public void Truncate()
+        {
+            Helper.TruncateTable(this);
         }
     }
 

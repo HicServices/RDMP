@@ -2,7 +2,9 @@ require 'albacore'
 
 load 'rakeconfig.rb'
 
-task :ci_continuous, [:config] => [:setup_connection, :deploy]
+task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :deploy]
+
+task :pluginbuild, [:folder] => [:assemblyinfo, :deployplugins]
 
 task :restorepackages do
     sh "nuget restore HIC.DataManagementPlatform.sln"
@@ -30,6 +32,38 @@ msbuild :deploy, [:config] => :restorepackages do |msb, args|
         :outdir => "#{PUBLISH_DIR}/"
     }
     msb.solution = SOLUTION
+end
+
+desc "Sets the version number from GIT"    
+assemblyinfo :assemblyinfo do |asm|
+	asm.input_file = "SharedAssemblyInfo.cs"
+    asm.output_file = "SharedAssemblyInfo.cs"
+    version = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
+    describe = `git describe`.strip
+    tag, rev, hash = describe.split(/-/)
+    major, minor, patch, build = version.split(/\./)
+    if PRERELEASE == "true"
+        puts "version: #{major}.#{minor}.#{patch}.#{rev} build:#{build} suffix:#{SUFFIX}"
+        asm.version = "#{major}.#{minor}.#{patch}.#{rev}"
+        asm.file_version = "#{major}.#{minor}.#{patch}.#{rev}"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{rev}-#{SUFFIX}"
+    elsif CANDIDATE == "true"
+        puts "version: #{major}.#{minor}.#{patch}.0 build:#{build} suffix:#{SUFFIX}#{rev}"
+        asm.version = "#{major}.#{minor}.#{patch}.0"
+        asm.file_version = "#{major}.#{minor}.#{patch}.0"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.0-#{SUFFIX}#{rev}"
+    else
+        puts "version: #{major}.#{minor}.#{patch}.0 build:#{build}"
+        asm.version = "#{major}.#{minor}.#{patch}.0"
+        asm.file_version = "#{major}.#{minor}.#{patch}.0"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.0"
+    end
+end
+
+task :deployplugins, [:folder] do |t, args|
+    Dir.chdir('Plugin/Plugin') do
+        sh "./build-and-deploy-local.bat #{args.folder}"
+    end
 end
 
 # task :link do

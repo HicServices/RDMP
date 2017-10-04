@@ -103,6 +103,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllExternalServersNode {
+            get {
+                object obj = ResourceManager.GetObject("AllExternalServersNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllProcessTasksUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllProcessTasksUsedByLoadMetadataNode", resourceCulture);
@@ -426,6 +436,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Database {
             get {
                 object obj = ResourceManager.GetObject("Database", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DecryptionPrivateKeyNode {
+            get {
+                object obj = ResourceManager.GetObject("DecryptionPrivateKeyNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1013,6 +1033,26 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap PermissionWindow {
+            get {
+                object obj = ResourceManager.GetObject("PermissionWindow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Pipeline {
+            get {
+                object obj = ResourceManager.GetObject("Pipeline", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap PivotField {
             get {
                 object obj = ResourceManager.GetObject("PivotField", resourceCulture);
@@ -1036,6 +1076,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap PreLoadDiscardedColumn {
             get {
                 object obj = ResourceManager.GetObject("PreLoadDiscardedColumn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap PreLoadDiscardedColumnsNode {
+            get {
+                object obj = ResourceManager.GetObject("PreLoadDiscardedColumnsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

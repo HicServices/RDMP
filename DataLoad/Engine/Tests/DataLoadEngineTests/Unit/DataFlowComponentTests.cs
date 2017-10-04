@@ -25,7 +25,7 @@ namespace DataLoadEngineTests.Unit
             var toProcess = new DataTable();
             toProcess.Columns.Add("Column1");
 
-            var ex = Assert.Throws<InvalidOperationException>(() => renamer.ProcessPipelineData( toProcess, new ToConsoleDataLoadEventReceiver(), cts.Token));
+            var ex = Assert.Throws<InvalidOperationException>(() => renamer.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token));
             Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
         }
 
@@ -42,7 +42,7 @@ namespace DataLoadEngineTests.Unit
             var toProcess = new DataTable();
             toProcess.Columns.Add("ToFind");
 
-            var processed = renamer.ProcessPipelineData( toProcess, new ToConsoleDataLoadEventReceiver(), cts.Token);
+            var processed = renamer.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token);
 
             Assert.AreEqual(1, processed.Columns.Count);
             Assert.AreEqual("ReplacementName", processed.Columns[0].ColumnName);

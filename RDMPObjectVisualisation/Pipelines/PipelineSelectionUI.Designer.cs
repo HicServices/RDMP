@@ -48,7 +48,7 @@
             this.ddPipelines.FormattingEnabled = true;
             this.ddPipelines.Location = new System.Drawing.Point(14, 21);
             this.ddPipelines.Name = "ddPipelines";
-            this.ddPipelines.Size = new System.Drawing.Size(524, 21);
+            this.ddPipelines.Size = new System.Drawing.Size(557, 21);
             this.ddPipelines.Sorted = true;
             this.ddPipelines.TabIndex = 25;
             this.ddPipelines.SelectedIndexChanged += new System.EventHandler(this.ddPipelines_SelectedIndexChanged);
@@ -57,9 +57,9 @@
             // 
             this.btnCreateNewPipeline.Location = new System.Drawing.Point(14, 77);
             this.btnCreateNewPipeline.Name = "btnCreateNewPipeline";
-            this.btnCreateNewPipeline.Size = new System.Drawing.Size(81, 22);
+            this.btnCreateNewPipeline.Size = new System.Drawing.Size(51, 22);
             this.btnCreateNewPipeline.TabIndex = 27;
-            this.btnCreateNewPipeline.Text = "Create New...";
+            this.btnCreateNewPipeline.Text = "New...";
             this.btnCreateNewPipeline.UseVisualStyleBackColor = true;
             this.btnCreateNewPipeline.Click += new System.EventHandler(this.btnCreateNewPipeline_Click);
             // 
@@ -68,7 +68,7 @@
             this.btnEditPipeline.Enabled = false;
             this.btnEditPipeline.Location = new System.Drawing.Point(14, 49);
             this.btnEditPipeline.Name = "btnEditPipeline";
-            this.btnEditPipeline.Size = new System.Drawing.Size(81, 22);
+            this.btnEditPipeline.Size = new System.Drawing.Size(41, 22);
             this.btnEditPipeline.TabIndex = 27;
             this.btnEditPipeline.Text = "Edit...";
             this.btnEditPipeline.UseVisualStyleBackColor = true;
@@ -96,9 +96,9 @@
             // btnClonePipeline
             // 
             this.btnClonePipeline.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClonePipeline.Location = new System.Drawing.Point(544, 19);
+            this.btnClonePipeline.Location = new System.Drawing.Point(577, 19);
             this.btnClonePipeline.Name = "btnClonePipeline";
-            this.btnClonePipeline.Size = new System.Drawing.Size(75, 23);
+            this.btnClonePipeline.Size = new System.Drawing.Size(42, 23);
             this.btnClonePipeline.TabIndex = 31;
             this.btnClonePipeline.Text = "Clone";
             this.btnClonePipeline.UseVisualStyleBackColor = true;
@@ -109,11 +109,11 @@
             this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDescription.Location = new System.Drawing.Point(101, 49);
+            this.tbDescription.Location = new System.Drawing.Point(71, 49);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.ReadOnly = true;
-            this.tbDescription.Size = new System.Drawing.Size(518, 80);
+            this.tbDescription.Size = new System.Drawing.Size(548, 80);
             this.tbDescription.TabIndex = 30;
             // 
             // label1
@@ -145,7 +145,7 @@
             this.btnDeletePipeline.Enabled = false;
             this.btnDeletePipeline.Location = new System.Drawing.Point(14, 105);
             this.btnDeletePipeline.Name = "btnDeletePipeline";
-            this.btnDeletePipeline.Size = new System.Drawing.Size(81, 22);
+            this.btnDeletePipeline.Size = new System.Drawing.Size(51, 22);
             this.btnDeletePipeline.TabIndex = 27;
             this.btnDeletePipeline.Text = "Delete";
             this.btnDeletePipeline.UseVisualStyleBackColor = true;

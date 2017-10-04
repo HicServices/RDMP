@@ -6,10 +6,13 @@ using System.Linq;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.ExtractionTime;
+using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
+using HIC.Logging;
 using NUnit.Framework;
+using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
@@ -40,31 +43,25 @@ namespace DataExportLibrary.Tests.DataExtraction
             
             TruncateDataTable();
 
-           //now create the engine factory to turn the Pipeline prototype into a runnable engine
-            var factory = new DataFlowPipelineEngineFactory<DataTable>(CatalogueRepository.MEF,ExtractionPipelineHost.Context);
+            var host = new ExtractionPipelineHost(_request,p,DataLoadInfo.Empty);
 
-            //ask the engine factory to create an engine for our pipeline (and check it against the context)
-            var engine = (DataFlowPipelineEngine<DataTable>)factory.Create(p, new ThrowImmediatelyEventsListener());
-
-            var source = ((ExecuteDatasetExtractionSource) engine.Source);
-            source.PreInitialize(_request,new ThrowImmediatelyEventsListener());
-
-            source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
+            var engine = host.GetEngine(p, new ThrowImmediatelyDataLoadEventListener());
+            host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
 
             var token = new GracefulCancellationToken();
             
             if(allowEmptyDatasetExtractions)
             {
 
-                var dt = source.GetChunk(new ThrowImmediatelyEventsListener(), token);
-                Assert.IsNull(source.GetChunk(new ThrowImmediatelyEventsListener(), token));
+                var dt = host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token);
+                Assert.IsNull(host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token));
 
                 Assert.AreEqual(0,dt.Rows.Count);
                 Assert.AreEqual(2, dt.Columns.Count);
             }
             else
             {
-                var exception = Assert.Throws<Exception>(() => source.GetChunk(new ThrowImmediatelyEventsListener(), token));
+                var exception = Assert.Throws<Exception>(() => host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token));
 
                 Assert.IsTrue(exception.Message.StartsWith("There is no data to load, query returned no rows, query was"));
             }

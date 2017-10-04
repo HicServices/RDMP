@@ -64,7 +64,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return argFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
                 
                 //tell it how to create new instances of us related to parent
-                parent.CreateNewArgument,
+                parent,
 
                 //what arguments already exist
                 parent.GetAllArguments().ToArray())

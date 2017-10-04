@@ -180,7 +180,7 @@ namespace DataLoadEngineTests.Integration
 
         private void Mutilate(string timeColumnName)
         {
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
             var mutilator = new StagingBackfillMutilator
             {
                 TimePeriodicityField = CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("WHERE Name=@Name", new Dictionary<string, object>
@@ -1029,7 +1029,7 @@ namespace DataLoadEngineTests.Integration
             #endregion
 
             // databases are now represent state after push to staging and before migration
-            var listener = new ToConsoleDataLoadEventReceiver();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
             var mutilator = new StagingBackfillMutilator
             {
                 TimePeriodicityField = CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("WHERE Name=@Name", new Dictionary<string, object>

@@ -245,10 +245,6 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
             ddPipeline.DataSource = compatiblePipelines;
             ddPipeline.SelectedItem = compatiblePipelines.First();
-
-            //if the user can only select one
-            //if (compatiblePipelines.Length == 1)
-                //gbPickPipeline.Enabled = false;
         }
 
         private enum State

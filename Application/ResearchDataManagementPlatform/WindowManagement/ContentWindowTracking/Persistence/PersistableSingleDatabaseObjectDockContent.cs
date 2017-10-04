@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
@@ -50,13 +52,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         public override void HandleUserRequestingTabRefresh(IActivateItems activator)
         {
-            var entity = DatabaseObject as DatabaseEntity;
-            
-            if(entity != null)
-            {
-                entity.RevertToDatabaseState();
-                activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(entity));
-            }
+            var cmd = new ExecuteCommandRefreshObject(activator, DatabaseObject as DatabaseEntity);
+
+            if (!cmd.IsImpossible)
+                cmd.Execute();
         }
 
         public override void HandleUserRequestingEmphasis(IActivateItems activator)

@@ -34,6 +34,7 @@ namespace Tests.Common
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         private static string _serverName;
         private static string _mySqlServer;
+        private static string _oracleServer;
 
         public CatalogueRepository CatalogueRepository
         {
@@ -61,10 +62,10 @@ namespace Tests.Common
             if (CatalogueRepository.SuppressHelpLoading == null)
                 CatalogueRepository.SuppressHelpLoading = true;
             
-            ReadSettingsFile(out _serverName, out TestDatabaseNames.Prefix,out _mySqlServer);
+            ReadSettingsFile(out _serverName, out TestDatabaseNames.Prefix,out _mySqlServer, out _oracleServer);
         }
 
-        private static void ReadSettingsFile(out string serverName,out string prefix, out string mysql)
+        private static void ReadSettingsFile(out string serverName,out string prefix, out string mysql, out string oracle)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Tests.Common.TestDatabases.txt";
@@ -76,13 +77,13 @@ namespace Tests.Common
             //there is a local text file so favour that one
             if (f != null)
             {
-                ReadSettingsFileFromStream(f.OpenRead(),out serverName,out prefix, out mysql);
+                ReadSettingsFileFromStream(f.OpenRead(),out serverName,out prefix, out mysql, out oracle);
                 return;
             }
 
             //otherwise use the embedded resource file
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                ReadSettingsFileFromStream(stream,out serverName,out prefix, out mysql);
+                ReadSettingsFileFromStream(stream,out serverName,out prefix, out mysql,out oracle);
             
         }
 
@@ -109,17 +110,16 @@ namespace Tests.Common
 
             CreateScratchArea();
 
-             
-            if(_mySqlServer != null)
-            {
-
+            if (_mySqlServer != null)
                 DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer));
-            }
+
+            if(_oracleServer != null)
+                DiscoveredOracleServer = new DiscoveredServer(new OracleConnectionStringBuilder(_oracleServer));
         }
 
         
 
-        private static void ReadSettingsFileFromStream(Stream stream, out string serverName, out string prefix, out string mySql)
+        private static void ReadSettingsFileFromStream(Stream stream, out string serverName, out string prefix, out string mySql, out string oracle)
         {
             using (StreamReader reader = new StreamReader(stream))
             {
@@ -130,6 +130,10 @@ namespace Tests.Common
 
                 var mysqlMatch = Regex.Match(result, "^MySql:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
                 mySql = mysqlMatch.Success? mysqlMatch.Groups[1].Value.Trim():null;
+
+
+                var oracleMatch = Regex.Match(result, "^Oracle:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                oracle = oracleMatch.Success ? oracleMatch.Groups[1].Value.Trim() : null;
             }
         }
 

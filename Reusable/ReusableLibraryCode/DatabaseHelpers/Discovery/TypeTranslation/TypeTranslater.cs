@@ -39,9 +39,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 return GetByteArrayDataType();
 
 
-            throw new NotImplementedException("Unsure what SQL Database type to use for Property Type " + t.Name);
+            throw new NotSupportedException("Unsure what SQL Database type to use for Property Type " + t.Name);
 
         }
+
 
         protected virtual string GetByteArrayDataType()
         {
@@ -90,6 +91,67 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         protected virtual string GetIntDataType()
         {
             return "int";
+        }
+        
+        public Type GetCSharpTypeForSQLDBType(string sqlType)
+        {
+            if (IsFloatingPoint(sqlType))
+                return typeof (decimal);
+
+            if (IsString(sqlType))
+                return typeof (string);
+
+            if (IsDate(sqlType))
+                return typeof (DateTime);
+
+            if (IsInt(sqlType))
+                return typeof(int);
+
+            if (IsBit(sqlType))
+                return typeof (bool);
+
+            if (IsByteArray(sqlType))
+                return typeof (byte[]);
+
+
+            throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
+        }
+
+        protected virtual bool IsByteArray(string sqlType)
+        {
+            return sqlType.ToLower().Contains("binary");
+        }
+
+        protected virtual bool IsBit(string sqlType)
+        {
+            return sqlType.Trim().Equals("bit", StringComparison.CurrentCultureIgnoreCase);
+        }
+
+
+        protected virtual bool IsInt(string sqlType)
+        {
+            return sqlType.Trim().Equals("int",StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        protected virtual bool IsDate(string sqlType)
+        {
+            return sqlType.ToLower().Contains("date");
+        }
+
+        protected virtual bool IsString(string sqlType)
+        {
+            return sqlType.ToLower().Contains("char") || sqlType.ToLower().Contains("text");
+        }
+
+        protected virtual bool IsFloatingPoint(string sqlType)
+        {
+            foreach (var s in new[] { "float","decimal","numeric" })
+            {
+                if (sqlType.Trim().StartsWith(s, StringComparison.CurrentCultureIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

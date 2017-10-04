@@ -81,19 +81,8 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
             
             RefreshUIFromDatabase();
             preLoadDiscardedColumnUI1.Saved += (s,e)=>RefreshUIFromDatabase();
-            preLoadDiscardedColumnUI1.MutliSelectDestinationChanged += preLoadDiscardedColumnUI1_MutliSelectDestinationChanged;
             lblTableInfoName.Text = TableInfo.GetRuntimeName();
             loading = false;
-        }
-
-        void preLoadDiscardedColumnUI1_MutliSelectDestinationChanged(DiscardedColumnDestination chosenDestination)
-        {
-            //occurs when user changes the destination combo box when there are multiple PreLoadDiscardedColumns selected in the listbox
-            foreach (PreLoadDiscardedColumn column in lbPreLoadDiscardedColumns.SelectedItems)
-            {
-                column.Destination = chosenDestination;
-                column.SaveToDatabase();
-            }
         }
 
         private void RefreshUIFromDatabase()
@@ -104,17 +93,6 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
 
         private void lbPreLoadDiscardedColumns_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lbPreLoadDiscardedColumns.SelectedItems.Count == 1)
-            {
-                preLoadDiscardedColumnUI1.MultiSelectMode = false;
-                preLoadDiscardedColumnUI1.PreLoadDiscardedColumn = lbPreLoadDiscardedColumns.SelectedItems[0] as PreLoadDiscardedColumn;
-                
-            }
-            else
-            {
-                preLoadDiscardedColumnUI1.MultiSelectMode = true;
-                preLoadDiscardedColumnUI1.PreLoadDiscardedColumn = null;
-            }
         }
 
         private void btnNewColumn_Click(object sender, EventArgs e)
@@ -156,8 +134,6 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
                         foreach (PreLoadDiscardedColumn column in lbPreLoadDiscardedColumns.SelectedItems)
                             column.DeleteInDatabase();
 
-                        
-                        preLoadDiscardedColumnUI1.PreLoadDiscardedColumn = null;
                         RefreshUIFromDatabase(); 
                         
                         e.Handled = true;
@@ -208,36 +184,8 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
                     TableInfo.IdentifierDumpServer_ID = server.ID;
                 
                 TableInfo.SaveToDatabase();
-                RunChecks();
             }
         }
 
-        private void RunChecks()
-        {
-            if(loading)
-                return;
-
-            lblMustSpecifyIdentifierDump.Visible = false;
-
-            IdentifierDumper dumper = null;
-            try
-            {
-                dumper = new IdentifierDumper(TableInfo);
-            }
-            catch (Exception e)
-            {
-                if (e.Message.Contains("does not have a listed IdentifierDump"))
-                    lblMustSpecifyIdentifierDump.Visible = true;
-                else
-                    checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to construct IdentifierDumper",CheckResult.Fail, e));
-            }
-            if(dumper != null)
-                checksUI1.StartChecking(dumper);
-        }
-
-        private void btnCheck_Click(object sender, EventArgs e)
-        {
-            RunChecks();
-        }
     }
 }

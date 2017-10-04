@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Reports;
+using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.SimpleDialogs.Reports;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
-using DatasetLoaderUI;
 using NUnit.Framework;
 using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement;
@@ -25,7 +25,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Console.WriteLine("////////////////////Documentation of UI Controls////////////////");
 
-            Assembly.Load(typeof (DatasetLoadControl).Assembly.FullName);
             Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
             Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
             Assembly.Load(typeof(ContentWindowManager).Assembly.FullName);

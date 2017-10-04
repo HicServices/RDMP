@@ -44,7 +44,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
+            this.pbLoading = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.tlvLoadedTables)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
             // 
             // btnDiscoverTables
@@ -65,7 +67,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             this.loadStateUI1.BackColor = System.Drawing.Color.Wheat;
             this.loadStateUI1.Location = new System.Drawing.Point(0, 0);
             this.loadStateUI1.Name = "loadStateUI1";
-            this.loadStateUI1.Size = new System.Drawing.Size(281, 19);
+            this.loadStateUI1.Size = new System.Drawing.Size(263, 19);
             this.loadStateUI1.TabIndex = 6;
             // 
             // helpIconDiscoverTables
@@ -92,10 +94,10 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(365, 553);
+            this.ragSmiley1.Location = new System.Drawing.Point(263, -1);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 2;
@@ -173,10 +175,25 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
             this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
             // 
+            // pbLoading
+            // 
+            this.pbLoading.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pbLoading.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.pbLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
+            this.pbLoading.InitialImage = null;
+            this.pbLoading.Location = new System.Drawing.Point(159, 216);
+            this.pbLoading.Name = "pbLoading";
+            this.pbLoading.Size = new System.Drawing.Size(104, 101);
+            this.pbLoading.TabIndex = 170;
+            this.pbLoading.TabStop = false;
+            this.pbLoading.Visible = false;
+            // 
             // LoadDiagram
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pbLoading);
             this.Controls.Add(this.btnExpandOrCollapse);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.label1);
@@ -189,6 +206,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             this.Name = "LoadDiagram";
             this.Size = new System.Drawing.Size(392, 578);
             ((System.ComponentModel.ISupportInitialize)(this.tlvLoadedTables)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -208,5 +226,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Button btnExpandOrCollapse;
+        private System.Windows.Forms.PictureBox pbLoading;
     }
 }

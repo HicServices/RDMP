@@ -130,7 +130,7 @@ namespace DataLoadEngineTests.Integration
                 Assert.AreEqual("Ok", r["name2"]);
             }
             
-            attacher.LoadCompletedSoDispose(ExitCodeType.Success,new ToConsoleDataLoadEventReceiver());
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
 
             File.Delete(filename);
         }
@@ -172,7 +172,7 @@ namespace DataLoadEngineTests.Integration
                 Assert.AreEqual("Crusher", r["name2"]);
             }
 
-            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ToConsoleDataLoadEventReceiver());
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
             File.Delete(filename);
 

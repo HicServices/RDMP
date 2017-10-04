@@ -9,9 +9,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
     public class MySqlBulkCopy : IBulkCopy
     {
         private readonly DiscoveredTable _discoveredTable;
-        private DbConnection _connection;
+        private IManagedConnection _connection;
         
-        public MySqlBulkCopy(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction)
+        public MySqlBulkCopy(DiscoveredTable discoveredTable, IManagedConnection connection)
         {
             _discoveredTable = discoveredTable;
             _connection = connection;
@@ -19,7 +19,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public int Upload(DataTable dt)
         {
-            var loader = new MySqlBulkLoader((MySqlConnection)_connection);
+            var loader = new MySqlBulkLoader((MySqlConnection)_connection.Connection);
             loader.TableName = _discoveredTable.GetRuntimeName();
             
             var tempFile = Path.GetTempFileName();
@@ -45,7 +45,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public void Dispose()
         {
-            
+           _connection.Dispose();
         }
     }
 }

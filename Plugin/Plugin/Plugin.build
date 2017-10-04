@@ -4,23 +4,23 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
   <Target Name="Deploy">
-    
-    <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
-           Text="Please pass 'ReleaseNugetPackageSource' in to this build task (/p:ReleaseNugetPackageSource=foo)" />
-    
-    <Message Text="Pushing to nuget server at $(ReleaseNugetPackageSource) after build" />
-    
     <CallTarget Targets="Build" />
+    	
+    <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
+       Text="Please pass 'ReleaseNugetPackageSource' in to this build task (/p:ReleaseNugetPackageSource=foo)" />
+
+    <Message Text="Pushing to nuget server at $(ReleaseNugetPackageSource) after build" />
 	
-	<!--
-	  <PropertyGroup Condition="'$(ConfigurationName)'=='Release' And '$(PushRelease)'!='' And '$(PushRelease)'==1">
-      <ReleaseNugetPackage>true</ReleaseNugetPackage>
-      <ReleaseNugetPackageSource>http://adp-hicci-01/nuget/</ReleaseNugetPackageSource>
-      <ReleaseNugetPushParams>-ApiKey hicteamserver</ReleaseNugetPushParams>
-    </PropertyGroup>
+    <!--
+        <PropertyGroup Condition="'$(ConfigurationName)'=='Release' And '$(PushRelease)'!='' And '$(PushRelease)'==1">
+            <ReleaseNugetPackage>true</ReleaseNugetPackage>
+            <ReleaseNugetPackageSource>http://adp-hicci-01/nuget/</ReleaseNugetPackageSource>
+            <ReleaseNugetPushParams>-ApiKey hicteamserver</ReleaseNugetPushParams>
+        </PropertyGroup>
     -->
 	
   	<Exec Command="nuget pack Plugin.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName)" />    
+    <Exec Command="nuget push HIC.RDMP.Plugin.*.nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />    
   </Target>
   
   <Target Name="Build">

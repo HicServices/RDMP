@@ -208,36 +208,5 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
                 Assert.AreEqual(0, table.GetRowCount());
             }
         }
-
-        [Test]
-        public void CannotDelete()
-        {
-            var table = _database.ExpectTable("Fish");
-
-            Assert.IsTrue(table.Exists());
-
-            using (var connection = server.BeginNewTransactedConnection())
-            {
-                var t = connection.ManagedTransaction;
-
-                //table should be there
-                Assert.IsTrue(table.Exists(t));
-            
-                //drop it within transaction
-                table.Drop(t);
-
-                //shouldn't be there within transaction
-                Assert.IsFalse(table.Exists(t));
-            
-                //abandon transaction
-                t.AbandonAndCloseConnection();
-                
-            }
-            //table should be there still
-            Assert.IsTrue(table.Exists());
-
-            //rollback meant that table was there so it should refuse to drop it
-            Assert.Throws<InvalidOperationException>(() => _database.Drop());
-        }
     }
 }

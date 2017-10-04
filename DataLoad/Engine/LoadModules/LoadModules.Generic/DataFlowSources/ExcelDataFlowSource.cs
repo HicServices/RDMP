@@ -19,6 +19,7 @@ using LoadModules.Generic.Exceptions;
 using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using DataTable = System.Data.DataTable;
 using Excel = Microsoft.Office.Interop.Excel; 
@@ -71,7 +72,7 @@ namespace LoadModules.Generic.DataFlowSources
             //set the table name to:
             toReturn.TableName =  
                 //sane version of
-                DelimitedFlatFileDataFlowSource.MakeHeaderNameSane(
+                QuerySyntaxHelper.MakeHeaderNameSane(
                     //the filename
                     Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
             
@@ -184,7 +185,7 @@ namespace LoadModules.Generic.DataFlowSources
                                 legitColumns.Add(c,toReturn.Columns.Count);//index of the column in our data table
 
                                 if (MakeHeaderNamesSane)
-                                    header = DelimitedFlatFileDataFlowSource.MakeHeaderNameSane(header);
+                                    header = QuerySyntaxHelper.MakeHeaderNameSane(header);
 
                                 //watch for duplicate columns
                                 if(toReturn.Columns.Contains(header))
@@ -391,7 +392,7 @@ namespace LoadModules.Generic.DataFlowSources
             DataTable dt;
             try
             {
-                dt = GetAllData(new ToConsoleDataLoadEventReceiver(),token);
+                dt = GetAllData(new ThrowImmediatelyDataLoadEventListener(),token);
             }
             catch (Exception e)
             {

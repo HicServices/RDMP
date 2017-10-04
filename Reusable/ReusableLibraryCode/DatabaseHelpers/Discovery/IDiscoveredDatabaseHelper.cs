@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.Contracts;
@@ -24,6 +23,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         void DropDatabase(DiscoveredDatabase database);
 
         Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database);
-        
+
+        DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty=false);
+        DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns);
     }
 }

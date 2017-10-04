@@ -62,5 +62,9 @@ namespace CatalogueLibrary.Providers
             return Parents.Last();
         }
 
+        public int ScoreSearch(string[] searchTokens)
+        {
+            return -1;
+        }
     }
 }

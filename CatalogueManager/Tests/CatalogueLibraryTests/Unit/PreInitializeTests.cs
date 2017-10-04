@@ -20,7 +20,7 @@ namespace CatalogueLibraryTests.Unit
             FishUser fishUser = new FishUser();
 
             Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(),fishUser, fish);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(),fishUser, fish);
             Assert.AreEqual(fishUser.IFish, fish);
         }
 
@@ -31,7 +31,7 @@ namespace CatalogueLibraryTests.Unit
             FishUser fishUser = new FishUser();
             
             Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(), fishUser,new object(), fish);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser,new object(), fish);
             Assert.AreEqual(fishUser.IFish, fish);
         }
         [Test]
@@ -41,7 +41,7 @@ namespace CatalogueLibraryTests.Unit
             FishUser fishUser = new FishUser();
 
             Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(), fishUser, (IFish)fish);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, (IFish)fish);
             Assert.AreEqual(fishUser.IFish, fish);
         }
            
@@ -52,14 +52,14 @@ namespace CatalogueLibraryTests.Unit
 
             IFish f = fish;
             Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ToConsoleDataLoadEventReceiver(), fishUser, f);
+            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, f);
             Assert.AreEqual(fishUser.IFish, fish);
         }
         [Test]
         public void TestNoObjects()
         {
             SpecificFishUser fishUser = new SpecificFishUser();
-            var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ToConsoleDataLoadEventReceiver(), fishUser, new object[0]));
+            var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, new object[0]));
             Assert.IsTrue(ex.Message.StartsWith("The following expected types were not passed to PreInitialize:Fish"));
         }
 
@@ -67,7 +67,7 @@ namespace CatalogueLibraryTests.Unit
         public void TestWrongObjects()
         {
             SpecificFishUser fishUser = new SpecificFishUser();
-            var ex = Assert.Throws<Exception>(() => context.PreInitialize(new ToConsoleDataLoadEventReceiver(), fishUser, new Penguin()));
+            var ex = Assert.Throws<Exception>(() => context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, new Penguin()));
             Assert.IsTrue(ex.Message.StartsWith("The following expected types were not passed to PreInitialize:Fish"));
             Assert.IsTrue(ex.Message.Contains("The object types passed were:"));
             Assert.IsTrue(ex.Message.Contains("Penguin"));

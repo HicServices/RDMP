@@ -4,6 +4,7 @@ using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime;
@@ -98,7 +99,6 @@ namespace DataExportLibrary.ExtractionTime.Commands
 
         private ExtractDatasetCommand()
         {
-            
         }
 
         public void GenerateQueryBuilder()
@@ -120,6 +120,9 @@ namespace DataExportLibrary.ExtractionTime.Commands
 
         public DirectoryInfo GetExtractionDirectory()
         {
+            if (this == EmptyCommand)
+                return new DirectoryInfo(Path.GetTempPath());
+
             return Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
         }
         public string DescribeExtractionImplementation()

@@ -100,8 +100,8 @@ namespace DataLoadEngineTests.Integration
                 var logManager = new LogManager(loggingServer);
                 var preExecutionChecker = new PreExecutionChecker(loadMetadata, configuration);
                 var pipelineFactory = new HICDataLoadFactory(loadMetadata, configuration, loadConfigurationFlags, CatalogueRepository, logManager);
-                var pipeline = pipelineFactory.Create(new ToConsoleDataLoadEventReceiver());
-                var stage2_ExecuteDataLoad = new DataLoadProcess(loadMetadata, preExecutionChecker, logManager, new ToConsoleDataLoadEventReceiver(), pipeline);
+                var pipeline = pipelineFactory.Create(new ThrowImmediatelyDataLoadEventListener());
+                var stage2_ExecuteDataLoad = new DataLoadProcess(loadMetadata, preExecutionChecker, logManager, new ThrowImmediatelyDataLoadEventListener(), pipeline);
                 
                 stage2_ExecuteDataLoad.Run(new GracefulCancellationToken());
                 Assert.IsTrue(stage2_ExecuteDataLoad.ExitCode == ExitCodeType.Success);

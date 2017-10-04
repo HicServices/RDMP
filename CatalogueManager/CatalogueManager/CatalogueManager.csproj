@@ -238,7 +238,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestTimestampUrl>http://timestamp.verisign.com/scripts/timstamp.dll</ManifestTimestampUrl>
@@ -341,13 +341,20 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewProcessTask.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCatalogueWithLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChoosePlatformDatabase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingExistingDataTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
@@ -367,7 +374,9 @@
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
+    <Compile Include="CommandExecution\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
     <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
+    <Compile Include="CommandExecution\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
     <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
     <Compile Include="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />
@@ -391,6 +400,26 @@
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadExecutionUIs\CachingDashboard\CacheProgressTreeNode.cs" />
+    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.Designer.cs">
+      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadExecutionUIs\CachingDashboard\PermissionWindowTreeNode.cs" />
+    <Compile Include="LoadExecutionUIs\ExecuteCacheProgressUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LoadExecutionUIs\ExecuteCacheProgressUI.Designer.cs">
+      <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadExecutionUIs\ExecuteLoadMetadataUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LoadExecutionUIs\ExecuteLoadMetadataUI.Designer.cs">
+      <DependentUpon>ExecuteLoadMetadataUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataViewing\Collections\Arbitrary\ArbitraryTableExtractionUICollection.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramColumnNode.cs" />
@@ -482,7 +511,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FamFamFamIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\IconConcept.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionality.cs" />
     <Compile Include="Collections\RDMPCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -579,7 +607,7 @@
       <DependentUpon>LoadMetadataUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.Designer.cs">
       <DependentUpon>PermissionWindowUI.cs</DependentUpon>
@@ -665,8 +693,16 @@
     <Compile Include="ItemActivation\Emphasis\EmphasiseItemHandler.cs" />
     <Compile Include="ItemActivation\Emphasis\EmphasiseRequest.cs" />
     <Compile Include="ItemActivation\IActivateItems.cs" />
+    <Compile Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.Designer.cs">
+      <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Menus\AggregateFilterContainerMenu.cs" />
     <Compile Include="Menus\AggregatesNodeMenu.cs" />
+    <Compile Include="Menus\AllExternalServersNodeMenu.cs" />
+    <Compile Include="Menus\CacheProgressMenu.cs" />
     <Compile Include="Menus\CatalogueItemsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
@@ -677,6 +713,7 @@
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
     <Compile Include="Menus\MenuItems\AddAggregateMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddJoinInfoMenuItem.cs" />
@@ -684,6 +721,14 @@
     <Compile Include="Menus\MenuItems\AddSupportingDocumentMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddSupportingSqlTableMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddCatalogueItemMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
+    <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -839,7 +884,7 @@
       <DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="MainFormUITabs\SubComponents\TableInfoUI.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MainFormUITabs\SubComponents\TableInfoUI.Designer.cs">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
@@ -943,12 +988,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\Reports\DatabaseSizeReportUI.Designer.cs">
       <DependentUpon>DatabaseSizeReportUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\Reports\MockarooFileGeneratorUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Reports\MockarooFileGeneratorUI.Designer.cs">
-      <DependentUpon>MockarooFileGeneratorUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Revertable\OfferChanceToSaveDialog.cs">
       <SubType>Form</SubType>
@@ -1309,6 +1348,9 @@
     <None Include="Icons\AllCataloguesUsedByLoadMetadataNode.png" />
     <None Include="Icons\Exe.png" />
     <None Include="Icons\Executable.png" />
+    <None Include="Icons\AllExternalServersNode.png" />
+    <None Include="Icons\DecryptionPrivateKeyNode.png" />
+    <None Include="Icons\AllPreLoadDiscardedColumns.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1378,6 +1420,12 @@
     <None Include="Icons\LoadBubbleMounting.png" />
     <None Include="Icons\PreLoadDiscardedColumn.png" />
     <None Include="Icons\Warning.png" />
+    <None Include="Icons\PreLoadDiscardedColumnsCollection.png" />
+    <None Include="Icons\PreLoadDiscardedColumnsNode.png" />
+    <None Include="Icons\lock_break.png" />
+    <None Include="Icons\Overlays\locked.png" />
+    <None Include="Icons\PermissionWindow.png" />
+    <None Include="Icons\Pipeline.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1424,6 +1472,17 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.resx">
+      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
+      <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoadExecutionUIs\ExecuteLoadMetadataUI.resx">
+      <DependentUpon>ExecuteLoadMetadataUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DataQualityUIs\DQEExecutionControl.resx">
       <DependentUpon>DQEExecutionControl.cs</DependentUpon>
@@ -1545,6 +1604,9 @@
       <SubType>Designer</SubType>
       <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.resx">
+      <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ObjectVisualisation\RDMPObjectsRibbonUI.resx">
       <DependentUpon>RDMPObjectsRibbonUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1622,9 +1684,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Reports\DatabaseSizeReportUI.resx">
       <DependentUpon>DatabaseSizeReportUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\MockarooFileGeneratorUI.resx">
-      <DependentUpon>MockarooFileGeneratorUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Revertable\OfferChanceToSaveDialog.resx">
       <DependentUpon>OfferChanceToSaveDialog.cs</DependentUpon>

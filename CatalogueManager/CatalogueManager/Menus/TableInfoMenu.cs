@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,8 +53,6 @@ namespace CatalogueManager.Menus
 
             Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, false)));
 
-            Items.Add("Edit TableInfo", null, delegate { EditTableInfo_Click(tableInfo); });
-            
             Items.Add(new ToolStripSeparator());
             Items.Add(new AddLookupMenuItem(activator, "Add new Lookup Table Relationship", null, tableInfo));
             Items.Add(new AddJoinInfoMenuItem(activator, tableInfo));
@@ -79,8 +78,10 @@ namespace CatalogueManager.Menus
             Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution, delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
             Items.Add(new ToolStripSeparator());
-            Items.Add("Configure Discarded Columns ", activator.CoreIconProvider.GetImage(RDMPConcept.PreLoadDiscardedColumn), delegate { ConfigureDiscardedColumns_Click(tableInfo); });
-            
+            Items.Add(new SetDumpServerMenuItem(activator, tableInfo));
+            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, tableInfo)));
+            Items.Add(new ToolStripSeparator());
+
             if (tableInfo != null && tableInfo.IsTableValuedFunction)
                 Items.Add("Configure Parameters...", activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
 
@@ -112,11 +113,6 @@ namespace CatalogueManager.Menus
             dialog.ShowDialog(this);
         }
 
-        private void ConfigureDiscardedColumns_Click(TableInfo tableInfo)
-        {
-            var dialog = new ConfigurePreLoadDiscardedColumns(tableInfo);
-            dialog.ShowDialog(this);
-        }
 
         private void SynchronizeANOConfiguration_Click(TableInfo tableInfo)
         {
@@ -188,15 +184,6 @@ namespace CatalogueManager.Menus
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(newColumnInfo));
         }
         
-        private void EditTableInfo_Click(TableInfo tableInfo)
-        {
-            var t = new TableInfoUI(tableInfo);
-            t.RepositoryLocator = RepositoryLocator;
-            t.ShowDialog();
-
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(tableInfo));
-        }
-
         private void ConfigureTableInfoParameters(TableInfo tableInfo)
         {
             ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptionsFactory().Create(tableInfo));
@@ -232,8 +219,5 @@ namespace CatalogueManager.Menus
                 ExceptionViewer.Show(e);
             }
         }
-
-
-        
     }
 }

@@ -7,6 +7,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
@@ -28,6 +29,9 @@ namespace ResearchDataManagementPlatform
 
             dockPanel1.DocumentStyle = DocumentStyle.DockingWindow;
             WindowState = FormWindowState.Maximized;
+
+            if(!UserSettingsFile.GetInstance().LicenseAccepted)
+                new LicenseUI().ShowDialog();
         }
 
         ToolboxWindowManager _windowManager;
@@ -40,6 +44,7 @@ namespace ResearchDataManagementPlatform
                 return;
 
             _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator);
+            rdmpMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
@@ -74,7 +79,6 @@ namespace ResearchDataManagementPlatform
             }
          
             FormClosing += CloseForm;
-            rdmpMenuStrip1.SetWindowManager(_windowManager);
         }
 
         private void CloseForm(object sender, FormClosingEventArgs e)

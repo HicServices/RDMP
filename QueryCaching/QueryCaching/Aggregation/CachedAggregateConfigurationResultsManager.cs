@@ -12,7 +12,6 @@ using QueryCaching.Database;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DataTableExtension;
 
 namespace QueryCaching.Aggregation
 {
@@ -37,7 +36,7 @@ namespace QueryCaching.Aggregation
             {
                 con.Open();
 
-                var r = DatabaseCommandHelper.GetCommand("Select TableName from [CachedAggregateConfigurationResults] WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" +operation + "'" , con).ExecuteReader();
+                var r = DatabaseCommandHelper.GetCommand("Select TableName from CachedAggregateConfigurationResults WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" +operation + "'" , con).ExecuteReader();
                 
                 if (r.Read())
                 {
@@ -55,7 +54,7 @@ namespace QueryCaching.Aggregation
             {
                 con.Open();
 
-                var cmd = DatabaseCommandHelper.GetCommand("Select TableName,SqlExecuted from [CachedAggregateConfigurationResults] WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" + operation + "'", con);
+                var cmd = DatabaseCommandHelper.GetCommand("Select TableName,SqlExecuted from CachedAggregateConfigurationResults WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" + operation + "'", con);
                 var r = cmd.ExecuteReader();
 
                 if (r.Read())
@@ -92,28 +91,25 @@ namespace QueryCaching.Aggregation
             using (var con = _server.GetConnection())
             {
                 con.Open();
-                var transaction = con.BeginTransaction();
-
+                
                 string nameWeWillGiveTableInCache = operation + "_AggregateConfiguration" + configuration.ID;
 
                 //either it has no name or it already has name we want so its ok
                 arguments.Results.TableName = nameWeWillGiveTableInCache;
 
-                DataTableHelper helper = new DataTableHelper(arguments.Results);
-                string tableName;
-
                 //add explicit types
-                if(arguments.ExplicitTypesDictionary != null)
-                    foreach (KeyValuePair<string, string> kvp in arguments.ExplicitTypesDictionary)
-                        helper.ExplicitWriteTypes.Add(kvp.Key, kvp.Value);
-                
-                helper.UploadFileToConnection(_server, con, out tableName, transaction,true,false);
+                var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
+                if(tbl.Exists())
+                    tbl.Drop();
 
+                tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
+
+                if (!tbl.Exists())
+                    throw new Exception("Cache table did not exist even after CreateTable completed without error!");
 
                 var cmdCreateNew =
                     DatabaseCommandHelper.GetCommand(
-                        "INSERT INTO [CachedAggregateConfigurationResults] (Committer,AggregateConfiguration_ID,SqlExecuted,Operation,TableName) Values (@Committer,@AggregateConfiguration_ID,@SqlExecuted,@Operation,@TableName)", con,transaction);
-
+                        "INSERT INTO CachedAggregateConfigurationResults (Committer,AggregateConfiguration_ID,SqlExecuted,Operation,TableName) Values (@Committer,@AggregateConfiguration_ID,@SqlExecuted,@Operation,@TableName)",con);
 
                 cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@Committer", cmdCreateNew));
                 cmdCreateNew.Parameters["@Committer"].Value = Environment.UserName;
@@ -128,13 +124,11 @@ namespace QueryCaching.Aggregation
                 cmdCreateNew.Parameters["@Operation"].Value = operation.ToString();
 
                 cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@TableName", cmdCreateNew));
-                cmdCreateNew.Parameters["@TableName"].Value = tableName;
+                cmdCreateNew.Parameters["@TableName"].Value = tbl.GetRuntimeName();
 
                 cmdCreateNew.ExecuteNonQuery();
 
-                arguments.CommitTableDataCompleted(_server,tableName, helper, con, transaction);
-             
-                transaction.Commit();
+                arguments.CommitTableDataCompleted(tbl);
             }
         }
 
@@ -152,7 +146,7 @@ namespace QueryCaching.Aggregation
                 _database.ExpectTable(table.GetRuntimeName()).Drop();
                 
                 //delete the record!
-                int deletedRows = DatabaseCommandHelper.GetCommand("DELETE FROM [CachedAggregateConfigurationResults] WHERE AggregateConfiguration_ID = "+configuration.ID+" AND Operation = '"+operation+"'", con).ExecuteNonQuery();
+                int deletedRows = DatabaseCommandHelper.GetCommand("DELETE FROM CachedAggregateConfigurationResults WHERE AggregateConfiguration_ID = "+configuration.ID+" AND Operation = '"+operation+"'", con).ExecuteNonQuery();
 
                 if(deletedRows != 1)
                     throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");

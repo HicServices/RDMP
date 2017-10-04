@@ -15,7 +15,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DataTableExtension;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Destinations
@@ -31,9 +31,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         [DemandsInitialization("Set to true if you want to restrict table creation to datetime instead of datetime2 (means any dates before 1753 will crash)", DemandType.Unspecified,false)]
         public bool OnlyUseOldDateTimes { get; set; }
 
-        private DbConnection _con;
-        private DbTransaction _transaction;
-        private DataTableHelper _helper;
         public string TargetTableName { get; private set; }
         private IBulkCopy _bulkcopy;
         private int _affectedRows = 0;
@@ -46,10 +43,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         private DataLoadInfo _dataLoadInfo;
 
-        private ManagedTransaction _managedTransaction;
+        private IManagedConnection _managedConnection;
         private ToLoggingDatabaseDataLoadEventListener _loggingDatabaseListener;
 
-        Dictionary<string,string> explicitWriteTypes = new Dictionary<string, string>();
+        List<DatabaseColumnRequest> explicitTypes = new List<DatabaseColumnRequest>();
+
+        private bool _firstTime = true;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -61,10 +60,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
 
-                _helper = new DataTableHelper(toProcess);
-                _helper.ExplicitWriteTypes = explicitWriteTypes;
 
-                TargetTableName = _helper.GetTableName();
+                TargetTableName = QuerySyntaxHelper.MakeHeaderNameSane(toProcess.TableName);
             }
 
             StartAuditIfExists(TargetTableName);
@@ -72,16 +69,18 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             if (_loggingDatabaseListener != null)
                 listener = new ForkDataLoadEventListener(listener, _loggingDatabaseListener);
 
-            if (_con == null)
+            if (_firstTime)
             {
                 bool tableAlreadyExistsButEmpty = false;
 
                 if (!_database.Exists())
                     throw new Exception("Database " + _database + " does not exist");
 
+                var discoveredTable = _database.ExpectTable(TargetTableName);
+
                 //table already exists
-                if (_database.ExpectTable(TargetTableName).Exists())
-                    if (_database.ExpectTable(TargetTableName).GetRowCount() == 0)
+                if (discoveredTable.Exists())
+                    if (discoveredTable.GetRowCount() == 0)
                     {
                         tableAlreadyExistsButEmpty = true;
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
@@ -90,32 +89,24 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                         throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
-
-
+                
                 EnsureTableHasDataInIt(toProcess);
                 
                 //create connection to destination
-                _con = _server.GetConnection();
-                _con.Open();
-
-                if (!tableAlreadyExistsButEmpty)
-                {
-                    //create the destination table
-                    string sql;
-                    _helper.CreateTables(_server, _con, out whoCares, null, false, OnlyUseOldDateTimes, out sql);
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + whoCares + " successfully.  With create statement:" + Environment.NewLine + sql));
+               if (!tableAlreadyExistsButEmpty)
+               {
+                   _database.CreateTable(TargetTableName, toProcess, explicitTypes.ToArray(), true);
+                   listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + TargetTableName + " successfully."));
                 }
 
-                _transaction = _con.BeginTransaction();//begin a tansaction
+                _managedConnection = _server.BeginNewTransactedConnection();
+                _bulkcopy = discoveredTable.BeginBulkInsert(_managedConnection.ManagedTransaction);
 
-                _managedTransaction = new ManagedTransaction(_con, _transaction);
-                
-                _bulkcopy = _database.ExpectTable(TargetTableName).BeginBulkInsert(_managedTransaction);
+                _firstTime = false;
             }
 
             try
             {
-
                 if (AllowResizingColumnsAtUploadTime)
                     ResizeColumnsIfRequired(toProcess, listener);
 
@@ -133,7 +124,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             }
             catch (Exception e)
             {
-                _con.Close();
+                _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
 
                 if (LoggingServer != null)
                     FatalErrorLogging.GetInstance().LogFatalError(_dataLoadInfo, GetType().Name, ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
@@ -164,7 +155,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             List<string> bitColumns = new List<string>();
 
             //go interrogate the database about the current size
-            DiscoveredColumn[] columns = _database.ExpectTable(TargetTableName).DiscoverColumns(_managedTransaction).ToArray();
+            DiscoveredColumn[] columns = _database.ExpectTable(TargetTableName).DiscoverColumns(_managedConnection.ManagedTransaction).ToArray();
 
             //build 2 dictionaries one with the current database size, the other with 0s which will become the size of the toProcess columns
             foreach (var column in columns)
@@ -212,7 +203,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                             "Altering Column '" + kvp.Key + "' to " + currentDatatype +
                             " based on the latest batch containing values non bit/null values"));
 
-                    columns.Single(c => c.GetRuntimeName().Equals(kvp.Key)).DataType.AlterTypeTo(currentDatatype, _managedTransaction);
+                    columns.Single(c => c.GetRuntimeName().Equals(kvp.Key)).DataType.AlterTypeTo(currentDatatype, _managedConnection.ManagedTransaction);
 
                 }
 
@@ -229,7 +220,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                                 currentDatabaseStringSizes[kvp.Key]));
 
                         //attempt to make the change
-                        columns.Single(c => c.GetRuntimeName().Equals(kvp.Key)).DataType.Resize(kvp.Value.Length, _managedTransaction);
+                        columns.Single(c => c.GetRuntimeName().Equals(kvp.Key)).DataType.Resize(kvp.Value.Length, _managedConnection.ManagedTransaction);
                     }
 
                 //handle longer decimals
@@ -252,7 +243,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                                 " based on the latest batch containing values longer than the first seen batch values! Old size was " +
                                 col.DataType.SQLType));
 
-                        col.DataType.Resize(newBeforeDecimalPoint, newAfterDecimalPoint, _managedTransaction);
+                        col.DataType.Resize(newBeforeDecimalPoint, newAfterDecimalPoint, _managedConnection.ManagedTransaction);
 
                     }
                 }
@@ -262,16 +253,14 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         public void Abort(IDataLoadEventListener listener)
         {
-            _transaction.Rollback();
-            _con.Close();
+            _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             try
             {
-                _transaction.Commit();
-                _con.Close();
+                _managedConnection.ManagedTransaction.CommitAndCloseConnection();
                 
                 if (_bulkcopy != null)
                     _bulkcopy.Dispose();
@@ -330,7 +319,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         public void AddExplicitWriteType(string columnName, string explicitType)
         {
-            explicitWriteTypes.Add(columnName,explicitType);
+            explicitTypes.Add(new DatabaseColumnRequest(columnName, explicitType, true));
         }
     }
 }

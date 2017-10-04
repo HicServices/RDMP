@@ -298,15 +298,15 @@ DEALLOCATE PREPARE stmt;",
 
                 //the order by (should be count so that heavy populated columns come first)
                 countSqlWithoutAlias,
-                GetDatePartOfColumn(axis.AxisIncrement, "dateAxis.dt"),
+                syntaxHelper.Escape(GetDatePartOfColumn(axis.AxisIncrement, "dateAxis.dt")),
 
                 //the SELECT statement only (no columns)
                 string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert == QueryComponent.SELECT)),
 
-                GetDatePartOfColumn(axis.AxisIncrement,axisColumnWithoutAlias),
+                syntaxHelper.Escape(GetDatePartOfColumn(axis.AxisIncrement,axisColumnWithoutAlias)),
 
-                //the rest of the query down to the WHERE
-                string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.FROM && c.LocationToInsert <= QueryComponent.WHERE)),
+                //the rest of the query down to the WHERE (escaping quotes)
+                syntaxHelper.Escape(string.Join(Environment.NewLine, lines.Where(c => c.LocationToInsert >= QueryComponent.FROM && c.LocationToInsert <= QueryComponent.WHERE))),
                 whereDateColumnNotNull,
                 topXLimitSqlIfAny,
                 orderBy,

@@ -8,25 +8,25 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
-    public class MySqlDatabaseHelper : IDiscoveredDatabaseHelper
+    public class MySqlDatabaseHelper : DiscoveredDatabaseHelper
     {
-        public IEnumerable<DiscoveredTableValuedFunction> ListTableValuedFunctions(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper,
+        public override IEnumerable<DiscoveredTableValuedFunction> ListTableValuedFunctions(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper,
             DbConnection connection, string database, DbTransaction transaction = null)
         {
             return Enumerable.Empty<DiscoveredTableValuedFunction>();
         }
 
-        public DiscoveredStoredprocedure[] ListStoredprocedures(DbConnectionStringBuilder builder, string database)
+        public override DiscoveredStoredprocedure[] ListStoredprocedures(DbConnectionStringBuilder builder, string database)
         {
             throw new NotImplementedException();
         }
 
-        public IDiscoveredTableHelper GetTableHelper()
+        public override IDiscoveredTableHelper GetTableHelper()
         {
             return new MySqlTableHelper();
         }
 
-        public void DropDatabase(DiscoveredDatabase database)
+        public override void DropDatabase(DiscoveredDatabase database)
         {
             using (var con = (MySqlConnection) database.Server.GetConnection())
             {
@@ -36,14 +36,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             }
         }
 
-        public Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
+        public override Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
         {
             throw new NotImplementedException();
         }
 
-
-
-        public IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
+        public override IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
         {
             if (connection.State == ConnectionState.Closed)
                 throw new InvalidOperationException("Expected connection to be open");

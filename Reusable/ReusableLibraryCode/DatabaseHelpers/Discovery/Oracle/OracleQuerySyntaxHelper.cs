@@ -8,7 +8,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {
     public class OracleQuerySyntaxHelper : QuerySyntaxHelper
     {
-        public OracleQuerySyntaxHelper() : base(new TypeTranslater(),new OracleAggregateHelper())//no custom translater
+        public OracleQuerySyntaxHelper() : base(new OracleTypeTranslater(), new OracleAggregateHelper())//no custom translater
         {
         }
 

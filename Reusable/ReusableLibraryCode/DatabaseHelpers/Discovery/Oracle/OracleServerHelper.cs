@@ -134,7 +134,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
         public override string[] ListDatabases(DbConnection con)
         {
-            var cmd = GetCommand("select distinct username from dba_users", con); //already comes as single column called Database
+            var cmd = GetCommand("select * from all_users", con); //already comes as single column called Database
             
             List<string> databases = new List<string>();
 

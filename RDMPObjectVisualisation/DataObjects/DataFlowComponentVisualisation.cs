@@ -104,7 +104,7 @@ namespace RDMPObjectVisualisation.DataObjects
             //get all the properties that must be set on AnySeparatorFileAttacher (Those marked with the attribute DemandsInitialization
             var propertiesWeHaveToSet =
                 value.GetType().GetProperties()
-                    .Where(p => p.GetCustomAttributes(typeof(DemandsInitialization), true).Any())
+                    .Where(p => p.GetCustomAttributes(typeof(DemandsInitializationAttribute), true).Any())
                     .ToArray();
             foreach (PropertyInfo p in propertiesWeHaveToSet)
             {

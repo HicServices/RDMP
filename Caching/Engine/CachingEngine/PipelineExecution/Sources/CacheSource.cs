@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using CachingEngine.Requests;
 using CachingEngine.Requests.FetchRequestProvider;
@@ -13,13 +14,15 @@ using ReusableLibraryCode.Progress;
 namespace CachingEngine.PipelineExecution.Sources
 {
     [InheritedExport(typeof(IDataFlowSource<ICacheChunk>))]
-    public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IPipelineRequirement<MEF> where T : class,ICacheChunk
+    public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IPipelineRequirement<ICatalogueRepository> where T : class,ICacheChunk
     {
         public ICacheFetchRequestProvider RequestProvider { get; set; }
         public IPermissionWindow PermissionWindow { get; set; }
 
         protected T Chunk;
         protected ICacheFetchRequest Request;
+
+        protected ICatalogueRepository CatalogueRepository;
         protected MEF MEF;
 
         /// <summary>
@@ -52,7 +55,12 @@ namespace CachingEngine.PipelineExecution.Sources
             }
 
             DoGetChunk(listener, cancellationToken);
-            
+
+            if (Chunk != null && Chunk.Request == null && Request != null)
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Error,
+                        "DoGetChunk completed and set a Chunk succesfully but the Chunk.Request was null.  Try respecting the Request property in your class when creating your Chunk."));
+
             return Chunk;
         }
 
@@ -72,9 +80,12 @@ namespace CachingEngine.PipelineExecution.Sources
         public abstract void Abort(IDataLoadEventListener listener);
         public abstract T TryGetPreview();
         public abstract void Check(ICheckNotifier notifier);
-        public void PreInitialize(MEF value, IDataLoadEventListener listener)
+        public void PreInitialize(ICatalogueRepository value, IDataLoadEventListener listener)
         {
-            MEF = value;
+            CatalogueRepository = value;
+            MEF = value.MEF;
         }
+
+        
     }
 }

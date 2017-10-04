@@ -53,18 +53,18 @@ namespace DataQualityEngine.Tests
             if (testCancellingValiationEarly)
                 source.Cancel();
 
-            ToMemoryDataLoadEventReceiver receiver = new ToMemoryDataLoadEventReceiver(false);
-            report.GenerateReport(testData.catalogue, receiver, source.Token);
+            ToMemoryDataLoadEventListener listener = new ToMemoryDataLoadEventListener(false);
+            report.GenerateReport(testData.catalogue, listener, source.Token);
 
             if(testCancellingValiationEarly)
             {
-                Assert.IsTrue(receiver.EventsReceivedBySender[report].Count(m=>m.Exception is OperationCanceledException) == 1);
+                Assert.IsTrue(listener.EventsReceivedBySender[report].Count(m=>m.Exception is OperationCanceledException) == 1);
                 testData.Destroy();
                 testData.DeleteCatalogue();
                 return;
             }
             
-            Assert.IsTrue(receiver.EventsReceivedBySender[report].All(m => m.Exception == null));//all messages must have null exceptions
+            Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null));//all messages must have null exceptions
             
             
             //get the reuslts now

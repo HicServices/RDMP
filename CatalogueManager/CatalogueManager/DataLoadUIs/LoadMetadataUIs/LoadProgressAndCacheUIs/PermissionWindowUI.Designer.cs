@@ -42,13 +42,14 @@
             this.tbFriday = new System.Windows.Forms.TextBox();
             this.tbSaturday = new System.Windows.Forms.TextBox();
             this.tbSunday = new System.Windows.Forms.TextBox();
-            this.btnSaveAndClose = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.SuspendLayout();
             // 
             // label1
@@ -116,77 +117,59 @@
             // 
             // tbMonday
             // 
-            this.tbMonday.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbMonday.Location = new System.Drawing.Point(89, 163);
             this.tbMonday.Name = "tbMonday";
-            this.tbMonday.Size = new System.Drawing.Size(190, 20);
+            this.tbMonday.Size = new System.Drawing.Size(222, 20);
             this.tbMonday.TabIndex = 2;
+            this.tbMonday.TextChanged += new System.EventHandler(this.tbDay_TextChanged);
             // 
             // tbTuesday
             // 
-            this.tbTuesday.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbTuesday.Location = new System.Drawing.Point(89, 208);
             this.tbTuesday.Name = "tbTuesday";
-            this.tbTuesday.Size = new System.Drawing.Size(190, 20);
+            this.tbTuesday.Size = new System.Drawing.Size(222, 20);
             this.tbTuesday.TabIndex = 3;
+            this.tbTuesday.TextChanged += new System.EventHandler(this.tbDay_TextChanged);
             // 
             // tbWednesday
             // 
-            this.tbWednesday.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbWednesday.Location = new System.Drawing.Point(89, 234);
             this.tbWednesday.Name = "tbWednesday";
-            this.tbWednesday.Size = new System.Drawing.Size(190, 20);
+            this.tbWednesday.Size = new System.Drawing.Size(222, 20);
             this.tbWednesday.TabIndex = 4;
+            this.tbWednesday.TextChanged += new System.EventHandler(this.tbDay_TextChanged);
             // 
             // tbThursday
             // 
-            this.tbThursday.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbThursday.Location = new System.Drawing.Point(89, 260);
             this.tbThursday.Name = "tbThursday";
-            this.tbThursday.Size = new System.Drawing.Size(190, 20);
+            this.tbThursday.Size = new System.Drawing.Size(222, 20);
             this.tbThursday.TabIndex = 5;
+            this.tbThursday.TextChanged += new System.EventHandler(this.tbDay_TextChanged);
             // 
             // tbFriday
             // 
-            this.tbFriday.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFriday.Location = new System.Drawing.Point(89, 286);
             this.tbFriday.Name = "tbFriday";
-            this.tbFriday.Size = new System.Drawing.Size(190, 20);
+            this.tbFriday.Size = new System.Drawing.Size(222, 20);
             this.tbFriday.TabIndex = 6;
+            this.tbFriday.TextChanged += new System.EventHandler(this.tbDay_TextChanged);
             // 
             // tbSaturday
             // 
-            this.tbSaturday.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSaturday.Location = new System.Drawing.Point(89, 312);
             this.tbSaturday.Name = "tbSaturday";
-            this.tbSaturday.Size = new System.Drawing.Size(190, 20);
+            this.tbSaturday.Size = new System.Drawing.Size(222, 20);
             this.tbSaturday.TabIndex = 7;
+            this.tbSaturday.TextChanged += new System.EventHandler(this.tbDay_TextChanged);
             // 
             // tbSunday
             // 
-            this.tbSunday.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSunday.Location = new System.Drawing.Point(89, 338);
             this.tbSunday.Name = "tbSunday";
-            this.tbSunday.Size = new System.Drawing.Size(190, 20);
+            this.tbSunday.Size = new System.Drawing.Size(222, 20);
             this.tbSunday.TabIndex = 8;
-            // 
-            // btnSaveAndClose
-            // 
-            this.btnSaveAndClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSaveAndClose.Location = new System.Drawing.Point(89, 413);
-            this.btnSaveAndClose.Name = "btnSaveAndClose";
-            this.btnSaveAndClose.Size = new System.Drawing.Size(127, 23);
-            this.btnSaveAndClose.TabIndex = 9;
-            this.btnSaveAndClose.Text = "Save and Close";
-            this.btnSaveAndClose.UseVisualStyleBackColor = true;
-            this.btnSaveAndClose.Click += new System.EventHandler(this.btnSaveAndClose_Click);
+            this.tbSunday.TextChanged += new System.EventHandler(this.tbDay_TextChanged);
             // 
             // label8
             // 
@@ -208,22 +191,20 @@
             // 
             // tbName
             // 
-            this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbName.Location = new System.Drawing.Point(89, 19);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(190, 20);
+            this.tbName.Size = new System.Drawing.Size(564, 20);
             this.tbName.TabIndex = 0;
+            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
             // tbDescription
             // 
-            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDescription.Location = new System.Drawing.Point(89, 45);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(190, 53);
+            this.tbDescription.Size = new System.Drawing.Size(564, 53);
             this.tbDescription.TabIndex = 1;
+            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
             // label10
             // 
@@ -245,14 +226,33 @@
             this.label11.TabIndex = 0;
             this.label11.Text = "(e.g. 10:20-10:40,11:20-11:40)";
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(134, 364);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.TabIndex = 9;
+            this.objectSaverButton1.Text = "objectSaverButton1";
+            this.objectSaverButton1.UseVisualStyleBackColor = true;
+            // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragSmiley1.Location = new System.Drawing.Point(4, 158);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 10;
+            // 
             // PermissionWindowUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(298, 448);
+            this.Controls.Add(this.ragSmiley1);
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.tbDescription);
             this.Controls.Add(this.tbName);
-            this.Controls.Add(this.btnSaveAndClose);
             this.Controls.Add(this.tbSunday);
             this.Controls.Add(this.tbSaturday);
             this.Controls.Add(this.tbFriday);
@@ -273,7 +273,7 @@
             this.Controls.Add(this.label1);
             this.MinimumSize = new System.Drawing.Size(314, 385);
             this.Name = "PermissionWindowUI";
-            this.Text = "PermissionWindowForm";
+            this.Size = new System.Drawing.Size(828, 402);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -295,12 +295,13 @@
         private System.Windows.Forms.TextBox tbFriday;
         private System.Windows.Forms.TextBox tbSaturday;
         private System.Windows.Forms.TextBox tbSunday;
-        private System.Windows.Forms.Button btnSaveAndClose;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

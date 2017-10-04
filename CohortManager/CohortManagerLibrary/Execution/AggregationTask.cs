@@ -13,6 +13,7 @@ using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
@@ -67,9 +68,9 @@ namespace CohortManagerLibrary.Execution
             return Aggregate;
         }
 
-        public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, Dictionary<string, string> explicitTypingDictionary)
+        public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
         {
-            return new CacheCommitIdentifierList(Aggregate,sql,results,explicitTypingDictionary,Timeout);
+            return new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes.Single(), Timeout);
         }
 
         public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)

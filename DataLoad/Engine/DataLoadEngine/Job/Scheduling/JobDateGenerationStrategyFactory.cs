@@ -67,9 +67,9 @@ namespace DataLoadEngine.Job.Scheduling
             AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks);
 
             var cp = loadProgress.GetCacheProgress();
-            
-            var factory = new CachingPipelineEngineFactory();
-            var destination = factory.CreateDestinationOnly(cp,new ToConsoleDataLoadEventReceiver());
+
+            var factory = new CachingPipelineUseCase(cp);
+            var destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
             
             return destination.CreateCacheLayout();
         }

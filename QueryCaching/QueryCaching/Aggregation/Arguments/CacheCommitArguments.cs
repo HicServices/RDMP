@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using CatalogueLibrary.Data.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DataTableExtension;
 
 namespace QueryCaching.Aggregation.Arguments
 {
@@ -15,22 +14,22 @@ namespace QueryCaching.Aggregation.Arguments
         public AggregateConfiguration Configuration { get; set; }
         public string SQL { get; private set; }
         public DataTable Results { get; private set; }
-        public Dictionary<string, string> ExplicitTypesDictionary { get; private set; }
+        public DatabaseColumnRequest[] ExplicitColumns { get; private set; }
 
-        protected CacheCommitArguments(AggregateOperation operation, AggregateConfiguration configuration, string sql, DataTable results, Dictionary<string, string> explicitTypesDictionary, int timeout)
+        protected CacheCommitArguments(AggregateOperation operation, AggregateConfiguration configuration, string sql, DataTable results, int timeout, DatabaseColumnRequest[] explicitColumns = null)
         {
             Timeout = timeout;
             Operation = operation;
             Configuration = configuration;
             SQL = sql;
             Results = results;
-            ExplicitTypesDictionary = explicitTypesDictionary;
+            ExplicitColumns = explicitColumns;
 
             if (results == null)
                 throw new Exception("DataTable results must have a value");
 
         }
 
-        public abstract void CommitTableDataCompleted(DiscoveredServer server,string tableName, DataTableHelper helper, DbConnection con, DbTransaction transaction);
+        public abstract void CommitTableDataCompleted(DiscoveredTable resultingTable);
     }
 }

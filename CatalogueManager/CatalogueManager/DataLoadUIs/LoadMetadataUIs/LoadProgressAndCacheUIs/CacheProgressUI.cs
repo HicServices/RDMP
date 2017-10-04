@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CachingEngine.Factories;
@@ -9,8 +11,12 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
@@ -27,64 +33,41 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     /// 
     /// Setting a 'Permission Window' will create a restriction on the times of day in which caching can take place (e.g. between midnight and 4am only).
     /// </summary>
-    public partial class CacheProgressUI : RDMPUserControl
+    public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
     {
         private CacheProgress _cacheProgress;
-
-        public event Action CacheProgressDeleted = delegate { };
-
-        public CacheProgress CacheProgress
-        {
-            get
-            {
-                return _cacheProgress;
-            }
-            set
-            {
-                _cacheProgress = value;
-                RefreshUIFromDatabase();
-            }
-        }
         
         public CacheProgressUI()
         {
             InitializeComponent();
-        }
 
-        private bool _bLoading = false;
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if(VisualStudioDesignMode)
-                return;
-            
-            
-            RefreshUIFromDatabase();
-        }
-
-        private void RefreshUIFromDatabase()
-        {
             _bLoading = true;
+
             ddCacheLagDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
             ddCacheLagDelayDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
-
-            if (RepositoryLocator == null)
-                return;
-            
-            if (CacheProgress == null)
-                ClearCacheProgressPanel();
-            else
-                PopulateCacheProgressPanel(CacheProgress);
             
             _bLoading = false;
         }
 
+        private bool _bLoading = false;
+        private Control _pipelineSelectionUI;
+
+        public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)
+        {
+            base.SetDatabaseObject(activator, databaseObject);
+
+            _cacheProgress = databaseObject;
+            PopulateCacheProgressPanel(_cacheProgress);
+            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+        }
+
         private void PopulateCacheProgressPanel(ICacheProgress cacheProgress)
         {
+            _bLoading = true;
+
             gbCacheProgress.Enabled = true; 
             tbCacheProgressID.Text = cacheProgress.ID.ToString();
-            tbCacheProgress.Text = cacheProgress.CacheFillProgress.HasValue ? cacheProgress.CacheFillProgress.ToString() : "Caching not started";
+            SetCacheProgressTextBox();
             
             var cacheLagPeriod = cacheProgress.GetCacheLagPeriod();
             if (cacheLagPeriod != null)
@@ -95,24 +78,35 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             tbChunkPeriod.Text = cacheProgress.ChunkPeriod.ToString();
 
-            cbPermissionWindowRequired.Checked = cacheProgress.PermissionWindow_ID != null;
-            EnablePermissionWindowUI(cacheProgress.PermissionWindow_ID != null);
-
             UpdateCacheLagPeriodControl();
+
+            SetupPipelineUI();
+
+            _bLoading = false;
         }
 
-        private void ClearCacheProgressPanel()
+        private void SetupPipelineUI()
         {
-            tbCacheProgressID.Text = "";
-            gbCacheProgress.Enabled = false;
+            if(_pipelineSelectionUI == null)
+            {
+                var user = new PipelineUser(_cacheProgress);
+                var useCase = new CachingPipelineUseCase(_cacheProgress);
+
+                var selectionFactory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
+                _pipelineSelectionUI = (Control)selectionFactory.Create();
+                pPipeline.Controls.Add(_pipelineSelectionUI);
+            }
+        }
+
+        private void SetCacheProgressTextBox()
+        {
+            tbCacheProgress.Text = _cacheProgress.CacheFillProgress.HasValue ? _cacheProgress.CacheFillProgress.ToString() : "Caching not started";
         }
 
         private void UpdateCacheLagPeriodControl()
         {
-            if (CacheProgress == null)
-                return;
+            var cacheLagPeriod = _cacheProgress.GetCacheLagPeriod();
 
-            var cacheLagPeriod = CacheProgress.GetCacheLagPeriod();
             if (cacheLagPeriod == null)
             {
                 udCacheLagDuration.Value = 0;
@@ -124,148 +118,18 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 ddCacheLagDurationType.SelectedItem = cacheLagPeriod.Type;
             }
 
-            var cacheLoadDelayPeriod = CacheProgress.GetCacheLagPeriodLoadDelay();
+            var cacheLoadDelayPeriod = _cacheProgress.GetCacheLagPeriodLoadDelay();
             udCacheLagDelayPeriodDuration.Value = cacheLoadDelayPeriod.Duration;
             ddCacheLagDelayDurationType.SelectedItem = cacheLoadDelayPeriod.Type;
 
         }
-
-        private void btnConfigureCachingPipeline_Click(object sender, EventArgs e)
-        {
-            // Associate a new caching pipeline on-the-fly
-            IPipeline pipeline;
-            if (CacheProgress.Pipeline_ID == null)
-            {
-                pipeline = new Pipeline(RepositoryLocator.CatalogueRepository, "CachingPipeline_" + Guid.NewGuid());
-                CacheProgress.Pipeline_ID = pipeline.ID;
-                CacheProgress.SaveToDatabase();
-            }
-            else
-                pipeline = CacheProgress.Pipeline;
-
-            HICProjectDirectory projectDirectory;
-            var lmd = CacheProgress.GetLoadProgress().GetLoadMetadata();
-
-            try
-            {   
-                projectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show("Could not generate/edit Cache Pipeline because of a problem with the LoadMetadata '"+lmd+"' project directory.  See Inner Exception for specifics" ,exception);
-                return;
-            }
-            //var engine = engineFactory.Create(cacheProgress, new ToConsoleDataLoadEventreceiver());
-            var context = CachingPipelineEngineFactory.Context;
-
-            var uiFactory = new ConfigurePipelineUIFactory(RepositoryLocator.CatalogueRepository.MEF, RepositoryLocator.CatalogueRepository);
-            var form = uiFactory.Create(context.GetType().GenericTypeArguments[0].FullName, pipeline, null, null, context, 
-                new List<object>
-                {
-                    new CacheFetchRequestProvider(new CacheFetchRequest(pipeline.Repository,DateTime.Now)),
-                    CacheProgress.GetPermissionWindow() ?? new PermissionWindow(){Repository = pipeline.Repository},
-                          projectDirectory,
-                        RepositoryLocator.CatalogueRepository.MEF
-                
-                });
-
-            form.ShowDialog();
-        }
-
-        private void btnAddNewPermissionWindow_Click(object sender, EventArgs e)
-        {
-            var permissionWindow = new PermissionWindow(RepositoryLocator.CatalogueRepository);
-            var form = new PermissionWindowUI();
-            form.SetPermissionWindow(permissionWindow);
-
-            if (form.ShowDialog() != DialogResult.OK)
-                permissionWindow.DeleteInDatabase();
-            else
-            {
-                CacheProgress.PermissionWindow_ID = permissionWindow.ID;
-                CacheProgress.SaveToDatabase();
-
-                RefreshUIFromDatabase();
-            }
-        }
-
-        private void btnEditPermissionWindow_Click(object sender, EventArgs e)
-        {
-            var permissionWindow = ddPermissionWindow.SelectedItem as IPermissionWindow;
-
-            if(permissionWindow == null)
-                return;
-
-            var form = new PermissionWindowUI();
-            form.SetPermissionWindow(permissionWindow);
-            form.ShowDialog();
-            RefreshUIFromDatabase();
-        }
-
-        private void cbPermissionWindowRequired_CheckedChanged(object sender, EventArgs e)
-        {
-            if(_bLoading)
-                return;
-
-            EnablePermissionWindowUI(cbPermissionWindowRequired.Checked);
-
-            if (cbPermissionWindowRequired.Checked)
-            {
-                var permissionWindow = ddPermissionWindow.SelectedItem as IPermissionWindow;
-                if (permissionWindow != null)
-                    CacheProgress.PermissionWindow_ID = permissionWindow.ID;
-            }
-            else
-                CacheProgress.PermissionWindow_ID = null;
-
-            CacheProgress.SaveToDatabase();
-        }
-
-        private void EnablePermissionWindowUI(bool enabled)
-        {
-            ddPermissionWindow.Enabled = enabled;
-            btnAddNewPermissionWindow.Enabled = enabled;
-            btnEditPermissionWindow.Enabled = enabled;
-            btnDeletePermissionWindow.Enabled = enabled;
-
-            if (CacheProgress == null)
-                return;
-            
-            ddPermissionWindow.Items.Clear();
-            ddPermissionWindow.Items.AddRange(CacheProgress.Repository.GetAllObjects<PermissionWindow>());
-
-            if (CacheProgress.PermissionWindow_ID != null)
-                ddPermissionWindow.SelectedItem = ddPermissionWindow.Items.Cast<PermissionWindow>().First(window => window.ID == CacheProgress.PermissionWindow_ID);
-        }
-
-        private void ddPermissionWindow_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_bLoading)
-                return;
-            
-            _bLoading = true;
-            var permissionWindow = ddPermissionWindow.SelectedItem as IPermissionWindow;
-            if (permissionWindow == null)
-            {
-                CacheProgress.PermissionWindow_ID = null;
-                EnablePermissionWindowUI(false);
-            }
-            else
-            {
-                CacheProgress.PermissionWindow_ID = permissionWindow.ID;
-                EnablePermissionWindowUI(true);
-            }
-            CacheProgress.SaveToDatabase();
-            _bLoading = false;
-        }
-
+        
         private void udCacheLagDuration_ValueChanged(object sender, EventArgs e)
         {
             if (_bLoading)
                 return;
 
-            CacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value, ddCacheLagDurationType.SelectedItem));
-            CacheProgress.SaveToDatabase();
+            _cacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value, ddCacheLagDurationType.SelectedItem));
         }
 
         private void ddCacheLagDurationType_SelectedIndexChanged(object sender, EventArgs e)
@@ -273,8 +137,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             if (_bLoading)
                 return;
 
-            CacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value, ddCacheLagDurationType.SelectedItem));
-            CacheProgress.SaveToDatabase();
+            _cacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value, ddCacheLagDurationType.SelectedItem));
         }
 
         private void ddCacheLagDelayDurationType_SelectedIndexChanged(object sender, EventArgs e)
@@ -282,16 +145,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             if (_bLoading)
                 return;
 
-            CacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value, ddCacheLagDelayDurationType.SelectedItem));
-            CacheProgress.SaveToDatabase();
+            _cacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value, ddCacheLagDelayDurationType.SelectedItem));    
         }
         private void udCacheLagDelayPeriodDuration_ValueChanged(object sender, EventArgs e)
         {
             if (_bLoading)
                 return;
 
-            CacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value, ddCacheLagDelayDurationType.SelectedItem));
-            CacheProgress.SaveToDatabase();
+            _cacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value, ddCacheLagDelayDurationType.SelectedItem));
         }
 
         // Returns null if there is no duration, otherwise picks up the current state of both Duration and Type UI elements
@@ -305,71 +166,46 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             return cacheLagPeriod;
         }
-        
-        private void btnDeletePermissionWindow_Click(object sender, EventArgs e)
+
+        public ObjectSaverButton GetObjectSaverButton()
         {
-            try
-            {
-                var window = ddPermissionWindow.SelectedItem as PermissionWindow;
-                if(window == null)
-                    return;
-
-                var otherUsers = RepositoryLocator.CatalogueRepository.GetAllObjects<CacheProgress>().Where(c => c.PermissionWindow_ID == window.ID).Except(new[] { CacheProgress }).ToArray();
-
-                if (otherUsers.Any())
-                {
-                    MessageBox.Show(
-                        "Cannot delete permission window because it is used by another cache progress(es) (" +
-                        string.Join(",", otherUsers.Select(u => u.ToString())));
-                    return;
-                }
-
-                if (
-                        MessageBox.Show(
-                            "Are you SURE you want to delete the permission window " + window,
-                            "Confirm deleting permission window?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-
-                    CacheProgress.PermissionWindow_ID = null;
-                    CacheProgress.SaveToDatabase();
-
-                    window.DeleteInDatabase();
-
-                    ddPermissionWindow.SelectedItem = null;
-                    cbPermissionWindowRequired.Checked = false;
-
-                    ddPermissionWindow.Items.Clear();
-                    ddPermissionWindow.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<PermissionWindow>());
-                }
-            }
-            catch (Exception ex)
-            {
-                ExceptionViewer.Show(ex);
-            }
+            return objectSaverButton1;
         }
 
-        private void btnDeleteCaching_Click(object sender, EventArgs e)
+        private void btnRefresh_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (CacheProgress != null)
-                {
-                    if (
-                        MessageBox.Show(
-                            "Are you SURE you want to delete the caching configuration? this may result in loosing important information about what data you have cached and what data cache fetches failed (holes in your data)?",
-                            "Confirm deleting cache configuration?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-
-                        CacheProgress.DeleteInDatabase();
-                        CacheProgress = null;
-                        CacheProgressDeleted();
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
+            _cacheProgress.RevertToDatabaseState();
+            SetCacheProgressTextBox();
         }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            tbCacheProgress.ReadOnly = false;
+        }
+
+        private void tbCacheProgress_TextChanged(object sender, EventArgs e)
+        {
+
+            FormsHelper.DoActionAndRedIfThrows(tbCacheProgress, () =>
+            {
+                var dt = DateTime.Parse(tbCacheProgress.Text);
+                _cacheProgress.CacheFillProgress = dt;
+            });
+
+        }
+
+        private void tbChunkPeriod_TextChanged(object sender, EventArgs e)
+        {
+            FormsHelper.DoActionAndRedIfThrows(tbChunkPeriod, () =>
+            {
+                _cacheProgress.ChunkPeriod = TimeSpan.Parse(tbChunkPeriod.Text);
+            });
+
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CacheProgressUI_Design, UserControl>))]
+    public abstract class CacheProgressUI_Design:RDMPSingleDatabaseObjectControl<CacheProgress>
+    {
     }
 }

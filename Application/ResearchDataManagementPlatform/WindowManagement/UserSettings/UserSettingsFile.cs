@@ -28,13 +28,23 @@ namespace ResearchDataManagementPlatform.WindowManagement.UserSettings
 
         private UserSettingsFile()
         {
-            _settingsFile = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP", "UserSettings.txt"));
+            var rdmpDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP");
+
+            //create the directory %appdata%\RDMP\ if it doesn't exist
+            if (!Directory.Exists(rdmpDirectory))
+                Directory.CreateDirectory(rdmpDirectory);
+
+            _settingsFile = new FileInfo(Path.Combine(rdmpDirectory, "UserSettings.txt"));
             _helper = new PersistStringHelper();
 
             if (!_settingsFile.Exists)
             {
-                _settingsFile.Create();
-                _dictionary = new Dictionary<string, string>();
+                using(var fs =  _settingsFile.Create())
+                {
+                    fs.Flush();
+                    fs.Dispose();
+                    _dictionary = new Dictionary<string, string>();
+                }
             }
             else
                 try
@@ -68,6 +78,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.UserSettings
             set
             {
                 SetBoolean("EmphasiseOnTabChanged", value);
+            }
+        }
+
+        public bool LicenseAccepted
+        {
+            get
+            {
+                return GetBoolean("LicenseAccepted", false);
+            }
+            set
+            {
+                SetBoolean("LicenseAccepted", value);
             }
         }
 

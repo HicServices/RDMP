@@ -27,7 +27,7 @@ namespace CatalogueLibraryTests.Unit
             var context = MockRepository.GenerateMock<DataFlowPipelineContext<DataTable>>();
             var destination = MockRepository.GenerateMock<IDataFlowDestination<DataTable>>();
             var engine = new DataFlowPipelineEngine<DataTable>(context, source, destination,
-                new ToConsoleDataLoadEventReceiver());
+                new ThrowImmediatelyDataLoadEventListener());
             
             engine.Initialize();
             var tokenSource = new CancellationTokenSource();

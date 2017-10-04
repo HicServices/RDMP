@@ -3,6 +3,7 @@ using System.Data;
 using CatalogueLibrary.Data.Aggregation;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
@@ -13,7 +14,7 @@ namespace CohortManagerLibrary.Execution
         }
 
         public abstract AggregateConfiguration GetAggregateConfiguration();
-        public abstract CacheCommitArguments GetCacheArguments(string sql, DataTable results, Dictionary<string, string> explicitTypingDictionary);
+        public abstract CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes);
         public abstract void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager);
 
         public bool IsCacheableWhenFinished()

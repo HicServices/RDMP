@@ -12,6 +12,6 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 {
     public interface IArgumentValueUI : IContainerControl
     {
-        void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny);
+        void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny);
     }
 }

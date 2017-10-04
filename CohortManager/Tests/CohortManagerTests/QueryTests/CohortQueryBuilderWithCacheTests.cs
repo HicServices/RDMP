@@ -18,6 +18,7 @@ namespace CohortManagerTests.QueryTests
     {
         private DiscoveredDatabase queryCacheDatabase;
         private ExternalDatabaseServer externalDatabaseServer;
+        private DatabaseColumnRequest _chiColumnSpecification = new DatabaseColumnRequest("chi","varchar(10)");
         
         [TestFixtureSetUp]
         public void SetUpCache()
@@ -86,7 +87,7 @@ SELECT
 distinct
 [" +TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]",cohortIdentificationConfiguration.ID), dt, null, 30));
+[" + TestDatabaseNames.Prefix + @"ScratchArea]..[BulkData]", cohortIdentificationConfiguration.ID), dt, _chiColumnSpecification, 30));
                 }
 
 

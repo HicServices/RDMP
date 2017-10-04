@@ -5,13 +5,13 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DataTableExtension;
 
 namespace QueryCaching.Aggregation.Arguments
 {
     public class CacheCommitExtractableAggregate : CacheCommitArguments
     {
-        public CacheCommitExtractableAggregate(AggregateConfiguration configuration, string sql, DataTable results, Dictionary<string, string> explicitTypesDictionary,int timeout) : base(AggregateOperation.ExtractableAggregateResults,configuration, sql, results, explicitTypesDictionary,timeout)
+        public CacheCommitExtractableAggregate(AggregateConfiguration configuration, string sql, DataTable results, int timeout)
+            : base(AggregateOperation.ExtractableAggregateResults, configuration, sql, results, timeout)
         {
             if (results.Columns.Count == 0)
                 throw new ArgumentException("The DataTable that you claimed was an " + Operation + " had zero columns and therefore cannot be cached");
@@ -32,7 +32,7 @@ namespace QueryCaching.Aggregation.Arguments
             
         }
 
-        public override void CommitTableDataCompleted(DiscoveredServer server, string tableName, DataTableHelper helper, DbConnection con, DbTransaction transaction)
+        public override void CommitTableDataCompleted(DiscoveredTable resultingTable)
         {
             //no need to do anything here we dont need index or anything else
         }

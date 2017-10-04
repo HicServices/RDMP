@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -17,7 +18,9 @@ using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LocationsMenu;
 using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
@@ -82,18 +85,40 @@ namespace CatalogueManager.Collections
         private object tlvTableInfos_DataTypeAspectGetter(object rowobject)
         {
             var c = rowobject as ColumnInfo;
+            var p = rowobject as PreLoadDiscardedColumn;
+
             if (c != null)
                 return c.Data_type;
+
+            if (p != null)
+                return p.Data_type;
 
             return null;
         }
 
         private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
         {
-            var credentials = tlvTableInfos.SelectedObject as DataAccessCredentials;
+            var o = tlvTableInfos.SelectedObject;
+            var credentials = o as DataAccessCredentials;
+            var externalDatabaseServer = o as ExternalDatabaseServer;
+            var tableInfo = o as TableInfo;
+            var preLoadDiscardedColumn = o as PreLoadDiscardedColumn;
+            
 
             if (credentials != null)
                 _activator.ActivateDataAccessCredentials(this,credentials);
+
+            if (o is DecryptionPrivateKeyNode)
+                _activator.ShowWindow(new PasswordEncryptionKeyLocationUI(), true);
+
+            if (externalDatabaseServer != null)
+                _activator.ActivateExternalDatabaseServer(this, externalDatabaseServer);
+
+            if (tableInfo != null)
+                _activator.ActivateTableInfo(this, tableInfo);
+
+            if (preLoadDiscardedColumn != null)
+                _activator.ActivatePreLoadDiscardedColumn(this, preLoadDiscardedColumn);
 
         }
         
@@ -142,7 +167,11 @@ namespace CatalogueManager.Collections
         {
             TableInfo tableInfo = e.Model as TableInfo;
             ColumnInfo columnInfo = e.Model as ColumnInfo;
-
+            var discardCollection = e.Model as PreLoadDiscardedColumnsNode;
+            
+            if (e.Model is AllExternalServersNode)
+                e.MenuStrip = new AllExternalServersNodeMenu(_activator);
+            else
             if (tableInfo != null)
                 e.MenuStrip = new TableInfoMenu( _activator, tableInfo);
             else if (columnInfo != null)
@@ -151,6 +180,8 @@ namespace CatalogueManager.Collections
                 e.MenuStrip = new DataAccessCredentialsNodeMenu(_activator);
             else if (e.Model is DataAccessCredentialUsageNode)
                 e.MenuStrip = new DataAccessCredentialUsageNodeMenu( _activator,(DataAccessCredentialUsageNode)e.Model);
+            else if (discardCollection != null)
+                e.MenuStrip = new PreLoadDiscardedColumnsCollectionMenu(_activator, discardCollection);
             else
             if(e.Model == null)
             {
@@ -208,9 +239,11 @@ namespace CatalogueManager.Collections
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.DataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.ANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
+            
 
         }
 
@@ -240,7 +273,8 @@ namespace CatalogueManager.Collections
         {
             return root is DataAccessCredentialsNode ||
             root is ANOTablesNode || 
-            root is AllServersNode;
+            root is AllServersNode || 
+            root is AllExternalServersNode;
         }
     }
 }

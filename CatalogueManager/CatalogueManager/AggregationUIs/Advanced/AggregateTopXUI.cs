@@ -45,6 +45,13 @@ namespace CatalogueManager.AggregationUIs.Advanced
             _aggregate = aggregate;
             _topX = aggregate.GetTopXIfAny();
 
+            //if a TopX exists and control is disabled
+            if(!Enabled && _topX != null)
+            {
+                _topX.DeleteInDatabase();
+                _topX = null;
+            }
+
             RefreshUIFromDatabase();
         }
 

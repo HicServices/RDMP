@@ -18,17 +18,17 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI
     {
         private Argument _argument;
-        private DemandsInitialization _demand;
+        private DemandsInitializationAttribute _demand;
 
         public ArgumentValueSqlUI()
         {
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
         {
             _argument = argument;
-            _demand = demand;
+            _demand = requirement.Demand;
 
             BombIfMandatoryAndEmpty();
         }

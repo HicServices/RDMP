@@ -55,10 +55,10 @@ namespace DataLoadEngine.DatabaseManagement.Operations
                 return DataType.DateTime;
 
             if (IsMatchTwo(@"^decimal\(([0-9]+),([0-9]+)\)", sqlDataType, out i, out j))
-                return DataType.Decimal(i, j);
+                return DataType.Decimal(j, i);
 
             if (IsMatchTwo(@"^numeric\(([0-9]+),([0-9]+)\)", sqlDataType, out i, out j))
-                return DataType.Numeric(i, j);
+                return DataType.Numeric(j, i);
 
             if (sqlDataType.Equals("time"))
                 return new DataType(SqlDataType.Time);

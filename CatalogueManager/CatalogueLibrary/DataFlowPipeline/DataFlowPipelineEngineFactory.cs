@@ -23,10 +23,13 @@ namespace CatalogueLibrary.DataFlowPipeline
             get { return _context; }
         }
 
-        public DataFlowPipelineEngineFactory(MEF mefPlugins, DataFlowPipelineContext<T> context)
+        public DataFlowPipelineEngineFactory(MEF mefPlugins, DataFlowPipelineContext<T> context,IDataFlowSource<T> explicitSource = null, IDataFlowDestination<T> explicitDestination = null)
         {
             _mefPlugins = mefPlugins;
             _context = context;
+
+            ExplicitSource = explicitSource;
+            ExplicitDestination = explicitDestination;
         }
 
         public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
@@ -62,7 +65,7 @@ namespace CatalogueLibrary.DataFlowPipeline
 
             return dataFlowEngine;
         }
-
+        
         /// <summary>
         /// Returns the thing that is not null or throws an exception because both are blank.  also throws if both are populated
         /// </summary>
@@ -126,14 +129,14 @@ namespace CatalogueLibrary.DataFlowPipeline
                 //see if any demand initialization
                 Attribute initialization =
                     System.Attribute.GetCustomAttributes(propertyInfo)
-                        .FirstOrDefault(a => a is DemandsInitialization);
+                        .FirstOrDefault(a => a is DemandsInitializationAttribute);
 
                 //this one does
                 if (initialization != null)
                 {
                     try
                     {
-                        //get the approrpriate value from arguments
+                        //get the appropriate value from arguments
                         var value = allArguments.SingleOrDefault(n => n.Name.Equals(propertyInfo.Name));
 
                         if (value == null)
@@ -148,6 +151,55 @@ namespace CatalogueLibrary.DataFlowPipeline
                         throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
                                             " but is of unexpected/unsupported type " + propertyInfo.GetType(), e);
                     }
+                }
+
+                //see if any demand nested initialization
+                Attribute nestedInit =
+                    System.Attribute.GetCustomAttributes(propertyInfo)
+                        .FirstOrDefault(a => a is DemandsNestedInitializationAttribute);
+
+                //this one does
+                if (nestedInit != null)
+                {
+                    // initialise the container before nesting-setting all properties
+                    var container = Activator.CreateInstance(propertyInfo.PropertyType);
+
+                    foreach (var nestedProp in propertyInfo.PropertyType.GetProperties())
+                    {
+                        //see if any demand initialization
+                        initialization = System.Attribute.GetCustomAttributes(nestedProp)
+                                            .FirstOrDefault(a => a is DemandsInitializationAttribute);
+
+                        //this one does
+                        if (initialization != null)
+                        {
+                            var dottedName = propertyInfo.Name + "." + nestedProp.Name;
+
+                            try
+                            {
+                                //get the appropriate value from arguments
+                                var value = allArguments.SingleOrDefault(n => n.Name.Equals(dottedName));
+
+                                if (value == null)
+                                    throw new Exception("Class " + toReturn.GetType().Name + " has a property " +
+                                                        dottedName +
+                                                        " marked with DemandsNestedInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called " +
+                                                        toBuild.Name);
+
+                                //use reflection to set the value
+                                nestedProp.SetValue(container, value.GetValueAsSystemType(), null);
+                            }
+                            catch (NotSupportedException e)
+                            {
+                                throw new Exception(
+                                    "Class " + toReturn.GetType().Name + " has a nested property " + dottedName +
+                                    " but is of unexpected/unsupported type " + nestedProp.GetType(), e);
+                            }
+                        }
+                    }
+
+                    //use reflection to set the container
+                    propertyInfo.SetValue(toReturn, container, null);
                 }
             }
 
@@ -232,7 +284,31 @@ namespace CatalogueLibrary.DataFlowPipeline
                 dataFlowPipelineEngine.Check(checkNotifier);
             }
         }
+    }
 
-      
+    public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
+    {
+        private readonly IPipelineUseCase _useCase;
+
+        public DataFlowPipelineEngineFactory(IPipelineUseCase useCase)
+        {
+            _useCase = useCase;
+        }
+
+        public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
+        {
+            var repo = ((CatalogueRepository) pipeline.Repository);
+            var context = _useCase.GetContext();
+
+            //create an DataFlowPipelineContext<T> of the appropriate type T
+            var genericFactoryType = typeof( DataFlowPipelineEngineFactory<>).MakeGenericType(context.GetFlowType());
+
+            var constructor = genericFactoryType.GetConstructors().Single();
+            
+            //MEF mefPlugins, DataFlowPipelineContext<T> context
+            var genericFactoryInstance = (IDataFlowPipelineEngineFactory)constructor.Invoke(new object[] { repo.MEF, context,_useCase.ExplicitSource,_useCase.ExplicitDestination});
+            
+            return genericFactoryInstance.Create(pipeline, listener);
+        }
     }
 }

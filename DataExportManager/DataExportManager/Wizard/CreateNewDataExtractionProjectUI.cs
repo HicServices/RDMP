@@ -221,7 +221,7 @@ namespace DataExportManager.Wizard
                     tbCohortName.Text = cic.ToString();
 
                     var source = new CohortIdentificationConfigurationSource();
-                    source.PreInitialize(cic,new ToConsoleDataLoadEventReceiver());
+                    source.PreInitialize(cic,new ThrowImmediatelyDataLoadEventListener());
                     source.Check(ragCic);
 
                     ClearFile();
@@ -316,7 +316,7 @@ namespace DataExportManager.Wizard
                     var cohortFactory =
                         new DataFlowPipelineEngineFactory<DataTable>(
                             _activator.RepositoryLocator.CatalogueRepository.MEF, CohortCreationRequest.Context);
-                    var cohortPipe = cohortFactory.Create(importCohortPipe, new ToConsoleDataLoadEventReceiver());
+                    var cohortPipe = cohortFactory.Create(importCohortPipe, new ThrowImmediatelyDataLoadEventListener());
                     cohortPipe.Initialize(new object[] {inputObject, ddCohortSources.SelectedItem,cohortRequest});
 
                     cohortPipe.ExecutePipeline(new GracefulCancellationToken());

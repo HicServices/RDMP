@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Reflection;
 
 [assembly: AssemblyCompany("Health Informatics Centre, University of Dundee")]
@@ -7,6 +8,6 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 // These should be replaced with correct values by the release process
-[assembly: AssemblyVersion("2.3.1.3")]
-[assembly: AssemblyFileVersion("2.3.1.3")]
-[assembly: AssemblyInformationalVersion("2.3.1.3")]
+[assembly: AssemblyVersion("2.3.2.0")]
+[assembly: AssemblyFileVersion("2.3.2.0")]
+[assembly: AssemblyInformationalVersion("2.3.2.0")]

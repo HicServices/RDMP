@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -6,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableUIComponents;
@@ -19,7 +21,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     /// (e.g. when using RemoteSQLTableAttacher you should make use of the @startDate and @endDate parameters in your fetch query).  See CacheProgressUI for a description of caching and 
     /// permission windows.
     /// </summary>
-    public partial class LoadProgressUI : LoadProgressUI_Design
+    public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
     {
         private LoadProgress _loadProgress;
         private bool bLoading;
@@ -29,7 +31,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public LoadProgressUI()
         {
             InitializeComponent();
-            cacheProgressUI1.CacheProgressDeleted += ReloadUIFromDatabase;
             loadProgressDiagram1.LoadProgressChanged += ReloadUIFromDatabase;
         }
         
@@ -38,11 +39,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             get { return _loadProgress; }
             set
             {
-                cacheProgressUI1.Enabled = value != null;
                 bLoading = true;
                 
-                AllowUserToSaveChanges();
-
                 _loadProgress = value;
 
                 ReloadUIFromDatabase();
@@ -66,22 +64,15 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             if (_loadProgress == null)
             {
-                btnConfigureCaching.Visible = true;
-
                 tbID.Text = "";
                 //dtpOriginDate.Value = DateTime.MinValue;
                 tbOriginDate.Text = null;
                 tbName.Text = null;
 
                 groupBox1.Visible = false;
-                cacheProgressUI1.Visible = false;
-
-                btnSave.Visible = false;
             }
             else
             {
-                cacheProgressUI1.Visible = true;
-                
                 groupBox1.Visible = true;
                 
                 if(_loadProgress.OriginDate != null)
@@ -92,37 +83,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
                 tbDataLoadProgress.Text = LoadProgress.DataLoadProgress != null ? LoadProgress.DataLoadProgress.ToString() : "";
 
-                //If there is no caching yet then the button is enabled otherwise it isn't
-                btnConfigureCaching.Enabled = _loadProgress.CacheProgress == null;
-
-                cacheProgressUI1.CacheProgress = _loadProgress.CacheProgress;
-
                 nDefaultNumberOfDaysToLoadEachTime.Value = LoadProgress.DefaultNumberOfDaysToLoadEachTime;
                 cbEnableAutomation.Checked = _loadProgress.AllowAutomation;
-
-                btnSave.Visible = true;
             }
-        }
-
-        private void AllowUserToSaveChanges()
-        {
-            if (btnSave.Enabled && _loadProgress != null && _loadProgress.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                if (MessageBox.Show("Save changes to " + _loadProgress + "?", "Save changes?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    _loadProgress.SaveToDatabase();
-            
-        }
-
-        protected override bool ProcessKeyPreview(ref Message m)
-        {
-            PreviewKey p = new PreviewKey(ref m, ModifierKeys);
-
-            if (p.IsKeyDownMessage && p.e.KeyCode == Keys.S && p.e.Control)
-            {
-                btnSave_Click(null,null);
-                p.Trap(this);
-            }
-
-            return base.ProcessKeyPreview(ref m);
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)
@@ -132,44 +95,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             LoadProgress.Name = tbName.Text;
             
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            if(LoadProgress!= null)
-            {
-                LoadProgress.SaveToDatabase();
-
-                if(cacheProgressUI1.CacheProgress != null)
-                    cacheProgressUI1.CacheProgress.SaveToDatabase();
-                
-                if (Saved != null)
-                    Saved(this, new EventArgs());
-
-                btnSave.Enabled = false;
-
-                ReloadUIFromDatabase();
-
-                Task.Delay(1000).ContinueWith(delegate { Invoke(new MethodInvoker(() => { btnSave.Enabled = true; })); });
-
-
-
-            }
-        }
-        private void btnConfigureCaching_Click(object sender, EventArgs e)
-        {
-            var cacheProgress = _loadProgress.CacheProgress;
-
-            // If the LoadProgress doesn't have a corresponding CacheProgress, create it
-            if (cacheProgress == null)
-            {
-                cacheProgress = new CacheProgress(RepositoryLocator.CatalogueRepository, _loadProgress);
-                _loadProgress.SaveToDatabase();
-            }
-            cacheProgressUI1.CacheProgress = (CacheProgress)cacheProgress;
-            cacheProgressUI1.Visible = true;
-
-            btnConfigureCaching.Enabled = false;
         }
         
         private void nDefaultNumberOfDaysToLoadEachTime_ValueChanged(object sender, EventArgs e)
@@ -229,9 +154,17 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             LoadProgress = databaseObject;
 
+            objectSaverButton1.SetupFor(LoadProgress,activator.RefreshBus);
+
+        }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
         }
     }
 
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadProgressUI_Design, UserControl>))]
     public abstract class LoadProgressUI_Design:RDMPSingleDatabaseObjectControl<LoadProgress>
     {
     }

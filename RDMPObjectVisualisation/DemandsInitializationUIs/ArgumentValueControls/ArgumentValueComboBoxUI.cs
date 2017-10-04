@@ -16,7 +16,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
     {
         private Argument _argument;
-        private DemandsInitialization _demand;
+        private DemandsInitializationAttribute _demand;
         private bool _bLoading = true;
 
         private const string ClearSelection = "<<Clear Selection>>";
@@ -38,11 +38,11 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             }
         }
 
-        public void SetUp(Argument argument, DemandsInitialization demand, DataTable previewIfAny)
+        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
         {
             _bLoading = true;
             _argument = argument;
-            _demand = demand;
+            _demand = requirement.Demand;
 
             object currentValue = null;
 

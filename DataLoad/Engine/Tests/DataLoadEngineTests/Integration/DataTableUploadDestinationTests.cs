@@ -34,7 +34,7 @@ namespace DataLoadEngineTests.Integration
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -72,7 +72,7 @@ namespace DataLoadEngineTests.Integration
                 if (tbl.Exists())
                     tbl.Drop();
 
-                var toConsole = new ToConsoleDataLoadEventReceiver();
+                var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
                 int errorIsInColumnOrder = random.Next(3);
                 string errorColumn = "";
@@ -185,7 +185,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             
             //the bulk insert is
             DataTableUploadDestination destination = new DataTableUploadDestination();
-            destination.PreInitialize(db, new ToConsoleDataLoadEventReceiver());
+            destination.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
 
             //order is inverted where name comes out at the end column (index 2)
             DataTable dt1 = new DataTable();
@@ -196,7 +196,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Rows.Add("30", "blue", "Fish");
             dt1.TableName = "DroppedColumnsTable";
 
-            var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, new ToConsoleDataLoadEventReceiver(), token));
+            var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(), token));
 
             string exceptionMessage = ex.InnerException.Message;
             var interestingBit = exceptionMessage.Substring(exceptionMessage.IndexOf(": <<") + ": ".Length);
@@ -213,7 +213,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -229,7 +229,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -246,8 +246,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
-            var toMemory = new ToMemoryDataLoadEventReceiver(true);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -280,7 +280,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -309,7 +309,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -343,8 +343,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
-            var toMemory = new ToMemoryDataLoadEventReceiver(true);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -398,7 +398,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
             
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -439,7 +439,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
             
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -542,7 +542,7 @@ CREATE TABLE [dbo].[TestResizing](
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -585,8 +585,8 @@ CREATE TABLE [dbo].[TestResizing](
         {
             var token = new GracefulCancellationToken();
             DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
-            var toConsole = new ToConsoleDataLoadEventReceiver();
-            var toMemory = new ToMemoryDataLoadEventReceiver(true);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -624,7 +624,7 @@ CREATE TABLE [dbo].[TestResizing](
             var db = DiscoveredMySqlServer.ExpectDatabase(TestDatabaseNames.GetConsistentName("DataTableUploadTests"));
             db.Create(true);
 
-            var toConsole = new ToConsoleDataLoadEventReceiver();
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);
@@ -680,8 +680,8 @@ CREATE TABLE [dbo].[TestResizing](
             var db = DiscoveredMySqlServer.ExpectDatabase(TestDatabaseNames.GetConsistentName("DataTableUploadTests"));
             db.Create(true);
 
-            var toConsole = new ToConsoleDataLoadEventReceiver();
-            var toMemory = new ToMemoryDataLoadEventReceiver(true);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
             destination.PreInitialize(db, toConsole);

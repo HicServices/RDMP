@@ -1,20 +1,27 @@
-﻿using CatalogueLibrary.Data;
+﻿using System;
+using System.Linq;
+using CatalogueLibrary.Data;
 using ReusableUIComponents.Copying;
 
 namespace RDMPObjectVisualisation.Copying.Commands
 {
     public class ColumnInfoCommand : ICommand
     {
-        public ColumnInfo ColumnInfo { get; set; }
+        public ColumnInfo[] ColumnInfos { get; private set; }
 
         public ColumnInfoCommand(ColumnInfo columnInfo)
         {
-            ColumnInfo = columnInfo;
+            ColumnInfos = new []{columnInfo};
+        }
+
+        public ColumnInfoCommand(ColumnInfo[] columnInfos)
+        {
+            ColumnInfos = columnInfos;
         }
 
         public string GetSqlString()
         {
-            return ColumnInfo.Name;
+            return string.Join(Environment.NewLine,ColumnInfos.Select(c=>c.Name));
         }
     }
 }

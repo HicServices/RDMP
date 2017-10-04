@@ -7,15 +7,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
     public class MicrosoftSQLBulkCopy : IBulkCopy
     {
         private readonly DiscoveredTable _discoveredTable;
-        private readonly DbTransaction _transaction;
+        private readonly IManagedConnection _connection;
+
         private SqlBulkCopy _bulkcopy;
 
-        public MicrosoftSQLBulkCopy(DiscoveredTable discoveredTable, DbConnection connection, DbTransaction transaction)
+        public MicrosoftSQLBulkCopy(DiscoveredTable discoveredTable, IManagedConnection connection)
         {
             _discoveredTable = discoveredTable;
-            _transaction = transaction;
+            _connection = connection;
 
-            _bulkcopy = new SqlBulkCopy((SqlConnection)connection, SqlBulkCopyOptions.KeepIdentity, (SqlTransaction)_transaction);
+            _bulkcopy = new SqlBulkCopy((SqlConnection)connection.Connection, SqlBulkCopyOptions.KeepIdentity, (SqlTransaction)connection.Transaction);
             _bulkcopy.BulkCopyTimeout = 50000;
             _bulkcopy.DestinationTableName = _discoveredTable.GetRuntimeName();
 
@@ -32,7 +33,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 
         public void Dispose()
         {
-            
+            _connection.Dispose();
         }
     }
 }

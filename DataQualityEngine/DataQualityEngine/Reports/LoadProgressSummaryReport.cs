@@ -223,7 +223,7 @@ namespace DataQualityEngine.Reports
 
                 try
                 {
-                    var cacheFileSystem = new CachingPipelineEngineFactory().CreateDestinationOnly(_cacheProgress,new FromCheckNotifierToDataLoadEventListener(notifier));
+                    var cacheFileSystem = new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(new FromCheckNotifierToDataLoadEventListener(notifier));
                     
                     var layout = cacheFileSystem.CreateCacheLayout();
                     availableFiles = layout.GetSortedDateQueue().ToArray();

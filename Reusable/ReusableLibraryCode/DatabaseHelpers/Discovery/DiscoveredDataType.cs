@@ -76,7 +76,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
 
-        public void Resize(int newSize, ManagedTransaction managedTransaction = null)
+        public void Resize(int newSize, IManagedTransaction managedTransaction = null)
         {
             int toReplace = GetLengthIfString();
             
@@ -99,7 +99,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="numberOfDigitsBeforeDecimalPoint"></param>
         /// <param name="numberOfDigitsAfterDecimalPoint"></param>
         /// <param name="managedTransaction"></param>
-        public void Resize(int numberOfDigitsBeforeDecimalPoint, int numberOfDigitsAfterDecimalPoint, ManagedTransaction managedTransaction = null)
+        public void Resize(int numberOfDigitsBeforeDecimalPoint, int numberOfDigitsAfterDecimalPoint, IManagedTransaction managedTransaction = null)
         {
             Pair<int, int> toReplace = GetDigitsBeforeAndAfterDecimalPointIfDecimal();
 
@@ -124,7 +124,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
 
         }
-        public void AlterTypeTo(string newType, ManagedTransaction managedTransaction = null)
+        public void AlterTypeTo(string newType, IManagedTransaction managedTransaction = null)
         {
             if(Column == null)
                 throw new NotSupportedException("Cannot resize DataType because it does not have a reference to a Column to which it belongs (possibly you are trying to resize a data type associated with a TableValuedFunction Parameter?)");

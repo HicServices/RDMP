@@ -76,7 +76,7 @@ namespace RDMPAutomationServiceTests
 
                 //manually run a DQE run on the dataset!
                 CatalogueConstraintReport report = new CatalogueConstraintReport(cata, MigrationColumnSet.DataLoadRunField);
-                report.GenerateReport(cata, new ToConsoleDataLoadEventReceiver(), new CancellationTokenSource().Token);
+                report.GenerateReport(cata, new ThrowImmediatelyDataLoadEventListener(), new CancellationTokenSource().Token);
 
                 //finder shouldn't suggest this catalogue anymore because DQE has been run recently (within 100 days!)
                 Assert.IsNull(finder.SuggestRun());

@@ -5,6 +5,7 @@ using System.ServiceProcess;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CommandLine;
+using ReusableLibraryCode.Progress;
 
 namespace CachingService
 {
@@ -48,7 +49,7 @@ namespace CachingService
         {
             Console.WriteLine("Running in console mode");
 
-            var listener = new CommonLoggingListener();
+            var listener = new ThrowImmediatelyDataLoadEventListener();
 
             Console.CancelKeyPress += (sender, eventArgs) =>
             {

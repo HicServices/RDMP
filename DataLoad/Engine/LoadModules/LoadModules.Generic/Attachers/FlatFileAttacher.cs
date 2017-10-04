@@ -201,83 +201,25 @@ namespace LoadModules.Generic.Attachers
 
        }
 
-        protected void
-            SetupTypes(DataTable dt, DiscoveredColumn[] columnsAtDestination, DiscoveredTable table, IDataLoadJob job)
+        protected void SetupTypes(DataTable dt, DiscoveredColumn[] columnsAtDestination, DiscoveredTable table, IDataLoadJob job)
         {
+            var syntaxHelper = table.Database.Server.GetQuerySyntaxHelper();
+
             foreach (DiscoveredColumn columnAtDestination in columnsAtDestination)
             {
-                string type = columnAtDestination.DataType.SQLType;
+                string sqlType = columnAtDestination.DataType.SQLType;
                 string name = columnAtDestination.GetRuntimeName();
-
-                //remove (x) from varchar(x)
-                if (type.Contains("("))
-                    type = type.Substring(0, type.IndexOf("("));
+                
+                Type t = syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(sqlType);
 
                 if (dt.Columns[name] == null)//missing column
                 {
                     job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Column missing from DataTable (loaded from flat file) " + columnAtDestination + " (Column is present at destination database but not in datatable, so skipping it)"));
                     continue;//skip it
                 }
-                
-                switch (type)
-                {
-                    case "decimal":
-                        dt.Columns[name].DataType = typeof(decimal);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "numeric":
-                        dt.Columns[name].DataType = typeof(decimal);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "char":
-                        dt.Columns[name].DataType = typeof(string);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "nchar":
-                        dt.Columns[name].DataType = typeof(string);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "varchar":
-                        dt.Columns[name].DataType = typeof (string);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "nvarchar":
-                        dt.Columns[name].DataType = typeof(string);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                  case "datetime2":
-                        dt.Columns[name].DataType = typeof(DateTime);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                  case "datetime":
-                        dt.Columns[name].DataType = typeof (DateTime);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "date":
-                        dt.Columns[name].DataType = typeof(DateTime);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "text":
-                        dt.Columns[name].DataType = typeof(string);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "int":
-                        dt.Columns[name].DataType = typeof(int);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    case "float":
-                        dt.Columns[name].DataType = typeof(decimal);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-               
-                    case "bit":
-                        dt.Columns[name].DataType = typeof(Boolean);
-                        dt.Columns[name].AllowDBNull = true;
-                        break;
-                    default:
-                        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"SetupTypes is not sure what type of data table column to use for SQL type :" + type));
-                        break;
-                }
+
+                dt.Columns[name].DataType = t;
+                dt.Columns[name].AllowDBNull = true;
             }
 
         }

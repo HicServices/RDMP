@@ -1,4 +1,7 @@
-﻿namespace DataExportManager.DataRelease
+﻿using System.IO;
+using CatalogueLibrary.DataFlowPipeline;
+
+namespace DataExportManager.DataRelease
 {
     partial class DoReleaseAndAuditUI
     {
@@ -31,8 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.btnRelease = new System.Windows.Forms.Button();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.lblReleaseRootDirectory = new System.Windows.Forms.Label();
-            this.btnShowReleaseDirectory = new System.Windows.Forms.Button();
+            this.pnlPipeline = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // label1
@@ -62,37 +64,24 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.Location = new System.Drawing.Point(7, 20);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(525, 477);
+            this.treeView1.Size = new System.Drawing.Size(525, 299);
             this.treeView1.TabIndex = 3;
             this.treeView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.treeView1_KeyUp);
             // 
-            // lblReleaseRootDirectory
+            // pnlPipeline
             // 
-            this.lblReleaseRootDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblReleaseRootDirectory.AutoSize = true;
-            this.lblReleaseRootDirectory.Location = new System.Drawing.Point(7, 504);
-            this.lblReleaseRootDirectory.Name = "lblReleaseRootDirectory";
-            this.lblReleaseRootDirectory.Size = new System.Drawing.Size(94, 13);
-            this.lblReleaseRootDirectory.TabIndex = 4;
-            this.lblReleaseRootDirectory.Text = "Release Directory:";
-            // 
-            // btnShowReleaseDirectory
-            // 
-            this.btnShowReleaseDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnShowReleaseDirectory.Location = new System.Drawing.Point(473, 504);
-            this.btnShowReleaseDirectory.Name = "btnShowReleaseDirectory";
-            this.btnShowReleaseDirectory.Size = new System.Drawing.Size(71, 23);
-            this.btnShowReleaseDirectory.TabIndex = 5;
-            this.btnShowReleaseDirectory.Text = "Show";
-            this.btnShowReleaseDirectory.UseVisualStyleBackColor = true;
-            this.btnShowReleaseDirectory.Click += new System.EventHandler(this.btnShowReleaseDirectory_Click);
+            this.pnlPipeline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlPipeline.Location = new System.Drawing.Point(7, 338);
+            this.pnlPipeline.Name = "pnlPipeline";
+            this.pnlPipeline.Size = new System.Drawing.Size(525, 188);
+            this.pnlPipeline.TabIndex = 7;
             // 
             // DoReleaseAndAuditUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnShowReleaseDirectory);
-            this.Controls.Add(this.lblReleaseRootDirectory);
+            this.Controls.Add(this.pnlPipeline);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.btnRelease);
             this.Controls.Add(this.label1);
@@ -108,7 +97,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnRelease;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.Label lblReleaseRootDirectory;
-        private System.Windows.Forms.Button btnShowReleaseDirectory;
+        private System.Windows.Forms.Panel pnlPipeline;
     }
 }

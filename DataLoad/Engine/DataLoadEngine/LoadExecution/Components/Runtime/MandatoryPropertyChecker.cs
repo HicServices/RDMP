@@ -19,7 +19,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             foreach (var propertyInfo in _classInstanceToCheck.GetType().GetProperties())
             {
                 //see if any demand initialization
-                DemandsInitialization demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitialization>().FirstOrDefault();
+                DemandsInitializationAttribute demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
 
                 //this one does
                 if (demand != null)
@@ -27,7 +27,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
                     if(demand.Mandatory)
                     {
                         var value = propertyInfo.GetValue(_classInstanceToCheck);
-                        if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
+                        if (value == null || string.IsNullOrEmpty(value.ToString()))
                             notifier.OnCheckPerformed(new CheckEventArgs( "DemandsInitialization Property '" + propertyInfo.Name + "' is marked Mandatory but does not have a value", CheckResult.Fail));
 
                     }

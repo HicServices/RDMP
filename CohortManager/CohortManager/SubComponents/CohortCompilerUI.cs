@@ -25,6 +25,7 @@ using CohortManagerLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
 
@@ -621,20 +622,20 @@ namespace CohortManager.SubComponents
         {
             CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
             
-            Dictionary<string,string> explicitTypingDictionary = new Dictionary<string, string>();
+            var explicitTypes = new List<DatabaseColumnRequest>();
             
             AggregateConfiguration configuration = cachable.GetAggregateConfiguration();
             try
             {
                 ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c=>c.IsExtractionIdentifier).ColumnInfo;
-                explicitTypingDictionary.Add(identifierColumnInfo.GetRuntimeName(),identifierColumnInfo.Data_type);
+                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
             }
             catch (Exception e)
             {
                 throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache",e);
             }
 
-            CacheCommitArguments args = cachable.GetCacheArguments(Compiler.Tasks[cachable].CountSQL,Compiler.Tasks[cachable].Identifiers, explicitTypingDictionary);
+            CacheCommitArguments args = cachable.GetCacheArguments(Compiler.Tasks[cachable].CountSQL, Compiler.Tasks[cachable].Identifiers, explicitTypes.ToArray());
 
             manager.CommitResults(args);
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -108,6 +110,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 ForceDrop();
 
             Server.CreateDatabase(GetRuntimeName());
+        }
+
+        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns)
+        {
+            return Helper.CreateTable(this,tableName,columns);
+        }
+
+        public DiscoveredTable CreateTable(string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
+        {
+            return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions,createEmpty);
         }
     }
 }

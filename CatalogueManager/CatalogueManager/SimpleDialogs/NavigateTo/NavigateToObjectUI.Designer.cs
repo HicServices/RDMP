@@ -43,11 +43,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(655, 639);
+            this.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.ClientSize = new System.Drawing.Size(1275, 639);
+            this.ControlBox = false;
             this.Controls.Add(this.tbFind);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "NavigateToObjectUI";
             this.Text = "NavigateToObjectUI";
+            this.TransparencyKey = System.Drawing.Color.Magenta;
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using ReusableUIComponents.Annotations;
 
 namespace RDMPObjectVisualisation.Pipelines
 {
@@ -19,7 +23,7 @@ namespace RDMPObjectVisualisation.Pipelines
     /// chance they will execute succesfully if they are not compatible with the DataFlowPipelineContext.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public partial class PipelineSelectionUI<T> : UserControl
+    public partial class PipelineSelectionUI<T> : UserControl, IPipelineSelectionUI
     {
         private readonly IDataFlowSource<T> _sourceIfExists;
         private readonly IDataFlowDestination<T> _destinationIfExists;
@@ -27,7 +31,8 @@ namespace RDMPObjectVisualisation.Pipelines
         private DataFlowPipelineContext<T> _context;
         private IPipeline _pipeline;
         public event Action PipelineDeleted = delegate { };
-
+        
+        public event EventHandler PipelineChanged;
         public event EventHandler OnBeforeLaunchEdit;
 
         public IPipeline Pipeline
@@ -41,10 +46,7 @@ namespace RDMPObjectVisualisation.Pipelines
                     ddPipelines.SelectedItem = value;
             }
         }
-
-
-        public event EventHandler PipelineChanged;
-
+        
         public DataFlowPipelineContext<T> Context
         {
             get { return _context; }
@@ -53,6 +55,11 @@ namespace RDMPObjectVisualisation.Pipelines
                 _context = value;
                 RefreshPipelineList();
             }
+        }
+
+        public void SetContext(IDataFlowPipelineContext context)
+        {
+            Context = (DataFlowPipelineContext<T>)context;
         }
 
         public override string Text
@@ -195,6 +202,40 @@ namespace RDMPObjectVisualisation.Pipelines
                 //select the clone
                 ddPipelines.SelectedItem = clone;
             }
+        }
+
+        
+        /// <summary>
+        /// Turns the control into a single line ui control
+        /// </summary>
+        [UsedImplicitly]
+        public void CollapseToSingleLineMode()
+        {
+            this.Height = 28;
+
+            this.Controls.Remove(gbPrompt);
+
+            this.Controls.Add(ddPipelines);
+            ddPipelines.Location = new Point(2, 2);
+            ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+
+            foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline, cbOnlyShowCompatiblePipelines })
+            {
+                this.Controls.Add(button);
+                button.Location = new Point(2, 2);
+                button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            }
+
+            cbOnlyShowCompatiblePipelines.Text = "";
+            cbOnlyShowCompatiblePipelines.Left = Width - cbOnlyShowCompatiblePipelines.Width;
+
+            btnDeletePipeline.Left = cbOnlyShowCompatiblePipelines.Left- btnDeletePipeline.Width;
+            btnClonePipeline.Left = btnDeletePipeline.Left - btnClonePipeline.Width;
+            btnCreateNewPipeline.Left = btnClonePipeline.Left - btnCreateNewPipeline.Width;
+            btnEditPipeline.Left = btnCreateNewPipeline.Left - btnEditPipeline.Width;
+
+            ddPipelines.Width = btnEditPipeline.Left - 2;
+
         }
     }
 }

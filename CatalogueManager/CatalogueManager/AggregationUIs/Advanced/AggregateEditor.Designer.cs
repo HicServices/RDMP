@@ -41,6 +41,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.gbAxis = new System.Windows.Forms.GroupBox();
             this.btnClearAxis = new System.Windows.Forms.Button();
             this.ddAxisDimension = new System.Windows.Forms.ComboBox();
+            this.aggregateContinuousDateAxisUI1 = new CatalogueManager.AggregationUIs.AggregateContinuousDateAxisUI();
             this.gbPivot = new System.Windows.Forms.GroupBox();
             this.btnClearPivotDimension = new System.Windows.Forms.Button();
             this.ddPivotDimension = new System.Windows.Forms.ComboBox();
@@ -57,16 +58,18 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.btnViewQuery = new System.Windows.Forms.Button();
             this.btnParameters = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.lblName = new System.Windows.Forms.Label();
             this._aggregateTopXui1 = new CatalogueManager.AggregationUIs.Advanced.AggregateTopXUI();
             this.selectColumnUI1 = new CatalogueManager.AggregationUIs.Advanced.SelectColumnUI();
-            this.aggregateContinuousDateAxisUI1 = new CatalogueManager.AggregationUIs.AggregateContinuousDateAxisUI();
-            this.btnShow = new System.Windows.Forms.Button();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tbName = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.gbDescription.SuspendLayout();
             this.gbAxis.SuspendLayout();
             this.gbPivot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvJoin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbDescription
@@ -74,9 +77,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.gbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbDescription.Controls.Add(this.tbDescription);
-            this.gbDescription.Location = new System.Drawing.Point(4, 790);
+            this.gbDescription.Location = new System.Drawing.Point(9, 697);
             this.gbDescription.Name = "gbDescription";
-            this.gbDescription.Size = new System.Drawing.Size(700, 107);
+            this.gbDescription.Size = new System.Drawing.Size(655, 75);
             this.gbDescription.TabIndex = 16;
             this.gbDescription.TabStop = false;
             this.gbDescription.Text = "Description";
@@ -87,7 +90,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.tbDescription.Location = new System.Drawing.Point(3, 16);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(694, 88);
+            this.tbDescription.Size = new System.Drawing.Size(649, 56);
             this.tbDescription.TabIndex = 0;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
@@ -111,7 +114,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             // lblFromTable
             // 
             this.lblFromTable.AutoSize = true;
-            this.lblFromTable.Location = new System.Drawing.Point(45, 380);
+            this.lblFromTable.Location = new System.Drawing.Point(45, 287);
             this.lblFromTable.Name = "lblFromTable";
             this.lblFromTable.Size = new System.Drawing.Size(10, 13);
             this.lblFromTable.TabIndex = 11;
@@ -137,9 +140,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.gbAxis.Controls.Add(this.aggregateContinuousDateAxisUI1);
             this.gbAxis.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbAxis.ForeColor = System.Drawing.Color.Blue;
-            this.gbAxis.Location = new System.Drawing.Point(3, 609);
+            this.gbAxis.Location = new System.Drawing.Point(9, 520);
             this.gbAxis.Name = "gbAxis";
-            this.gbAxis.Size = new System.Drawing.Size(700, 100);
+            this.gbAxis.Size = new System.Drawing.Size(655, 100);
             this.gbAxis.TabIndex = 14;
             this.gbAxis.TabStop = false;
             this.gbAxis.Text = "AXIS";
@@ -149,7 +152,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.btnClearAxis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClearAxis.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClearAxis.ForeColor = System.Drawing.Color.Black;
-            this.btnClearAxis.Location = new System.Drawing.Point(602, 17);
+            this.btnClearAxis.Location = new System.Drawing.Point(557, 17);
             this.btnClearAxis.Name = "btnClearAxis";
             this.btnClearAxis.Size = new System.Drawing.Size(75, 23);
             this.btnClearAxis.TabIndex = 1;
@@ -166,9 +169,18 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.ddAxisDimension.FormattingEnabled = true;
             this.ddAxisDimension.Location = new System.Drawing.Point(15, 19);
             this.ddAxisDimension.Name = "ddAxisDimension";
-            this.ddAxisDimension.Size = new System.Drawing.Size(581, 21);
+            this.ddAxisDimension.Size = new System.Drawing.Size(536, 21);
             this.ddAxisDimension.TabIndex = 0;
             this.ddAxisDimension.SelectedIndexChanged += new System.EventHandler(this.ddAxisDimension_SelectedIndexChanged);
+            // 
+            // aggregateContinuousDateAxisUI1
+            // 
+            this.aggregateContinuousDateAxisUI1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.aggregateContinuousDateAxisUI1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.aggregateContinuousDateAxisUI1.Location = new System.Drawing.Point(15, 46);
+            this.aggregateContinuousDateAxisUI1.Name = "aggregateContinuousDateAxisUI1";
+            this.aggregateContinuousDateAxisUI1.Size = new System.Drawing.Size(633, 48);
+            this.aggregateContinuousDateAxisUI1.TabIndex = 2;
             // 
             // gbPivot
             // 
@@ -178,9 +190,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.gbPivot.Controls.Add(this.ddPivotDimension);
             this.gbPivot.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbPivot.ForeColor = System.Drawing.Color.Blue;
-            this.gbPivot.Location = new System.Drawing.Point(4, 715);
+            this.gbPivot.Location = new System.Drawing.Point(9, 626);
             this.gbPivot.Name = "gbPivot";
-            this.gbPivot.Size = new System.Drawing.Size(700, 65);
+            this.gbPivot.Size = new System.Drawing.Size(655, 65);
             this.gbPivot.TabIndex = 15;
             this.gbPivot.TabStop = false;
             this.gbPivot.Text = "PIVOT";
@@ -190,7 +202,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.btnClearPivotDimension.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClearPivotDimension.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClearPivotDimension.ForeColor = System.Drawing.Color.Black;
-            this.btnClearPivotDimension.Location = new System.Drawing.Point(602, 19);
+            this.btnClearPivotDimension.Location = new System.Drawing.Point(557, 19);
             this.btnClearPivotDimension.Name = "btnClearPivotDimension";
             this.btnClearPivotDimension.Size = new System.Drawing.Size(75, 23);
             this.btnClearPivotDimension.TabIndex = 1;
@@ -207,7 +219,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.ddPivotDimension.FormattingEnabled = true;
             this.ddPivotDimension.Location = new System.Drawing.Point(15, 19);
             this.ddPivotDimension.Name = "ddPivotDimension";
-            this.ddPivotDimension.Size = new System.Drawing.Size(581, 21);
+            this.ddPivotDimension.Size = new System.Drawing.Size(536, 21);
             this.ddPivotDimension.Sorted = true;
             this.ddPivotDimension.TabIndex = 0;
             this.ddPivotDimension.SelectedIndexChanged += new System.EventHandler(this.ddPivotDimension_SelectedIndexChanged);
@@ -218,9 +230,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbHaving.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbHaving.ForeColor = System.Drawing.Color.Blue;
-            this.gbHaving.Location = new System.Drawing.Point(3, 504);
+            this.gbHaving.Location = new System.Drawing.Point(9, 415);
             this.gbHaving.Name = "gbHaving";
-            this.gbHaving.Size = new System.Drawing.Size(700, 99);
+            this.gbHaving.Size = new System.Drawing.Size(655, 99);
             this.gbHaving.TabIndex = 13;
             this.gbHaving.TabStop = false;
             this.gbHaving.Text = "HAVING";
@@ -240,9 +252,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.olvJoin.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvJoin.FullRowSelect = true;
             this.olvJoin.IsSimpleDropSink = true;
-            this.olvJoin.Location = new System.Drawing.Point(4, 396);
+            this.olvJoin.Location = new System.Drawing.Point(4, 303);
             this.olvJoin.Name = "olvJoin";
-            this.olvJoin.Size = new System.Drawing.Size(699, 106);
+            this.olvJoin.Size = new System.Drawing.Size(689, 106);
             this.olvJoin.TabIndex = 12;
             this.olvJoin.UseCompatibleStateImageBehavior = false;
             this.olvJoin.View = System.Windows.Forms.View.Details;
@@ -270,7 +282,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Blue;
-            this.label3.Location = new System.Drawing.Point(1, 380);
+            this.label3.Location = new System.Drawing.Point(1, 287);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(42, 13);
             this.label3.TabIndex = 10;
@@ -281,7 +293,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.Blue;
-            this.label1.Location = new System.Drawing.Point(6, 149);
+            this.label1.Location = new System.Drawing.Point(1, 56);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(54, 13);
             this.label1.TabIndex = 7;
@@ -346,92 +358,105 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Blue;
-            this.label2.Location = new System.Drawing.Point(6, 104);
+            this.label2.Location = new System.Drawing.Point(1, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(36, 13);
             this.label2.TabIndex = 23;
             this.label2.Text = "TOP ";
             // 
-            // lblName
-            // 
-            this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(128, 7);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(45, 13);
-            this.lblName.TabIndex = 25;
-            this.lblName.Text = "lblName";
-            // 
             // _aggregateTopXui1
             // 
             this._aggregateTopXui1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._aggregateTopXui1.Location = new System.Drawing.Point(7, 120);
+            this._aggregateTopXui1.Location = new System.Drawing.Point(2, 25);
             this._aggregateTopXui1.Name = "_aggregateTopXui1";
-            this._aggregateTopXui1.Size = new System.Drawing.Size(683, 28);
+            this._aggregateTopXui1.Size = new System.Drawing.Size(679, 28);
             this._aggregateTopXui1.TabIndex = 24;
             // 
             // selectColumnUI1
             // 
             this.selectColumnUI1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.selectColumnUI1.Location = new System.Drawing.Point(6, 161);
+            this.selectColumnUI1.Location = new System.Drawing.Point(1, 68);
             this.selectColumnUI1.Name = "selectColumnUI1";
-            this.selectColumnUI1.Size = new System.Drawing.Size(696, 216);
+            this.selectColumnUI1.Size = new System.Drawing.Size(687, 216);
             this.selectColumnUI1.TabIndex = 9;
             // 
-            // aggregateContinuousDateAxisUI1
+            // objectSaverButton1
             // 
-            this.aggregateContinuousDateAxisUI1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.aggregateContinuousDateAxisUI1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.aggregateContinuousDateAxisUI1.Location = new System.Drawing.Point(15, 46);
-            this.aggregateContinuousDateAxisUI1.Name = "aggregateContinuousDateAxisUI1";
-            this.aggregateContinuousDateAxisUI1.Size = new System.Drawing.Size(633, 48);
-            this.aggregateContinuousDateAxisUI1.TabIndex = 2;
+            this.objectSaverButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.objectSaverButton1.Location = new System.Drawing.Point(7, 903);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.TabIndex = 26;
+            this.objectSaverButton1.Text = "objectSaverButton1";
+            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
-            // btnShow
+            // panel1
             // 
-            this.btnShow.Location = new System.Drawing.Point(187, 3);
-            this.btnShow.Name = "btnShow";
-            this.btnShow.Size = new System.Drawing.Size(45, 22);
-            this.btnShow.TabIndex = 0;
-            this.btnShow.Text = "Show";
-            this.btnShow.UseVisualStyleBackColor = true;
-            this.btnShow.Click += new System.EventHandler(this.btnShow_Click);
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this._aggregateTopXui1);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.selectColumnUI1);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.olvJoin);
+            this.panel1.Controls.Add(this.gbDescription);
+            this.panel1.Controls.Add(this.lblFromTable);
+            this.panel1.Controls.Add(this.gbHaving);
+            this.panel1.Controls.Add(this.gbAxis);
+            this.panel1.Controls.Add(this.gbPivot);
+            this.panel1.Location = new System.Drawing.Point(6, 116);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(697, 775);
+            this.panel1.TabIndex = 27;
+            // 
+            // tbName
+            // 
+            this.tbName.Location = new System.Drawing.Point(128, 5);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(472, 20);
+            this.tbName.TabIndex = 28;
+            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(87, 8);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.TabIndex = 29;
+            this.label6.Text = "Name";
             // 
             // AggregateEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.Controls.Add(this.btnShow);
-            this.Controls.Add(this.lblName);
-            this.Controls.Add(this._aggregateTopXui1);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.tbName);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnViewQuery);
-            this.Controls.Add(this.gbDescription);
-            this.Controls.Add(this.selectColumnUI1);
             this.Controls.Add(this.tbID);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lblParams);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnParameters);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.lblFromTable);
             this.Controls.Add(this.cbExtractable);
-            this.Controls.Add(this.olvJoin);
-            this.Controls.Add(this.gbHaving);
-            this.Controls.Add(this.gbPivot);
-            this.Controls.Add(this.gbAxis);
             this.Name = "AggregateEditor";
-            this.Size = new System.Drawing.Size(706, 900);
+            this.Size = new System.Drawing.Size(706, 929);
             this.gbDescription.ResumeLayout(false);
             this.gbDescription.PerformLayout();
             this.gbAxis.ResumeLayout(false);
             this.gbPivot.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvJoin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -467,7 +492,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
         private AggregateTopXUI _aggregateTopXui1;
-        private System.Windows.Forms.Label lblName;
-        private System.Windows.Forms.Button btnShow;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox tbName;
+        private System.Windows.Forms.Label label6;
     }
 }

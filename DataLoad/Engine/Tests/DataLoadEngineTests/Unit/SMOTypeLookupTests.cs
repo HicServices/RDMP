@@ -38,9 +38,9 @@ namespace DataLoadEngineTests.Unit
         public void Numbers()
         {
             var dt = lookup.GetSMODataTypeForSqlStringDataType("decimal(3,2)");
-            Assert.AreEqual(DataType.Decimal(3,2), dt);
+            Assert.AreEqual(DataType.Decimal(2,3), dt);
 
-            dt = lookup.GetSMODataTypeForSqlStringDataType("numeric(5,10)"); //this is actually an illegal type btw since there cant be more scale than precision but that doesn't stop C#!
+            dt = lookup.GetSMODataTypeForSqlStringDataType("numeric(10,5)");
             Assert.AreEqual(DataType.Numeric(5,10), dt);
         }
 

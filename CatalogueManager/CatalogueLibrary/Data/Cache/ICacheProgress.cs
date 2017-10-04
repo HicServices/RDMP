@@ -19,6 +19,7 @@ namespace CatalogueLibrary.Data.Cache
 
         IPipeline Pipeline { get; }
         PermissionWindow PermissionWindow { get; }
+        LoadProgress LoadProgress { get;}
 
         CacheLagPeriod GetCacheLagPeriod();
         void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod);

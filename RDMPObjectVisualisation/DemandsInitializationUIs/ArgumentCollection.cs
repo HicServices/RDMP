@@ -14,6 +14,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 using ContentAlignment = System.Drawing.ContentAlignment;
 
@@ -27,7 +28,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
     /// </summary>
     public partial class ArgumentCollection : UserControl 
     {
-        public Dictionary<string, DemandsInitialization> DemandDictionary = new Dictionary<string, DemandsInitialization>();
+        public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
         private Type _argumentsAreFor;
         private IArgumentHost _parent;
         private CatalogueRepository _catalogueRepository;
@@ -57,20 +58,27 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
         {
             _parent = parent;
             _argumentsAreFor = argumentsAreForUnderlyingType;
+
+            lblTypeUnloadable.Visible = _argumentsAreFor == null;
+
             _catalogueRepository = catalogueRepository;
             _valueUisFactory = new ArgumentValueUIFactory();
 
-            lblClassName.Text = _argumentsAreFor.FullName;
+            if (_argumentsAreFor != null)
+                lblClassName.Text = _argumentsAreFor.FullName;
 
             helpIcon1.Left = lblClassName.Right;
-
-            btnViewSourceCode.Enabled = ViewSourceCodeDialog.GetSourceForFile(_argumentsAreFor.Name + ".cs") != null;
-            btnViewSourceCode.Left = helpIcon1.Right;
             
-            helpIcon1.SetHelpText( _argumentsAreFor.Name,GetDescriptionForTypeIncludingBaseTypes(_argumentsAreFor, true));
+            if (_argumentsAreFor != null)
+            {
+                btnViewSourceCode.Enabled = ViewSourceCodeDialog.GetSourceForFile(_argumentsAreFor.Name + ".cs") != null;
+                btnViewSourceCode.Left = helpIcon1.Right;
 
-            RefreshArgumentList();
-            
+                helpIcon1.SetHelpText(_argumentsAreFor.Name, GetDescriptionForTypeIncludingBaseTypes(_argumentsAreFor, true)); 
+
+                RefreshArgumentList();
+            }
+
         }
         
         /// <summary>
@@ -105,91 +113,16 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             }
             return message;
         }
+
         private void RefreshArgumentList()
         {
-            if (_parent == null)
-                return;
+            var argumentFactory = new ArgumentFactory();
+            DemandDictionary = argumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
+            
+            lblNoArguments.Visible = !DemandDictionary.Any();
+            pArguments.Visible = DemandDictionary.Any();
 
-            DemandDictionary.Clear();
-
-            if (_argumentsAreFor != null)
-            {
-                //parameters that already exist
-                var existing = _parent.GetAllArguments().Cast<Argument>().ToList();
-                List<string> required = new List<string>();
-
-                foreach (PropertyInfo propertyInfo in _argumentsAreFor.GetProperties())
-                    foreach (DemandsInitialization attribute in propertyInfo.GetCustomAttributes(typeof(DemandsInitialization), true))
-                    {
-                        //found a tagged attribute - it might already exist though
-                        required.Add(propertyInfo.Name);
-
-                        //record the name of the property and the type it requires
-                        DemandDictionary.Add(propertyInfo.Name, attribute);
-
-                        var argument = existing.SingleOrDefault(arg => arg.Name.Equals(propertyInfo.Name));
-
-                        if (argument == null)//it doesnt exist - so create it
-                        {
-                            var newArgument = (Argument)_parent.CreateNewArgument();
-
-                            newArgument.Name = propertyInfo.Name;
-                                
-                            try
-                            {
-                                newArgument.SetType(propertyInfo.PropertyType);
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionViewer.Show("Problem determining argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName,e);
-                            }
-
-                            newArgument.Description = attribute.Description;
-
-                            if (attribute.DefaultValue != null)
-                                try
-                                {
-                                    newArgument.SetValue(attribute.DefaultValue);
-                                }
-                                catch (Exception e)
-                                {
-                                    ExceptionViewer.Show("Problem setting DefaultValue argument " + propertyInfo.Name + " on class " + _argumentsAreFor.FullName + " DefaultValue was '" + attribute.DefaultValue + "' (" + attribute.DefaultValue.GetType().Name+")", e);
-                                }
-                            newArgument.SaveToDatabase();
-                            existing.Add(newArgument);
-                        }
-                        else
-                        {
-                            //it does exist but check it hasn't had a type descync
-                            if (argument.GetSystemType() != propertyInfo.PropertyType)
-                                if (MessageBox.Show("Argument '" + argument.Name + "' is of Type '" +
-                                                    argument.GetSystemType() + "' in Catalogue but is of Type '" +
-                                                    propertyInfo.PropertyType + "' in underlying class '" +
-                                                    _argumentsAreFor.Name +
-                                                    "'.  Do you want to resolve this by changing the type of argument " +
-                                                    argument.Name + " to Type " + propertyInfo.PropertyType + "?",
-                                    "Fix Argument Type Desynchronisation?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                                {
-                                    //user wants to fix the problem
-                                    argument.SetType(propertyInfo.PropertyType);
-                                    argument.SaveToDatabase();
-                                }
-                        }
-                    }
-
-                foreach (var argumentsNotRequired in existing.Where(e => !required.Any(r => r.Equals(e.Name))))
-                {
-                    if (MessageBox.Show("Argument " + argumentsNotRequired.Name + " is not required, delete it?", "Delete superfluous argument?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        argumentsNotRequired.DeleteInDatabase();
-                }
-            }
-
-            var args = _parent.GetAllArguments().ToArray();
-
-            lblNoArguments.Visible = !args.Any();
-            pArguments.Visible = args.Any();
-
-            if (!args.Any())
+            if (!DemandDictionary.Any())
                 return;
 
             pArguments.Controls.Clear();
@@ -202,9 +135,8 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             _maxValueUILeft = 0;
             _valueUIs.Clear();
 
-            foreach (var arg in args)
-                if (DemandDictionary.ContainsKey(arg.Name))
-                    CreateLine(_parent, (Argument) arg, DemandDictionary[arg.Name]);
+            foreach (var kvp in DemandDictionary)
+                CreateLine(_parent, kvp.Key, kvp.Value);
 
             foreach (Control control in _valueUIs)
             {
@@ -230,23 +162,23 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             return label;
         }
 
-        private void CreateLine(IArgumentHost parent, Argument argument, DemandsInitialization demandsInitialization)
+        private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required)
         {
 
             Label name = new Label();
 
             HelpIcon helpIcon = new HelpIcon();
-            helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()), demandsInitialization.Description);
+            helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()), required.Demand.Description);
             helpIcon.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            string spaceSeparatedArgumentName = Regex.Replace(argument.Name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
+            string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
             name.Height = helpIcon.Height;
             name.Text = spaceSeparatedArgumentName;
             name.TextAlign = ContentAlignment.MiddleLeft;
             name.AutoSize = true;
             name.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            var valueui = (Control)_valueUisFactory.Create(parent, argument, demandsInitialization, Preview);
+            var valueui = (Control)_valueUisFactory.Create(parent, argument, required, Preview);
             valueui.MinimumSize = new Size(valueui.Width/4, valueui.Height);
             valueui.MaximumSize = new Size(valueui.Width, valueui.Height);
             valueui.Anchor = name.Anchor = AnchorStyles.Top |  AnchorStyles.Left | AnchorStyles.Right;
@@ -303,7 +235,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
                 //get all properties
                 argumentsAreForUnderlyingType.GetProperties()
                 //any of them have custom attribute collections which contain a [DemandsInitialization]?
-                .Any(p => p.GetCustomAttributes(typeof (CatalogueLibrary.Data.DemandsInitialization)).Any());
+                .Any(p => p.GetCustomAttributes(typeof (CatalogueLibrary.Data.DemandsInitializationAttribute)).Any());
 
             if (!areAnyDemandsInitializations)
                 return;
