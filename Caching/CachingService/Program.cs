@@ -16,11 +16,10 @@ namespace CachingService
         /// </summary>
         static int Main(string[] args)
         {
-            var result = Parser.Default.ParseArguments<CachingServiceOptions>(args);
-            if (result.Errors.Any())
-                Console.WriteLine(string.Join(",", result.Errors.Select(error => error.ToString())));
-
-            var options = result.Value;
+            var options = new CachingServiceOptions();
+            var isValid = Parser.Default.ParseArgumentsStrict(args, options);
+            if (!isValid)//result.Errors.Any())
+                // Console.WriteLine(string.Join(",", .Errors.Select(error => error.ToString())));
 
             // Override the default if requested
             if (string.IsNullOrWhiteSpace(options.ConnectionString))

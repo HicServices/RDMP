@@ -49,6 +49,8 @@ namespace WebdavAutodowloader
                 return;
             }
 
+            Console.WriteLine("Processing {0}" + file.DisplayName);
+
             var zipFilePath = DownloadToDestination(file);
 
             UnzipToReleaseFolder(zipFilePath);
@@ -68,10 +70,13 @@ namespace WebdavAutodowloader
                 return null;
 
             var files = client.List(remoteFolder.Href).Result;
+            var enumerable = files as Item[] ?? files.ToArray();
+
+            Console.WriteLine("Found {0} files", enumerable.Count());
 
             var alreadyProcessed = File.ReadAllLines("processed.txt");
 
-            var latest = files.Where(f => f.DisplayName.Contains("Release") && !alreadyProcessed.Contains(f.Href)).OrderBy(f => f.LastModified).FirstOrDefault();
+            var latest = enumerable.Where(f => f.DisplayName.Contains("Release") && !alreadyProcessed.Contains(f.Href)).OrderBy(f => f.LastModified).FirstOrDefault();
 
             return latest;
         }
@@ -87,6 +92,8 @@ namespace WebdavAutodowloader
                 var content = client.Download(file.Href).Result;
                 content.CopyTo(fileStream);
             }
+
+            Console.WriteLine("Downloaded to {0}", Path.Combine(options.LocalDestination, file.DisplayName));
 
             return Path.Combine(options.LocalDestination, file.DisplayName);
         }
@@ -104,6 +111,8 @@ namespace WebdavAutodowloader
                 zip.Password = options.ZipPassword;
                 zip.ExtractAll(destination);
             }
+
+            Console.WriteLine("Unzipped all to {0}", destination);
         }
     }
 }
