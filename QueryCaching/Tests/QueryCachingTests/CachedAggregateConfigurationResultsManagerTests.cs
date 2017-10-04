@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using NUnit.Framework;
@@ -126,7 +127,7 @@ namespace QueryCachingTests
         }
 
         [Test]
-        public void Throws_BecauseItHasNulls()
+        public void NullsAreDropped()
         {
             DataTable dt = new DataTable();
             dt.Columns.Add("MyCol");
@@ -134,9 +135,30 @@ namespace QueryCachingTests
             dt.Rows.Add(DBNull.Value);
             dt.Rows.Add("0101010102");
 
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30));
 
-            var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30)));
-            Assert.AreEqual("DataTable for 'CachedAggregateConfigurationResultsManagerTests' contains nulls so cannot be cached",ex.Message);
+            var resultTable =_manager.GetLatestResultsTable(_config,AggregateOperation.IndexedExtractionIdentifierList, "select * from fish");
+            
+            var dt2 = new DataTable();
+
+            using (
+                var con =
+                    DataAccessPortal.GetInstance()
+                        .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
+                        .GetConnection())
+            {
+                con.Open();
+
+                
+                SqlDataAdapter da = new SqlDataAdapter("Select * from " + resultTable.GetFullyQualifiedName(),
+                    (SqlConnection) con);
+                da.Fill(dt2);
+            }
+
+            Assert.AreEqual(2,dt2.Rows.Count);
+            Assert.IsTrue(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010101"));
+            Assert.IsTrue(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010102"));
+
         }
         
         private const string SomeComplexBitOfSqlCode =

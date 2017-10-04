@@ -232,12 +232,21 @@ namespace CatalogueLibrary.Data.DataLoad
 
         public Type GetSystemType()
         {
-            var basicType = PermissableTypes.SingleOrDefault(t => t.ToString().Equals(Type));
-            
-            if (basicType != null)
-                return basicType;
-            
-            return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Type);
+            //if we know they type (it is exactly one we are expecting)
+            foreach (Type knownType in PermissableTypes)
+            {
+                //return the type
+                if (knownType.ToString().Equals(Type))
+                    return knownType;
+            }
+
+            //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
+            var anyType =  ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Type);
+
+            if(anyType == null)
+                throw new Exception("Could not figure out what SystemType to use for Type = '" + Type +"'");
+
+            return anyType;
         }
 
         public void SetType(Type t)

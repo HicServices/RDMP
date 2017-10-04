@@ -19,6 +19,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -69,7 +70,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// One (DATE!) column can be marked as an Axis.  See AggregateContinuousDateAxisUI for description.
     /// 
     /// </summary>
-    public partial class AggregateEditor : AggregateEditor_Design //designer support
+    public partial class AggregateEditor : AggregateEditor_Design,ISaveableUI
     {
         private IAggregateEditorOptions _options;
         private AggregateConfiguration _aggregate;
@@ -225,6 +226,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             PopulateTopX();
 
+            objectSaverButton1.SetupFor(_aggregate,_activator.RefreshBus);
             isRefreshing = false;
         }
 
@@ -281,8 +283,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 pictureBox1.Image = CatalogueIcons.BigGraph;
             
             //set the name to the tostring not the .Name so that we ignore the cic prefix
-            lblName.Text = _aggregate.ToString();
-            btnShow.Left = lblName.Right + 5;
+            tbName.Text = _aggregate.ToString();
         }
 
         
@@ -329,12 +330,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
             e.Column.PutAspectByName(e.RowObject,e.NewValue);
 
             if (countColumn != null)
-            {
-                _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? " as " + countColumn.Alias:"");
-                _aggregate.SaveToDatabase();
-            }
-            else
-            if (revertable != null)
+                _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? " as " + countColumn.Alias : "");
+            else if (revertable != null)
             {
                 if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                     revertable.SaveToDatabase();
@@ -425,8 +422,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             if (_aggregate != null)
             {
                 _aggregate.PivotOnDimensionID = null;
-                _aggregate.SaveToDatabase();
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                 ddPivotDimension.SelectedItem = null;
             }
         }
@@ -537,10 +532,20 @@ namespace CatalogueManager.AggregationUIs.Advanced
         {
             _activator.ViewDataSample(new ViewAggregateExtractUICollection(_aggregate));
         }
-
-        private void btnShow_Click(object sender, EventArgs e)
+        
+        public ObjectSaverButton GetObjectSaverButton()
         {
-            _activator.RequestItemEmphasis(this,new EmphasiseRequest(_aggregate));
+            return objectSaverButton1;
+        }
+
+        private void tbName_TextChanged(object sender, EventArgs e)
+        {
+            _aggregate.Name = tbName.Text;
+            
+            var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
+
+            if (cic != null)
+                cic.EnsureNamingConvention(_aggregate);
         }
     }
     
