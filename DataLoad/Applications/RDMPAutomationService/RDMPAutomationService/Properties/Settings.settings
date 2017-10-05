@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RDMPAutomationService.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ServerName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CHILTERN8564</Value>
+    </Setting>
+    <Setting Name="CatalogueDB" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">NewLookupDataCatalogue</Value>
+    </Setting>
+    <Setting Name="DataExportDB" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">EMBARCDataExportManager</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
