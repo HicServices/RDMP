@@ -25,19 +25,20 @@ namespace RDMPAutomationService
 
             host = new RDMPAutomationLoop(serviceLocator, GetFirstAutomationServiceSlot(serviceLocator));
 
+            OnLogEvent(new ServiceEventArgs()
+            {
+                EntryType = EventLogEntryType.Information,
+                Message = "Starting Host Container..."
+            });
+
+            host.Start();
+
             if (Environment.UserInteractive)
             {
                 // running as console app
-                host.Start();
-
                 Console.WriteLine("Press any key to stop...");
                 Console.ReadKey(true);
-
                 Stop();
-            }
-            else
-            {
-                
             }
         }
 

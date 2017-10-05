@@ -35,7 +35,6 @@ namespace RDMPAutomationService
 
         public bool Stop { get; set; }
 
-
         public void Start()
         {
             Stop = false;
@@ -43,7 +42,6 @@ namespace RDMPAutomationService
             t = new Thread(Run);
             t.Start();
         }
-
 
         private readonly IRepository _repository;
         private readonly IRDMPPlatformRepositoryServiceLocator _locator;

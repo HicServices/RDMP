@@ -22,13 +22,12 @@ namespace RDMPAutomationService
             autoRDMP = new AutoRDMP();
             autoRDMP.LogEvent += (o,e) => eventLogger.WriteEntry(e.Message, e.EntryType);
             autoRDMP.Start();
-            //ExitCode = 1;
-            //Environment.FailFast("Cannot start! Check the Error Log and verify that the arguments are correct.");
         }
 
         protected override void OnStop()
         {
             eventLogger.WriteEntry("Stopping RDMP AutomationService", EventLogEntryType.Information);
+            autoRDMP.Stop();
         }
 
         private void InitLogging()
