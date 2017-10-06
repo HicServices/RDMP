@@ -90,7 +90,7 @@ namespace RDMPAutomationService
 
                 //let people know we are still alive
                 _serviceSlot.TickLifeline();
-
+                
                 _collection = new AutomationPipelineEngineCollection(_locator, _serviceSlot, AutomationDestination);
 
                 Console.WriteLine("_____AUTOMATION SERVER NOW RUNNING_____");
@@ -101,7 +101,7 @@ namespace RDMPAutomationService
                     {
                         while(!poll.Token.IsCancellationRequested)
                         {
-                            Task.Delay(100).Wait(poll.Token);
+                            Task.Delay(100, poll.Token);
                             AutomationDestination.ProcessCancellationRequests();
                         }
                     });

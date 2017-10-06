@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using RDMPAutomationService.EventHandlers;
 using RDMPAutomationService.Pipeline.Sources;
 using RDMPStartup;
@@ -24,9 +25,10 @@ namespace RDMPAutomationService.Pipeline
 
         public DataFlowPipelineEngine<OnGoingAutomationTask> DLEPipe { get; private set; }
         public DataFlowPipelineEngine<OnGoingAutomationTask> DQEPipe { get; private set; }
-
-        public List<DataFlowPipelineEngine<OnGoingAutomationTask>> UserSpecificPipelines { get; set; }
         public DataFlowPipelineEngine<OnGoingAutomationTask> CachePipe { get; private set; }
+
+        public List<DataFlowPipelineEngine<OnGoingAutomationTask>> UserSpecificPipelines { get; private set; }
+        public List<DataFlowPipelineEngine<OnGoingAutomationTask>> PluginDerivedPipelines { get; private set; }
 
         public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator,AutomationServiceSlot slot, AutomationDestination fixedDestination)
         {
@@ -53,6 +55,16 @@ namespace RDMPAutomationService.Pipeline
 
                 UserSpecificPipelines.Add((DataFlowPipelineEngine<OnGoingAutomationTask>) pipe);
             }
+
+            PluginDerivedPipelines = new List<DataFlowPipelineEngine<OnGoingAutomationTask>>();
+            foreach (var source in repositoryLocator.CatalogueRepository.MEF.GetTypes<IDataFlowSource<OnGoingAutomationTask>>())
+            {
+                var sourceImpl = (IDataFlowSource<OnGoingAutomationTask>) new ObjectConstructor().Construct(source);
+                var engine = new DataFlowPipelineEngine<OnGoingAutomationTask>(AutomationPipelineContext.Context, sourceImpl, fixedDestination, _listener);
+                engine.Initialize(slot, repositoryLocator);
+
+                PluginDerivedPipelines.Add(engine);
+            }
         }
 
         public void ExecuteAll(int minimumLengthOfTimeToWaitWhileDoingThis)
@@ -61,7 +73,6 @@ namespace RDMPAutomationService.Pipeline
             Task task = new Task(() =>
             {
                 //we are not trying to stop so look for new tasks
-
                 _slot.RevertToDatabaseState();
 
                 DLEPipe.ExecutePipeline(new GracefulCancellationToken());
@@ -69,6 +80,9 @@ namespace RDMPAutomationService.Pipeline
                 CachePipe.ExecutePipeline(new GracefulCancellationToken());
 
                 foreach (var pipeline in UserSpecificPipelines)
+                    pipeline.ExecutePipeline(new GracefulCancellationToken());
+
+                foreach (var pipeline in PluginDerivedPipelines)
                     pipeline.ExecutePipeline(new GracefulCancellationToken());
             });
             
