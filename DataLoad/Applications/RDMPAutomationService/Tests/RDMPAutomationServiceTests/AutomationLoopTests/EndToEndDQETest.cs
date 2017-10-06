@@ -23,7 +23,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             bulkTests.ImportAsCatalogue();
 
             AutomationServiceSlot slot = new AutomationServiceSlot(CatalogueRepository);
-            var loop = new RDMPAutomationLoop(RepositoryLocator, slot);
+            var loop = new RDMPAutomationLoop(RepositoryLocator, slot, logAction);
 
             slot.DLEMaxConcurrentJobs = 0;
             slot.DQEMaxConcurrentJobs = 1;

@@ -109,7 +109,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             Assert.AreEqual(0, _hicProjectDirectory.Cache.GetFiles("*.csv").Count());
 
-            var loop = new RDMPAutomationLoop(RepositoryLocator, _slot);
+            var loop = new RDMPAutomationLoop(RepositoryLocator, _slot, logAction);
             loop.Start();
 
 

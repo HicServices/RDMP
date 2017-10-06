@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Policy;
 using System.Threading;
@@ -35,6 +36,8 @@ namespace RDMPAutomationService
 
         public bool Stop { get; set; }
 
+        private readonly Action<EventLogEntryType, string> _log;
+
         public void Start()
         {
             Stop = false;
@@ -52,12 +55,13 @@ namespace RDMPAutomationService
         /// true once an RDMPStartup has completed execution (MEF loaded, repositories located etc)
         /// </summary>
         public bool StartupComplete { get; set; }
-
-        public RDMPAutomationLoop(IRDMPPlatformRepositoryServiceLocator locator, AutomationServiceSlot serviceSlot)
+        
+        public RDMPAutomationLoop(IRDMPPlatformRepositoryServiceLocator locator, AutomationServiceSlot serviceSlot, Action<EventLogEntryType, string> log)
         {
             _repository = locator.CatalogueRepository;
             _locator = locator;
             _serviceSlot = serviceSlot;
+            _log = log;
 
             AutomationDestination = new AutomationDestination();
         }
@@ -78,6 +82,7 @@ namespace RDMPAutomationService
 
                 //lock it
                 _serviceSlot.Lock();
+                _log(EventLogEntryType.Information, "Locked service slot " + _serviceSlot.ID);
 
                 Startup startup = new Startup(_locator);
                 startup.DoStartup(new AutomationMEFLoadingCheckNotifier());//who cares if MEF has problems eh?
@@ -93,7 +98,7 @@ namespace RDMPAutomationService
                 
                 _collection = new AutomationPipelineEngineCollection(_locator, _serviceSlot, AutomationDestination);
 
-                Console.WriteLine("_____AUTOMATION SERVER NOW RUNNING_____");
+                _log(EventLogEntryType.Information, "_____AUTOMATION SERVER NOW RUNNING_____" + _serviceSlot.ID);
 
                 //always keep processing cancellation requests, infact if the user is trying to shut down automation hes probably also spamming cancellation buttons
                 CancellationTokenSource poll = new CancellationTokenSource();
@@ -123,8 +128,9 @@ namespace RDMPAutomationService
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _log(EventLogEntryType.Error, e.Message);
                 new AutomationServiceException((ICatalogueRepository) _repository, e);
+                throw;
             }
             finally
             {
@@ -133,7 +139,5 @@ namespace RDMPAutomationService
             }
             
         }
-
-        
     }
 }

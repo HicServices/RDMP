@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,11 +16,10 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
     public class BasicAutomationTests : AutomationTests
     {
-
         [Test]
         public void TestsNoAvailableSlots_ErrorLoggedForService()
         {
-            var loop = new RDMPAutomationLoop(RepositoryLocator, null);
+            var loop = new RDMPAutomationLoop(RepositoryLocator, null, logAction);
             loop.Start();
 
             int timeout = 0;
@@ -46,7 +46,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             Assert.IsFalse(slot.LockedBecauseRunning);
 
-            var loop = new RDMPAutomationLoop(RepositoryLocator, slot);
+            var loop = new RDMPAutomationLoop(RepositoryLocator, slot, logAction);
             loop.Start();
 
             int timeout = 30000;

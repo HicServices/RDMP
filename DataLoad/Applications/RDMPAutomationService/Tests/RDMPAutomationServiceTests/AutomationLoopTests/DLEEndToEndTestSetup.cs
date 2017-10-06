@@ -93,7 +93,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
 
             //start an automation loop in the slot, it should pickup the load
-            var loop = new RDMPAutomationLoop(RepositoryLocator, _slot);
+            var loop = new RDMPAutomationLoop(RepositoryLocator, _slot, (type, s) => { Console.WriteLine("{0}: {1}", type.ToString().ToUpper(), s); });
             loop.Start();
 
             //wait 10 seconds for the load to start

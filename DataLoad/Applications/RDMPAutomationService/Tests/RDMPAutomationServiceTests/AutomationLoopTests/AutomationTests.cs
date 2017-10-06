@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
     public class AutomationTests:DatabaseTests
     {
+        protected Action<EventLogEntryType, string> logAction = ((type, s) => { Console.WriteLine("{0}: {1}", type.ToString().ToUpper(), s); });
+
         [TestFixtureSetUp]
         public void ClearSlotsAndJobs()
         {

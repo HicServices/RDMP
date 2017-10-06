@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
 using CommandLine;
@@ -11,6 +12,13 @@ namespace RDMPAutomationService
     {
         private RDMPAutomationLoop host;
         private IRDMPPlatformRepositoryServiceLocator serviceLocator;
+
+        private readonly Action<EventLogEntryType, string> logAction;
+
+        public AutoRDMP()
+        {
+            logAction = (et, msg) => OnLogEvent(new ServiceEventArgs() { EntryType = et, Message = msg });
+        }
 
         private AutomationServiceSlot GetFirstAutomationServiceSlot(IRDMPPlatformRepositoryServiceLocator repositoryFinder)
         {
@@ -23,7 +31,7 @@ namespace RDMPAutomationService
             var options = new AutomationServiceOptions();
             serviceLocator = options.GetRepositoryLocator();
 
-            host = new RDMPAutomationLoop(serviceLocator, GetFirstAutomationServiceSlot(serviceLocator));
+            host = new RDMPAutomationLoop(serviceLocator, GetFirstAutomationServiceSlot(serviceLocator), logAction);
 
             OnLogEvent(new ServiceEventArgs()
             {
@@ -32,6 +40,17 @@ namespace RDMPAutomationService
             });
 
             host.Start();
+            
+            while (!host.StartupComplete)
+            {
+                Thread.Sleep(1000);
+            }
+
+            OnLogEvent(new ServiceEventArgs()
+            {
+                EntryType = EventLogEntryType.Information,
+                Message = "Host Container Started..."
+            });
 
             if (Environment.UserInteractive)
             {
@@ -61,11 +80,5 @@ namespace RDMPAutomationService
                 Console.WriteLine("{0}: {1}", e.EntryType.ToString().ToUpper(), e.Message);
             }
         }
-    }
-
-    public class ServiceEventArgs
-    {
-        public string Message { get; set; }
-        public EventLogEntryType EntryType { get; set; }
     }
 }
