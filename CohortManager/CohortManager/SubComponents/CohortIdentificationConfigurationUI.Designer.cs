@@ -129,7 +129,7 @@ namespace CohortManager.SubComponents
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 50;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
+            
             
             // 
             // CohortIdentificationConfigurationUI

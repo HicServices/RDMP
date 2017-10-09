@@ -321,7 +321,6 @@ namespace CatalogueManager.MainFormUITabs
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
             this.objectSaverButton1.TabIndex = 162;
             this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // label1
             // 

@@ -892,7 +892,12 @@
     <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
     <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
-    <Compile Include="SimpleControls\ObjectSaverButton.cs" />
+    <Compile Include="SimpleControls\ObjectSaverButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleControls\ObjectSaverButton.Designer.cs">
+      <DependentUpon>ObjectSaverButton.cs</DependentUpon>
+    </Compile>
     <Compile Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1636,6 +1641,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\SubComponents\TableInfoUI.resx">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleControls\ObjectSaverButton.resx">
+      <DependentUpon>ObjectSaverButton.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.resx">
       <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>

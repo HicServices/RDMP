@@ -19,7 +19,7 @@ namespace ReusableUIComponents.SingleControlForms
             control.Anchor = AnchorStyles.Top | AnchorStyles.Left| AnchorStyles.Right | AnchorStyles.Bottom;
             
             var consult = control as IConsultableBeforeClosing;
-
+            
             if (consult != null)
                 FormClosing += consult.ConsultAboutClosing;
 

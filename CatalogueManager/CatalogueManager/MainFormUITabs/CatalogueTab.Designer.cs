@@ -752,10 +752,8 @@ namespace CatalogueManager.MainFormUITabs
             // 
             this.objectSaverButton1.Location = new System.Drawing.Point(133, 247);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(266, 32);
             this.objectSaverButton1.TabIndex = 164;
-            this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // label34
             // 

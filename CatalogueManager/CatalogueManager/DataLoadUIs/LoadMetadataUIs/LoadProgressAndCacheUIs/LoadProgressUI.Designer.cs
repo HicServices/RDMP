@@ -212,7 +212,6 @@
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
             this.objectSaverButton1.TabIndex = 27;
             this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // LoadProgressUI
             // 

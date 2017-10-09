@@ -212,7 +212,7 @@ namespace DataExportManager.ProjectUI
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
             this.objectSaverButton1.TabIndex = 51;
             this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
+            
             // 
             // label2
             // 

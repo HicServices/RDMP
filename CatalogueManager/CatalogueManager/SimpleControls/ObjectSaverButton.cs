@@ -1,14 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleDialogs.Revertable;
+using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueManager.SimpleControls
 {
-    [System.ComponentModel.DesignerCategory("")]
-    public class ObjectSaverButton : Button, IRefreshBusSubscriber
+    public partial class ObjectSaverButton : UserControl,IRefreshBusSubscriber
     {
+        public ObjectSaverButton()
+        {
+            InitializeComponent();
+        }
+
         private DatabaseEntity _o;
         private RefreshBus _refreshBus;
         
@@ -29,30 +41,22 @@ namespace CatalogueManager.SimpleControls
             _refreshBus = refreshBus;
             _refreshBus.Subscribe(this);
             o.PropertyChanged += PropertyChanged;
-            Enabled = false;
+            DisableAll();
             Text = "&Save";
         }
-        
+
+        private void DisableAll()
+        {
+            btnSave.Enabled = false;
+            btnDiscard.Enabled = false;
+            btnViewDifferences.Enabled = false;
+        }
+
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.Enabled = true;
+            CheckForLocalChanges();
         }
-
-        protected override void OnClick(EventArgs e)
-        {
-            Save();
-            base.OnClick(e);
-            
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if(_refreshBus != null)
-                _refreshBus.Unsubscribe(this);
-        }
-
+        
         public void Save()
         {
             if(BeforeSave!= null)
@@ -61,7 +65,7 @@ namespace CatalogueManager.SimpleControls
 
             _o.SaveToDatabase();
             _refreshBus.Publish(this,new RefreshObjectEventArgs(_o));
-            Enabled = false;
+            DisableAll();
             
             if(AfterSave != null)
                 AfterSave();
@@ -76,11 +80,40 @@ namespace CatalogueManager.SimpleControls
                 _o = e.Object;  //record the new fresh object
                 _o.PropertyChanged += PropertyChanged;//and subscribe to it's events
             }
+
+            //anytime any publish event ever fires (not just to our object)
+            CheckForLocalChanges();
+
+        }
+
+        private void CheckForLocalChanges()
+        {
+            var different = _o.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent;
+
+            btnSave.Enabled = different;
+            btnViewDifferences.Enabled = different;
+            btnDiscard.Enabled = different;
         }
 
         public void ForceDirty()
         {
-            Enabled = true;
+            btnSave.Enabled = true;
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void btnViewDifferences_Click(object sender, EventArgs e)
+        {
+            OfferChanceToSaveDialog.ShowIfRequired(_o);
+        }
+
+        private void btnDiscard_Click(object sender, EventArgs e)
+        {
+            _o.RevertToDatabaseState();
+            _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
         }
     }
 }

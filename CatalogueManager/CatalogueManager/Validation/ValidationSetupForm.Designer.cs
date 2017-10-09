@@ -263,7 +263,6 @@ namespace CatalogueManager.Validation
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
             this.objectSaverButton1.TabIndex = 11;
             this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // ValidationSetupForm
             // 
