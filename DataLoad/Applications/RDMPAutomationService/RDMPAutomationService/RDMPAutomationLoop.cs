@@ -18,26 +18,23 @@ namespace RDMPAutomationService
 {
     public class RDMPAutomationLoop
     {
-        public bool StillRunning
-        {
-            get
-            {
-                return 
-                    t == null //not started yet 
-                    || t.IsAlive; //or running
-            }
-        }
-
         /// <summary>
         /// Manages all the OnGoingAutomationTasks, will be null until a lock has been successfully established on an AutomationServiceSlot
         /// </summary>
         public AutomationDestination AutomationDestination { get; private set; }
-        private Thread t;
-
+        
         public bool Stop { get; set; }
 
-        private readonly Action<EventLogEntryType, string> _log;
-
+        public bool StillRunning
+        {
+            get
+            {
+                return
+                    t == null //not started yet 
+                    || t.IsAlive; //or running
+            }
+        }
+        
         public void Start()
         {
             Stop = false;
@@ -50,12 +47,25 @@ namespace RDMPAutomationService
         private readonly IRDMPPlatformRepositoryServiceLocator _locator;
         private AutomationServiceSlot _serviceSlot;
         private AutomationPipelineEngineCollection _collection;
+        private Thread t;
+        private readonly Action<EventLogEntryType, string> _log;
+        private readonly string mySelf = Environment.UserName + " (" + Environment.MachineName + ")";
         
         /// <summary>
         /// true once an RDMPStartup has completed execution (MEF loaded, repositories located etc)
         /// </summary>
         public bool StartupComplete { get; set; }
-        
+
+        public RDMPAutomationLoop(AutomationServiceOptions options, Action<EventLogEntryType, string> logAction)
+        {
+            _log = logAction;
+            _locator = options.GetRepositoryLocator();
+            _repository = _locator.CatalogueRepository;
+            _serviceSlot = GetFirstAutomationServiceSlot();
+
+            AutomationDestination = new AutomationDestination();
+        }
+
         public RDMPAutomationLoop(IRDMPPlatformRepositoryServiceLocator locator, AutomationServiceSlot serviceSlot, Action<EventLogEntryType, string> log)
         {
             _repository = locator.CatalogueRepository;
@@ -72,13 +82,19 @@ namespace RDMPAutomationService
             try
             {
                 if (_serviceSlot == null)
-                    throw new Exception("Cannot start automation service because there are no free AutomationServiceSlots, they must all be locked?");
+                {
+                    _log(EventLogEntryType.Warning, "Cannot start automation service without an AutomationServiceSlots, are they all locked?");
+                    return;
+                }
 
                 //refresh it since it might have changed
                 _serviceSlot.RevertToDatabaseState();
 
-                if (_serviceSlot.LockedBecauseRunning)
-                    throw new NotSupportedException("AutomationServiceSlot");
+                if (_serviceSlot.LockedBecauseRunning && _serviceSlot.LockHeldBy != mySelf)
+                {
+                    _log(EventLogEntryType.Error, "AutomationServiceSlots seems to be locked by someone else!");
+                    return;
+                }
 
                 //lock it
                 _serviceSlot.Lock();
@@ -138,6 +154,28 @@ namespace RDMPAutomationService
                     _serviceSlot.Unlock();
             }
             
+        }
+
+        private AutomationServiceSlot GetFirstAutomationServiceSlot()
+        {
+            //get all slots, locked first so if one of the locked is ours we will re-grab it!
+            var slots = _locator.CatalogueRepository.GetAllObjects<AutomationServiceSlot>().OrderByDescending(ass => ass.LockedBecauseRunning);
+            foreach (var automationServiceSlot in slots)
+            {
+                if (automationServiceSlot.LockedBecauseRunning)
+                {
+                    if (automationServiceSlot.LockHeldBy == mySelf)
+                    {
+                        automationServiceSlot.Unlock();
+                        return automationServiceSlot;
+                    }
+                }
+                else
+                {
+                    return automationServiceSlot;
+                }
+            }
+            return null;
         }
     }
 }

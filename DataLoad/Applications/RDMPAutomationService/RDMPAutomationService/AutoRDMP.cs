@@ -3,43 +3,47 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data.Automation;
-using CatalogueLibrary.Repositories;
 using CommandLine;
+using Timer = System.Timers.Timer;
 
 namespace RDMPAutomationService
 {
     public class AutoRDMP
     {
-        private RDMPAutomationLoop host;
-        private IRDMPPlatformRepositoryServiceLocator serviceLocator;
+        private readonly RDMPAutomationLoop host;
 
         private readonly Action<EventLogEntryType, string> logAction;
+        private readonly Timer timer;
 
         public AutoRDMP()
         {
             logAction = (et, msg) => OnLogEvent(new ServiceEventArgs() { EntryType = et, Message = msg });
-        }
+            timer = new Timer(60000);
+            timer.Elapsed += (sender, args) => Start();
+            timer.Start();
 
-        private AutomationServiceSlot GetFirstAutomationServiceSlot(IRDMPPlatformRepositoryServiceLocator repositoryFinder)
-        {
-            //get first unlocked slot
-            return repositoryFinder.CatalogueRepository.GetAllObjects<AutomationServiceSlot>().FirstOrDefault(a => !a.LockedBecauseRunning);
+            host = new RDMPAutomationLoop(new AutomationServiceOptions(), logAction);
         }
 
         public void Start()
         {
-            var options = new AutomationServiceOptions();
-            serviceLocator = options.GetRepositoryLocator();
-
-            host = new RDMPAutomationLoop(serviceLocator, GetFirstAutomationServiceSlot(serviceLocator), logAction);
-
             OnLogEvent(new ServiceEventArgs()
             {
                 EntryType = EventLogEntryType.Information,
                 Message = "Starting Host Container..."
             });
 
-            host.Start();
+            try
+            {
+                host.Start();
+            }
+            catch (Exception e)
+            {
+                OnLogEvent(new ServiceEventArgs() { EntryType = EventLogEntryType.Error,
+                                                    Message = "RDMP Automation Loop did not start: \r\n\r\n" + e.Message + 
+                                                              "\r\n\r\nWill try again in about " + timer.Interval / 60000 + " minute(s)." });
+                return;
+            }
             
             while (!host.StartupComplete)
             {
@@ -49,7 +53,7 @@ namespace RDMPAutomationService
             OnLogEvent(new ServiceEventArgs()
             {
                 EntryType = EventLogEntryType.Information,
-                Message = "Host Container Started..."
+                Message = "RDMP Automation Loop Started..."
             });
 
             if (Environment.UserInteractive)
@@ -60,7 +64,7 @@ namespace RDMPAutomationService
                 Stop();
             }
         }
-
+        
         public void Stop()
         {
             host.Stop = true;
