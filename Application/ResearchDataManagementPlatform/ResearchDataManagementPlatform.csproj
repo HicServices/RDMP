@@ -182,6 +182,7 @@
     <Compile Include="WindowManagement\TopMenu\MenuItems\ResetTutorialsMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WindowManagement\TopMenu\MenuItems\SaveMenuItem.cs" />
     <Compile Include="WindowManagement\TopMenu\RDMPMenuStrip.cs">
       <SubType>UserControl</SubType>
     </Compile>
