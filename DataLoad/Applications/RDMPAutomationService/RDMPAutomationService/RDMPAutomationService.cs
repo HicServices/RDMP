@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.ServiceProcess;
+using System.Threading.Tasks;
 using RDMPAutomationService;
 
 namespace RDMPAutomationService
@@ -21,7 +22,7 @@ namespace RDMPAutomationService
             eventLogger.WriteEntry("Starting up RDMP AutomationService", EventLogEntryType.Information);
             autoRDMP = new AutoRDMP();
             autoRDMP.LogEvent += (o,e) => eventLogger.WriteEntry(e.Message, e.EntryType);
-            autoRDMP.Start();
+            Task.Run(() => autoRDMP.Start());
         }
 
         protected override void OnStop()

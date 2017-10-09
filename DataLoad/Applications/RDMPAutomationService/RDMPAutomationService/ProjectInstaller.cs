@@ -21,29 +21,29 @@ namespace RDMPAutomationService
 
         void ServiceInstaller_AfterInstall(object sender, InstallEventArgs e)
         {
-            int exitCode;
-            using (var process = new Process())
-            {
-                var startInfo = process.StartInfo;
-                startInfo.FileName = "sc";
-                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            //int exitCode;
+            //using (var process = new Process())
+            //{
+            //    var startInfo = process.StartInfo;
+            //    startInfo.FileName = "sc";
+            //    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                // tell Windows that the service should restart if it fails
-                startInfo.Arguments = string.Format("failure \"{0}\" reset= 0 actions= restart/60000/restart/60000//", serviceInstaller1.ServiceName);
+            //    // tell Windows that the service should restart if it fails
+            //    startInfo.Arguments = string.Format("failure \"{0}\" reset= 0 actions= restart/60000/restart/60000//", serviceInstaller1.ServiceName);
 
-                process.Start();
-                process.WaitForExit();
+            //    process.Start();
+            //    process.WaitForExit();
 
-                exitCode = process.ExitCode;
-            }
+            //    exitCode = process.ExitCode;
+            //}
 
-            if (exitCode != 0)
-                throw new InvalidOperationException();
+            //if (exitCode != 0)
+            //    throw new InvalidOperationException();
 
-            using (ServiceController sc = new ServiceController(serviceInstaller1.ServiceName))
-            {
-                sc.Start();
-            }
+            //using (ServiceController sc = new ServiceController(serviceInstaller1.ServiceName))
+            //{
+            //    sc.Start();
+            //}
         }
     }
 }

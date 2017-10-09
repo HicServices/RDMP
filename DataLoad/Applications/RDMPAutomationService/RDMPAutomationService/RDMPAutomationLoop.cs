@@ -43,6 +43,9 @@ namespace RDMPAutomationService
             t.Start();
         }
 
+        public event EventHandler<ServiceEventArgs> Failed;
+        public event EventHandler<ServiceEventArgs> StartCompleted;
+        
         private readonly IRepository _repository;
         private readonly IRDMPPlatformRepositoryServiceLocator _locator;
         private AutomationServiceSlot _serviceSlot;
@@ -144,9 +147,8 @@ namespace RDMPAutomationService
             }
             catch (Exception e)
             {
-                _log(EventLogEntryType.Error, e.Message);
                 new AutomationServiceException((ICatalogueRepository) _repository, e);
-                throw;
+                RaiseFailure(e);
             }
             finally
             {
@@ -176,6 +178,33 @@ namespace RDMPAutomationService
                 }
             }
             return null;
+        }
+
+        private void RaiseFailure(Exception exception)
+        {
+            var eventArgs = new ServiceEventArgs()
+            {
+                EntryType = EventLogEntryType.Error,
+                Exception = exception,
+                Message = exception.Message
+            };
+            
+            var handler = Failed;
+            if (handler != null) 
+                handler(this, eventArgs);
+        }
+
+        private void OnStartCompleted()
+        {
+            var eventArgs = new ServiceEventArgs()
+            {
+                EntryType = EventLogEntryType.Information,
+                Message = "MEF Startup Completed"
+            };
+
+            var handler = StartCompleted;
+            if (handler != null)
+                handler(this, eventArgs);
         }
     }
 }

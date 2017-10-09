@@ -10,7 +10,9 @@ namespace RDMPAutomationService
 {
     public class AutoRDMP
     {
-        private readonly RDMPAutomationLoop host;
+        public event EventHandler<ServiceEventArgs> LogEvent;
+
+        private RDMPAutomationLoop host;
 
         private readonly Action<EventLogEntryType, string> logAction;
         private readonly Timer timer;
@@ -18,11 +20,35 @@ namespace RDMPAutomationService
         public AutoRDMP()
         {
             logAction = (et, msg) => OnLogEvent(new ServiceEventArgs() { EntryType = et, Message = msg });
-            timer = new Timer(60000);
+            timer = new Timer(600000);
             timer.Elapsed += (sender, args) => Start();
             timer.Start();
 
+            InitialiseAutomationLoop();
+        }
+
+        private void InitialiseAutomationLoop()
+        {
             host = new RDMPAutomationLoop(new AutomationServiceOptions(), logAction);
+            host.Failed += HostServiceFailure;
+            host.StartCompleted += HostStarted;
+        }
+
+        private void HostServiceFailure(object sender, ServiceEventArgs e)
+        {
+            OnLogEvent(new ServiceEventArgs()
+            {
+                EntryType = e.EntryType,
+                Message = "RDMP Automation Loop did not start: \r\n\r\n" + e.Message +
+                          "\r\n\r\nWill try again in about " + timer.Interval / 60000 + " minute(s)."
+            });
+            Stop();
+            Environment.FailFast("Unrecoverable error from Automation Loop", e.Exception);
+        }
+
+        private void HostStarted(object sender, ServiceEventArgs e)
+        {
+            OnLogEvent(new ServiceEventArgs() { EntryType = e.EntryType, Message = e.Message });
         }
 
         public void Start()
@@ -33,29 +59,8 @@ namespace RDMPAutomationService
                 Message = "Starting Host Container..."
             });
 
-            try
-            {
-                host.Start();
-            }
-            catch (Exception e)
-            {
-                OnLogEvent(new ServiceEventArgs() { EntryType = EventLogEntryType.Error,
-                                                    Message = "RDMP Automation Loop did not start: \r\n\r\n" + e.Message + 
-                                                              "\r\n\r\nWill try again in about " + timer.Interval / 60000 + " minute(s)." });
-                return;
-            }
+            host.Start();
             
-            while (!host.StartupComplete)
-            {
-                Thread.Sleep(1000);
-            }
-
-            OnLogEvent(new ServiceEventArgs()
-            {
-                EntryType = EventLogEntryType.Information,
-                Message = "RDMP Automation Loop Started..."
-            });
-
             if (Environment.UserInteractive)
             {
                 // running as console app
@@ -69,8 +74,6 @@ namespace RDMPAutomationService
         {
             host.Stop = true;
         }
-
-        public event EventHandler<ServiceEventArgs> LogEvent;
 
         protected virtual void OnLogEvent(ServiceEventArgs e)
         {
