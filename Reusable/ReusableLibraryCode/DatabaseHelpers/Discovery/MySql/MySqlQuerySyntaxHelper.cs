@@ -50,8 +50,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             sql = sql.Replace("\n", "\\n"); //swap newline whitespace for \n
             sql = sql.Replace("\t", "\\t"); //swap tab whitespace for \t
 
-            sql = sql.Replace("%", "\\%"); //swap % for \%
-            sql = sql.Replace("_", "\\_"); //swap _ for \_
+            //only apply in pattern matching use cases (rare?) otherwise they break it! you will have to handle this yourself if you have that situation
+            //sql = sql.Replace("%", "\\%"); //swap % for \%
+            //sql = sql.Replace("_", "\\_"); //swap _ for \_
             
             return sql;
         }
