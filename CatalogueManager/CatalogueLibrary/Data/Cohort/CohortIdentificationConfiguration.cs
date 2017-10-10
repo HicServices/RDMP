@@ -197,9 +197,9 @@ namespace CatalogueLibrary.Data.Cohort
             string origName = aggregate.Name;
 
 
-            var otherConfigurations = Repository.GetAllObjects<AggregateConfiguration>().ToArray();
+            var otherConfigurations = Repository.GetAllObjects<AggregateConfiguration>().Except(new[] {aggregate}).ToArray();
 
-            //if there is a conflict on the ane
+            //if there is a conflict on the name
             if (otherConfigurations.Any(c => c.Name.Equals(origName)))
             {
                 do

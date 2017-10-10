@@ -73,28 +73,40 @@ namespace CatalogueManager.Collections.Providers
 
             var name = e.RowObject as INamed;
 
-            if (name != null)
+            try
             {
-                name.Name = (string)e.NewValue;
-
-                if(!haveComplainedAboutToStringImplementationOfINamed && !name.ToString().Contains(name.Name))
+                if (name != null)
                 {
+                    name.Name = (string)e.NewValue;
 
-                    WideMessageBox.Show("ToString method of INamed class '" + name.GetType().Name + "' does not return the Name property, this makes it highly unsuitable for RenameProvider.  Try adding the following code to your class:" 
-                                        + Environment.NewLine +
-                                        @"public override string ToString()
+                    if(!haveComplainedAboutToStringImplementationOfINamed && !name.ToString().Contains(name.Name))
+                    {
+
+                        WideMessageBox.Show("ToString method of INamed class '" + name.GetType().Name + "' does not return the Name property, this makes it highly unsuitable for RenameProvider.  Try adding the following code to your class:" 
+                                            + Environment.NewLine +
+                                            @"public override string ToString()
         {
             return Name;
         }"
                         
-                        );
-                    haveComplainedAboutToStringImplementationOfINamed = true;
+                            );
+                        haveComplainedAboutToStringImplementationOfINamed = true;
+                    }
+
+                    EnsureNameIfCohortIdentificationAggregate(e.RowObject);
+
+                    name.SaveToDatabase();
+                    _refreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)name));
                 }
+            }
+            catch (Exception exception)
+            {
+                e.Cancel = true;
+                ExceptionViewer.Show(exception);
 
-                EnsureNameIfCohortIdentificationAggregate(e.RowObject);
-
-                name.SaveToDatabase();
-                _refreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)name));
+                //reset it to what it was before
+                if (name != null)
+                    name.Name = (string)e.Value;
             }
         }
 
