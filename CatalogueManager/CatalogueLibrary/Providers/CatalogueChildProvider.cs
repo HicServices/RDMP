@@ -14,6 +14,7 @@ using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
+using ReusableUIComponents;
 
 namespace CatalogueLibrary.Providers
 {
@@ -537,16 +538,26 @@ namespace CatalogueLibrary.Providers
 
             foreach (var plugin in PluginChildProviders)
             {
-                //this plugin is broken
-                if(plugin.Exceptions != null && plugin.Exceptions.Any() )
-                    continue;
+                try
+                {
+                    //this plugin is broken
+                    if(plugin.Exceptions != null && plugin.Exceptions.Any() )
+                        continue;
 
-                //otherwise ask plugin what it's children are
-                var pluginChildren = plugin.GetChildren(model);
+                    //otherwise ask plugin what it's children are
+                    var pluginChildren = plugin.GetChildren(model);
 
-                //it has children
-                if(pluginChildren != null)
-                    children.AddRange(pluginChildren);//add them
+                    //it has children
+                    if(pluginChildren != null)
+                        children.AddRange(pluginChildren);//add them
+                }
+                catch (Exception e)
+                {
+                    if (plugin.Exceptions != null)
+                        plugin.Exceptions.Add(e);
+                    
+                    Console.WriteLine(e);
+                }
             }
 
             //if we don't have a record of any children in the child dictionary for the parent model object

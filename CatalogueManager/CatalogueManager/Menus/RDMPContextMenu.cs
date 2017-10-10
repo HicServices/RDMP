@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -8,8 +10,8 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
 using RDMPStartup;
@@ -57,9 +59,19 @@ namespace CatalogueManager.Menus
             {
                 foreach (var plugin in _activator.PluginUserInterfaces)
                 {
-                    var toAdd = plugin.GetAdditionalRightClickMenuItems(_databaseEntity);
+                    ToolStripMenuItem[] toAdd;
 
-                    if(toAdd != null && toAdd.Any())
+                    try
+                    {
+                        toAdd = plugin.GetAdditionalRightClickMenuItems(_databaseEntity);
+                        
+                    }
+                    catch (Exception ex)
+                    {
+                        toAdd = new ToolStripMenuItem[]{new PluginUserInterfaceCrashedMenuItem(plugin,ex)};
+                    }
+
+                    if (toAdd != null && toAdd.Any())
                     {
                         Items.Add(new ToolStripSeparator());
                         Items.AddRange(toAdd);

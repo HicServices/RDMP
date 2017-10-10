@@ -727,6 +727,9 @@
     <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
