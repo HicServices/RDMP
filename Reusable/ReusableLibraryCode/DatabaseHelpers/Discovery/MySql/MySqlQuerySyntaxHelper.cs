@@ -37,6 +37,25 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return "/*" + proposedNewParameterName + "*/";
         }
 
+        public override string Escape(string sql)
+        {
+            //https://dev.mysql.com/doc/refman/5.7/en/string-literals.html
+            
+            sql = sql.Replace("\\", "\\\\"); //first of all swap current \ for \\ (don't do this later because we are going to inject a bunch of that stuff!).
+
+            sql = sql.Replace("'", "\\'"); //swap ' for \'
+
+            sql = sql.Replace("\"", "\\\""); //swap " for \"
+            sql = sql.Replace("\r\n", "\\n"); //swap newline whitespace with \r for \n
+            sql = sql.Replace("\n", "\\n"); //swap newline whitespace for \n
+            sql = sql.Replace("\t", "\\t"); //swap tab whitespace for \t
+
+            sql = sql.Replace("%", "\\%"); //swap % for \%
+            sql = sql.Replace("_", "\\_"); //swap _ for \_
+            
+            return sql;
+        }
+
         public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
         {
             switch (function)

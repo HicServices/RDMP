@@ -64,6 +64,8 @@ myfloat float,
 mydouble double precision,
 chiAsNumeric numeric(10,0),
 teenynumber smallint,
+filePath text,
+freeText text,
 CONSTRAINT pk_Fish PRIMARY KEY (id, height)
 )",
                         con);
@@ -117,7 +119,7 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
 
             using (var trans = server.BeginNewTransactedConnection())
             {
-                server.GetCommand("INSERT INTO " + _databaseName + ".Fish VALUES (1,'flibble',1.5,'0101010101',2.5,1.1,1000,1)", trans).ExecuteNonQuery();
+                server.GetCommand("INSERT INTO " + _databaseName + ".Fish VALUES (1,'flibble',1.5,'0101010101',2.5,1.1,1000,1,null,null)", trans).ExecuteNonQuery();
 
                 Assert.AreEqual(1, table.GetRowCount(trans.ManagedTransaction));
 
@@ -132,58 +134,81 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
         public void BulkInsert()
         {
             var table = server.ExpectDatabase(_databaseName).ExpectTable("Fish");
-
-            //now rows to start with
-            Assert.AreEqual(0, table.GetRowCount());
-
-            using (var i = table.BeginBulkInsert())
+            try
             {
-                var dt = new DataTable();
-                dt.Columns.Add("id");
-                dt.Columns.Add("name");
-                dt.Columns.Add("height");
-                dt.Columns.Add("chi");
-                dt.Columns.Add("myfloat");
-                dt.Columns.Add("mydouble");
-                dt.Columns.Add("chiAsNumeric");
-                dt.Columns.Add("teenynumber");
+                string someFreeText = @"The sailor said to the whale ""where's your hat?"" 
+to which the whale replied:
+___________________________
+	I've a great many hats?
+___________________________
+    which in particular do you want to know about slash slash \\\ '
+""what's with the slashes"" said the sailor:
+to whatever the whale doth say: 'I love them semicolons: ; see'
 
-                dt.Rows.Add("10", "flibble", 1.5, "0101010101", 2.5, 1.1, 1000, 5);
-                dt.Rows.Add("11", "bandycoot", 1.1, "0202020202", 1.5, 1.2, 2000, 8);
-                i.Upload(dt);
+Remember it's \t not	";
+
+                //now rows to start with
+                Assert.AreEqual(0, table.GetRowCount());
+
+                using (var i = table.BeginBulkInsert())
+                {
+                    var dt = new DataTable();
+                    dt.Columns.Add("id");
+                    dt.Columns.Add("name");
+                    dt.Columns.Add("height");
+                    dt.Columns.Add("chi");
+                    dt.Columns.Add("myfloat");
+                    dt.Columns.Add("mydouble");
+                    dt.Columns.Add("chiAsNumeric");
+                    dt.Columns.Add("teenynumber");
+                    dt.Columns.Add("filePath");
+                    dt.Columns.Add("freeText");
+
+
+                    dt.Rows.Add("10", "flibble", 1.5, "0101010101", 2.5, 1.1, 1000, 5, @"c:\temp\fish.txt", someFreeText);
+                    dt.Rows.Add("11", "bandycoot", 1.1, "0202020202", 1.5, 1.2, 2000, 8, @"\\mynetworkpath\mydrive\fish.txt",null);
+                    i.Upload(dt);
+                }
+
+                Assert.AreEqual(2, table.GetRowCount());
+
+                using (var con = table.Database.Server.GetConnection())
+                {
+                    con.Open();
+                    var r = new MySqlCommand("select * from Fish", (MySqlConnection)con).ExecuteReader();
+                    Assert.IsTrue(r.Read());
+
+                    Assert.AreEqual(10, r["id"]);
+                    Assert.AreEqual("flibble", r["name"]);
+                    Assert.AreEqual(1.5, r["height"]);
+                    Assert.AreEqual("0101010101", r["chi"]);
+                    Assert.AreEqual(2.5, r["myfloat"]);
+                    Assert.AreEqual(1.1, r["mydouble"]);
+                    Assert.AreEqual(1000, r["chiAsNumeric"]);
+                    Assert.AreEqual(5, r["teenynumber"]);
+                    Assert.AreEqual(@"c:\temp\fish.txt", r["filePath"]);
+                    Assert.AreEqual(someFreeText.Replace("\r",""), r["freeText"].ToString().Replace("\r","\r"));//mysql doesn't support \r and neither might this file? or vice versa... let's not worry about it, the \n is there anyway
+
+                    Assert.IsTrue(r.Read());
+
+                    Assert.AreEqual(11, r["id"]);
+                    Assert.AreEqual("bandycoot", r["name"]);
+                    Assert.AreEqual(1.1, r["height"]);
+                    Assert.AreEqual("0202020202", r["chi"]);
+                    Assert.AreEqual(1.5, r["myfloat"]);
+                    Assert.AreEqual(1.2, r["mydouble"]);
+                    Assert.AreEqual(2000, r["chiAsNumeric"]);
+                    Assert.AreEqual(8, r["teenynumber"]);
+                    Assert.AreEqual(@"\\mynetworkpath\mydrive\fish.txt", r["filePath"]);
+                    Assert.AreEqual(DBNull.Value, r["freeText"]);
+
+                    r.Close();
+                }
             }
-
-            Assert.AreEqual(2, table.GetRowCount());
-
-            using (var con = table.Database.Server.GetConnection())
+            finally
             {
-                con.Open();
-                var r = new MySqlCommand("select * from Fish", (MySqlConnection)con).ExecuteReader();
-                Assert.IsTrue(r.Read());
-
-                Assert.AreEqual(10, r["id"]);
-                Assert.AreEqual("flibble", r["name"]);
-                Assert.AreEqual(1.5, r["height"]);
-                Assert.AreEqual("0101010101", r["chi"]);
-                Assert.AreEqual(2.5, r["myfloat"]);
-                Assert.AreEqual(1.1, r["mydouble"]);
-                Assert.AreEqual(1000, r["chiAsNumeric"]);
-                Assert.AreEqual(5, r["teenynumber"]);
-
-                Assert.IsTrue(r.Read());
-
-                Assert.AreEqual(11, r["id"]);
-                Assert.AreEqual("bandycoot", r["name"]);
-                Assert.AreEqual(1.1, r["height"]);
-                Assert.AreEqual("0202020202", r["chi"]);
-                Assert.AreEqual(1.5, r["myfloat"]);
-                Assert.AreEqual(1.2, r["mydouble"]);
-                Assert.AreEqual(2000, r["chiAsNumeric"]);
-                Assert.AreEqual(8, r["teenynumber"]);
-                r.Close();
+                table.Truncate();
             }
-            
-            table.Truncate();
 
             Assert.AreEqual(0, table.GetRowCount());
 
@@ -200,7 +225,7 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
             using (var con = server.GetConnection())
             {
                 con.Open();
-                server.GetCommand("INSERT INTO " + _databaseName + ".Fish VALUES (1,'flibble',1.5,'0101010101',2.5,1.1,1000,1)", con)
+                server.GetCommand("INSERT INTO " + _databaseName + ".Fish VALUES (1,'flibble',1.5,'0101010101',2.5,1.1,1000,1,null,null)", con)
                     .ExecuteNonQuery();
 
                 Assert.AreEqual(1, table.GetRowCount());
