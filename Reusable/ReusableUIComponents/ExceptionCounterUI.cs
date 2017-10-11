@@ -24,6 +24,7 @@ namespace ReusableUIComponents
         {
             Image = Images.exclamation;
             Enabled = false;
+            ToolTipText = "Application Errors";
         }
         protected override void OnPaint(PaintEventArgs e)
         {

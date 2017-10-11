@@ -72,6 +72,9 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
 
         void _startup_DatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
         {
+            if(IsDisposed || !IsHandleCreated)
+                return;
+
             if (InvokeRequired)
             {
                 Invoke(new MethodInvoker(() => _startup_DatabaseFound(sender, eventArgs)));
