@@ -35,14 +35,6 @@ namespace RDMPAutomationService
             }
         }
         
-        public void Start()
-        {
-            Stop = false;
-
-            t = new Thread(Run);
-            t.Start();
-        }
-
         public event EventHandler<ServiceEventArgs> Failed;
         public event EventHandler<ServiceEventArgs> StartCompleted;
         
@@ -54,10 +46,8 @@ namespace RDMPAutomationService
         private readonly Action<EventLogEntryType, string> _log;
         private readonly string mySelf = Environment.UserName + " (" + Environment.MachineName + ")";
         
-        /// <summary>
-        /// true once an RDMPStartup has completed execution (MEF loaded, repositories located etc)
-        /// </summary>
-        public bool StartupComplete { get; set; }
+        private bool lockEstablished;
+        private bool startupComplete;
 
         public RDMPAutomationLoop(AutomationServiceOptions options, Action<EventLogEntryType, string> logAction)
         {
@@ -79,9 +69,17 @@ namespace RDMPAutomationService
             AutomationDestination = new AutomationDestination();
         }
 
+        public void Start()
+        {
+            Stop = false;
+
+            t = new Thread(Run);
+            t.Start();
+        }
+
         private void Run()
         {
-            bool lockEstablished = false;
+            lockEstablished = false;
             try
             {
                 if (_serviceSlot == null)
@@ -101,14 +99,12 @@ namespace RDMPAutomationService
 
                 //lock it
                 _serviceSlot.Lock();
-                _log(EventLogEntryType.Information, "Locked service slot " + _serviceSlot.ID);
 
                 Startup startup = new Startup(_locator);
                 startup.DoStartup(new AutomationMEFLoadingCheckNotifier());//who cares if MEF has problems eh?
 
-                StartupComplete = true;
-                lockEstablished = true;
-
+                OnStartCompleted();
+                
                 if (_serviceSlot.GlobalTimeoutPeriod.HasValue && _serviceSlot.GlobalTimeoutPeriod.Value > 0)
                     DatabaseCommandHelper.GlobalTimeout = _serviceSlot.GlobalTimeoutPeriod.Value;
 
@@ -196,10 +192,13 @@ namespace RDMPAutomationService
 
         private void OnStartCompleted()
         {
+            startupComplete = true;
+            lockEstablished = true;
+
             var eventArgs = new ServiceEventArgs()
             {
                 EntryType = EventLogEntryType.Information,
-                Message = "MEF Startup Completed"
+                Message = String.Format("MEF Startup Completed, Lock on SLOT {0} established.", _serviceSlot.ID)
             };
 
             var handler = StartCompleted;

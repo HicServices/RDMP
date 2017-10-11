@@ -16,6 +16,7 @@ namespace RDMPAutomationService
 
         private readonly Action<EventLogEntryType, string> logAction;
         private readonly Timer timer;
+        private bool hostStarted;
 
         public AutoRDMP()
         {
@@ -30,29 +31,40 @@ namespace RDMPAutomationService
         private void InitialiseAutomationLoop()
         {
             host = new RDMPAutomationLoop(new AutomationServiceOptions(), logAction);
-            host.Failed += HostServiceFailure;
-            host.StartCompleted += HostStarted;
+            host.Failed += OnHostServiceFailure;
+            host.StartCompleted += OnHostStarted;
         }
 
-        private void HostServiceFailure(object sender, ServiceEventArgs e)
+        private void OnHostServiceFailure(object sender, ServiceEventArgs e)
         {
-            OnLogEvent(new ServiceEventArgs()
+            var serviceEventArgs = new ServiceEventArgs()
             {
                 EntryType = e.EntryType,
                 Message = "RDMP Automation Loop did not start: \r\n\r\n" + e.Message +
                           "\r\n\r\nWill try again in about " + timer.Interval / 60000 + " minute(s)."
-            });
+            };
+            if (e.Exception != null)
+            {
+                serviceEventArgs.Message += "\r\n\r\n" + e.Exception.Message +
+                                            "\r\n" + e.Exception.StackTrace;
+            }
+
+            OnLogEvent(serviceEventArgs);
             Stop();
-            Environment.FailFast("Unrecoverable error from Automation Loop", e.Exception);
+            Environment.Exit(666);
         }
 
-        private void HostStarted(object sender, ServiceEventArgs e)
+        private void OnHostStarted(object sender, ServiceEventArgs e)
         {
             OnLogEvent(new ServiceEventArgs() { EntryType = e.EntryType, Message = e.Message });
+            hostStarted = true;
         }
 
         public void Start()
         {
+            if (hostStarted)
+                return;
+
             OnLogEvent(new ServiceEventArgs()
             {
                 EntryType = EventLogEntryType.Information,
