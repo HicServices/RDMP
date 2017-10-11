@@ -43,7 +43,10 @@ namespace ResearchDataManagementPlatform
             if (RepositoryLocator == null)
                 return;
 
-            _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator);
+            var exceptionCounter = new ExceptionCounterUI();
+            rdmpMenuStrip1.InjectButton(exceptionCounter);
+
+            _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
             rdmpMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title

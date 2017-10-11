@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Providers;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -421,6 +422,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
         {
             var l = new LicenseUI();
             l.ShowDialog();
+        }
+
+        public void InjectButton(ToolStripButton button)
+        {
+            rdmpTaskBar1.InjectButton(button);
         }
     }
 }

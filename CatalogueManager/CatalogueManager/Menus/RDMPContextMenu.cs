@@ -16,6 +16,7 @@ using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
 using RDMPStartup;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
@@ -59,23 +60,21 @@ namespace CatalogueManager.Menus
             {
                 foreach (var plugin in _activator.PluginUserInterfaces)
                 {
-                    ToolStripMenuItem[] toAdd;
-
                     try
                     {
-                        toAdd = plugin.GetAdditionalRightClickMenuItems(_databaseEntity);
-                        
+                        var toAdd = plugin.GetAdditionalRightClickMenuItems(_databaseEntity);
+
+                        if (toAdd != null && toAdd.Any())
+                        {
+                            Items.Add(new ToolStripSeparator());
+                            Items.AddRange(toAdd);
+                        }
                     }
                     catch (Exception ex)
                     {
-                        toAdd = new ToolStripMenuItem[]{new PluginUserInterfaceCrashedMenuItem(plugin,ex)};
+                        _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,CheckResult.Fail, ex));
                     }
 
-                    if (toAdd != null && toAdd.Any())
-                    {
-                        Items.Add(new ToolStripSeparator());
-                        Items.AddRange(toAdd);
-                    }
                 }
 
                 Items.Add(new ExpandAllTreeNodesMenuItem(_activator, _databaseEntity));

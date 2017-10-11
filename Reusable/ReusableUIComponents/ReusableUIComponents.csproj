@@ -258,6 +258,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DoTransparencyProperly.cs" />
+    <Compile Include="ExceptionCounterUI.cs" />
     <Compile Include="Heatmapping\ExampleData.cs" />
     <Compile Include="Heatmapping\HeatmapUI.cs">
       <SubType>UserControl</SubType>
@@ -538,6 +539,7 @@
     <Resource Include="Images\DependencyGraphToolbarInformation.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\exclamation.png" />
     <None Include="Icons\DatabaseProviderIcons\Microsoft.png" />
     <None Include="Icons\DatabaseProviderIcons\MicrosoftOverlay.png" />
     <None Include="Icons\DatabaseProviderIcons\MySql.png" />

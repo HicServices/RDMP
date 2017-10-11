@@ -65,7 +65,9 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -77,6 +79,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private readonly DockPanel _mainDockPanel;
         private readonly ToolboxWindowManager _toolboxWindowManager;
+
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
         public WindowFactory WindowFactory { get; private set; }
 
@@ -92,12 +95,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
         public IArrangeWindows WindowArranger { get; private set; }
+        
+        public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
 
-        public ContentWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, ToolboxWindowManager toolboxWindowManager)
+        public ContentWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, ToolboxWindowManager toolboxWindowManager, ICheckNotifier globalErrorCheckNotifier)
         {
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _toolboxWindowManager = toolboxWindowManager;
+            GlobalErrorCheckNotifier = globalErrorCheckNotifier;
             RepositoryLocator = repositoryLocator;
 
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
@@ -109,16 +115,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             UpdateChildProviders();
             RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
-            
-            CoreIconProvider = new DataExportIconProvider(
-                
-                //handle custom icons from plugin user interfaces in which
-                PluginUserInterfaces.Where(i=>
-                
-                    //there are no exceptions
-                    i.Exceptions == null || !i.Exceptions.Any()
 
-                    ).ToArray());
+            //handle custom icons from plugin user interfaces in which
+            CoreIconProvider = new DataExportIconProvider(PluginUserInterfaces.ToArray());
 
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 
@@ -141,7 +140,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 }
                 catch (Exception e)
                 {
-                    ExceptionViewer.Show("Problem occured trying to load Plugin '" + pluginType.Name +"'",  e);
+                    GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Problem occured trying to load Plugin '" + pluginType.Name +"'", CheckResult.Fail, e));
                 }
             }
         }
@@ -152,12 +151,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if(RepositoryLocator.DataExportRepository != null)
                 try
                 {
-                    CoreChildProvider = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray());
-                    if (CoreChildProvider.Exceptions.Any())
-                        WideMessageBox.Show("The following Exceptions occurred during Child Finding:" + 
-                            String.Join(Environment.NewLine,CoreChildProvider.Exceptions)
-                            );
-
+                    CoreChildProvider = new DataExportChildProvider(RepositoryLocator,PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
                     return;
                 }
                 catch (Exception e)
@@ -168,13 +162,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //there was an error generating a data export repository or there was no repository specified
 
             //so just create a catalogue one
-            CoreChildProvider = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray());
-
-            if(CoreChildProvider.Exceptions.Any())
-                ExceptionViewer.Show("The following Exceptions occurred during Child Finding", new AggregateException(CoreChildProvider.Exceptions.ToArray()));
-            
+            CoreChildProvider = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
         }
-
 
         public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control,DatabaseEntity objectOfTypeT)
         {
