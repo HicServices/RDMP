@@ -23,6 +23,9 @@ namespace RDMPAutomationService
         [Option('e', "DataExport", Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
         public string DataExportDatabaseName { get; set; }
 
+        [Option('f', "ForceSlot", Required = false, HelpText = "Force the ID of the Slot to use")]
+        public int ForceSlot { get; set; }
+
         [ParserState]
         public IParserState LastParserState { get; set; }
 
@@ -38,6 +41,7 @@ namespace RDMPAutomationService
             ServerName = Settings.Default.ServerName;
             CatalogueDatabaseName = Settings.Default.CatalogueDB;
             DataExportDatabaseName = Settings.Default.DataExportDB;
+            ForceSlot = Settings.Default.ForceSlot;
         }
 
         public IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()

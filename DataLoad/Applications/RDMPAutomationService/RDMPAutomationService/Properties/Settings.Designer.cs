@@ -43,10 +43,19 @@ namespace RDMPAutomationService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("EMBARCDataExportManager")]
+        [global::System.Configuration.DefaultSettingValueAttribute("EMBARCDataExport")]
         public string DataExportDB {
             get {
                 return ((string)(this["DataExportDB"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int ForceSlot {
+            get {
+                return ((int)(this["ForceSlot"]));
             }
         }
     }

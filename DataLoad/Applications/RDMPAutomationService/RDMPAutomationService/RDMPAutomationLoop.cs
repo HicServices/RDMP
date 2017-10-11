@@ -42,19 +42,20 @@ namespace RDMPAutomationService
         private readonly IRDMPPlatformRepositoryServiceLocator _locator;
         private AutomationServiceSlot _serviceSlot;
         private AutomationPipelineEngineCollection _collection;
+        private AutomationServiceOptions _options;
+        
         private Thread t;
         private readonly Action<EventLogEntryType, string> _log;
         private readonly string mySelf = Environment.UserName + " (" + Environment.MachineName + ")";
         
         private bool lockEstablished;
-        private bool startupComplete;
-
+        
         public RDMPAutomationLoop(AutomationServiceOptions options, Action<EventLogEntryType, string> logAction)
         {
             _log = logAction;
+            _options = options;
             _locator = options.GetRepositoryLocator();
             _repository = _locator.CatalogueRepository;
-            _serviceSlot = GetFirstAutomationServiceSlot();
 
             AutomationDestination = new AutomationDestination();
         }
@@ -80,11 +81,12 @@ namespace RDMPAutomationService
         private void Run()
         {
             lockEstablished = false;
+            _serviceSlot = GetFirstAutomationServiceSlot(_options.ForceSlot);
             try
             {
                 if (_serviceSlot == null)
                 {
-                    _log(EventLogEntryType.Warning, "Cannot start automation service without an AutomationServiceSlots, are they all locked?");
+                    _log(EventLogEntryType.Error, "Cannot start automation service without an AutomationServiceSlot, are they all locked?");
                     return;
                 }
 
@@ -93,7 +95,7 @@ namespace RDMPAutomationService
 
                 if (_serviceSlot.LockedBecauseRunning && _serviceSlot.LockHeldBy != mySelf)
                 {
-                    _log(EventLogEntryType.Error, "AutomationServiceSlots seems to be locked by someone else!");
+                    _log(EventLogEntryType.Error, "AutomationServiceSlots seems to be locked by someone else: " + _serviceSlot.LockHeldBy);
                     return;
                 }
 
@@ -113,11 +115,11 @@ namespace RDMPAutomationService
                 
                 _collection = new AutomationPipelineEngineCollection(_locator, _serviceSlot, AutomationDestination);
 
-                _log(EventLogEntryType.Information, "_____AUTOMATION SERVER NOW RUNNING_____" + _serviceSlot.ID);
+                _log(EventLogEntryType.Information, String.Format("_____AUTOMATION SERVER NOW RUNNING ON SLOT {0}_____", _serviceSlot.ID));
 
                 //always keep processing cancellation requests, infact if the user is trying to shut down automation hes probably also spamming cancellation buttons
-                CancellationTokenSource poll = new CancellationTokenSource();
-                Task pollTask = new Task(()=>
+                var poll = new CancellationTokenSource();
+                var pollTask = new Task(()=>
                     {
                         while(!poll.Token.IsCancellationRequested)
                         {
@@ -154,23 +156,52 @@ namespace RDMPAutomationService
             
         }
 
-        private AutomationServiceSlot GetFirstAutomationServiceSlot()
+        private AutomationServiceSlot GetFirstAutomationServiceSlot(int forceSlot)
         {
-            //get all slots, locked first so if one of the locked is ours we will re-grab it!
-            var slots = _locator.CatalogueRepository.GetAllObjects<AutomationServiceSlot>().OrderByDescending(ass => ass.LockedBecauseRunning);
-            foreach (var automationServiceSlot in slots)
+            if (forceSlot != 0)
             {
-                if (automationServiceSlot.LockedBecauseRunning)
+                var existingSlot = _locator.CatalogueRepository.GetAllObjects<AutomationServiceSlot>().FirstOrDefault(ass => ass.ID == forceSlot);
+                if (existingSlot == null)
                 {
-                    if (automationServiceSlot.LockHeldBy == mySelf)
+                    _log(EventLogEntryType.Warning,
+                        String.Format("Could not find the requested slot {0}.", forceSlot));
+                    return null;
+                }
+                if (existingSlot.LockedBecauseRunning)
+                {
+                    if (existingSlot.LockHeldBy == mySelf)
                     {
-                        automationServiceSlot.Unlock();
-                        return automationServiceSlot;
+                        existingSlot.Unlock();
+                        return existingSlot;
+                    }
+                    else
+                    {
+                        _log(EventLogEntryType.Warning,
+                             String.Format("Found slot {0}, but it was locked by {1}.", forceSlot, existingSlot.LockHeldBy));
+                        return null;
                     }
                 }
-                else
+
+                return existingSlot;
+            }
+            else
+            {
+                //get all slots, locked first so if one of the locked is ours we will re-grab it!
+                var slots = _locator.CatalogueRepository.GetAllObjects<AutomationServiceSlot>().OrderByDescending(ass => ass.LockedBecauseRunning);
+                foreach (var automationServiceSlot in slots)
                 {
-                    return automationServiceSlot;
+                    if (automationServiceSlot.LockedBecauseRunning)
+                    {
+                        if (automationServiceSlot.LockHeldBy == mySelf)
+                        {
+                            automationServiceSlot.Unlock();
+                            return automationServiceSlot;
+                        }
+                    }
+                    else
+                    {
+                        return automationServiceSlot;
+                    }
                 }
             }
             return null;
@@ -192,7 +223,6 @@ namespace RDMPAutomationService
 
         private void OnStartCompleted()
         {
-            startupComplete = true;
             lockEstablished = true;
 
             var eventArgs = new ServiceEventArgs()

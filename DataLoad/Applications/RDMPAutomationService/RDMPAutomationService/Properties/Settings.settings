@@ -9,7 +9,10 @@
       <Value Profile="(Default)">NewLookupDataCatalogue</Value>
     </Setting>
     <Setting Name="DataExportDB" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">EMBARCDataExportManager</Value>
+      <Value Profile="(Default)">EMBARCDataExport</Value>
+    </Setting>
+    <Setting Name="ForceSlot" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>
