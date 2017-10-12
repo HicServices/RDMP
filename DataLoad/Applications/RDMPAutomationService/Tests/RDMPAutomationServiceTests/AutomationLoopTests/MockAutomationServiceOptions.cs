@@ -12,7 +12,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             this.mockRepositoryLocator = mockRepositoryLocator;
         }
 
-        public new IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
+        public override IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
         {
             return mockRepositoryLocator;
         }

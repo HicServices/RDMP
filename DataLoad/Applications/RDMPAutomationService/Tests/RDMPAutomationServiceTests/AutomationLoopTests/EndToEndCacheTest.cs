@@ -35,7 +35,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
         const int NumDaysToCache = 5;
 
-
         [SetUp]
         public void SetupDatabaseObjects()
         {
@@ -48,7 +47,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             _slot = new AutomationServiceSlot(CatalogueRepository);
         
-            
             _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
             _hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, true);
             _lmd.LocationOfFlatFiles = _hicProjectDirectory.RootPath.FullName;
@@ -109,9 +107,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             Assert.AreEqual(0, _hicProjectDirectory.Cache.GetFiles("*.csv").Count());
 
-            var loop = new RDMPAutomationLoop(RepositoryLocator, _slot, logAction);
+            var loop = new RDMPAutomationLoop(mockOptions, logAction);
             loop.Start();
-
 
             while (_hicProjectDirectory.Cache.GetFiles("*.csv").Count() < 5)
             {
@@ -129,7 +126,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             Assert.AreEqual(0,_slot.AutomationJobs.Length);
             
             foreach (var ex in CatalogueRepository.GetAllObjects<AutomationServiceException>())
-                Console.WriteLine("AutomationServiceException:" + ex.Exception);
+                Console.WriteLine("AutomationServiceException: " + ex.Exception);
 
             //Give the Thread time to complete even though the job length is zero the thread might be in race condition to complete with this check.
             while (!loop.AutomationDestination.CanStop() && timeout>0)

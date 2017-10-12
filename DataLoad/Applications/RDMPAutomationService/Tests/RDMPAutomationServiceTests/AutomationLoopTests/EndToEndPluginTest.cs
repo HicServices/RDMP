@@ -52,7 +52,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         [Test]
         public void TestEndToEndPlugin()
         {
-            RDMPAutomationLoop loop = new RDMPAutomationLoop(RepositoryLocator, _slot, logAction);
+            RDMPAutomationLoop loop = new RDMPAutomationLoop(mockOptions, logAction);
             loop.Start();
 
             Task.Delay(10000).Wait();

@@ -44,7 +44,7 @@ namespace RDMPAutomationService
             ForceSlot = Settings.Default.ForceSlot;
         }
 
-        public IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
+        public virtual IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
         {
             var c = new SqlConnectionStringBuilder();
             c.DataSource = ServerName;

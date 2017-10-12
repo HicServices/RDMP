@@ -59,17 +59,7 @@ namespace RDMPAutomationService
 
             AutomationDestination = new AutomationDestination();
         }
-
-        public RDMPAutomationLoop(IRDMPPlatformRepositoryServiceLocator locator, AutomationServiceSlot serviceSlot, Action<EventLogEntryType, string> log)
-        {
-            _repository = locator.CatalogueRepository;
-            _locator = locator;
-            _serviceSlot = serviceSlot;
-            _log = log;
-
-            AutomationDestination = new AutomationDestination();
-        }
-
+        
         public void Start()
         {
             Stop = false;
@@ -145,8 +135,7 @@ namespace RDMPAutomationService
             }
             catch (Exception e)
             {
-                new AutomationServiceException((ICatalogueRepository) _repository, e);
-                RaiseFailure(e);
+                OnFailed(e);
             }
             finally
             {
@@ -206,9 +195,10 @@ namespace RDMPAutomationService
             }
             return null;
         }
-
-        private void RaiseFailure(Exception exception)
+        
+        private void OnFailed(Exception exception)
         {
+            new AutomationServiceException((ICatalogueRepository) _repository, exception);
             var eventArgs = new ServiceEventArgs()
             {
                 EntryType = EventLogEntryType.Error,

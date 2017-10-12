@@ -47,8 +47,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             mockOptions = new MockAutomationServiceOptions(RepositoryLocator)
             {
                 ServerName = _serverName,
-                CatalogueDatabaseName = TestDatabaseNames.GetConsistentName("Catalogue"),
-                DataExportDatabaseName = TestDatabaseNames.GetConsistentName("DataExport"),
                 ForceSlot = 0
             };
         }
