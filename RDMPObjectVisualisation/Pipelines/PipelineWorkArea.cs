@@ -32,6 +32,9 @@ namespace RDMPObjectVisualisation.Pipelines
 
         public PipelineWorkArea(IPipeline pipeline, DataFlowPipelineContext<T> context, CatalogueRepository catalogueRepository, object[] initializationObjects)
         {
+            if (initializationObjects.Any(o=>o == null))
+                throw new ArgumentException("initializationObjects array cannot contain null elements", "initializationObjects");
+
             _pipeline = pipeline;
             _context = context;
             _catalogueRepository = catalogueRepository;

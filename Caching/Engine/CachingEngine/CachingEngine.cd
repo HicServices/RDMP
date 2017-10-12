@@ -12,7 +12,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAWBAAAQAAAAAwAAAAAAAAAAYAAAIAgAASAA=</HashCode>
+      <HashCode>AAAAAAAAAWBAAAQAAAAAQAAAAAAAAAAYAAAIAgAASAA=</HashCode>
       <FileName>CachingHost.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -38,7 +38,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>gAAQIABAAABCABAEAAAAkAAQAAAkAAQABAEAEAAACBI=</HashCode>
+      <HashCode>gAAQIABAAABCABAEAAAAEAAQAAAkAAQABAEAEAAACBI=</HashCode>
       <FileName>DataRetrievers\PermissionWindowCacheDownloader.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -52,11 +52,8 @@
       <FileName>PipelineExecution\IMultiPipelineEngineExecutionStrategy.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.IPermissionWindow">
-    <Position X="8.75" Y="4.5" Width="2.5" />
-    <Compartments>
-      <Compartment Name="Properties" Collapsed="true" />
-    </Compartments>
+  <Interface Name="CatalogueLibrary.Data.IPermissionWindow" Collapsed="true">
+    <Position X="7.75" Y="5" Width="2" />
     <TypeIdentifier />
   </Interface>
   <Font Name="Segoe UI" Size="9" />

@@ -1,6 +1,8 @@
 using System;
 using System.Windows.Forms;
 using CachingEngine.Factories;
+using CachingEngine.Requests;
+using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
@@ -38,10 +40,13 @@ namespace CatalogueManager.Menus
 
             Items.Add(setWindow);
 
+            //this will be used as design time fetch request date, set it to min dt to avoid issues around caches not having progress dates etc
+            var fetchRequest = new SingleDayCacheFetchRequestProvider(new CacheFetchRequest(RepositoryLocator.CatalogueRepository,DateTime.MinValue));
+
             Items.Add(new ChoosePipelineMenuItem(
                 activator,
                 new PipelineUser(_cacheProgress),
-                new CachingPipelineUseCase(_cacheProgress),
+                new CachingPipelineUseCase(_cacheProgress,false, fetchRequest,false),
                 "Set Caching Pipeline")
                 );
             

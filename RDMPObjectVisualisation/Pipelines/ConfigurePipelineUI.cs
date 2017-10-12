@@ -37,6 +37,9 @@ namespace RDMPObjectVisualisation.Pipelines
 
         public ConfigurePipelineUI(IPipeline pipeline, IDataFlowSource<T> source, IDataFlowDestination<T> destination, DataFlowPipelineContext<T> context, List<object> initializationObjectsForPreviewPipelineSource, CatalogueRepository repository)
         {
+            if (initializationObjectsForPreviewPipelineSource.Any(o => o == null))
+                throw new ArgumentException("initializationObjectsForPreviewPipelineSource array cannot contain null elements", "initializationObjectsForPreviewPipelineSource");
+
             _pipeline = pipeline;
             _source = source;
             _destination = destination;

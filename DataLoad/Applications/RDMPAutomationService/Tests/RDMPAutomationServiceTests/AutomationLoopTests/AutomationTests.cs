@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using NUnit.Framework;
+using RDMPStartup;
 using Tests.Common;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
     public class AutomationTests:DatabaseTests
     {
+        protected Action<EventLogEntryType, string> logAction = ((type, s) => { Console.WriteLine("{0}: {1}", type.ToString().ToUpper(), s); });
+
+        protected MockAutomationServiceOptions mockOptions;
+
         [TestFixtureSetUp]
         public void ClearSlotsAndJobs()
         {
-
             foreach (AutomateablePipeline automateablePipeline in CatalogueRepository.GetAllObjects<AutomateablePipeline>())
             {
                 var pipe = automateablePipeline.Pipeline;
@@ -37,6 +43,12 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             foreach (LoadPeriodically loadPeriodically in CatalogueRepository.GetAllObjects<LoadPeriodically>())
                 loadPeriodically.DeleteInDatabase();
+            
+            mockOptions = new MockAutomationServiceOptions(RepositoryLocator)
+            {
+                ServerName = _serverName,
+                ForceSlot = 0
+            };
         }
         
     }

@@ -41,8 +41,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             InitializeComponent();
 
+            _bLoading = true;
+
             ddCacheLagDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
             ddCacheLagDelayDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
+            
+            _bLoading = false;
         }
 
         private bool _bLoading = false;

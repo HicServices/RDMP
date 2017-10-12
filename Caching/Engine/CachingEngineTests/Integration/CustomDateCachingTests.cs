@@ -48,6 +48,7 @@ namespace CachingEngineTests.Integration
             destinationComponent.Stub(c => c.GetClassAsSystemType()).Return(typeof (TestCacheDestination));
             destinationComponent.Stub(c => c.GetAllArguments()).Return(new IArgument[0]);
 
+            pipeline.Repository = CatalogueRepository;
             pipeline.Stub(p => p.Source).Return(sourceComponent);
             pipeline.Stub(p => p.Destination).Return(destinationComponent);
             pipeline.Stub(p => p.PipelineComponents).Return(Enumerable.Empty<IPipelineComponent>().OrderBy(p => p));

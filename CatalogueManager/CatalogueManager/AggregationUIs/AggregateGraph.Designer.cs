@@ -54,9 +54,9 @@ namespace CatalogueManager.AggregationUIs
             this.btnSaveImages = new System.Windows.Forms.ToolStripButton();
             this.btnClipboard = new System.Windows.Forms.ToolStripButton();
             this.btnResendQuery = new System.Windows.Forms.ToolStripButton();
-            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbTimeout = new System.Windows.Forms.ToolStripTextBox();
+            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -90,10 +90,9 @@ namespace CatalogueManager.AggregationUIs
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 414);
+            this.label1.Location = new System.Drawing.Point(3, 405);
             this.label1.MaximumSize = new System.Drawing.Size(710, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 39);
@@ -322,15 +321,6 @@ namespace CatalogueManager.AggregationUIs
             this.btnResendQuery.Text = "Re Send Query";
             this.btnResendQuery.Click += new System.EventHandler(this.btnResendQuery_Click);
             // 
-            // rdmpObjectsRibbonUI1
-            // 
-            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
-            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
-            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
-            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(698, 22);
-            this.rdmpObjectsRibbonUI1.TabIndex = 4;
-            // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
@@ -342,6 +332,15 @@ namespace CatalogueManager.AggregationUIs
             this.tbTimeout.Name = "tbTimeout";
             this.tbTimeout.Size = new System.Drawing.Size(100, 25);
             this.tbTimeout.TextChanged += new System.EventHandler(this.tbTimeout_TextChanged);
+            // 
+            // rdmpObjectsRibbonUI1
+            // 
+            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
+            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
+            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
+            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(698, 22);
+            this.rdmpObjectsRibbonUI1.TabIndex = 4;
             // 
             // AggregateGraph
             // 

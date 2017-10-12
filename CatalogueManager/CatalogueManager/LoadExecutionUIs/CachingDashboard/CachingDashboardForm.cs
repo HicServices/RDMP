@@ -65,13 +65,7 @@ namespace CatalogueManager.LoadExecutionUIs.CachingDashboard
 
                 tvCacheItems.Nodes.Add(parentNode);
             }
-
-            var unassigned = new PermissionWindow {Name = "Unassigned"};
-            var unassignedNode = new PermissionWindowTreeNode(unassigned);
-            foreach (var cacheProgress in RepositoryLocator.CatalogueRepository.GetAllCacheProgressWithoutAPermissionWindow())
-                unassignedNode.Nodes.Add(new CacheProgressTreeNode(cacheProgress));
             
-            tvCacheItems.Nodes.Add(unassignedNode);
             tvCacheItems.ExpandAll();
         }
 

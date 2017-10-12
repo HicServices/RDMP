@@ -24,9 +24,11 @@ namespace QueryCaching.Aggregation.Arguments
             if (sql.Trim().StartsWith(CachedAggregateConfigurationResultsManager.CachingPrefix))
                 throw new NotSupportedException("Sql for the query started with '" + CachedAggregateConfigurationResultsManager.CachingPrefix + "' which implies you ran some SQL code to fetch some stuff from the cache and then committed it back into the cache (obliterating the record of what the originally executed query was).  This is referred to as Inception Caching and isn't allowed.  Note to developers: this happens if user caches a query then runs the query again (fetching it from the cache) and somehow tries to commit the cache fetch request back into the cache as an overwrite");
 
-            if (results.Rows.Cast<DataRow>().Any(r=>r[0] == null || r[0] == DBNull.Value))
-                throw new Exception("DataTable for '" + configuration + "' contains nulls so cannot be cached");
-
+            //throw away nulls
+            foreach (var r in results.Rows.Cast<DataRow>().ToArray())
+                if (r[0] == null || r[0] == DBNull.Value)
+                    results.Rows.Remove(r);
+            
             if (identifierColumn == null)
                 throw new Exception("You must specify the data type of the identifier column, identifierColumn was null");
 

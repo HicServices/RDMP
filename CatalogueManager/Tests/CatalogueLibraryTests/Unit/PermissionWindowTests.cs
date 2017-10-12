@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using HIC.Common.Validation;
 using NUnit.Framework;
+using Tests.Common;
 
 namespace CatalogueLibraryTests.Unit
 {
-    [Category("Unit")]
-    public class PermissionWindowTests
+    
+    public class PermissionWindowTests:DatabaseTests
     {
 
         [Test]
@@ -16,7 +17,8 @@ namespace CatalogueLibraryTests.Unit
             var period1 = new PermissionWindowPeriod((int) DayOfWeek.Monday, new TimeSpan(0, 0, 0), new TimeSpan(6, 0, 0));
             var period2 = new PermissionWindowPeriod((int) DayOfWeek.Monday, new TimeSpan(17, 0, 0), new TimeSpan(23, 59, 59));
 
-            var permissionWindow = new PermissionWindow(new List<PermissionWindowPeriod>
+            var permissionWindow = new PermissionWindow(CatalogueRepository);
+            permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>
             {
                 period1,
                 period2
@@ -24,7 +26,7 @@ namespace CatalogueLibraryTests.Unit
 
             var permissionPeriodConfig = permissionWindow.PermissionPeriodConfig;
 
-            var newPermissionWindow = new PermissionWindow();
+            var newPermissionWindow = new PermissionWindow(CatalogueRepository);
             newPermissionWindow.PermissionPeriodConfig = permissionPeriodConfig;
 
             var periods = newPermissionWindow.PermissionWindowPeriods;

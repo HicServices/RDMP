@@ -61,6 +61,7 @@
     <Compile Include="AutomationLoopTests\FictionalCache\TestDataPipelineAssembler.cs" />
     <Compile Include="AutomationLoopTests\FictionalCache\TestDataWritter.cs" />
     <Compile Include="AutomationLoopTests\FictionalCache\TestDataWritterChunk.cs" />
+    <Compile Include="AutomationLoopTests\MockAutomationServiceOptions.cs" />
     <Compile Include="CacheRunFinderTests.cs" />
     <Compile Include="DLECacheRunFinderTests.cs" />
     <Compile Include="DLERunFinderTests.cs" />

@@ -22,7 +22,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.DataFlowPipeline.Components.CleanStrings" Collapsed="true">
-    <Position X="7.75" Y="8" Width="2.25" />
+    <Position X="9" Y="8" Width="4.25" />
     <TypeIdentifier>
       <HashCode>BAQAAAwCACAAgAAAAAAAAAAAAAAAAAAAAggAAAAAAAA=</HashCode>
       <FileName>DataFlowPipeline\Components\CleanStrings.cs</FileName>
@@ -30,7 +30,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.DataFlowPipeline.Components.RemoveDuplicates" Collapsed="true">
-    <Position X="7.75" Y="8.75" Width="2.25" />
+    <Position X="9" Y="8.75" Width="4.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACBAAAAAAAAAAAAAAAAAAAEAAgAAAAAAAAA=</HashCode>
       <FileName>DataFlowPipeline\Components\RemoveDuplicates.cs</FileName>
@@ -75,7 +75,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.DataFlowPipeline.Sources.DbDataReaderDataFlowSource" Collapsed="true">
-    <Position X="4.5" Y="7.75" Width="2.75" />
+    <Position X="4.5" Y="7.75" Width="3.5" />
     <TypeIdentifier>
       <HashCode>AAWAAAQAACAAAAAgCAAAQAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataFlowPipeline\Sources\DbDataReaderDataFlowSource.cs</FileName>
@@ -84,35 +84,44 @@
   </Class>
   <Class Name="CatalogueLibrary.Data.Pipelines.Pipeline" Collapsed="true">
     <Position X="3.75" Y="1" Width="1.5" />
-    <TypeIdentifier />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAgAgAAAMAAIAAAQAQAQAAAAEAAAAAAAIABA=</HashCode>
+      <FileName>Data\Pipelines\Pipeline.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueLibrary.Data.Pipelines.PipelineComponent" Collapsed="true">
     <Position X="5.75" Y="1" Width="1.5" />
-    <TypeIdentifier />
+    <TypeIdentifier>
+      <HashCode>AAEAIAACACAAAAAEABpAAAQQABAAAAAAAAAQEAAAABA=</HashCode>
+      <FileName>Data\Pipelines\PipelineComponent.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueLibrary.Data.Pipelines.PipelineComponentArgument" Collapsed="true">
     <Position X="7.75" Y="1" Width="1.5" />
-    <TypeIdentifier />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAEAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Data\Pipelines\PipelineComponentArgument.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.DataFlowPipeline.DataFlowPipelineEngineFactory&lt;T&gt;">
-    <Position X="3.5" Y="3.25" Width="2.5" />
+    <Position X="3.75" Y="3.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAgAAAABAAAAAAQAAAAAAAAAEAAAAAAAAAAJEA=</HashCode>
       <FileName>DataFlowPipeline\DataFlowPipelineComponentFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.DataFlowPipeline.Requirements.DataFlowPipelineContext&lt;T&gt;">
-    <Position X="0.5" Y="0.5" Width="2.25" />
+    <Position X="0.5" Y="0.5" Width="5.75" />
     <TypeIdentifier>
       <HashCode>AAIAAASAgAgAAACCAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
       <FileName>DataFlowPipeline\Requirements\DataFlowPipelineContext.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLoadEngine.DataFlowPipeline.Requirements.DataFlowPipelineContextFactory&lt;T&gt;">
-    <Position X="0.5" Y="2.75" Width="2.5" />
+  <Class Name="CatalogueLibrary.DataFlowPipeline.Requirements.DataFlowPipelineContextFactory&lt;T&gt;">
+    <Position X="0.5" Y="2.75" Width="3" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
@@ -121,10 +130,10 @@
       <FileName>DataFlowPipeline\Requirements\DataFlowPipelineContextFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="DataLoadEngine.DataFlowPipeline.IDataFlowComponent&lt;T&gt;" Collapsed="true">
+  <Interface Name="CatalogueLibrary.DataFlowPipeline.IDataFlowComponent&lt;T&gt;" Collapsed="true">
     <Position X="8.25" Y="6.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAACAAACAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
       <FileName>DataFlowPipeline\IDataFlowComponent.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -135,14 +144,14 @@
       <FileName>DataFlowPipeline\IDataFlowDestination.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="DataLoadEngine.DataFlowPipeline.IDataFlowSource&lt;T&gt;" Collapsed="true">
+  <Interface Name="CatalogueLibrary.DataFlowPipeline.IDataFlowSource&lt;T&gt;" Collapsed="true">
     <Position X="5" Y="6.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAQAACAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAQAACAAACAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataFlowPipeline\IDataFlowSource.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="DataLoadEngine.DataFlowPipeline.Requirements.IPipelineRequirement&lt;T&gt;" Collapsed="true">
+  <Interface Name="CatalogueLibrary.DataFlowPipeline.Requirements.IPipelineRequirement&lt;T&gt;" Collapsed="true">
     <Position X="0.5" Y="7.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>

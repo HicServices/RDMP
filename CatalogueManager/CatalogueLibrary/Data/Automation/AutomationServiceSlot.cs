@@ -212,6 +212,7 @@ namespace CatalogueLibrary.Data.Automation
         {
             Lifeline = ((CatalogueRepository) Repository).GetTickLifeline(this);
         }
+
         public void RefreshLockPropertiesFromDatabase()
         {
             ((CatalogueRepository)Repository).RefreshLockPropertiesFromDatabase(this);
