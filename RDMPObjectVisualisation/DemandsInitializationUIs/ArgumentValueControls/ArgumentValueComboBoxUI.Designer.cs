@@ -30,6 +30,7 @@
         {
             this.cbxValue = new System.Windows.Forms.ComboBox();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.btnPick = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cbxValue
@@ -39,7 +40,7 @@
             this.cbxValue.FormattingEnabled = true;
             this.cbxValue.Location = new System.Drawing.Point(3, 3);
             this.cbxValue.Name = "cbxValue";
-            this.cbxValue.Size = new System.Drawing.Size(510, 21);
+            this.cbxValue.Size = new System.Drawing.Size(459, 21);
             this.cbxValue.TabIndex = 18;
             this.cbxValue.SelectedIndexChanged += new System.EventHandler(this.cbxValue_SelectedIndexChanged);
             this.cbxValue.TextChanged += new System.EventHandler(this.cbxValue_TextChanged);
@@ -49,15 +50,28 @@
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ragSmiley1.Location = new System.Drawing.Point(519, 0);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 19;
             // 
+            // btnPick
+            // 
+            this.btnPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPick.Location = new System.Drawing.Point(468, 3);
+            this.btnPick.Name = "btnPick";
+            this.btnPick.Size = new System.Drawing.Size(45, 21);
+            this.btnPick.TabIndex = 20;
+            this.btnPick.Text = "Pick";
+            this.btnPick.UseVisualStyleBackColor = true;
+            this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
+            // 
             // ArgumentValueComboBoxUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnPick);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.cbxValue);
             this.Name = "ArgumentValueComboBoxUI";
@@ -70,6 +84,7 @@
 
         private System.Windows.Forms.ComboBox cbxValue;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private System.Windows.Forms.Button btnPick;
 
 
     }

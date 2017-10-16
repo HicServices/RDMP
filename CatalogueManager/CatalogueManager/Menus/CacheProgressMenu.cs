@@ -10,6 +10,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -42,14 +43,19 @@ namespace CatalogueManager.Menus
 
             //this will be used as design time fetch request date, set it to min dt to avoid issues around caches not having progress dates etc
             var fetchRequest = new SingleDayCacheFetchRequestProvider(new CacheFetchRequest(RepositoryLocator.CatalogueRepository,DateTime.MinValue));
-
-            Items.Add(new ChoosePipelineMenuItem(
-                activator,
-                new PipelineUser(_cacheProgress),
-                new CachingPipelineUseCase(_cacheProgress,false, fetchRequest,false),
-                "Set Caching Pipeline")
-                );
-            
+            try
+            {
+                Items.Add(new ChoosePipelineMenuItem(
+                    activator,
+                    new PipelineUser(_cacheProgress),
+                    new CachingPipelineUseCase(_cacheProgress,false, fetchRequest,false),
+                    "Set Caching Pipeline")
+                    );
+            }
+            catch (Exception e)
+            {
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not assemble CacheProgress Pipeline Options", CheckResult.Fail, e));
+            }
             AddCommonMenuItems();
         }
 
