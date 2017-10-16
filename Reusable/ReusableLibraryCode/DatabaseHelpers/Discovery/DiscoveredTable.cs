@@ -74,6 +74,26 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return Helper.GetTopXSqlForTable(this, topX);
         }
 
+        public virtual DataTable GetDataTable(int topX = 0,bool enforceTypesAndNullness = true, IManagedTransaction transaction = null)
+        {
+            var dt = new DataTable();
+            var svr = Database.Server;
+            using (IManagedConnection con = svr.GetManagedConnection(transaction))
+                svr.GetDataAdapter(GetTopXSql(topX), con.Connection).Fill(dt);
+
+            if (enforceTypesAndNullness)
+                foreach (DiscoveredColumn c in DiscoverColumns(transaction))
+                {
+                    var cSharpDataType = _querySyntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(c.DataType.SQLType);
+
+                    var name = c.GetRuntimeName();
+                    dt.Columns[name].DataType = cSharpDataType;
+                    dt.Columns[name].AllowDBNull = c.AllowNulls;
+                }
+
+            return dt;
+        }
+        
         public virtual void Drop()
         {
             using(var connection = Database.Server.GetManagedConnection())

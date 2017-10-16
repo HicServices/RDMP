@@ -95,7 +95,7 @@ namespace LoadModules.Generic.Attachers
         {
             using (var con = dbInfo.Server.GetConnection())
             {
-                DataTable dt = CreateDataTableForTarget(tableToLoad,job);
+                DataTable dt = tableToLoad.GetDataTable();
 
                 // setup bulk insert it into destination
                 SqlBulkCopy insert = new SqlBulkCopy((SqlConnection) con);
@@ -165,24 +165,7 @@ namespace LoadModules.Generic.Attachers
             if (string.IsNullOrWhiteSpace(FilePattern))
                 notifier.OnCheckPerformed(new CheckEventArgs("Argument FilePattern has not been set on " + this + ", you should specify this value in the LoadMetadataUI", CheckResult.Fail));
         }
-
-        private DataTable CreateDataTableForTarget(DiscoveredTable table,IDataLoadJob job)
-        {
-            DataTable dt = new DataTable();
-
-            DiscoveredColumn[] columns = table.DiscoverColumns().ToArray();
-            
-            //add the columns found on the database by name to the DataTable
-            foreach (var listColumn in columns.Select(c => c.GetRuntimeName()))
-                dt.Columns.Add(listColumn);
-            
-            //now setup the types for those columns
-            SetupTypes(dt,columns, table,job);
-            
-            return dt;
-        }
         
-
         private void ConfirmFitToDestination(DataTable dt, DiscoveredTable tableToLoad,IDataLoadJob job)
         {
 
@@ -201,28 +184,6 @@ namespace LoadModules.Generic.Attachers
 
        }
 
-        protected void SetupTypes(DataTable dt, DiscoveredColumn[] columnsAtDestination, DiscoveredTable table, IDataLoadJob job)
-        {
-            var syntaxHelper = table.Database.Server.GetQuerySyntaxHelper();
-
-            foreach (DiscoveredColumn columnAtDestination in columnsAtDestination)
-            {
-                string sqlType = columnAtDestination.DataType.SQLType;
-                string name = columnAtDestination.GetRuntimeName();
-                
-                Type t = syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(sqlType);
-
-                if (dt.Columns[name] == null)//missing column
-                {
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Column missing from DataTable (loaded from flat file) " + columnAtDestination + " (Column is present at destination database but not in datatable, so skipping it)"));
-                    continue;//skip it
-                }
-
-                dt.Columns[name].DataType = t;
-                dt.Columns[name].AllowDBNull = true;
-            }
-
-        }
 
         /// <summary>
         /// DataTable dt is a copy of what is in RAW, your job (if you choose to accept it) is to look in your file and work out what headers you can see
