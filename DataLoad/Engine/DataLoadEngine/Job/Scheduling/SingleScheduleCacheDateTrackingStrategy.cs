@@ -22,14 +22,14 @@ namespace DataLoadEngine.Job.Scheduling
         private readonly Queue<DateTime> _availableDates = new Queue<DateTime>();
         private readonly DateTime _lastDateForLoading;
 
-        public SingleScheduleCacheDateTrackingStrategy(ICacheLayout cacheLayout, ILoadProgress loadProgress)
+        public SingleScheduleCacheDateTrackingStrategy(ICacheLayout cacheLayout, ILoadProgress loadProgress,IDataLoadEventListener listener)
         {
             // no null check needed as the contract ensures that both DataLoadProgress and OriginDate can't simultaneously be null
             var lastAssignedLoadDate = loadProgress.DataLoadProgress == null ? loadProgress.OriginDate.Value : loadProgress.DataLoadProgress.Value;
 
             // This is all the dates in the cache, but we want to start from _lastAssignedLoadDate
             // todo: must be efficient, revisit
-            _availableDates = cacheLayout.GetSortedDateQueue();
+            _availableDates = cacheLayout.GetSortedDateQueue(listener);
             if (_availableDates.Any())
             {
                 while (_availableDates.Peek() <= lastAssignedLoadDate)

@@ -52,6 +52,8 @@ namespace CatalogueManager.LoadExecutionUIs
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.gbLoadProgresses = new System.Windows.Forms.GroupBox();
+            this.btnUnlockAll = new System.Windows.Forms.Button();
+            this.btnRefreshLoadProgresses = new System.Windows.Forms.Button();
             this.helpIconAbortShouldCancel = new ReusableUIComponents.HelpIcon();
             this.helpIconRunRepeatedly = new ReusableUIComponents.HelpIcon();
             this.cbRunIteratively = new System.Windows.Forms.CheckBox();
@@ -120,7 +122,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbDebugOptions.Controls.Add(this.cbMigrateStagingToLive);
             this.gbDebugOptions.Controls.Add(this.cbMigrateRAWToStaging);
             this.gbDebugOptions.Controls.Add(this.cbSkipArchiving);
-            this.gbDebugOptions.Location = new System.Drawing.Point(525, 3);
+            this.gbDebugOptions.Location = new System.Drawing.Point(659, 3);
             this.gbDebugOptions.Name = "gbDebugOptions";
             this.gbDebugOptions.Size = new System.Drawing.Size(166, 90);
             this.gbDebugOptions.TabIndex = 16;
@@ -158,11 +160,13 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             // ddLoadProgress
             // 
+            this.ddLoadProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ddLoadProgress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddLoadProgress.FormattingEnabled = true;
             this.ddLoadProgress.Location = new System.Drawing.Point(88, 20);
             this.ddLoadProgress.Name = "ddLoadProgress";
-            this.ddLoadProgress.Size = new System.Drawing.Size(215, 21);
+            this.ddLoadProgress.Size = new System.Drawing.Size(291, 21);
             this.ddLoadProgress.TabIndex = 48;
             this.ddLoadProgress.SelectedIndexChanged += new System.EventHandler(this.ddLoadProgress_SelectedIndexChanged);
             // 
@@ -276,6 +280,8 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             // gbLoadProgresses
             // 
+            this.gbLoadProgresses.Controls.Add(this.btnUnlockAll);
+            this.gbLoadProgresses.Controls.Add(this.btnRefreshLoadProgresses);
             this.gbLoadProgresses.Controls.Add(this.helpIconAbortShouldCancel);
             this.gbLoadProgresses.Controls.Add(this.helpIconRunRepeatedly);
             this.gbLoadProgresses.Controls.Add(this.cbRunIteratively);
@@ -286,10 +292,31 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.Controls.Add(this.label4);
             this.gbLoadProgresses.Location = new System.Drawing.Point(196, 3);
             this.gbLoadProgresses.Name = "gbLoadProgresses";
-            this.gbLoadProgresses.Size = new System.Drawing.Size(323, 90);
+            this.gbLoadProgresses.Size = new System.Drawing.Size(457, 90);
             this.gbLoadProgresses.TabIndex = 57;
             this.gbLoadProgresses.TabStop = false;
             this.gbLoadProgresses.Text = "Progressable To Execute";
+            // 
+            // btnUnlockAll
+            // 
+            this.btnUnlockAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUnlockAll.Location = new System.Drawing.Point(385, 18);
+            this.btnUnlockAll.Name = "btnUnlockAll";
+            this.btnUnlockAll.Size = new System.Drawing.Size(30, 23);
+            this.btnUnlockAll.TabIndex = 59;
+            this.btnUnlockAll.UseVisualStyleBackColor = true;
+            this.btnUnlockAll.Click += new System.EventHandler(this.btnUnlockAll_Click);
+            // 
+            // btnRefreshLoadProgresses
+            // 
+            this.btnRefreshLoadProgresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshLoadProgresses.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshLoadProgresses.Image")));
+            this.btnRefreshLoadProgresses.Location = new System.Drawing.Point(421, 18);
+            this.btnRefreshLoadProgresses.Name = "btnRefreshLoadProgresses";
+            this.btnRefreshLoadProgresses.Size = new System.Drawing.Size(30, 23);
+            this.btnRefreshLoadProgresses.TabIndex = 59;
+            this.btnRefreshLoadProgresses.UseVisualStyleBackColor = true;
+            this.btnRefreshLoadProgresses.Click += new System.EventHandler(this.btnRefreshLoadProgresses_Click);
             // 
             // helpIconAbortShouldCancel
             // 
@@ -333,7 +360,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.cbAbortShouldActuallyCancelInstead.Text = "Clicking Abort Should Wait";
             this.cbAbortShouldActuallyCancelInstead.UseVisualStyleBackColor = true;
             // 
-            // DatasetLoadControl
+            // ExecuteLoadMetadataUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -341,7 +368,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.Controls.Add(this.gbControls);
             this.Controls.Add(this.gbLoad);
             this.Controls.Add(this.gbDebugOptions);
-            this.Name = "DatasetLoadControl";
+            this.Name = "ExecuteLoadMetadataUI";
             this.Size = new System.Drawing.Size(922, 733);
             this.gbLoad.ResumeLayout(false);
             this.gbDebugOptions.ResumeLayout(false);
@@ -381,6 +408,8 @@ namespace CatalogueManager.LoadExecutionUIs
         private System.Windows.Forms.CheckBox cbRunIteratively;
         private System.Windows.Forms.CheckBox cbAbortShouldActuallyCancelInstead;
         private ReusableUIComponents.HelpIcon helpIconAbortShouldCancel;
+        private System.Windows.Forms.Button btnUnlockAll;
+        private System.Windows.Forms.Button btnRefreshLoadProgresses;
     }
 }
 

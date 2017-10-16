@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CachingEngine.PipelineExecution.Destinations;
 using CatalogueLibrary.Data.DataLoad;
+using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Layouts
 {
@@ -20,16 +21,16 @@ namespace CachingEngine.Layouts
         DirectoryInfo RootDirectory { get; }
         
         // some interface for looking up filename
-        DateTime? GetEarliestDateToLoadAccordingToFilesystem(); 
-        DateTime? GetMostRecentDateToLoadAccordingToFilesystem();
+        DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener); 
+        DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
         void CreateIfNotExists();
         bool CheckExists(DateTime archiveDate);
         FileInfo GetArchiveFileInfoForDate(DateTime archiveDate);
         DirectoryInfo GetLoadCacheDirectory();
 
         // requested by DLE
-        Queue<DateTime> GetSortedDateQueue();
-        bool CheckCacheFilesAvailability();
+        Queue<DateTime> GetSortedDateQueue(IDataLoadEventListener listener);
+        bool CheckCacheFilesAvailability(IDataLoadEventListener listener);
         
     }
 }

@@ -21,6 +21,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache.Reading
 {
     public class TestDataCacheReader : ICachedDataProvider
     {
+        public LoadProgress LoadProgress { get; set; }
+
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
         {
             throw new NotImplementedException();
@@ -48,5 +50,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache.Reading
         {
             throw new NotImplementedException();
         }
+
     }
 }

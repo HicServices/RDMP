@@ -28,7 +28,7 @@ namespace DataLoadEngine.LoadProcess.Scheduling
                 return ExitCodeType.OperationNotRequired;
 
             // create job factory
-            var progresses = loadProgresses.ToDictionary(loadProgress => loadProgress, loadProgress => JobDateGenerationStrategyFactory.Create(loadProgress));
+            var progresses = loadProgresses.ToDictionary(loadProgress => loadProgress, loadProgress => JobDateGenerationStrategyFactory.Create(loadProgress, DataLoadEventListener));
             var jobProvider = new MultipleScheduleJobFactory(progresses, OverrideNumberOfDaysToLoad, LoadMetadata, LogManager);
 
             // check if the factory will produce any jobs, if not we can stop here

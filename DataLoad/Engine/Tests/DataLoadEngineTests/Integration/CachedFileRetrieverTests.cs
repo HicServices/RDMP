@@ -185,7 +185,7 @@ namespace DataLoadEngineTests.Integration
             return ExitCodeType.Success;
         }
 
-        protected override ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
+        protected override ICacheLayout CreateCacheLayout(ICacheProgress cacheProgress, IDataLoadEventListener listener)
         {
             return Layout;
         }

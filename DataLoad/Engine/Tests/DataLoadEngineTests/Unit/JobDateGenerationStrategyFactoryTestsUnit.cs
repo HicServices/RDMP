@@ -16,6 +16,7 @@ using DataLoadEngine.Job.Scheduling.Exceptions;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 
 namespace DataLoadEngineTests.Unit
@@ -31,7 +32,7 @@ namespace DataLoadEngineTests.Unit
 
             var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp), new HICDatabaseConfiguration(server));
 
-            var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() => factory.Create(lp));
+            var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() => factory.Create(lp,new ThrowImmediatelyDataLoadEventListener()));
 
             Assert.AreEqual("Don't know when to start the data load, both DataLoadProgress and OriginDate are null", ex.Message);
         }
@@ -46,7 +47,7 @@ namespace DataLoadEngineTests.Unit
 
             var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp), new HICDatabaseConfiguration(server));
 
-            Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy), factory.Create(lp).GetType());
+            Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy), factory.Create(lp,new ThrowImmediatelyDataLoadEventListener()).GetType());
         }
     }
 }

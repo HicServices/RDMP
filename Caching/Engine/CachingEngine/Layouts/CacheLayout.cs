@@ -12,6 +12,7 @@ using CachingEngine.Requests;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using ICSharpCode.SharpZipLib.Tar;
+using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Layouts
 {
@@ -87,38 +88,38 @@ namespace CachingEngine.Layouts
             return downloadDirectory.Exists ? downloadDirectory : Directory.CreateDirectory(downloadDirectory.FullName);
         }
         
-        private IEnumerable<FileInfo> GetArchiveFilesInLoadCacheDirectory()
+        private IEnumerable<FileInfo> GetArchiveFilesInLoadCacheDirectory(IDataLoadEventListener listener)
         {
             var disciplineRoot = GetLoadCacheDirectory();
             return disciplineRoot.EnumerateFiles("*." + (ArchiveType != CacheArchiveType.None ?ArchiveType.ToString():"*"));
         }
 
-        private IEnumerable<DateTime> GetDateListFromArchiveFilesInLoadCacheDirectory()
+        private IEnumerable<DateTime> GetDateListFromArchiveFilesInLoadCacheDirectory(IDataLoadEventListener listener)
         {
             // remove the extension
-            return GetArchiveFilesInLoadCacheDirectory()
+            return GetArchiveFilesInLoadCacheDirectory(listener)
                 .Select(
                     info =>
                         DateTime.ParseExact(Path.GetFileNameWithoutExtension(info.Name), DateFormat,
                             CultureInfo.InvariantCulture));
         }
 
-        public virtual Queue<DateTime> GetSortedDateQueue()
+        public virtual Queue<DateTime> GetSortedDateQueue(IDataLoadEventListener listener)
         {
-            var dateList = GetDateListFromArchiveFilesInLoadCacheDirectory().ToList();
+            var dateList = GetDateListFromArchiveFilesInLoadCacheDirectory(listener).ToList();
             dateList.Sort();
 
             return new Queue<DateTime>(dateList);
         }
 
-        public bool CheckCacheFilesAvailability()
+        public bool CheckCacheFilesAvailability(IDataLoadEventListener listener)
         {
-            return GetArchiveFilesInLoadCacheDirectory().Any();
+            return GetArchiveFilesInLoadCacheDirectory(listener).Any();
         }
 
-        public DateTime? GetMostRecentDateToLoadAccordingToFilesystem()
+        public DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener)
         {
-            var dateList = GetDateListFromArchiveFilesInLoadCacheDirectory().ToList();
+            var dateList = GetDateListFromArchiveFilesInLoadCacheDirectory(listener).ToList();
 
             if (!dateList.Any())
                 return null;
@@ -126,10 +127,10 @@ namespace CachingEngine.Layouts
             dateList.Sort();
             return dateList[dateList.Count -1];
         }
-        
-        public DateTime? GetEarliestDateToLoadAccordingToFilesystem()
+
+        public DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener)
         {
-            var dateList = GetDateListFromArchiveFilesInLoadCacheDirectory().ToList();
+            var dateList = GetDateListFromArchiveFilesInLoadCacheDirectory(listener).ToList();
 
             if (!dateList.Any())
                 return null;
