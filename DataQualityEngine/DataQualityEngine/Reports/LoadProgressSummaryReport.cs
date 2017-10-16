@@ -227,7 +227,7 @@ namespace DataQualityEngine.Reports
                     
                     var layout = cacheFileSystem.CreateCacheLayout();
                     availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
-                    ResolvedCachePath = layout.GetLoadCacheDirectory();
+                    ResolvedCachePath = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
 
 
                 }

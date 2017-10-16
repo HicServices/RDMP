@@ -30,11 +30,10 @@ namespace DataLoadEngine.Job.Scheduling
             // This is all the dates in the cache, but we want to start from _lastAssignedLoadDate
             // todo: must be efficient, revisit
             _availableDates = cacheLayout.GetSortedDateQueue(listener);
-            if (_availableDates.Any())
-            {
-                while (_availableDates.Peek() <= lastAssignedLoadDate)
-                    _availableDates.Dequeue();
-            }
+          
+            while (_availableDates.Any() &&  _availableDates.Peek() <= lastAssignedLoadDate)
+                _availableDates.Dequeue();
+            
 
             _lastDateForLoading = CalculateLastLoadDate(loadProgress);
         }

@@ -76,7 +76,7 @@ namespace DataLoadEngine.DataProvider.FromCache
             _workload = new Dictionary<DateTime, FileInfo>();
             foreach (var date in job.DatesToRetrieve)
             {
-                var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date);
+                var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date,job);
                 
                 if (fileInfo == null)
                     OnCacheFileNotFound("Could not find cached file for date '" + date + "' for CacheLayout.ArchiveType " + cacheLayout.ArchiveType + " in cache at " + job.HICProjectDirectory.Cache.FullName, null);
@@ -237,7 +237,7 @@ namespace DataLoadEngine.DataProvider.FromCache
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Files Found In Cache:" + filesFound,filesFound ? CheckResult.Success : CheckResult.Warning));
 
-                var d = layout.GetLoadCacheDirectory();
+                var d = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
 
                 if(d == null)
                 {

@@ -23,10 +23,10 @@ namespace CachingEngine.Layouts
         // some interface for looking up filename
         DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener); 
         DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
-        void CreateIfNotExists();
-        bool CheckExists(DateTime archiveDate);
-        FileInfo GetArchiveFileInfoForDate(DateTime archiveDate);
-        DirectoryInfo GetLoadCacheDirectory();
+        void CreateIfNotExists(IDataLoadEventListener listener);
+        bool CheckExists(DateTime archiveDate, IDataLoadEventListener listener);
+        FileInfo GetArchiveFileInfoForDate(DateTime archiveDate, IDataLoadEventListener listener);
+        DirectoryInfo GetLoadCacheDirectory(IDataLoadEventListener listener);
 
         // requested by DLE
         Queue<DateTime> GetSortedDateQueue(IDataLoadEventListener listener);

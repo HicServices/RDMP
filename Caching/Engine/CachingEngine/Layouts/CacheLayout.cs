@@ -33,22 +33,22 @@ namespace CachingEngine.Layouts
             RootDirectory = rootDirectory;
         }
 
-        public virtual void CreateIfNotExists()
+        public virtual void CreateIfNotExists(IDataLoadEventListener listener)
         {
             var downloadDirectory = Resolver.GetLoadCacheDirectory(RootDirectory);
             if (!downloadDirectory.Exists)
                 downloadDirectory.Create();
         }
 
-        public virtual bool CheckExists(DateTime archiveDate)
+        public virtual bool CheckExists(DateTime archiveDate,IDataLoadEventListener listener)
         {
-            var fi = GetArchiveFileInfoForDate(archiveDate);
+            var fi = GetArchiveFileInfoForDate(archiveDate,listener);
             return fi != null && fi.Exists;
         }
 
-        public virtual FileInfo GetArchiveFileInfoForDate(DateTime archiveDate)
+        public virtual FileInfo GetArchiveFileInfoForDate(DateTime archiveDate, IDataLoadEventListener listener)
         {
-            var loadCacheDirectory = GetLoadCacheDirectory();
+            var loadCacheDirectory = GetLoadCacheDirectory(listener);
             
             if(ArchiveType == CacheArchiveType.None)
             {
@@ -66,14 +66,17 @@ namespace CachingEngine.Layouts
 
             var filename = archiveDate.ToString(DateFormat) + "." + ArchiveType.ToString().ToLower();
 
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Looking for a file called '" + filename +"' in '" + loadCacheDirectory.FullName+ "'"));
+
             return new FileInfo(Path.Combine(loadCacheDirectory.FullName, filename));
         }
 
         /// <summary>
         /// The cache sub-directory for a particular load schedule within a load metadata. Uses a resolver for dataset-specific cache layout knowledge
         /// </summary>
+        /// <param name="listener"></param>
         /// <returns></returns>
-        public virtual DirectoryInfo GetLoadCacheDirectory()
+        public virtual DirectoryInfo GetLoadCacheDirectory(IDataLoadEventListener listener)
         {
             if(Resolver == null)
                 throw new Exception("No ILoadCachePathResolver has been set on CacheLayout " + this + ", this tells the system whether there are subdirectories and which one to use for a given ICacheLayout, if you don't have one use a new NoSubdirectoriesCachePathResolver() in your ICacheLayout constructor");
@@ -85,12 +88,25 @@ namespace CachingEngine.Layouts
 
             if (downloadDirectory == null)
                 throw new Exception("Resolver " + Resolver + " of type " + Resolver.GetType().FullName + " returned null from GetLoadCacheDirectory");
-            return downloadDirectory.Exists ? downloadDirectory : Directory.CreateDirectory(downloadDirectory.FullName);
+
+            if (downloadDirectory.Exists)
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        "Download Directory Is:" + downloadDirectory.FullName));
+            else
+            {
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Download Directory Did Not Exist:" + downloadDirectory.FullName));
+                
+                downloadDirectory.Create();
+
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"Created Download Directory:" + downloadDirectory.FullName));
+            }
+            return downloadDirectory;
         }
         
         private IEnumerable<FileInfo> GetArchiveFilesInLoadCacheDirectory(IDataLoadEventListener listener)
         {
-            var disciplineRoot = GetLoadCacheDirectory();
+            var disciplineRoot = GetLoadCacheDirectory(listener);
             return disciplineRoot.EnumerateFiles("*." + (ArchiveType != CacheArchiveType.None ?ArchiveType.ToString():"*"));
         }
 
@@ -139,14 +155,14 @@ namespace CachingEngine.Layouts
             return dateList[0];
         }
 
-        protected void ArchiveFiles(FileInfo[] files, DateTime archiveDate)
+        protected void ArchiveFiles(FileInfo[] files, DateTime archiveDate,IDataLoadEventListener listener)
         {
             if (!files.Any()) return;
 
             if (ArchiveType == CacheArchiveType.None)
                 throw new ArgumentException("When using CacheArchiveType.None you should not use ArchiveFiles, instead just copy them into the relevant Cache directory yourself.  Remember that you must have 1 file per day and the filename must be the date according to the DateFormat e.g. 2001-01-01.csv or 2001-01-01.txt or whatever");
 
-            var archiveFilepath = GetArchiveFileInfoForDate(archiveDate);
+            var archiveFilepath = GetArchiveFileInfoForDate(archiveDate,listener);
             var archiveDirectory = archiveFilepath.DirectoryName;
             if (archiveDirectory == null)
                 throw new Exception("The directory for the archive within the cache is being reported as null, which should not be possible.");
