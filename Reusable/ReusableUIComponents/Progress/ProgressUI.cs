@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using GraphX.PCL.Logic.Algorithms.LayoutAlgorithms;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using ReusableUIComponents.Icons;
 
 namespace ReusableUIComponents.Progress
 {
@@ -35,6 +38,13 @@ namespace ReusableUIComponents.Progress
 
         private int _processingTimeColIndex;
 
+
+        private Bitmap _information;
+        private Bitmap _warning;
+        private Bitmap _warningEx;
+        private Bitmap _fail;
+        private Bitmap _failEx;
+
         public ProgressUI()
         {
             InitializeComponent();
@@ -58,6 +68,37 @@ namespace ReusableUIComponents.Progress
 
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             _processingTimeColIndex = dataGridView1.Columns["Processing Time"].Index;
+
+            _information = ChecksAndProgressIcons.Information;
+            _warning = ChecksAndProgressIcons.Warning;
+            _warningEx = ChecksAndProgressIcons.WarningEx;
+            _fail = ChecksAndProgressIcons.Fail;
+            _failEx = ChecksAndProgressIcons.FailEx;
+
+            olvSender.ImageGetter += ImageGetter;
+            olvProgressEvents.ItemActivate += olvProgressEvents_ItemActivate;
+            olvProgressEvents.UseFiltering = true;
+        }
+
+
+        private object ImageGetter(object rowObject)
+        {
+            var o = rowObject as ProgressUIEntry;
+
+            if(o != null)
+                switch (o.ProgressEventType)
+                {
+                    case ProgressEventType.Information:
+                        return _information;
+                    case ProgressEventType.Warning:
+                        return o.Exception == null ? _warning : _warningEx;
+                    case ProgressEventType.Error:
+                        return o.Exception == null ? _fail : _failEx;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+            return null;
         }
 
         void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -72,83 +113,10 @@ namespace ReusableUIComponents.Progress
 
         public void Clear()
         {
-            listView1.Items.Clear();
+            olvProgressEvents.ClearObjects();
             progress.Rows.Clear();
         }
-
-        private string FormatSender(object sender)
-        {
-            return sender != null ? sender.GetType().Name : "Unknown";
-        }
-
-        private string FormatTime(DateTime dt)
-        {
-            return dt.ToLongTimeString();
-        }
-
-        private void NotifyError(DateTime time, object sender, string message, Exception e, string stackTrace)
-        {
-            ListViewItem i = new ListViewItem("", "Fail");
-            i.SubItems.Add(FormatTime(time));
-            i.SubItems.Add(FormatSender(sender));
-            i.SubItems.Add(message);
-            i.Tag = stackTrace;
-
-            ListViewItem.ListViewSubItem item = i.SubItems.Add(e != null ? e.ToString() : "none");
-
-            if (e != null)
-            {
-                item.Tag = e;
-                i.ImageKey = "FailedWithException";
-            }
-            else
-                item.Tag = stackTrace;
-
-            listView1.Items.Add(i);
-            listView1.Items[listView1.Items.Count - 1].EnsureVisible();
-
-            foreach (ColumnHeader column in listView1.Columns)
-                column.Width = -2; //magical (apparently it resizes to max width of content or header)
-        }
-
-        private void NotifyInformation(DateTime time, object sender, string message, string stackTrace)
-        {
-            ListViewItem i = new ListViewItem("", "Information");
-            i.SubItems.Add(FormatTime(time));
-            i.SubItems.Add(FormatSender(sender));
-            i.SubItems.Add(message);
-            i.SubItems.Add("none");
-            i.Tag = stackTrace;
-
-            listView1.Items.Add(i);
-            listView1.Items[listView1.Items.Count - 1].EnsureVisible();
-
-            foreach (ColumnHeader column in listView1.Columns)
-                column.Width = -2; //magical (apparently it resizes to max width of content or header)
-        }
-
-        private void NotifyWarning(DateTime time,object sender, string message, Exception e, string stackTrace)
-        {
-            ListViewItem i = new ListViewItem("", e == null?"Warning":"WarningWithException");
-            i.SubItems.Add(FormatTime(time));
-            i.SubItems.Add(FormatSender(sender));
-            i.SubItems.Add(message);
-            i.Tag = stackTrace;
-
-            ListViewItem.ListViewSubItem item = i.SubItems.Add(e != null ? e.ToString() : "none");
-
-            if (e != null)
-                item.Tag = e;
-
-            listView1.Items.Add(i);
-            listView1.Items[listView1.Items.Count - 1].EnsureVisible();
-
-
-            foreach (ColumnHeader column in listView1.Columns)
-                column.Width = -2; //magical (apparently it resizes to max width of content or header)
-        }
-
-
+        
         Dictionary<object, HashSet<string>> JobsreceivedFromSender = new Dictionary<object, HashSet<string>>();
 
         object oProgressQueLock = new object();
@@ -156,8 +124,7 @@ namespace ReusableUIComponents.Progress
 
 
         object oNotifyQueLock = new object();
-        List<QueuedNotifyMessage> NotificationQueue = new List<QueuedNotifyMessage>();
-        private List<object> blackListedSenders = new List<object>();
+        List<ProgressUIEntry> NotificationQueue = new List<ProgressUIEntry>();
 
         public void Progress(object sender,ProgressEventArgs args)
         {
@@ -179,7 +146,7 @@ namespace ReusableUIComponents.Progress
 
             lock (oNotifyQueLock)
             {
-                NotificationQueue.Add(new QueuedNotifyMessage(DateTime.Now,notifyEventArgs,sender));
+                NotificationQueue.Add(new ProgressUIEntry(sender,DateTime.Now, notifyEventArgs));
             }
 
             
@@ -225,30 +192,7 @@ namespace ReusableUIComponents.Progress
 
             lock (oNotifyQueLock)
             {
-                foreach (QueuedNotifyMessage args in NotificationQueue)
-                {
-                    switch (args.NotifyEventArgs.ProgressEventType)
-                    {
-                        case ProgressEventType.Information:
-                            NotifyInformation(args.DateTime, args.Sender, args.NotifyEventArgs.Message, args.NotifyEventArgs.StackTrace);
-                            break;
-                        case ProgressEventType.Warning:
-                            NotifyWarning(args.DateTime, args.Sender, args.NotifyEventArgs.Message, args.NotifyEventArgs.Exception, args.NotifyEventArgs.StackTrace);
-                            break;
-                        case ProgressEventType.Error:
-                            NotifyError(args.DateTime, args.Sender, args.NotifyEventArgs.Message, args.NotifyEventArgs.Exception, args.NotifyEventArgs.StackTrace);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-
-                foreach (IGrouping<object, QueuedNotifyMessage> spammers in NotificationQueue.GroupBy(f => f.Sender).Where(g => g.Count() > 500))
-                {
-                    NotifyError(DateTime.Now, spammers.Key, "Sender blacklisted for sending more than 300 messages in under 3 seconds!", null, null);
-                    blackListedSenders.Add(spammers.Key);
-                }
-
+                olvProgressEvents.AddObjects(NotificationQueue);
                 NotificationQueue.Clear();
             }
         }
@@ -323,39 +267,16 @@ namespace ReusableUIComponents.Progress
            
         }
 
-        private void listView1_KeyUp(object sender, KeyEventArgs e)
+        void olvProgressEvents_ItemActivate(object sender, EventArgs e)
         {
-            //copy entire row to clipboard
-            if (e.KeyCode == Keys.C && e.Control)
+            var model = olvProgressEvents.SelectedObject as ProgressUIEntry;
+
+            if (model != null)
             {
-                string text = "";
-                foreach (ListViewItem item in listView1.SelectedItems)
-                {
-                    foreach (ListViewItem.ListViewSubItem subitem in item.SubItems)
-                        text += subitem.Text + Environment.NewLine;
-                    
-                    text += Environment.NewLine;
-                }
-
-
-                Clipboard.SetText(text);
-            }
-        
-        }
-
-        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            ListViewHitTestInfo listViewHitTestInfo = listView1.HitTest(e.Location);
-            if (listViewHitTestInfo.Item != null)
-            {
-                Exception exception = listViewHitTestInfo.Item.SubItems[4].Tag as Exception;
-
-                string stackTrace = listViewHitTestInfo.Item.Tag as string;
-
-                if (exception != null)
-                    ExceptionViewer.Show(listViewHitTestInfo.Item.SubItems[3].Text, exception,false);
+                if (model.Exception != null)
+                    ExceptionViewer.Show(model.Message, model.Exception, false);
                 else
-                    WideMessageBox.Show(listViewHitTestInfo.Item.SubItems[3].Text, environmentDotStackTrace: stackTrace,isModalDialog: false);
+                    WideMessageBox.Show(model.Message, model.Args.StackTrace, false);
             }
         }
 
@@ -366,27 +287,38 @@ namespace ReusableUIComponents.Progress
         }
         public void OnNotify(object sender, NotifyEventArgs e)
         {
-            if (blackListedSenders.Contains(sender))//sender was blacklisted for spamming messages
-                return;
-            
             Notify(sender,e);
         }
-    }
 
-    internal class QueuedNotifyMessage
-    {
-        public DateTime DateTime { get; set; }
-        public NotifyEventArgs NotifyEventArgs { get; set; }
-        public object Sender { get; set; }
-
-        public QueuedNotifyMessage(DateTime dateTime, NotifyEventArgs notifyEventArgs, object sender)
+        private void tbTopX_TextChanged(object sender, EventArgs e)
         {
-            DateTime = dateTime;
-            NotifyEventArgs = notifyEventArgs;
-            Sender = sender;
+            SetTopX();
+        }
+
+        private void SetTopX()
+        {
+
+            try
+            {
+                var topX = int.Parse(tbTopX.Text);
+                if(topX <=0)
+                    throw new Exception("Must be positive");
+
+                olvProgressEvents.ListFilter = new TailFilter(topX);
+
+                tbTopX.ForeColor = Color.Black;
+            }
+            catch (Exception)
+            {
+                tbTopX.ForeColor = Color.Red;
+            }
+        }
+
+        private void tbTextFilter_TextChanged(object sender, EventArgs e)
+        {
+            olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents,tbTextFilter.Text,StringComparison.CurrentCultureIgnoreCase);
         }
     }
-
     internal class QueuedProgressMessage
     {
         public QueuedProgressMessage(DateTime dateTime, ProgressEventArgs progressEventArgs, object sender)

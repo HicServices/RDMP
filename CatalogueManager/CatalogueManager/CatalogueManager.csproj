@@ -1357,6 +1357,7 @@
     <None Include="Icons\AllExternalServersNode.png" />
     <None Include="Icons\DecryptionPrivateKeyNode.png" />
     <None Include="Icons\AllPreLoadDiscardedColumns.png" />
+    <None Include="Icons\famfamfam\information.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

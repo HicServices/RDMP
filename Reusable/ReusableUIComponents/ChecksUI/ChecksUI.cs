@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
+using QuickGraph;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using ReusableUIComponents.Icons;
 
 namespace ReusableUIComponents.ChecksUI
 {
@@ -26,15 +30,46 @@ namespace ReusableUIComponents.ChecksUI
     /// </summary>
     public partial  class ChecksUI : UserControl, ICheckNotifier
     {
-        //list view items currently being hidden from the user due to filters
-        private readonly List<ListViewItem> _hiddenItems = new List<ListViewItem>();
-        
-        //original order that the events were received from the source
-        Dictionary<ListViewItem, int> orderDictionary = new Dictionary<ListViewItem,int>();
+        private Bitmap _tick;
+        private Bitmap _warning;
+        private Bitmap _warningEx;
+        private Bitmap _fail;
+        private Bitmap _failEx;
 
         public ChecksUI()
         {
             InitializeComponent();
+            olvChecks.ItemActivate += olvChecks_ItemActivate;
+            olvResult.ImageGetter += ImageGetter;
+            olvChecks.RowHeight = 19;
+
+            _tick = ChecksAndProgressIcons.Tick;
+            _warning = ChecksAndProgressIcons.Warning;
+            _warningEx = ChecksAndProgressIcons.WarningEx;
+            _fail = ChecksAndProgressIcons.Fail;
+            _failEx = ChecksAndProgressIcons.FailEx;
+
+            olvChecks.PrimarySortOrder = SortOrder.Descending;
+        }
+
+        private object ImageGetter(object rowObject)
+        {
+            var e = (CheckEventArgs) rowObject;
+
+            if(e != null)
+                switch (e.Result)
+                {
+                    case CheckResult.Success:
+                        return _tick;
+                    case CheckResult.Warning:
+                        return e.Ex == null ? _warning : _warningEx;
+                    case CheckResult.Fail:
+                        return e.Ex == null ? _fail : _failEx;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+            return null;
         }
 
         public bool CheckingInProgress { get; private set; }
@@ -43,12 +78,12 @@ namespace ReusableUIComponents.ChecksUI
         
         Thread _checkingThread;
         private YesNoYesToAllDialog yesNoYesToAllDialog = new YesNoYesToAllDialog();
+        
 
         public void StartChecking(ICheckable rootCheckable, bool bClearUI =true)
         {
             if(bClearUI)
             {
-                _hiddenItems.Clear();
                 yesNoYesToAllDialog = new YesNoYesToAllDialog();
             }
 
@@ -59,7 +94,7 @@ namespace ReusableUIComponents.ChecksUI
             }
 
             if (bClearUI)
-                listView1.Items.Clear();
+                olvChecks.ClearObjects();
 
             CheckingInProgress = true;
             btnAbortChecking.Enabled = true;
@@ -83,9 +118,6 @@ namespace ReusableUIComponents.ChecksUI
                 }
             });
             _checkingThread.Start();
-
-            ddFilterSeverity.DataSource = Enum.GetValues(typeof (CheckResult));
-            ddFilterSeverity.SelectedItem = CheckResult.Success;
         }
         
         void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
@@ -96,45 +128,15 @@ namespace ReusableUIComponents.ChecksUI
                 Invoke(new MethodInvoker(() => checker_AllChecksFinished(listener)));
                 return;
             }
-
-            //let user know it's all done
-            ListViewItem i = new ListViewItem("","Pass");
-            i.SubItems.Add("All Checks Complete");
-            listView1.Items.Add(i);
-            orderDictionary.Add(i,int.MaxValue);
-
-            //scroll to bottom of list view
-            listView1.EnsureVisible(listView1.Items.Count - 1);
-
+            
+            olvChecks.AddObject(new CheckEventArgs("All Checks Complete",CheckResult.Success));
+            
             CheckingInProgress = false;
 
             if(AllChecksComplete!= null)
                 AllChecksComplete(this,new AllChecksCompleteHandlerArgs(listener));
         }
 
-
-        private void listView1_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.C && e.Control)
-            {
-                string text = "";
-
-                foreach (ListViewItem item in listView1.SelectedItems)
-                    text += GetTextFromItem(item) + Environment.NewLine;
-
-
-                Clipboard.SetText(text);
-            }
-        }
-
-        private string GetTextFromItem(ListViewItem item)
-        {
-            string toReturn = "";
-            foreach (ListViewItem.ListViewSubItem subitem in item.SubItems)
-                toReturn += subitem.Text + Environment.NewLine;
-            
-            return toReturn;
-        }
 
         public bool OnCheckPerformed(CheckEventArgs args)
         {
@@ -177,110 +179,30 @@ namespace ReusableUIComponents.ChecksUI
                 return;
             }
 
-            ListViewItem i;
-            switch (args.Result)
-            {
-                case CheckResult.Success:
-                    i = new ListViewItem("", "Pass");
-                    break;
-                case CheckResult.Fail:
-                    i = new ListViewItem("", args.Ex == null ? "Fail" : "FailedWithException");
-                    break;
-                case CheckResult.Warning:
-                    i = new ListViewItem("", args.Ex == null ? "Warning" : "WarningWithException");
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("result");
-            }
-            i.Tag = args;
-
-            i.SubItems.Add(args.Message);
-
-            orderDictionary.Add(i, orderDictionary.Count);
-
-            if (args.Ex != null)
-            {
-                //add the exception into the Tag of the subitem
-                var item = i.SubItems.Add(args.Ex.ToString());
-                item.Tag = args.Ex;
-            }
-            else
-                i.SubItems.Add("none");
-
-            listView1.Items.Add(i);
-
-            foreach (ColumnHeader column in listView1.Columns)
-                column.Width = -2;//magical (apparently it resizes to max width of content or header)
-
-            //scroll to bottom of list view
-            listView1.EnsureVisible(listView1.Items.Count - 1);
+            olvChecks.AddObject(args);
         }
 
 
         
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            listView1.Visible = false;
-            
-            ApplyFilter();
-
-            listView1.Visible = true;
-        }
-
-        private void ApplyFilter()
-        {
-            //make anything that was previously hidden visible again and clear the hidden list (reset)
-            listView1.Items.AddRange(_hiddenItems.ToArray());
-            _hiddenItems.Clear();
-            
-            //for each thing in the list
-            foreach (var item in listView1.Items.Cast<ListViewItem>().ToArray())//to array prevents editing collection while in use error
-            {
-                //if it does not match the severity threshold, hide it
-                if (item.Tag != null && ((CheckEventArgs)item.Tag).Result < _threshold)
-                    HideItem(item);
-                else
-                //if there are search text criteria
-                if (!string.IsNullOrWhiteSpace(tbFilter.Text))
-                    //see if any text from the node matches the search criteria
-                    if (!GetTextFromItem(item).ToUpper().Contains(tbFilter.Text.ToUpper()))
-                        HideItem(item);
-            }
-
-            var ordered = listView1.Items.Cast<ListViewItem>().OrderBy(i => orderDictionary[i]).ToArray();
-            listView1.Items.Clear();
-            listView1.Items.AddRange(ordered);
-        }
-
-        private void HideItem(ListViewItem item)
-        {
-            _hiddenItems.Add(item);
-            listView1.Items.Remove(item);
+            olvChecks.ModelFilter = new TextMatchFilter(olvChecks,tbFilter.Text);
         }
 
         public void Clear()
         {
-            _hiddenItems.Clear();
-            listView1.Items.Clear();
+            olvChecks.Items.Clear();
             yesNoYesToAllDialog = new YesNoYesToAllDialog();
         }
 
-        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        void olvChecks_ItemActivate(object sender, EventArgs e)
         {
-            ListViewHitTestInfo listViewHitTestInfo = listView1.HitTest(e.Location);
-            if (listViewHitTestInfo.Item != null)
-            {
-                var args = (CheckEventArgs)listViewHitTestInfo.Item.Tag;
-
-                //user maybe double clicked on 'All Checks Complete'?
-                if(args == null)
-                    return;
-                
+            var args = olvChecks.SelectedObject as CheckEventArgs;
+            if (args != null)
                 if (args.Ex != null)
-                    ExceptionViewer.Show(listViewHitTestInfo.Item.SubItems[1].Text + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(args.Ex), args.Ex);
+                    ExceptionViewer.Show(args.Message+ Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(args.Ex), args.Ex);
                 else
-                    WideMessageBox.Show(listViewHitTestInfo.Item.SubItems[1].Text,environmentDotStackTrace: args.StackTrace);
-            }
+                    WideMessageBox.Show(args.Message, args.StackTrace);
         }
 
         public void TerminateWithExtremePrejudice()
@@ -294,13 +216,6 @@ namespace ReusableUIComponents.ChecksUI
         private void btnAbortChecking_Click(object sender, EventArgs e)
         {
             TerminateWithExtremePrejudice();
-        }
-
-        CheckResult _threshold = CheckResult.Success;
-        private void ddFilterSeverity_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _threshold = (CheckResult) ddFilterSeverity.SelectedItem;
-            ApplyFilter();
         }
     }
 }
