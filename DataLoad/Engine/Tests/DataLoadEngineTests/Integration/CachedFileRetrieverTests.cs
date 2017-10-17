@@ -25,6 +25,21 @@ namespace DataLoadEngineTests.Integration
 {
     public class CachedFileRetrieverTests : DatabaseTests
     {
+        private ILoadProgress _lpMock;
+        private ICacheProgress _cpMock;
+
+        public CachedFileRetrieverTests()
+        {
+            _cpMock = MockRepository.GenerateMock<ICacheProgress>();
+
+            _lpMock = MockRepository.GenerateMock<ILoadProgress>();
+            _lpMock.Stub(cp => cp.GetCacheProgress()).Return(_cpMock);
+
+            
+        }
+
+
+
         [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
         public void AttemptToLoadDataWithFilesInForLoading_DisagreementBetweenCacheAndForLoading()
         {
@@ -45,6 +60,7 @@ namespace DataLoadEngineTests.Integration
                 var retriever = new TestCachedFileRetriever()
                 {
                     ExtractFilesFromArchive = false,
+                    LoadProgress = _lpMock,
                     Layout = cacheLayout
                 };
                 
@@ -86,6 +102,7 @@ namespace DataLoadEngineTests.Integration
                 var retriever = new TestCachedFileRetriever()
                 {
                     ExtractFilesFromArchive = false,
+                    LoadProgress = _lpMock,
                     Layout =  cacheLayout
                     
                 };
@@ -129,6 +146,7 @@ namespace DataLoadEngineTests.Integration
                 var retriever = new TestCachedFileRetriever()
                 {
                     ExtractFilesFromArchive = false,
+                    LoadProgress = _lpMock,
                     Layout = cacheLayout
 
                 };
@@ -163,7 +181,9 @@ namespace DataLoadEngineTests.Integration
             var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
             loadMetadata.Stub(lm => lm.GetAllCatalogues()).Return(new[] { catalogue });
 
-            return new ScheduledDataLoadJob("Test job", logManager, loadMetadata, hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener());
+            var j =  new ScheduledDataLoadJob("Test job", logManager, loadMetadata, hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener());
+            j.LoadProgress = _lpMock;
+            return j;
         }
     }
 
@@ -179,7 +199,7 @@ namespace DataLoadEngineTests.Integration
         public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)
         {
             var scheduledJob = ConvertToScheduledJob(dataLoadJob);
-            GetDataLoadWorkload(scheduledJob); //hack to avoid having to serve up mocks of progress etc
+            GetDataLoadWorkload(scheduledJob);
             ExtractJobs(scheduledJob);
             
             return ExitCodeType.Success;

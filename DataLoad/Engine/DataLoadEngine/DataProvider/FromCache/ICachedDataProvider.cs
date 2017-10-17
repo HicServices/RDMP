@@ -5,6 +5,6 @@ namespace DataLoadEngine.DataProvider.FromCache
 {
     public interface ICachedDataProvider : IPluginDataProvider
     {
-        LoadProgress LoadProgress { get; set;}
+        ILoadProgress LoadProgress { get; set; }
     }
 }

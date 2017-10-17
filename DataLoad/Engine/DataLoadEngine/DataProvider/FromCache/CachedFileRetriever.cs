@@ -24,7 +24,7 @@ namespace DataLoadEngine.DataProvider.FromCache
     public abstract class CachedFileRetriever : ICachedDataProvider
     {
         [DemandsInitialization("The LoadProgress (which must also have a CacheProgress with a valid Caching Pipeline associated with it)",mandatory:true)]
-        public LoadProgress LoadProgress { get; set; }
+        public ILoadProgress LoadProgress { get; set; }
 
         [DemandsInitialization("Whether to unarchive the files into the ForLoading folder, or just copy them as is")]
         public bool ExtractFilesFromArchive { get; set; }
@@ -208,7 +208,7 @@ namespace DataLoadEngine.DataProvider.FromCache
                     return;
                 }
 
-                var cp = LoadProgress.CacheProgress;
+                var cp = LoadProgress.GetCacheProgress();
 
                 if(cp == null)
                 {

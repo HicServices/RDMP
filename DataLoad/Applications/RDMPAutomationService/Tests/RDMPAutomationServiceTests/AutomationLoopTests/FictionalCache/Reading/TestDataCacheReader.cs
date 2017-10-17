@@ -21,7 +21,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache.Reading
 {
     public class TestDataCacheReader : ICachedDataProvider
     {
-        public LoadProgress LoadProgress { get; set; }
+        public ILoadProgress LoadProgress { get; set; }
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
         {
