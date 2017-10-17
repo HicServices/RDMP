@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using EnvDTE;
 using EnvDTE80;
 using ReusableLibraryCode;
@@ -92,6 +93,8 @@ namespace ReusableUIComponents
 
             tableLayoutPanel1.RowCount = lines.Length;
 
+            ViewSourceCodeToolTip tt = new ViewSourceCodeToolTip();
+
             for (int i = 0; i < lines.Length; i++)
             {
                 
@@ -127,11 +130,15 @@ namespace ReusableUIComponents
 
                     link.AutoSize = true;
                     link.Text = lines[i];
+
+                    tt.SetToolTip(link,filename + "|" + lineNumber);
+
                     link.LinkClicked += (sender, args) => OpenVisualStudio(filename, lineNumber);
                     tableLayoutPanel1.Controls.Add(link, 0, i);
                 }
             }
         }
+
 
         internal static void Show(Exception _exception)
         {
@@ -181,10 +188,9 @@ namespace ReusableUIComponents
                 {
                     ExceptionViewer.Show(ex);
                 }
-
             }
         }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             this.Close();

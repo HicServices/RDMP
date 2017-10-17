@@ -417,6 +417,9 @@
     <Compile Include="ViewSourceCodeDialog.Designer.cs">
       <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewSourceCodeToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WideMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
