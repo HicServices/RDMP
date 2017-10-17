@@ -24,6 +24,7 @@ using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -59,7 +60,7 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void CacheProvider_None()
         {
-            var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp));
+            var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
             Assert.IsTrue(ex.Message.StartsWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration does not have ANY process tasks of type ProcessTaskType.DataProvider"));
         }
 
@@ -73,7 +74,7 @@ namespace DataLoadEngineTests.Integration
             pt.Name = "DoNothing";
             pt.SaveToDatabase();
             
-            var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp));
+            var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
             Assert.IsTrue(ex.Message.StartsWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
         }
 
@@ -93,7 +94,7 @@ namespace DataLoadEngineTests.Integration
             pt2.Name = "Cache2";
             pt2.SaveToDatabase();
 
-            var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp));
+            var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
             Assert.AreEqual("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has multiple cache DataProviders tasks (Cache1,Cache2), you are only allowed 1",ex.Message);
         }
 
@@ -118,7 +119,7 @@ namespace DataLoadEngineTests.Integration
             _lmd.SaveToDatabase();
             try
             {
-                var ex = Assert.Throws<Exception>(() => _factory.Create(_lp));
+                var ex = Assert.Throws<Exception>(() => _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
                 Assert.AreEqual("CacheProgress Cache Progress "+_cp.ID+" does not have a Pipeline configured on it", ex.Message);
             }
             finally
@@ -147,7 +148,7 @@ namespace DataLoadEngineTests.Integration
 
             try
             {
-                var ex = Assert.Throws<Exception>(()=>_factory.Create(_lp));
+                var ex = Assert.Throws<Exception>(()=>_factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
                 Assert.AreEqual("Don't know when to begin loading the cache from. Neither CacheProgress or LoadProgress has a relevant date.",ex.Message);
             }
             finally
@@ -184,7 +185,7 @@ namespace DataLoadEngineTests.Integration
 
             try
             {
-                var strategy = _factory.Create(_lp);
+                var strategy = _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener());
                 Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
                 
                 var dates = strategy.GetDates(10, false);
@@ -194,7 +195,7 @@ namespace DataLoadEngineTests.Integration
                 File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-03.zip"), "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
                 File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-05.zip"), "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
                 
-                strategy = _factory.Create(_lp);
+                strategy = _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener());
                 Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
                 dates = strategy.GetDates(10, false);
                 Assert.AreEqual(3, dates.Count); //zero dates to load because no files in cache

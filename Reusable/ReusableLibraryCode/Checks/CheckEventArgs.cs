@@ -10,12 +10,16 @@ namespace ReusableLibraryCode.Checks
         public string ProposedFix { get; set; }
         public string StackTrace { get; set; }
 
+        public DateTime EventDate { get; private set; }
+
         public CheckEventArgs(string message, CheckResult result, Exception ex = null, string proposedFix = null)
         {
             Message = message;
             Result = result;
             Ex = ex;
             ProposedFix = proposedFix;
+
+            EventDate = DateTime.Now;
 
             try
             {

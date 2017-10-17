@@ -10,7 +10,9 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.Checks;
 using DataLoadEngine.Checks.Checkers;
@@ -53,6 +55,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private bool _checksPassed = false;
 
         private LoadMetadata _loadMetadata;
+        private ILoadProgress[] _allLoadProgresses;
 
         public ExecuteLoadMetadataUI()
         {
@@ -61,6 +64,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
             helpIconRunRepeatedly.SetHelpText("Run Repeatedly", "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
             helpIconAbortShouldCancel.SetHelpText("Abort Behaviour", "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
+
+            btnUnlockAll.Image = FamFamFamIcons.lock_break;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
@@ -71,19 +76,23 @@ namespace CatalogueManager.LoadExecutionUIs
             SetButtonStates();
 
             SetLoadProgressGroupBoxState();
+
         }
 
         private void SetLoadProgressGroupBoxState()
         {
-            var loadProgresses = _loadMetadata.LoadProgresses;
-            if (loadProgresses.Any())
+            _allLoadProgresses = _loadMetadata.LoadProgresses;
+
+            btnUnlockAll.Enabled = _allLoadProgresses.Any(l => l.LockedBecauseRunning);
+
+            if (_allLoadProgresses.Any())
             {
                 //there are some load progresses
                 gbLoadProgresses.Visible = true;
                 gbDebugOptions.Left = gbLoadProgresses.Right + 3;
                 
                 //get the unlocked ones
-                var unlockedLoadProgresses = loadProgresses.Where(schedule => !schedule.LockedBecauseRunning).ToArray();
+                var unlockedLoadProgresses = _allLoadProgresses.Where(schedule => !schedule.LockedBecauseRunning).ToArray();
 
                 //they are all locked!!!
                 if(!unlockedLoadProgresses.Any())
@@ -108,6 +117,9 @@ namespace CatalogueManager.LoadExecutionUIs
                 gbLoadProgresses.Visible = false;
                 gbDebugOptions.Left = gbControls.Right + 3;
             }
+
+
+            
         }
 
         private void SetButtonStates()
@@ -467,6 +479,21 @@ namespace CatalogueManager.LoadExecutionUIs
             cbAbortShouldActuallyCancelInstead.Enabled = cbRunIteratively.Checked;
         }
 
+        private void btnUnlockAll_Click(object sender, EventArgs e)
+        {
+            foreach (ILoadProgress lp in _allLoadProgresses)
+                if (lp.LockedBecauseRunning)
+                    lp.Unlock();
+            
+            SetLoadProgressGroupBoxState();
+
+            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_loadMetadata));
+        }
+
+        private void btnRefreshLoadProgresses_Click(object sender, EventArgs e)
+        {
+            SetLoadProgressGroupBoxState();
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DatasetLoadControl_Design, UserControl>))]

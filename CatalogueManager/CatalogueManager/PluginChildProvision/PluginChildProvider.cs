@@ -13,12 +13,10 @@ namespace CatalogueManager.PluginChildProvision
     public abstract class PluginUserInterface:IPluginUserInterface
     {
         protected readonly IActivateItems ItemActivator;
-        public List<Exception> Exceptions { get; private set; }
 
         protected PluginUserInterface(IActivateItems itemActivator)
         {
             ItemActivator = itemActivator;
-            Exceptions = new List<Exception>();
         }
         
         public abstract object[] GetChildren(object model);

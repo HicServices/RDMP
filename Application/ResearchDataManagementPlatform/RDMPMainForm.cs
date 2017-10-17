@@ -9,6 +9,7 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ResearchDataManagementPlatform.WindowManagement.UserSettings;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -37,13 +38,18 @@ namespace ResearchDataManagementPlatform
         ToolboxWindowManager _windowManager;
         RefreshBus _refreshBus = new RefreshBus();
         private FileInfo _persistenceFile;
+        private ICheckNotifier _globalErrorCheckNotifier;
 
         private void RDMPMainForm_Load(object sender, EventArgs e)
         {
             if (RepositoryLocator == null)
                 return;
 
-            _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator);
+            var exceptionCounter = new ExceptionCounterUI();
+            _globalErrorCheckNotifier = exceptionCounter;
+            rdmpMenuStrip1.InjectButton(exceptionCounter);
+
+            _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
             rdmpMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
@@ -74,7 +80,9 @@ namespace ResearchDataManagementPlatform
                 }
                 catch (Exception ex)
                 {
-                    ExceptionViewer.Show("Could not load window persistence due to error in persistence file", ex);
+                    _globalErrorCheckNotifier.OnCheckPerformed(
+                        new CheckEventArgs("Could not load window persistence due to error in persistence file",
+                            CheckResult.Fail, ex));
                 }
             }
          
@@ -112,7 +120,7 @@ namespace ResearchDataManagementPlatform
             }
             catch (Exception e)
             {
-                ExceptionViewer.Show("Could not work out what window to show for persistence string '" + persiststring + "'",e);
+                _globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not work out what window to show for persistence string '" + persiststring + "'",CheckResult.Fail, e));
             }
 
             return null;

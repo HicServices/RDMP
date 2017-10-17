@@ -49,7 +49,7 @@ namespace DataLoadEngine.Job.Scheduling
             // Contract.Requires<ArgumentException>(strategy.GetAllLoadProgresses(false).Any(),"There were no LoadProgress objects associated with the given strategy (see your LoadMetadata for more information) so why are you asking for job date creation/allocation logic");
         }
 
-        public IJobDateGenerationStrategy Create(ILoadProgress loadProgress)
+        public IJobDateGenerationStrategy Create(ILoadProgress loadProgress, IDataLoadEventListener listener)
         {
             if (_typeToCreate == typeof(SingleScheduleConsecutiveDateStrategy))
                 return new SingleScheduleConsecutiveDateStrategy(loadProgress);
@@ -57,12 +57,12 @@ namespace DataLoadEngine.Job.Scheduling
             var loadMetadata = loadProgress.GetLoadMetadata();
             
             if (_typeToCreate == typeof(SingleScheduleCacheDateTrackingStrategy))
-                return new SingleScheduleCacheDateTrackingStrategy(CreateCacheLayout(loadProgress, loadMetadata), loadProgress);
+                return new SingleScheduleCacheDateTrackingStrategy(CreateCacheLayout(loadProgress, loadMetadata, listener), loadProgress,listener);
 
             throw new Exception("Factory has been configured to supply an unknown type");
         }
 
-        private ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
+        private ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata, IDataLoadEventListener listener)
         {
             AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks);
 

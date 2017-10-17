@@ -90,7 +90,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             if(_pipelineSelectionUI == null)
             {
                 var user = new PipelineUser(_cacheProgress);
-                var useCase = new CachingPipelineUseCase(_cacheProgress);
+                var useCase = new CachingPipelineUseCase(_cacheProgress,false,null,false);
 
                 var selectionFactory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
                 _pipelineSelectionUI = (Control)selectionFactory.Create();
@@ -188,8 +188,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             FormsHelper.DoActionAndRedIfThrows(tbCacheProgress, () =>
             {
-                var dt = DateTime.Parse(tbCacheProgress.Text);
-                _cacheProgress.CacheFillProgress = dt;
+                if (string.IsNullOrWhiteSpace(tbCacheProgress.Text))
+                    _cacheProgress.CacheFillProgress = null;
+                else
+                {
+                    var dt = DateTime.Parse(tbCacheProgress.Text);
+                    _cacheProgress.CacheFillProgress = dt;
+                }
+                
             });
 
         }

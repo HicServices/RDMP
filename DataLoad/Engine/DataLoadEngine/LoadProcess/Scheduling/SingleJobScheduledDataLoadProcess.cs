@@ -38,18 +38,19 @@ namespace DataLoadEngine.LoadProcess.Scheduling
             // Create the job factory
             if (_scheduledJobFactory != null)
                 throw new Exception("Job factory should only be created once");
-            _scheduledJobFactory = new SingleScheduledJobFactory(loadProgress, JobDateGenerationStrategyFactory.Create(loadProgress), OverrideNumberOfDaysToLoad??loadProgress.DefaultNumberOfDaysToLoadEachTime, LoadMetadata, LogManager);
 
-            // If the job factory won't produce any jobs we can bail out here
-            if (!_scheduledJobFactory.HasJobs())
-                return ExitCodeType.OperationNotRequired;
-
-            // Run the data load
-            JobProvider = new SingleJobProvider(_scheduledJobFactory);
-
+            _scheduledJobFactory = new SingleScheduledJobFactory(loadProgress, JobDateGenerationStrategyFactory.Create(loadProgress,DataLoadEventListener), OverrideNumberOfDaysToLoad??loadProgress.DefaultNumberOfDaysToLoadEachTime, LoadMetadata, LogManager);
+            
             try
             {
-                  return base.Run(loadCancellationToken);
+                // If the job factory won't produce any jobs we can bail out here
+                if (!_scheduledJobFactory.HasJobs())
+                    return ExitCodeType.OperationNotRequired;
+
+                // Run the data load
+                JobProvider = new SingleJobProvider(_scheduledJobFactory);
+
+             return base.Run(loadCancellationToken);
             }
             finally
             {

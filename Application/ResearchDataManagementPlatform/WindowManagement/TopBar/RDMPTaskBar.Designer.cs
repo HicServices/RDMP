@@ -38,8 +38,8 @@
             this.btnTables = new System.Windows.Forms.ToolStripButton();
             this.btnLoad = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.cbxDashboards = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.cbxDashboards = new System.Windows.Forms.ToolStripComboBox();
             this.btnAddDashboard = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
@@ -135,17 +135,17 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // cbxDashboards
-            // 
-            this.cbxDashboards.Name = "cbxDashboards";
-            this.cbxDashboards.Size = new System.Drawing.Size(121, 25);
-            this.cbxDashboards.DropDownClosed += new System.EventHandler(this.cbxDashboards_DropDownClosed);
-            // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
             this.toolStripLabel1.Size = new System.Drawing.Size(69, 22);
             this.toolStripLabel1.Text = "Dashboards";
+            // 
+            // cbxDashboards
+            // 
+            this.cbxDashboards.Name = "cbxDashboards";
+            this.cbxDashboards.Size = new System.Drawing.Size(121, 25);
+            this.cbxDashboards.DropDownClosed += new System.EventHandler(this.cbxDashboards_DropDownClosed);
             // 
             // btnAddDashboard
             // 
