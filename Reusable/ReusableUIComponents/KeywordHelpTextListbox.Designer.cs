@@ -34,6 +34,7 @@
             this.olvKeyword = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvHelpText = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.olvHelpSections)).BeginInit();
             this.SuspendLayout();
             // 
@@ -41,16 +42,19 @@
             // 
             this.olvHelpSections.AllColumns.Add(this.olvKeyword);
             this.olvHelpSections.AllColumns.Add(this.olvHelpText);
+            this.olvHelpSections.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.olvHelpSections.BackColor = System.Drawing.SystemColors.Info;
             this.olvHelpSections.CellEditUseWholeCell = false;
             this.olvHelpSections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvKeyword,
             this.olvHelpText});
             this.olvHelpSections.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvHelpSections.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvHelpSections.Location = new System.Drawing.Point(0, 0);
             this.olvHelpSections.Name = "olvHelpSections";
             this.olvHelpSections.ShowGroups = false;
-            this.olvHelpSections.Size = new System.Drawing.Size(756, 326);
+            this.olvHelpSections.Size = new System.Drawing.Size(756, 291);
             this.olvHelpSections.TabIndex = 6;
             this.olvHelpSections.UseCompatibleStateImageBehavior = false;
             this.olvHelpSections.View = System.Windows.Forms.View.Details;
@@ -59,7 +63,7 @@
             // olvKeyword
             // 
             this.olvKeyword.AspectName = "Keyword";
-            this.olvKeyword.Text = "Keyword";
+            this.olvKeyword.Text = "Helpful Keywords*";
             this.olvKeyword.Width = 120;
             // 
             // olvHelpText
@@ -74,10 +78,23 @@
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "Information.ico");
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.BackColor = System.Drawing.SystemColors.Info;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(3, 294);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(750, 32);
+            this.label1.TabIndex = 7;
+            this.label1.Text = resources.GetString("label1.Text");
+            // 
             // KeywordHelpTextListbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.olvHelpSections);
             this.Name = "KeywordHelpTextListbox";
             this.Size = new System.Drawing.Size(756, 326);
@@ -92,5 +109,6 @@
         private BrightIdeasSoftware.OLVColumn olvKeyword;
         private BrightIdeasSoftware.OLVColumn olvHelpText;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.Label label1;
     }
 }
