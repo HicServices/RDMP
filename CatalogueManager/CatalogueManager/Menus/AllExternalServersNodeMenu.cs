@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -10,6 +12,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.PluginDbInit;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode;
 using ReusableUIComponents.Icons.IconProvision;
@@ -51,6 +54,16 @@ namespace CatalogueManager.Menus
                 var addIcon = overlayProvider.GetOverlayNoCache(basicIcon, OverlayKind.Add);
 
                 Items.Add(new ToolStripMenuItem("Create New '" + name + "' Server...",addIcon, (s, e) => CreateNewExternalServer(defaultToSet, databaseAssembly)));
+            }
+
+            foreach (var type in activator.RepositoryLocator.CatalogueRepository.MEF.CreateCompositionContainer().GetExportedValues<IPluginDbInitalize>())
+            {
+                foreach (var command in type.DbCommands())
+                {
+                    Items.Add(new ToolStripMenuItem(command.CommandTitle,
+                                                    CatalogueIcons.Database,
+                                                    (s, e) => command.Command(_activator.RepositoryLocator.CatalogueRepository)));
+                }
             }
                
         }
