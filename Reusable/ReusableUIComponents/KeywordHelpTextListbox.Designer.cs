@@ -28,12 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KeywordHelpTextListbox));
             this.olvHelpSections = new BrightIdeasSoftware.ObjectListView();
             this.olvKeyword = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvHelpText = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.olvHelpSections)).BeginInit();
             this.SuspendLayout();
@@ -72,12 +70,6 @@
             this.olvHelpText.FillsFreeSpace = true;
             this.olvHelpText.Text = "HelpText (Double Click for popup)";
             // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "Information.ico");
-            // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -108,7 +100,6 @@
         private BrightIdeasSoftware.ObjectListView olvHelpSections;
         private BrightIdeasSoftware.OLVColumn olvKeyword;
         private BrightIdeasSoftware.OLVColumn olvHelpText;
-        private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Label label1;
     }
 }

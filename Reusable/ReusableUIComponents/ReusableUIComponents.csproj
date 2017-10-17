@@ -274,6 +274,7 @@
       <DependentUpon>HelpIcon.cs</DependentUpon>
     </Compile>
     <Compile Include="HelpSection.cs" />
+    <Compile Include="IconFactory.cs" />
     <Compile Include="Icons\ChecksAndProgressIcons.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -76,6 +76,16 @@ namespace CatalogueManager.Icons.IconProvision
             if(IsLockedLockable(concept) && (kind == OverlayKind.None || kind == OverlayKind.Link))
                 kind = OverlayKind.Locked;
 
+            //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
+            if(concept is string)
+            {
+                RDMPConcept result;
+                if (RDMPConcept.TryParse((string) concept, true, out result)) 
+                    concept = result;
+                else 
+                    return null; //it's a string but an unhandled one so give them null back
+            }
+
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
             if (_pluginIconProviders != null)
                 foreach (IIconProvider plugin in _pluginIconProviders)

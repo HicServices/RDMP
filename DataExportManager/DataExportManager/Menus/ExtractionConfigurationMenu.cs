@@ -169,8 +169,8 @@ namespace DataExportManager.Menus
             {
 
                 WideMessageBox.Show("Extraction Configuration '" + _extractionConfiguration + "' belongs to Project '" +
-                                project +
-                                "' which does not have a ProjectNumber, you must have a ProjectNumber to associate a cohort");
+                                    project +
+                                    "' which does not have a ProjectNumber, you must have a ProjectNumber to associate a cohort");
                 return;         
             }
 

@@ -16,6 +16,7 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;
 using ResearchDataManagementPlatform.WindowManagement.UserSettings;
+using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
 using WeifenLuo.WinFormsUI.Docking;
 

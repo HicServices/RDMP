@@ -675,7 +675,6 @@
     <Compile Include="DataViewing\Collections\ViewTableInfoExtractUICollection.cs" />
     <Compile Include="DataViewing\ViewType.cs" />
     <Compile Include="HelpTextConstants.cs" />
-    <Compile Include="Icons\IconFactory.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\IObjectStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\RDMPConcept.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\LoadStageNodeStateBasedIconProvider.cs" />

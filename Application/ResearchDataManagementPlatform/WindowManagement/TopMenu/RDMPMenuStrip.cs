@@ -325,7 +325,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
                 }
             
             if(sb.Length >0)
-                WideMessageBox.Show(sb.ToString(), null, true, firstMatch, "Help");
+                WideMessageBox.Show(sb.ToString(), environmentDotStackTrace: null, isModalDialog: true, keywordNotToAdd: firstMatch, title: "Help");
         
         }
 

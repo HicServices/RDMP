@@ -8,6 +8,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ReusableUIComponents.Icons;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace ReusableUIComponents
 {
@@ -20,6 +22,8 @@ namespace ReusableUIComponents
     {
         #region Static setup of dictionary of keywords
         private static Dictionary<string, string> HelpKeywordsDictionary = new Dictionary<string, string>();
+        public static IIconProvider HelpKeywordsIconProvider;
+        private static Bitmap _information;
 
         public static void AddToHelpDictionaryIfNotExists(string key, string value)
         {
@@ -28,6 +32,8 @@ namespace ReusableUIComponents
             
             if(!HelpKeywordsDictionary.ContainsKey(key))
                 HelpKeywordsDictionary.Add(key,value);
+
+            _information = ChecksAndProgressIcons.Information;
         }
         #endregion
         
@@ -43,9 +49,9 @@ namespace ReusableUIComponents
 
             //if theres no keywords dont show the help listbox
             olvHelpSections.Visible = false;
-            olvHelpSections.SmallImageList = imageList1;
             olvHelpSections.FullRowSelect = true;
-            olvKeyword.ImageGetter += rowObject => "Information.ico";
+            olvKeyword.ImageGetter += ImageGetter;
+            olvHelpSections.RowHeight = 19;
 
             //unless the text is unreasonably long
             if(richTextBoxToHighlight.TextLength < 100000)
@@ -62,6 +68,15 @@ namespace ReusableUIComponents
 
                         olvHelpSections.AddObject(new HelpSection(kvp.Key, kvp.Value));
                     }
+        }
+
+        private object ImageGetter(object rowObject)
+        {
+            var section = (HelpSection) rowObject;
+            if (HelpKeywordsIconProvider != null)
+                return HelpKeywordsIconProvider.GetImage(section.Keyword) ?? _information;
+
+            return _information;
         }
 
         public static void HighlightText(RichTextBox myRtb, string word, Color color)
@@ -83,9 +98,9 @@ namespace ReusableUIComponents
         private void olvHelpSections_ItemActivate(object sender, EventArgs e)
         {
             var hs = olvHelpSections.SelectedObject as HelpSection;
-
+            
             if(hs != null)
-                WideMessageBox.Show(hs.Keyword +":" + Environment.NewLine + hs.HelpText,Environment.StackTrace,false,hs.Keyword);
+                WideMessageBox.Show(hs.Keyword + ":" + Environment.NewLine + hs.HelpText, Environment.StackTrace, false, hs.Keyword, "Help Keyword:" + hs.Keyword, (Bitmap)ImageGetter(hs));
         }
 
     }

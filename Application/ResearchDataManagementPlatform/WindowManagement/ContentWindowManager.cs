@@ -118,6 +118,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(PluginUserInterfaces.ToArray());
+            KeywordHelpTextListbox.HelpKeywordsIconProvider = CoreIconProvider;
 
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 

@@ -50,6 +50,8 @@ namespace ReusableUIComponents.ChecksUI
             _failEx = ChecksAndProgressIcons.FailEx;
 
             olvChecks.PrimarySortOrder = SortOrder.Descending;
+
+            olvChecks.UseFiltering = true;
         }
 
         private object ImageGetter(object rowObject)
@@ -202,7 +204,7 @@ namespace ReusableUIComponents.ChecksUI
                 if (args.Ex != null)
                     ExceptionViewer.Show(args.Message+ Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(args.Ex), args.Ex);
                 else
-                    WideMessageBox.Show(args.Message, args.StackTrace);
+                    WideMessageBox.Show(args.Message, environmentDotStackTrace: args.StackTrace);
         }
 
         public void TerminateWithExtremePrejudice()
