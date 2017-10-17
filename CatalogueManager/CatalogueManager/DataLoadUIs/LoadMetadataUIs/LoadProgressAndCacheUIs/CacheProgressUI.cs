@@ -188,8 +188,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             FormsHelper.DoActionAndRedIfThrows(tbCacheProgress, () =>
             {
-                var dt = DateTime.Parse(tbCacheProgress.Text);
-                _cacheProgress.CacheFillProgress = dt;
+                if (string.IsNullOrWhiteSpace(tbCacheProgress.Text))
+                    _cacheProgress.CacheFillProgress = null;
+                else
+                {
+                    var dt = DateTime.Parse(tbCacheProgress.Text);
+                    _cacheProgress.CacheFillProgress = dt;
+                }
+                
             });
 
         }
