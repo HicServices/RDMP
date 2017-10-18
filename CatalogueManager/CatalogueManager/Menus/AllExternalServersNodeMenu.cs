@@ -60,9 +60,10 @@ namespace CatalogueManager.Menus
             {
                 foreach (var command in type.DbCommands())
                 {
+                    DbInitCommands c = command;
                     Items.Add(new ToolStripMenuItem(command.CommandTitle,
                                                     CatalogueIcons.Database,
-                                                    (s, e) => command.Command(_activator.RepositoryLocator.CatalogueRepository)));
+                                                    (s, e) => c.Command(_activator.RepositoryLocator)));
                 }
             }
                
