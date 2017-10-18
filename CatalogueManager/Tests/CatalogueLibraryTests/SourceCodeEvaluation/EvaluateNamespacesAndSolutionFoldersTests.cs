@@ -26,7 +26,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             "Class1.cs",
             "Images.Designer.cs",
             "ToolTips.Designer.cs",
-            "Resources.Designer.cs"
+            "Resources.Designer.cs",
+            "ProjectInstaller.cs",
+            "ProjectInstaller.Designer.cs"
         };
 
         [Test]

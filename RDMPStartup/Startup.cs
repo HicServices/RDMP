@@ -323,7 +323,7 @@ namespace RDMPStartup
             }
 
             List<DirectoryInfo> toProcess = new List<DirectoryInfo>();
-            toProcess.Add(new DirectoryInfo(Environment.CurrentDirectory));
+            toProcess.Add(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory));
             toProcess.AddRange(dirs);
 
             MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toProcess.Select(d=>d.FullName).ToArray());

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;

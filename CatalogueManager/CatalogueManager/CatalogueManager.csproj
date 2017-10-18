@@ -356,8 +356,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

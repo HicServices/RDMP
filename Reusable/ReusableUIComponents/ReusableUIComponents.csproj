@@ -226,8 +226,6 @@
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ConnectionStringTextBox.cs" />
-    <Compile Include="Copying\BasicCommandExecution.cs" />
-    <Compile Include="Copying\ICommandExecution.cs" />
     <Compile Include="Copying\ICommandExecutionFactory.cs" />
     <Compile Include="Copying\ICommand.cs" />
     <Compile Include="Copying\ICommandFactory.cs" />

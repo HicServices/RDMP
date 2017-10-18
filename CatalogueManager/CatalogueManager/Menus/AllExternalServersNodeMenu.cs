@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
+using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
@@ -51,6 +57,18 @@ namespace CatalogueManager.Menus
                 var addIcon = overlayProvider.GetOverlayNoCache(basicIcon, OverlayKind.Add);
 
                 Items.Add(new ToolStripMenuItem("Create New '" + name + "' Server...",addIcon, (s, e) => CreateNewExternalServer(defaultToSet, databaseAssembly)));
+            }
+
+            var factory = new AtomicCommandUIFactory(activator.CoreIconProvider);
+
+            var types = activator.RepositoryLocator.CatalogueRepository.MEF
+                .GetTypes<IAtomicCommand>().Where(t =>
+                    typeof (PluginDatabaseAtomicCommand).IsAssignableFrom(t));
+
+            foreach (var type in types)
+            {
+                var instance = new ObjectConstructor().Construct(type,activator.RepositoryLocator);
+                Items.Add(factory.CreateMenuItem((IAtomicCommand)instance));
             }
                
         }

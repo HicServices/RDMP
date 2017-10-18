@@ -226,6 +226,8 @@
     <Compile Include="Checks\ReplayCheckable.cs" />
     <Compile Include="Checks\ThrowImmediatelyCheckNotifier.cs" />
     <Compile Include="Checks\ToMemoryCheckNotifier.cs" />
+    <Compile Include="CommandExecution\BasicCommandExecution.cs" />
+    <Compile Include="CommandExecution\ICommandExecution.cs" />
     <Compile Include="DataAccess\DataAccessContext.cs" />
     <Compile Include="DataAccess\DataAccessPortal.cs" />
     <Compile Include="DataAccess\IDataAccessCredentials.cs" />
