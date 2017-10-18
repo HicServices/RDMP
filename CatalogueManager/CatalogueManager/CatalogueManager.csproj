@@ -355,8 +355,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -705,12 +703,10 @@
     <Compile Include="Menus\CatalogueItemsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
-    <Compile Include="PluginDbInit\DbInitCommands.cs" />
     <Compile Include="Menus\DocumentationNodeMenu.cs" />
     <Compile Include="Menus\FilterMenu.cs" />
     <Compile Include="Menus\FiltersParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
-    <Compile Include="PluginDbInit\IPluginDbInitalize.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs">
       <SubType>Component</SubType>
     </Compile>

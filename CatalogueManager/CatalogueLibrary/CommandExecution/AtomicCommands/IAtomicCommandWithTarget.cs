@@ -1,6 +1,6 @@
 ﻿using CatalogueLibrary.Data;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace CatalogueLibrary.CommandExecution.AtomicCommands
 {
     public interface IAtomicCommandWithTarget : IAtomicCommand
     {

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Text.RegularExpressions;
-using ReusableLibraryCode;
 
-namespace ReusableUIComponents.Copying
+namespace ReusableLibraryCode.CommandExecution
 {
     public abstract class BasicCommandExecution : ICommandExecution
     {

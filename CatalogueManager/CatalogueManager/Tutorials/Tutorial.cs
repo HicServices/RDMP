@@ -1,4 +1,5 @@
 ﻿using System;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Copying;
 
 namespace CatalogueManager.Tutorials
