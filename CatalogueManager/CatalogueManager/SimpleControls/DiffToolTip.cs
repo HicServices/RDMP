@@ -6,18 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ScintillaNET;
+using MapsDirectlyToDatabaseTable.Revertable;
+using ReusableUIComponents;
 
-namespace ReusableUIComponents
+namespace CatalogueManager.SimpleControls
 {
     [System.ComponentModel.DesignerCategory("")]
-    internal class ViewSourceCodeToolTip : ToolTip
+    public class DiffToolTip:ToolTip
     {
         private int WIDTH = 600;
         private int HEIGHT = 450;
         private int LINE_PADDING = 1;
 
-        public ViewSourceCodeToolTip()
+        public DiffToolTip()
         {
             OwnerDraw = true;
             ToolTipIcon = ToolTipIcon.None;
@@ -38,62 +39,22 @@ namespace ReusableUIComponents
             }
 
             e.ToolTipSize = new Size(WIDTH, HEIGHT);
+            e.Cancel = GetReportIfDiff(e.AssociatedControl) == null;
         }
 
         static Dictionary<string, string[]> SourceFileCache = new Dictionary<string, string[]>();
 
         private void OnDraw(object sender, DrawToolTipEventArgs e)
         {
+            var report = GetReportIfDiff(e.AssociatedControl);
+            
             try
             {
-                var elements = e.ToolTipText.Split(new string[]{"|"}, StringSplitOptions.RemoveEmptyEntries);
-                string filename = elements[0];
-                int linenumber = int.Parse(elements[1]);
-
-                linenumber = Math.Max(0,linenumber-1);
-
-                var lines = ReadAllLinesCached(filename);
-
-                if(lines == null)
-                    throw new FileNotFoundException("Could not find source code for file:" + Path.GetFileName(filename));
-
-                //get height of any given line
-                var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts" , e.Font).Height + (LINE_PADDING*2);
-
-                int midpointY = HEIGHT/2;
 
                 //white background
                 e.Graphics.FillRectangle(Brushes.White, 0, 0, WIDTH, HEIGHT);
 
-                //the highlighted line
-                e.Graphics.FillRectangle(Brushes.LawnGreen, 0,midpointY - LINE_PADDING,WIDTH,coreLineHeight);
-                e.Graphics.DrawString(lines[linenumber],e.Font,Brushes.Black,0,midpointY);
-
-                var index = linenumber - 1;
-                var currentLineY = midpointY - coreLineHeight;
-            
-                //any other lines we can fit on above the current line
-                while(currentLineY > 0 && index >= 0)
-                {
-                    e.Graphics.DrawString(lines[index],e.Font,Brushes.Black,0,currentLineY);
-                    currentLineY -= coreLineHeight;
-                    index --;
-                }
-
-                index = linenumber + 1;
-                currentLineY = midpointY + coreLineHeight;
-            
-                //while there are lines below us
-                while (currentLineY < HEIGHT && index < lines.Length)
-                {
-                    e.Graphics.DrawString(lines[index], e.Font, Brushes.Black, 0, currentLineY);
-                    currentLineY += coreLineHeight;
-                    index++;
-                }
-
-                //draw the name of the file
-                e.Graphics.FillRectangle(Brushes.DarkBlue,0,0,WIDTH,coreLineHeight);
-                e.Graphics.DrawString(Path.GetFileName(filename) ,e.Font,Brushes.White,LINE_PADDING,LINE_PADDING);
+                e.Graphics.FillRectangle(Brushes.Red, 25, 25, 25,25);
             }
             catch (Exception exception)
             {
@@ -101,6 +62,19 @@ namespace ReusableUIComponents
                 e.Graphics.FillRectangle(Brushes.White, 0, 0, WIDTH, HEIGHT);
                 e.Graphics.DrawString(exception.Message,e.Font,Brushes.Red,new RectangleF(0,0,WIDTH,HEIGHT));
             }
+        }
+
+        private RevertableObjectReport GetReportIfDiff(Control associatedControl)
+        {
+            var report = associatedControl.Tag as RevertableObjectReport;
+            
+            if (report == null)
+                return null;
+
+            if (report.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                return report;
+
+            return null;
         }
 
         private string[] ReadAllLinesCached(string filename)

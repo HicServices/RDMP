@@ -896,6 +896,7 @@
     </Compile>
     <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
     <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
+    <Compile Include="SimpleControls\DiffToolTip.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
     <Compile Include="SimpleControls\ObjectSaverButton.cs">
       <SubType>UserControl</SubType>

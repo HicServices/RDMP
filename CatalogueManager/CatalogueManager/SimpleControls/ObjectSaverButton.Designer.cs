@@ -19,6 +19,8 @@
             }
             base.Dispose(disposing);
 
+            if (_tt != null)
+                _tt.Dispose();
 
             if (_refreshBus != null)
                 _refreshBus.Unsubscribe(this);
@@ -34,7 +36,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObjectSaverButton));
             this.btnSave = new System.Windows.Forms.Button();
-            this.btnViewDifferences = new System.Windows.Forms.Button();
             this.btnDiscard = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -48,22 +49,12 @@
             this.btnSave.Tag = "";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // btnViewDifferences
-            // 
-            this.btnViewDifferences.Image = ((System.Drawing.Image)(resources.GetObject("btnViewDifferences.Image")));
-            this.btnViewDifferences.Location = new System.Drawing.Point(33, 0);
-            this.btnViewDifferences.Name = "btnViewDifferences";
-            this.btnViewDifferences.Size = new System.Drawing.Size(27, 27);
-            this.btnViewDifferences.TabIndex = 0;
-            this.btnViewDifferences.Tag = "";
-            this.btnViewDifferences.UseVisualStyleBackColor = true;
-            this.btnViewDifferences.Click += new System.EventHandler(this.btnViewDifferences_Click);
+            this.btnSave.MouseEnter += new System.EventHandler(this.btnSave_MouseEnter);
             // 
             // btnDiscard
             // 
             this.btnDiscard.Image = ((System.Drawing.Image)(resources.GetObject("btnDiscard.Image")));
-            this.btnDiscard.Location = new System.Drawing.Point(66, 0);
+            this.btnDiscard.Location = new System.Drawing.Point(27, 0);
             this.btnDiscard.Name = "btnDiscard";
             this.btnDiscard.Size = new System.Drawing.Size(27, 27);
             this.btnDiscard.TabIndex = 0;
@@ -76,10 +67,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnDiscard);
-            this.Controls.Add(this.btnViewDifferences);
             this.Controls.Add(this.btnSave);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "ObjectSaverButton";
-            this.Size = new System.Drawing.Size(96, 30);
+            this.Size = new System.Drawing.Size(54, 27);
             this.ResumeLayout(false);
 
         }
@@ -87,7 +78,6 @@
         #endregion
 
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnViewDifferences;
         private System.Windows.Forms.Button btnDiscard;
     }
 }

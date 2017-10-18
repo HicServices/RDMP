@@ -11,14 +11,19 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Revertable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using ReusableLibraryCode;
 
 namespace CatalogueManager.SimpleControls
 {
     public partial class ObjectSaverButton : UserControl,IRefreshBusSubscriber
     {
+
+        DiffToolTip _tt;
+
         public ObjectSaverButton()
         {
             InitializeComponent();
+            _tt = new DiffToolTip();
         }
 
         private DatabaseEntity _o;
@@ -61,7 +66,6 @@ namespace CatalogueManager.SimpleControls
 
             btnSave.Enabled = b;
             btnDiscard.Enabled = b;
-            btnViewDifferences.Enabled = b;
         }
         
         
@@ -97,35 +101,39 @@ namespace CatalogueManager.SimpleControls
 
         private void CheckForLocalChanges()
         {
-            var different = _o.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent;
+            var changes = _o.HasLocalChanges();
+            var isDifferent = changes.Evaluation == ChangeDescription.DatabaseCopyDifferent;
 
-            btnSave.Enabled = different;
-            btnViewDifferences.Enabled = different;
-            btnDiscard.Enabled = different;
+            btnSave.Enabled = isDifferent;
+
+            btnSave.Tag = changes;
+            _tt.SetToolTip(btnSave,"See Tag");
+
+            btnDiscard.Enabled = isDifferent;
         }
 
         public void ForceDirty()
         {
             CheckForLocalChanges();
-            btnSave.Enabled = true;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             Save();
         }
-
-        private void btnViewDifferences_Click(object sender, EventArgs e)
-        {
-            OfferChanceToSaveDialog.ShowIfRequired(_o);
-        }
-
+        
         private void btnDiscard_Click(object sender, EventArgs e)
         {
             _o.RevertToDatabaseState();
             _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
 
             Enable(false);
+            btnSave.Tag = null;
+        }
+
+        private void btnSave_MouseEnter(object sender, EventArgs e)
+        {
+            CheckForLocalChanges();
         }
     }
 }
