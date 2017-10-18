@@ -120,6 +120,8 @@ namespace CatalogueManager.CommandExecution
             if (targetPreLoadDiscardedColumnsNode != null)
                 return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
 
+            
+
             //no valid combinations
             return null;
         }
@@ -363,6 +365,10 @@ namespace CatalogueManager.CommandExecution
             if(sourceAggregateConfigurationCommand != null)
                 if (sourceAggregateConfigurationCommand.Aggregate.IsCohortIdentificationAggregate)
                     return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode.Configuration);
+
+            var sourceCatalogueCommand = cmd as CatalogueCommand;
+            if (sourceCatalogueCommand != null)
+                return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCommand, targetJoinableCollectionNode.Configuration);
 
             return null;
         }

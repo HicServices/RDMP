@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -8,12 +9,14 @@ namespace RDMPObjectVisualisation.Copying.Commands
 {
     public class CatalogueCommand : ICommand
     {
+        public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
         public Catalogue Catalogue { get; set; }
         public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler ResolveMultipleExtractionIdentifiers { get; set; }
 
         public CatalogueCommand(Catalogue catalogue)
         {
             Catalogue = catalogue;
+            ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any(e => e.IsExtractionIdentifier);
         }
 
         public string GetSqlString()

@@ -169,7 +169,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CohortIdentificationIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortIdentificationConfiguration.cs" />
     <Compile Include="ItemActivation\IActivateCohortIdentificationItems.cs" />
     <Compile Include="Menus\CohortAggregateContainerMenu.cs" />

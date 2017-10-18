@@ -338,6 +338,7 @@
     </Compile>
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />

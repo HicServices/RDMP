@@ -33,6 +33,9 @@ namespace CatalogueManager.CommandExecution
             _activator = activator;
             _catalogueCommand = catalogueCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
+
+            if(!catalogueCommand.ContainsAtLeastOneExtractionIdentifier)
+                SetImpossible("Catalogue " + catalogueCommand.Catalogue + " does not contain any IsExtractionIdentifier columns");
         }
 
         public override void Execute()

@@ -2,8 +2,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.CommandExecution;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
@@ -11,9 +9,9 @@ using RDMPObjectVisualisation.Copying.Commands;
 using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CohortManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicCommandExecution,IAtomicCommand
     {
         private readonly IActivateItems _activator;
         private readonly CohortIdentificationConfiguration _configuration;
@@ -25,9 +23,11 @@ namespace CohortManager.CommandExecution.AtomicCommands
             _configuration = configuration;
         }
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator, CohortIdentificationConfiguration configuration,CatalogueCommand catalogue):this(activator,configuration)
+        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator,CatalogueCommand catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
         {
             _catalogue = catalogue;
+            if(!_catalogue.ContainsAtLeastOneExtractionIdentifier)
+                SetImpossible("Catalogue " + _catalogue.Catalogue + " does not contain any IsExtractionIdentifier columns");
         }
 
         public override void Execute()
@@ -50,7 +50,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.PatientIndexTable, OverlayKind.Add);
+            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
         }
     }
 }
