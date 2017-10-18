@@ -32,6 +32,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObjectSaverButton));
             this.btnSave = new System.Windows.Forms.Button();
             this.btnViewDifferences = new System.Windows.Forms.Button();
             this.btnDiscard = new System.Windows.Forms.Button();
@@ -39,31 +40,34 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(3, 3);
+            this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
+            this.btnSave.Location = new System.Drawing.Point(0, 0);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.Size = new System.Drawing.Size(27, 27);
             this.btnSave.TabIndex = 0;
-            this.btnSave.Text = "Save";
+            this.btnSave.Tag = "";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnViewDifferences
             // 
-            this.btnViewDifferences.Location = new System.Drawing.Point(84, 3);
+            this.btnViewDifferences.Image = ((System.Drawing.Image)(resources.GetObject("btnViewDifferences.Image")));
+            this.btnViewDifferences.Location = new System.Drawing.Point(33, 0);
             this.btnViewDifferences.Name = "btnViewDifferences";
-            this.btnViewDifferences.Size = new System.Drawing.Size(75, 23);
+            this.btnViewDifferences.Size = new System.Drawing.Size(27, 27);
             this.btnViewDifferences.TabIndex = 0;
-            this.btnViewDifferences.Text = "View Diff";
+            this.btnViewDifferences.Tag = "";
             this.btnViewDifferences.UseVisualStyleBackColor = true;
             this.btnViewDifferences.Click += new System.EventHandler(this.btnViewDifferences_Click);
             // 
             // btnDiscard
             // 
-            this.btnDiscard.Location = new System.Drawing.Point(165, 3);
+            this.btnDiscard.Image = ((System.Drawing.Image)(resources.GetObject("btnDiscard.Image")));
+            this.btnDiscard.Location = new System.Drawing.Point(66, 0);
             this.btnDiscard.Name = "btnDiscard";
-            this.btnDiscard.Size = new System.Drawing.Size(97, 23);
+            this.btnDiscard.Size = new System.Drawing.Size(27, 27);
             this.btnDiscard.TabIndex = 0;
-            this.btnDiscard.Text = "Discard Chanes";
+            this.btnDiscard.Tag = "";
             this.btnDiscard.UseVisualStyleBackColor = true;
             this.btnDiscard.Click += new System.EventHandler(this.btnDiscard_Click);
             // 
@@ -75,7 +79,7 @@
             this.Controls.Add(this.btnViewDifferences);
             this.Controls.Add(this.btnSave);
             this.Name = "ObjectSaverButton";
-            this.Size = new System.Drawing.Size(265, 30);
+            this.Size = new System.Drawing.Size(96, 30);
             this.ResumeLayout(false);
 
         }
