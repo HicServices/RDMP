@@ -313,7 +313,7 @@ EXECUTE(@Query)
 
      syntaxHelper.Escape(countAlias),
      syntaxHelper.Escape(pivotAlias),
-     GetDatePartOfColumn(axis.AxisIncrement,"axis.dt")
+     syntaxHelper.Escape(GetDatePartOfColumn(axis.AxisIncrement,"axis.dt"))
  );
            
            return part1 + part2;
