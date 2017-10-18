@@ -33,8 +33,6 @@ namespace CohortManager.Menus
         {
             _cic = cic;
 
-            AtomicCommandUIFactory factory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-
             if(cic!=null)
             {
                 var execute = new ToolStripMenuItem("Execute Configuration", CatalogueIcons.ExecuteArrow,(s, e) => activator.ExecuteCohortIdentificationConfiguration(this, cic));
@@ -44,7 +42,7 @@ namespace CohortManager.Menus
                 Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
             }
             
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)));
+            Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator));
 
 
             if (cic != null)
@@ -56,7 +54,6 @@ namespace CohortManager.Menus
                     CatalogueIcons.FrozenCohortIdentificationConfiguration, (s, e) => FreezeConfiguration());
                 freeze.Enabled = !cic.Frozen;
                 Items.Add(freeze);
-
             }
 
             if(cic != null)

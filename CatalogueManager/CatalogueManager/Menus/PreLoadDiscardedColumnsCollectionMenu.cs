@@ -10,23 +10,11 @@ using CatalogueManager.Refreshing;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    internal class PreLoadDiscardedColumnsCollectionMenu : ContextMenuStrip
+    internal class PreLoadDiscardedColumnsCollectionMenu : RDMPContextMenuStrip
     {
-        private readonly IActivateItems _activator;
-        private readonly PreLoadDiscardedColumnsNode _discardNode;
-
-        public PreLoadDiscardedColumnsCollectionMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode)
+        public PreLoadDiscardedColumnsCollectionMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode) : base(activator,null)
         {
-            _activator = activator;
-            _discardNode = discardNode;
-
-            AtomicCommandUIFactory uiFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-            
-            Items.Add(
-                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator,
-                    _discardNode.TableInfo)));
-
-
+            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardNode.TableInfo));
         }
         
     }

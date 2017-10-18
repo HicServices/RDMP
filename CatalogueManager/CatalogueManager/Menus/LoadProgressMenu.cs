@@ -10,9 +10,8 @@ namespace CatalogueManager.Menus
     {
         public LoadProgressMenu(IActivateItems activator, LoadProgress loadProgress) : base(activator,loadProgress)
         {
-            Items.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandUnlockLockable(activator, loadProgress)));
-
-            Items.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandAddCachingSupportToLoadProgress(activator, loadProgress)));
+            Add(new ExecuteCommandUnlockLockable(activator, loadProgress));
+            Add(new ExecuteCommandAddCachingSupportToLoadProgress(activator, loadProgress));
 
             AddCommonMenuItems();
 

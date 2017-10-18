@@ -183,12 +183,9 @@ namespace CatalogueManager.Menus
 
         private void AddCatalogueImportOptions()
         {
-            var factory =new AtomicCommandUIFactory(_coreIconProvider);
-
             //Things that are always visible regardless
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)));
-
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true)));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true));
                 
             Items.Add("Create new Empty Catalogue (Not Recommended)", _coreIconProvider.GetImage(RDMPConcept.Catalogue,OverlayKind.Problem), (s, e) => NewCatalogue());
         }

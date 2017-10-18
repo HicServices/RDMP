@@ -29,15 +29,17 @@ namespace RDMPObjectVisualisation.Copying.Commands
         /// <returns></returns>
         public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortAggregateContainer cohortAggregateContainer,bool importMandatoryFilters=true, [CallerMemberName] string caller = null)
         {
-            if(caller == null || !caller.Equals("Execute"))
-                throw new NotSupportedException("Do not try to create AggregateConfigurations except at Execution time since it results in permenant database changes");
-
             var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
 
             if (cic == null)
                 return null;
 
-            var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue, ResolveMultipleExtractionIdentifiers??CohortCommandHelper.PickOneExtractionIdentifier,importMandatoryFilters);
+            return GenerateAggregateConfigurationFor(cic);
+        }
+
+        public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortIdentificationConfiguration cic, bool importMandatoryFilters = true, [CallerMemberName] string caller = null)
+        {
+            var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue, ResolveMultipleExtractionIdentifiers ?? CohortCommandHelper.PickOneExtractionIdentifier, importMandatoryFilters);
             return new AggregateConfigurationCommand(newAggregate);
         }
     }

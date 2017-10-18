@@ -31,7 +31,7 @@ namespace CatalogueManager.Menus
         protected ToolStripMenuItem RefreshObjectMenuItem;
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
-        protected AtomicCommandUIFactory AtomicCommandUIFactory;
+        private AtomicCommandUIFactory AtomicCommandUIFactory;
 
         public RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
         {
@@ -47,6 +47,12 @@ namespace CatalogueManager.Menus
 
             if (dependencies != null)
                 DependencyViewingMenuItem = new ViewDependenciesToolStripMenuItem(dependencies, new CatalogueObjectVisualisation(activator.CoreIconProvider));
+        }
+        protected ToolStripMenuItem Add(IAtomicCommand cmd)
+        {
+            var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
+            Items.Add(mi);
+            return mi;
         }
 
         protected void AddCommonMenuItems()

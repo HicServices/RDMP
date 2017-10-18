@@ -362,7 +362,7 @@ namespace CatalogueManager.CommandExecution
             var sourceAggregateConfigurationCommand = cmd as AggregateConfigurationCommand;
             if(sourceAggregateConfigurationCommand != null)
                 if (sourceAggregateConfigurationCommand.Aggregate.IsCohortIdentificationAggregate)
-                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode);
+                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode.Configuration);
 
             return null;
         }

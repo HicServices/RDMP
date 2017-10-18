@@ -8,8 +8,7 @@ namespace CatalogueManager.Menus
     {
         public PermissionWindowUsageMenu(IActivateItems activator, PermissionWindowUsedByCacheProgress permissionWindowUsage):base(activator,null)
         {
-            Items.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandUnlockLockable(activator, permissionWindowUsage.PermissionWindow)));
-
+            Add(new ExecuteCommandUnlockLockable(activator, permissionWindowUsage.PermissionWindow));
         }
     }
 }

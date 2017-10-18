@@ -33,7 +33,7 @@ namespace CatalogueManager.Menus
             var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
 
             foreach (var window in activator.CoreChildProvider.AllPermissionWindows)
-                setWindow.DropDownItems.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window)));
+                Add(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window));
 
             setWindow.DropDownItems.Add(new ToolStripSeparator());
             
