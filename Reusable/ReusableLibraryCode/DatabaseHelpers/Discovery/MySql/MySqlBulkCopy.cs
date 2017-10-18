@@ -28,10 +28,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             loader.FieldQuotationCharacter = '"';
             
             var sw = new StreamWriter(tempFile);
-            Rfc4180Writer.WriteDataTable(dt,sw,false);
+            Rfc4180Writer.WriteDataTable(dt,sw,false, new MySqlQuerySyntaxHelper());
             sw.Flush();
             sw.Close();
 
+            
             loader.FileName = tempFile;
             try
             {

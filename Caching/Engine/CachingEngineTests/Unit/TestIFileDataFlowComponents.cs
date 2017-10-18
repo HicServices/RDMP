@@ -77,7 +77,7 @@ namespace CachingEngineTests.Unit
 
             var moveComponent = new MoveToDirectory
             {
-                DestinationDirectory = layout.GetLoadCacheDirectory()
+                DestinationDirectory = layout.GetLoadCacheDirectory(listener)
             };
 
             moveComponent.ProcessPipelineData(toProcess, listener);

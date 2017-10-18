@@ -41,21 +41,29 @@ namespace CatalogueManager.SimpleControls
             _refreshBus = refreshBus;
             _refreshBus.Subscribe(this);
             o.PropertyChanged += PropertyChanged;
-            DisableAll();
+
+            Enable(false);
             Text = "&Save";
         }
-
-        private void DisableAll()
-        {
-            btnSave.Enabled = false;
-            btnDiscard.Enabled = false;
-            btnViewDifferences.Enabled = false;
-        }
-
+        
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            CheckForLocalChanges();
+            Enable(true);
         }
+
+        private void Enable(bool b)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => Enable(b)));
+                return;
+            }
+
+            btnSave.Enabled = b;
+            btnDiscard.Enabled = b;
+            btnViewDifferences.Enabled = b;
+        }
+        
         
         public void Save()
         {
@@ -65,7 +73,8 @@ namespace CatalogueManager.SimpleControls
 
             _o.SaveToDatabase();
             _refreshBus.Publish(this,new RefreshObjectEventArgs(_o));
-            DisableAll();
+
+            Enable(false);
             
             if(AfterSave != null)
                 AfterSave();
@@ -97,6 +106,7 @@ namespace CatalogueManager.SimpleControls
 
         public void ForceDirty()
         {
+            CheckForLocalChanges();
             btnSave.Enabled = true;
         }
 
@@ -114,6 +124,8 @@ namespace CatalogueManager.SimpleControls
         {
             _o.RevertToDatabaseState();
             _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+
+            Enable(false);
         }
     }
 }

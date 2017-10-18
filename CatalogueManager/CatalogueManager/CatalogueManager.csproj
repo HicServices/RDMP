@@ -675,7 +675,6 @@
     <Compile Include="DataViewing\Collections\ViewTableInfoExtractUICollection.cs" />
     <Compile Include="DataViewing\ViewType.cs" />
     <Compile Include="HelpTextConstants.cs" />
-    <Compile Include="Icons\IconFactory.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\IObjectStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\RDMPConcept.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\LoadStageNodeStateBasedIconProvider.cs" />
@@ -722,6 +721,12 @@
     <Compile Include="Menus\MenuItems\AddSupportingSqlTableMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddCatalogueItemMenuItem.cs" />
     <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs">
@@ -1356,6 +1361,7 @@
     <None Include="Icons\AllExternalServersNode.png" />
     <None Include="Icons\DecryptionPrivateKeyNode.png" />
     <None Include="Icons\AllPreLoadDiscardedColumns.png" />
+    <None Include="Icons\famfamfam\information.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode
 {
     public static class Rfc4180Writer
     {
-        public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders)
+        public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders, QuerySyntaxHelper escaper = null)
         {
             if (includeHeaders)
             {
@@ -27,7 +29,7 @@ namespace ReusableLibraryCode
                 var line = new List<string>();
                 
                 foreach (DataColumn col in sourceTable.Columns)
-                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].CurrentEstimate == typeof(DateTime))));
+                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].CurrentEstimate == typeof(DateTime), escaper)));
                 
                 writer.WriteLine(String.Join(",", line));
             }
@@ -35,7 +37,7 @@ namespace ReusableLibraryCode
             writer.Flush();
         }
 
-        private static string GetStringRepresentation(object o, bool allowDates)
+        private static string GetStringRepresentation(object o, bool allowDates, QuerySyntaxHelper escaper = null)
         {
             if (o == null || o == DBNull.Value)
                 return null;
@@ -51,7 +53,14 @@ namespace ReusableLibraryCode
             if (o is DateTime)
                 return GetStringRepresentation((DateTime) o);
 
-            return o.ToString();
+            var str = o.ToString();
+
+            if (escaper != null)
+                str = escaper.Escape(str);
+            else
+                str = str.Replace("\"", "\"\"");
+
+            return str;
         }
 
         private static string GetStringRepresentation(DateTime dt)
@@ -67,8 +76,8 @@ namespace ReusableLibraryCode
             if (value == null)
                 return "NULL";
 
-            return String.Concat("\"",
-                value.Replace("\"", "\"\""), "\"");
+            return String.Concat("\"", value, "\"");
+
         }
     }
 }

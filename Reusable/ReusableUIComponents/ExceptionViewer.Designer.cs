@@ -83,7 +83,7 @@ namespace ReusableUIComponents
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(689, 139);
+            this.richTextBox1.Size = new System.Drawing.Size(687, 137);
             this.richTextBox1.TabIndex = 4;
             this.richTextBox1.Text = "";
             this.richTextBox1.WordWrap = false;
@@ -93,6 +93,7 @@ namespace ReusableUIComponents
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer1.Location = new System.Drawing.Point(3, 5);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -114,7 +115,7 @@ namespace ReusableUIComponents
             this.keywordHelpTextListbox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.keywordHelpTextListbox.Location = new System.Drawing.Point(0, 0);
             this.keywordHelpTextListbox.Name = "keywordHelpTextListbox";
-            this.keywordHelpTextListbox.Size = new System.Drawing.Size(689, 136);
+            this.keywordHelpTextListbox.Size = new System.Drawing.Size(687, 134);
             this.keywordHelpTextListbox.TabIndex = 0;
             // 
             // ExceptionViewer

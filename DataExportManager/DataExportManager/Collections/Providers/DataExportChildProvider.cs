@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using DataExportLibrary.CohortDescribing;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -23,6 +24,7 @@ using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.SimpleDialogs;
 using RDMPStartup;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
@@ -37,6 +39,7 @@ namespace DataExportManager.Collections.Providers
         public ExtractableDataSetsNode RootExtractableDataSets { get; private set; }
 
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        private readonly ICheckNotifier _errorsCheckNotifier;
 
         public ExternalCohortTable[] CohortSources { get; private set; }
         public ExtractableDataSet[] ExtractableDataSets { get; private set; }
@@ -63,9 +66,10 @@ namespace DataExportManager.Collections.Providers
 
         public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
 
-        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders) : base(repositoryLocator.CatalogueRepository, pluginChildProviders)
+        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
             _repositoryLocator = repositoryLocator;
+            _errorsCheckNotifier = errorsCheckNotifier;
             var dataExportRepository = repositoryLocator.DataExportRepository;
 
             

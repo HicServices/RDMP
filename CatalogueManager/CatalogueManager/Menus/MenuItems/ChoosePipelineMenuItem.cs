@@ -31,7 +31,7 @@ namespace CatalogueManager.Menus.MenuItems
 
             DropDown.Items.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandEditPipeline(activator,user,useCase)));
 
-            DropDown.Items.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandCreateNewPipeline(activator, user)));
+            DropDown.Items.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandCreateNewPipeline(activator, user,useCase)));
             
             Text = label;
         }
