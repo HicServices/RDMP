@@ -53,6 +53,9 @@ namespace ReusableUIComponents
 
                 var lines = ReadAllLinesCached(filename);
 
+                if(lines == null)
+                    throw new FileNotFoundException("Could not find source code for file:" + Path.GetFileName(filename));
+
                 //get height of any given line
                 var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts" , e.Font).Height + (LINE_PADDING*2);
 
@@ -102,7 +105,26 @@ namespace ReusableUIComponents
         private string[] ReadAllLinesCached(string filename)
         {
             if(!SourceFileCache.ContainsKey(filename))
-                SourceFileCache.Add(filename,File.ReadLines(filename).ToArray());
+            {
+                string[] fileContents;
+                
+                //if you have the original file
+                if (File.Exists(filename))
+                    fileContents = File.ReadLines(filename).ToArray();
+                //otherwise get it from SourceCodeForSelfAwareness.zip / Plugin zip source codes
+                else
+                {
+                    string contentsInOneLine = ViewSourceCodeDialog.GetSourceForFile(Path.GetFileName(filename));
+
+                    if (contentsInOneLine == null)
+                        return null;
+
+                    fileContents = contentsInOneLine.Split('\n');
+                    
+                }
+
+                SourceFileCache.Add(filename,fileContents);
+            }
             
             return SourceFileCache[filename];
         }
