@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -21,7 +22,7 @@ namespace CatalogueManager.CommandExecution
     public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         private readonly IActivateItems _activator;
-        private Dictionary<ICommand,Dictionary<object,ICommandExecution>> _cachedAnswers = new Dictionary<ICommand, Dictionary<object, ICommandExecution>>();
+        private Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>>();
         private object oLockCachedAnswers = new object();
 
 
@@ -34,18 +35,20 @@ namespace CatalogueManager.CommandExecution
         {
             lock (oLockCachedAnswers)
             {
+                CachedDropTarget proposition = new CachedDropTarget(targetModel, insertOption);
+
                 //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
                 if (_cachedAnswers.ContainsKey(cmd))
                 {
                     //if we already have a cached execution for the command and the target
-                    if (_cachedAnswers[cmd].ContainsKey(targetModel))
-                        return _cachedAnswers[cmd][targetModel];//return from cache
+                    if (_cachedAnswers[cmd].ContainsKey(proposition))
+                        return _cachedAnswers[cmd][proposition];//return from cache
                 }
                 else
-                    _cachedAnswers.Add(cmd,new Dictionary<object, ICommandExecution>()); //novel command
+                    _cachedAnswers.Add(cmd, new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
 
                 var result  = CreateNoCache(cmd, targetModel, insertOption);
-                _cachedAnswers[cmd].Add(targetModel,result);
+                _cachedAnswers[cmd].Add(new CachedDropTarget(targetModel,insertOption), result);
 
                 return result;
             }
