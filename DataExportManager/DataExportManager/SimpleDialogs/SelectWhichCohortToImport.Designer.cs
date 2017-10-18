@@ -34,6 +34,7 @@
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
+            this.lblFilteringBy = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -104,11 +105,22 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "Filter:";
             // 
+            // lblFilteringBy
+            // 
+            this.lblFilteringBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblFilteringBy.AutoSize = true;
+            this.lblFilteringBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFilteringBy.Location = new System.Drawing.Point(136, 511);
+            this.lblFilteringBy.Name = "lblFilteringBy";
+            this.lblFilteringBy.Size = new System.Drawing.Size(0, 13);
+            this.lblFilteringBy.TabIndex = 8;
+            // 
             // SelectWhichCohortToImport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(973, 560);
+            this.Controls.Add(this.lblFilteringBy);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.tbFilter);
@@ -131,5 +143,6 @@
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblFilteringBy;
     }
 }
