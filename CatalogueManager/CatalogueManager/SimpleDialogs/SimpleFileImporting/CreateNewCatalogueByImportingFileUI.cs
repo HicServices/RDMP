@@ -114,7 +114,20 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void btnClearFile_Click(object sender, EventArgs e)
         {
+            //if advanced is instantiated it will have a pre-clear file state
+            if (advanced != null)
+            {
+                //toggle off advanced
+                if (isAdvanced)
+                    ToggleAdvanced();
+
+                advanced = null;
+            }
+
             SetupState(State.SelectFile);
+
+            btnConfirmDatabase.Enabled = serverDatabaseTableSelector1.GetDiscoveredDatabase() != null;
+
         }
 
         private void SetupState(State state)
