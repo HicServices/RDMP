@@ -1,4 +1,4 @@
-﻿namespace ReusableUIComponents.Copying
+﻿namespace ReusableUIComponents.CommandExecution
 {
     public interface ICommand
     {

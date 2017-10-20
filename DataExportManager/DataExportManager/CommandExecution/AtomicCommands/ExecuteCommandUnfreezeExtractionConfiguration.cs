@@ -15,7 +15,6 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands

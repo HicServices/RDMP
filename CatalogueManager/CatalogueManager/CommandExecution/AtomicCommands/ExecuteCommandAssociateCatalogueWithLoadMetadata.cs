@@ -14,7 +14,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

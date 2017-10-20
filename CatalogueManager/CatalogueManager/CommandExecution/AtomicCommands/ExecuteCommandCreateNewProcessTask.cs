@@ -15,7 +15,6 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

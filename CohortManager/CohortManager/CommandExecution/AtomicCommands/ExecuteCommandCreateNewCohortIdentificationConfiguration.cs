@@ -9,7 +9,6 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CohortManager.Wizard;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CohortManager.CommandExecution.AtomicCommands

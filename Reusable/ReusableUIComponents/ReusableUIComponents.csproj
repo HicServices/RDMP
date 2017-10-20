@@ -180,6 +180,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -226,9 +227,10 @@
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ConnectionStringTextBox.cs" />
-    <Compile Include="Copying\ICommandExecutionFactory.cs" />
-    <Compile Include="Copying\ICommand.cs" />
-    <Compile Include="Copying\ICommandFactory.cs" />
+    <Compile Include="CommandExecution\ICommandExecutionFactory.cs" />
+    <Compile Include="CommandExecution\ICommand.cs" />
+    <Compile Include="CommandExecution\ICommandFactory.cs" />
+    <Compile Include="CommandExecution\Proposals\ICommandExecutionProposal.cs" />
     <Compile Include="DataTableViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>

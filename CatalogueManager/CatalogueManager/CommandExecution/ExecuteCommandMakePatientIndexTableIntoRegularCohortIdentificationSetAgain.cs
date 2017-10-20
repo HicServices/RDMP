@@ -6,7 +6,6 @@ using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
-using ReusableUIComponents.Copying;
 
 namespace CatalogueManager.CommandExecution
 {

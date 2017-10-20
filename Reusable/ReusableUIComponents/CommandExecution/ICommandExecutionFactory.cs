@@ -1,7 +1,6 @@
-using BrightIdeasSoftware;
 using ReusableLibraryCode.CommandExecution;
 
-namespace ReusableUIComponents.Copying
+namespace ReusableUIComponents.CommandExecution
 {
     public interface ICommandExecutionFactory
     {

@@ -5,7 +5,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
 
 namespace CatalogueManager.CommandExecution
 {

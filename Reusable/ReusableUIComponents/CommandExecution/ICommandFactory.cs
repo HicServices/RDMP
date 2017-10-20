@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 
-namespace ReusableUIComponents.Copying
+namespace ReusableUIComponents.CommandExecution
 {
     public interface ICommandFactory
     {

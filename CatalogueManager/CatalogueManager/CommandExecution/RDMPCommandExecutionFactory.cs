@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
@@ -7,14 +9,17 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Nodes;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.Proposals;
 using ReusableUIComponents.TreeHelper;
 using ScintillaNET;
 
@@ -25,11 +30,28 @@ namespace CatalogueManager.CommandExecution
         private readonly IActivateItems _activator;
         private Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>>();
         private object oLockCachedAnswers = new object();
+        private List<ICommandExecutionProposal> _proposers = new List<ICommandExecutionProposal>();
 
 
         public RDMPCommandExecutionFactory(IActivateItems activator)
         {
             _activator = activator;
+
+            foreach (Type proposerType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<ICommandExecutionProposal>())
+            {
+                try
+                {
+                    ObjectConstructor constructor = new ObjectConstructor();
+                    _proposers.Add((ICommandExecutionProposal)constructor.Construct(proposerType,activator));
+
+                }
+                catch (Exception ex)
+                {
+                    activator.GlobalErrorCheckNotifier.OnCheckPerformed(
+                        new CheckEventArgs("Could not instantiate ICommandExecutionProposal '" + proposerType + "'",
+                            CheckResult.Fail, ex));
+                }
+            }
         }
 
         public ICommandExecution Create(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
@@ -104,7 +126,7 @@ namespace CatalogueManager.CommandExecution
             var targetExtractableDatasetsNode = targetModel as ExtractableDataSetsNode;
             if (targetExtractableDatasetsNode != null)
                 return CreateWhenTargetIsExtractableDataSetsNode(cmd,targetExtractableDatasetsNode);
-
+            
             ///////////////Data Loading Drop Targets ///////////////////
 
             var targetProcessTask = targetModel as ProcessTask;
@@ -121,11 +143,18 @@ namespace CatalogueManager.CommandExecution
             if (targetPreLoadDiscardedColumnsNode != null)
                 return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
 
-            
+            foreach (ICommandExecutionProposal proposals in _proposers)
+            {
+                var ce = proposals.ProposeExecution(cmd, targetModel, insertOption);
+                if (ce != null)
+                    return ce;
+            }
 
             //no valid combinations
             return null;
         }
+
+        
 
 
         private ICommandExecution CreateWhenTargetIsLoadStage(ICommand cmd, LoadStageNode targetStage)
@@ -359,7 +388,7 @@ namespace CatalogueManager.CommandExecution
             return null;
 
         }
-
+        
         private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICommand cmd, JoinableCollectionNode targetJoinableCollectionNode)
         {
             var sourceAggregateConfigurationCommand = cmd as AggregateConfigurationCommand;

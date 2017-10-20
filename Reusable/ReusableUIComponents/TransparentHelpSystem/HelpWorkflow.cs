@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace ReusableUIComponents.TransparentHelpSystem

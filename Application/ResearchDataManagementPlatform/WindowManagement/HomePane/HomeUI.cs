@@ -25,7 +25,6 @@ using CohortManager.CommandExecution.AtomicCommands;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTable;
-using ReusableUIComponents.Copying;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.HomePane

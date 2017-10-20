@@ -6,7 +6,7 @@ using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution

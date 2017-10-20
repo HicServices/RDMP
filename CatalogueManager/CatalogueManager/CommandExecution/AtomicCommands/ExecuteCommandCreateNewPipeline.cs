@@ -8,7 +8,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

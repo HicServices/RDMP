@@ -28,7 +28,7 @@ using CatalogueManager.Refreshing;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections

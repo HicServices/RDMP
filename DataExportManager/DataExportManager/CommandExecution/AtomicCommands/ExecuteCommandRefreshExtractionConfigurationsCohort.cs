@@ -17,7 +17,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;

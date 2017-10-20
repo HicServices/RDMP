@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueLibrary.CommandExecution.AtomicCommands

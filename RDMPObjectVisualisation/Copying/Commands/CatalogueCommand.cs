@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 
 namespace RDMPObjectVisualisation.Copying.Commands
 {

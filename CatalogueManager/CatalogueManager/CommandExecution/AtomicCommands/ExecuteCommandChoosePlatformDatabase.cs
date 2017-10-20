@@ -12,7 +12,6 @@ using CatalogueManager.LocationsMenu;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Annotations;
-using ReusableUIComponents.Copying;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
