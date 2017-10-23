@@ -283,6 +283,10 @@ namespace CatalogueManager.Collections
 
             if (o is ParametersNode)
                 e.MenuStrip = new FiltersParametersNodeMenu( _activator, (ParametersNode)o, CoreIconProvider);
+
+            //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
+            if(o != null)
+                Tree.SelectedObject = o;
         }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)

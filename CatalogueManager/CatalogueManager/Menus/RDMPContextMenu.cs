@@ -11,10 +11,12 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
-using CatalogueManager.Refreshing;
+using DataLoadEngine.DataProvider.FromCache;
+using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -46,7 +48,6 @@ namespace CatalogueManager.Menus
 
             RepositoryLocator = _activator.RepositoryLocator;
             
-
             RefreshObjectMenuItem = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandRefreshObject(activator, databaseEntity));
             
             var dependencies = databaseEntity as IHasDependencies;
@@ -54,9 +55,13 @@ namespace CatalogueManager.Menus
             if (dependencies != null)
                 DependencyViewingMenuItem = new ViewDependenciesToolStripMenuItem(dependencies, new CatalogueObjectVisualisation(activator.CoreIconProvider));
         }
-        protected ToolStripMenuItem Add(IAtomicCommand cmd)
+        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
         {
             var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
+
+            if (shortcutKey != Keys.None)
+                mi.ShortcutKeys = shortcutKey;
+            
             Items.Add(mi);
             return mi;
         }
@@ -64,6 +69,18 @@ namespace CatalogueManager.Menus
         protected void AddCommonMenuItems()
         {
             Items.Add(RefreshObjectMenuItem);
+
+            var deletable = _databaseEntity as IDeleteable;
+            var nameable = _databaseEntity as INamed;
+
+            if (deletable != null || nameable != null)
+                Items.Add(new ToolStripSeparator());
+
+            if (deletable != null)
+                Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
+
+            if (nameable != null)
+                Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
             
             if(DependencyViewingMenuItem != null)
                 Items.Add(DependencyViewingMenuItem);

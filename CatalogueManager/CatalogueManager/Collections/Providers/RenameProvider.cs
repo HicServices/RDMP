@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
@@ -77,8 +79,9 @@ namespace CatalogueManager.Collections.Providers
             {
                 if (name != null)
                 {
-                    name.Name = (string)e.NewValue;
-
+                    
+                    new ExecuteCommandRename(_refreshBus,name,(string)e.NewValue).Execute();
+                    
                     if(!haveComplainedAboutToStringImplementationOfINamed && !name.ToString().Contains(name.Name))
                     {
 
@@ -92,11 +95,6 @@ namespace CatalogueManager.Collections.Providers
                             );
                         haveComplainedAboutToStringImplementationOfINamed = true;
                     }
-
-                    EnsureNameIfCohortIdentificationAggregate(e.RowObject);
-
-                    name.SaveToDatabase();
-                    _refreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)name));
                 }
             }
             catch (Exception exception)
@@ -110,17 +108,5 @@ namespace CatalogueManager.Collections.Providers
             }
         }
 
-        private void EnsureNameIfCohortIdentificationAggregate(object o)
-        {
-            //handle Aggregates that are part of cohort identification
-            var aggregate = o as AggregateConfiguration;
-            if (aggregate != null)
-            {
-                var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
-
-                if (cic != null)
-                    cic.EnsureNamingConvention(aggregate);
-            }
-        }
     }
 }
