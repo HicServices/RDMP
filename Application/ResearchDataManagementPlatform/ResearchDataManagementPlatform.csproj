@@ -297,6 +297,10 @@
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
+      <Project>{b541f57b-631a-4639-8589-8cda0021ae2d}</Project>
+      <Name>RDMPObjectVisualisation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
       <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
       <Name>RDMPStartup</Name>

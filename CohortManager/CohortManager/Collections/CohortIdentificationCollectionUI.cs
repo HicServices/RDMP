@@ -56,10 +56,6 @@ namespace CohortManager.Collections
             CommonFunctionality.SetUp(
                 tlvCohortIdentificationConfigurations,
                 _activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(),
-                new RDMPCommandExecutionFactory(_activator),
-                
                 olvName,//column with the icon
                 tbFilter, 
                 olvName,//column that can be renamed

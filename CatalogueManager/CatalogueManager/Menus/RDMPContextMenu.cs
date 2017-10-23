@@ -38,9 +38,14 @@ namespace CatalogueManager.Menus
         {
             _activator = activator;
             _databaseEntity = databaseEntity;
+
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
+
+            if(databaseEntity != null)
+                Add(new ExecuteCommandActivate(activator,databaseEntity));
+
             RepositoryLocator = _activator.RepositoryLocator;
             
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
 
             RefreshObjectMenuItem = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandRefreshObject(activator, databaseEntity));
             

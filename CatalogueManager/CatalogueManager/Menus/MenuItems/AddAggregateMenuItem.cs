@@ -34,7 +34,7 @@ namespace CatalogueManager.Menus.MenuItems
         {
             var newAggregate = new AggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_catalogue));
-            _activator.ActivateAggregate(this,newAggregate);
+            _activator.Activate(newAggregate);
         }
     }
 }

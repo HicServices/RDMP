@@ -16,6 +16,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
@@ -63,12 +64,14 @@ using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using RDMPObjectVisualisation.Copying;
 using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.CommandExecution;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -98,6 +101,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
 
+        public ICommandFactory CommandFactory { get; private set; }
+        public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
+
         public ContentWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, ToolboxWindowManager toolboxWindowManager, ICheckNotifier globalErrorCheckNotifier)
         {
             WindowFactory = windowFactory;
@@ -125,7 +131,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             DocumentationStore = new RDMPDocumentationStore(RepositoryLocator);
 
             WindowArranger = new WindowArranger(this,_toolboxWindowManager,_mainDockPanel);
-
+            
+            CommandFactory = new RDMPCommandFactory();
+            CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
         }
 
         private void ConstructPluginChildProviders()
@@ -201,11 +209,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public bool AllowExecute { get { return true; }}
 
-        public void ActivateCatalogue(object sender, Catalogue c)
+        public void Activate(object databaseObject)
         {
-            Activate<CatalogueTab,Catalogue>(c);
+            CommandExecutionFactory.Activate(databaseObject);
         }
-
+        
         public void ActivateViewCatalogueExtractionSql(object sender,Catalogue c)
         {
             Activate<ViewExtractionSql,Catalogue>(c, CatalogueIcons.SQL);
@@ -537,12 +545,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             Activate<ExtractionFilterUI,ConcreteFilter>(filter,CatalogueIcons.Filter);
         }
-
-        public void ActivateAggregate(object sender, AggregateConfiguration aggregate)
-        {
-            Activate<AggregateEditor,AggregateConfiguration>(aggregate);
-        }
-
+        
         public void ExecuteAggregate(object sender, AggregateConfiguration aggregate)
         {
             var graph = Activate<AggregateGraph, AggregateConfiguration>(aggregate,CatalogueIcons.Graph);
@@ -554,7 +557,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);
         }
 
-        private T Activate<T, T2>(T2 databaseObject)
+        public T Activate<T, T2>(T2 databaseObject)
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
             where T2 : DatabaseEntity
         {

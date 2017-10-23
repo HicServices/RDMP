@@ -34,6 +34,7 @@ using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.ItemActivation
 {
@@ -58,13 +59,29 @@ namespace CatalogueManager.ItemActivation
         ICoreIconProvider CoreIconProvider { get; }
 
         ICheckNotifier GlobalErrorCheckNotifier { get; }
+        
+        ICommandFactory CommandFactory { get;}
+        ICommandExecutionFactory CommandExecutionFactory { get;}
 
-        void ActivateCatalogue(object sender, Catalogue c);
+        /// <summary>
+        /// You might want to use CommandExecutionFactory.Activate instead unless you have a specific combination in mind
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="databaseObject"></param>
+        /// <returns></returns>
+        T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
+
+        /// <summary>
+        /// Consults the CommandExecutionFactory about what to activate (might not do anything if there are no compatible ICommandExecutionProposals)
+        /// </summary>
+        /// <param name="databaseObject"></param>
+        void Activate(object databaseObject);
+
         void ActivateDQEResultViewing(object sender, Catalogue c);
         void ActivateViewCatalogueExtractionSql(object sender, Catalogue c);
 
         void ActivateLoadMetadata(object sender, LoadMetadata lmd);
-        void ActivateAggregate(object sender, AggregateConfiguration aggregate);
         
         void ActivateCatalogueItem(object sender, CatalogueItem cataItem);//user wants to edit the textual metadata 
         void ActivateExtractionInformation(object sender, ExtractionInformation extractionInformation); //user wants to create/delete/edit ExtractionInformation
@@ -103,8 +120,7 @@ namespace CatalogueManager.ItemActivation
         /// </summary>
         /// <param name="o"></param>
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
-
-
+        
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
         void ActivateJoinInfoConfiguration(object sender, TableInfo tableInfo);
 

@@ -29,8 +29,7 @@ namespace CatalogueManager.Menus
         public AggregateConfigurationMenu(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IActivateItems itemActivator, AggregateConfiguration aggregate, ICoreIconProvider coreIconProvider):base(itemActivator,aggregate)
         {
             _aggregate = aggregate;
-            Items.Add("Edit", CatalogueIcons.Spanner, (s, e) => itemActivator.ActivateAggregate(this,aggregate));
-
+            
             Items.Add("View SQL", CatalogueIcons.SQL, (s, e) => itemActivator.ViewDataSample(new ViewAggregateExtractUICollection(aggregate)));
 
             //only allow them to execute graph if it is normal aggregate graph

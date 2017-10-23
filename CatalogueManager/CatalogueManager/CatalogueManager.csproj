@@ -338,6 +338,7 @@
     </Compile>
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
@@ -378,6 +379,10 @@
     <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
     <Compile Include="CommandExecution\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAggregateConfiguration.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogue.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortAggregateContainer.cs" />
+    <Compile Include="CommandExecution\Proposals\RDMPCommandExecutionProposal.cs" />
     <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
     <Compile Include="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />
     <Compile Include="DashboardTabs\Construction\IDashboardableControl.cs" />

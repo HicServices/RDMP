@@ -83,15 +83,14 @@ namespace CatalogueManager.Collections
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        /// <param name="renameableObjectTypes">List of INameable object Types which can be renamed (only rows containing items of this type will be user editable)</param>
         /// <param name="renameLabel">A Label for displaying the help text telling the user how to rename (F2)</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, IRDMPPlatformRepositoryServiceLocator repositoryLocator,ICommandFactory commandFactory, ICommandExecutionFactory commandExecutionFactory,OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, Label renameLabel)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, Label renameLabel)
         {
             IsSetup = true;
             _activator = activator;
             _activator.RefreshBus.Subscribe(this);
 
-            RepositoryLocator = repositoryLocator;
+            RepositoryLocator = _activator.RepositoryLocator;
 
             Tree = tree;
             Tree.FullRowSelect = true;
@@ -113,7 +112,10 @@ namespace CatalogueManager.Collections
 
             ParentFinder = new TreeNodeParentFinder(Tree);
 
-            DragDropProvider = new DragDropProvider(commandFactory,commandExecutionFactory,tree);
+            DragDropProvider = new DragDropProvider(
+                _activator.CommandFactory,
+                _activator.CommandExecutionFactory,
+                tree);
             
             if(renameableColumn != null)
             {
@@ -288,12 +290,13 @@ namespace CatalogueManager.Collections
             var o = Tree.SelectedObject;
             var config = o as AggregateConfiguration;
 
+            if(o != null)
+                _activator.CommandExecutionFactory.Activate(o);
+
             //also actually handles ExtractionFilters as well as AggregateFilters
             var filter = o as ConcreteFilter;
             var parameters = o as ParametersNode;
-
-            if (config != null)
-                _activator.ActivateAggregate(this, config);
+            
             if (filter != null)
                 _activator.ActivateFilter(this, filter);
             if (parameters != null)

@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
@@ -83,10 +82,6 @@ namespace CatalogueManager.CommandExecution
             var targetCatalogueFolder = targetModel as CatalogueFolder;
             if (targetCatalogueFolder != null)
                 return CreateWhenTargetIsFolder(cmd, targetCatalogueFolder);
-
-            var targetCatalogue = targetModel as Catalogue;
-            if (targetCatalogue != null)
-                return CreateWhenTargetIsACatalogue(cmd, targetCatalogue);
             
             var targetcatalogueItem = targetModel as CatalogueItem;
             if(targetcatalogueItem != null)
@@ -103,16 +98,7 @@ namespace CatalogueManager.CommandExecution
                 return CreateWhenTargetIsATableInfo(cmd, targetTableInfo);
 
             //////////////////////Cohort Drop Targets//////////////////
-
-            //UNION / INTERSECT / EXCEPT in cohort identification
-            var targetCohortAggregateContainer = targetModel as CohortAggregateContainer;
-            if (targetCohortAggregateContainer != null)
-                return CreateWhenTargetIsCohortAggregateContainer(cmd,targetCohortAggregateContainer, insertOption);
             
-            var targetAggregateConfiguration = targetModel as AggregateConfiguration;
-            if (targetAggregateConfiguration != null)
-                return CreateWhenTargetIsAggregateConfiguration(cmd, targetAggregateConfiguration, insertOption);
-
             var targetJoinableCollectionNode = targetModel as JoinableCollectionNode;
             if (targetJoinableCollectionNode != null)
                 return CreateWhenTargetIsJoinableCollectionNode(cmd,targetJoinableCollectionNode);
@@ -143,7 +129,7 @@ namespace CatalogueManager.CommandExecution
             if (targetPreLoadDiscardedColumnsNode != null)
                 return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
 
-            foreach (ICommandExecutionProposal proposals in _proposers)
+            foreach (ICommandExecutionProposal proposals in _proposers.Where(p => p.IsCompatibleTarget(targetModel)))
             {
                 var ce = proposals.ProposeExecution(cmd, targetModel, insertOption);
                 if (ce != null)
@@ -154,8 +140,17 @@ namespace CatalogueManager.CommandExecution
             return null;
         }
 
-        
 
+        public void Activate(object target)
+        {
+            foreach (ICommandExecutionProposal proposals in _proposers.Where(p => p.IsCompatibleTarget(target)))
+                proposals.Activate(target);
+        }
+
+        public bool CanActivate(object target)
+        {
+            return _proposers.Any(p => p.CanActivate(target));
+        }
 
         private ICommandExecution CreateWhenTargetIsLoadStage(ICommand cmd, LoadStageNode targetStage)
         {
@@ -200,16 +195,7 @@ namespace CatalogueManager.CommandExecution
             return null;
         }
 
-        private ICommandExecution CreateWhenTargetIsACatalogue(ICommand cmd, Catalogue targetCatalogue)
-        {
-            var sourceFileCollection = cmd as FileCollectionCommand;
-
-            if(sourceFileCollection != null)
-                return new ExecuteCommandAddFilesAsSupportingDocuments(_activator,sourceFileCollection, targetCatalogue);
-
-            return null;
-        }
-
+        
         private ICommandExecution CreateWhenTargetIsCatalogueItem(ICommand cmd, CatalogueItem targetcatalogueItem)
         {
             var sourceColumnInfo = cmd as ColumnInfoCommand;
@@ -271,94 +257,6 @@ namespace CatalogueManager.CommandExecution
             return null;
         }
 
-        private ICommandExecution CreateWhenTargetIsCohortAggregateContainer(ICommand cmd, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption)
-        {
-            //Target is a cohort container (UNION / INTERSECT / EXCEPT)
-
-            //source is catalogue
-            var sourceCatalogueCommand = cmd as CatalogueCommand;
-
-            if (sourceCatalogueCommand != null)
-                return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,sourceCatalogueCommand, targetCohortAggregateContainer);
-
-            //source is aggregate
-            var sourceAggregateCommand = cmd as AggregateConfigurationCommand;
-
-            if (sourceAggregateCommand != null)
-            {
-                //if it is not already involved in cohort identification 
-                if(!sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate)
-                    return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,sourceAggregateCommand,targetCohortAggregateContainer);
-
-                //it is involved in cohort identification already, presumably it's a reorder?
-                if(sourceAggregateCommand.ContainerIfAny != null)
-                   if(insertOption == InsertOption.Default)
-                       return new ExecuteCommandMoveAggregateIntoContainer(_activator, sourceAggregateCommand, targetCohortAggregateContainer);
-                    else
-                        return new ExecuteCommandReOrderAggregate(_activator,sourceAggregateCommand,targetCohortAggregateContainer,insertOption);
-                
-                //it's a patient index table
-                if (sourceAggregateCommand.IsPatientIndexTable)
-                    return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(_activator,sourceAggregateCommand, targetCohortAggregateContainer);
-                
-                
-                //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
-                return new ExecuteCommandMoveAggregateIntoContainer(_activator, sourceAggregateCommand, targetCohortAggregateContainer);
-            }
-
-            //source is another container (UNION / INTERSECT / EXCEPT)
-            var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCommand;
-
-            if (sourceCohortAggregateContainerCommand != null)
-            {
-                //can never drag the root container elsewhere
-                if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)
-                    return null;
-
-                //they are trying to drag it onto it's current parent
-                if (sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer))
-                    return null;
-
-                //its being dragged into a container (move into new container)
-                if(insertOption == InsertOption.Default)
-                    return new ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(_activator,sourceCohortAggregateContainerCommand,targetCohortAggregateContainer);
-                
-                //its being dragged above/below a container (reorder)
-                return new ExecuteCommandReOrderAggregateContainer(_activator,sourceCohortAggregateContainerCommand,targetCohortAggregateContainer,insertOption);
-                
-            }
-            return null;
-        }
-
-        private ICommandExecution CreateWhenTargetIsAggregateConfiguration(ICommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption)
-        {
-            var sourceAggregateCommand = cmd as AggregateConfigurationCommand;
-
-            //if it is an aggregate being dragged
-            if(sourceAggregateCommand != null)
-            {
-                //source and target are the same
-                if (sourceAggregateCommand.Aggregate.Equals(targetAggregateConfiguration))
-                    return null;
-
-                //that is part of cohort identification already and being dragged above/below the current aggregate
-                if (sourceAggregateCommand.ContainerIfAny != null && insertOption != InsertOption.Default)
-                    return new ExecuteCommandReOrderAggregate(_activator, sourceAggregateCommand, targetAggregateConfiguration, insertOption);
-            }
-
-            var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCommand;
-            if (sourceCohortAggregateContainerCommand != null)
-            {
-                //can never drag the root container elsewhere
-                if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)
-                    return null;
-
-                //above or below
-                if (insertOption != InsertOption.Default)
-                    return new ExecuteCommandReOrderAggregateContainer(_activator,sourceCohortAggregateContainerCommand,targetAggregateConfiguration,insertOption);
-            }
-            return null;
-        }
 
         private ICommandExecution CreateWhenTargetIsExtractionConfiguration(ICommand cmd, ExtractionConfiguration targetExtractionConfiguration)
         {

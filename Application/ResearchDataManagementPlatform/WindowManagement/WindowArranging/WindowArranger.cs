@@ -34,7 +34,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _toolboxWindowManager.CloseAllWindows();
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(catalogue,2));
-            _activator.ActivateCatalogue(this, catalogue);
+            _activator.Activate(catalogue);
 
             _toolboxWindowManager.Create(RDMPCollection.Tables, DockState.DockRight);
 

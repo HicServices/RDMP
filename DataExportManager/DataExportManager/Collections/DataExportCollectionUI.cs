@@ -142,9 +142,6 @@ namespace DataExportManager.Collections
             CommonFunctionality.SetUp(
                 tlvDataExport,
                 _activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(), 
-                new RDMPCommandExecutionFactory(_activator), 
                 olvName,
                 tbFilter,
                 olvName,

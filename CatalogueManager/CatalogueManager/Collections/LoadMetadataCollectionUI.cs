@@ -189,9 +189,6 @@ namespace CatalogueManager.Collections
             CommonFunctionality.SetUp(
                 tlvLoadMetadata,
                 activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(), 
-                new RDMPCommandExecutionFactory(activator),
                 olvName,
                 tbFilter,
                 olvName,
