@@ -83,7 +83,7 @@ namespace DataExportManager.Menus
             proxyMenu.SetScopeIsProject(_project);
 
             //get all the items from the menu we just created
-            var proxyItems = proxyMenu.Items.Cast<ToolStripMenuItem>().ToArray();
+            var proxyItems = proxyMenu.Items.Cast<ToolStripItem>().ToArray();
             proxyMenu.Items.Clear();
 
             //and move them to our dropdown
