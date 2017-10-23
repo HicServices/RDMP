@@ -74,10 +74,7 @@ namespace DataExportManager.ProjectUI
             if(RepositoryLocator == null)
                 return;
             
-            using(RepositoryLocator.CatalogueRepository.SuperCachingMode())
-                using (RepositoryLocator.DataExportRepository.SuperCachingMode())
-                    SetupUserInterface();
-
+            SetupUserInterface();
         }
 
         private void SetupUserInterface()
