@@ -37,7 +37,7 @@ namespace RDMPObjectVisualisation.Copying.Commands
             if (cic == null)
                 return null;
 
-            return GenerateAggregateConfigurationFor(cic);
+            return GenerateAggregateConfigurationFor(cic, importMandatoryFilters);
         }
 
         public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortIdentificationConfiguration cic, bool importMandatoryFilters = true, [CallerMemberName] string caller = null)
