@@ -162,7 +162,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
 
             //create pipeline initialization objects
             var request = new CohortCreationRequest(_project, new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), (DataExportRepository)DataExportRepository, "Here goes nothing");
-
+            request.CohortIdentificationConfiguration = _cic;
             var engine = request.GetEngine(_pipe,new ThrowImmediatelyDataLoadEventListener());
             engine.ExecutePipeline(new GracefulCancellationToken());
         }

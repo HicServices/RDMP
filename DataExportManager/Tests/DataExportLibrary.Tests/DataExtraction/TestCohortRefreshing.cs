@@ -1,3 +1,4 @@
+using CatalogueLibrary.Data.Cohort;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
@@ -15,10 +16,19 @@ namespace DataExportLibrary.Tests.DataExtraction
             ExtractionPipelineHost host;
             IExecuteDatasetExtractionDestination results;
 
+            var pipe = SetupPipeline();
+            pipe.Name = "RefreshPipe";
+            pipe.SaveToDatabase();
+
             Execute(out host,out results);
 
             var oldcohort = _configuration.Cohort;
-            
+
+
+            _configuration.CohortIdentificationConfiguration_ID =new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs").ID;
+            _configuration.CohortRefreshPipeline_ID = pipe.ID;
+            _configuration.SaveToDatabase();
+
             var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
             
             Assert.NotNull(engine.Request.NewCohortDefinition);
