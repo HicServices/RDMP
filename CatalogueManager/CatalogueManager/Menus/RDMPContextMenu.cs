@@ -31,7 +31,6 @@ namespace CatalogueManager.Menus
         protected IActivateItems _activator;
         private readonly DatabaseEntity _databaseEntity;
 
-        protected ToolStripMenuItem RefreshObjectMenuItem;
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
         private AtomicCommandUIFactory AtomicCommandUIFactory;
@@ -47,8 +46,6 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandActivate(activator,databaseEntity));
 
             RepositoryLocator = _activator.RepositoryLocator;
-            
-            RefreshObjectMenuItem = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandRefreshObject(activator, databaseEntity));
             
             var dependencies = databaseEntity as IHasDependencies;
 
@@ -68,14 +65,13 @@ namespace CatalogueManager.Menus
 
         protected void AddCommonMenuItems()
         {
-            Items.Add(RefreshObjectMenuItem);
-
             var deletable = _databaseEntity as IDeleteable;
             var nameable = _databaseEntity as INamed;
 
-            if (deletable != null || nameable != null)
-                Items.Add(new ToolStripSeparator());
+            Items.Add(new ToolStripSeparator());
 
+            Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
+            
             if (deletable != null)
                 Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
 

@@ -56,8 +56,6 @@ namespace CatalogueManager.Collections.Providers
                 e.Cancel = true;
         }
 
-        private static bool haveComplainedAboutToStringImplementationOfINamed = false;
-
         void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
         {
             if(e.RowObject == null)
@@ -78,24 +76,7 @@ namespace CatalogueManager.Collections.Providers
             try
             {
                 if (name != null)
-                {
-                    
-                    new ExecuteCommandRename(_refreshBus,name,(string)e.NewValue).Execute();
-                    
-                    if(!haveComplainedAboutToStringImplementationOfINamed && !name.ToString().Contains(name.Name))
-                    {
-
-                        WideMessageBox.Show("ToString method of INamed class '" + name.GetType().Name + "' does not return the Name property, this makes it highly unsuitable for RenameProvider.  Try adding the following code to your class:" 
-                                            + Environment.NewLine +
-                                            @"public override string ToString()
-        {
-            return Name;
-        }"
-                        
-                            );
-                        haveComplainedAboutToStringImplementationOfINamed = true;
-                    }
-                }
+                    new ExecuteCommandRename(_refreshBus, name, (string) e.NewValue).Execute();
             }
             catch (Exception exception)
             {

@@ -26,6 +26,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return iconProvider.GetImage(_databaseEntity, OverlayKind.Edit);
         }
 
+        public override string GetCommandName()
+        {
+            return "Edit";
+        }
+
         public override void Execute()
         {
             base.Execute();
