@@ -171,6 +171,12 @@
     <Compile Include="DataObjects\CohortCreationRequestVisualisation.Designer.cs">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataObjects\UnknownVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataObjects\UnknownVisualisation.Designer.cs">
+      <DependentUpon>UnknownVisualisation.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataObjects\PatientIndexTableVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -314,6 +320,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\CohortCreationRequestVisualisation.resx">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataObjects\UnknownVisualisation.resx">
+      <DependentUpon>UnknownVisualisation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\PatientIndexTableVisualisation.resx">
       <DependentUpon>PatientIndexTableVisualisation.cs</DependentUpon>

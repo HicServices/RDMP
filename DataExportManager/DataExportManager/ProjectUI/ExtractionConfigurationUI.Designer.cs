@@ -49,6 +49,7 @@ namespace DataExportManager.ProjectUI
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.label2 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
+            this.ragSmiley1Refresh = new ReusableUIComponents.RAGSmiley();
             this.gbCohortRefreshing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCic)).BeginInit();
             this.SuspendLayout();
@@ -142,6 +143,7 @@ namespace DataExportManager.ProjectUI
             // 
             // gbCohortRefreshing
             // 
+            this.gbCohortRefreshing.Controls.Add(this.ragSmiley1Refresh);
             this.gbCohortRefreshing.Controls.Add(this.pChooseCohortRefreshPipeline);
             this.gbCohortRefreshing.Controls.Add(this.btnClearCic);
             this.gbCohortRefreshing.Controls.Add(this.pbCic);
@@ -232,6 +234,16 @@ namespace DataExportManager.ProjectUI
             this.tbDescription.TabIndex = 53;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
+            // ragSmiley1Refresh
+            // 
+            this.ragSmiley1Refresh.AlwaysShowHandCursor = false;
+            this.ragSmiley1Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ragSmiley1Refresh.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1Refresh.Location = new System.Drawing.Point(629, 44);
+            this.ragSmiley1Refresh.Name = "ragSmiley1Refresh";
+            this.ragSmiley1Refresh.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1Refresh.TabIndex = 52;
+            // 
             // ExtractionConfigurationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -283,5 +295,6 @@ namespace DataExportManager.ProjectUI
         private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbDescription;
+        private ReusableUIComponents.RAGSmiley ragSmiley1Refresh;
     }
 }

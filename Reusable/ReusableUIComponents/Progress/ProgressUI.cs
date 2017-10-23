@@ -192,8 +192,11 @@ namespace ReusableUIComponents.Progress
 
             lock (oNotifyQueLock)
             {
-                olvProgressEvents.AddObjects(NotificationQueue);
-                NotificationQueue.Clear();
+                if (NotificationQueue.Any())
+                {
+                    olvProgressEvents.AddObjects(NotificationQueue);
+                    NotificationQueue.Clear();
+                }
             }
         }
         private bool HandleFloodOfMessagesFromJob(object sender, string job,int progressAmount,string label)

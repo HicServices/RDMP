@@ -54,7 +54,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             progressUi.Text = "Refreshing Cohort (" + _extractionConfiguration + ")";
             _activator.ShowWindow(progressUi,true);
 
-            var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration,_activator.RepositoryLocator.CatalogueRepository.MEF);
+            var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration);
             Task.Run(
 
                 //run the pipeline in a Thread

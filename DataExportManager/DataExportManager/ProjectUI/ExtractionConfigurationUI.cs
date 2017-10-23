@@ -33,10 +33,12 @@ using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Icons.IconProvision;
+using ReusableUIComponents.TransparentHelpSystem;
 
 namespace DataExportManager.ProjectUI
 {
@@ -60,7 +62,7 @@ namespace DataExportManager.ProjectUI
         private ExtractionConfiguration _extractionConfiguration;
         private IPipelineSelectionUI _extractionPipelineSelectionUI;
 
-        private PipelineSelectionUI<DataTable> _cohortRefreshingPipelineSelectionUI;
+        private IPipelineSelectionUI _cohortRefreshingPipelineSelectionUI;
 
         public ExtractionConfigurationUI()
         {
@@ -152,18 +154,18 @@ namespace DataExportManager.ProjectUI
             = @"You are trying to perform a data extraction of one or more datasets against a cohort.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the ExtractionConfiguration level which will allow you to change all copies at once in one place.  You will also see two global parameters the system generates automatically when doing extractions these are @CohortDefinitionID and @ProjectNumber";
 
         private bool _bLoading = false;
+        
         public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             _bLoading = true;
             ExtractionConfiguration = databaseObject;
 
-            SetupPipelineSelection();
-
             SetupCohortIdentificationConfiguration();
 
-            SetPreviewObjectsForCohortRefresh();
-
+            SetupPipelineSelectionExtraction();
+            SetupPipelineSelectionCohortRefresh();
+            
             pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link);
             
             objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
@@ -171,22 +173,53 @@ namespace DataExportManager.ProjectUI
             _bLoading = false;
             
         }
-
-        private void SetPreviewObjectsForCohortRefresh()
-        {
-            _cohortRefreshingPipelineSelectionUI.InitializationObjectsForPreviewPipeline.Clear();
-            _cohortRefreshingPipelineSelectionUI.InitializationObjectsForPreviewPipeline.Add(CohortCreationRequest.Empty);
-            _cohortRefreshingPipelineSelectionUI.InitializationObjectsForPreviewPipeline.Add(ExtractionConfiguration.CohortIdentificationConfiguration);
-        }
-
-
+        
         private void SetupCohortIdentificationConfiguration()
         {
             cbxCohortIdentificationConfiguration.DataSource = _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
             cbxCohortIdentificationConfiguration.SelectedItem = ExtractionConfiguration.CohortIdentificationConfiguration;
         }
 
-        private void SetupPipelineSelection()
+        private void SetupPipelineSelectionCohortRefresh()
+        {
+            ragSmiley1Refresh.Reset();
+
+            if (_cohortRefreshingPipelineSelectionUI != null)
+                return;
+            try
+            {
+                //the use case is extracting a dataset
+                var useCase = new CohortCreationRequest(ExtractionConfiguration);
+
+                //the user is DefaultPipeline_ID field of ExtractionConfiguration
+                var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"), ExtractionConfiguration);
+
+                //create the UI for this situation
+                var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
+                _cohortRefreshingPipelineSelectionUI = factory.Create("Cohort Refresh Pipeline", DockStyle.Fill,pChooseCohortRefreshPipeline);
+                _cohortRefreshingPipelineSelectionUI.Pipeline = ExtractionConfiguration.CohortRefreshPipeline;
+                _cohortRefreshingPipelineSelectionUI.PipelineChanged += _cohortRefreshingPipelineSelectionUI_PipelineChanged;
+            }
+            catch (Exception e)
+            {
+                ragSmiley1Refresh.Fatal(e);
+            }
+        }
+
+        void _cohortRefreshingPipelineSelectionUI_PipelineChanged(object sender, EventArgs e)
+        {
+            ragSmiley1Refresh.Reset();
+            try
+            {
+                new CohortCreationRequest(ExtractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline,new ThrowImmediatelyDataLoadEventListener());
+            }
+            catch (Exception ex)
+            {
+                ragSmiley1Refresh.Fatal(ex);
+            }
+        }
+
+        private void SetupPipelineSelectionExtraction()
         {
             //already set i tup
             if (_extractionPipelineSelectionUI != null)
@@ -200,41 +233,9 @@ namespace DataExportManager.ProjectUI
 
             //create the UI for this situation
             var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
-            _extractionPipelineSelectionUI = factory.Create();
-            
-            //add it to the user interface
-            var c = (Control) _extractionPipelineSelectionUI;
-            c.Text = "Extraction Pipeline";
-            c.Dock = DockStyle.Fill;
-            pChooseExtractionPipeline.Controls.Add(c);
-            
-            _cohortRefreshingPipelineSelectionUI = new PipelineSelectionUI<DataTable>(null, null, _activator.RepositoryLocator.CatalogueRepository);
-            _cohortRefreshingPipelineSelectionUI.Context = CohortCreationRequest.Context;
-            _cohortRefreshingPipelineSelectionUI.Dock = DockStyle.Fill;
-            _cohortRefreshingPipelineSelectionUI.PipelineChanged += CohortRefreshingPipelineSelectionUIOnPipelineChanged;
-            pChooseCohortRefreshPipeline.Controls.Add(_cohortRefreshingPipelineSelectionUI);
-
-            try
-            {
-                _cohortRefreshingPipelineSelectionUI.Pipeline = ExtractionConfiguration.CohortRefreshPipeline;
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
-            }
-            _cohortRefreshingPipelineSelectionUI.Text = "Cohort Refresh Pipeline";
+            _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline",DockStyle.Fill,pChooseExtractionPipeline);
         }
-
-        private void CohortRefreshingPipelineSelectionUIOnPipelineChanged(object sender, EventArgs eventArgs)
-        {
-            var newValue = _cohortRefreshingPipelineSelectionUI.Pipeline != null ? _cohortRefreshingPipelineSelectionUI.Pipeline.ID : (int?)null;
-
-            if (newValue == ExtractionConfiguration.CohortRefreshPipeline_ID)
-                return;
-
-            ExtractionConfiguration.CohortRefreshPipeline_ID = newValue;
-        }
-
+        
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
@@ -251,6 +252,8 @@ namespace DataExportManager.ProjectUI
                 ExtractionConfiguration.CohortIdentificationConfiguration_ID = null;
             else
                 ExtractionConfiguration.CohortIdentificationConfiguration_ID = cic.ID;
+
+            SetupPipelineSelectionCohortRefresh();
         }
 
         private void btnClearCic_Click(object sender, EventArgs e)

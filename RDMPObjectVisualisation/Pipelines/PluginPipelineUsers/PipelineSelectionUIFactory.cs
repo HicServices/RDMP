@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
@@ -32,7 +33,7 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
             _useCase = pluginUserAndCase;
         }
 
-        public IPipelineSelectionUI Create()
+        public IPipelineSelectionUI Create(string text = null, DockStyle dock = DockStyle.None, Control containerControl = null)
         {
             var context = _useCase.GetContext();
 
@@ -58,8 +59,18 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
             }
 
             var c = (Control)_pipelineSelectionUIInstance;
-            c.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            
+
+            if (dock == DockStyle.None)
+                c.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            else
+                c.Dock = dock;
+
+            if (text != null)
+                c.Text = text;
+
+            if (containerControl != null)
+                containerControl.Controls.Add(c);
+
             return _pipelineSelectionUIInstance;
         }
 

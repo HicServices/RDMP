@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -170,8 +172,11 @@ namespace DataExportManager.Menus
         {
             ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline();
             configureAndExecuteDialog.Dock = DockStyle.Fill;
-            configureAndExecuteDialog.AddInitializationObject(request);
-            configureAndExecuteDialog.SetPipelineOptions(null, null, CohortCreationRequest.Context, RepositoryLocator.CatalogueRepository);
+            configureAndExecuteDialog.SetPipelineOptions(null, null, (DataFlowPipelineContext<DataTable>)request.GetContext(), RepositoryLocator.CatalogueRepository);
+
+            foreach (object o in request.GetInitializationObjects(RepositoryLocator.CatalogueRepository))
+                configureAndExecuteDialog.AddInitializationObject(o);
+
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccesfully(configureAndExecuteDialog,request);
 
             //add in the logging server
