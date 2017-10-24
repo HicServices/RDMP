@@ -64,7 +64,7 @@
             this.lblGo.ForeColor = System.Drawing.Color.CornflowerBlue;
             this.lblGo.Location = new System.Drawing.Point(457, 0);
             this.lblGo.Name = "lblGo";
-            this.lblGo.Size = new System.Drawing.Size(33, 19);
+            this.lblGo.Size = new System.Drawing.Size(28, 19);
             this.lblGo.TabIndex = 3;
             this.lblGo.Text = "GO";
             this.lblGo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

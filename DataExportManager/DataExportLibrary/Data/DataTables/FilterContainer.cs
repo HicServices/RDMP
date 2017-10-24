@@ -208,7 +208,12 @@ namespace DataExportLibrary.Data.DataTables
 
         public SelectedDataSets GetSelectedDataSetIfAny()
         {
-            return Repository.GetAllObjects<SelectedDataSets>("WHERE RootFilterContainer_ID=" + this.ID).SingleOrDefault();
+            var root = GetRootContainerOrSelf();
+
+            if (root == null)
+                return null;
+
+            return Repository.GetAllObjects<SelectedDataSets>("WHERE RootFilterContainer_ID=" + root.ID).SingleOrDefault();
         }
 
         public SelectedDataSets GetSelectedDatasetRecursively()

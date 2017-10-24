@@ -385,6 +385,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAggregateConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogue.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortAggregateContainer.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsFilterContainer.cs" />
     <Compile Include="CommandExecution\Proposals\RDMPCommandExecutionProposal.cs" />
     <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
     <Compile Include="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />

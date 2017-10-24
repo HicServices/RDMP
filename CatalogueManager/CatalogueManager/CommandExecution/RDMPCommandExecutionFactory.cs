@@ -86,12 +86,7 @@ namespace CatalogueManager.CommandExecution
             var targetcatalogueItem = targetModel as CatalogueItem;
             if(targetcatalogueItem != null)
                 return CreateWhenTargetIsCatalogueItem(cmd, targetcatalogueItem);
-
-            // AND / OR - in data export or aggregation
-            var targetContainer = targetModel as IContainer;
-            if (targetContainer != null)
-                return CreateWhenTargetIsContainer(cmd,targetContainer);
-
+            
             /////////////Table Info Drop Targets///////////////////////////////////
             var targetTableInfo = targetModel as TableInfo;
             if (targetTableInfo != null)
@@ -212,46 +207,6 @@ namespace CatalogueManager.CommandExecution
             return null;
         }
 
-        private ICommandExecution CreateWhenTargetIsContainer(ICommand cmd, IContainer targetContainer)
-        {
-            var sourceFilterCommand = cmd as FilterCommand;
-
-            //drag a filter into a container
-            if (sourceFilterCommand != null)
-            {
-                //if filter is already in the target container
-                if (sourceFilterCommand.ImmediateContainerIfAny.Equals(targetContainer))
-                    return null;
-
-                //if the target container is one that is part of the filters tree then it's a move
-                if (sourceFilterCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                    return new ExecuteCommandMoveFilterIntoContainer(_activator, sourceFilterCommand, targetContainer);
-                
-                //otherwise it's an import    
-
-                //so instead lets let them create a new copy (possibly including changing the type e.g. importing a master
-                //filter into a data export AND/OR container
-                return new ExecuteCommandImportNewCopyOfFilterIntoContainer(_activator, sourceFilterCommand,targetContainer);
-                
-            }
-
-            
-            var sourceContainerCommand = cmd as ContainerCommand;
-            
-            //drag a container into another container
-            if (sourceContainerCommand != null)
-            {
-                //if the source and target are the same container
-                if (sourceContainerCommand.Container.Equals(targetContainer))
-                    return null;
-
-                //is it a movement within the current container tree
-                if (sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                    return new ExecuteCommandMoveContainerIntoContainer(_activator, sourceContainerCommand, targetContainer);
-            }
-            
-            return null;
-        }
 
 
         private ICommandExecution CreateWhenTargetIsExtractableDataSetsNode(ICommand cmd, ExtractableDataSetsNode targetExtractableDataSetsNode)
