@@ -56,11 +56,7 @@ namespace DataExportManager.Menus
 
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
             _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).ToArray();
-
-            var editMenuItem = new ToolStripMenuItem("Edit", CatalogueIcons.ExtractionConfiguration, (s, e) => activator.ActivateExtractionConfiguration(this, extractionConfiguration));
-            editMenuItem.Enabled = !extractionConfiguration.IsReleased;
-            Items.Add(editMenuItem);
-
+            
             ///////////////////Change Cohorts//////////////
             string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";
 

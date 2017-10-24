@@ -25,6 +25,12 @@ namespace CatalogueManager.CommandExecution
                 return;
             }
 
+            if (_targetExtractionConfiguration.IsReleased)
+            {
+                SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
+                return;
+            }
+
             if (!sourceExtractableCohortComand.CompatibleExtractionConfigurations.Contains(_targetExtractionConfiguration))
             {
                 SetImpossible("Cohort has project number " + sourceExtractableCohortComand.ExternalProjectNumber + " so can only be added to ExtractionConfigurations belonging to Projects with that same number");
@@ -40,6 +46,8 @@ namespace CatalogueManager.CommandExecution
                 
                 return;
             }
+
+            
         }
 
         public override void Execute()

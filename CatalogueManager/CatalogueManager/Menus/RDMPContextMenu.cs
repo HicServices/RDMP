@@ -11,7 +11,6 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
@@ -77,7 +76,10 @@ namespace CatalogueManager.Menus
 
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
-            
+
+            if(_databaseEntity != null)
+                Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
+
             if(DependencyViewingMenuItem != null)
                 Items.Add(DependencyViewingMenuItem);
 

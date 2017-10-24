@@ -358,6 +358,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
       <SubType>UserControl</SubType>
@@ -1439,6 +1440,7 @@
     <None Include="Icons\Overlays\locked.png" />
     <None Include="Icons\PermissionWindow.png" />
     <None Include="Icons\Pipeline.png" />
+    <None Include="Icons\Overlays\Help.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

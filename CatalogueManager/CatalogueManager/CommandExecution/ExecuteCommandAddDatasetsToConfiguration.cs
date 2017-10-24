@@ -21,11 +21,18 @@ namespace CatalogueManager.CommandExecution
             _activator = activator;
             _sourceExtractableDataSetCommand = sourceExtractableDataSetCommand;
             _targetExtractionConfiguration = targetExtractionConfiguration;
-
-
+            
             var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();
 
             _toadd = _sourceExtractableDataSetCommand.ExtractableDataSets.Except(alreadyInConfiguration).ToArray();
+
+
+            if (_targetExtractionConfiguration.IsReleased)
+            {
+                SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
+                return;
+            }
+
 
             if(!_toadd.Any())
                 SetImpossible("ExtractionConfiguration already contains this dataset(s)");

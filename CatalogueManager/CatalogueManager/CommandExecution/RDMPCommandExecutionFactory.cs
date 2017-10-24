@@ -104,11 +104,7 @@ namespace CatalogueManager.CommandExecution
                 return CreateWhenTargetIsJoinableCollectionNode(cmd,targetJoinableCollectionNode);
 
             ////////////////Data Export Drop Targets ////////////////
-
-            var targetExtractionConfiguration = targetModel as ExtractionConfiguration;
-            if (targetExtractionConfiguration != null)
-                return CreateWhenTargetIsExtractionConfiguration(cmd, targetExtractionConfiguration);
-
+            
             var targetExtractableDatasetsNode = targetModel as ExtractableDataSetsNode;
             if (targetExtractableDatasetsNode != null)
                 return CreateWhenTargetIsExtractableDataSetsNode(cmd,targetExtractableDatasetsNode);
@@ -257,23 +253,6 @@ namespace CatalogueManager.CommandExecution
             return null;
         }
 
-
-        private ICommandExecution CreateWhenTargetIsExtractionConfiguration(ICommand cmd, ExtractionConfiguration targetExtractionConfiguration)
-        {
-            //user is trying to set the cohort of the configuration
-            var sourceExtractableCohortComand = cmd as ExtractableCohortCommand;
-
-            if (sourceExtractableCohortComand != null)
-                return new ExecuteCommandAddCohortToExtractionConfiguration(_activator, sourceExtractableCohortComand,targetExtractionConfiguration);
-
-            //user is trying to add datasets to a configuration
-            var sourceExtractableDataSetCommand = cmd as ExtractableDataSetCommand;
-
-            if (sourceExtractableDataSetCommand != null)
-                return new ExecuteCommandAddDatasetsToConfiguration(_activator,sourceExtractableDataSetCommand,targetExtractionConfiguration);
-
-            return null;
-        }
 
         private ICommandExecution CreateWhenTargetIsExtractableDataSetsNode(ICommand cmd, ExtractableDataSetsNode targetExtractableDataSetsNode)
         {
