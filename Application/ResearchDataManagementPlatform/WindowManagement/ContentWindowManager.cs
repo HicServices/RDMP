@@ -208,11 +208,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         public bool AllowExecute { get { return true; }}
-
-        public void Activate(object databaseObject)
-        {
-            CommandExecutionFactory.Activate(databaseObject);
-        }
         
         public void ActivateViewCatalogueExtractionSql(object sender,Catalogue c)
         {

@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
@@ -34,7 +35,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _toolboxWindowManager.CloseAllWindows();
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(catalogue,2));
-            _activator.Activate(catalogue);
+            new ExecuteCommandActivate(_activator,catalogue).Execute();
 
             _toolboxWindowManager.Create(RDMPCollection.Tables, DockState.DockRight);
 

@@ -82,7 +82,7 @@ namespace DataExportManager.Menus
         private void AddBlankFilter()
         {
             var newFilter = new DeployedExtractionFilter(RepositoryLocator.DataExportRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            _activator.Activate(newFilter);
+            Activate(newFilter);
             Publish(_filterContainer);
         }
     }

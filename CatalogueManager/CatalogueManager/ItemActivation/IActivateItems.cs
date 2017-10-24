@@ -71,13 +71,7 @@ namespace CatalogueManager.ItemActivation
         /// <param name="databaseObject"></param>
         /// <returns></returns>
         T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
-
-        /// <summary>
-        /// Consults the CommandExecutionFactory about what to activate (might not do anything if there are no compatible ICommandExecutionProposals)
-        /// </summary>
-        /// <param name="databaseObject"></param>
-        void Activate(object databaseObject);
-
+        
         void ActivateDQEResultViewing(object sender, Catalogue c);
         void ActivateViewCatalogueExtractionSql(object sender, Catalogue c);
 
