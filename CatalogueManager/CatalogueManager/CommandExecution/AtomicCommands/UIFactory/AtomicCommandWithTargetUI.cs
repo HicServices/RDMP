@@ -54,7 +54,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 
             
             lblGo.Enabled = false;
-            
+
+            Enabled = _selection.Any();
+
         }
 
         private void lblGo_Click(object sender, EventArgs e)

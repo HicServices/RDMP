@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
@@ -33,10 +34,18 @@ namespace CohortManager.SubComponents.Graphs
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            _collection.RevertIfMatchedInCollectionObjects(e.Object);
+            bool shouldCloseInstead;
+            _collection.RevertIfMatchedInCollectionObjects(e.Object,out shouldCloseInstead);
 
-            //now reload the graph because the change was to a relevant object
-            LoadGraphAsync();
+            if (shouldCloseInstead)
+            {
+                if(ParentForm != null)
+                    ParentForm.Close();
+            }
+            else
+                //now reload the graph because the change was to a relevant object
+                LoadGraphAsync();
+            
         }
 
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
