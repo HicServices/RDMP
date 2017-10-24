@@ -148,7 +148,7 @@ namespace CatalogueManager.Menus
             {
                 catalogue.DeleteInDatabase();
 
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(catalogue));
+                Publish(catalogue);
             }
         }
 
@@ -162,14 +162,14 @@ namespace CatalogueManager.Menus
             c.IsDeprecated = value;
             c.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
         private void SetColdStorage(Catalogue c,bool value)
         {
             c.IsColdStorageDataset = value;
             c.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
 
         private void SetInternal(Catalogue c, bool value)
@@ -177,7 +177,7 @@ namespace CatalogueManager.Menus
             c.IsInternalDataset = value;
             c.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
         
 
@@ -234,7 +234,7 @@ namespace CatalogueManager.Menus
         public void NewCatalogue()
         {
             var c = new Catalogue(RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
         private void GenerateSQL(Catalogue c)
         {

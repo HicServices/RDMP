@@ -44,7 +44,7 @@ namespace DataExportManager.Menus
         {
             _dataset.DisableExtraction = disable;
             _dataset.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_dataset));
+            Publish(_dataset);
         }
     }
 }

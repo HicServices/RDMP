@@ -1,4 +1,5 @@
 ﻿using System.IO.Packaging;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -38,10 +39,10 @@ namespace CatalogueManager.CommandExecution
             {
                 c.Folder = _targetModel;
                 c.SaveToDatabase();
-
-                //Catalogue folder has changed so publish the change
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
             }
+
+            //Catalogue folder has changed so publish the change (but only change the last Catalogue so we don't end up subing a million global refreshes changes)
+            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogues.Last()));
         }
     }
 }

@@ -50,7 +50,7 @@ namespace DataExportManager.Menus
 
                 //package contents changed
                 if(dialog.MultiSelected.Any())
-                    _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_package));
+                    Publish(_package);
             }
         }
     }

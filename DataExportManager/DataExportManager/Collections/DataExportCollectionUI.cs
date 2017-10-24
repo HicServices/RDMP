@@ -310,9 +310,7 @@ namespace DataExportManager.Collections
             var customDataTable = o as CustomDataTableNode;
             var folder = o as ExtractionFolderNode;
             var project = o as Project;
-            var extractionConfiguration = o as ExtractionConfiguration;
             var selectedDataSet = o as SelectedDataSets;
-            var deployedExtractionFilter = o as DeployedExtractionFilter;
             
             if (externalCohortTable != null)
                 _activator.ActivateExternalCohortTable(this, externalCohortTable);
@@ -334,18 +332,12 @@ namespace DataExportManager.Collections
 
                 _activator.ShowWindow(c, true);
             }
-
-            if(extractionConfiguration != null && !extractionConfiguration.IsReleased)//only allow opening if it is not released
-                _activator.ActivateExtractionConfiguration(this, extractionConfiguration);
-
+            
             if(folder != null && folder.CanActivate())
                 folder.Activate();
 
             if (selectedDataSet != null)
                 _activator.ActivateEditExtractionConfigurationDataset(selectedDataSet);
-
-            if(deployedExtractionFilter != null)
-                _activator.ActivateFilter(this,deployedExtractionFilter);
         }
 
 

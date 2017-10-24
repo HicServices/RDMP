@@ -21,7 +21,7 @@ namespace CatalogueManager.Menus
         {
             var newCredentials = new DataAccessCredentials(RepositoryLocator.CatalogueRepository, "New Blank Credentials " + Guid.NewGuid());
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newCredentials));
+            Publish(newCredentials);
         }
     }
 }

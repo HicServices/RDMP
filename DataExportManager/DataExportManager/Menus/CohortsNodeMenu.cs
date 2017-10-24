@@ -46,7 +46,7 @@ namespace DataExportManager.Menus
         private void AddBlankExternalCohortTable()
         {
             var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid());
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newExternalCohortTable));
+            Publish(newExternalCohortTable);
             ((IActivateDataExportItems)_activator).ActivateExternalCohortTable(this, newExternalCohortTable);
 
         }
@@ -59,8 +59,7 @@ namespace DataExportManager.Menus
             f.FormClosed += (s, e) =>
             {
                 if (wizard.ExternalCohortTableCreatedIfAny != null)
-                    _activator.RefreshBus.Publish(wizard,
-                        new RefreshObjectEventArgs(wizard.ExternalCohortTableCreatedIfAny));
+                    Publish(wizard.ExternalCohortTableCreatedIfAny);
             };
         }
     }

@@ -6,6 +6,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs.Advanced.Options;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -60,7 +61,7 @@ namespace CatalogueManager.Menus
         {
             var newContainer = new AggregateFilterContainer(RepositoryLocator.CatalogueRepository,FilterContainerOperation.AND);
             _filterContainer.AddChild(newContainer);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+            Publish(_filterContainer);
         }
 
         private void ImportFilter()
@@ -70,15 +71,15 @@ namespace CatalogueManager.Menus
             if(newFilter != null)
             {
                 _filterContainer.AddChild((AggregateFilter) newFilter);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+                Publish(_filterContainer);
             }
         }
 
         private void AddBlankFilter()
         {
             var newFilter = new AggregateFilter(RepositoryLocator.CatalogueRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            _activator.ActivateFilter(this,newFilter);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newFilter));
+            Publish(newFilter);
+            Activate(newFilter);
         }
     }
 }

@@ -20,6 +20,7 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Copying;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -292,19 +293,20 @@ namespace CatalogueManager.Collections
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {
             var o = Tree.SelectedObject;
-            var config = o as AggregateConfiguration;
-
-            if(o != null)
-                _activator.CommandExecutionFactory.Activate(o);
 
             //also actually handles ExtractionFilters as well as AggregateFilters
-            var filter = o as ConcreteFilter;
             var parameters = o as ParametersNode;
             
-            if (filter != null)
-                _activator.ActivateFilter(this, filter);
             if (parameters != null)
                 _activator.ActivateParameterNode(this, parameters);
+
+            var d = o as DatabaseEntity;
+            if(d != null)
+            {
+                var cmd = new ExecuteCommandActivate(_activator, d);
+                if(!cmd.IsImpossible)
+                    cmd.Execute();
+            }
 
             foreach (IPluginUserInterface pluginUserInterface in _activator.PluginUserInterfaces)
                 pluginUserInterface.Activate(sender, o);

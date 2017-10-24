@@ -99,7 +99,7 @@ namespace DataExportManager.Menus
                 {
                     _project.ExtractionDirectory = ofd.SelectedPath;
                     _project.SaveToDatabase();
-                    _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
+                    Publish(_project);
                 }
             }
         }
@@ -116,8 +116,8 @@ namespace DataExportManager.Menus
             var newConfig = new ExtractionConfiguration(RepositoryLocator.DataExportRepository, _project);
             
             //refresh the project
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_project));
-            ((IActivateDataExportItems)_activator).ActivateExtractionConfiguration(this, newConfig);
+            Publish(_project);
+            Activate(newConfig);
         }
     }
 }

@@ -115,7 +115,7 @@ namespace DataExportManager.Menus
             try
             {
                 var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(clone));
+                Publish(clone);
             }
             catch (Exception exception)
             {
@@ -128,7 +128,7 @@ namespace DataExportManager.Menus
         {
             _extractionConfiguration.IsReleased = true;
             _extractionConfiguration.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_extractionConfiguration));
+            Publish(_extractionConfiguration);
         }
 
         private void GenerateReleaseDocument()
@@ -193,7 +193,7 @@ namespace DataExportManager.Menus
                 //clear current one
                 _extractionConfiguration.Cohort_ID = ((ExtractableCohort)dialog.Selected).ID;
                 _extractionConfiguration.SaveToDatabase();
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_extractionConfiguration));
+                Publish(_extractionConfiguration);
             }
         }
 

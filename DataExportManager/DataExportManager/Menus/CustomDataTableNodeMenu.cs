@@ -46,7 +46,7 @@ namespace DataExportManager.Menus
             if(MessageBox.Show("This will involve DELETING the table in your cohort database aswell as the custom table record, are you sure this is what you want?","Confirm Deleting Data",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _customDataTableNode.Cohort.DeleteCustomData(_customDataTableNode.TableName);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_customDataTableNode.Cohort));
+                Publish(_customDataTableNode.Cohort);
             }
             
         }
@@ -54,8 +54,7 @@ namespace DataExportManager.Menus
         private void SetActive(bool flag)
         {
             _customDataTableNode.Cohort.SetActiveFlagOnCustomData(_customDataTableNode.TableName,flag);
-
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_customDataTableNode.Cohort));
+            Publish(_customDataTableNode.Cohort);
         }
     }
 }

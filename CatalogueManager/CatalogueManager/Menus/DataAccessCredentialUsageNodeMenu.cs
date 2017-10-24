@@ -40,7 +40,7 @@ namespace CatalogueManager.Menus
         private void SetContext(DataAccessContext destinationContext, DataAccessCredentialUsageNode node)
         {
             RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.SetContextFor(node,destinationContext);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(node.TableInfo));
+            Publish(node.TableInfo);
 
         }
     }

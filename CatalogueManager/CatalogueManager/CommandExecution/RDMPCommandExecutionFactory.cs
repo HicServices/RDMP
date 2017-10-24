@@ -109,11 +109,7 @@ namespace CatalogueManager.CommandExecution
             var targetProcessTask = targetModel as ProcessTask;
             if (targetProcessTask != null)
                 return CreateWhenTargetIsProcessTask(cmd, targetProcessTask, insertOption);
-
-            var targetStage = targetModel as LoadStageNode;
-            if (targetStage != null)
-                return CreateWhenTargetIsLoadStage(cmd, targetStage);
-
+            
             /////////////Table Info Collection Drop Targets////////////////////
 
             var targetPreLoadDiscardedColumnsNode = targetModel as PreLoadDiscardedColumnsNode;
@@ -141,16 +137,6 @@ namespace CatalogueManager.CommandExecution
         public bool CanActivate(object target)
         {
             return _proposers.Any(p => p.CanActivate(target));
-        }
-
-        private ICommandExecution CreateWhenTargetIsLoadStage(ICommand cmd, LoadStageNode targetStage)
-        {
-            var sourceProcessTaskCommand = cmd as ProcessTaskCommand;
-            if (sourceProcessTaskCommand != null)
-                return new ExecuteCommandChangeLoadStage(_activator, sourceProcessTaskCommand, targetStage);
-
-            return null;
-
         }
 
         private ICommandExecution CreateWhenTargetIsProcessTask(ICommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)

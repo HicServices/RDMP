@@ -73,7 +73,7 @@ namespace CatalogueManager.Menus
         {
             _aggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = null;
             _aggregate.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+            Publish(_aggregate);
         }
 
         private void ChooseHijacker()
@@ -101,7 +101,7 @@ namespace CatalogueManager.Menus
                         ((AggregateConfiguration) dialog.Selected).ID;
 
                 _aggregate.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+                Publish(_aggregate);
             }
         
         }
@@ -111,7 +111,7 @@ namespace CatalogueManager.Menus
             var newContainer = new AggregateFilterContainer(RepositoryLocator.CatalogueRepository, FilterContainerOperation.AND);
             _aggregate.RootFilterContainer_ID = newContainer.ID;
             _aggregate.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+            Publish(_aggregate);
         }
     }
 }

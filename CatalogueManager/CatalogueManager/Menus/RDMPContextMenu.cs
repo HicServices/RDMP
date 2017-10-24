@@ -14,6 +14,7 @@ using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
+using CatalogueManager.Refreshing;
 using DataLoadEngine.DataProvider.FromCache;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
@@ -106,6 +107,17 @@ namespace CatalogueManager.Menus
 
                 Items.Add(new ExpandAllTreeNodesMenuItem(_activator, _databaseEntity));
             }
+        }
+
+        protected void Activate(DatabaseEntity o)
+        {
+            var cmd = new ExecuteCommandActivate(_activator, o);
+            cmd.Execute();
+        }
+
+        protected void Publish(DatabaseEntity o)
+        {
+            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
         }
     }
 }

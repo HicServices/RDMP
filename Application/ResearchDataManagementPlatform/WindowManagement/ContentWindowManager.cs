@@ -540,11 +540,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             Activate<ExtractionInformationUI, ExtractionInformation>(extractionInformation);
         }
-
-        public void ActivateFilter(object sender, ConcreteFilter filter)
-        {
-            Activate<ExtractionFilterUI,ConcreteFilter>(filter,CatalogueIcons.Filter);
-        }
         
         public void ExecuteAggregate(object sender, AggregateConfiguration aggregate)
         {

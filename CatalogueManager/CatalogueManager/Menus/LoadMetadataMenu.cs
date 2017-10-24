@@ -58,7 +58,7 @@ namespace CatalogueManager.Menus
                 //delete it from the database
                 _loadMetadata.DeleteInDatabase();
               
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_loadMetadata));
+                Publish(_loadMetadata);
             }
         }
     }

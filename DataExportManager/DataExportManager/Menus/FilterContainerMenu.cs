@@ -55,14 +55,14 @@ namespace DataExportManager.Menus
                 : FilterContainerOperation.AND;
 
             _filterContainer.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+            Publish(_filterContainer);
         }
 
         private void AddSubcontainer()
         {
             var newContainer = new FilterContainer(RepositoryLocator.DataExportRepository);
             _filterContainer.AddChild(newContainer);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+            Publish(_filterContainer);
         }
 
         private void ImportFilter()
@@ -72,7 +72,7 @@ namespace DataExportManager.Menus
             if(newFilter != null)
             {
                 _filterContainer.AddChild((DeployedExtractionFilter)newFilter);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+                Publish(_filterContainer);
             }
 
         }
@@ -82,8 +82,8 @@ namespace DataExportManager.Menus
         private void AddBlankFilter()
         {
             var newFilter = new DeployedExtractionFilter(RepositoryLocator.DataExportRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            _activator.ActivateFilter(this,newFilter);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+            _activator.Activate(newFilter);
+            Publish(_filterContainer);
         }
     }
 }

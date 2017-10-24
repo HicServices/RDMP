@@ -159,7 +159,7 @@ namespace CohortManager.Menus
         {
             var newContainer = new CohortAggregateContainer(RepositoryLocator.CatalogueRepository, SetOperation.UNION);
             _container.AddChild(newContainer);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_container));
+            Publish(_container);
         }
 
         private void AddToolStripMenuItemSetTo(SetOperation operation)
@@ -202,7 +202,7 @@ namespace CohortManager.Menus
                     _container.Name = dialog.ResultText;
             }
             _container.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_container));
+            Publish(_container);
 
         }
     }

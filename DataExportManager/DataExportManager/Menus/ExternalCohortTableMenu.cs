@@ -145,7 +145,7 @@ namespace DataExportManager.Menus
                     if (customColsCreated > 0)
                         MessageBox.Show("Also created " + customColsCreated + " custom columns");
 
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(newCohort));
+                    Publish(newCohort);
                 }
                 catch (Exception exception)
                 {
@@ -201,7 +201,7 @@ namespace DataExportManager.Menus
             }
 
             if (request.CohortCreatedIfAny != null)
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(request.CohortCreatedIfAny));
+                Publish(request.CohortCreatedIfAny);
 
             if (MessageBox.Show("Pipeline reports it has successfully loaded the cohort, would you like to close the Form?", "Succesfully Created Cohort", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 responsibleControl.ParentForm.Close();

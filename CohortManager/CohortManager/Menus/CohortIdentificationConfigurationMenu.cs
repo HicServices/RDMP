@@ -73,14 +73,14 @@ namespace CohortManager.Menus
                 var clone = _cic.CreateClone(checks);
 
                 //Load the clone up
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(clone));
+                Publish(clone);
             }
         }
 
         private void FreezeConfiguration()
         {
             _cic.Freeze();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_cic));
+            Publish(_cic);
         }
     }
 
