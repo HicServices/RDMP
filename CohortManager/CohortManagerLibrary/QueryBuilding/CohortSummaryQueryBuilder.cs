@@ -61,7 +61,7 @@ namespace CohortManagerLibrary.QueryBuilding
             _cohort = cohort;
 
             //here we take the identifier from the cohort because the dataset might have multiple identifiers e.g. birth record could have patient Id, parent Id, child Id etc.  The Aggregate will already have one of those selected and only one of them selected
-            _extractionIdentifierColumn = _cohort.AggregateDimensions.Single();
+            _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d=>d.IsExtractionIdentifier);
 
             var cic = _cohort.GetCohortIdentificationConfigurationIfAny();
             
@@ -243,13 +243,8 @@ namespace CohortManagerLibrary.QueryBuilding
             if (!cohort.IsCohortIdentificationAggregate)
                 throw new ArgumentException("AggregateConfiguration " + cohort + " was a not a cohort identification configuration aggregate It's name didn't start with '" + CohortIdentificationConfiguration.CICPrefix + "', this is not allowed, the second argument must always be a cohort specific aggregate with only a single column marked IsExtractionIdentifier etc");
 
-            var dimensions = cohort.AggregateDimensions;
-
-            if (dimensions.Length != 1)
+            if(cohort.AggregateDimensions.Count(d=>d.IsExtractionIdentifier) != 1)
                 throw new Exception("Expected cohort " + cohort + " to have exactly 1 column which would be an IsExtractionIdentifier");
-
-            if (!dimensions[0].IsExtractionIdentifier)
-                throw new Exception("Cohort " + cohort + " had a single dimension but it was not an IsExtractionIdentifier");
         }
 
         private void ThrowIfNotValidGraph(AggregateConfiguration summary)
