@@ -41,9 +41,7 @@ namespace CatalogueManager.Menus
             
             Items.Add(execute);
 
-            var edit = new ToolStripMenuItem("Edit", null, (s, e) => _activator.ActivateLoadMetadata(this,loadMetadata));
-            
-            Items.Add(edit);
+            Add(new ExecuteCommandActivate(_activator,loadMetadata));
             
             Items.Add("View Load Log", CatalogueIcons.Logging, (s, e) => _activator.ActivateViewLoadMetadataLog(this,loadMetadata));
 

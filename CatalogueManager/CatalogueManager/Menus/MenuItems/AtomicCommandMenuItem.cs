@@ -7,6 +7,7 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems
 {
+    [System.ComponentModel.DesignerCategory("")]
     public class AtomicCommandMenuItem : ToolStripMenuItem
     {
         private readonly IAtomicCommand _command;

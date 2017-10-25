@@ -85,9 +85,10 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.CustomDataTableNode, OverlayKind.Add);
         }
 
-        public void SetTarget(DatabaseEntity target)
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             _cohort = (ExtractableCohort)target;
+            return this;
         }
     }
 }

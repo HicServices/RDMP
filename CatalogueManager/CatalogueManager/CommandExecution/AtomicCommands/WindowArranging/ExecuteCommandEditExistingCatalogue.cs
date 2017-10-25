@@ -25,9 +25,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Edit);
         }
 
-        public void SetTarget(DatabaseEntity target)
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             Catalogue = (Catalogue) target;
+            return this;
         }
 
         public override string GetCommandHelp()

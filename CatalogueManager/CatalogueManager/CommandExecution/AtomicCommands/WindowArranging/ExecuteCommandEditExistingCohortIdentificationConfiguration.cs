@@ -26,9 +26,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
             return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit);
         }
 
-        public void SetTarget(DatabaseEntity target)
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             CohortIdConfig = (CohortIdentificationConfiguration) target;
+            return this;
         }
 
         public override string GetCommandHelp()

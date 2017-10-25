@@ -214,11 +214,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<ViewExtractionSql,Catalogue>(c, CatalogueIcons.SQL);
         }
 
-        public void ActivateLoadMetadata(object sender, LoadMetadata lmd)
-        {
-            Activate<LoadMetadataUI,LoadMetadata>(lmd);
-        }
-        
         public void ExecuteLoadMetadata(object sender, LoadMetadata lmd)
         {
             Activate<ExecuteLoadMetadataUI, LoadMetadata>(lmd, CatalogueIcons.ExecuteArrow);
@@ -428,12 +423,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (processTask.ProcessTaskType == ProcessTaskType.SQLFile)
                 Activate<SqlProcessTaskUI, ProcessTask>(processTask);
         }
-
-        public void ActivateExecuteDQE(object sender, Catalogue catalogue)
-        {
-            Activate<DQEExecutionControl, Catalogue>(catalogue);
-        }
-
+        
         public void ActivateLoadProgress(object sender, LoadProgress loadProgress)
         {
             Activate<LoadProgressUI, LoadProgress>(loadProgress);
@@ -479,10 +469,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<ExtractionAggregateGraph>(objectCollection);
         }
 
-        public void ActivateDQEResultViewing(object sender, Catalogue c)
-        {
-            Activate<CatalogueSummaryScreen,Catalogue>(c,CatalogueIcons.DQE);
-        }
 
         public void ActivateExternalCohortTable(object sender, ExternalCohortTable externalCohortTable)
         {

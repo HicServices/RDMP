@@ -19,7 +19,6 @@ namespace CatalogueManager.CommandExecution.Proposals
         {
         }
 
-
         public override bool CanActivate(AggregateConfiguration target)
         {
             return true;

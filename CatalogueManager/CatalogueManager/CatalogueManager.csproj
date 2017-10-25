@@ -387,6 +387,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortAggregateContainer.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConcreteFilter.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsFilterContainer.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadMetadata.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadStageNode.cs" />
     <Compile Include="CommandExecution\Proposals\RDMPCommandExecutionProposal.cs" />
     <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
@@ -734,15 +735,12 @@
     <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">

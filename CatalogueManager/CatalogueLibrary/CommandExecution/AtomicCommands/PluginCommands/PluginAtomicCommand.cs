@@ -9,7 +9,6 @@ namespace CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands
     [InheritedExport(typeof(IAtomicCommand))]
     public abstract class PluginAtomicCommand : BasicCommandExecution, IAtomicCommand
     {
-
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
 
         protected PluginAtomicCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator)

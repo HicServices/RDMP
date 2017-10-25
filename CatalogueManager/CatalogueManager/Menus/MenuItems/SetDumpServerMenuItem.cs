@@ -12,15 +12,13 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems
 {
-    internal class SetDumpServerMenuItem : ToolStripMenuItem
+    internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
     {
-        private readonly IActivateItems _activator;
         private readonly TableInfo _tableInfo;
         private ExternalDatabaseServer[] _availableServers;
 
-        public SetDumpServerMenuItem(IActivateItems activator, TableInfo tableInfo): base("Add Dump Server")
+        public SetDumpServerMenuItem(IActivateItems activator, TableInfo tableInfo): base(activator,"Add Dump Server")
         {
-            _activator = activator;
             _tableInfo = tableInfo;
 
             //cannot set server if we already have one

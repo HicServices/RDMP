@@ -1,26 +1,37 @@
+using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecution
+    public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecution,IAtomicCommand
     {
         private readonly IActivateItems _activator;
         private readonly Assembly _databaseAssembly;
         private readonly ServerDefaults.PermissableDefaults _defaultToSet;
 
         public ExternalDatabaseServer ServerCreatedIfAny { get; private set; }
+        
+        public string OverrideCommandName { get; set; }
 
         public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator, Assembly databaseAssembly, ServerDefaults.PermissableDefaults defaultToSet)
         {
             _activator = activator;
             _databaseAssembly = databaseAssembly;
             _defaultToSet = defaultToSet;
+        }
+
+        public override string GetCommandName()
+        {
+            return OverrideCommandName?? base.GetCommandName();
         }
 
         public override void Execute()
@@ -57,5 +68,9 @@ namespace CatalogueManager.CommandExecution
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(ServerCreatedIfAny));
         }
 
+        public Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
+        }
     }
 }
