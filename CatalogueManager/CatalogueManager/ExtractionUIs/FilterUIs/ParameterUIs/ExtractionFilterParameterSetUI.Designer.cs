@@ -134,11 +134,11 @@
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(0, 52);
+            this.objectSaverButton1.Location = new System.Drawing.Point(11, 50);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(62, 31);
             this.objectSaverButton1.TabIndex = 30;
-            this.objectSaverButton1.Text = "objectSaverButton1";
             // 
             // btnRefreshParameters
             // 

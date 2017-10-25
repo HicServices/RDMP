@@ -41,20 +41,69 @@ namespace CatalogueManager.SimpleControls
             e.ToolTipSize = new Size(WIDTH, HEIGHT);
             e.Cancel = GetReportIfDiff(e.AssociatedControl) == null;
         }
-
-        static Dictionary<string, string[]> SourceFileCache = new Dictionary<string, string[]>();
-
+        
         private void OnDraw(object sender, DrawToolTipEventArgs e)
         {
             var report = GetReportIfDiff(e.AssociatedControl);
             
             try
             {
+                //get height of any given line
+                var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts", e.Font).Height + (LINE_PADDING * 2);
 
-                //white background
-                e.Graphics.FillRectangle(Brushes.White, 0, 0, WIDTH, HEIGHT);
+                var propertyNames = report.Differences.Select(d => d.Property.Name.ToString()).ToArray();
+                var dividerWidth = e.Graphics.MeasureString(propertyNames.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur), e.Font).Width;
+                
+                int midpointX = WIDTH/2;
+                float dividerStartX = midpointX - (dividerWidth/2);
+                float dividerEndX = dividerStartX + dividerWidth;
 
-                e.Graphics.FillRectangle(Brushes.Red, 25, 25, 25,25);
+                var localBackground = e.ToolTipText.Equals("Save") ? Brushes.MediumSpringGreen : Brushes.IndianRed;
+                var dbBackground = e.ToolTipText.Equals("Discard") ? Brushes.MediumSpringGreen : Brushes.IndianRed;
+                
+                //background for local
+                e.Graphics.FillRectangle(localBackground, 0, 0, midpointX, HEIGHT);
+
+                var diffYCoords = new List<float> { coreLineHeight };
+                var currentLineY = coreLineHeight;
+
+                foreach (var difference in report.Differences)
+                {
+                    currentLineY += Math.Max(e.Graphics.MeasureString("" + difference.LocalValue, e.Font).Height,
+                        e.Graphics.MeasureString("" + difference.DatabaseValue, e.Font).Height) + coreLineHeight;
+
+                    diffYCoords.Add(currentLineY);
+                }
+
+                for (int i = 0; i < report.Differences.Count; i++)
+                {
+                    var localValue = "" + report.Differences[i].LocalValue;
+                    e.Graphics.DrawString(localValue, e.Font, Brushes.Black, 0, diffYCoords.ElementAt(i));
+                }
+
+                //background for db
+                e.Graphics.FillRectangle(dbBackground, midpointX, 0, midpointX, HEIGHT);
+
+                for (int i = 0; i < report.Differences.Count; i++)
+                {
+                    var dbValue = "" + report.Differences[i].DatabaseValue;
+                    e.Graphics.DrawString(dbValue, e.Font, Brushes.Black, dividerEndX, diffYCoords.ElementAt(i));
+                }
+                
+                //grey divider
+                e.Graphics.FillRectangle(Brushes.Gainsboro, dividerStartX, 0, dividerWidth, HEIGHT);
+                e.Graphics.DrawLine(Pens.White, dividerStartX, 0, dividerStartX, HEIGHT);
+                e.Graphics.DrawLine(Pens.White, dividerEndX, 0, dividerEndX, HEIGHT);
+
+                //property names
+                for (int i = 0; i < report.Differences.Count; i++)
+                {
+                    e.Graphics.DrawString(propertyNames[i], e.Font, Brushes.DarkSlateGray, dividerStartX, diffYCoords.ElementAt(i));
+                }
+
+                //draw the title
+                e.Graphics.FillRectangle(Brushes.DarkBlue, 0, 0, WIDTH, coreLineHeight);
+                e.Graphics.DrawString(e.ToolTipText + " changes", e.Font, Brushes.White, LINE_PADDING, LINE_PADDING);
             }
             catch (Exception exception)
             {
@@ -75,33 +124,6 @@ namespace CatalogueManager.SimpleControls
                 return report;
 
             return null;
-        }
-
-        private string[] ReadAllLinesCached(string filename)
-        {
-            if(!SourceFileCache.ContainsKey(filename))
-            {
-                string[] fileContents;
-                
-                //if you have the original file
-                if (File.Exists(filename))
-                    fileContents = File.ReadLines(filename).ToArray();
-                //otherwise get it from SourceCodeForSelfAwareness.zip / Plugin zip source codes
-                else
-                {
-                    string contentsInOneLine = ViewSourceCodeDialog.GetSourceForFile(Path.GetFileName(filename));
-
-                    if (contentsInOneLine == null)
-                        return null;
-
-                    fileContents = contentsInOneLine.Split('\n');
-                    
-                }
-
-                SourceFileCache.Add(filename,fileContents);
-            }
-            
-            return SourceFileCache[filename];
         }
     }
 }

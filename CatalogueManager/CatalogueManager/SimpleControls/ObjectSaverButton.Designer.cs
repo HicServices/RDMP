@@ -61,6 +61,7 @@
             this.btnDiscard.Tag = "";
             this.btnDiscard.UseVisualStyleBackColor = true;
             this.btnDiscard.Click += new System.EventHandler(this.btnDiscard_Click);
+            this.btnDiscard.MouseEnter += new System.EventHandler(this.btnDiscard_MouseEnter);
             // 
             // ObjectSaverButton
             // 

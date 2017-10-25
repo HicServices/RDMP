@@ -95,11 +95,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(18, 202);
+            this.objectSaverButton1.Location = new System.Drawing.Point(18, 198);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(59, 27);
             this.objectSaverButton1.TabIndex = 11;
-            this.objectSaverButton1.Text = "objectSaverButton1";
             // 
             // LoadMetadataUI
             // 

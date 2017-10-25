@@ -207,11 +207,11 @@
             // objectSaverButton1
             // 
             this.objectSaverButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.objectSaverButton1.Location = new System.Drawing.Point(9, 792);
+            this.objectSaverButton1.Location = new System.Drawing.Point(9, 789);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(55, 26);
             this.objectSaverButton1.TabIndex = 27;
-            this.objectSaverButton1.Text = "objectSaverButton1";
             // 
             // LoadProgressUI
             // 

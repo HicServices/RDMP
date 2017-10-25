@@ -107,9 +107,12 @@ namespace CatalogueManager.SimpleControls
             btnSave.Enabled = isDifferent;
 
             btnSave.Tag = changes;
-            _tt.SetToolTip(btnSave,"See Tag");
+            _tt.SetToolTip(btnSave,"Save");
 
             btnDiscard.Enabled = isDifferent;
+
+            btnDiscard.Tag = changes;
+            _tt.SetToolTip(btnDiscard, "Discard");
         }
 
         public void ForceDirty()
@@ -132,6 +135,11 @@ namespace CatalogueManager.SimpleControls
         }
 
         private void btnSave_MouseEnter(object sender, EventArgs e)
+        {
+            CheckForLocalChanges();
+        }
+
+        private void btnDiscard_MouseEnter(object sender, EventArgs e)
         {
             CheckForLocalChanges();
         }

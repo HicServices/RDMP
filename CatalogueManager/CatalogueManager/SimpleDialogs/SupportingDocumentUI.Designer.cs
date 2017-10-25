@@ -183,11 +183,11 @@ namespace CatalogueManager.SimpleDialogs
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(6, 111);
+            this.objectSaverButton1.Location = new System.Drawing.Point(17, 111);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(64, 30);
             this.objectSaverButton1.TabIndex = 38;
-            this.objectSaverButton1.Text = "objectSaverButton1";
             // 
             // ticketingControl1
             // 

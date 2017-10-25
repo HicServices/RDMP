@@ -42,7 +42,7 @@ namespace CohortManager.SubComponents
             this.label2 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnSave = new ObjectSaverButton();
+            this.btnSave = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
             // 
             // btnConfigureGlobalParameters
@@ -124,13 +124,11 @@ namespace CohortManager.SubComponents
             // btnSave
             // 
             this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(64, 56);
+            this.btnSave.Location = new System.Drawing.Point(64, 53);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(0);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.Size = new System.Drawing.Size(75, 26);
             this.btnSave.TabIndex = 50;
-            this.btnSave.Text = "Save";
-            
-            
             // 
             // CohortIdentificationConfigurationUI
             // 

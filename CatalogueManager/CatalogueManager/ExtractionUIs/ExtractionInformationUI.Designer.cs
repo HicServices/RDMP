@@ -170,10 +170,10 @@ namespace CatalogueManager.ExtractionUIs
             // objectSaverButton1
             // 
             this.objectSaverButton1.Location = new System.Drawing.Point(17, 86);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
             this.objectSaverButton1.TabIndex = 4;
-            this.objectSaverButton1.Text = "objectSaverButton1";
             // 
             // label4
             // 
@@ -223,6 +223,7 @@ namespace CatalogueManager.ExtractionUIs
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ragSmiley1.Location = new System.Drawing.Point(3, 149);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
