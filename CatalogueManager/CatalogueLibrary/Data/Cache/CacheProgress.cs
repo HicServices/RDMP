@@ -32,18 +32,30 @@ namespace CatalogueLibrary.Data.Cache
             set { SetField(ref  _loadProgressID, value); }
         }
 
+        /// <summary>
+        /// When we can run the cache (e.g. evenings only).  Also serves as the locking object for preventing multiple caching engines/automation servers from executing
+        /// caching activities belonging to the same window.
+        /// </summary>
         public int? PermissionWindow_ID
         {
             get { return _permissionWindowID; }
             set { SetField(ref  _permissionWindowID, value); }
         }
 
+        /// <summary>
+        /// How far through the caching activity are we? files up to this date should be on disk in archives
+        /// </summary>
         public DateTime? CacheFillProgress
         {
             get { return _cacheFillProgress; }
             set { SetField(ref  _cacheFillProgress, value); }
         }
 
+        /// <summary>
+        /// The period of time e.g. 1m that is never fetched expressed as an offset from DateTime.Now.  This handles the case where the cache source
+        /// is not real time i.e. we expect it to take at least 1 month for data to appear on the cache endpoint so don't make requests for data that would
+        /// originate very recently.  
+        /// </summary>
         public string CacheLagPeriod
         {
             get { return _cacheLagPeriod; }
@@ -56,12 +68,24 @@ namespace CatalogueLibrary.Data.Cache
             set { SetField(ref  _pipelineID, value); }
         }
 
+        /// <summary>
+        /// The amount of time to request at a time from the cache source e.g. (fetch 6 hours of data at a time).
+        /// </summary>
         public TimeSpan ChunkPeriod
         {
             get { return _chunkPeriod; }
             set { SetField(ref  _chunkPeriod, value); }
         }
 
+        /// <summary>
+        /// Used by the automation server to decide whether to execute a CacheProgress.  This period is the minimum amount of available to fetch data that must
+        /// exist before starting a caching activity.  E.g. if the cache is up to date (including the lag period offset) and 1 second passes then we don't want to 
+        /// make a request for 1 second of data.  Similarly we don't want to just use the ChunkPeriod otherwise we would be executing arbitrary manner.  
+        /// 
+        /// This lets you say 'only execute the cache if theres at least 1 month of data (assumed) to exist on the cache source' (CacheLagPeriodLoadDelay) and don't
+        /// request any data generated within the last month (CacheLagPeriod).  This means the cache will execute once a month and fetch a month of data at a time but
+        /// the CacheFillProgress will always be 1-2 months behind DateTime.Now (depending on how recently the execution occured).
+        /// </summary>
         public string CacheLagPeriodLoadDelay
         {
             get { return _cacheLagPeriodLoadDelay; }
@@ -69,6 +93,7 @@ namespace CatalogueLibrary.Data.Cache
         } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
 
         #endregion
+
         #region Relationships
 
         [NoMappingToDatabase]

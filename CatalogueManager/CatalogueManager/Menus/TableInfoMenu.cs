@@ -49,9 +49,7 @@ namespace CatalogueManager.Menus
 
         public TableInfoMenu(IActivateItems activator, TableInfo tableInfo) : base( activator, tableInfo)
         {
-            var factory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, false)));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, false));
 
             Items.Add(new ToolStripSeparator());
             Items.Add(new AddLookupMenuItem(activator, "Add new Lookup Table Relationship", null, tableInfo));
@@ -79,7 +77,7 @@ namespace CatalogueManager.Menus
 
             Items.Add(new ToolStripSeparator());
             Items.Add(new SetDumpServerMenuItem(activator, tableInfo));
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, tableInfo)));
+            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, tableInfo));
             Items.Add(new ToolStripSeparator());
 
             if (tableInfo != null && tableInfo.IsTableValuedFunction)

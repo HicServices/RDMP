@@ -8,10 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
+using CatalogueLibrary.Providers;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.WindowManagement.Events;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
@@ -42,7 +44,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         {
             _manager = manager;
             _manager.CollectionCreated += _manager_CollectionCreated;
-
             btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
 
             //needed because persistence can result in the toolboxes being visible before the events system is even registered to by oursevles at application startup
@@ -55,7 +56,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnAddDashboard.Image = manager.ContentManager.CoreIconProvider.GetImage(RDMPConcept.DashboardLayout,OverlayKind.Add);
             ReCreateDashboardsDropDown();
         }
-
+        
         void _manager_CollectionCreated(object sender, Events.RDMPCollectionCreatedEventHandlerArgs args)
         {
             //a toolbox was programatically activated
@@ -208,6 +209,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             ui.ParentForm.FormClosed += (s,ev)=>OnFormClosed(ui,ev);
 
             ReCreateDashboardsDropDown();
+        }
+
+        public void InjectButton(ToolStripButton button)
+        {
+            toolStrip1.Items.Add(button);
         }
     }
 }

@@ -14,6 +14,8 @@ using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
+using ReusableLibraryCode.Checks;
+using ReusableUIComponents;
 
 namespace CatalogueLibrary.Providers
 {
@@ -78,18 +80,18 @@ namespace CatalogueLibrary.Providers
         private readonly CatalogueFilterHierarchy _filterChildProvider;
 
         private readonly CohortHierarchy _cohortContainerChildProvider;
-
-        public List<Exception> Exceptions { get; private set; }
-
+        
         public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
 
         public readonly IChildProvider[] PluginChildProviders;
+        private readonly ICheckNotifier _errorsCheckNotifier;
+        private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
 
-        public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders)
+        public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
             PluginChildProviders = pluginChildProviders;
+            _errorsCheckNotifier = errorsCheckNotifier;
 
-            Exceptions = new List<Exception>();
             AllANOTables = repository.GetAllObjects<ANOTable>();
             ANOTablesNode = new ANOTablesNode();
             AddChildren(ANOTablesNode);
@@ -535,18 +537,21 @@ namespace CatalogueLibrary.Providers
         {
             List<object> children = new List<object>();
 
-            foreach (var plugin in PluginChildProviders)
+            foreach (var plugin in PluginChildProviders.Except(_blacklistedPlugins))
             {
-                //this plugin is broken
-                if(plugin.Exceptions != null && plugin.Exceptions.Any() )
-                    continue;
+                try
+                {
+                    //otherwise ask plugin what it's children are
+                    var pluginChildren = plugin.GetChildren(model);
 
-                //otherwise ask plugin what it's children are
-                var pluginChildren = plugin.GetChildren(model);
-
-                //it has children
-                if(pluginChildren != null)
-                    children.AddRange(pluginChildren);//add them
+                    //it has children
+                    if(pluginChildren != null)
+                        children.AddRange(pluginChildren);//add them
+                }
+                catch (Exception e)
+                {
+                    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
+                }
             }
 
             //if we don't have a record of any children in the child dictionary for the parent model object
@@ -638,7 +643,7 @@ namespace CatalogueLibrary.Providers
             //configuration has the wrong name
             if (!configuration.IsCohortIdentificationAggregate)
             {
-                Exceptions.Add(new Exception("Had to fix naming of configuration '" + configuration + "' because it didn't start with correct cic prefix"));
+                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Had to fix naming of configuration '" + configuration + "' because it didn't start with correct cic prefix",CheckResult.Warning));
                 descendancy.Parents.OfType<CohortIdentificationConfiguration>().Single().EnsureNamingConvention(configuration);
                 configuration.SaveToDatabase();
             }
@@ -747,7 +752,7 @@ namespace CatalogueLibrary.Providers
                     else
                     {
                         //there was a horrible problem with 
-                        Exceptions.Add(new Exception("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + _descendancyDictionary[o]));
+                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + _descendancyDictionary[o],CheckResult.Fail));
                         return;
                     }
 
@@ -782,5 +787,4 @@ namespace CatalogueLibrary.Providers
                 toReturn.Add(m, null);
         }
     }
-
 }

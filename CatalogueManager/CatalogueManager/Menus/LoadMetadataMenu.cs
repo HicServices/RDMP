@@ -31,16 +31,14 @@ namespace CatalogueManager.Menus
         {
             _loadMetadata = loadMetadata;
 
-            AtomicCommandUIFactory factory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewLoadMetadata(activator)));
+            Add(new ExecuteCommandCreateNewLoadMetadata(activator));
 
             var execute = new ToolStripMenuItem("Start Data Load", CatalogueIcons.ExecuteArrow,(s,e)=>activator.ExecuteLoadMetadata(this, loadMetadata));
             execute.Enabled = activator.AllowExecute;
 
 
             Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
-
-
+            
             Items.Add(execute);
 
             var edit = new ToolStripMenuItem("Edit", null, (s, e) => _activator.ActivateLoadMetadata(this,loadMetadata));

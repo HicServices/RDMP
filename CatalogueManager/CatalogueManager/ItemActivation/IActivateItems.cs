@@ -33,6 +33,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueManager.ItemActivation
 {
@@ -55,6 +56,8 @@ namespace CatalogueManager.ItemActivation
 
         bool AllowExecute { get; }
         ICoreIconProvider CoreIconProvider { get; }
+
+        ICheckNotifier GlobalErrorCheckNotifier { get; }
 
         void ActivateCatalogue(object sender, Catalogue c);
         void ActivateDQEResultViewing(object sender, Catalogue c);

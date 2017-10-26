@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -24,7 +25,6 @@ using CohortManager.CommandExecution.AtomicCommands;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTable;
-using ReusableUIComponents.Copying;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.HomePane
@@ -82,6 +82,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 AddCommand(new ExecuteCommandEditAndRunExistingDataExtractionProject(windowManager.ContentManager),
                         dataExportChildProvider.Projects,
                         cic => cic.Name,
+                        tlpDataExport);
+
+                AddCommand(new ExecuteCommandImportFileAsCustomDataForCohort(windowManager.ContentManager), 
+                        dataExportChildProvider.Cohorts,
+                        c => c.ToString(),
                         tlpDataExport);
             }
 

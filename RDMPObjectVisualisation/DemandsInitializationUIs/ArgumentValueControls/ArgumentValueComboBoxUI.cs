@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
 
 namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
@@ -15,6 +18,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     [TechnicalUI]
     public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
     {
+        private readonly object[] _objectsForComboBox;
         private Argument _argument;
         private DemandsInitializationAttribute _demand;
         private bool _bLoading = true;
@@ -23,7 +27,10 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
         public ArgumentValueComboBoxUI(object[] objectsForComboBox, bool useDropdownDataSourceAndOmmitClear = false)
         {
+            _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
+
+            btnPick.Enabled = objectsForComboBox.All(o => o is IMapsDirectlyToDatabaseTable);
 
             if(!useDropdownDataSourceAndOmmitClear)
             {
@@ -99,6 +106,17 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
         {
             if (_demand.Mandatory && string.IsNullOrWhiteSpace(cbxValue.Text))
                 ragSmiley1.Fatal(new Exception("Property is Mandatory which means it you have to Type an appropriate input in"));
+        }
+
+        private void btnPick_Click(object sender, EventArgs e)
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_objectsForComboBox.Cast<IMapsDirectlyToDatabaseTable>(), true,false);
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.Selected == null)
+                    cbxValue.Text = ClearSelection;
+                else
+                    cbxValue.SelectedItem = dialog.Selected;
         }
     }
 }

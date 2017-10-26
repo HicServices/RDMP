@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using CachingEngine.Factories;
 using CachingEngine.Layouts;
 using CatalogueLibrary;
@@ -22,6 +23,9 @@ namespace DataLoadEngine.DataProvider.FromCache
     [Description("Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).  Cached data is unzipped to the forLoading directory.  The Dispose method (which should be called after the entire DataLoad has completed successfully) will clear out the cached file(s) that were loaded and update the schedule to indicate the successful loading of data")]
     public abstract class CachedFileRetriever : ICachedDataProvider
     {
+        [DemandsInitialization("The LoadProgress (which must also have a CacheProgress with a valid Caching Pipeline associated with it)",mandatory:true)]
+        public ILoadProgress LoadProgress { get; set; }
+
         [DemandsInitialization("Whether to unarchive the files into the ForLoading folder, or just copy them as is")]
         public bool ExtractFilesFromArchive { get; set; }
 
@@ -37,15 +41,20 @@ namespace DataLoadEngine.DataProvider.FromCache
         }
         #endregion
 
-        protected virtual ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
+        protected  ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
         {
             var cacheProgress = job.LoadProgress.GetCacheProgress();
 
             if(cacheProgress == null)
                 throw new NullReferenceException("cacheProgress cannot be null");
 
+            return CreateCacheLayout(cacheProgress, job);
+        }
+
+        protected virtual ICacheLayout CreateCacheLayout(ICacheProgress cacheProgress,IDataLoadEventListener listener)
+        {
             var pipelineFactory = new CachingPipelineUseCase(cacheProgress);
-            var destination = pipelineFactory.CreateDestinationOnly(job);
+            var destination = pipelineFactory.CreateDestinationOnly(listener);
             return destination.CreateCacheLayout();
         }
 
@@ -62,12 +71,12 @@ namespace DataLoadEngine.DataProvider.FromCache
         protected Dictionary<DateTime, FileInfo> GetDataLoadWorkload(ScheduledDataLoadJob job)
         {
             var cacheLayout = CreateCacheLayout(job);
-            cacheLayout.CheckCacheFilesAvailability();
+            cacheLayout.CheckCacheFilesAvailability(job);
 
             _workload = new Dictionary<DateTime, FileInfo>();
             foreach (var date in job.DatesToRetrieve)
             {
-                var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date);
+                var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date,job);
                 
                 if (fileInfo == null)
                     OnCacheFileNotFound("Could not find cached file for date '" + date + "' for CacheLayout.ArchiveType " + cacheLayout.ArchiveType + " in cache at " + job.HICProjectDirectory.Cache.FullName, null);
@@ -191,7 +200,57 @@ namespace DataLoadEngine.DataProvider.FromCache
 
         public void Check(ICheckNotifier notifier)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Runtime checks are dependent on which CacheProgress if any is executed so cannot run any checks at this time",CheckResult.Warning));
+            try
+            {
+                if (LoadProgress == null)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("A LoadProgress must be selected for a Cache to run",CheckResult.Fail));
+                    return;
+                }
+
+                var cp = LoadProgress.GetCacheProgress();
+
+                if(cp == null)
+                {
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "LoadProgress must have a CacheProgress associated with it to support CachedFileRetrieval",
+                            CheckResult.Fail));
+                        return;
+                }
+
+                var layout = CreateCacheLayout(cp, new FromCheckNotifierToDataLoadEventListener(notifier));
+
+                if (layout == null)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("CacheLayout created was null!", CheckResult.Fail));
+                    return;
+                }
+
+                notifier.OnCheckPerformed(new CheckEventArgs("Archive type is:" + layout.ArchiveType,CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs("DateFormat is:" + layout.DateFormat, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs("Granularity is:" + layout.CacheFileGranularity, CheckResult.Success));
+
+                notifier.OnCheckPerformed(new CheckEventArgs("CacheLayout is:" + layout, CheckResult.Success));
+
+                var filesFound = layout.CheckCacheFilesAvailability(new FromCheckNotifierToDataLoadEventListener(notifier));
+
+                notifier.OnCheckPerformed(new CheckEventArgs("Files Found In Cache:" + filesFound,filesFound ? CheckResult.Success : CheckResult.Warning));
+
+                var d = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
+
+                if(d == null)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Cache Directory was null!", CheckResult.Fail));
+                    return;
+                }
+                
+                notifier.OnCheckPerformed(new CheckEventArgs("Cache Directory Is:" + d.FullName,CheckResult.Success));
+            }
+            catch (Exception ex)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Checking failed on " + this, CheckResult.Fail, ex));
+            }
         }
 
     }

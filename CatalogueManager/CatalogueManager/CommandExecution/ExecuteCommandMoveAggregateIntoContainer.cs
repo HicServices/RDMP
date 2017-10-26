@@ -4,7 +4,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
@@ -24,6 +24,9 @@ namespace CatalogueManager.CommandExecution
 
             if(cic != null && !cic.Equals(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
                 SetImpossible("Aggregate belongs to a different CohortIdentificationConfiguration");
+
+            if(_sourceAggregateCommand.ContainerIfAny != null &&  _sourceAggregateCommand.ContainerIfAny.Equals(targetCohortAggregateContainer))
+                SetImpossible("Aggregate is already in container");
         }
 
         public override void Execute()

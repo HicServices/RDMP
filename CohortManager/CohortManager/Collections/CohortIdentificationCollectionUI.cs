@@ -85,6 +85,7 @@ namespace CohortManager.Collections
             var o = e.Model;
             var cic = o as CohortIdentificationConfiguration;
             var cohortContainer = o as CohortAggregateContainer;
+            var patientIndexTablesNode = o as JoinableCollectionNode;
 
             //if user clicked on a cohort identification configuration or on whitespace
             if(cic != null || e.Model == null)
@@ -94,8 +95,10 @@ namespace CohortManager.Collections
             {
                 var rootParent = CommonFunctionality.ParentFinder.GetFirstOrNullParentRecursivelyOfType<CohortIdentificationConfiguration>(cohortContainer);
                 e.MenuStrip = new CohortAggregateContainerMenu(_activator, rootParent, cohortContainer);
-
             }
+
+            if (patientIndexTablesNode != null)
+                e.MenuStrip = new JoinableCollectionNodeMenu(_activator, patientIndexTablesNode);
         }
 
         private void tlvCohortIdentificationConfigurations_ItemActivate(object sender, EventArgs e)

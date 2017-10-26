@@ -180,6 +180,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -226,11 +227,10 @@
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ConnectionStringTextBox.cs" />
-    <Compile Include="Copying\BasicCommandExecution.cs" />
-    <Compile Include="Copying\ICommandExecution.cs" />
-    <Compile Include="Copying\ICommandExecutionFactory.cs" />
-    <Compile Include="Copying\ICommand.cs" />
-    <Compile Include="Copying\ICommandFactory.cs" />
+    <Compile Include="CommandExecution\ICommandExecutionFactory.cs" />
+    <Compile Include="CommandExecution\ICommand.cs" />
+    <Compile Include="CommandExecution\ICommandFactory.cs" />
+    <Compile Include="CommandExecution\Proposals\ICommandExecutionProposal.cs" />
     <Compile Include="DataTableViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -258,6 +258,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DoTransparencyProperly.cs" />
+    <Compile Include="ExceptionCounterUI.cs" />
     <Compile Include="Heatmapping\ExampleData.cs" />
     <Compile Include="Heatmapping\HeatmapUI.cs">
       <SubType>UserControl</SubType>
@@ -273,6 +274,12 @@
       <DependentUpon>HelpIcon.cs</DependentUpon>
     </Compile>
     <Compile Include="HelpSection.cs" />
+    <Compile Include="IconFactory.cs" />
+    <Compile Include="Icons\ChecksAndProgressIcons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
+    </Compile>
     <Compile Include="Icons\DatabaseProviderIcons.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -343,6 +350,7 @@
     <Compile Include="Progress\ProgressUI.Designer.cs">
       <DependentUpon>ProgressUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Progress\ProgressUIEntry.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RAGSmiley.cs">
@@ -409,6 +417,9 @@
     <Compile Include="ViewSourceCodeDialog.Designer.cs">
       <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewSourceCodeToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WideMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -449,6 +460,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="HelpIcon.resx">
       <DependentUpon>HelpIcon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\ChecksAndProgressIcons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ChecksAndProgressIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\DatabaseProviderIcons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -538,6 +553,15 @@
     <Resource Include="Images\DependencyGraphToolbarInformation.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Information.png" />
+    <None Include="Resources\WarningEx.png" />
+    <None Include="Resources\Warning.png" />
+    <None Include="Resources\FailEx.png" />
+    <None Include="Resources\Fail.png" />
+    <None Include="Resources\exclamationEx.png" />
+    <None Include="Resources\exclamation.png" />
+    <None Include="Resources\Blocked.png" />
+    <None Include="Resources\Tick.png" />
     <None Include="Icons\DatabaseProviderIcons\Microsoft.png" />
     <None Include="Icons\DatabaseProviderIcons\MicrosoftOverlay.png" />
     <None Include="Icons\DatabaseProviderIcons\MySql.png" />

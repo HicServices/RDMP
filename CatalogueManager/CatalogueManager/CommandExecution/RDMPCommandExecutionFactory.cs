@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -6,13 +9,17 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Nodes;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.Proposals;
 using ReusableUIComponents.TreeHelper;
 using ScintillaNET;
 
@@ -21,31 +28,50 @@ namespace CatalogueManager.CommandExecution
     public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         private readonly IActivateItems _activator;
-        private Dictionary<ICommand,Dictionary<object,ICommandExecution>> _cachedAnswers = new Dictionary<ICommand, Dictionary<object, ICommandExecution>>();
+        private Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>>();
         private object oLockCachedAnswers = new object();
+        private List<ICommandExecutionProposal> _proposers = new List<ICommandExecutionProposal>();
 
 
         public RDMPCommandExecutionFactory(IActivateItems activator)
         {
             _activator = activator;
+
+            foreach (Type proposerType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<ICommandExecutionProposal>())
+            {
+                try
+                {
+                    ObjectConstructor constructor = new ObjectConstructor();
+                    _proposers.Add((ICommandExecutionProposal)constructor.Construct(proposerType,activator));
+
+                }
+                catch (Exception ex)
+                {
+                    activator.GlobalErrorCheckNotifier.OnCheckPerformed(
+                        new CheckEventArgs("Could not instantiate ICommandExecutionProposal '" + proposerType + "'",
+                            CheckResult.Fail, ex));
+                }
+            }
         }
 
         public ICommandExecution Create(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
         {
             lock (oLockCachedAnswers)
             {
+                CachedDropTarget proposition = new CachedDropTarget(targetModel, insertOption);
+
                 //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
                 if (_cachedAnswers.ContainsKey(cmd))
                 {
                     //if we already have a cached execution for the command and the target
-                    if (_cachedAnswers[cmd].ContainsKey(targetModel))
-                        return _cachedAnswers[cmd][targetModel];//return from cache
+                    if (_cachedAnswers[cmd].ContainsKey(proposition))
+                        return _cachedAnswers[cmd][proposition];//return from cache
                 }
                 else
-                    _cachedAnswers.Add(cmd,new Dictionary<object, ICommandExecution>()); //novel command
+                    _cachedAnswers.Add(cmd, new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
 
                 var result  = CreateNoCache(cmd, targetModel, insertOption);
-                _cachedAnswers[cmd].Add(targetModel,result);
+                _cachedAnswers[cmd].Add(new CachedDropTarget(targetModel,insertOption), result);
 
                 return result;
             }
@@ -100,7 +126,7 @@ namespace CatalogueManager.CommandExecution
             var targetExtractableDatasetsNode = targetModel as ExtractableDataSetsNode;
             if (targetExtractableDatasetsNode != null)
                 return CreateWhenTargetIsExtractableDataSetsNode(cmd,targetExtractableDatasetsNode);
-
+            
             ///////////////Data Loading Drop Targets ///////////////////
 
             var targetProcessTask = targetModel as ProcessTask;
@@ -117,9 +143,18 @@ namespace CatalogueManager.CommandExecution
             if (targetPreLoadDiscardedColumnsNode != null)
                 return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
 
+            foreach (ICommandExecutionProposal proposals in _proposers)
+            {
+                var ce = proposals.ProposeExecution(cmd, targetModel, insertOption);
+                if (ce != null)
+                    return ce;
+            }
+
             //no valid combinations
             return null;
         }
+
+        
 
 
         private ICommandExecution CreateWhenTargetIsLoadStage(ICommand cmd, LoadStageNode targetStage)
@@ -353,13 +388,17 @@ namespace CatalogueManager.CommandExecution
             return null;
 
         }
-
+        
         private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICommand cmd, JoinableCollectionNode targetJoinableCollectionNode)
         {
             var sourceAggregateConfigurationCommand = cmd as AggregateConfigurationCommand;
             if(sourceAggregateConfigurationCommand != null)
                 if (sourceAggregateConfigurationCommand.Aggregate.IsCohortIdentificationAggregate)
-                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode);
+                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode.Configuration);
+
+            var sourceCatalogueCommand = cmd as CatalogueCommand;
+            if (sourceCatalogueCommand != null)
+                return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCommand, targetJoinableCollectionNode.Configuration);
 
             return null;
         }

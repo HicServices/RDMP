@@ -12,7 +12,7 @@ using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPStartup;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
@@ -50,7 +50,13 @@ namespace CatalogueManager.Tutorials
         private TutorialTracker(IActivateItems activator)
         {
             _activator = activator;
-            _progressFile = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"RDMP", "HelpProgress.txt"));
+
+            var root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP"));
+
+            if(!root.Exists)
+                root.Create();
+
+            _progressFile = new FileInfo(Path.Combine(root.FullName, "HelpProgress.txt"));
 
             BuildTutorialList();
 
@@ -104,7 +110,7 @@ namespace CatalogueManager.Tutorials
         public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
         {
             //all tutorials disabled
-            if (TutorialSeen[AllTutorialsText])
+            if (TutorialSeen.ContainsKey(AllTutorialsText) && TutorialSeen[AllTutorialsText])
                 return false;
 
             string type = GetDictionaryKey(workflow);

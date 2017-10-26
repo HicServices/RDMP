@@ -22,8 +22,10 @@ namespace DataExportManager.SimpleDialogs
         private readonly ExternalCohortTable _source;
         public int IDToImport { get; private set; }
 
-        string displayMember;
-        string valueMember;
+        private readonly string _projectNumberMemberName;
+        private readonly string _versionMemberName;
+        private readonly string _displayMember;
+        private readonly string _valueMember;
 
         public SelectWhichCohortToImport(ExternalCohortTable source)
         {
@@ -33,8 +35,8 @@ namespace DataExportManager.SimpleDialogs
             if(source == null)
                 return;
 
-            string projectNumberMemberName,versionMemberName;
-            DataTable dt = ExtractableCohort.GetImportableCohortDefinitionsTable(source,out displayMember,out valueMember,out versionMemberName, out projectNumberMemberName);
+            
+            DataTable dt = ExtractableCohort.GetImportableCohortDefinitionsTable(source,out _displayMember,out _valueMember,out _versionMemberName, out _projectNumberMemberName);
 
             dataGridView1.DataSource = dt;
         }
@@ -47,7 +49,7 @@ namespace DataExportManager.SimpleDialogs
                 return;
             }
 
-            var idUserPlansToImport = (int) dataGridView1.SelectedRows[0].Cells[valueMember].Value;
+            var idUserPlansToImport = (int) dataGridView1.SelectedRows[0].Cells[_valueMember].Value;
 
             var existing = RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>("WHERE ExternalCohortTable_ID = " + _source.ID + " AND OriginID =" + idUserPlansToImport);
 
@@ -76,21 +78,48 @@ namespace DataExportManager.SimpleDialogs
             try
             {
 
-                int? id = null;
+                if (string.IsNullOrWhiteSpace(tbFilter.Text))
+                {
+                    lblFilteringBy.Text = "";
+                    ((DataTable)dataGridView1.DataSource).DefaultView.RowFilter = null;
+                    return;
+                }
+                
+                int? number = null;
 
                 try
                 {
-                    id = int.Parse(tbFilter.Text);
+                    number = int.Parse(tbFilter.Text);
                 }
                 catch (Exception)
                 {
+                    //it's not a number
+                    number = null;
                 }
 
-                string filter = string.Format("{0} LIKE '%{1}%'", displayMember, tbFilter.Text);
+                string filter = null;
 
-                if(id!= null)
-                    filter +=  string.Format(" OR {0} = {1}", valueMember, id);
 
+                //filter is numerical
+                if (number != null)
+                {
+                    filter = string.Format("{0} LIKE '%{3}%' OR {1} = {3} OR {2} = {3}",
+                        _displayMember,
+                        _projectNumberMemberName,
+                        _valueMember,
+                        number);
+
+                    lblFilteringBy.Text = "Filtering by Number";
+                }
+                    else
+                {
+                    filter = string.Format("{0} LIKE '%{1}%'",
+                        _displayMember,
+                        tbFilter.Text);
+
+                    lblFilteringBy.Text = "Filtering by Text";
+                }
+                
                 ((DataTable) dataGridView1.DataSource).DefaultView.RowFilter = filter;
                 
                 tbFilter.ForeColor = Color.Black;
@@ -98,6 +127,7 @@ namespace DataExportManager.SimpleDialogs
             catch (Exception)
             {
                 tbFilter.ForeColor = Color.Red;
+                lblFilteringBy.Text = "Filter Error";
             }
         }
 

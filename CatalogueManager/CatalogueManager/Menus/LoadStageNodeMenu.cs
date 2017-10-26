@@ -25,17 +25,13 @@ namespace CatalogueManager.Menus
         {
             _loadStageNode = loadStageNode;
             _mef = activator.RepositoryLocator.CatalogueRepository.MEF;
-
-            AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-
-
             
            AddMenu<IDataProvider>("Add New Data Provider");
            AddMenu<IAttacher>("Add New Attacher");
            AddMenu<IMutilateDataTables>("Add New Mutilator");
 
-           Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewProcessTask(activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage)));
-           Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewProcessTask(activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage)));
+           Add(new ExecuteCommandCreateNewProcessTask(activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage));
+           Add(new ExecuteCommandCreateNewProcessTask(activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage));
         }
         
         private void AddMenu<T>(string menuName)

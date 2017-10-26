@@ -39,7 +39,6 @@ namespace CatalogueLibrary.QueryBuilding
                 //add filters
                 if (currentContainer.GetFilters() != null)
                     toAdd.AddRange(currentContainer.GetFilters());
-                
             }
 
             return toAdd;
@@ -423,7 +422,12 @@ namespace CatalogueLibrary.QueryBuilding
         {
             Filters_LineNumbers = new int[qb.Filters.Count];
             string toReturn = "";
+            
+            var emptyFilters = qb.Filters.Where(f => string.IsNullOrWhiteSpace(f.WhereSQL)).ToArray();
 
+            if (emptyFilters.Any())
+                throw new QueryBuildingException("The following empty filters were found in the query:" + Environment.NewLine + string.Join(Environment.NewLine, emptyFilters.Select(f => f.Name)));
+            
             //recursively iterate the filter containers joining them up with their operation (AND or OR) and doing tab indentation etc
             if (qb.Filters.Count > 0)
             {

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using ReusableLibraryCode;
 
 
 namespace ReusableUIComponents
@@ -47,9 +48,12 @@ namespace ReusableUIComponents
                 this.WindowState = FormWindowState.Maximized;
         }
 
-        public static void Show(string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,string title = null)
+        public static void Show(string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null, string title = null, Bitmap icon=null)
         {
             WideMessageBox wmb = new WideMessageBox(message, environmentDotStackTrace, keywordNotToAdd);
+
+            if (icon != null)
+                wmb.Icon = new IconFactory().GetIcon(icon);
 
             if(title != null)
                 wmb.Text = title;

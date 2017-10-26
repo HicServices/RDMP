@@ -1,6 +1,8 @@
 using System;
 using System.Windows.Forms;
 using CachingEngine.Factories;
+using CachingEngine.Requests;
+using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
@@ -8,6 +10,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -30,7 +33,7 @@ namespace CatalogueManager.Menus
             var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
 
             foreach (var window in activator.CoreChildProvider.AllPermissionWindows)
-                setWindow.DropDownItems.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window)));
+                Add(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window));
 
             setWindow.DropDownItems.Add(new ToolStripSeparator());
             
@@ -38,13 +41,21 @@ namespace CatalogueManager.Menus
 
             Items.Add(setWindow);
 
-            Items.Add(new ChoosePipelineMenuItem(
-                activator,
-                new PipelineUser(_cacheProgress),
-                new CachingPipelineUseCase(_cacheProgress),
-                "Set Caching Pipeline")
-                );
-            
+            //this will be used as design time fetch request date, set it to min dt to avoid issues around caches not having progress dates etc
+            var fetchRequest = new SingleDayCacheFetchRequestProvider(new CacheFetchRequest(RepositoryLocator.CatalogueRepository,DateTime.MinValue));
+            try
+            {
+                Items.Add(new ChoosePipelineMenuItem(
+                    activator,
+                    new PipelineUser(_cacheProgress),
+                    new CachingPipelineUseCase(_cacheProgress,false, fetchRequest,false),
+                    "Set Caching Pipeline")
+                    );
+            }
+            catch (Exception e)
+            {
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not assemble CacheProgress Pipeline Options", CheckResult.Fail, e));
+            }
             AddCommonMenuItems();
         }
 

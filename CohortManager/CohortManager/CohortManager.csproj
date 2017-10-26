@@ -173,6 +173,7 @@
     <Compile Include="ItemActivation\IActivateCohortIdentificationItems.cs" />
     <Compile Include="Menus\CohortAggregateContainerMenu.cs" />
     <Compile Include="Menus\CohortIdentificationConfigurationMenu.cs" />
+    <Compile Include="Menus\JoinableCollectionNodeMenu.cs" />
     <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraph.cs">
       <SubType>UserControl</SubType>
     </Compile>

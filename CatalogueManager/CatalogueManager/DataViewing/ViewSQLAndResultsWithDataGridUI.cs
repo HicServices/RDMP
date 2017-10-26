@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconOverlays;
@@ -50,6 +51,8 @@ namespace CatalogueManager.DataViewing
             _scintilla = factory.Create();
             splitContainer1.Panel1.Controls.Add(_scintilla);
             _scintilla.TextChanged += _scintilla_TextChanged;
+
+            DoTransparencyProperly.ThisHoversOver(ragSmiley1,dataGridView1);
         }
 
 
@@ -96,20 +99,27 @@ namespace CatalogueManager.DataViewing
         {
             try
             {
-                _server = DataAccessPortal.GetInstance().ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
+                _server = DataAccessPortal.GetInstance()
+                    .ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
 
                 _server.TestConnection();
-                
+
                 string sql = _collection.GetSql();
                 _originalSql = sql;
                 //update the editor to show the user the SQL
                 _scintilla.Text = sql;
 
-                LoadDataTableAsync(_server,sql);
+                LoadDataTableAsync(_server, sql);
+            }
+            catch (QueryBuildingException ex)
+            {
+                ragSmiley1.SetVisible(true);
+                ragSmiley1.Fatal(ex);
             }
             catch (SqlException ex)
             {
-                ExceptionViewer.Show(ex);
+                ragSmiley1.SetVisible(true);
+                ragSmiley1.Fatal(ex);
             }
         }
 

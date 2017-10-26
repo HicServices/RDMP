@@ -1,19 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
 using RDMPStartup;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
@@ -28,7 +32,7 @@ namespace CatalogueManager.Menus
         protected ToolStripMenuItem RefreshObjectMenuItem;
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
-        protected AtomicCommandUIFactory AtomicCommandUIFactory;
+        private AtomicCommandUIFactory AtomicCommandUIFactory;
 
         public RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
         {
@@ -45,6 +49,12 @@ namespace CatalogueManager.Menus
             if (dependencies != null)
                 DependencyViewingMenuItem = new ViewDependenciesToolStripMenuItem(dependencies, new CatalogueObjectVisualisation(activator.CoreIconProvider));
         }
+        protected ToolStripMenuItem Add(IAtomicCommand cmd)
+        {
+            var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
+            Items.Add(mi);
+            return mi;
+        }
 
         protected void AddCommonMenuItems()
         {
@@ -57,13 +67,21 @@ namespace CatalogueManager.Menus
             {
                 foreach (var plugin in _activator.PluginUserInterfaces)
                 {
-                    var toAdd = plugin.GetAdditionalRightClickMenuItems(_databaseEntity);
-
-                    if(toAdd != null && toAdd.Any())
+                    try
                     {
-                        Items.Add(new ToolStripSeparator());
-                        Items.AddRange(toAdd);
+                        var toAdd = plugin.GetAdditionalRightClickMenuItems(_databaseEntity);
+
+                        if (toAdd != null && toAdd.Any())
+                        {
+                            Items.Add(new ToolStripSeparator());
+                            Items.AddRange(toAdd);
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,CheckResult.Fail, ex));
+                    }
+
                 }
 
                 Items.Add(new ExpandAllTreeNodesMenuItem(_activator, _databaseEntity));

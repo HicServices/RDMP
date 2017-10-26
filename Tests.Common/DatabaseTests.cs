@@ -32,7 +32,7 @@ namespace Tests.Common
     public class DatabaseTests
     {
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
-        private static string _serverName;
+        protected static string _serverName;
         private static string _mySqlServer;
         private static string _oracleServer;
 

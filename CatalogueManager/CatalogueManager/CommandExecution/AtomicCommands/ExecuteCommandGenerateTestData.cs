@@ -2,7 +2,7 @@
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.Reports;
 using RDMPStartup;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

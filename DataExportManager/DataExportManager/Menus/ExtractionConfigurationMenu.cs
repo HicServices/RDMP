@@ -52,8 +52,6 @@ namespace DataExportManager.Menus
             _extractionConfiguration = extractionConfiguration;
             _childProvider = childProvider;
             
-            var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-
             var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
 
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
@@ -104,13 +102,13 @@ namespace DataExportManager.Menus
             Items.Add(freeze);
 
             if (extractionConfiguration.IsReleased)
-                Items.Add(factory.CreateMenuItem(new ExecuteCommandUnfreezeExtractionConfiguration(activator, extractionConfiguration)));
+                Add(new ExecuteCommandUnfreezeExtractionConfiguration(activator, extractionConfiguration));
             
             var clone = new ToolStripMenuItem("Clone Extraction", CatalogueIcons.CloneExtractionConfiguration,(s, e) => Clone());
             clone.Enabled = _datasets.Any();
             Items.Add(clone);
 
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration)));
+            Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
             AddCommonMenuItems();
         }
@@ -169,8 +167,8 @@ namespace DataExportManager.Menus
             {
 
                 WideMessageBox.Show("Extraction Configuration '" + _extractionConfiguration + "' belongs to Project '" +
-                                project +
-                                "' which does not have a ProjectNumber, you must have a ProjectNumber to associate a cohort");
+                                    project +
+                                    "' which does not have a ProjectNumber, you must have a ProjectNumber to associate a cohort");
                 return;         
             }
 

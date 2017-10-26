@@ -4,8 +4,8 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
-using ReusableUIComponents.Copying;
 
 namespace CatalogueManager.CommandExecution
 {

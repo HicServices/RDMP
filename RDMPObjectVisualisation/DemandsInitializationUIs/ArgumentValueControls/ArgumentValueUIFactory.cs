@@ -91,11 +91,11 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
 
             //Populate dropdown with the appropriate types
             if (argumentType == typeof(TableInfo))
-                array = GetAllTableInfosAssociatedWithLoadMetadata(parent).ToArray(); //explicit cases where selection is constrained somehow
+                array = GetAllTableInfosAssociatedWithLoadMetadata(repository, parent).ToArray(); //explicit cases where selection is constrained somehow
             else if (argumentType == typeof (ColumnInfo))
                 array = GetAdvertisedColumnInfos(repository,parent,relatedOnlyToLoadMetadata);
             else if (argumentType == typeof (PreLoadDiscardedColumn))
-                array = GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(parent).ToArray();
+                array = GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(repository, parent).ToArray();
             else if (argumentType == typeof (LoadProgress))
                 array = GetAllLoadProgressAssociatedWithLoadMetadata(parent).ToArray();
             else
@@ -159,39 +159,38 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                                                         " in the global or LoadMetadata-related list of ColumnInfos");
             }
         }*/
-        private IEnumerable<TableInfo> GetTableInfosFromParentOrThrow(IArgumentHost parent)
+        private IEnumerable<TableInfo> GetTableInfosFromParentOrThrow(ICatalogueRepository repository, IArgumentHost parent)
         {
             var t = parent as ITableInfoCollectionHost;
 
             if (t == null)
-                throw new NotSupportedException("We are trying to configure arguments for a " + parent.GetType().Name + " but it does not implement interface " + typeof(ITableInfoCollectionHost).Name + " which means we cannot support DemandsInitializations of types TableInfo or any derrivative objects (ColumnInfo,Prediscarded Columns etc).");
+                return repository.GetAllObjects<TableInfo>();
 
             return t.GetTableInfos();
         }
 
-        private IEnumerable<TableInfo> GetAllTableInfosAssociatedWithLoadMetadata(IArgumentHost parent)
+        private IEnumerable<TableInfo> GetAllTableInfosAssociatedWithLoadMetadata(ICatalogueRepository  repository,IArgumentHost parent)
         {
-            return GetTableInfosFromParentOrThrow(parent);
+            return GetTableInfosFromParentOrThrow(repository,parent);
         }
 
 
         private object[] GetAdvertisedColumnInfos(CatalogueRepository repository,IArgumentHost parent, bool relatedOnlyToLoadMetadata)
         {
             return relatedOnlyToLoadMetadata
-                ? GetAllColumnInfosAssociatedWithLoadMetadata(parent).ToArray()
+                ? GetAllColumnInfosAssociatedWithLoadMetadata(repository, parent).ToArray()
                 : repository.GetAllObjects<ColumnInfo>().ToArray();
         }
 
 
-        private IEnumerable<ColumnInfo> GetAllColumnInfosAssociatedWithLoadMetadata(IArgumentHost parent)
+        private IEnumerable<ColumnInfo> GetAllColumnInfosAssociatedWithLoadMetadata(ICatalogueRepository repository,IArgumentHost parent)
         {
-            return GetTableInfosFromParentOrThrow(parent).SelectMany(ti => ti.ColumnInfos);
+            return GetTableInfosFromParentOrThrow(repository,parent).SelectMany(ti => ti.ColumnInfos);
         }
-      
         
-        private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(IArgumentHost parent)
+        private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(ICatalogueRepository repository, IArgumentHost parent)
         {
-            return GetTableInfosFromParentOrThrow(parent).SelectMany(t=>t.PreLoadDiscardedColumns);
+            return GetTableInfosFromParentOrThrow(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);
         }
         private IEnumerable<ILoadProgress> GetAllLoadProgressAssociatedWithLoadMetadata(IArgumentHost parent)
         {

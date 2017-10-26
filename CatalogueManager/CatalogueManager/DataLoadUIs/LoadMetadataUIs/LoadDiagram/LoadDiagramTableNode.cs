@@ -11,7 +11,7 @@ using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {

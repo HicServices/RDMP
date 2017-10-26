@@ -81,7 +81,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(745, 150);
+            this.richTextBox1.Size = new System.Drawing.Size(743, 148);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             this.richTextBox1.WordWrap = false;
@@ -91,6 +91,7 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer1.Location = new System.Drawing.Point(7, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -111,7 +112,7 @@
             this.keywordHelpTextListbox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.keywordHelpTextListbox1.Location = new System.Drawing.Point(0, 0);
             this.keywordHelpTextListbox1.Name = "keywordHelpTextListbox1";
-            this.keywordHelpTextListbox1.Size = new System.Drawing.Size(745, 147);
+            this.keywordHelpTextListbox1.Size = new System.Drawing.Size(743, 145);
             this.keywordHelpTextListbox1.TabIndex = 5;
             // 
             // WideMessageBox

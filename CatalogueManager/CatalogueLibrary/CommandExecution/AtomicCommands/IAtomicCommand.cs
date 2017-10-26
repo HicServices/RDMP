@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
-using CatalogueManager.Icons.IconProvision;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace CatalogueLibrary.CommandExecution.AtomicCommands
 {
     public interface IAtomicCommand : ICommandExecution
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
@@ -14,6 +15,7 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -35,10 +37,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public event RDMPCollectionCreatedEventHandler CollectionCreated;
 
-        public ToolboxWindowManager(RefreshBus refreshBus,DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public ToolboxWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             _windowFactory = new WindowFactory(repositoryLocator,mainDockPanel);
-            ContentManager = new ContentWindowManager(refreshBus, mainDockPanel, repositoryLocator, _windowFactory,this);
+            ContentManager = new ContentWindowManager(refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
 
             _mainDockPanel = mainDockPanel;
             _mainDockPanel.Theme = new VS2015LightTheme();

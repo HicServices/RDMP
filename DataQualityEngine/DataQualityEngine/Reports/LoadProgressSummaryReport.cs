@@ -226,8 +226,8 @@ namespace DataQualityEngine.Reports
                     var cacheFileSystem = new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(new FromCheckNotifierToDataLoadEventListener(notifier));
                     
                     var layout = cacheFileSystem.CreateCacheLayout();
-                    availableFiles = layout.GetSortedDateQueue().ToArray();
-                    ResolvedCachePath = layout.GetLoadCacheDirectory();
+                    availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
+                    ResolvedCachePath = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
 
 
                 }
