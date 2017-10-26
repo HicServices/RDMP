@@ -42,7 +42,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
 
                 _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(cic, int.MaxValue));
-                _activator.ExecuteCohortIdentificationConfiguration(this, cic);
+                new ExecuteCommandActivate(_activator, cic).Execute();
             }   
         }
 

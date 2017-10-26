@@ -29,8 +29,9 @@ namespace CatalogueManager.Menus
         public AggregateConfigurationMenu(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IActivateItems itemActivator, AggregateConfiguration aggregate, ICoreIconProvider coreIconProvider):base(itemActivator,aggregate)
         {
             _aggregate = aggregate;
-            
-            Items.Add("View SQL", CatalogueIcons.SQL, (s, e) => itemActivator.ViewDataSample(new ViewAggregateExtractUICollection(aggregate)));
+
+
+            Items.Add("View SQL", itemActivator.CoreIconProvider.GetImage(RDMPConcept.SQL,OverlayKind.Execute), ViewDatasetSample);
 
             //only allow them to execute graph if it is normal aggregate graph
             if(!aggregate.IsCohortIdentificationAggregate)
@@ -38,10 +39,6 @@ namespace CatalogueManager.Menus
                 var execute = new ToolStripMenuItem("Execute Aggregate Graph", CatalogueIcons.ExecuteArrow,(s, e) => itemActivator.ExecuteAggregate(this, aggregate));
                 execute.Enabled = itemActivator.AllowExecute;
                 Items.Add(execute);
-            }
-            else
-            {
-                Items.Add("Execute Query", coreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute), (s, e) => itemActivator.ViewDataSample(new ViewAggregateExtractUICollection(aggregate)));
             }
 
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => new PopupChecksUI("Checking " + aggregate, false).Check(aggregate));
@@ -67,6 +64,32 @@ namespace CatalogueManager.Menus
             Items.Add(clearShortcutFilterContainer);
 
             AddCommonMenuItems();
+        }
+
+        private void ViewDatasetSample(object sender,EventArgs e)
+        {
+            var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
+            
+            var collection = new ViewAggregateExtractUICollection(_aggregate);
+
+            //if it has a cic with a query cache
+            if (cic != null && cic.QueryCachingServer_ID != null)
+            {
+                switch (MessageBox.Show("Use Query Cache when building query?", "Use Configured Cache", MessageBoxButtons.YesNoCancel))
+                {
+                    case DialogResult.Cancel:
+                        return;
+                    case DialogResult.Yes:
+                        collection.UseQueryCache = true;
+                        break;
+                    case DialogResult.No:
+                        collection.UseQueryCache = false;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            _activator.ViewDataSample(collection);
         }
 
         private void ClearShortcut()

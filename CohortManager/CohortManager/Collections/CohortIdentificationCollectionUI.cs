@@ -96,14 +96,6 @@ namespace CohortManager.Collections
             if (patientIndexTablesNode != null)
                 e.MenuStrip = new JoinableCollectionNodeMenu(_activator, patientIndexTablesNode);
         }
-
-        private void tlvCohortIdentificationConfigurations_ItemActivate(object sender, EventArgs e)
-        {
-            var cic = tlvCohortIdentificationConfigurations.SelectedObject as CohortIdentificationConfiguration;
-            
-            if(cic != null)
-                _activator.ActivateCohortIdentificationConfiguration(this,cic);
-        }
         
         private void tlvCohortIdentificationConfigurations_KeyUp(object sender, KeyEventArgs e)
         {

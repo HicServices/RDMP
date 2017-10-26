@@ -12,20 +12,20 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     public class ExecuteCommandActivate : BasicCommandExecution,IAtomicCommand
     {
         private readonly IActivateItems _activator;
-        private readonly DatabaseEntity _databaseEntity;
+        private readonly object _o;
 
-        public ExecuteCommandActivate(IActivateItems activator, DatabaseEntity databaseEntity)
+        public ExecuteCommandActivate(IActivateItems activator, object o)
         {
             _activator = activator;
-            _databaseEntity = databaseEntity;
+            _o = o;
 
-            if(!activator.CommandExecutionFactory.CanActivate(databaseEntity))
+            if(!activator.CommandExecutionFactory.CanActivate(o))
                 SetImpossible("Object cannot be Activated");
         }
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(_databaseEntity, OverlayKind.Edit);
+            return iconProvider.GetImage(_o, OverlayKind.Edit);
         }
 
         public override string GetCommandName()
@@ -37,7 +37,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _activator.CommandExecutionFactory.Activate(_databaseEntity);
+            _activator.CommandExecutionFactory.Activate(_o);
         }
     }
 }

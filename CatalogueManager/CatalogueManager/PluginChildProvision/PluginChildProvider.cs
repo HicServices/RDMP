@@ -24,12 +24,6 @@ namespace CatalogueManager.PluginChildProvision
         public abstract object[] GetChildren(object model);
         public abstract ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity);
 
-        /// <summary>
-        /// Use ItemActivator ShowRDMPSingleDatabaseObjectControl to create new tabs or ActivateWindow to show Forms (must be top level controls i.e. Forms)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="model"></param>
-        public abstract void Activate(object sender, object model);
         public abstract Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None);
     }
 }

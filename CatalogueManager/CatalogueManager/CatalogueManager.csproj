@@ -333,6 +333,7 @@
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />
@@ -719,9 +720,7 @@
     <Compile Include="Menus\FilterMenu.cs" />
     <Compile Include="Menus\FiltersParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
-    <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
     <Compile Include="Menus\MenuItems\AddAggregateMenuItem.cs" />

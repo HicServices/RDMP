@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.ObjectVisualisation;
@@ -17,6 +18,7 @@ namespace CatalogueManager.DataViewing.Collections
     {
         public PersistStringHelper Helper { get; private set; }
         public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
+        public bool UseQueryCache { get; set; }
 
         public ViewAggregateExtractUICollection()
         {
@@ -47,6 +49,23 @@ namespace CatalogueManager.DataViewing.Collections
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {
             ribbon.Add(AggregateConfiguration);
+            
+            if(UseQueryCache)
+            {
+                var cache = GetCacheServer();
+                if (cache != null)
+                    ribbon.Add(cache);
+            }
+        }
+
+        private ExternalDatabaseServer GetCacheServer()
+        {
+            var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
+
+            if (cic != null && cic.QueryCachingServer_ID != null)
+                return cic.QueryCachingServer;
+
+            return null;
         }
 
         public IDataAccessPoint GetDataAccessPoint()
@@ -71,6 +90,9 @@ namespace CatalogueManager.DataViewing.Collections
                 var globals = cic.GetAllParameters();
 
                 var builder = new CohortQueryBuilder(ac, globals, isJoinable);
+                
+                if(UseQueryCache)
+                    builder.CacheServer = GetCacheServer();
 
                 sql = builder.GetDatasetSampleSQL(100);
             }

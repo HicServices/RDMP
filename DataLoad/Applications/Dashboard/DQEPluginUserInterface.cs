@@ -46,10 +46,6 @@ namespace Dashboard
             return null;
         }
 
-        public override void Activate(object sender, object model)
-        {
-
-        }
 
         public override Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {

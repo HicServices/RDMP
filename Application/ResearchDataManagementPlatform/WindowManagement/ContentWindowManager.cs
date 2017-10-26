@@ -308,17 +308,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<DataAccessCredentialsUI, DataAccessCredentials>(dataAccessCredentials);
         }
 
-        public void ActivateParameterNode(object sender, ParametersNode parameters)
-        {
-            var parameterCollectionUI = new ParameterCollectionUI();
-
-            ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
-            var options = factory.Create(parameters.Collector);
-            parameterCollectionUI.SetUp(options);
-
-            ShowWindow(parameterCollectionUI, true);
-        }
-
         public void ViewDataSample(IViewSQLAndResultsCollection collection)
         {
             Activate<ViewSQLAndResultsWithDataGridUI>(collection);
@@ -399,17 +388,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var log = Activate<SingleDataLoadLogView, ExternalDatabaseServer>(loggingServer);
             log.ShowDataLoadRunID(dataLoadRunID);
-        }
-
-
-        public void ActivateCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<CohortIdentificationConfigurationUI,CohortIdentificationConfiguration>(cic);
-        }
-
-        public void ExecuteCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<ExecuteCohortIdentificationConfigurationUI,CohortIdentificationConfiguration>(cic,CatalogueIcons.ExecuteArrow);
         }
 
         public void ActivateProcessTask(object sender, ProcessTask processTask)

@@ -97,9 +97,7 @@ namespace CatalogueManager.ItemActivation
         void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument);
         void ActivateSupportingSqlTable(object sender, SupportingSQLTable supportingSQLTable);
         void ActivateDataAccessCredentials(object sender, DataAccessCredentials dataAccessCredentials);
-
-        void ActivateParameterNode(object sender, ParametersNode parameters);
-
+        
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
         DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard);
@@ -123,8 +121,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);
         void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
 
-        void ActivateCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic);
-        void ExecuteCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic);
         void ActivateProcessTask(object sender, ProcessTask processTask);
         
         void ActivateLoadProgress(object sender, LoadProgress loadProgress);

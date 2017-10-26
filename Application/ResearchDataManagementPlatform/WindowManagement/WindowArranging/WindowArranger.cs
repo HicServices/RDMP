@@ -51,7 +51,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _toolboxWindowManager.Create(RDMPCollection.Cohort, DockState.DockLeft);
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(cohortIdentificationConfiguration, int.MaxValue));
-            _activator.ExecuteCohortIdentificationConfiguration(this, cohortIdentificationConfiguration);
+            new ExecuteCommandActivate(_activator, cohortIdentificationConfiguration);
         }
 
         public void SetupEditDataExtractionProject(object sender, Project project)

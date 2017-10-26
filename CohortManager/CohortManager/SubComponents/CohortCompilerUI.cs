@@ -82,7 +82,8 @@ namespace CohortManager.SubComponents
     /// 
     /// 
     /// </summary>
-    public partial class CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing
+    public partial class 
+        CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing
     {
         public event EventHandler SelectionChanged;
         private CohortIdentificationConfiguration _configuration;

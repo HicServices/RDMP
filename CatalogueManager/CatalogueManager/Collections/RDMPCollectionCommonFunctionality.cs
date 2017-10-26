@@ -293,23 +293,10 @@ namespace CatalogueManager.Collections
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {
             var o = Tree.SelectedObject;
-
-            //also actually handles ExtractionFilters as well as AggregateFilters
-            var parameters = o as ParametersNode;
             
-            if (parameters != null)
-                _activator.ActivateParameterNode(this, parameters);
-
-            var d = o as DatabaseEntity;
-            if(d != null)
-            {
-                var cmd = new ExecuteCommandActivate(_activator, d);
-                if(!cmd.IsImpossible)
-                    cmd.Execute();
-            }
-
-            foreach (IPluginUserInterface pluginUserInterface in _activator.PluginUserInterfaces)
-                pluginUserInterface.Activate(sender, o);
+            var cmd = new ExecuteCommandActivate(_activator, o);
+            if(!cmd.IsImpossible)
+                cmd.Execute();
         }
 
 

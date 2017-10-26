@@ -49,7 +49,7 @@ namespace CatalogueManager.Menus
 
             RepositoryLocator = _activator.RepositoryLocator;
             
-            Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(activator.CoreIconProvider)));
+            
         }
         protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
         {
@@ -78,10 +78,10 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
 
             if(_databaseEntity != null)
+            {
                 Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
-
-            if(DependencyViewingMenuItem != null)
-                Items.Add(DependencyViewingMenuItem);
+                Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+            }
 
             if(_databaseEntity != null)
             {
