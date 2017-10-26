@@ -15,6 +15,8 @@ using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.CommandExecution.Proposals;
 using Rhino.Mocks;
 using Tests.Common;
@@ -97,11 +99,24 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             Assert.AreEqual(Errors.Count,0);
         }
 
+        private string[] _exemptNamespaces = new string[]
+        {
+            "System.ComponentModel.Design",
+            "System.Windows.Forms"
+        };
+
         private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
         {
             List<Exception> whoCares;
             foreach (Type type in CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(InterfaceType.IsAssignableFrom))
             {
+                if (type.Namespace == null) 
+                    continue;
+
+                //theese guys can be wherever they want
+                if (_exemptNamespaces.Any(e=>type.Namespace.StartsWith(e)))
+                    continue;
+
                 if (!legalNamespaces.Any(ns=>type.Namespace.EndsWith(ns)))
                     yield return "Expected Type '" + type.Name + "' to be in namespace(s) '" + string.Join("' or '",legalNamespaces) + "' but it was in '" + type.Namespace + "'";
                 

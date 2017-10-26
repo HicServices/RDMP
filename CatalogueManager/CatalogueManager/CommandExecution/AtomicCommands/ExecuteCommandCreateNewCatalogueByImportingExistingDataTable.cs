@@ -6,6 +6,8 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

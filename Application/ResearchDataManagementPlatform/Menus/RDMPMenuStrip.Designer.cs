@@ -1,6 +1,6 @@
-﻿namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
+﻿namespace ResearchDataManagementPlatform.Menus
 {
-    partial class RDMPMenuStrip
+    partial class RDMPTopMenuStrip
     {
         /// <summary> 
         /// Required designer variable.
@@ -444,7 +444,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.rdmpTaskBar1);
             this.Controls.Add(this.menuStrip1);
-            this.Name = "RDMPMenuStrip";
+            this.Name = "RDMPTopMenuStrip";
             this.Size = new System.Drawing.Size(658, 52);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -496,7 +496,7 @@
         private System.Windows.Forms.ToolStripMenuItem codeGenerationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tutorialsToolStripMenuItem;
-        private TopBar.RDMPTaskBar rdmpTaskBar1;
+        private WindowManagement.TopBar.RDMPTaskBar rdmpTaskBar1;
         private System.Windows.Forms.ToolStripMenuItem userSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
 

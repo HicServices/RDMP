@@ -8,9 +8,11 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecution,IAtomicCommand
     {

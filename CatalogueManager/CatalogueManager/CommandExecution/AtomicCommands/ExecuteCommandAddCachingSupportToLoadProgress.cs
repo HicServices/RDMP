@@ -2,14 +2,15 @@
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddCachingSupportToLoadProgress : BasicCommandExecution,IAtomicCommand
     {

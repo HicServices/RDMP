@@ -333,14 +333,14 @@
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
-    <Compile Include="Collections\Providers\ExpandAllTreeNodesMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
@@ -378,9 +378,7 @@
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\CachedDropTarget.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
     <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAggregateConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogue.cs" />
@@ -732,9 +730,7 @@
     <Compile Include="Menus\MenuItems\AddSupportingDocumentMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddSupportingSqlTableMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddCatalogueItemMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
       <SubType>Component</SubType>

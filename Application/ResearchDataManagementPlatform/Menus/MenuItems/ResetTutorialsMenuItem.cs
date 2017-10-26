@@ -2,8 +2,9 @@ using System;
 using System.Windows.Forms;
 using CatalogueManager.Tutorials;
 
-namespace ResearchDataManagementPlatform.WindowManagement.TopMenu.MenuItems
+namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
+    [System.ComponentModel.DesignerCategory("")]
     public class ResetTutorialsMenuItem : ToolStripMenuItem
     {
         private readonly TutorialTracker _tracker;

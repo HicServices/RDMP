@@ -1,29 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode;
+using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.Dependencies;
 using ReusableUIComponents.Dependencies.Models;
+using ReusableUIComponents.Icons.IconProvision;
 
-namespace ReusableUIComponents.Dependencies
+namespace ReusableUIComponents.CommandExecution.AtomicCommands
 {
-    public class ViewDependenciesToolStripMenuItem : ToolStripMenuItem
+    public class ExecuteCommandViewDependencies : BasicCommandExecution,IAtomicCommand
     {
         private readonly IHasDependencies _root;
         private readonly Type[] _allowFilterOnTypes;
         private readonly IObjectVisualisation _visualiser;
         private readonly List<Type> _initialGraphTypes;
 
-        public ViewDependenciesToolStripMenuItem(IHasDependencies root, IObjectVisualisation visualiser, List<Type> initialGraphTypes = null )
-            : base("View Dependencies", Images.ViewDependencies)
+        public ExecuteCommandViewDependencies(IHasDependencies hasDependenciesOrNull, IObjectVisualisation visualiser, List<Type> initialGraphTypes = null)
         {
-            _root = root;
+            if (hasDependenciesOrNull == null)
+            {
+                SetImpossible("Object is not IHasDependencies");
+                return;
+            }
+
+            _root = hasDependenciesOrNull;
 
             //Find all other IHasDependencies objects in the assembly and let the user filter on them
-            _allowFilterOnTypes = root.GetType().Assembly.GetTypes()
+            _allowFilterOnTypes = _root.GetType().Assembly.GetTypes()
                     .Where(t => typeof(IHasDependencies).IsAssignableFrom(t) && !(t.IsInterface || t.IsAbstract))
                     .ToArray();
 
@@ -31,10 +37,10 @@ namespace ReusableUIComponents.Dependencies
             _initialGraphTypes = initialGraphTypes;
         }
 
-        protected override void OnClick(EventArgs e)
+        public override void Execute()
         {
-            base.OnClick(e);
-            
+            base.Execute();
+
             DependencyGraph g = new DependencyGraph(_allowFilterOnTypes, _visualiser);
             if (_initialGraphTypes != null)
                 g.ShowTypeList(_initialGraphTypes);
@@ -49,6 +55,11 @@ namespace ReusableUIComponents.Dependencies
             f.Show();
 
             g.GraphDependenciesOf(_root);
+        }
+        
+        public Image GetImage(IIconProvider iconProvider)
+        {
+            return Images.ViewDependencies;
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Providers;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -32,16 +31,17 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using DataQualityEngine;
 using MapsDirectlyToDatabaseTableUI;
+using ResearchDataManagementPlatform.Menus.MenuItems;
+using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
-using ResearchDataManagementPlatform.WindowManagement.TopMenu.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
+namespace ResearchDataManagementPlatform.Menus
 {
 
     /// <summary>
@@ -68,14 +68,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
     /// - Generate user interface document (the document you are currently reading).
     /// </summary>
 
-    public partial class RDMPMenuStrip : RDMPUserControl
+    public partial class RDMPTopMenuStrip : RDMPUserControl
     {
         private IActivateItems _activator;
         private ToolboxWindowManager _windowManager;
         private DockContent currentTab;
         private ISaveableUI _saveable;
 
-        public RDMPMenuStrip()
+        public RDMPTopMenuStrip()
         {
             InitializeComponent();
         }
@@ -335,7 +335,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopMenu
             _activator = _windowManager.ContentManager;
 
             //top menu strip setup / adjustment
-            LocationsMenu.DropDownItems.Add(new DataExportMenu(RepositoryLocator));
+            LocationsMenu.DropDownItems.Add(new DataExportMenu(_activator));
             
             _windowManager.ContentManager.WindowFactory.TabChanged += WindowFactory_TabChanged;
 

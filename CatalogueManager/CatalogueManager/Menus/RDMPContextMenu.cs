@@ -20,6 +20,8 @@ using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
@@ -47,10 +49,7 @@ namespace CatalogueManager.Menus
 
             RepositoryLocator = _activator.RepositoryLocator;
             
-            var dependencies = databaseEntity as IHasDependencies;
-
-            if (dependencies != null)
-                DependencyViewingMenuItem = new ViewDependenciesToolStripMenuItem(dependencies, new CatalogueObjectVisualisation(activator.CoreIconProvider));
+            Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(activator.CoreIconProvider)));
         }
         protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
         {

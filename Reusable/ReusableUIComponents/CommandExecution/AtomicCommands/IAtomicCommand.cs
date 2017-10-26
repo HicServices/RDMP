@@ -2,7 +2,7 @@
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CatalogueLibrary.CommandExecution.AtomicCommands
+namespace ReusableUIComponents.CommandExecution.AtomicCommands
 {
     public interface IAtomicCommand : ICommandExecution
     {

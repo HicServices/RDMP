@@ -2,6 +2,8 @@
 using System.Drawing;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands

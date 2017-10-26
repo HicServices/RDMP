@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using CatalogueManager.Tutorials;
 
-namespace ResearchDataManagementPlatform.WindowManagement.TopMenu.MenuItems
+namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
     [System.ComponentModel.DesignerCategory("")]
     public class DisableTutorialsMenuItem : ToolStripMenuItem
