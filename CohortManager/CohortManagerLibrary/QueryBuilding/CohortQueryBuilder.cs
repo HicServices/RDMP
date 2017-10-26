@@ -39,7 +39,18 @@ namespace CohortManagerLibrary.QueryBuilding
         private AggregateConfiguration configuration;
         private readonly bool _isExplicitRequestForJoinableInceptionAggregateQuery;
 
-        public ExternalDatabaseServer CacheServer { get; set; }
+        public ExternalDatabaseServer CacheServer
+        {
+            get { return _cacheServer; }
+            set
+            {
+                _cacheServer = value;
+                if(helper != null)
+                    helper.CacheServer = value;
+
+                SQLOutOfDate = true;
+            }
+        }
 
         public ParameterManager ParameterManager = new ParameterManager();
 
@@ -101,6 +112,7 @@ namespace CohortManagerLibrary.QueryBuilding
             //create a clone of ourselves so we don't mess up the ParameterManager of this instance
             var cloneBuilder = new CohortQueryBuilder(configuration, _globals);
             cloneBuilder.TopX = topX;
+            cloneBuilder.CacheServer = CacheServer;
 
             string sampleSQL = 
                 cloneBuilder.GetSQLForAggregate(configuration,
@@ -233,6 +245,7 @@ namespace CohortManagerLibrary.QueryBuilding
 
         private IOrderable _stopContainerWhenYouReach;
         private bool _doNotWriteOutParameters;
+        private ExternalDatabaseServer _cacheServer;
 
         public IOrderable StopContainerWhenYouReach
         {

@@ -32,14 +32,15 @@ namespace CohortManager.SubComponents
         {
             this.label1 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblName = new System.Windows.Forms.Label();
+            this.lblDescription = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.tbName = new System.Windows.Forms.TextBox();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.queryCachingServerSelector = new CatalogueManager.AggregationUIs.QueryCachingServerSelector();
             this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
+            this.btnCollapseOrExpand = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -59,23 +60,23 @@ namespace CohortManager.SubComponents
             this.tbID.Size = new System.Drawing.Size(100, 20);
             this.tbID.TabIndex = 54;
             // 
-            // label2
+            // lblName
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(44, 35);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 52;
-            this.label2.Text = "Name";
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(44, 35);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(35, 13);
+            this.lblName.TabIndex = 52;
+            this.lblName.Text = "Name";
             // 
-            // label3
+            // lblDescription
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(19, 61);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 13);
-            this.label3.TabIndex = 53;
-            this.label3.Text = "Description";
+            this.lblDescription.AutoSize = true;
+            this.lblDescription.Location = new System.Drawing.Point(19, 61);
+            this.lblDescription.Name = "lblDescription";
+            this.lblDescription.Size = new System.Drawing.Size(60, 13);
+            this.lblDescription.TabIndex = 53;
+            this.lblDescription.Text = "Description";
             // 
             // tbDescription
             // 
@@ -138,21 +139,32 @@ namespace CohortManager.SubComponents
             this.CohortCompilerUI1.Size = new System.Drawing.Size(1237, 511);
             this.CohortCompilerUI1.TabIndex = 0;
             // 
-            // ExecuteCohortIdentificationConfigurationUI
+            // btnCollapseOrExpand
+            // 
+            this.btnCollapseOrExpand.Location = new System.Drawing.Point(39, 4);
+            this.btnCollapseOrExpand.Name = "btnCollapseOrExpand";
+            this.btnCollapseOrExpand.Size = new System.Drawing.Size(16, 22);
+            this.btnCollapseOrExpand.TabIndex = 59;
+            this.btnCollapseOrExpand.Text = "-";
+            this.btnCollapseOrExpand.UseVisualStyleBackColor = true;
+            this.btnCollapseOrExpand.Click += new System.EventHandler(this.btnCollapseOrExpand_Click);
+            // 
+            // CohortIdentificationConfigurationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnCollapseOrExpand);
             this.Controls.Add(this.tbDescription);
             this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbID);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lblName);
             this.Controls.Add(this.ticket);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.tbName);
             this.Controls.Add(this.queryCachingServerSelector);
             this.Controls.Add(this.CohortCompilerUI1);
-            this.Name = "ExecuteCohortIdentificationConfigurationUI";
+            this.Name = "CohortIdentificationConfigurationUI";
             this.Size = new System.Drawing.Size(1243, 694);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -166,10 +178,11 @@ namespace CohortManager.SubComponents
         private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbID;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblName;
         private CatalogueManager.LocationsMenu.Ticketing.TicketingControl ticket;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.TextBox tbName;
+        private System.Windows.Forms.Button btnCollapseOrExpand;
     }
 }

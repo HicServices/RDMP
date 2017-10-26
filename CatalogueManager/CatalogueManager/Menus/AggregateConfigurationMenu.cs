@@ -31,7 +31,7 @@ namespace CatalogueManager.Menus
             _aggregate = aggregate;
 
 
-            Items.Add("View SQL", itemActivator.CoreIconProvider.GetImage(RDMPConcept.SQL,OverlayKind.Execute), ViewDatasetSample);
+            Items.Add("View Sample", itemActivator.CoreIconProvider.GetImage(RDMPConcept.SQL,OverlayKind.Execute), ViewDatasetSample);
 
             //only allow them to execute graph if it is normal aggregate graph
             if(!aggregate.IsCohortIdentificationAggregate)
@@ -72,8 +72,8 @@ namespace CatalogueManager.Menus
             
             var collection = new ViewAggregateExtractUICollection(_aggregate);
 
-            //if it has a cic with a query cache
-            if (cic != null && cic.QueryCachingServer_ID != null)
+            //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
+            if (cic != null && cic.QueryCachingServer_ID != null && _aggregate.PatientIndexJoinablesUsed.Any())
             {
                 switch (MessageBox.Show("Use Query Cache when building query?", "Use Configured Cache", MessageBoxButtons.YesNoCancel))
                 {

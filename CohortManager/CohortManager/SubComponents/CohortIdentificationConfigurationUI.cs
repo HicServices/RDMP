@@ -113,6 +113,33 @@ namespace CohortManager.SubComponents
         {
             _configuration.Ticket = ticket.TicketText;
         }
+
+        private bool collapse = true;
+        private void btnCollapseOrExpand_Click(object sender, EventArgs e)
+        {
+
+            ticket.Visible = !collapse;
+            lblName.Visible = !collapse;
+            lblDescription.Visible = !collapse;
+            tbName.Visible = !collapse;
+            tbDescription.Visible = !collapse;
+            objectSaverButton1.Visible = !collapse;
+
+            if (collapse)
+            {
+                CohortCompilerUI1.Top = tbID.Bottom;
+                CohortCompilerUI1.Height = Bottom - tbID.Bottom;
+
+            }
+            else
+            {
+                CohortCompilerUI1.Top = objectSaverButton1.Bottom;
+                CohortCompilerUI1.Height = Bottom - objectSaverButton1.Bottom;
+            }
+
+            collapse = !collapse;
+            btnCollapseOrExpand.Text = collapse ? "-" : "+";
+        }
     }
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
     public abstract class CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>
