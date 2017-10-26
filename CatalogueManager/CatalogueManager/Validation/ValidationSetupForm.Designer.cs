@@ -49,6 +49,15 @@ namespace CatalogueManager.Validation
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnConfigureStandardRegex = new System.Windows.Forms.ToolStripButton();
             this.btnSave = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.cbxTimePeriodColumn = new System.Windows.Forms.ToolStripComboBox();
+            this.lblPickTimePeriodColumn = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.cbxPivotColumn = new System.Windows.Forms.ToolStripComboBox();
+            this.lblPickPivotColumn = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.olvColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -234,7 +243,16 @@ namespace CatalogueManager.Validation
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnConfigureStandardRegex,
-            this.btnSave});
+            this.btnSave,
+            this.toolStripSeparator2,
+            this.toolStripLabel1,
+            this.cbxTimePeriodColumn,
+            this.lblPickTimePeriodColumn,
+            this.toolStripSeparator1,
+            this.toolStripLabel2,
+            this.cbxPivotColumn,
+            this.lblPickPivotColumn,
+            this.toolStripSeparator3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1183, 25);
@@ -260,6 +278,61 @@ namespace CatalogueManager.Validation
             this.btnSave.Size = new System.Drawing.Size(23, 22);
             this.btnSave.Text = "Save Validation";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(117, 22);
+            this.toolStripLabel1.Text = "Time Period Column";
+            // 
+            // cbxTimePeriodColumn
+            // 
+            this.cbxTimePeriodColumn.Name = "cbxTimePeriodColumn";
+            this.cbxTimePeriodColumn.Size = new System.Drawing.Size(200, 25);
+            this.cbxTimePeriodColumn.SelectedIndexChanged += new System.EventHandler(this.cbxTimePeriodColumn_SelectedIndexChanged);
+            // 
+            // lblPickTimePeriodColumn
+            // 
+            this.lblPickTimePeriodColumn.BackColor = System.Drawing.Color.White;
+            this.lblPickTimePeriodColumn.Name = "lblPickTimePeriodColumn";
+            this.lblPickTimePeriodColumn.Size = new System.Drawing.Size(16, 22);
+            this.lblPickTimePeriodColumn.Text = "...";
+            this.lblPickTimePeriodColumn.Click += new System.EventHandler(this.lblPickTimePeriodColumn_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(80, 22);
+            this.toolStripLabel2.Text = "Pivot Column";
+            // 
+            // cbxPivotColumn
+            // 
+            this.cbxPivotColumn.Name = "cbxPivotColumn";
+            this.cbxPivotColumn.Size = new System.Drawing.Size(200, 25);
+            this.cbxPivotColumn.SelectedIndexChanged += new System.EventHandler(this.cbxPivotColumn_SelectedIndexChanged);
+            // 
+            // lblPickPivotColumn
+            // 
+            this.lblPickPivotColumn.BackColor = System.Drawing.Color.White;
+            this.lblPickPivotColumn.Name = "lblPickPivotColumn";
+            this.lblPickPivotColumn.Size = new System.Drawing.Size(16, 22);
+            this.lblPickPivotColumn.Text = "...";
+            this.lblPickPivotColumn.Click += new System.EventHandler(this.lblPickPivotColumn_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // timer1
             // 
@@ -310,6 +383,15 @@ namespace CatalogueManager.Validation
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripComboBox cbxTimePeriodColumn;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+        private System.Windows.Forms.ToolStripComboBox cbxPivotColumn;
+        private System.Windows.Forms.ToolStripLabel lblPickTimePeriodColumn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripLabel lblPickPivotColumn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 

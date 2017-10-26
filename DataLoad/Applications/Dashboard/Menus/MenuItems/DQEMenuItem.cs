@@ -50,16 +50,6 @@ namespace Dashboard.Menus.MenuItems
                 }
             }
 
-            var timeCoverIdmissing = catalogue.TimeCoverage_ExtractionInformation_ID == null;
-
-            string timeCoverageText = timeCoverIdmissing ? "Pick Time Coverage Column (Required)" : "Change Time Coverage Column";
-            Image timeCoverageIcon = iconProvider.GetImage(RDMPConcept.TimeCoverageField, timeCoverIdmissing ? OverlayKind.Problem : OverlayKind.None);
-
-            DropDownItems.Add(timeCoverageText, timeCoverageIcon, (s, e) => ChooseTimeCoverageExtractionInformation(catalogue));
-
-            string pivotText = catalogue.PivotCategory_ExtractionInformation_ID == null ? "Pick Pivot Category Column (Optional)" : "Change Pivot Category Column";
-            DropDownItems.Add(pivotText, CatalogueIcons.PivotField, (s, e) => ChoosePivotCategoryExtractionInformation(catalogue));
-
             Add(new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(catalogue));
 
             DropDownItems.Add(new ToolStripSeparator());
@@ -78,58 +68,5 @@ namespace Dashboard.Menus.MenuItems
             manageServers.RepositoryLocator = _activator.RepositoryLocator;
             manageServers.Show();
         }
-        
-        private void ChooseTimeCoverageExtractionInformation(Catalogue c)
-        {
-            //fire up a chooser for the current value
-            DialogResult dr;
-
-            var extractionInformation = SelectAppropriateExtractionInformation(c, c.TimeCoverage_ExtractionInformation_ID, out dr);
-
-            //if the user chose a new value
-            if (dr == DialogResult.OK)
-            {
-                //set the Catalogues property to the new value
-                if (extractionInformation != null)
-                    c.TimeCoverage_ExtractionInformation_ID = extractionInformation.ID;
-                else
-                    c.TimeCoverage_ExtractionInformation_ID = null;
-
-                c.SaveToDatabase();
-            }
-        }
-        private void ChoosePivotCategoryExtractionInformation(Catalogue c)
-        {
-            //fire up a chooser for the current value
-            DialogResult dr;
-            var extractionInformation = SelectAppropriateExtractionInformation(c, c.PivotCategory_ExtractionInformation_ID, out dr);
-
-            //if the user chose a new value
-            if (dr == DialogResult.OK)
-            {
-                //set the Catalogues property to the new value
-                if (extractionInformation != null)
-                    c.PivotCategory_ExtractionInformation_ID = extractionInformation.ID;
-                else
-                    c.PivotCategory_ExtractionInformation_ID = null;
-
-                c.SaveToDatabase();
-            }
-        }
-
-        private ExtractionInformation SelectAppropriateExtractionInformation(Catalogue cata, int? oldValue, out DialogResult dialogResult)
-        {
-            if (cata != null)
-            {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(cata.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
-                dialogResult = dialog.ShowDialog();
-
-                return dialog.Selected as ExtractionInformation;
-            }
-
-            dialogResult = DialogResult.Ignore;
-            return null;
-        }
-    
     }
 }
