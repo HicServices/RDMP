@@ -323,8 +323,6 @@
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="Dashboard_1_TemporaryKey.pfx" />
-    <None Include="Dashboard_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
