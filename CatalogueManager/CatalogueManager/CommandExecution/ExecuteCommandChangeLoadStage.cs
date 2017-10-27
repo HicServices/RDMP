@@ -1,21 +1,20 @@
 ﻿using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandChangeLoadStage : BasicCommandExecution
+    internal class ExecuteCommandChangeLoadStage : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly ProcessTask _sourceProcessTask;
         private readonly LoadStageNode _targetStage;
 
-        public ExecuteCommandChangeLoadStage(IActivateItems activator, ProcessTaskCommand sourceProcessTaskCommand, LoadStageNode targetStage)
+        public ExecuteCommandChangeLoadStage(IActivateItems activator, ProcessTaskCommand sourceProcessTaskCommand, LoadStageNode targetStage) : base(activator)
         {
-            _activator = activator;
             _sourceProcessTask = sourceProcessTaskCommand.ProcessTask;
             _targetStage = targetStage;
 
@@ -32,7 +31,7 @@ namespace CatalogueManager.CommandExecution
 
             _sourceProcessTask.LoadStage = _targetStage.LoadStage;
             _sourceProcessTask.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_sourceProcessTask.LoadMetadata));
+            Publish(_sourceProcessTask.LoadMetadata);
         }
     }
 }

@@ -2,24 +2,21 @@
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.Reports;
 using RDMPStartup;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandGenerateTestData : BasicCommandExecution
+    public class ExecuteCommandGenerateTestData : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandGenerateTestData(IActivateItems activator)
+        public ExecuteCommandGenerateTestData(IActivateItems activator) : base(activator)
         {
-            _activator = activator;
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            var dialog = new GenerateTestDataUI(_activator,this);
+            var dialog = new GenerateTestDataUI(Activator,this);
             dialog.Show();
         }
     }

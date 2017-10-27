@@ -4,23 +4,22 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandAddFilesAsSupportingDocuments : BasicCommandExecution
+    public class ExecuteCommandAddFilesAsSupportingDocuments : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly FileCollectionCommand _fileCollectionCommand;
         private readonly Catalogue _targetCatalogue;
 
-        public ExecuteCommandAddFilesAsSupportingDocuments(IActivateItems activator, FileCollectionCommand fileCollectionCommand, Catalogue targetCatalogue)
+        public ExecuteCommandAddFilesAsSupportingDocuments(IActivateItems activator, FileCollectionCommand fileCollectionCommand, Catalogue targetCatalogue) : base(activator)
         {
-            _activator = activator;
             _fileCollectionCommand = fileCollectionCommand;
             _targetCatalogue = targetCatalogue;
             var allExisting = targetCatalogue.GetAllSupportingDocuments(FetchOptions.AllGlobalsAndAllLocals);
@@ -50,7 +49,7 @@ namespace CatalogueManager.CommandExecution
                 doc.SaveToDatabase();
             }
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_targetCatalogue));
+            Publish(_targetCatalogue);
         }
     }
 }

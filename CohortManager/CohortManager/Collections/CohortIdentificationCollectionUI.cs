@@ -56,10 +56,6 @@ namespace CohortManager.Collections
             CommonFunctionality.SetUp(
                 tlvCohortIdentificationConfigurations,
                 _activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(),
-                new RDMPCommandExecutionFactory(_activator),
-                
                 olvName,//column with the icon
                 tbFilter, 
                 olvName,//column that can be renamed
@@ -85,6 +81,7 @@ namespace CohortManager.Collections
             var o = e.Model;
             var cic = o as CohortIdentificationConfiguration;
             var cohortContainer = o as CohortAggregateContainer;
+            var patientIndexTablesNode = o as JoinableCollectionNode;
 
             //if user clicked on a cohort identification configuration or on whitespace
             if(cic != null || e.Model == null)
@@ -94,16 +91,10 @@ namespace CohortManager.Collections
             {
                 var rootParent = CommonFunctionality.ParentFinder.GetFirstOrNullParentRecursivelyOfType<CohortIdentificationConfiguration>(cohortContainer);
                 e.MenuStrip = new CohortAggregateContainerMenu(_activator, rootParent, cohortContainer);
-
             }
-        }
 
-        private void tlvCohortIdentificationConfigurations_ItemActivate(object sender, EventArgs e)
-        {
-            var cic = tlvCohortIdentificationConfigurations.SelectedObject as CohortIdentificationConfiguration;
-            
-            if(cic != null)
-                _activator.ActivateCohortIdentificationConfiguration(this,cic);
+            if (patientIndexTablesNode != null)
+                e.MenuStrip = new JoinableCollectionNodeMenu(_activator, patientIndexTablesNode);
         }
         
         private void tlvCohortIdentificationConfigurations_KeyUp(object sender, KeyEventArgs e)

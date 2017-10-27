@@ -1,24 +1,24 @@
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandReOrderAggregate : BasicCommandExecution
+    internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly AggregateConfigurationCommand _sourceAggregateCommand;
         private CohortAggregateContainer _parentContainer;
         
         private IOrderable _targetOrder;
         private readonly InsertOption _insertOption;
 
-        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption) :this(targetAggregateConfiguration,insertOption)
+        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption) :this(activator,targetAggregateConfiguration,insertOption)
         {
-            _activator = activator;
             _sourceAggregateCommand = sourceAggregateCommand;
             _parentContainer = targetAggregateConfiguration.GetCohortAggregateContainerIfAny();
 
@@ -35,9 +35,8 @@ namespace CatalogueManager.CommandExecution
             }
         }
 
-        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(targetCohortAggregateContainer,insertOption)
+        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
         {
-            _activator = activator;
             _sourceAggregateCommand = sourceAggregateCommand;
             _parentContainer = targetCohortAggregateContainer.GetParentContainerIfAny();
             
@@ -48,7 +47,7 @@ namespace CatalogueManager.CommandExecution
             }
         }
 
-        private ExecuteCommandReOrderAggregate(IOrderable target, InsertOption insertOption)
+        private ExecuteCommandReOrderAggregate(IActivateItems activator, IOrderable target, InsertOption insertOption):base(activator)
         {
             _targetOrder = target;
             _insertOption = insertOption;
@@ -67,7 +66,7 @@ namespace CatalogueManager.CommandExecution
             _parentContainer.AddChild(source, targetOrder);
 
             //refresh the parent container
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_parentContainer));
+            Publish(_parentContainer);
             
 
         }

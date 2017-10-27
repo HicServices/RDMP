@@ -170,31 +170,27 @@
       <DependentUpon>CohortIdentificationIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortIdentificationConfiguration.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortIdentificationConfiguration.cs" />
     <Compile Include="ItemActivation\IActivateCohortIdentificationItems.cs" />
     <Compile Include="Menus\CohortAggregateContainerMenu.cs" />
     <Compile Include="Menus\CohortIdentificationConfigurationMenu.cs" />
-    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraph.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraphObjectCollection.cs" />
-    <Compile Include="SubComponents\EmptyLineElements\CohortIdentificationHeader.cs" />
-    <Compile Include="SubComponents\ExecuteCohortIdentificationConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SubComponents\ExecuteCohortIdentificationConfigurationUI.Designer.cs">
-      <DependentUpon>ExecuteCohortIdentificationConfigurationUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.Designer.cs">
-      <DependentUpon>ViewCohortIdentificationConfigurationUI.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Menus\JoinableCollectionNodeMenu.cs" />
     <Compile Include="SubComponents\CohortIdentificationConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SubComponents\CohortIdentificationConfigurationUI.Designer.cs">
       <DependentUpon>CohortIdentificationConfigurationUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraph.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraphObjectCollection.cs" />
+    <Compile Include="SubComponents\EmptyLineElements\CohortIdentificationHeader.cs" />
+    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.Designer.cs">
+      <DependentUpon>ViewCohortIdentificationConfigurationUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SubComponents\CohortCompilerUI.cs">
       <SubType>UserControl</SubType>
@@ -241,9 +237,6 @@
       <LastGenOutput>CohortIdentificationIcons.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SubComponents\ExecuteCohortIdentificationConfigurationUI.resx">
-      <DependentUpon>ExecuteCohortIdentificationConfigurationUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SubComponents\CohortIdentificationConfigurationUI.resx">
       <DependentUpon>CohortIdentificationConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -281,7 +274,6 @@
     <EmbeddedResource Include="Wizard\SimpleSetOperation.resx">
       <DependentUpon>SimpleSetOperation.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="CohortManager_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

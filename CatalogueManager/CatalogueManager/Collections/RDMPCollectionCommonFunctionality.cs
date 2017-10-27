@@ -20,6 +20,7 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Copying;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -28,7 +29,7 @@ using CatalogueManager.Refreshing;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -83,15 +84,14 @@ namespace CatalogueManager.Collections
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        /// <param name="renameableObjectTypes">List of INameable object Types which can be renamed (only rows containing items of this type will be user editable)</param>
         /// <param name="renameLabel">A Label for displaying the help text telling the user how to rename (F2)</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, IRDMPPlatformRepositoryServiceLocator repositoryLocator,ICommandFactory commandFactory, ICommandExecutionFactory commandExecutionFactory,OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, Label renameLabel)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, Label renameLabel)
         {
             IsSetup = true;
             _activator = activator;
             _activator.RefreshBus.Subscribe(this);
 
-            RepositoryLocator = repositoryLocator;
+            RepositoryLocator = _activator.RepositoryLocator;
 
             Tree = tree;
             Tree.FullRowSelect = true;
@@ -113,7 +113,10 @@ namespace CatalogueManager.Collections
 
             ParentFinder = new TreeNodeParentFinder(Tree);
 
-            DragDropProvider = new DragDropProvider(commandFactory,commandExecutionFactory,tree);
+            DragDropProvider = new DragDropProvider(
+                _activator.CommandFactory,
+                _activator.CommandExecutionFactory,
+                tree);
             
             if(renameableColumn != null)
             {
@@ -270,7 +273,7 @@ namespace CatalogueManager.Collections
         {
             var o = e.Model;
             if (o is AggregateConfiguration)
-                e.MenuStrip = new AggregateConfigurationMenu(RepositoryLocator, _activator, (AggregateConfiguration)o, CoreIconProvider);
+                e.MenuStrip = new AggregateConfigurationMenu(_activator, (AggregateConfiguration)o, CoreIconProvider);
 
             var container = o as AggregateFilterContainer;
             if (container != null)
@@ -281,26 +284,19 @@ namespace CatalogueManager.Collections
 
             if (o is ParametersNode)
                 e.MenuStrip = new FiltersParametersNodeMenu( _activator, (ParametersNode)o, CoreIconProvider);
+
+            //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
+            if(o != null)
+                Tree.SelectedObject = o;
         }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {
             var o = Tree.SelectedObject;
-            var config = o as AggregateConfiguration;
-
-            //also actually handles ExtractionFilters as well as AggregateFilters
-            var filter = o as ConcreteFilter;
-            var parameters = o as ParametersNode;
-
-            if (config != null)
-                _activator.ActivateAggregate(this, config);
-            if (filter != null)
-                _activator.ActivateFilter(this, filter);
-            if (parameters != null)
-                _activator.ActivateParameterNode(this, parameters);
-
-            foreach (IPluginUserInterface pluginUserInterface in _activator.PluginUserInterfaces)
-                pluginUserInterface.Activate(sender, o);
+            
+            var cmd = new ExecuteCommandActivate(_activator, o);
+            if(!cmd.IsImpossible)
+                cmd.Execute();
         }
 
 

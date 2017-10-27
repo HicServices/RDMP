@@ -257,6 +257,9 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Cloning\MissingTableException.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
     <Compile Include="DataFlowPipeline\ContextFactory.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowContextProvider.cs" />

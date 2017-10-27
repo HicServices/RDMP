@@ -1,23 +1,22 @@
 using System;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandImportNewCopyOfFilterIntoContainer : BasicCommandExecution
+    internal class ExecuteCommandImportNewCopyOfFilterIntoContainer : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private FilterCommand _filterCommand;
         private IContainer _targetContainer;
 
-        public ExecuteCommandImportNewCopyOfFilterIntoContainer(IActivateItems activator,FilterCommand filterCommand, IContainer targetContainer)
+        public ExecuteCommandImportNewCopyOfFilterIntoContainer(IActivateItems activator,FilterCommand filterCommand, IContainer targetContainer) : base(activator)
         {
-            _activator = activator;
             _filterCommand = filterCommand;
             _targetContainer = targetContainer;
 
@@ -42,7 +41,7 @@ namespace CatalogueManager.CommandExecution
             if (newFilter != null)
             {
                 _targetContainer.AddChild(newFilter);
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity) _targetContainer));
+                Publish((DatabaseEntity) _targetContainer);
             }
         }
     }

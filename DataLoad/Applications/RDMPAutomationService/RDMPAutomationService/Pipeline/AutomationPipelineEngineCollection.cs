@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using RDMPAutomationService.EventHandlers;
 using RDMPAutomationService.Pipeline.Sources;
 using RDMPStartup;
@@ -24,9 +25,9 @@ namespace RDMPAutomationService.Pipeline
 
         public DataFlowPipelineEngine<OnGoingAutomationTask> DLEPipe { get; private set; }
         public DataFlowPipelineEngine<OnGoingAutomationTask> DQEPipe { get; private set; }
-
-        public List<DataFlowPipelineEngine<OnGoingAutomationTask>> UserSpecificPipelines { get; set; }
         public DataFlowPipelineEngine<OnGoingAutomationTask> CachePipe { get; private set; }
+
+        public List<DataFlowPipelineEngine<OnGoingAutomationTask>> UserSpecificPipelines { get; private set; }
 
         public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator,AutomationServiceSlot slot, AutomationDestination fixedDestination)
         {
@@ -61,7 +62,6 @@ namespace RDMPAutomationService.Pipeline
             Task task = new Task(() =>
             {
                 //we are not trying to stop so look for new tasks
-
                 _slot.RevertToDatabaseState();
 
                 DLEPipe.ExecutePipeline(new GracefulCancellationToken());

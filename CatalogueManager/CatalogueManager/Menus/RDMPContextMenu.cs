@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
@@ -14,9 +15,13 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
+using DataLoadEngine.DataProvider.FromCache;
+using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
@@ -28,33 +33,55 @@ namespace CatalogueManager.Menus
         protected IActivateItems _activator;
         private readonly DatabaseEntity _databaseEntity;
 
-        protected ToolStripMenuItem RefreshObjectMenuItem;
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
-        protected AtomicCommandUIFactory AtomicCommandUIFactory;
+        private AtomicCommandUIFactory AtomicCommandUIFactory;
 
         public RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
         {
             _activator = activator;
             _databaseEntity = databaseEntity;
-            RepositoryLocator = _activator.RepositoryLocator;
-            
+
             AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
 
-            RefreshObjectMenuItem = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandRefreshObject(activator, databaseEntity));
-            
-            var dependencies = databaseEntity as IHasDependencies;
+            if(databaseEntity != null)
+                Add(new ExecuteCommandActivate(activator,databaseEntity));
 
-            if (dependencies != null)
-                DependencyViewingMenuItem = new ViewDependenciesToolStripMenuItem(dependencies, new CatalogueObjectVisualisation(activator.CoreIconProvider));
+            RepositoryLocator = _activator.RepositoryLocator;
+            
+            
+        }
+        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
+        {
+            var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
+
+            if (shortcutKey != Keys.None)
+                mi.ShortcutKeys = shortcutKey;
+            
+            Items.Add(mi);
+            return mi;
         }
 
         protected void AddCommonMenuItems()
         {
-            Items.Add(RefreshObjectMenuItem);
+            var deletable = _databaseEntity as IDeleteable;
+            var nameable = _databaseEntity as INamed;
+
+            Items.Add(new ToolStripSeparator());
+
+            Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
             
-            if(DependencyViewingMenuItem != null)
-                Items.Add(DependencyViewingMenuItem);
+            if (deletable != null)
+                Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
+
+            if (nameable != null)
+                Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
+
+            if(_databaseEntity != null)
+            {
+                Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
+                Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+            }
 
             if(_databaseEntity != null)
             {
@@ -79,6 +106,17 @@ namespace CatalogueManager.Menus
 
                 Items.Add(new ExpandAllTreeNodesMenuItem(_activator, _databaseEntity));
             }
+        }
+
+        protected void Activate(DatabaseEntity o)
+        {
+            var cmd = new ExecuteCommandActivate(_activator, o);
+            cmd.Execute();
+        }
+
+        protected void Publish(DatabaseEntity o)
+        {
+            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
         }
     }
 }

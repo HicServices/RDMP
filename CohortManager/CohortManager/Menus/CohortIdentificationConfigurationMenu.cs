@@ -32,35 +32,20 @@ namespace CohortManager.Menus
         public CohortIdentificationConfigurationMenu(IActivateCohortIdentificationItems activator, CohortIdentificationConfiguration cic) : base( activator,cic)
         {
             _cic = cic;
-
-            AtomicCommandUIFactory factory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-
-            if(cic!=null)
-            {
-                var execute = new ToolStripMenuItem("Execute Configuration", CatalogueIcons.ExecuteArrow,(s, e) => activator.ExecuteCohortIdentificationConfiguration(this, cic));
-                execute.Enabled = !cic.Frozen;
-                Items.Add(execute);
-
-                Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
-            }
             
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)));
+            Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL),(s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
 
+            Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator));
 
-            if (cic != null)
-            {
-                Items.Add("Clone Configuration", CohortIdentificationIcons.cloneCohortIdentificationConfiguration,
-                    (s, e) => CloneCohortIdentificationConfiguration());
+            Items.Add("Clone Configuration", CohortIdentificationIcons.cloneCohortIdentificationConfiguration,
+                (s, e) => CloneCohortIdentificationConfiguration());
 
-                var freeze = new ToolStripMenuItem("Freeze Configuration",
-                    CatalogueIcons.FrozenCohortIdentificationConfiguration, (s, e) => FreezeConfiguration());
-                freeze.Enabled = !cic.Frozen;
-                Items.Add(freeze);
-
-            }
-
-            if(cic != null)
-                AddCommonMenuItems();
+            var freeze = new ToolStripMenuItem("Freeze Configuration",
+                CatalogueIcons.FrozenCohortIdentificationConfiguration, (s, e) => FreezeConfiguration());
+            freeze.Enabled = !cic.Frozen;
+            Items.Add(freeze);
+            
+            AddCommonMenuItems();
         }
 
 
@@ -76,14 +61,14 @@ namespace CohortManager.Menus
                 var clone = _cic.CreateClone(checks);
 
                 //Load the clone up
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(clone));
+                Publish(clone);
             }
         }
 
         private void FreezeConfiguration()
         {
             _cic.Freeze();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_cic));
+            Publish(_cic);
         }
     }
 

@@ -73,6 +73,8 @@ namespace CatalogueLibrary.Providers
 
         public JoinInfo[] AllJoinInfos { get; set; }
 
+        public AnyTableSqlParameter[] AllAnyTableParameters;
+
         //Filter / extraction side of things
 
         private Dictionary<int,ExtractionInformation> _allExtractionInformations;
@@ -91,6 +93,8 @@ namespace CatalogueLibrary.Providers
         {
             PluginChildProviders = pluginChildProviders;
             _errorsCheckNotifier = errorsCheckNotifier;
+
+            AllAnyTableParameters = repository.GetAllObjects<AnyTableSqlParameter>();
 
             AllANOTables = repository.GetAllObjects<ANOTable>();
             ANOTablesNode = new ANOTablesNode();
@@ -442,16 +446,24 @@ namespace CatalogueLibrary.Providers
 
         private void AddChildren(AggregateConfiguration aggregateConfiguration, DescendancyList descendancy)
         {
+            var childrenObjects = new HashSet<object>();
+
+            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
+            var node = new ParametersNode(aggregateConfiguration, parameters);
+            childrenObjects.Add(node);
+
             //we can step into this twice, once via Catalogue children and once via CohortIdentificationConfiguration children
             //if we get in via Catalogue children then descendancy will be Ignore=true we don't end up emphasising into CatalogueCollectionUI when
             //really user wants to see it in CohortIdentificationCollectionUI
             if(aggregateConfiguration.RootFilterContainer_ID != null)
             {
                 var container = _filterChildProvider.AllAggregateContainers[(int) aggregateConfiguration.RootFilterContainer_ID];
-
+                
                 AddChildren(container,descendancy.Add(container));
-                AddToDictionaries(new HashSet<object>(new object[]{container}),descendancy);
+                childrenObjects.Add(container);
             }
+
+            AddToDictionaries(childrenObjects, descendancy);
         }
 
         private void AddChildren(AggregateFilterContainer container, DescendancyList descendancy)
@@ -571,6 +583,11 @@ namespace CatalogueLibrary.Providers
         private void AddChildren(CohortIdentificationConfiguration cic)
         {
             HashSet<object> children = new HashSet<object>();
+
+            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(cic)).Cast<ISqlParameter>().ToArray();
+            var node = new ParametersNode(cic, parameters);
+
+            children.Add(node);
 
             //if it has a root container
             if (cic.RootCohortAggregateContainer_ID != null)

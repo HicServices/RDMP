@@ -1,21 +1,20 @@
 ﻿using System;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
+    internal class ExecuteCommandMoveContainerIntoContainer : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly ContainerCommand _containerCommand;
         private readonly IContainer _targetContainer;
 
-        public ExecuteCommandMoveContainerIntoContainer(IActivateItems activator, ContainerCommand containerCommand, IContainer targetContainer)
+        public ExecuteCommandMoveContainerIntoContainer(IActivateItems activator, ContainerCommand containerCommand, IContainer targetContainer) : base(activator)
         {
-            _activator = activator;
             _containerCommand = containerCommand;
             _targetContainer = targetContainer;
 
@@ -29,7 +28,7 @@ namespace CatalogueManager.CommandExecution
 
             _containerCommand.Container.MakeIntoAnOrphan();
             _targetContainer.AddChild(_containerCommand.Container);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs((DatabaseEntity) _targetContainer));
+            Publish((DatabaseEntity) _targetContainer);
         }
     }
 }

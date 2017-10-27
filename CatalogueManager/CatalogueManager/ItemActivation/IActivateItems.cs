@@ -34,6 +34,7 @@ using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.ItemActivation
 {
@@ -54,33 +55,24 @@ namespace CatalogueManager.ItemActivation
 
         IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
-        bool AllowExecute { get; }
         ICoreIconProvider CoreIconProvider { get; }
 
         ICheckNotifier GlobalErrorCheckNotifier { get; }
-
-        void ActivateCatalogue(object sender, Catalogue c);
-        void ActivateDQEResultViewing(object sender, Catalogue c);
-        void ActivateViewCatalogueExtractionSql(object sender, Catalogue c);
-
-        void ActivateLoadMetadata(object sender, LoadMetadata lmd);
-        void ActivateAggregate(object sender, AggregateConfiguration aggregate);
         
-        void ActivateCatalogueItem(object sender, CatalogueItem cataItem);//user wants to edit the textual metadata 
-        void ActivateExtractionInformation(object sender, ExtractionInformation extractionInformation); //user wants to create/delete/edit ExtractionInformation
+        ICommandFactory CommandFactory { get;}
+        ICommandExecutionFactory CommandExecutionFactory { get;}
 
-        void ActivateFilter(object sender, ConcreteFilter filter);
-
-        void ExecuteAggregate(object sender, AggregateConfiguration aggregate);
-        void ExecuteLoadMetadata(object sender, LoadMetadata lmd);
-        void ExecuteCacheProgress(object sender, CacheProgress cp);
-
+        /// <summary>
+        /// You might want to use CommandExecutionFactory.Activate instead unless you have a specific combination in mind
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="databaseObject"></param>
+        /// <returns></returns>
+        T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
+        
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);
         bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
-
-        void ActivateViewLoadMetadataLog(object sender,LoadMetadata loadMetadata);
-
-        void ActivateExtractionFilterParameterSet(object sender,ExtractionFilterParameterSet parameterSet);
 
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
         void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue);
@@ -89,9 +81,7 @@ namespace CatalogueManager.ItemActivation
         void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument);
         void ActivateSupportingSqlTable(object sender, SupportingSQLTable supportingSQLTable);
         void ActivateDataAccessCredentials(object sender, DataAccessCredentials dataAccessCredentials);
-
-        void ActivateParameterNode(object sender, ParametersNode parameters);
-
+        
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
         DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard);
@@ -103,8 +93,7 @@ namespace CatalogueManager.ItemActivation
         /// </summary>
         /// <param name="o"></param>
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
-
-
+        
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
         void ActivateJoinInfoConfiguration(object sender, TableInfo tableInfo);
 
@@ -116,16 +105,11 @@ namespace CatalogueManager.ItemActivation
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);
         void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
 
-        void ActivateCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic);
-        void ExecuteCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic);
-        void ActivateProcessTask(object sender, ProcessTask processTask);
-        void ActivateExecuteDQE(object sender, Catalogue catalogue);
         void ActivateLoadProgress(object sender, LoadProgress loadProgress);
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
         void ActivateTableInfo(object sender, TableInfo tableInfo);
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
-        void ActivateCacheProgress(object sender, CacheProgress cacheProgress);
         void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
     }
 }

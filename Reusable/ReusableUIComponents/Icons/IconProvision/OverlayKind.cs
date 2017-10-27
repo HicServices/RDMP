@@ -17,6 +17,7 @@
         Internal,
         Delete,
         Edit,
-        Locked
+        Locked,
+        Help
     }
 }

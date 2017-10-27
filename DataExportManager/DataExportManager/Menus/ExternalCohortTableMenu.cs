@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -63,7 +65,7 @@ namespace DataExportManager.Menus
 
             if (_project.ProjectNumber == null)
             {
-                foreach (ToolStripMenuItem item in Items)
+                foreach (var item in Items.OfType<ToolStripMenuItem>())
                 {
                     item.Text += " (Project has no Project Number)";
                     item.Enabled = false;
@@ -143,7 +145,7 @@ namespace DataExportManager.Menus
                     if (customColsCreated > 0)
                         MessageBox.Show("Also created " + customColsCreated + " custom columns");
 
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(newCohort));
+                    Publish(newCohort);
                 }
                 catch (Exception exception)
                 {
@@ -170,8 +172,11 @@ namespace DataExportManager.Menus
         {
             ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline();
             configureAndExecuteDialog.Dock = DockStyle.Fill;
-            configureAndExecuteDialog.AddInitializationObject(request);
-            configureAndExecuteDialog.SetPipelineOptions(null, null, CohortCreationRequest.Context, RepositoryLocator.CatalogueRepository);
+            configureAndExecuteDialog.SetPipelineOptions(null, null, (DataFlowPipelineContext<DataTable>)request.GetContext(), RepositoryLocator.CatalogueRepository);
+
+            foreach (object o in request.GetInitializationObjects(RepositoryLocator.CatalogueRepository))
+                configureAndExecuteDialog.AddInitializationObject(o);
+
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccesfully(configureAndExecuteDialog,request);
 
             //add in the logging server
@@ -196,7 +201,7 @@ namespace DataExportManager.Menus
             }
 
             if (request.CohortCreatedIfAny != null)
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(request.CohortCreatedIfAny));
+                Publish(request.CohortCreatedIfAny);
 
             if (MessageBox.Show("Pipeline reports it has successfully loaded the cohort, would you like to close the Form?", "Succesfully Created Cohort", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 responsibleControl.ParentForm.Close();

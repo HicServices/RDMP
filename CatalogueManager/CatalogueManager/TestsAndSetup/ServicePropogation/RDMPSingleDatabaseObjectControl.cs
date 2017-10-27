@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
+using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
@@ -63,6 +64,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             var saveableUI = this as ISaveableUI;
             if(saveableUI != null)
                 saveableUI.GetObjectSaverButton().OfferChanceToRevertOrSaveIfRequired();
+        }
+
+        public void Publish(DatabaseEntity e)
+        {
+            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
     }
 }

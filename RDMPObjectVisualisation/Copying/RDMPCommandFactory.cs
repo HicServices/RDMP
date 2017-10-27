@@ -14,7 +14,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableUIComponents.Annotations;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.TreeHelper;
 
 namespace RDMPObjectVisualisation.Copying
@@ -65,7 +65,7 @@ namespace RDMPObjectVisualisation.Copying
                 return new ColumnCommand(icolumn);
 
             //table column pointers (not extractable)
-            var columnInfo = modelObject as ColumnInfo;
+            var columnInfo = modelObject as ColumnInfo; //ColumnInfo is not an IColumn btw because it does not have column order or other extraction rule stuff (alias, hash etc)
             var linkedColumnInfo = modelObject as LinkedColumnInfoNode;
             
             if (columnInfo != null || linkedColumnInfo != null)
@@ -80,14 +80,13 @@ namespace RDMPObjectVisualisation.Copying
                 return new TableInfoCommand(tableInfo);
 
             //catalogues
-            var catalogue = modelObject as Catalogue;
-            var manyCatalogues = IsArrayOf<Catalogue>(modelObject);
-                
-            if (catalogue != null)
-                return new CatalogueCommand(catalogue);
-
-            if (manyCatalogues != null)
-                return new ManyCataloguesCommand(manyCatalogues);
+            var catalogues = IsArrayOf<Catalogue>(modelObject);
+            
+            if (catalogues != null)
+                if(catalogues.Length == 1)
+                    return new CatalogueCommand(catalogues[0]);
+                else
+                    return new ManyCataloguesCommand(catalogues);
 
             //filters
             var filter = modelObject as IFilter;
@@ -114,13 +113,9 @@ namespace RDMPObjectVisualisation.Copying
                 return new ExtractableCohortCommand(extractableCohort);
 
             //extractable data sets
-            var extractableDataSet = modelObject as ExtractableDataSet;
-            if (extractableDataSet != null)
-                return new ExtractableDataSetCommand(extractableDataSet);
-
-            var extractableDataSetArray = modelObject as ExtractableDataSet[];
-            if (extractableDataSetArray != null)
-                return new ExtractableDataSetCommand(extractableDataSetArray);
+            var extractableDataSets = IsArrayOf<ExtractableDataSet>(modelObject);
+            if (extractableDataSets != null)
+                return new ExtractableDataSetCommand(extractableDataSets);
 
             var extractableDataSetPackage = modelObject as ExtractableDataSetPackage;
             if(extractableDataSetPackage != null)
@@ -144,6 +139,9 @@ namespace RDMPObjectVisualisation.Copying
 
         private T[] IsArrayOf<T>(object modelObject)
         {
+            if(modelObject is T)
+                return new []{(T)modelObject};
+
             if (!(modelObject is IEnumerable))
                 return null;
 
@@ -151,15 +149,16 @@ namespace RDMPObjectVisualisation.Copying
 
             List<T> toReturn = new List<T>();
 
-
             foreach (var o in array)
             {
-                if (o == null || o.GetType() != typeof (T))
-                    return null;
+                //if array contains anything that isn't a T
+                if (!(o is T))
+                    return null; //it's not an array of T
                 
                 toReturn.Add((T)o);
             }
 
+            //it's an array of T
             return toReturn.ToArray();
         }
     }

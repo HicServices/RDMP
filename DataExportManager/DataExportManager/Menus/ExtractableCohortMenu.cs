@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -15,10 +12,12 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CohortUI.ImportCustomData;
 using DataExportManager.Collections.Providers;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.DataViewing.Collections;
 using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
@@ -39,7 +38,7 @@ namespace DataExportManager.Menus
             _cohort = cohort;
             Items.Add("View TOP 100 identifiers",null, (s, e) => ViewTop100());
 
-            Items.Add("Import File as custom data", CatalogueIcons.ImportFile, (s, e) => ImportFileAsCustomData());
+            Add(new ExecuteCommandImportFileAsCustomDataForCohort(activator,cohort));
 
             Items.Add("Import CohortIdentificationConfiguration PatientIndexTable as custom data", activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import), (s, e) => ExecutePatientIndexTableAndImportAsCustomData());
 
@@ -65,23 +64,6 @@ namespace DataExportManager.Menus
             }
         }
 
-        private void ImportFileAsCustomData()
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Multiselect = true;
-
-            DialogResult dialogResult = ofd.ShowDialog(this);
-
-            if (dialogResult == DialogResult.OK)
-            {
-                foreach (string file in ofd.FileNames)
-                {
-                    var importer = new ImportCustomDataFileUI(_activator, _cohort, new FlatFileToLoad(new FileInfo(file)));
-                    importer.RepositoryLocator = RepositoryLocator;
-                    _activator.ShowWindow(importer, true);
-                }
-            }
-        }
 
         private void ViewTop100()
         {

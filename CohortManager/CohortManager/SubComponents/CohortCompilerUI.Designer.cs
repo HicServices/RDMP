@@ -56,14 +56,13 @@ namespace CohortManager.SubComponents
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.cbAutoCache = new System.Windows.Forms.CheckBox();
-            this.ddOptimisation = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfiguration)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // otvConfiguration
+            // tlvConfiguration
             // 
             this.tlvConfiguration.AllColumns.Add(this.olvAggregate);
             this.tlvConfiguration.AllColumns.Add(this.olvCatalogue);
@@ -76,6 +75,7 @@ namespace CohortManager.SubComponents
             this.tlvConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tlvConfiguration.BackColor = System.Drawing.Color.WhiteSmoke;
             this.tlvConfiguration.CellEditUseWholeCell = false;
             this.tlvConfiguration.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvAggregate,
@@ -89,7 +89,7 @@ namespace CohortManager.SubComponents
             this.tlvConfiguration.FullRowSelect = true;
             this.tlvConfiguration.HideSelection = false;
             this.tlvConfiguration.Location = new System.Drawing.Point(4, 0);
-            this.tlvConfiguration.Name = "otvConfiguration";
+            this.tlvConfiguration.Name = "tlvConfiguration";
             this.tlvConfiguration.ShowGroups = false;
             this.tlvConfiguration.Size = new System.Drawing.Size(536, 538);
             this.tlvConfiguration.TabIndex = 0;
@@ -314,21 +314,10 @@ namespace CohortManager.SubComponents
             this.cbAutoCache.Text = "Auto Cache";
             this.cbAutoCache.UseVisualStyleBackColor = true;
             // 
-            // ddOptimisation
-            // 
-            this.ddOptimisation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddOptimisation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddOptimisation.FormattingEnabled = true;
-            this.ddOptimisation.Location = new System.Drawing.Point(416, 544);
-            this.ddOptimisation.Name = "ddOptimisation";
-            this.ddOptimisation.Size = new System.Drawing.Size(121, 21);
-            this.ddOptimisation.TabIndex = 16;
-            // 
             // CohortCompilerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.ddOptimisation);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.lblThreadCount);
@@ -376,6 +365,5 @@ namespace CohortManager.SubComponents
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox cbAutoCache;
-        private System.Windows.Forms.ComboBox ddOptimisation;
     }
 }

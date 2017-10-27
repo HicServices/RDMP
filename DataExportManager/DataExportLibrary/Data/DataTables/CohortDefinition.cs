@@ -15,7 +15,7 @@ namespace DataExportLibrary.Data.DataTables
         public int Version { get; set; }
         public int ProjectNumber { get; set; }
         public IExternalCohortTable LocationOfCohort { get; private set; }
-
+        
         public CohortDefinition(int? id, string description, int version, int projectNumber, IExternalCohortTable locationOfCohort)
         {
             ID = id;
@@ -27,7 +27,7 @@ namespace DataExportLibrary.Data.DataTables
             if (string.IsNullOrWhiteSpace(description))
                 throw new NullReferenceException("Description for cohort with ID " + id + " is blank this is not permitted");
         }
-
+        
         public bool IsAcceptableAsNewCohort(out string matchDescription)
         {
                 //if there is an ID

@@ -1,14 +1,14 @@
 ﻿using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicCommandExecution
+    public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly CatalogueCommand _catalogueCommand;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
@@ -27,12 +27,13 @@ namespace CatalogueManager.CommandExecution
             }
         }
 
-
-        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IActivateItems activator,CatalogueCommand catalogueCommand, CohortAggregateContainer targetCohortAggregateContainer)
+        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IActivateItems activator,CatalogueCommand catalogueCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
-            _activator = activator;
             _catalogueCommand = catalogueCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
+
+            if(!catalogueCommand.ContainsAtLeastOneExtractionIdentifier)
+                SetImpossible("Catalogue " + catalogueCommand.Catalogue + " does not contain any IsExtractionIdentifier columns");
         }
 
         public override void Execute()
@@ -43,7 +44,7 @@ namespace CatalogueManager.CommandExecution
             var cmd = _catalogueCommand.GenerateAggregateConfigurationFor(_targetCohortAggregateContainer,!SkipMandatoryFilterCreation);
             if(cmd != null)
             {
-                _postImportCommand = new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,cmd, _targetCohortAggregateContainer);
+                _postImportCommand = new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(Activator,cmd, _targetCohortAggregateContainer);
                 _postImportCommand.Execute();
             }
         }

@@ -24,7 +24,7 @@ namespace RDMPStartup.PluginManagement
         {
             bool toReturn = false;
 
-            if (toCommit.Extension != ".zip")
+            if (toCommit.Extension.ToLowerInvariant() != ".zip")
                 throw new NotSupportedException("Files must be zip files");
             
             var workingDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());

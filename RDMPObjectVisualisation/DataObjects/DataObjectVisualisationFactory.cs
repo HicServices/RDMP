@@ -43,7 +43,7 @@ namespace RDMPObjectVisualisation.DataObjects
             if(type == typeof(AggregateConfiguration))
                 return new PatientIndexTableVisualisation((AggregateConfiguration) value);//if we expand into visualizing non patient index tables then we will have to evaluate the value to see what type of aggregate it is (identifier list, graphable, patient index table etc)
 
-            throw new NotSupportedException("Did not know how to visualise object of type " + type);
+            return new UnknownObjectVisualisation(value);
         }
 
         private bool IsGenericType(Type toCheck, Type genericType)

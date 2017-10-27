@@ -254,14 +254,14 @@ namespace DataExportManager.Wizard
 
             string problem = AllRequiredDataPresent();
 
-            if (problem != null)
-            {
-                MessageBox.Show(problem);
-                return;
-            }
-
             try
             {
+                if (problem != null)
+                {
+                    MessageBox.Show(problem);
+                    return;
+                }
+
                 ragExecute.Reset();
 
                 //create the project
@@ -297,29 +297,23 @@ namespace DataExportManager.Wizard
                     var cohortRequest = new CohortCreationRequest(_project, cohortDefinition,
                         (DataExportRepository) _activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
 
-                    object inputObject = null;
-                    Pipeline importCohortPipe = null;
-
+                    ComboBox dd;
                     if (_cohortFile != null)
                     {
                         //execute cohort creation from file.
-                        inputObject = new FlatFileToLoad(_cohortFile);
-                        importCohortPipe = (Pipeline) ddFilePipeline.SelectedItem;
+                        cohortRequest.FileToLoad = new FlatFileToLoad(_cohortFile);
+                        dd = ddFilePipeline;
                     }
                     else
                     {
                         //execute cohort creation from cic
-                        inputObject = cbxCohort.SelectedItem;
-                        importCohortPipe = (Pipeline) ddCicPipeline.SelectedItem;
+                        cohortRequest.CohortIdentificationConfiguration =
+                            (CohortIdentificationConfiguration) cbxCohort.SelectedItem;
+                        dd = ddCicPipeline;
                     }
 
-                    var cohortFactory =
-                        new DataFlowPipelineEngineFactory<DataTable>(
-                            _activator.RepositoryLocator.CatalogueRepository.MEF, CohortCreationRequest.Context);
-                    var cohortPipe = cohortFactory.Create(importCohortPipe, new ThrowImmediatelyDataLoadEventListener());
-                    cohortPipe.Initialize(new object[] {inputObject, ddCohortSources.SelectedItem,cohortRequest});
-
-                    cohortPipe.ExecutePipeline(new GracefulCancellationToken());
+                    var engine = cohortRequest.GetEngine((Pipeline) dd.SelectedItem,new ThrowImmediatelyDataLoadEventListener());
+                    engine.ExecutePipeline(new GracefulCancellationToken());
                     _cohortCreated = cohortRequest.CohortCreatedIfAny;
                 }
 

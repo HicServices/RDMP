@@ -94,7 +94,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             
             gbHaving.Controls.Add(QueryHaving);
 
-            QueryHaving.Leave += HavingTextChanged;
+            QueryHaving.TextChanged += HavingTextChanged;
             aggregateContinuousDateAxisUI1.AxisSaved += ReloadUIFromDatabase;
 
             olvJoin.SetNativeBackgroundWatermark(Images.DropHere);
@@ -153,8 +153,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     Publish();
                 }
             }
-
-            
 
             return CheckState.Indeterminate;
 
@@ -343,12 +341,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         #region Having
         private void HavingTextChanged(object sender, EventArgs e)
         {
-            //if it changed
-            if (_aggregate.HavingSQL == QueryHaving.Text)
-                return;
             _aggregate.HavingSQL = QueryHaving.Text;
-            _aggregate.SaveToDatabase();
-            ReloadUIFromDatabase();
         }
 
         private void PopulateHavingText()

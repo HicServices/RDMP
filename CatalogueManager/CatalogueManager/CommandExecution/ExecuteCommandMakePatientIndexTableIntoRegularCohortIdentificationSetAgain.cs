@@ -1,33 +1,30 @@
 ﻿using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
-using ReusableUIComponents.Copying;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain : BasicCommandExecution
+    public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly AggregateConfigurationCommand _sourceAggregateCommand;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
-        public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer)
+        public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
-            _activator = activator;
             _sourceAggregateCommand = sourceAggregateCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
             if (!_sourceAggregateCommand.CohortIdentificationConfigurationIfAny.Equals(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
                 SetImpossible("Aggregate belongs to a different CohortIdentificationConfiguration");
-
             
             if(_sourceAggregateCommand.JoinableUsersIfAny.Any())
                 SetImpossible("The following Cohort Set(s) use this PatientIndex table:" + string.Join(",",_sourceAggregateCommand.JoinableUsersIfAny.Select(j=>j.ToString())));
-
         }
 
         public override void Execute()
@@ -59,7 +56,7 @@ namespace CatalogueManager.CommandExecution
             _targetCohortAggregateContainer.AddChild(_sourceAggregateCommand.Aggregate, 0);
 
             //refresh the entire configuration
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_sourceAggregateCommand.CohortIdentificationConfigurationIfAny));
+            Publish(_sourceAggregateCommand.CohortIdentificationConfigurationIfAny);
         }
     }
 }

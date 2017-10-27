@@ -23,17 +23,13 @@ namespace CatalogueManager.Menus
         public CacheProgressMenu(IActivateItems activator, CacheProgress cacheProgress) : base(activator,cacheProgress)
         {
             _cacheProgress = cacheProgress;
-            Items.Add(
-                "Execute Cache",
-                CatalogueIcons.ExecuteArrow,
-                (s,e)=>_activator.ExecuteCacheProgress(this,cacheProgress)
-                );
-
+            
+            Add(new ExecuteCommandExecuteCacheProgress(activator).SetTarget(cacheProgress));
 
             var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
 
             foreach (var window in activator.CoreChildProvider.AllPermissionWindows)
-                setWindow.DropDownItems.Add(AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window)));
+                Add(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window));
 
             setWindow.DropDownItems.Add(new ToolStripSeparator());
             

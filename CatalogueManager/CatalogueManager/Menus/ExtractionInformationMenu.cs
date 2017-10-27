@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -36,8 +37,8 @@ namespace CatalogueManager.Menus
         private void AddFilter()
         {
             var newFilter = new ExtractionFilter(RepositoryLocator.CatalogueRepository, "New Filter " + Guid.NewGuid(),_extractionInformation);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newFilter));
-            _activator.ActivateFilter(this,newFilter);
+            Publish(newFilter);
+            Activate(newFilter);
         }
     }
 }

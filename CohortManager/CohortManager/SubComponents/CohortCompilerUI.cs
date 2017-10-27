@@ -82,7 +82,8 @@ namespace CohortManager.SubComponents
     /// 
     /// 
     /// </summary>
-    public partial class CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing
+    public partial class 
+        CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing
     {
         public event EventHandler SelectionChanged;
         private CohortIdentificationConfiguration _configuration;
@@ -138,9 +139,6 @@ namespace CohortManager.SubComponents
             tlvConfiguration.RowFormatter += RowFormatter;
             
             refreshThreadCountPeriodically.Start();
-
-            ddOptimisation.DataSource = Enum.GetValues(typeof(OptimisationStrategy));
-            ddOptimisation.SelectedItem = OptimisationStrategy.BasicOptimisation;
 
             tlvConfiguration.RowHeight = 19;
 
@@ -232,25 +230,8 @@ namespace CohortManager.SubComponents
         {
             if (VisualStudioDesignMode || RepositoryLocator == null)
                 return;
-
-            var item = (OptimisationStrategy)ddOptimisation.SelectedItem;
-
-            switch (item)
-            {
-                case OptimisationStrategy.NoOptimisation:
-                    RecreateAllTasks();
-                    break;
-                case OptimisationStrategy.BasicOptimisation:
-                    using (RepositoryLocator.CatalogueRepository.SuperCachingMode())//Use super caching mode on
-                        RecreateAllTasks();
-                    break;
-                case OptimisationStrategy.PreCacheOptimisation:
-                    using (RepositoryLocator.CatalogueRepository.SuperCachingMode(new[] { typeof(AggregateDimension), typeof(ColumnInfo), typeof(TableInfo), typeof(ExtractionInformation), typeof(AnyTableSqlParameter), typeof(AggregateConfiguration), typeof(AggregateFilterContainer), typeof(AggregateFilterParameter)}))//Use super caching mode on if user has ticked the optimise button
-                        RecreateAllTasks();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            
+            RecreateAllTasks();
 
             if (ConfigurationChanged != null)
                 ConfigurationChanged(this, new EventArgs());
@@ -878,14 +859,7 @@ namespace CohortManager.SubComponents
                 asyncRefreshIsOverdue = true;
             }
         }
-
-        enum OptimisationStrategy
-        {
-            NoOptimisation,
-            BasicOptimisation,
-            PreCacheOptimisation
-        }
-
+        
         public void Refresh(IMapsDirectlyToDatabaseTable triggeringObject)
         {
             RefreshUIFromDatabase();

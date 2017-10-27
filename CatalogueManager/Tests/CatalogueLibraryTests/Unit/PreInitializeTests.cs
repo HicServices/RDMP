@@ -60,7 +60,7 @@ namespace CatalogueLibraryTests.Unit
         {
             SpecificFishUser fishUser = new SpecificFishUser();
             var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, new object[0]));
-            Assert.IsTrue(ex.Message.StartsWith("The following expected types were not passed to PreInitialize:Fish"));
+            Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace CatalogueLibraryTests.Unit
         {
             SpecificFishUser fishUser = new SpecificFishUser();
             var ex = Assert.Throws<Exception>(() => context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, new Penguin()));
-            Assert.IsTrue(ex.Message.StartsWith("The following expected types were not passed to PreInitialize:Fish"));
+            Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
             Assert.IsTrue(ex.Message.Contains("The object types passed were:"));
             Assert.IsTrue(ex.Message.Contains("Penguin"));
         }

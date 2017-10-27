@@ -47,10 +47,10 @@ namespace ResearchDataManagementPlatform
 
             var exceptionCounter = new ExceptionCounterUI();
             _globalErrorCheckNotifier = exceptionCounter;
-            rdmpMenuStrip1.InjectButton(exceptionCounter);
+            _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
             _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
-            rdmpMenuStrip1.SetWindowManager(_windowManager);
+            _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;

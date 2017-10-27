@@ -186,12 +186,8 @@ namespace CatalogueManager.Collections
             if(e.Model == null)
             {
                 //user right clicked in an empty area
-                var menu = new ContextMenuStrip();
                 var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-                menu.Items.Add(
-                    factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator,false))
-                    );
-                e.MenuStrip = menu;
+                e.MenuStrip = factory.CreateMenu(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator,false));
             }
 
         }
@@ -228,9 +224,6 @@ namespace CatalogueManager.Collections
             CommonFunctionality.SetUp(
                 tlvTableInfos,
                 activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(), 
-                new RDMPCommandExecutionFactory(activator),
                 olvColumn1,
                 tbFilter,
                 olvColumn1,

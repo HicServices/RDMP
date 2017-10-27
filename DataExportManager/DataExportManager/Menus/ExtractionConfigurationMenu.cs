@@ -52,17 +52,11 @@ namespace DataExportManager.Menus
             _extractionConfiguration = extractionConfiguration;
             _childProvider = childProvider;
             
-            var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-
             var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
 
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
             _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).ToArray();
-
-            var editMenuItem = new ToolStripMenuItem("Edit", CatalogueIcons.ExtractionConfiguration, (s, e) => activator.ActivateExtractionConfiguration(this, extractionConfiguration));
-            editMenuItem.Enabled = !extractionConfiguration.IsReleased;
-            Items.Add(editMenuItem);
-
+            
             ///////////////////Change Cohorts//////////////
             string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";
 
@@ -104,13 +98,13 @@ namespace DataExportManager.Menus
             Items.Add(freeze);
 
             if (extractionConfiguration.IsReleased)
-                Items.Add(factory.CreateMenuItem(new ExecuteCommandUnfreezeExtractionConfiguration(activator, extractionConfiguration)));
+                Add(new ExecuteCommandUnfreezeExtractionConfiguration(activator, extractionConfiguration));
             
             var clone = new ToolStripMenuItem("Clone Extraction", CatalogueIcons.CloneExtractionConfiguration,(s, e) => Clone());
             clone.Enabled = _datasets.Any();
             Items.Add(clone);
 
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration)));
+            Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
             AddCommonMenuItems();
         }
@@ -121,7 +115,7 @@ namespace DataExportManager.Menus
             try
             {
                 var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(clone));
+                Publish(clone);
             }
             catch (Exception exception)
             {
@@ -134,7 +128,7 @@ namespace DataExportManager.Menus
         {
             _extractionConfiguration.IsReleased = true;
             _extractionConfiguration.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_extractionConfiguration));
+            Publish(_extractionConfiguration);
         }
 
         private void GenerateReleaseDocument()
@@ -199,7 +193,7 @@ namespace DataExportManager.Menus
                 //clear current one
                 _extractionConfiguration.Cohort_ID = ((ExtractableCohort)dialog.Selected).ID;
                 _extractionConfiguration.SaveToDatabase();
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_extractionConfiguration));
+                Publish(_extractionConfiguration);
             }
         }
 

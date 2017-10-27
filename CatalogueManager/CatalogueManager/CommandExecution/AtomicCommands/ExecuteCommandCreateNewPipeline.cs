@@ -1,25 +1,26 @@
 using System;
 using System.Drawing;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewPipeline :BasicCommandExecution, IAtomicCommand
+    internal class ExecuteCommandCreateNewPipeline :BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly PipelineUser _user;
         private readonly IPipelineUseCase _useCase;
 
-        public ExecuteCommandCreateNewPipeline(IActivateItems activator, PipelineUser user, IPipelineUseCase useCase)
+        public ExecuteCommandCreateNewPipeline(IActivateItems activator, PipelineUser user, IPipelineUseCase useCase) : base(activator)
         {
-            _activator = activator;
             _user = user;
             _useCase = useCase;
 
@@ -31,11 +32,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _user.Setter(new Pipeline(_activator.RepositoryLocator.CatalogueRepository, "CachingPipeline_" + Guid.NewGuid()));
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_user.User));
+            _user.Setter(new Pipeline(Activator.RepositoryLocator.CatalogueRepository, "CachingPipeline_" + Guid.NewGuid()));
+            Publish(_user.User);
 
             //now activate it so the user can edit it
-            var cmd = new ExecuteCommandEditPipeline(_activator, _user, _useCase);
+            var cmd = new ExecuteCommandEditPipeline(Activator, _user, _useCase);
 
             if(!cmd.IsImpossible)
                 cmd.Execute();

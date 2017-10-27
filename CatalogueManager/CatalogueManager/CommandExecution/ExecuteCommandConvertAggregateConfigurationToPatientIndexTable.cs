@@ -1,29 +1,29 @@
-﻿using CatalogueLibrary.Data.Cohort.Joinables;
+﻿using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicCommandExecution
+    public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicUICommandExecution
     {
         private readonly AggregateConfigurationCommand _sourceAggregateConfigurationCommand;
-        private readonly JoinableCollectionNode _targetJoinableCollectionNode;
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IActivateItems activator, AggregateConfigurationCommand sourceAggregateConfigurationCommand, JoinableCollectionNode targetJoinableCollectionNode)
+        private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+        
+        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IActivateItems activator, AggregateConfigurationCommand sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
         {
-            _activator = activator;
             _sourceAggregateConfigurationCommand = sourceAggregateConfigurationCommand;
-            _targetJoinableCollectionNode = targetJoinableCollectionNode;
+            _cohortIdentificationConfiguration = cohortIdentificationConfiguration;
 
             if(sourceAggregateConfigurationCommand.JoinableDeclarationIfAny != null)
                 SetImpossible("Aggregate is already a Patient Index Table");
 
             if(_sourceAggregateConfigurationCommand.CohortIdentificationConfigurationIfAny != null &&
-                _sourceAggregateConfigurationCommand.CohortIdentificationConfigurationIfAny.ID != _targetJoinableCollectionNode.Configuration.ID)
+                _sourceAggregateConfigurationCommand.CohortIdentificationConfigurationIfAny.ID != _cohortIdentificationConfiguration.ID)
                 SetImpossible("Aggregate '" + _sourceAggregateConfigurationCommand.Aggregate + "'  belongs to a different Cohort Identification Configuration");
 
         }
@@ -33,16 +33,15 @@ namespace CatalogueManager.CommandExecution
             base.Execute();
 
             var sourceAggregate = _sourceAggregateConfigurationCommand.Aggregate;
-            var cic = _targetJoinableCollectionNode.Configuration;
-
+            
             //make sure it is not part of any folders
             var parent = sourceAggregate.GetCohortAggregateContainerIfAny();
             if (parent != null)
                 parent.RemoveChild(sourceAggregate);
 
             //create a new patient index table usage allowance for this aggregate
-            new JoinableCohortAggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository, cic, sourceAggregate);
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
+            new JoinableCohortAggregateConfiguration(Activator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
+            Publish(_cohortIdentificationConfiguration);
         }
     }
 }

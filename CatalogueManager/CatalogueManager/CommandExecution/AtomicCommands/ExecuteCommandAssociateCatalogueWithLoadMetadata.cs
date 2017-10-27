@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Icons.IconOverlays;
@@ -12,23 +13,23 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly LoadMetadata _loadMetadata;
         private Catalogue[] _availableCatalogues;
 
-        public ExecuteCommandAssociateCatalogueWithLoadMetadata(IActivateItems activator, LoadMetadata loadMetadata)
+        public ExecuteCommandAssociateCatalogueWithLoadMetadata(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
-            _activator = activator;
             _loadMetadata = loadMetadata;
 
-            _availableCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
+            _availableCatalogues = Activator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
             
             if(!_availableCatalogues.Any())
                 SetImpossible("There are no Catalogues that are not associated with another Load already");
@@ -87,7 +88,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
                     cata.LoadMetadata_ID = _loadMetadata.ID;
                     cata.SaveToDatabase();
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_loadMetadata));
+                    Publish(_loadMetadata);
                 }
             }
         }

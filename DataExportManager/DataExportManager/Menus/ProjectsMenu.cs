@@ -83,7 +83,7 @@ namespace DataExportManager.Menus
             proxyMenu.SetScopeIsProject(_project);
 
             //get all the items from the menu we just created
-            var proxyItems = proxyMenu.Items.Cast<ToolStripMenuItem>().ToArray();
+            var proxyItems = proxyMenu.Items.Cast<ToolStripItem>().ToArray();
             proxyMenu.Items.Clear();
 
             //and move them to our dropdown
@@ -99,7 +99,7 @@ namespace DataExportManager.Menus
                 {
                     _project.ExtractionDirectory = ofd.SelectedPath;
                     _project.SaveToDatabase();
-                    _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
+                    Publish(_project);
                 }
             }
         }
@@ -116,8 +116,8 @@ namespace DataExportManager.Menus
             var newConfig = new ExtractionConfiguration(RepositoryLocator.DataExportRepository, _project);
             
             //refresh the project
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_project));
-            ((IActivateDataExportItems)_activator).ActivateExtractionConfiguration(this, newConfig);
+            Publish(_project);
+            Activate(newConfig);
         }
     }
 }

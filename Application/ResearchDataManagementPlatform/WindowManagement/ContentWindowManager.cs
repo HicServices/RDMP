@@ -16,6 +16,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
@@ -63,12 +64,14 @@ using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using RDMPObjectVisualisation.Copying;
 using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.CommandExecution;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -98,6 +101,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
 
+        public ICommandFactory CommandFactory { get; private set; }
+        public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
+
         public ContentWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, ToolboxWindowManager toolboxWindowManager, ICheckNotifier globalErrorCheckNotifier)
         {
             WindowFactory = windowFactory;
@@ -125,7 +131,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             DocumentationStore = new RDMPDocumentationStore(RepositoryLocator);
 
             WindowArranger = new WindowArranger(this,_toolboxWindowManager,_mainDockPanel);
-
+            
+            CommandFactory = new RDMPCommandFactory();
+            CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
         }
 
         private void ConstructPluginChildProviders()
@@ -199,32 +207,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
 
-        public bool AllowExecute { get { return true; }}
-
-        public void ActivateCatalogue(object sender, Catalogue c)
-        {
-            Activate<CatalogueTab,Catalogue>(c);
-        }
-
-        public void ActivateViewCatalogueExtractionSql(object sender,Catalogue c)
-        {
-            Activate<ViewExtractionSql,Catalogue>(c, CatalogueIcons.SQL);
-        }
-
-        public void ActivateLoadMetadata(object sender, LoadMetadata lmd)
-        {
-            Activate<LoadMetadataUI,LoadMetadata>(lmd);
-        }
-        
-        public void ExecuteLoadMetadata(object sender, LoadMetadata lmd)
-        {
-            Activate<ExecuteLoadMetadataUI, LoadMetadata>(lmd, CatalogueIcons.ExecuteArrow);
-        }
-
-        public void ExecuteCacheProgress(object sender, CacheProgress cp)
-        {
-            Activate<ExecuteCacheProgressUI, CacheProgress>(cp);
-        }
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable, string overrideConfirmationText = null)
         {
@@ -268,17 +250,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
             return false;
         }
-
-        public void ActivateViewLoadMetadataLog(object sender, LoadMetadata loadMetadata)
-        {
-            Activate<AllLoadEventsUI,LoadMetadata>(loadMetadata, CatalogueIcons.Logging);
-        }
-
-        public void ActivateExtractionFilterParameterSet(object sender, ExtractionFilterParameterSet parameterSet)
-        {
-            Activate<ExtractionFilterParameterSetUI,ExtractionFilterParameterSet>(parameterSet);
-        }
-
+        
         public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
             var wizard = new FilterImportWizard();
@@ -308,17 +280,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void ActivateDataAccessCredentials(object sender, DataAccessCredentials dataAccessCredentials)
         {
             Activate<DataAccessCredentialsUI, DataAccessCredentials>(dataAccessCredentials);
-        }
-
-        public void ActivateParameterNode(object sender, ParametersNode parameters)
-        {
-            var parameterCollectionUI = new ParameterCollectionUI();
-
-            ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
-            var options = factory.Create(parameters.Collector);
-            parameterCollectionUI.SetUp(options);
-
-            ShowWindow(parameterCollectionUI, true);
         }
 
         public void ViewDataSample(IViewSQLAndResultsCollection collection)
@@ -403,34 +364,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             log.ShowDataLoadRunID(dataLoadRunID);
         }
 
-
-        public void ActivateCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<CohortIdentificationConfigurationUI,CohortIdentificationConfiguration>(cic);
-        }
-
-        public void ExecuteCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<ExecuteCohortIdentificationConfigurationUI,CohortIdentificationConfiguration>(cic,CatalogueIcons.ExecuteArrow);
-        }
-
-        public void ActivateProcessTask(object sender, ProcessTask processTask)
-        {
-            if(processTask.IsPluginType())
-                Activate<PluginProcessTaskUI,ProcessTask>(processTask);
-
-            if (processTask.ProcessTaskType == ProcessTaskType.Executable)
-                Activate<ExeProcessTaskUI, ProcessTask>(processTask);
-
-            if (processTask.ProcessTaskType == ProcessTaskType.SQLFile)
-                Activate<SqlProcessTaskUI, ProcessTask>(processTask);
-        }
-
-        public void ActivateExecuteDQE(object sender, Catalogue catalogue)
-        {
-            Activate<DQEExecutionControl, Catalogue>(catalogue);
-        }
-
         public void ActivateLoadProgress(object sender, LoadProgress loadProgress)
         {
             Activate<LoadProgressUI, LoadProgress>(loadProgress);
@@ -455,12 +388,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
         }
-
-        public void ActivateCacheProgress(object sender, CacheProgress cacheProgress)
-        {
-            Activate<CacheProgressUI, CacheProgress>(cacheProgress);
-        }
-
+        
         public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
         {
             Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
@@ -476,10 +404,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<ExtractionAggregateGraph>(objectCollection);
         }
 
-        public void ActivateDQEResultViewing(object sender, Catalogue c)
-        {
-            Activate<CatalogueSummaryScreen,Catalogue>(c,CatalogueIcons.DQE);
-        }
 
         public void ActivateExternalCohortTable(object sender, ExternalCohortTable externalCohortTable)
         {
@@ -522,39 +446,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             Activate<ViewExtractionConfigurationSQLUI, SelectedDataSets>(selectedDataSet);
         }
-
-        public void ActivateCatalogueItem(object sender, CatalogueItem cataItem)
-        {
-            Activate<CatalogueItemTab,CatalogueItem>(cataItem);
-        }
-
-        public void ActivateExtractionInformation(object sender, ExtractionInformation extractionInformation)
-        {
-            Activate<ExtractionInformationUI, ExtractionInformation>(extractionInformation);
-        }
-
-        public void ActivateFilter(object sender, ConcreteFilter filter)
-        {
-            Activate<ExtractionFilterUI,ConcreteFilter>(filter,CatalogueIcons.Filter);
-        }
-
-        public void ActivateAggregate(object sender, AggregateConfiguration aggregate)
-        {
-            Activate<AggregateEditor,AggregateConfiguration>(aggregate);
-        }
-
-        public void ExecuteAggregate(object sender, AggregateConfiguration aggregate)
-        {
-            var graph = Activate<AggregateGraph, AggregateConfiguration>(aggregate,CatalogueIcons.Graph);
-            graph.LoadGraphAsync();
-        }
-
+        
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {
             return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);
         }
 
-        private T Activate<T, T2>(T2 databaseObject)
+        public T Activate<T, T2>(T2 databaseObject)
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
             where T2 : DatabaseEntity
         {

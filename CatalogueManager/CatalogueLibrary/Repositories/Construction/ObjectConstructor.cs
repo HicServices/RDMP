@@ -43,7 +43,7 @@ namespace CatalogueLibrary.Repositories.Construction
         }
         #endregion
 
-        protected object Construct<T>(Type t, T o, bool allowBlank = true)
+        public object Construct<T>(Type t, T o, bool allowBlank = true)
         {
             List<ConstructorInfo> repositoryLocatorConstructorInfos = GetConstructors<T>(t);
 

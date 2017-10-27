@@ -6,13 +6,12 @@ using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus
 {
-    internal class LoadMetadataScheduleNodeMenu : ContextMenuStrip
+    internal class LoadMetadataScheduleNodeMenu : RDMPContextMenuStrip
     {
-        public LoadMetadataScheduleNodeMenu(IActivateItems activator, LoadMetadataScheduleNode schedulingNode)
+        public LoadMetadataScheduleNodeMenu(IActivateItems activator, LoadMetadataScheduleNode schedulingNode) : base(activator,null)
         {
-            var factory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewLoadProgress(activator, schedulingNode.LoadMetadata)));
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewLoadPeriodically(activator, schedulingNode.LoadMetadata)));
+            Add(new ExecuteCommandCreateNewLoadProgress(activator, schedulingNode.LoadMetadata));
+            Add(new ExecuteCommandCreateNewLoadPeriodically(activator, schedulingNode.LoadMetadata));
         }
 
     }

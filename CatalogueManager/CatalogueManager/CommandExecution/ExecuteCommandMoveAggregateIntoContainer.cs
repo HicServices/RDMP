@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Reflection;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandMoveAggregateIntoContainer : BasicCommandExecution
+    internal class ExecuteCommandMoveAggregateIntoContainer : BasicUICommandExecution
     {
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
         private readonly AggregateConfigurationCommand _sourceAggregateCommand;
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandMoveAggregateIntoContainer(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer)
+        
+        public ExecuteCommandMoveAggregateIntoContainer(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
-            _activator = activator;
             _sourceAggregateCommand = sourceAggregateCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
@@ -24,6 +23,9 @@ namespace CatalogueManager.CommandExecution
 
             if(cic != null && !cic.Equals(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
                 SetImpossible("Aggregate belongs to a different CohortIdentificationConfiguration");
+
+            if(_sourceAggregateCommand.ContainerIfAny != null &&  _sourceAggregateCommand.ContainerIfAny.Equals(targetCohortAggregateContainer))
+                SetImpossible("Aggregate is already in container");
         }
 
         public override void Execute()
@@ -41,7 +43,7 @@ namespace CatalogueManager.CommandExecution
             
             
             //refresh the entire configuration
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()));
+            Publish(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration());
         }
     }
 }

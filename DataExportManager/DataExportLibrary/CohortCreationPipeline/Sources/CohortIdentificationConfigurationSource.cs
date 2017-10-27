@@ -79,10 +79,10 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             var task = cohortCompiler.Tasks.Single();
 
-            cohortCompiler.LaunchSingleTask(task.Key,Timeout);
+            cohortCompiler.LaunchSingleTask(task.Key,timeout);
 
             //timeout is in seconds
-            int countDown = Timeout * 1000;
+            int countDown = timeout * 1000;
 
             while ( 
                 //hasn't timed out

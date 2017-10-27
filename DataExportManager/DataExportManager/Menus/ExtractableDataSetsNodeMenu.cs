@@ -41,7 +41,7 @@ namespace DataExportManager.Menus
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var newPackage = new ExtractableDataSetPackage(RepositoryLocator.DataExportRepository, dialog.ResultText);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newPackage));
+                Publish(newPackage);
             }
         }
 
@@ -58,7 +58,7 @@ namespace DataExportManager.Menus
                 foreach (Catalogue c in dialog.MultiSelected)
                 {
                     var ds = new ExtractableDataSet(RepositoryLocator.DataExportRepository,c);
-                    _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(ds));
+                    Publish(ds);
                 }
             
         }

@@ -333,12 +333,24 @@
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
-    <Compile Include="Collections\Providers\ExpandAllTreeNodesMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParameterSet.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
+    <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
@@ -349,14 +361,15 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingExistingDataTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDelete.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -374,10 +387,17 @@
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
+    <Compile Include="CommandExecution\CachedDropTarget.cs" />
     <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAggregateConfiguration.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogue.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortAggregateContainer.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConcreteFilter.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsFilterContainer.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadMetadata.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadStageNode.cs" />
+    <Compile Include="CommandExecution\Proposals\RDMPCommandExecutionProposal.cs" />
     <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
     <Compile Include="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />
     <Compile Include="DashboardTabs\Construction\IDashboardableControl.cs" />
@@ -709,9 +729,7 @@
     <Compile Include="Menus\FilterMenu.cs" />
     <Compile Include="Menus\FiltersParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
-    <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
     <Compile Include="Menus\MenuItems\AddAggregateMenuItem.cs" />
@@ -720,18 +738,13 @@
     <Compile Include="Menus\MenuItems\AddSupportingDocumentMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddSupportingSqlTableMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddCatalogueItemMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
@@ -1438,6 +1451,7 @@
     <None Include="Icons\Overlays\locked.png" />
     <None Include="Icons\PermissionWindow.png" />
     <None Include="Icons\Pipeline.png" />
+    <None Include="Icons\Overlays\Help.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

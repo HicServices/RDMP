@@ -1,22 +1,23 @@
 using System.Drawing;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.Refreshing;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand
     {
-        private IActivateItems _activator;
         private readonly bool _autoImport;
 
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool autoImport)
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool autoImport) : base(activator)
         {
-            _activator = activator;
             _autoImport = autoImport;
         }
 
@@ -24,7 +25,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var importTable = new ImportSQLTable(_activator,_autoImport);
+            var importTable = new ImportSQLTable(Activator,_autoImport);
             importTable.ShowDialog();
         }
 

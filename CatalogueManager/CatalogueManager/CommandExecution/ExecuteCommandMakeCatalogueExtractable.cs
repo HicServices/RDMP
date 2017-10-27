@@ -1,23 +1,22 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Nodes;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandMakeCatalogueExtractable : BasicCommandExecution
+    internal class ExecuteCommandMakeCatalogueExtractable : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly CatalogueCommand _sourceCatalogueCommand;
         private readonly ExtractableDataSetsNode _targetExtractableDataSetsNode;
 
-        public ExecuteCommandMakeCatalogueExtractable(IActivateItems activator, CatalogueCommand sourceCatalogueCommand, ExtractableDataSetsNode targetExtractableDataSetsNode)
+        public ExecuteCommandMakeCatalogueExtractable(IActivateItems activator, CatalogueCommand sourceCatalogueCommand, ExtractableDataSetsNode targetExtractableDataSetsNode) : base(activator)
         {
-            _activator = activator;
             _sourceCatalogueCommand = sourceCatalogueCommand;
             _targetExtractableDataSetsNode = targetExtractableDataSetsNode;
 
@@ -30,7 +29,7 @@ namespace CatalogueManager.CommandExecution
             base.Execute();
 
             var newDataset = new ExtractableDataSet(_targetExtractableDataSetsNode.DataExportRepository,_sourceCatalogueCommand.Catalogue);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newDataset));
+            Publish(newDataset);
 
         }
     }

@@ -6,6 +6,9 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -395,6 +398,8 @@ namespace DataExportManager.DataRelease
 
         private void ShowRightClickMenuFor(ReleasePotential tag, Point point)
         {
+            var atomicCommandExecutionFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+
 
             //create right click context menu
             RightClickMenu = new ContextMenuStrip();
@@ -439,8 +444,9 @@ namespace DataExportManager.DataRelease
             }
 
 
-
-            RightClickMenu.Items.Add("Edit Configuration", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionConfiguration), (sender, args) => _activator.ActivateExtractionConfiguration(this, (ExtractionConfiguration)tag.Configuration));
+            RightClickMenu.Items.Add(
+                atomicCommandExecutionFactory.CreateMenuItem(new ExecuteCommandActivate(_activator,(ExtractionConfiguration) tag.Configuration)));
+            
             RightClickMenu.Items.Add("Execute Extraction Configuration", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Execute), (sender, args) => _activator.ExecuteExtractionConfiguration(this, new ExecuteExtractionUIRequest((ExtractionConfiguration)tag.Configuration)));
 
             RightClickMenu.Show(listView1, point);

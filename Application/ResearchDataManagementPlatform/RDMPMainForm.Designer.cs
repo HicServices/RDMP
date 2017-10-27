@@ -1,4 +1,4 @@
-﻿using ResearchDataManagementPlatform.WindowManagement.TopMenu;
+﻿using ResearchDataManagementPlatform.Menus;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform
@@ -32,17 +32,17 @@ namespace ResearchDataManagementPlatform
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RDMPMainForm));
-            this.rdmpMenuStrip1 = new ResearchDataManagementPlatform.WindowManagement.TopMenu.RDMPMenuStrip();
+            this._rdmpTopMenuStrip1 = new RDMPTopMenuStrip();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.SuspendLayout();
             // 
             // rdmpMenuStrip1
             // 
-            this.rdmpMenuStrip1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rdmpMenuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.rdmpMenuStrip1.Name = "rdmpMenuStrip1";
-            this.rdmpMenuStrip1.Size = new System.Drawing.Size(1300, 53);
-            this.rdmpMenuStrip1.TabIndex = 3;
+            this._rdmpTopMenuStrip1.Dock = System.Windows.Forms.DockStyle.Top;
+            this._rdmpTopMenuStrip1.Location = new System.Drawing.Point(0, 0);
+            this._rdmpTopMenuStrip1.Name = "_rdmpTopMenuStrip1";
+            this._rdmpTopMenuStrip1.Size = new System.Drawing.Size(1300, 53);
+            this._rdmpTopMenuStrip1.TabIndex = 3;
             // 
             // dockPanel1
             // 
@@ -60,7 +60,7 @@ namespace ResearchDataManagementPlatform
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1300, 785);
             this.Controls.Add(this.dockPanel1);
-            this.Controls.Add(this.rdmpMenuStrip1);
+            this.Controls.Add(this._rdmpTopMenuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RDMPMainForm";
             this.Text = "RDMPMainForm";
@@ -72,7 +72,7 @@ namespace ResearchDataManagementPlatform
 
         #endregion
 
-        private RDMPMenuStrip rdmpMenuStrip1;
+        private RDMPTopMenuStrip _rdmpTopMenuStrip1;
         private DockPanel dockPanel1;
     }
 }

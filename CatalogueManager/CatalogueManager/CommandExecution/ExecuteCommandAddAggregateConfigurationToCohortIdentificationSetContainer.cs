@@ -1,24 +1,23 @@
 ﻿using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer :BasicCommandExecution
+    public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer :BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly AggregateConfigurationCommand _aggregateConfigurationCommand;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
         public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
 
-        public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IActivateItems activator,AggregateConfigurationCommand aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer)
+        public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IActivateItems activator,AggregateConfigurationCommand aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
-            _activator = activator;
             _aggregateConfigurationCommand = aggregateConfigurationCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
@@ -53,7 +52,7 @@ namespace CatalogueManager.CommandExecution
             //bump everyone down to make room
             _targetCohortAggregateContainer.CreateInsertionPointAtOrder(child,minimumOrder,true);
             _targetCohortAggregateContainer.AddChild(child,minimumOrder);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_targetCohortAggregateContainer));
+            Publish(_targetCohortAggregateContainer);
 
             AggregateCreatedIfAny = child;
         }

@@ -388,26 +388,10 @@ namespace CatalogueManager.Collections
         private void tlvCatalogues_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvCatalogues.SelectedObject;
-            var cata = o as Catalogue;
-            var cataItem = o as CatalogueItem;
-            var valueSet = o as ExtractionFilterParameterSet;
-            var extractionInformation = o as ExtractionInformation;
             var issue = o as CatalogueItemIssue;
             var doc = o as SupportingDocument;
             var sql = o as SupportingSQLTable;
             
-            if (cata != null) //if user double clicked a catalogue
-                _activator.ActivateCatalogue(this, cata);
-
-            if (cataItem != null)
-                _activator.ActivateCatalogueItem(this, cataItem);
-
-            if (valueSet != null)
-                _activator.ActivateExtractionFilterParameterSet(this, valueSet);
-
-            if(extractionInformation != null)
-                _activator.ActivateExtractionInformation(this, extractionInformation);
-
             if(issue != null)
                 _activator.ActivateCatalogueItemIssue(this,issue);
 
@@ -469,9 +453,6 @@ namespace CatalogueManager.Collections
             CommonFunctionality.SetUp(
                 tlvCatalogues,
                 _activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(),
-                new RDMPCommandExecutionFactory(_activator),
                 olvColumn1, //the icon column
                 tbFilter,//we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1, //also the renameable column

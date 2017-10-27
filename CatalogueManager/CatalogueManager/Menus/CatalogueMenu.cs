@@ -75,7 +75,7 @@ namespace CatalogueManager.Menus
             }
 
             //create right click context menu
-            Items.Add("Generate/View Extraction SQL", CatalogueIcons.SQL, (s, e) => GenerateSQL(catalogue));
+            Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks(catalogue));
             
@@ -93,11 +93,7 @@ namespace CatalogueManager.Menus
             Items.Add(addItem);
 
             Items.Add(new ToolStripSeparator());
-
-            AddDQEOptions(catalogue);
-
-            Items.Add(new ToolStripSeparator());
-
+            
             Items.Add("Clone Catalogue", null, (s, e) => CloneCatalogue(catalogue));
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////
             Items.Add(new ToolStripSeparator());
@@ -148,7 +144,7 @@ namespace CatalogueManager.Menus
             {
                 catalogue.DeleteInDatabase();
 
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(catalogue));
+                Publish(catalogue);
             }
         }
 
@@ -162,14 +158,14 @@ namespace CatalogueManager.Menus
             c.IsDeprecated = value;
             c.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
         private void SetColdStorage(Catalogue c,bool value)
         {
             c.IsColdStorageDataset = value;
             c.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
 
         private void SetInternal(Catalogue c, bool value)
@@ -177,18 +173,15 @@ namespace CatalogueManager.Menus
             c.IsInternalDataset = value;
             c.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
         
 
         private void AddCatalogueImportOptions()
         {
-            var factory =new AtomicCommandUIFactory(_coreIconProvider);
-
             //Things that are always visible regardless
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)));
-
-            Items.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true)));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true));
                 
             Items.Add("Create new Empty Catalogue (Not Recommended)", _coreIconProvider.GetImage(RDMPConcept.Catalogue,OverlayKind.Problem), (s, e) => NewCatalogue());
         }
@@ -231,172 +224,16 @@ namespace CatalogueManager.Menus
                 MessageBox.Show("Select a Catalogue first (on the left)");
         }
 
-        
-
-
         public void NewCatalogue()
         {
             var c = new Catalogue(RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(c));
+            Publish(c);
         }
-        private void GenerateSQL(Catalogue c)
-        {
-            _activator.ActivateViewCatalogueExtractionSql(this, c);
-        }
+
         public void PopupChecks(ICheckable checkable)
         {
             var popupChecksUI = new PopupChecksUI("Checking " + checkable, false);
             popupChecksUI.StartChecking(checkable);
         }
-        #region DQE Options and handlers
-        private void AddDQEOptions(Catalogue catalogue)
-        {
-            var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
-            var dqeServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
-
-            //All menu items appear under this header
-            var dqeMenu = new ToolStripMenuItem("Data Quality Engine", _coreIconProvider.GetImage(RDMPConcept.DQE));
-
-            if (dqeServer == null)
-            {
-                dqeMenu.DropDownItems.Add("Create DQE Database", _coreIconProvider.GetImage(RDMPConcept.DQE,OverlayKind.Add), (s, e) => CreateDQEDatabase(defaults));
-                dqeMenu.DropDownItems.Add("Create link to existing DQE Database", _coreIconProvider.GetImage(RDMPConcept.Database,OverlayKind.Link), (s, e) => LaunchManageExternalServers());
-                dqeMenu.DropDownItems.Add(new ToolStripSeparator());
-            }
-            else
-            {
-                Exception ex;
-
-                if (!dqeServer.RespondsWithinTime(5,DataAccessContext.InternalDataProcessing, out ex))
-                {
-                    Items.Add(new ToolStripMenuItem("Data Quality Engine Server Broken!", _coreIconProvider.GetImage(RDMPConcept.DQE,OverlayKind.Problem), (s, e) => ExceptionViewer.Show(ex)));
-                    return;
-                }
-            }
-
-
-            var timeCoverIdmissing = catalogue.TimeCoverage_ExtractionInformation_ID == null;
-
-            string timeCoverageText = timeCoverIdmissing ? "Pick Time Coverage Column (Required)" : "Change Time Coverage Column";
-            Image timeCoverageIcon =  _coreIconProvider.GetImage(RDMPConcept.TimeCoverageField, timeCoverIdmissing ?OverlayKind.Problem:OverlayKind.None);
-
-            dqeMenu.DropDownItems.Add(timeCoverageText, timeCoverageIcon, (s, e) => ChooseTimeCoverageExtractionInformation(catalogue));
-
-            string pivotText = catalogue.PivotCategory_ExtractionInformation_ID == null ? "Pick Pivot Category Column (Optional)" : "Change Pivot Category Column";
-            dqeMenu.DropDownItems.Add(pivotText, CatalogueIcons.PivotField, (s, e) => ChoosePivotCategoryExtractionInformation(catalogue));
-
-            bool missingValidation = string.IsNullOrWhiteSpace(catalogue.ValidatorXML);
-            string configureRulesText = missingValidation ? "Configure Validation Rules (Required)" : "Change Configuration Rules";
-            Image configureRulesIcon = _coreIconProvider.GetImage(RDMPConcept.DQE,missingValidation ? OverlayKind.Problem : OverlayKind.None);
-
-            dqeMenu.DropDownItems.Add(configureRulesText, configureRulesIcon, (s, e) => ConfigureValidation(catalogue));
-            
-            dqeMenu.DropDownItems.Add(new ToolStripSeparator());
-
-            var exec = new ToolStripMenuItem("Execute DQE", CatalogueIcons.ExecuteArrow,(s, e) => _activator.ActivateExecuteDQE(this, catalogue));
-            dqeMenu.DropDownItems.Add(exec);
-
-            //must have both of these things to be DQEd
-            bool enabled = catalogue.TimeCoverage_ExtractionInformation_ID != null &&!string.IsNullOrWhiteSpace(catalogue.ValidatorXML) && dqeServer != null;
-            exec.Enabled = enabled;
-
-            dqeMenu.DropDownItems.Add(new ToolStripSeparator());
-
-            var viewResults = new ToolStripMenuItem("View DQE Results", CatalogueIcons.DQE, (s, e) => _activator.ActivateDQEResultViewing(this,catalogue));
-            viewResults.Enabled = dqeServer != null && ServerHasAtLeastOneEvaluation(catalogue);
-            dqeMenu.DropDownItems.Add(viewResults);
-
-            Items.Add(dqeMenu);
-        }
-
-        private bool ServerHasAtLeastOneEvaluation(Catalogue c)
-        {
-            return new DQERepository(RepositoryLocator.CatalogueRepository).GetAllEvaluationsFor(c).Any();
-        }
-
-        private void LaunchManageExternalServers()
-        {
-            var manageServers = new ManageExternalServers(_activator.CoreIconProvider);
-            manageServers.RepositoryLocator = RepositoryLocator;
-            manageServers.Show();
-        }
-
-        private void CreateDQEDatabase(ServerDefaults defaults)
-        {
-            CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(typeof(DataQualityEngine.Database.Class1).Assembly);
-            createPlatform.ShowDialog();
-
-            if (!string.IsNullOrWhiteSpace(createPlatform.DatabaseConnectionString))
-            {
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(createPlatform.DatabaseConnectionString);
-                var newServer = new ExternalDatabaseServer(RepositoryLocator.CatalogueRepository, builder.InitialCatalog, typeof(DataQualityEngine.Database.Class1).Assembly);
-
-                newServer.Server = builder.DataSource;
-                newServer.Database = builder.InitialCatalog;
-
-                //if there is a username/password
-                if (!builder.IntegratedSecurity)
-                {
-                    newServer.Password = builder.Password;
-                    newServer.Username = builder.UserID;
-                }
-                newServer.SaveToDatabase();
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.DQE, newServer);
-            }
-        }
-
-        private void ChooseTimeCoverageExtractionInformation(Catalogue c)
-        {
-            //fire up a chooser for the current value
-            DialogResult dr;
-
-            var extractionInformation = SelectAppropriateExtractionInformation(c, c.TimeCoverage_ExtractionInformation_ID, out dr);
-
-            //if the user chose a new value
-            if (dr == DialogResult.OK)
-            {
-                //set the Catalogues property to the new value
-                if (extractionInformation != null)
-                    c.TimeCoverage_ExtractionInformation_ID = extractionInformation.ID;
-                else
-                    c.TimeCoverage_ExtractionInformation_ID = null;
-
-                c.SaveToDatabase();
-            }
-        }
-        private void ChoosePivotCategoryExtractionInformation(Catalogue c)
-        {
-            //fire up a chooser for the current value
-            DialogResult dr;
-            var extractionInformation = SelectAppropriateExtractionInformation(c, c.PivotCategory_ExtractionInformation_ID, out dr);
-
-            //if the user chose a new value
-            if (dr == DialogResult.OK)
-            {
-                //set the Catalogues property to the new value
-                if (extractionInformation != null)
-                    c.PivotCategory_ExtractionInformation_ID = extractionInformation.ID;
-                else
-                    c.PivotCategory_ExtractionInformation_ID = null;
-
-                c.SaveToDatabase();
-            }
-        }
-        
-        private ExtractionInformation SelectAppropriateExtractionInformation(Catalogue cata, int? oldValue, out DialogResult dialogResult)
-        {
-            if (cata != null)
-            {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(cata.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
-                dialogResult = dialog.ShowDialog();
-
-                return dialog.Selected as ExtractionInformation;
-            }
-
-            dialogResult = DialogResult.Ignore;
-            return null;
-        }
-        #endregion
-
     }
 }

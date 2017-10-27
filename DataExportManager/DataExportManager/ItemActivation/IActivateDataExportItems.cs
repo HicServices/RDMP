@@ -20,7 +20,6 @@ namespace DataExportManager.ItemActivation
         void ActivateExternalCohortTable(object sender, ExternalCohortTable externalCohortTable);
         void ActivateCohort(object sender, ExtractableCohort cohort);
         void ActivateProject(object sender, Project project);
-        void ActivateExtractionConfiguration(object sender, ExtractionConfiguration config);
         void ExecuteExtractionConfiguration(object sender, ExecuteExtractionUIRequest settings);
         void ExecuteRelease(object sender, Project project);
 

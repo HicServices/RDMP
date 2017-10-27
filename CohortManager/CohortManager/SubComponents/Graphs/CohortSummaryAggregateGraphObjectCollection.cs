@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
@@ -85,12 +86,20 @@ namespace CohortManager.SubComponents.Graphs
             Adjustment = a;
         }
 
-        public void RevertIfMatchedInCollectionObjects(DatabaseEntity oTriggeringRefresh)
+        public void RevertIfMatchedInCollectionObjects(DatabaseEntity oTriggeringRefresh, out bool shouldClose)
         {
-            var matchingObject = DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh));
+            shouldClose = false;
 
+            var matchingObject = DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) as IRevertable;
+
+            //matched object in our collection
             if(matchingObject != null)
-                ((IRevertable)matchingObject).RevertToDatabaseState();
+                if (matchingObject.Exists()) 
+                    matchingObject.RevertToDatabaseState();
+                else
+                    shouldClose = true;//object doesn't exist anymore so close control
+
+            
         }
     }
 }

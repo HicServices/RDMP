@@ -5,7 +5,7 @@ using BrightIdeasSoftware;
 using EnvDTE;
 using MapsDirectlyToDatabaseTable;
 using QuickGraph;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 using ScintillaNET;
 
 namespace ReusableUIComponents.ScintillaHelper

@@ -1,27 +1,32 @@
 ﻿using System.Linq;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExecution
+    public class ExecuteCommandAddCohortToExtractionConfiguration : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly ExtractableCohortCommand _sourceExtractableCohortComand;
         private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
-        public ExecuteCommandAddCohortToExtractionConfiguration(IActivateItems activator, ExtractableCohortCommand sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration)
+        public ExecuteCommandAddCohortToExtractionConfiguration(IActivateItems activator, ExtractableCohortCommand sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
         {
-            _activator = activator;
             _sourceExtractableCohortComand = sourceExtractableCohortComand;
             _targetExtractionConfiguration = targetExtractionConfiguration;
 
             if(_sourceExtractableCohortComand.ErrorGettingCohortData != null)
             {
                 SetImpossible("Could not fetch Cohort data:" + _sourceExtractableCohortComand.ErrorGettingCohortData.Message);
+                return;
+            }
+
+            if (_targetExtractionConfiguration.IsReleased)
+            {
+                SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
                 return;
             }
 
@@ -40,6 +45,8 @@ namespace CatalogueManager.CommandExecution
                 
                 return;
             }
+
+            
         }
 
         public override void Execute()
@@ -48,7 +55,7 @@ namespace CatalogueManager.CommandExecution
 
             _targetExtractionConfiguration.Cohort_ID = _sourceExtractableCohortComand.Cohort.ID;
             _targetExtractionConfiguration.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_targetExtractionConfiguration));
+            Publish(_targetExtractionConfiguration);
 
         }
     }

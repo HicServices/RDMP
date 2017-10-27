@@ -10,30 +10,24 @@ using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus.MenuItems
 {
-    internal class ChoosePipelineMenuItem : ToolStripMenuItem
+    internal class ChoosePipelineMenuItem : RDMPToolStripMenuItem
     {
-        private readonly IActivateItems _activator;
         private readonly PipelineUser _user;
         private readonly IPipelineUseCase _useCase;
-        private AtomicCommandUIFactory _atomicCommandUIFactory;
 
-        public ChoosePipelineMenuItem(IActivateItems activator,PipelineUser user,IPipelineUseCase useCase, string label)
+        public ChoosePipelineMenuItem(IActivateItems activator,PipelineUser user,IPipelineUseCase useCase, string label):base(activator,label)
         {
             _activator = activator;
             _user = user;
             _useCase = useCase;
 
-            _atomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-
             AddCompatiblePipelines();
 
             DropDownItems.Add(new ToolStripSeparator());
 
-            DropDown.Items.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandEditPipeline(activator,user,useCase)));
+            Add(new ExecuteCommandEditPipeline(activator,user,useCase));
 
-            DropDown.Items.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandCreateNewPipeline(activator, user,useCase)));
-            
-            Text = label;
+            Add(new ExecuteCommandCreateNewPipeline(activator, user,useCase));
         }
 
 
@@ -47,7 +41,7 @@ namespace CatalogueManager.Menus.MenuItems
                 var cmd = new ExecuteCommandSetPipeline(_activator, _user, compatible);
 
                 if(!cmd.IsImpossible)
-                    DropDown.Items.Add(_atomicCommandUIFactory.CreateMenuItem(cmd));
+                    Add(cmd);
                 else
                 {
                     var mi = new ToolStripMenuItem(cmd.GetCommandName(),cmd.GetImage(_activator.CoreIconProvider));

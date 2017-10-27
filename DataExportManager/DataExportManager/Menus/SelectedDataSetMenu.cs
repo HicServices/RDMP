@@ -74,7 +74,7 @@ namespace DataExportManager.Menus
             _selectedDataSet.RootFilterContainer_ID = container.ID;
             _selectedDataSet.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_selectedDataSet));
+            Publish(_selectedDataSet);
         }
 
         private void GenerateExtractionGraphs(params AggregateConfiguration[] graphsToExecute)

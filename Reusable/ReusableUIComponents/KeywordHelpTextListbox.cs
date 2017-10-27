@@ -35,6 +35,18 @@ namespace ReusableUIComponents
 
             _information = ChecksAndProgressIcons.Information;
         }
+
+        public static bool ContainsKey(string key)
+        {
+            return HelpKeywordsDictionary.ContainsKey(key);
+        }
+
+        public static void ShowKeywordHelp(string key)
+        {
+            if(ContainsKey(key))
+                ShowHelpSection(new HelpSection(key,HelpKeywordsDictionary[key]));
+        }
+
         #endregion
         
         public bool HasEntries { get; private set; }
@@ -70,7 +82,7 @@ namespace ReusableUIComponents
                     }
         }
 
-        private object ImageGetter(object rowObject)
+        private static object ImageGetter(object rowObject)
         {
             var section = (HelpSection) rowObject;
             if (HelpKeywordsIconProvider != null)
@@ -100,8 +112,12 @@ namespace ReusableUIComponents
             var hs = olvHelpSections.SelectedObject as HelpSection;
             
             if(hs != null)
-                WideMessageBox.Show(hs.Keyword + ":" + Environment.NewLine + hs.HelpText, Environment.StackTrace, false, hs.Keyword, "Help Keyword:" + hs.Keyword, (Bitmap)ImageGetter(hs));
+                ShowHelpSection(hs);
         }
 
+        private static void ShowHelpSection(HelpSection hs)
+        {
+            WideMessageBox.Show(hs.Keyword + ":" + Environment.NewLine + hs.HelpText, Environment.StackTrace, false, hs.Keyword, "Help Keyword:" + hs.Keyword, (Bitmap)ImageGetter(hs));
+        }
     }
 }

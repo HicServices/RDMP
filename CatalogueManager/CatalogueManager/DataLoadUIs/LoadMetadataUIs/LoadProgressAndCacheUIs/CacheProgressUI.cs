@@ -93,8 +93,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 var useCase = new CachingPipelineUseCase(_cacheProgress,false,null,false);
 
                 var selectionFactory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
-                _pipelineSelectionUI = (Control)selectionFactory.Create();
-                pPipeline.Controls.Add(_pipelineSelectionUI);
+                _pipelineSelectionUI = (Control)selectionFactory.Create("Cache Pipeline",DockStyle.Fill,_pipelineSelectionUI);
             }
         }
 

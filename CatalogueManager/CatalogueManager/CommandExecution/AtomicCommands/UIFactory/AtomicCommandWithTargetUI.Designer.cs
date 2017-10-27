@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AtomicCommandWithTargetUI<>));
             this.pbCommandIcon = new System.Windows.Forms.PictureBox();
             this.lblName = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblGo = new System.Windows.Forms.Label();
             this.suggestComboBox1 = new ReusableUIComponents.SuggestComboBox();
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.lPick = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbCommandIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,7 +64,7 @@
             this.lblGo.ForeColor = System.Drawing.Color.CornflowerBlue;
             this.lblGo.Location = new System.Drawing.Point(457, 0);
             this.lblGo.Name = "lblGo";
-            this.lblGo.Size = new System.Drawing.Size(33, 19);
+            this.lblGo.Size = new System.Drawing.Size(28, 19);
             this.lblGo.TabIndex = 3;
             this.lblGo.Text = "GO";
             this.lblGo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -92,10 +92,23 @@
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.TabIndex = 6;
             // 
+            // lPick
+            // 
+            this.lPick.BackColor = System.Drawing.Color.White;
+            this.lPick.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lPick.Location = new System.Drawing.Point(452, 0);
+            this.lPick.Margin = new System.Windows.Forms.Padding(0);
+            this.lPick.Name = "lPick";
+            this.lPick.Size = new System.Drawing.Size(18, 21);
+            this.lPick.TabIndex = 8;
+            this.lPick.Text = "...";
+            this.lPick.Click += new System.EventHandler(this.lPick_Click);
+            // 
             // AtomicCommandWithTargetUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lPick);
             this.Controls.Add(this.helpIcon1);
             this.Controls.Add(this.suggestComboBox1);
             this.Controls.Add(this.lblGo);
@@ -116,5 +129,6 @@
         private System.Windows.Forms.Label lblGo;
         private ReusableUIComponents.SuggestComboBox suggestComboBox1;
         private ReusableUIComponents.HelpIcon helpIcon1;
+        private System.Windows.Forms.Label lPick;
     }
 }

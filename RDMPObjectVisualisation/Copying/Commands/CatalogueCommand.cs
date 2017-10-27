@@ -1,19 +1,22 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using ReusableUIComponents.Copying;
+using ReusableUIComponents.CommandExecution;
 
 namespace RDMPObjectVisualisation.Copying.Commands
 {
     public class CatalogueCommand : ICommand
     {
+        public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
         public Catalogue Catalogue { get; set; }
         public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler ResolveMultipleExtractionIdentifiers { get; set; }
 
         public CatalogueCommand(Catalogue catalogue)
         {
             Catalogue = catalogue;
+            ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any(e => e.IsExtractionIdentifier);
         }
 
         public string GetSqlString()
@@ -29,15 +32,17 @@ namespace RDMPObjectVisualisation.Copying.Commands
         /// <returns></returns>
         public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortAggregateContainer cohortAggregateContainer,bool importMandatoryFilters=true, [CallerMemberName] string caller = null)
         {
-            if(caller == null || !caller.Equals("Execute"))
-                throw new NotSupportedException("Do not try to create AggregateConfigurations except at Execution time since it results in permenant database changes");
-
             var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
 
             if (cic == null)
                 return null;
 
-            var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue, ResolveMultipleExtractionIdentifiers??CohortCommandHelper.PickOneExtractionIdentifier,importMandatoryFilters);
+            return GenerateAggregateConfigurationFor(cic, importMandatoryFilters);
+        }
+
+        public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortIdentificationConfiguration cic, bool importMandatoryFilters = true, [CallerMemberName] string caller = null)
+        {
+            var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue, ResolveMultipleExtractionIdentifiers ?? CohortCommandHelper.PickOneExtractionIdentifier, importMandatoryFilters);
             return new AggregateConfigurationCommand(newAggregate);
         }
     }

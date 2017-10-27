@@ -36,7 +36,7 @@ namespace DataExportManager.Menus
         private void AddProject()
         {
             Project p = new Project(RepositoryLocator.DataExportRepository,"New Project " + Guid.NewGuid());
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(p));
+            Publish(p);
             ((IActivateDataExportItems)_activator).ActivateProject(this, p);
         }
     }

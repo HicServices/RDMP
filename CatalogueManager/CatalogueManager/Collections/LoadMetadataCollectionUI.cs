@@ -76,29 +76,17 @@ namespace CatalogueManager.Collections
         private void otvLoadMetadata_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvLoadMetadata.SelectedObject;
-            var lmd = o as LoadMetadata;
             var hicDir = o as HICProjectDirectoryNode;
-            var processTask = o as ProcessTask;
             var loadProgress = o as LoadProgress;
-            var cacheProgress = o as CacheProgress;
             
             var permissionWindow = o as PermissionWindow;
             var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
-
-            if(lmd != null)
-                _activator.ActivateLoadMetadata(this,lmd);
-
+            
             if(hicDir != null)
                 hicDir.Activate();
 
-            if (processTask != null)
-                _activator.ActivateProcessTask(this, processTask);
-
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
-
-            if (cacheProgress != null)
-                _activator.ActivateCacheProgress(this, cacheProgress);
 
             if (permissionWindowUsage != null)
                 permissionWindow = permissionWindowUsage.PermissionWindow;
@@ -189,9 +177,6 @@ namespace CatalogueManager.Collections
             CommonFunctionality.SetUp(
                 tlvLoadMetadata,
                 activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(), 
-                new RDMPCommandExecutionFactory(activator),
                 olvName,
                 tbFilter,
                 olvName,

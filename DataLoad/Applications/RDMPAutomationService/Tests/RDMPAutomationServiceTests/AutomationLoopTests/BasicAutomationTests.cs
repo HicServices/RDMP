@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -8,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using RDMPAutomationService;
 using Tests.Common;
 
@@ -15,11 +17,18 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
     public class BasicAutomationTests : AutomationTests
     {
-
         [Test]
         public void TestsNoAvailableSlots_ErrorLoggedForService()
         {
-            var loop = new RDMPAutomationLoop(RepositoryLocator, null);
+            var error = EventLogEntryType.Information;
+            var message = String.Empty;
+
+            Action<EventLogEntryType, string> mockLog = (e, m) =>
+            {
+                message = m;
+                error = e;
+            };
+            var loop = new RDMPAutomationLoop(mockOptions, mockLog);
             loop.Start();
 
             int timeout = 0;
@@ -31,22 +40,21 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 Thread.Sleep(1000);
             }
 
-            var error = CatalogueRepository.GetAllObjects<AutomationServiceException>().Single();
-
-            Assert.IsTrue(error.Exception.StartsWith("Cannot start automation service because there are no free AutomationServiceSlots, they must all be locked?"));
-
-            error.DeleteInDatabase();
+            Assert.That(error, Is.EqualTo(EventLogEntryType.Error));
+            Assert.That(message, Is.StringStarting("Cannot start automation service"));
         }
 
 
         [Test]
         public void TestLifelineTicks()
         {
-            AutomationServiceSlot slot = new AutomationServiceSlot(CatalogueRepository);
+            bool startupComplete = false;
+            var slot = new AutomationServiceSlot(CatalogueRepository);
 
             Assert.IsFalse(slot.LockedBecauseRunning);
 
-            var loop = new RDMPAutomationLoop(RepositoryLocator, slot);
+            var loop = new RDMPAutomationLoop(mockOptions, logAction);
+            loop.StartCompleted += (sender, args) => { startupComplete = true; };
             loop.Start();
 
             int timeout = 30000;
@@ -58,7 +66,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 slot.RevertToDatabaseState();
 
                 //wait till it has started 
-                if (loop.StillRunning && slot.LockedBecauseRunning && loop.StartupComplete)
+                if (loop.StillRunning && slot.LockedBecauseRunning && startupComplete)
                 {
                     //check it's lifeline is ticking
                     Assert.IsTrue(slot.Lifeline.HasValue);
@@ -90,7 +98,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 {
 
                     timesSeen.Add(slot.Lifeline.Value);
-                    Console.WriteLine("Saw Tick Time:" + slot.Lifeline.Value);
+                    Console.WriteLine("Saw Tick Time: " + slot.Lifeline.Value);
                 }
 
                 if (timesSeen.Count > 1)

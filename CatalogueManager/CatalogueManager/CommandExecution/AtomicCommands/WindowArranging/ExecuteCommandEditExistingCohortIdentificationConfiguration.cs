@@ -1,23 +1,22 @@
 ﻿using System.Drawing;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableUIComponents.Copying;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 {
-    public class ExecuteCommandEditExistingCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandEditExistingCohortIdentificationConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
     {
-        private readonly IActivateItems activator;
-
         public CohortIdentificationConfiguration CohortIdConfig { get; set; }
 
-        public ExecuteCommandEditExistingCohortIdentificationConfiguration(IActivateItems activator)
+        public ExecuteCommandEditExistingCohortIdentificationConfiguration(IActivateItems activator) : base(activator)
         {
-            this.activator = activator;
+            
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -25,9 +24,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
             return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit);
         }
 
-        public void SetTarget(DatabaseEntity target)
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             CohortIdConfig = (CohortIdentificationConfiguration) target;
+            return this;
         }
 
         public override string GetCommandHelp()
@@ -43,7 +43,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a Cohort Identification Configuration to edit.");
 
             base.Execute();
-            activator.WindowArranger.SetupEditCohortIdentificationConfiguration(this, CohortIdConfig);
+            Activator.WindowArranger.SetupEditCohortIdentificationConfiguration(this, CohortIdConfig);
         }
     }
 }

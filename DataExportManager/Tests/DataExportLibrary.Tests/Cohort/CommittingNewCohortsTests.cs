@@ -90,7 +90,7 @@ namespace DataExportLibrary.Tests.Cohort
             source.Separator = ",";
             source.StronglyTypeInput = true;
             
-            DataFlowPipelineEngine<DataTable> pipeline = new DataFlowPipelineEngine<DataTable>(CohortCreationRequest.Context,source,destination,listener);
+            DataFlowPipelineEngine<DataTable> pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>) request.GetContext(),source,destination,listener);
             pipeline.Initialize(new FlatFileToLoad(new FileInfo(filename)),request);
             pipeline.ExecutePipeline(new GracefulCancellationToken());
 

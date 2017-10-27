@@ -89,3 +89,4 @@ goto finish
 EXIT /B %ERRORLEVEL%
 
 :finish
+cd ..\Plugin

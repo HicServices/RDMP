@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CohortManagerLibrary.QueryBuilding;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using Microsoft.SqlServer.Management.Smo;
+using ReusableUIComponents;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
@@ -25,6 +28,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
         private const string UseCaseParameterValueSet =
             "You are editing a 'pre canned' useful set of values for use with a Filter that has 1 or more parameters.  Each ExtractionFilter can have zero or more parameters which should have appropriate sample values but often you will want to record specific values e.g. for a filter 'Hospital Admissions with condition code X' you might want to record parameter value sets 'Dementia' as @codelist= 'A01,B01,C212' and 'Cancer' as @codelist='D21,E12,F2' etc.  This avoids creating duplicate filters while still allowing you to centralise such concept implementations into the Catalogue.  IMPORTANT: Only Value can be edited because Comment/Declaration are identical to the parent ExtractionFilterParameter.";
+
+        private const string UseCaseCohortIdentificationConfiguration =
+            "You are trying to build a cohort by performing SQL set operations on number of datasets, each dataset can have many filters which can have parameters.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the 'Cohort Identification Configuration' level which will allow you to change all copies at once in one place";
+
 
         public ParameterCollectionUIOptions Create(IFilter value, ISqlParameter[] globalFilterParameters)
         {
@@ -96,20 +103,44 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return new ParameterCollectionUIOptions(UseCaseAggregateConfiguration,aggregateConfiguration,ParameterLevel.QueryLevel, pm);
         }
 
+        
+
         public ParameterCollectionUIOptions Create(ICollectSqlParameters host)
         {
             if (host is TableInfo)
                 return Create((TableInfo) host);
-            else
+            
             if (host is ExtractionFilterParameterSet)
                 return Create((ExtractionFilterParameterSet)host);
-            else
+            
             if (host is AggregateConfiguration)
                 return Create((AggregateConfiguration)host);
-            else if (host is IFilter)
+            
+            if (host is IFilter)
                 return Create((IFilter) host, new ISqlParameter[0]);
-            else
-                throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", "host");
+            
+            if (host is CohortIdentificationConfiguration)
+                return Create((CohortIdentificationConfiguration)host);
+            
+            throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", "host");
+        }
+
+        private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration)
+        {
+            var builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
+
+            try
+            {
+                builder.RegenerateSQL();
+            }
+            catch (QueryBuildingException ex)
+            {
+                ExceptionViewer.Show("There was a problem resolving all the underlying parameters in all your various Aggregates, the following dialogue is reliable only for the Globals", ex);
+            }
+
+            var paramManager = builder.ParameterManager;
+
+            return new ParameterCollectionUIOptions(UseCaseCohortIdentificationConfiguration,cohortIdentificationConfiguration, ParameterLevel.Global, paramManager);
         }
     }
 }

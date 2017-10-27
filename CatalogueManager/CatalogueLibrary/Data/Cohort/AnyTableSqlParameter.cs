@@ -139,5 +139,10 @@ namespace CatalogueLibrary.Data.Cohort
 
             return new IHasDependencies[0];
         }
+
+        public bool BelongsTo(DatabaseEntity databaseEntity)
+        {
+            return ParentTable.Equals(databaseEntity.GetType().Name) && Parent_ID == databaseEntity.ID;
+        }
     }
 }

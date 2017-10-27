@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -26,24 +27,16 @@ namespace CatalogueManager.Menus
     {
         private readonly AggregateConfiguration _aggregate;
 
-        public AggregateConfigurationMenu(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IActivateItems itemActivator, AggregateConfiguration aggregate, ICoreIconProvider coreIconProvider):base(itemActivator,aggregate)
+        public AggregateConfigurationMenu(IActivateItems itemActivator, AggregateConfiguration aggregate, ICoreIconProvider coreIconProvider):base(itemActivator,aggregate)
         {
             _aggregate = aggregate;
-            Items.Add("Edit", CatalogueIcons.Spanner, (s, e) => itemActivator.ActivateAggregate(this,aggregate));
 
-            Items.Add("View SQL", CatalogueIcons.SQL, (s, e) => itemActivator.ViewDataSample(new ViewAggregateExtractUICollection(aggregate)));
+
+            Items.Add("View Sample", itemActivator.CoreIconProvider.GetImage(RDMPConcept.SQL,OverlayKind.Execute), ViewDatasetSample);
 
             //only allow them to execute graph if it is normal aggregate graph
-            if(!aggregate.IsCohortIdentificationAggregate)
-            {
-                var execute = new ToolStripMenuItem("Execute Aggregate Graph", CatalogueIcons.ExecuteArrow,(s, e) => itemActivator.ExecuteAggregate(this, aggregate));
-                execute.Enabled = itemActivator.AllowExecute;
-                Items.Add(execute);
-            }
-            else
-            {
-                Items.Add("Execute Query", coreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute), (s, e) => itemActivator.ViewDataSample(new ViewAggregateExtractUICollection(aggregate)));
-            }
+            if (!aggregate.IsCohortIdentificationAggregate)
+                Add(new ExecuteCommandExecuteAggregateGraph(_activator, aggregate));
 
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => new PopupChecksUI("Checking " + aggregate, false).Check(aggregate));
 
@@ -70,11 +63,37 @@ namespace CatalogueManager.Menus
             AddCommonMenuItems();
         }
 
+        private void ViewDatasetSample(object sender,EventArgs e)
+        {
+            var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
+            
+            var collection = new ViewAggregateExtractUICollection(_aggregate);
+
+            //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
+            if (cic != null && cic.QueryCachingServer_ID != null && _aggregate.PatientIndexJoinablesUsed.Any())
+            {
+                switch (MessageBox.Show("Use Query Cache when building query?", "Use Configured Cache", MessageBoxButtons.YesNoCancel))
+                {
+                    case DialogResult.Cancel:
+                        return;
+                    case DialogResult.Yes:
+                        collection.UseQueryCache = true;
+                        break;
+                    case DialogResult.No:
+                        collection.UseQueryCache = false;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            _activator.ViewDataSample(collection);
+        }
+
         private void ClearShortcut()
         {
             _aggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = null;
             _aggregate.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+            Publish(_aggregate);
         }
 
         private void ChooseHijacker()
@@ -102,7 +121,7 @@ namespace CatalogueManager.Menus
                         ((AggregateConfiguration) dialog.Selected).ID;
 
                 _aggregate.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+                Publish(_aggregate);
             }
         
         }
@@ -112,7 +131,7 @@ namespace CatalogueManager.Menus
             var newContainer = new AggregateFilterContainer(RepositoryLocator.CatalogueRepository, FilterContainerOperation.AND);
             _aggregate.RootFilterContainer_ID = newContainer.ID;
             _aggregate.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+            Publish(_aggregate);
         }
     }
 }
