@@ -72,10 +72,6 @@ namespace CatalogueManager.ItemActivation
         /// <returns></returns>
         T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
         
-      
-        void ActivateViewCatalogueExtractionSql(object sender, Catalogue c);
-
-        
         void ActivateCatalogueItem(object sender, CatalogueItem cataItem);//user wants to edit the textual metadata 
         void ActivateExtractionInformation(object sender, ExtractionInformation extractionInformation); //user wants to create/delete/edit ExtractionInformation
 
@@ -121,8 +117,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);
         void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
 
-        void ActivateProcessTask(object sender, ProcessTask processTask);
-        
         void ActivateLoadProgress(object sender, LoadProgress loadProgress);
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);

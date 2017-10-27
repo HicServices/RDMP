@@ -77,7 +77,7 @@ namespace CatalogueManager.Menus
 
             newTask.SaveToDatabase();
             Publish(lmd);
-            _activator.ActivateProcessTask(this,newTask);
+            Activate(newTask);
         }
     }
 }

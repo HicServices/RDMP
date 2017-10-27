@@ -1,6 +1,7 @@
 ﻿using System.IO.Packaging;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
@@ -8,9 +9,8 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandPutCatalogueIntoCatalogueFolder: BasicCommandExecution
+    public class ExecuteCommandPutCatalogueIntoCatalogueFolder: BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly Catalogue[] _catalogues;
         private readonly CatalogueFolder _targetModel;
 
@@ -25,9 +25,8 @@ namespace CatalogueManager.CommandExecution
             
         }
 
-        private ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, Catalogue[] catalogues, CatalogueFolder targetModel)
+        private ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, Catalogue[] catalogues, CatalogueFolder targetModel) : base(activator)
         {
-            _activator = activator;
             _targetModel = targetModel;
             _catalogues = catalogues;
         }
@@ -42,7 +41,7 @@ namespace CatalogueManager.CommandExecution
             }
 
             //Catalogue folder has changed so publish the change (but only change the last Catalogue so we don't end up subing a million global refreshes changes)
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogues.Last()));
+            Publish(_catalogues.Last());
         }
     }
 }

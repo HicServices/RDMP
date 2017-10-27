@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying;
@@ -11,18 +12,16 @@ using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandReOrderAggregateContainer : BasicCommandExecution 
+    internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution 
     {
-        private IActivateItems _activator;
         private readonly CohortAggregateContainerCommand _sourceCohortAggregateContainerCommand;
 
         private CohortAggregateContainer _targetParent;
         private IOrderable _targetOrderable;
         private readonly InsertOption _insertOption;
 
-        public ExecuteCommandReOrderAggregateContainer(IActivateItems activator, CohortAggregateContainerCommand sourceCohortAggregateContainerCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(targetCohortAggregateContainer,insertOption)
+        public ExecuteCommandReOrderAggregateContainer(IActivateItems activator, CohortAggregateContainerCommand sourceCohortAggregateContainerCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
         {
-            _activator = activator;
             _sourceCohortAggregateContainerCommand = sourceCohortAggregateContainerCommand;
             
             _targetParent = targetCohortAggregateContainer.GetParentContainerIfAny();
@@ -35,9 +34,8 @@ namespace CatalogueManager.CommandExecution
                 SetImpossible("Insert must be above/below");
         }
 
-        public ExecuteCommandReOrderAggregateContainer(IActivateItems activator, CohortAggregateContainerCommand sourceCohortAggregateContainerCommand, AggregateConfiguration targetAggregate, InsertOption insertOption):this(targetAggregate,insertOption)
+        public ExecuteCommandReOrderAggregateContainer(IActivateItems activator, CohortAggregateContainerCommand sourceCohortAggregateContainerCommand, AggregateConfiguration targetAggregate, InsertOption insertOption):this(activator,targetAggregate,insertOption)
         {
-            _activator = activator;
             _sourceCohortAggregateContainerCommand = sourceCohortAggregateContainerCommand;
             _targetParent = targetAggregate.GetCohortAggregateContainerIfAny();
 
@@ -46,7 +44,7 @@ namespace CatalogueManager.CommandExecution
                 SetImpossible("First move objects into the same parent container");
         }
 
-        private ExecuteCommandReOrderAggregateContainer(IOrderable orderable, InsertOption insertOption)
+        private ExecuteCommandReOrderAggregateContainer(IActivateItems activator,IOrderable orderable, InsertOption insertOption) : base(activator)
         {
             _targetOrderable = orderable;
             _insertOption = insertOption;
@@ -66,7 +64,7 @@ namespace CatalogueManager.CommandExecution
             source.SaveToDatabase();
 
             //refresh the parent container
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_sourceCohortAggregateContainerCommand.ParentContainerIfAny));
+            Publish(_sourceCohortAggregateContainerCommand.ParentContainerIfAny);
         }
     }
 }

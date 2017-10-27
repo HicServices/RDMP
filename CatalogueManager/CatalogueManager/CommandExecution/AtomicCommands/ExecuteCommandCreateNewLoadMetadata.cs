@@ -22,14 +22,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewLoadMetadata : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private Catalogue[] _availableCatalogues;
 
-        public ExecuteCommandCreateNewLoadMetadata(IActivateItems activator)
+        public ExecuteCommandCreateNewLoadMetadata(IActivateItems activator):base(activator)
         {
-            _activator = activator;
             _availableCatalogues = activator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
             
             if(!_availableCatalogues.Any())
@@ -80,9 +78,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                     cata.LoadMetadata_ID = lmd.ID;
                     cata.SaveToDatabase();
 
-                    _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(lmd));
+                    Publish(lmd);
 
-                    var arrangeEditting = new ExecuteCommandEditExistingLoadMetadata(_activator);
+                    var arrangeEditting = new ExecuteCommandEditExistingLoadMetadata(Activator);
                     arrangeEditting.LoadMetadata = lmd;
                     arrangeEditting.Execute();
                 }

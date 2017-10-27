@@ -16,14 +16,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewLoadPeriodically : BasicCommandExecution,IAtomicCommand
+    internal class ExecuteCommandCreateNewLoadPeriodically : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly LoadMetadata _loadMetadata;
 
-        public ExecuteCommandCreateNewLoadPeriodically(IActivateItems activator, LoadMetadata loadMetadata)
+        public ExecuteCommandCreateNewLoadPeriodically(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
-            _activator = activator;
             _loadMetadata = loadMetadata;
             if(loadMetadata.LoadProgresses.Any())
                 SetImpossible("Load already has a LoadProgress");
@@ -38,7 +36,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             var lp = new LoadPeriodically((ICatalogueRepository) _loadMetadata.Repository, _loadMetadata, 100);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_loadMetadata));
+            Publish(_loadMetadata);
         }
 
         public Image GetImage(IIconProvider iconProvider)

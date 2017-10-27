@@ -15,13 +15,10 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CohortManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewCohortIdentificationConfiguration: BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewCohortIdentificationConfiguration: BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandCreateNewCohortIdentificationConfiguration(IActivateItems activator)
+        public ExecuteCommandCreateNewCohortIdentificationConfiguration(IActivateItems activator) : base(activator)
         {
-            _activator = activator;
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -32,7 +29,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            var wizard = new CreateNewCohortIdentificationConfigurationUI(_activator);
+            var wizard = new CreateNewCohortIdentificationConfigurationUI(Activator);
 
             if(wizard.ShowDialog() == DialogResult.OK)
             {
@@ -40,9 +37,9 @@ namespace CohortManager.CommandExecution.AtomicCommands
                 if(cic == null)
                     return;
 
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(cic, int.MaxValue));
-                new ExecuteCommandActivate(_activator, cic).Execute();
+                Publish(cic);
+                Activator.RequestItemEmphasis(this, new EmphasiseRequest(cic, int.MaxValue));
+                Activate(cic);
             }   
         }
 

@@ -13,14 +13,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandChooseHICProjectDirectory : BasicCommandExecution, IAtomicCommand
+    internal class ExecuteCommandChooseHICProjectDirectory : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly LoadMetadata _loadMetadata;
 
-        public ExecuteCommandChooseHICProjectDirectory(IActivateItems activator, LoadMetadata loadMetadata)
+        public ExecuteCommandChooseHICProjectDirectory(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
-            _activator = activator;
             _loadMetadata = loadMetadata;
         }
 
@@ -33,7 +31,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             {
                 _loadMetadata.LocationOfFlatFiles = dialog.Result.RootPath.FullName;
                 _loadMetadata.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_loadMetadata));
+                Publish(_loadMetadata);
             }
         }
 

@@ -10,15 +10,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 {
-    public class ExecuteCommandEditAndRunExistingDataExtractionProject : BasicCommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandEditAndRunExistingDataExtractionProject : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         public Project Project { get; set; }
 
-        private readonly IActivateItems activator;
-
-        public ExecuteCommandEditAndRunExistingDataExtractionProject(IActivateItems activator)
+        public ExecuteCommandEditAndRunExistingDataExtractionProject(IActivateItems activator) : base(activator)
         {
-            this.activator = activator;
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -38,7 +35,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a Data Extraction Project to edit.");
 
             base.Execute();
-            activator.WindowArranger.SetupEditDataExtractionProject(this, Project);
+            Activator.WindowArranger.SetupEditDataExtractionProject(this, Project);
         }
 
         public override string GetCommandHelp()

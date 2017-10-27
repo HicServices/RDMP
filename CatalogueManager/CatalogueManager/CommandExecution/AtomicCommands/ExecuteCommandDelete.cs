@@ -9,14 +9,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandDelete : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandDelete : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly IDeleteable _deletable;
 
-        public ExecuteCommandDelete(IActivateItems activator, IDeleteable deletable)
+        public ExecuteCommandDelete(IActivateItems activator, IDeleteable deletable) : base(activator)
         {
-            _activator = activator;
             _deletable = deletable;
         }
 
@@ -29,7 +27,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _activator.DeleteWithConfirmation(this, _deletable);
+            Activator.DeleteWithConfirmation(this, _deletable);
         }
     }
 }

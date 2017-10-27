@@ -21,18 +21,16 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewProcessTask : BasicCommandExecution, IAtomicCommand
+    internal class ExecuteCommandCreateNewProcessTask : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly ProcessTaskType _taskType;
         private readonly LoadMetadata _loadMetadata;
         private readonly LoadStage _loadStage;
         private Bitmap _image;
         private HICProjectDirectory _hicProjectDirectory;
 
-        public ExecuteCommandCreateNewProcessTask(IActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage)
+        public ExecuteCommandCreateNewProcessTask(IActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage) : base(activator)
         {
-            _activator = activator;
             _taskType = taskType;
             _loadMetadata = loadMetadata;
             _loadStage = loadStage;
@@ -109,8 +107,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             task.Name = "Run '" + Path.GetFileName(task.Path) +"'";
             task.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_loadMetadata));
-            _activator.ActivateProcessTask(this,task);
+            Publish(_loadMetadata);
+            Activate(task);
         }
 
         public override string GetCommandName()

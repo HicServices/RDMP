@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
@@ -8,15 +9,13 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandMoveAggregateIntoContainer : BasicCommandExecution
+    internal class ExecuteCommandMoveAggregateIntoContainer : BasicUICommandExecution
     {
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
         private readonly AggregateConfigurationCommand _sourceAggregateCommand;
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandMoveAggregateIntoContainer(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer)
+        
+        public ExecuteCommandMoveAggregateIntoContainer(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
-            _activator = activator;
             _sourceAggregateCommand = sourceAggregateCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
@@ -44,7 +43,7 @@ namespace CatalogueManager.CommandExecution
             
             
             //refresh the entire configuration
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()));
+            Publish(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration());
         }
     }
 }

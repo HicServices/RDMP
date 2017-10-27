@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using Dashboard.CatalogueSummary;
@@ -12,14 +13,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace Dashboard.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewDQEResultsForCatalogue : BasicCommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution, IAtomicCommandWithTarget
     {
-        private readonly IActivateItems _activator;
         private Catalogue _catalogue;
 
-        public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator)
+        public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator):base(activator)
         {
-            _activator = activator;
         }
         
         public Image GetImage(IIconProvider iconProvider)
@@ -44,7 +43,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
                 return this;
             }
 
-            var defaults = new ServerDefaults(_activator.RepositoryLocator.CatalogueRepository);
+            var defaults = new ServerDefaults(Activator.RepositoryLocator.CatalogueRepository);
             var dqeServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
 
             if (dqeServer == null)
@@ -63,12 +62,12 @@ namespace Dashboard.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _activator.Activate<CatalogueSummaryScreen, Catalogue>(_catalogue);
+            Activator.Activate<CatalogueSummaryScreen, Catalogue>(_catalogue);
         }
 
         private bool ServerHasAtLeastOneEvaluation(Catalogue c)
         {
-            return new DQERepository(_activator.RepositoryLocator.CatalogueRepository).GetAllEvaluationsFor(c).Any();
+            return new DQERepository(Activator.RepositoryLocator.CatalogueRepository).GetAllEvaluationsFor(c).Any();
         }
     }
 }

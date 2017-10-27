@@ -12,15 +12,13 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCommand
+    internal class ExecuteCommandSetPermissionWindow : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly CacheProgress _cacheProgress;
         private readonly PermissionWindow _window;
 
-        public ExecuteCommandSetPermissionWindow(IActivateItems activator, CacheProgress cacheProgress,PermissionWindow window)
+        public ExecuteCommandSetPermissionWindow(IActivateItems activator, CacheProgress cacheProgress,PermissionWindow window) : base(activator)
         {
-            _activator = activator;
             _cacheProgress = cacheProgress;
             _window = window;
         }
@@ -37,7 +35,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _cacheProgress.PermissionWindow_ID = _window.ID;
             _cacheProgress.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_cacheProgress));
+            Publish(_cacheProgress);
         }
 
         public Image GetImage(IIconProvider iconProvider)

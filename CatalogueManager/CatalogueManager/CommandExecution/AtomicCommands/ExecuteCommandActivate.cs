@@ -9,17 +9,15 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandActivate : BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandActivate : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly object _o;
 
-        public ExecuteCommandActivate(IActivateItems activator, object o)
-        {
-            _activator = activator;
+        public ExecuteCommandActivate(IActivateItems activator, object o) : base(activator)
+        {    
             _o = o;
 
-            if(!activator.CommandExecutionFactory.CanActivate(o))
+            if(!Activator.CommandExecutionFactory.CanActivate(o))
                 SetImpossible("Object cannot be Activated");
         }
 
@@ -37,7 +35,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _activator.CommandExecutionFactory.Activate(_o);
+            Activator.CommandExecutionFactory.Activate(_o);
         }
     }
 }

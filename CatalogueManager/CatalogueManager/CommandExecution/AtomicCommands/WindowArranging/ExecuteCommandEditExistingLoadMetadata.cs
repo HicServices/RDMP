@@ -10,15 +10,13 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 {
-    public class ExecuteCommandEditExistingLoadMetadata : BasicCommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandEditExistingLoadMetadata : BasicUICommandExecution, IAtomicCommandWithTarget
     {
-        private readonly IActivateItems _activator;
-
         public LoadMetadata LoadMetadata{ get; set; }
 
-        public ExecuteCommandEditExistingLoadMetadata(IActivateItems activator)
+        public ExecuteCommandEditExistingLoadMetadata(IActivateItems activator) : base(activator)
         {
-            this._activator = activator;
+            
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -50,7 +48,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a LoadMetadata.");
 
             base.Execute();
-            _activator.WindowArranger.SetupEditLoadMetadata(this, LoadMetadata);
+            Activator.WindowArranger.SetupEditLoadMetadata(this, LoadMetadata);
         }
     }
 }

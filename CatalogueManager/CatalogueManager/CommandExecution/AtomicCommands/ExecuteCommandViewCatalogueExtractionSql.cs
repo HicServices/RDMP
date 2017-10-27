@@ -6,38 +6,43 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataQualityUIs;
+using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueManager.ExtractionUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace Dashboard.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandRunDQEOnCatalogue:BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandViewCatalogueExtractionSql:BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private Catalogue _catalogue;
 
-        public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator):base(activator)
+        public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator) : base(activator)
         {
+            
         }
-        
+
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);
+            return iconProvider.GetImage(RDMPConcept.SQL);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             _catalogue = (Catalogue) target;
+            
+            //if the catalogue has no extractable columns
+            if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+                SetImpossible("Catalogue has no ExtractionInformations");
+
             return this;
         }
 
         public override void Execute()
         {
-            base.Execute();
-            Activator.Activate<DQEExecutionControl, Catalogue>(_catalogue);
+            Activator.Activate<ViewExtractionSql, Catalogue>(_catalogue);
         }
     }
 }

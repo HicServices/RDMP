@@ -333,7 +333,10 @@
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
     <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />

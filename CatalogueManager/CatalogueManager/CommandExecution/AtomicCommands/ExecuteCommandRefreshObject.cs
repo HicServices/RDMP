@@ -12,14 +12,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandRefreshObject:BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandRefreshObject:BasicUICommandExecution,IAtomicCommand
     {
-        private IActivateItems _activator;
         private readonly DatabaseEntity _databaseEntity;
 
-        public ExecuteCommandRefreshObject(IActivateItems activator, DatabaseEntity databaseEntity)
+        public ExecuteCommandRefreshObject(IActivateItems activator, DatabaseEntity databaseEntity) : base(activator)
         {
-            _activator = activator;
             _databaseEntity = databaseEntity;
 
             if(_databaseEntity == null)
@@ -31,7 +29,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             _databaseEntity.RevertToDatabaseState();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_databaseEntity));
+            Publish(_databaseEntity);
         }
 
         public Image GetImage(IIconProvider iconProvider)

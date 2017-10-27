@@ -65,7 +65,7 @@ namespace DataExportManager.Menus
 
             if (_project.ProjectNumber == null)
             {
-                foreach (ToolStripMenuItem item in Items)
+                foreach (var item in Items.OfType<ToolStripMenuItem>())
                 {
                     item.Text += " (Project has no Project Number)";
                     item.Enabled = false;

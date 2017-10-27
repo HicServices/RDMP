@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Validation;
@@ -9,14 +10,13 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace Dashboard.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandConfigureCatalogueValidationRules : BasicCommandExecution,IAtomicCommandWithTarget
+    internal class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution,IAtomicCommandWithTarget
     {
-        private readonly IActivateItems _itemActivator;
         private Catalogue _catalogue;
 
-        public ExecuteCommandConfigureCatalogueValidationRules(IActivateItems itemActivator)
+        public ExecuteCommandConfigureCatalogueValidationRules(IActivateItems activator) : base(activator)
         {
-            _itemActivator = itemActivator;
+            
         }
 
         public override string GetCommandName()
@@ -38,7 +38,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            _itemActivator.Activate<ValidationSetupForm, Catalogue>(_catalogue);
+            Activator.Activate<ValidationSetupForm, Catalogue>(_catalogue);
         }
     }
 }

@@ -75,7 +75,7 @@ namespace CatalogueManager.Menus
             }
 
             //create right click context menu
-            Items.Add("Generate/View Extraction SQL", CatalogueIcons.SQL, (s, e) => GenerateSQL(catalogue));
+            Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks(catalogue));
             
@@ -224,18 +224,12 @@ namespace CatalogueManager.Menus
                 MessageBox.Show("Select a Catalogue first (on the left)");
         }
 
-        
-
-
         public void NewCatalogue()
         {
             var c = new Catalogue(RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
             Publish(c);
         }
-        private void GenerateSQL(Catalogue c)
-        {
-            _activator.ActivateViewCatalogueExtractionSql(this, c);
-        }
+
         public void PopupChecks(ICheckable checkable)
         {
             var popupChecksUI = new PopupChecksUI("Checking " + checkable, false);

@@ -390,18 +390,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             log.ShowDataLoadRunID(dataLoadRunID);
         }
 
-        public void ActivateProcessTask(object sender, ProcessTask processTask)
-        {
-            if(processTask.IsPluginType())
-                Activate<PluginProcessTaskUI,ProcessTask>(processTask);
-
-            if (processTask.ProcessTaskType == ProcessTaskType.Executable)
-                Activate<ExeProcessTaskUI, ProcessTask>(processTask);
-
-            if (processTask.ProcessTaskType == ProcessTaskType.SQLFile)
-                Activate<SqlProcessTaskUI, ProcessTask>(processTask);
-        }
-        
         public void ActivateLoadProgress(object sender, LoadProgress loadProgress)
         {
             Activate<LoadProgressUI, LoadProgress>(loadProgress);

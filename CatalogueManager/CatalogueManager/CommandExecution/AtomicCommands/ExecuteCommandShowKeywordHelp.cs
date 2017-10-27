@@ -11,12 +11,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandShowKeywordHelp : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCommand
     {
         private readonly DatabaseEntity _databaseEntity;
         private string _className;
 
-        public ExecuteCommandShowKeywordHelp(IActivateItems activator, DatabaseEntity databaseEntity)
+        public ExecuteCommandShowKeywordHelp(IActivateItems activator, DatabaseEntity databaseEntity) : base(activator)
         {
             _databaseEntity = databaseEntity;
             _className = databaseEntity.GetType().Name;

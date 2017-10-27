@@ -77,7 +77,6 @@ namespace CatalogueManager.Collections
         {
             var o = tlvLoadMetadata.SelectedObject;
             var hicDir = o as HICProjectDirectoryNode;
-            var processTask = o as ProcessTask;
             var loadProgress = o as LoadProgress;
             var cacheProgress = o as CacheProgress;
             
@@ -86,9 +85,6 @@ namespace CatalogueManager.Collections
             
             if(hicDir != null)
                 hicDir.Activate();
-
-            if (processTask != null)
-                _activator.ActivateProcessTask(this, processTask);
 
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);

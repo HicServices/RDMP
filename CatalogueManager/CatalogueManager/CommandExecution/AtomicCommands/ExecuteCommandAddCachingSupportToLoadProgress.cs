@@ -12,14 +12,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddCachingSupportToLoadProgress : BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandAddCachingSupportToLoadProgress : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly LoadProgress _loadProgress;
 
-        public ExecuteCommandAddCachingSupportToLoadProgress(IActivateItems activator, LoadProgress loadProgress)
+        public ExecuteCommandAddCachingSupportToLoadProgress(IActivateItems activator, LoadProgress loadProgress) : base(activator)
         {
-            _activator = activator;
             _loadProgress = loadProgress;
 
             if(_loadProgress.CacheProgress != null)
@@ -35,11 +33,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             // If the LoadProgress doesn't have a corresponding CacheProgress, create it
             if (cacheProgress == null)
             {
-                cacheProgress = new CacheProgress(_activator.RepositoryLocator.CatalogueRepository, _loadProgress);
+                new CacheProgress(Activator.RepositoryLocator.CatalogueRepository, _loadProgress);
                 _loadProgress.SaveToDatabase();
             }
             
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_loadProgress));
+            Publish(_loadProgress);
         }
 
         public Image GetImage(IIconProvider iconProvider)

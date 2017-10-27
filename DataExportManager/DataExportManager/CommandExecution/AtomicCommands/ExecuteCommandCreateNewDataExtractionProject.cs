@@ -19,26 +19,22 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewDataExtractionProject : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator)
+        public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator) : base(activator)
         {
-            this._activator = activator;
-            
         }
 
         public override void Execute()
         {
             base.Execute();
-            var wizard = new CreateNewDataExtractionProjectUI(_activator);
+            var wizard = new CreateNewDataExtractionProjectUI(Activator);
             if(wizard.ShowDialog() == DialogResult.OK && wizard.ExtractionConfigurationCreatedIfAny != null)
             {
                 var p = (Project) wizard.ExtractionConfigurationCreatedIfAny.Project;
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(p));
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
-                ((IActivateDataExportItems)_activator).ExecuteExtractionConfiguration(this, 
+                Publish(p);
+                Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
+                ((IActivateDataExportItems)Activator).ExecuteExtractionConfiguration(this, 
                     new ExecuteExtractionUIRequest(wizard.ExtractionConfigurationCreatedIfAny)
                     {
                         AutoStart = true

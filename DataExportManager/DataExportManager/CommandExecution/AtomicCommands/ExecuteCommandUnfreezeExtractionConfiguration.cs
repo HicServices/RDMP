@@ -21,14 +21,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandUnfreezeExtractionConfiguration:BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandUnfreezeExtractionConfiguration:BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateDataExportItems _activator;
         private readonly ExtractionConfiguration _configuration;
 
-        public ExecuteCommandUnfreezeExtractionConfiguration(IActivateDataExportItems activator, ExtractionConfiguration configuration)
+        public ExecuteCommandUnfreezeExtractionConfiguration(IActivateDataExportItems activator, ExtractionConfiguration configuration):base(activator)
         {
-            _activator = activator;
             _configuration = configuration;
 
             if(!_configuration.IsReleased)
@@ -44,7 +42,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             if(MessageBox.Show("This will mean deleting the Release Audit for the Configuration making it appear like it was never released in the first place.  If you just want to execute the Configuration again you can Clone it instead if you want.  Are you sure you want to Unfreeze?","Confirm Unfreeze",MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
             {
                 _configuration.Unfreeze();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_configuration));
+                Publish(_configuration);
             }
         }
 
