@@ -273,7 +273,7 @@ namespace CatalogueManager.Collections
         {
             var o = e.Model;
             if (o is AggregateConfiguration)
-                e.MenuStrip = new AggregateConfigurationMenu(RepositoryLocator, _activator, (AggregateConfiguration)o, CoreIconProvider);
+                e.MenuStrip = new AggregateConfigurationMenu(_activator, (AggregateConfiguration)o, CoreIconProvider);
 
             var container = o as AggregateFilterContainer;
             if (container != null)

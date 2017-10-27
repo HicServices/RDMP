@@ -4,9 +4,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.LoadExecutionUIs;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
@@ -88,7 +90,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
             _toolboxWindowManager.Create(RDMPCollection.DataLoad, DockState.DockLeft);
 
-            _activator.ExecuteLoadMetadata(this,loadMetadata);
+            _activator.Activate<ExecuteLoadMetadataUI, LoadMetadata>(loadMetadata);
+
             var diagram = (Control)_activator.ActivateViewLoadMetadataDiagram(this, loadMetadata);
             ((DockContent)diagram.Parent).DockTo(_mainDockPanel,DockStyle.Right);
         }

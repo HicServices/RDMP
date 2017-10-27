@@ -55,7 +55,6 @@ namespace CatalogueManager.ItemActivation
 
         IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
-        bool AllowExecute { get; }
         ICoreIconProvider CoreIconProvider { get; }
 
         ICheckNotifier GlobalErrorCheckNotifier { get; }
@@ -72,8 +71,6 @@ namespace CatalogueManager.ItemActivation
         /// <returns></returns>
         T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
         
-        void ExecuteAggregate(object sender, AggregateConfiguration aggregate);
-        void ExecuteLoadMetadata(object sender, LoadMetadata lmd);
         void ExecuteCacheProgress(object sender, CacheProgress cp);
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);

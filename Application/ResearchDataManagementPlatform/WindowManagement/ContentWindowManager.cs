@@ -207,18 +207,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
 
-        public bool AllowExecute { get { return true; }}
-        
-        public void ActivateViewCatalogueExtractionSql(object sender,Catalogue c)
-        {
-            Activate<ViewExtractionSql,Catalogue>(c, CatalogueIcons.SQL);
-        }
-
-        public void ExecuteLoadMetadata(object sender, LoadMetadata lmd)
-        {
-            Activate<ExecuteLoadMetadataUI, LoadMetadata>(lmd, CatalogueIcons.ExecuteArrow);
-        }
-
         public void ExecuteCacheProgress(object sender, CacheProgress cp)
         {
             Activate<ExecuteCacheProgressUI, CacheProgress>(cp);
@@ -478,12 +466,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<ViewExtractionConfigurationSQLUI, SelectedDataSets>(selectedDataSet);
         }
         
-        public void ExecuteAggregate(object sender, AggregateConfiguration aggregate)
-        {
-            var graph = Activate<AggregateGraph, AggregateConfiguration>(aggregate,CatalogueIcons.Graph);
-            graph.LoadGraphAsync();
-        }
-
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {
             return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);

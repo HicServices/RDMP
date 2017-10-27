@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -26,7 +27,7 @@ namespace CatalogueManager.Menus
     {
         private readonly AggregateConfiguration _aggregate;
 
-        public AggregateConfigurationMenu(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IActivateItems itemActivator, AggregateConfiguration aggregate, ICoreIconProvider coreIconProvider):base(itemActivator,aggregate)
+        public AggregateConfigurationMenu(IActivateItems itemActivator, AggregateConfiguration aggregate, ICoreIconProvider coreIconProvider):base(itemActivator,aggregate)
         {
             _aggregate = aggregate;
 
@@ -34,12 +35,8 @@ namespace CatalogueManager.Menus
             Items.Add("View Sample", itemActivator.CoreIconProvider.GetImage(RDMPConcept.SQL,OverlayKind.Execute), ViewDatasetSample);
 
             //only allow them to execute graph if it is normal aggregate graph
-            if(!aggregate.IsCohortIdentificationAggregate)
-            {
-                var execute = new ToolStripMenuItem("Execute Aggregate Graph", CatalogueIcons.ExecuteArrow,(s, e) => itemActivator.ExecuteAggregate(this, aggregate));
-                execute.Enabled = itemActivator.AllowExecute;
-                Items.Add(execute);
-            }
+            if (!aggregate.IsCohortIdentificationAggregate)
+                Add(new ExecuteCommandExecuteAggregateGraph(_activator, aggregate));
 
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => new PopupChecksUI("Checking " + aggregate, false).Check(aggregate));
 
