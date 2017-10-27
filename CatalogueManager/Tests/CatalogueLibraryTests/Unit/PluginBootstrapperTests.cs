@@ -53,7 +53,7 @@ namespace CatalogueLibraryTests.Unit
         {
             var bootstrapper = new PluginBootstrapper(CatalogueRepository);
             var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(() => bootstrapper.Create(typeof(TestPluginPatcherWithNoConstructor)));
-            Assert.IsTrue(ex.Message.Contains("does not have a constructor taking an"));
+            Assert.IsTrue(ex.Message.Contains("does not have a constructor taking"));
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace CatalogueLibraryTests.Unit
         {
             var bootstrapper = new PluginBootstrapper(CatalogueRepository);
             var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(() => bootstrapper.Create(typeof(TestPluginPatcherWithNoValidConstructor)));
-            Assert.IsTrue(ex.Message.Contains("does not have a constructor taking an"));
+            Assert.IsTrue(ex.Message.Contains("does not have a constructor taking"));
         }
 
         [Test]
