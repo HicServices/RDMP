@@ -83,10 +83,6 @@ namespace CatalogueManager.CommandExecution
             if (targetCatalogueFolder != null)
                 return CreateWhenTargetIsFolder(cmd, targetCatalogueFolder);
             
-            var targetcatalogueItem = targetModel as CatalogueItem;
-            if(targetcatalogueItem != null)
-                return CreateWhenTargetIsCatalogueItem(cmd, targetcatalogueItem);
-            
             /////////////Table Info Drop Targets///////////////////////////////////
             var targetTableInfo = targetModel as TableInfo;
             if (targetTableInfo != null)
@@ -168,17 +164,6 @@ namespace CatalogueManager.CommandExecution
                     toReturn.TargetFolder = targetCatalogueFolder;
                     return toReturn;
                 }
-
-            return null;
-        }
-
-        
-        private ICommandExecution CreateWhenTargetIsCatalogueItem(ICommand cmd, CatalogueItem targetcatalogueItem)
-        {
-            var sourceColumnInfo = cmd as ColumnInfoCommand;
-
-            if (sourceColumnInfo != null && targetcatalogueItem != null)
-                return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, sourceColumnInfo, targetcatalogueItem);
 
             return null;
         }

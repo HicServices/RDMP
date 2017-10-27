@@ -335,6 +335,8 @@
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
     <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />

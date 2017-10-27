@@ -59,7 +59,7 @@ namespace CatalogueManager.Menus
             var newExtractionInformation = new ExtractionInformation(RepositoryLocator.CatalogueRepository, _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
             Publish(newExtractionInformation);
-            _activator.ActivateExtractionInformation(this, newExtractionInformation);
+            Activate(newExtractionInformation);
         }
         
         private void SetColumnInfo(CatalogueItem ci)

@@ -72,9 +72,6 @@ namespace CatalogueManager.ItemActivation
         /// <returns></returns>
         T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
         
-        void ActivateCatalogueItem(object sender, CatalogueItem cataItem);//user wants to edit the textual metadata 
-        void ActivateExtractionInformation(object sender, ExtractionInformation extractionInformation); //user wants to create/delete/edit ExtractionInformation
-
         void ExecuteAggregate(object sender, AggregateConfiguration aggregate);
         void ExecuteLoadMetadata(object sender, LoadMetadata lmd);
         void ExecuteCacheProgress(object sender, CacheProgress cp);

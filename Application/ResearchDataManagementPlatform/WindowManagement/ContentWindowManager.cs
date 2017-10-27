@@ -477,16 +477,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             Activate<ViewExtractionConfigurationSQLUI, SelectedDataSets>(selectedDataSet);
         }
-
-        public void ActivateCatalogueItem(object sender, CatalogueItem cataItem)
-        {
-            Activate<CatalogueItemTab,CatalogueItem>(cataItem);
-        }
-
-        public void ActivateExtractionInformation(object sender, ExtractionInformation extractionInformation)
-        {
-            Activate<ExtractionInformationUI, ExtractionInformation>(extractionInformation);
-        }
         
         public void ExecuteAggregate(object sender, AggregateConfiguration aggregate)
         {
