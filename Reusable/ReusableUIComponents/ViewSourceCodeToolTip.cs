@@ -10,6 +10,7 @@ using ScintillaNET;
 
 namespace ReusableUIComponents
 {
+    [System.ComponentModel.DesignerCategory("")]
     internal class ViewSourceCodeToolTip : ToolTip
     {
         private int WIDTH = 600;

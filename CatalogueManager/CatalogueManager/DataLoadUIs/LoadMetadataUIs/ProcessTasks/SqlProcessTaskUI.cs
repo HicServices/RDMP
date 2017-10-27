@@ -124,7 +124,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
         private void ScintillaOnSavePointLeft(object sender, EventArgs eventArgs)
         {
-            objectSaverButton1.ForceDirty();
+            objectSaverButton1.Enable(true);
         }
 
         public ObjectSaverButton GetObjectSaverButton()

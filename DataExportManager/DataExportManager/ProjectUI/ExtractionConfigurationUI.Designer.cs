@@ -209,12 +209,11 @@ namespace DataExportManager.ProjectUI
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(11, 228);
+            this.objectSaverButton1.Location = new System.Drawing.Point(11, 225);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(75, 26);
             this.objectSaverButton1.TabIndex = 51;
-            this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // label2
             // 

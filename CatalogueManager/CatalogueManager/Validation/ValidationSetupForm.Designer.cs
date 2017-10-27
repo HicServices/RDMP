@@ -48,7 +48,6 @@ namespace CatalogueManager.Validation
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnConfigureStandardRegex = new System.Windows.Forms.ToolStripButton();
-            this.btnSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.cbxTimePeriodColumn = new System.Windows.Forms.ToolStripComboBox();
@@ -59,6 +58,7 @@ namespace CatalogueManager.Validation
             this.lblPickPivotColumn = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -81,7 +81,7 @@ namespace CatalogueManager.Validation
             this.olvColumns.HideSelection = false;
             this.olvColumns.Location = new System.Drawing.Point(0, 0);
             this.olvColumns.Name = "olvColumns";
-            this.olvColumns.Size = new System.Drawing.Size(240, 507);
+            this.olvColumns.Size = new System.Drawing.Size(259, 475);
             this.olvColumns.TabIndex = 0;
             this.olvColumns.UseCompatibleStateImageBehavior = false;
             this.olvColumns.View = System.Windows.Forms.View.Details;
@@ -165,7 +165,7 @@ namespace CatalogueManager.Validation
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(922, 436);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(959, 404);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // btnAddSecondaryConstraint
@@ -207,6 +207,7 @@ namespace CatalogueManager.Validation
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel2.Controls.Add(this.label4);
             this.splitContainer1.Panel2.Controls.Add(this.ddConsequence);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
@@ -216,16 +217,16 @@ namespace CatalogueManager.Validation
             this.splitContainer1.Panel2.Controls.Add(this.btnAddSecondaryConstraint);
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Size = new System.Drawing.Size(1177, 537);
-            this.splitContainer1.SplitterDistance = 242;
+            this.splitContainer1.SplitterDistance = 251;
             this.splitContainer1.TabIndex = 9;
             // 
             // tbFilter
             // 
             this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(41, 513);
+            this.tbFilter.Location = new System.Drawing.Point(41, 481);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(196, 20);
+            this.tbFilter.Size = new System.Drawing.Size(215, 20);
             this.tbFilter.TabIndex = 2;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
@@ -233,7 +234,7 @@ namespace CatalogueManager.Validation
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 516);
+            this.label1.Location = new System.Drawing.Point(3, 484);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 1;
@@ -243,7 +244,6 @@ namespace CatalogueManager.Validation
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnConfigureStandardRegex,
-            this.btnSave,
             this.toolStripSeparator2,
             this.toolStripLabel1,
             this.cbxTimePeriodColumn,
@@ -268,16 +268,6 @@ namespace CatalogueManager.Validation
             this.btnConfigureStandardRegex.Size = new System.Drawing.Size(23, 22);
             this.btnConfigureStandardRegex.Text = "Configure Standard Regexes";
             this.btnConfigureStandardRegex.Click += new System.EventHandler(this.btnConfigureStandardRegex_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
-            this.btnSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(23, 22);
-            this.btnSave.Text = "Save Validation";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // toolStripSeparator2
             // 
@@ -338,7 +328,14 @@ namespace CatalogueManager.Validation
             // 
             this.timer1.Enabled = true;
             this.timer1.Interval = 500;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(4, 500);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(56, 28);
+            this.objectSaverButton1.TabIndex = 11;
             // 
             // ValidationSetupForm
             // 
@@ -379,10 +376,10 @@ namespace CatalogueManager.Validation
         private OLVColumn olvName;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnConfigureStandardRegex;
-        private System.Windows.Forms.ToolStripButton btnSave;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cbxTimePeriodColumn;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;

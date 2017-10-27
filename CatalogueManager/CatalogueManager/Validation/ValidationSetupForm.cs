@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints;
@@ -31,7 +32,7 @@ namespace CatalogueManager.Validation
     /// collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the datatype, only use a primary constraint if you have an insane
     /// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).
     /// </summary>
-    public partial class ValidationSetupForm : ValidationSetupForm_Design, IConsultableBeforeClosing
+    public partial class ValidationSetupForm : ValidationSetupForm_Design, IConsultableBeforeClosing, ISaveableUI
     {
         private string _noPrimaryConstraintText = "No Primary Constraint Defined";
         
@@ -61,13 +62,11 @@ namespace CatalogueManager.Validation
         public ValidationSetupForm()
         {
             InitializeComponent();
-         
+            
             SetupAvailableOperations();
 
             olvColumns.RowHeight = 19;
             ddConsequence.DataSource = Enum.GetValues(typeof (Consequence));
-            
-            btnSave.Image = FamFamFamIcons.disk;
 
             int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
             tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
@@ -87,6 +86,9 @@ namespace CatalogueManager.Validation
             isFirstTime = false;
 
             _catalogue = databaseObject;
+
+            objectSaverButton1.SetupFor(databaseObject, _activator.RefreshBus);
+            objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
             olvName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
 
@@ -288,12 +290,7 @@ namespace CatalogueManager.Validation
             dialog.Closed += (s, v) => PopulateFormForSelectedColumn();
             dialog.Show();
         }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-           Save();
-        }
-
+        
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
             olvColumns.UseFiltering = true;
@@ -336,9 +333,10 @@ namespace CatalogueManager.Validation
             Publish(_catalogue);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
         {
-            btnSave.Enabled = HasChanges();
+            Save();
+            return true;
         }
 
         private bool HasChanges()
@@ -352,6 +350,11 @@ namespace CatalogueManager.Validation
             {
                 return false;
             }
+        }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
         }
 
         private void cbxTimePeriodColumn_SelectedIndexChanged(object sender, EventArgs e)

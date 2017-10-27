@@ -73,7 +73,8 @@ namespace ResearchDataManagementPlatform.Menus
         private IActivateItems _activator;
         private ToolboxWindowManager _windowManager;
         private DockContent currentTab;
-        private ISaveableUI _saveable;
+
+        private SaveMenuItem _saveToolStripMenuItem;
 
         public RDMPTopMenuStrip()
         {
@@ -336,16 +337,23 @@ namespace ResearchDataManagementPlatform.Menus
 
             //top menu strip setup / adjustment
             LocationsMenu.DropDownItems.Add(new DataExportMenu(_activator));
-            
+            _saveToolStripMenuItem = new SaveMenuItem
+            {
+                Enabled = false,
+                Name = "saveToolStripMenuItem",
+                Size = new System.Drawing.Size(214, 22)
+            };
+            fileToolStripMenuItem.DropDownItems.Add(_saveToolStripMenuItem);
+
             _windowManager.ContentManager.WindowFactory.TabChanged += WindowFactory_TabChanged;
 
             var tracker = TutorialTracker.GetInstance(_activator);
             foreach (Tutorial t in tracker.TutorialsAvailable)
-                tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem,_activator, t,tracker));
+                tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem, _activator, t, tracker));
 
             tutorialsToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
-            tutorialsToolStripMenuItem.DropDownItems.Add(new DisableTutorialsMenuItem(tutorialsToolStripMenuItem,tracker));
+            tutorialsToolStripMenuItem.DropDownItems.Add(new DisableTutorialsMenuItem(tutorialsToolStripMenuItem, tracker));
             tutorialsToolStripMenuItem.DropDownItems.Add(new ResetTutorialsMenuItem(tutorialsToolStripMenuItem, tracker));
 
             rdmpTaskBar1.SetWindowManager(_windowManager);
@@ -359,8 +367,8 @@ namespace ResearchDataManagementPlatform.Menus
 
             if (singleObjectControlTab == null)
             {
-                _saveable = null;
-                saveToolStripMenuItem.Enabled = false;
+                _saveToolStripMenuItem.Saveable = null;
+                _saveToolStripMenuItem.Enabled = false;
                 return;
             }
 
@@ -369,29 +377,24 @@ namespace ResearchDataManagementPlatform.Menus
 
             //if user wants to emphasise on tab change and theres an object we can emphasise associated with the control
             if (singleObject != null && UserSettingsFile.GetInstance().EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(singleObject.DatabaseObject));
+                _activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
 
             if (saveable != null)
             {
-                saveToolStripMenuItem.Enabled = true;
-                _saveable = saveable;
+                _saveToolStripMenuItem.Enabled = true;
+                _saveToolStripMenuItem.Saveable = saveable;
             }
             else
-                saveToolStripMenuItem.Enabled = false;
-        
-            
+                _saveToolStripMenuItem.Enabled = false;
+
+
         }
 
         private void navigateToObjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new NavigateToObjectUI(_windowManager.ContentManager).Show();
         }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _saveable.GetObjectSaverButton().Save();
-        }
-
+        
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PluginManagementForm dialogue = new PluginManagementForm();

@@ -1,6 +1,14 @@
-﻿using System.Drawing;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
+using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Reports;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
+using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.Menus.MenuItems;
+using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -27,7 +35,28 @@ namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality
         private void Initialize()
         {
             FormBorderStyle = FormBorderStyle.Sizable;
-        }
 
+            var saveToolStripMenuItem = new SaveMenuItem();
+            var singleObjectControlTab = this.DockPanel.ActiveDocument as RDMPSingleControlTab;
+
+            if (singleObjectControlTab == null)
+            {
+                saveToolStripMenuItem.Saveable = null;
+                saveToolStripMenuItem.Enabled = false;
+                return;
+            }
+
+            var saveable = singleObjectControlTab.GetControl() as ISaveableUI;
+            if (saveable != null)
+            {
+                saveToolStripMenuItem.Enabled = true;
+                saveToolStripMenuItem.Saveable = saveable;
+            }
+            else
+                saveToolStripMenuItem.Enabled = false;
+
+            ContextMenuStrip = new ContextMenuStrip();
+            ContextMenuStrip.Items.Add(saveToolStripMenuItem);
+        }
     }
 }

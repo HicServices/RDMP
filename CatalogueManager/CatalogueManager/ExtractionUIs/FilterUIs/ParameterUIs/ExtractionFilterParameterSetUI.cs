@@ -28,7 +28,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
     /// 
     /// This user interface lets you edit one of these.
     /// </summary>
-    public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterSetUI_Design,IConsultableBeforeClosing, ISaveableUI
+    public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterSetUI_Design, ISaveableUI
     {
         private ExtractionFilterParameterSet _extractionFilterParameterSet;
         
@@ -71,11 +71,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         private void tbDescription_TextChanged(object sender, EventArgs e)
         {
             ExtractionFilterParameterSet.Description = tbDescription.Text;
-        }
-
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
-        {
-            OfferChanceToSaveDialog.ShowIfRequired(ExtractionFilterParameterSet);
         }
 
         private void btnRefreshParameters_Click(object sender, EventArgs e)

@@ -442,12 +442,11 @@ namespace CatalogueManager.Issues
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(0, 77);
+            this.objectSaverButton1.Location = new System.Drawing.Point(6, 78);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(56, 29);
             this.objectSaverButton1.TabIndex = 75;
-            this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // IssueUI
             // 

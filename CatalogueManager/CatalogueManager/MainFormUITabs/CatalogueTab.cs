@@ -412,12 +412,6 @@ namespace CatalogueManager.MainFormUITabs
                 Catalogue = null;
         }
         
-        private void CatalogueTab_Leave(object sender, EventArgs e)
-        {
-            if (Catalogue != null)
-                OfferChanceToSaveDialog.ShowIfRequired(Catalogue);
-        }
-
         protected override void OnRepositoryLocatorAvailable()
         {
             base.OnRepositoryLocatorAvailable();
