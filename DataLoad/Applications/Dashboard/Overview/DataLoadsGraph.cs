@@ -17,6 +17,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Dashboard.CommandExecution.AtomicCommands;
 using HIC.Logging;
 using HIC.Logging.PastEvents;
 using ReusableUIComponents;
@@ -60,7 +61,7 @@ namespace Dashboard.Overview
                         .SingleOrDefault(m => m.ID == loadSummary.ID);
 
                 if (metadata != null)
-                    _activator.ActivateViewLoadMetadataLog(sender, metadata);
+                    new ExecuteCommandViewLoadMetadataLogs(_activator).SetTarget(metadata).Execute();
             };
 
             olvDataLoads.DoubleClick += delegate(object sender, EventArgs args)

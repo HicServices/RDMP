@@ -99,6 +99,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllProcessTasksUsedByLoadMetadataNode,
         AllCataloguesUsedByLoadMetadataNode,
         LoadMetadataScheduleNode,
+        Logging,
 
         GetFilesStage,
         LoadBubbleMounting,

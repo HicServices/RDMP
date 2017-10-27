@@ -38,10 +38,6 @@ namespace CatalogueManager.Menus
             
             Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
             
-            Add(new ExecuteCommandActivate(_activator,loadMetadata));
-            
-            Items.Add("View Load Log", CatalogueIcons.Logging, (s, e) => _activator.ActivateViewLoadMetadataLog(this,loadMetadata));
-
             AddCommonMenuItems();
 
         }

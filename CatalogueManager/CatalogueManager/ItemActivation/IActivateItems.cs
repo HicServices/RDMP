@@ -74,9 +74,6 @@ namespace CatalogueManager.ItemActivation
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);
         bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
 
-        void ActivateViewLoadMetadataLog(object sender,LoadMetadata loadMetadata);
-
-
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
         void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue);
 

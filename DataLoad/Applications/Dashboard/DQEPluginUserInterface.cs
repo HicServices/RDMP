@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
@@ -42,6 +43,18 @@ namespace Dashboard
 
             if (c != null)
                 return new[] {new DQEMenuItem(ItemActivator, c)};
+
+            var lmd = databaseEntity as LoadMetadata;
+
+            if(lmd != null)
+            {
+                 var factory = new AtomicCommandUIFactory(ItemActivator.CoreIconProvider);
+
+                return new[]
+                {
+                    factory.CreateMenuItem(new ExecuteCommandViewLoadMetadataLogs(ItemActivator).SetTarget(lmd))
+                };
+            }
 
             return null;
         }

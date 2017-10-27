@@ -194,6 +194,7 @@
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
     <Compile Include="DQEPluginUserInterface.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
     <Compile Include="Menus\MenuItems\DQEMenuItem.cs" />

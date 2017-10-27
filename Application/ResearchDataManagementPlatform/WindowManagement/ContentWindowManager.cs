@@ -250,12 +250,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
             return false;
         }
-
-        public void ActivateViewLoadMetadataLog(object sender, LoadMetadata loadMetadata)
-        {
-            Activate<AllLoadEventsUI,LoadMetadata>(loadMetadata, CatalogueIcons.Logging);
-        }
-
+        
         public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
             var wizard = new FilterImportWizard();
