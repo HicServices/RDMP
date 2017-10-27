@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Revertable;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -17,13 +18,16 @@ namespace CatalogueManager.SimpleControls
 {
     public partial class ObjectSaverButton : UserControl,IRefreshBusSubscriber
     {
-
-        DiffToolTip _tt;
+        private Bitmap _undoImage;
+        private Bitmap _redoImage;
 
         public ObjectSaverButton()
         {
             InitializeComponent();
-            _tt = new DiffToolTip();
+            _undoImage = FamFamFamIcons.Undo;
+            _redoImage = FamFamFamIcons.Redo;
+
+            btnUndoRedo.Image = _undoImage;
         }
 
         private DatabaseEntity _o;
@@ -37,6 +41,8 @@ namespace CatalogueManager.SimpleControls
         public event Func<DatabaseEntity,bool> BeforeSave;
 
         private bool _isEnabled;
+        private bool _undo = true;
+        
 
         public void SetupFor(DatabaseEntity o, RefreshBus refreshBus)
         {
@@ -73,7 +79,7 @@ namespace CatalogueManager.SimpleControls
             Enable(true);
         }
 
-        private void Enable(bool b)
+        public void Enable(bool b)
         {
             if (InvokeRequired)
             {
@@ -82,7 +88,7 @@ namespace CatalogueManager.SimpleControls
             }
 
             btnSave.Enabled = b;
-            btnDiscard.Enabled = b;
+            btnUndoRedo.Enabled = b;
 
             _isEnabled = b;
         }
@@ -96,9 +102,10 @@ namespace CatalogueManager.SimpleControls
 
             _o.SaveToDatabase();
             _refreshBus.Publish(this,new RefreshObjectEventArgs(_o));
-
             Enable(false);
-            
+
+            SetReadyToUndo();
+
             if(AfterSave != null)
                 AfterSave();
         }
@@ -124,45 +131,68 @@ namespace CatalogueManager.SimpleControls
             var isDifferent = changes.Evaluation == ChangeDescription.DatabaseCopyDifferent;
 
             btnSave.Enabled = isDifferent;
-
-            btnSave.Tag = changes;
-            _tt.SetToolTip(btnSave,"Save");
-
-            btnDiscard.Enabled = isDifferent;
-
-            btnDiscard.Tag = changes;
-            _tt.SetToolTip(btnDiscard, "Discard");
-
+            btnUndoRedo.Enabled = isDifferent;
+            
             _isEnabled = isDifferent;
-        }
-
-        public void ForceDirty()
-        {
-            CheckForLocalChanges();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             Save();
         }
-        
-        private void btnDiscard_Click(object sender, EventArgs e)
-        {
-            _o.RevertToDatabaseState();
-            _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
 
-            Enable(false);
-            btnSave.Tag = null;
+        private RevertableObjectReport _undoneChanges;
+
+        private void btnUndoRedo_Click(object sender, EventArgs e)
+        {
+            if(_undo)
+            {
+                var changes = _o.HasLocalChanges();
+
+                //no changes anyway user must have made a change and then unapplyed it
+                if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
+                    return;
+
+                //reset to the database state
+                _o.RevertToDatabaseState();
+
+                //publish that the object has changed
+                _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+
+                //show the redo image
+                SetReadyToRedo(changes);
+
+                //publish probably disabled us
+                Enable(true);
+
+            }
+            else
+            {
+                if(_undoneChanges != null && _undoneChanges.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                {
+                    foreach (var difference in _undoneChanges.Differences)
+                        difference.Property.SetValue(_o, difference.LocalValue);
+
+                    _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+                    
+                    SetReadyToUndo();
+                }
+            }
         }
 
-        private void btnSave_MouseEnter(object sender, EventArgs e)
+        private void SetReadyToRedo(RevertableObjectReport changes)
         {
-            CheckForLocalChanges();
-        }
+            //record the changes prior to the revert
+            _undoneChanges = changes; 
 
-        private void btnDiscard_MouseEnter(object sender, EventArgs e)
+            _undo = false;
+            btnUndoRedo.Image = _redoImage;
+        }
+        private void SetReadyToUndo()
         {
-            CheckForLocalChanges();
+            _undo = true;
+            btnUndoRedo.Image = _undoImage;
+            _undoneChanges = null;
         }
 
         public void CheckForOutOfDateObjectAndOfferToFix()
@@ -186,8 +216,10 @@ namespace CatalogueManager.SimpleControls
                 return;
 
             if (_isEnabled)
-                if(MessageBox.Show("Save Changes To '" + _o + "'?" ,"Save Changes" ,MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show("Save Changes To '" + _o + "'?", "Save Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     Save();
+                else
+                    _o.RevertToDatabaseState();
         }
 
     }

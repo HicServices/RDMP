@@ -269,12 +269,7 @@ namespace CatalogueManager.ExtractionUIs
                 MessageBox.Show(
                     "You must put in an Alias ( AS XYZ ) at the end of your query if you want to hash it on extraction (to a researcher)");
                 e.Cancel = true;
-                return;
             }
-
-            if (ExtractionInformation.Exists())
-                if (OfferChanceToSaveDialog.ShowIfRequired(ExtractionInformation) == DialogResult.Yes)
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(ExtractionInformation));
         }
 
         public ObjectSaverButton GetObjectSaverButton()

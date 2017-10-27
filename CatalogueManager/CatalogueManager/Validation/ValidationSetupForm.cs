@@ -333,12 +333,6 @@ namespace CatalogueManager.Validation
             Publish(_catalogue);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            if(HasChanges())
-                objectSaverButton1.ForceDirty();
-        }
-
         private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
         {
             Save();

@@ -909,7 +909,6 @@
     </Compile>
     <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
     <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
-    <Compile Include="SimpleControls\DiffToolTip.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
     <Compile Include="SimpleControls\ObjectSaverButton.cs">
       <SubType>UserControl</SubType>
@@ -1452,6 +1451,8 @@
     <None Include="Icons\PermissionWindow.png" />
     <None Include="Icons\Pipeline.png" />
     <None Include="Icons\Overlays\Help.png" />
+    <None Include="Icons\Undo.png" />
+    <None Include="Icons\Redo.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1665,6 +1666,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\ObjectSaverButton.resx">
       <DependentUpon>ObjectSaverButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.resx">
       <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>

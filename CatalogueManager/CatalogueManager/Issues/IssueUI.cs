@@ -36,7 +36,7 @@ namespace CatalogueManager.Issues
     /// IMPORTANT: Be careful of your language in Description and Notes to Researcher fields because depending on settings Issues can be reported in the data extraction metadata 
     /// supplied to researchers who receive extracts of the dataset.
     /// </summary>
-    public partial class IssueUI : IssueUI_Design,IConsultableBeforeClosing,ISaveableUI
+    public partial class IssueUI : IssueUI_Design,ISaveableUI
     {
         private CatalogueItemIssue _catalogueItemIssue;
         private bool bloading;
@@ -161,15 +161,7 @@ namespace CatalogueManager.Issues
                 bloading = false;
             }
         }
-
-        private void AllowUserToSave()
-        {
-            var result = OfferChanceToSaveDialog.ShowIfRequired(CatalogueItemIssue);
-
-            if(result == DialogResult.No)//user rejected change so object reverted to database state, so we must reload UI
-                CatalogueItemIssue = CatalogueItemIssue;
-        }
-
+        
         public IssueUI()
         {
             InitializeComponent();
@@ -424,10 +416,6 @@ namespace CatalogueManager.Issues
             }
         }
         
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
-        {
-            AllowUserToSave();
-        }
 
         public DateTime Truncate(DateTime dateTime, TimeSpan timeSpan)
         {
