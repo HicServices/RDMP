@@ -45,7 +45,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Validation;
-using CohortManager.ItemActivation;
+using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
@@ -76,7 +76,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
-    public class ContentWindowManager : IActivateDataExportItems, IActivateCohortIdentificationItems
+    public class ContentWindowManager : IActivateDataExportItems
     {
         public event EmphasiseItemHandler Emphasise;
 
@@ -346,7 +346,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 var cohortAggregate = aggFilter.GetAggregate();
                 //use this instead
-                ExecuteCohortSummaryGraph(sender, new CohortSummaryAggregateGraphObjectCollection(cohortAggregate,collection.GetGraph(),CohortSummaryAdjustment.WhereRecordsIn,aggFilter));
+                new ExecuteCommandViewCohortAggregateGraph(this, 
+                    new CohortSummaryAggregateGraphObjectCollection(cohortAggregate,collection.GetGraph(),CohortSummaryAdjustment.WhereRecordsIn,aggFilter))
+                    .Execute();
+
                 return;
             }
 
@@ -392,11 +395,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
         {
             Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
-        }
-
-        public void ExecuteCohortSummaryGraph(object sender,CohortSummaryAggregateGraphObjectCollection objectCollection)
-        {
-            Activate<CohortSummaryAggregateGraph>(objectCollection);
         }
 
         public void ExecuteExtractionExtractionAggregateGraph(object sender, ExtractionAggregateGraphObjectCollection objectCollection)
@@ -459,7 +457,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return Activate<T, T2>(databaseObject, (Bitmap)CoreIconProvider.GetImage(databaseObject));
         }
         
-        private T Activate<T>(IPersistableObjectCollection collection)
+        public T Activate<T>(IPersistableObjectCollection collection)
             where T: IObjectCollectionControl,new()
 
         {

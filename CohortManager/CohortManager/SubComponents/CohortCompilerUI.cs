@@ -15,7 +15,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManager.ItemActivation;
+using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents.EmptyLineElements;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary;
@@ -558,13 +558,14 @@ namespace CohortManager.SubComponents
 
         private void LaunchSummaryGraph( AggregateConfiguration cohort,AggregateConfiguration aggregate, CohortSummaryAdjustment adjustment)
         {
-            ((IActivateCohortIdentificationItems)_activator).ExecuteCohortSummaryGraph(this,new CohortSummaryAggregateGraphObjectCollection(cohort, aggregate,adjustment));
+            new ExecuteCommandViewCohortAggregateGraph(_activator, new CohortSummaryAggregateGraphObjectCollection(cohort, aggregate, adjustment)).Execute();
         }
         
         private void LaunchSummaryGraph(CohortAggregateContainer cohortAggregateContainer, AggregateConfiguration graph)
         {
-            ((IActivateCohortIdentificationItems)_activator).ExecuteCohortSummaryGraph(this, new CohortSummaryAggregateGraphObjectCollection(cohortAggregateContainer, graph));
+            new ExecuteCommandViewCohortAggregateGraph(_activator, new CohortSummaryAggregateGraphObjectCollection(cohortAggregateContainer, graph)).Execute();
         }
+
         private void StartThisTaskOnly(ICompileable configurationTask)
         {
 

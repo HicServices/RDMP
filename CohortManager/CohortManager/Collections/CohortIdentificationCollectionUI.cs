@@ -1,32 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Providers;
 using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManager.Collections.Providers;
-using CohortManager.ItemActivation;
 using CohortManager.Menus;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Copying;
-using ReusableUIComponents.TreeHelper;
 
 namespace CohortManager.Collections
 {
@@ -39,7 +21,7 @@ namespace CohortManager.Collections
     public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         //for expand all/ collapse all
-        private IActivateCohortIdentificationItems _activator;
+        private IActivateItems _activator;
         
         public CohortIdentificationCollectionUI()
         {
@@ -50,7 +32,7 @@ namespace CohortManager.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = (IActivateCohortIdentificationItems)activator;
+            _activator = (IActivateItems)activator;
             
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonFunctionality.SetUp(
@@ -106,9 +88,6 @@ namespace CohortManager.Collections
                     _activator.DeleteWithConfirmation(this,deletable);
             }
         }
-
-        
-        
 
         private void btnExpandOrCollapse_Click(object sender, EventArgs e)
         {

@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CatalogueLibrary.Data;
+﻿using System.Windows.Forms;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
 using CohortManager.Collections.Providers;
 using CohortManager.CommandExecution.AtomicCommands;
-using CohortManager.ItemActivation;
-using CohortManagerLibrary.QueryBuilding;
-using RDMPStartup;
 using ReusableUIComponents.ChecksUI;
 
 namespace CohortManager.Menus
@@ -29,7 +15,7 @@ namespace CohortManager.Menus
     {
         private CohortIdentificationConfiguration _cic;
 
-        public CohortIdentificationConfigurationMenu(IActivateCohortIdentificationItems activator, CohortIdentificationConfiguration cic) : base( activator,cic)
+        public CohortIdentificationConfigurationMenu(IActivateItems activator, CohortIdentificationConfiguration cic) : base( activator,cic)
         {
             _cic = cic;
             

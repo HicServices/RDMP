@@ -10,10 +10,10 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using CohortManager.Collections.Providers;
-using CohortManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
@@ -29,7 +29,7 @@ namespace CohortManager.Menus
     {
         private CohortAggregateContainer _container;
 
-        public CohortAggregateContainerMenu(IActivateCohortIdentificationItems activator, CohortIdentificationConfiguration cic, CohortAggregateContainer container)
+        public CohortAggregateContainerMenu(IActivateItems activator, CohortIdentificationConfiguration cic, CohortAggregateContainer container)
             : base( activator, container)
         {
             _container = container;

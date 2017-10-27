@@ -70,7 +70,8 @@ namespace CatalogueManager.ItemActivation
         /// <param name="databaseObject"></param>
         /// <returns></returns>
         T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
-        
+        T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
+
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);
         bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
 
