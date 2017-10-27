@@ -18,18 +18,24 @@ namespace CohortManager.Menus
         public CohortIdentificationConfigurationMenu(IActivateItems activator, CohortIdentificationConfiguration cic) : base( activator,cic)
         {
             _cic = cic;
+
+            Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator));
+
+            if(cic == null)
+                return;
             
             Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL),(s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
 
-            Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator));
 
             Items.Add("Clone Configuration", CohortIdentificationIcons.cloneCohortIdentificationConfiguration,
                 (s, e) => CloneCohortIdentificationConfiguration());
 
+            
             var freeze = new ToolStripMenuItem("Freeze Configuration",
                 CatalogueIcons.FrozenCohortIdentificationConfiguration, (s, e) => FreezeConfiguration());
             freeze.Enabled = !cic.Frozen;
             Items.Add(freeze);
+                
             
             AddCommonMenuItems();
         }
