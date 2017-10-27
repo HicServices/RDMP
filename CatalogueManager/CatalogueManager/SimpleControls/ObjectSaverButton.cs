@@ -36,6 +36,8 @@ namespace CatalogueManager.SimpleControls
         /// </summary>
         public event Func<DatabaseEntity,bool> BeforeSave;
 
+        private bool _isEnabled;
+
         public void SetupFor(DatabaseEntity o, RefreshBus refreshBus)
         {
             //already set up before
@@ -66,6 +68,8 @@ namespace CatalogueManager.SimpleControls
 
             btnSave.Enabled = b;
             btnDiscard.Enabled = b;
+
+            _isEnabled = b;
         }
         
         
@@ -113,6 +117,8 @@ namespace CatalogueManager.SimpleControls
 
             btnDiscard.Tag = changes;
             _tt.SetToolTip(btnDiscard, "Discard");
+
+            _isEnabled = isDifferent;
         }
 
         public void ForceDirty()
@@ -142,6 +148,44 @@ namespace CatalogueManager.SimpleControls
         private void btnDiscard_MouseEnter(object sender, EventArgs e)
         {
             CheckForLocalChanges();
+        }
+
+        public void OfferChanceToRevertOrSaveIfRequired()
+        {
+            var differences = _o.HasLocalChanges();
+
+            if (differences.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+            {
+                if (!_isEnabled)
+                {
+                    var text = _o.GetType().Name + " '" + _o + "' (ID=" + _o.ID + ") has different values in the database, would you like to reload it?";
+                    var caption = "Reload " + _o.GetType().Name + " " + _o + " (ID = " + _o.ID + ")";
+
+                    if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        _o.RevertToDatabaseState();
+                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+                    }
+                }
+                else
+                {
+                    var text = "Would you like to save changes to " + _o.GetType().Name + " '" + _o + "' (ID=" + _o.ID + ")";
+                    var caption = "Save changes to " + _o.GetType().Name + " " + _o + " (ID = " + _o.ID + ")";
+
+                    if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        _o.SaveToDatabase();
+                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+                    }
+                    else
+                    {
+                        _o.RevertToDatabaseState();
+                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+                    }
+                }
+                
+                CheckForLocalChanges();
+            }
         }
     }
 }

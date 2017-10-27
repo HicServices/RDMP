@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Reports;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
@@ -53,6 +54,15 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 return DatabaseObject.ToString();
 
             return "Unamed Tab";
+        }
+
+        protected override void OnLeave(EventArgs e)
+        {
+            base.OnLeave(e);
+
+            var saveableUI = this as ISaveableUI;
+            if(saveableUI != null)
+                saveableUI.GetObjectSaverButton().OfferChanceToRevertOrSaveIfRequired();
         }
     }
 }

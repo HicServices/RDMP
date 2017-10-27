@@ -918,7 +918,6 @@ namespace CatalogueManager.MainFormUITabs
             this.Controls.Add(this.splitContainer1);
             this.Name = "CatalogueTab";
             this.Size = new System.Drawing.Size(717, 940);
-            this.Leave += new System.EventHandler(this.CatalogueTab_Leave);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
