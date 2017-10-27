@@ -122,6 +122,7 @@ namespace MapsDirectlyToDatabaseTableUI
             this.tbFilter.Size = new System.Drawing.Size(225, 20);
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            this.tbFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbFilter_KeyDown);
             this.tbFilter.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbFilter_KeyUp);
             // 
             // label1

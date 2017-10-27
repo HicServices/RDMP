@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
@@ -29,7 +30,9 @@ using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
+using DataExportLibrary.Data.DataTables;
 using DataQualityEngine;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
@@ -430,6 +433,16 @@ namespace ResearchDataManagementPlatform.Menus
         public void InjectButton(ToolStripButton button)
         {
             rdmpTaskBar1.InjectButton(button);
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openables = _activator.CoreChildProvider.GetAllSearchables().Select(kvp=>kvp.Key).Where(o => _activator.CommandExecutionFactory.CanActivate(o));
+
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(openables, false, false);
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+                new ExecuteCommandActivate(_activator, dialog.Selected).Execute();
         }
     }
 }

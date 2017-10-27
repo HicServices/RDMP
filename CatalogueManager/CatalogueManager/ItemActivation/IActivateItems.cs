@@ -40,10 +40,19 @@ namespace CatalogueManager.ItemActivation
 {
     public interface IActivateItems
     {
+        /// <summary>
+        /// Component for publishing the fact that an object has recently been put out of date by you.
+        /// </summary>
         RefreshBus RefreshBus { get; }
         
+        /// <summary>
+        /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
+        /// </summary>
         FavouritesProvider FavouritesProvider { get;}
         
+        /// <summary>
+        /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
+        /// </summary>
         ICoreChildProvider CoreChildProvider { get; }
 
         List<IPluginUserInterface> PluginUserInterfaces { get; }

@@ -8,7 +8,6 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems
     [System.ComponentModel.DesignerCategory("")]
     public class SaveMenuItem : ToolStripMenuItem
     {
-        private readonly IActivateItems _activator;
         public ISaveableUI Saveable { get; set; }
 
         public SaveMenuItem() : base("Save")

@@ -134,7 +134,7 @@ namespace CatalogueManager.CommandExecution
         {
             return _proposers.Any(p => p.CanActivate(target));
         }
-
+        
         private ICommandExecution CreateWhenTargetIsProcessTask(ICommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)
         {
             var sourceProcessTaskCommand = cmd as ProcessTaskCommand;

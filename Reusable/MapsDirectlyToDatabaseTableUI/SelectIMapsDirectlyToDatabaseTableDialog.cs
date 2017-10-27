@@ -217,9 +217,16 @@ namespace MapsDirectlyToDatabaseTableUI
                     listBox1.Focus();
                     SendKeys.Send(e.KeyCode == Keys.Up ? "{UP}":"{DOWN}");
                 }
-
-        
         }
+
+
+
+        private void tbFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
+        }
+
 
         private void listBox1_CellClick(object sender, CellClickEventArgs e)
         {
@@ -235,6 +242,5 @@ namespace MapsDirectlyToDatabaseTableUI
                 this.Close();
             }
         }
-
     }
 }

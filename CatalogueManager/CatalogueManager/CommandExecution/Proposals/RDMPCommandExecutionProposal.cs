@@ -48,6 +48,7 @@ namespace CatalogueManager.CommandExecution.Proposals
             if (IsCompatibleTarget(target))
                 Activate((T) target);
         }
+
         public bool CanActivate(object target)
         {
             return IsCompatibleTarget(target) && CanActivate((T)target);
