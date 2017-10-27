@@ -56,16 +56,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             return "Unamed Tab";
         }
-
-        protected override void OnLeave(EventArgs e)
-        {
-            base.OnLeave(e);
-
-            var saveableUI = this as ISaveableUI;
-            if(saveableUI != null)
-                saveableUI.GetObjectSaverButton().OfferChanceToRevertOrSaveIfRequired();
-        }
-
+        
         public void Publish(DatabaseEntity e)
         {
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));

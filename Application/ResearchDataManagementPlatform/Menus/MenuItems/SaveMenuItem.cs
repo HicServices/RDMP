@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 
-namespace ResearchDataManagementPlatform.WindowManagement.TopMenu.MenuItems
+namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
     [System.ComponentModel.DesignerCategory("")]
     public class SaveMenuItem : ToolStripMenuItem

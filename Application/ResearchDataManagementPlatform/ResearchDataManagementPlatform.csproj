@@ -134,6 +134,7 @@
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
+    <Compile Include="Menus\MenuItems\SaveMenuItem.cs" />
     <Compile Include="RDMPDocumentationStore.cs" />
     <Compile Include="RDMPMainForm.cs">
       <SubType>Form</SubType>

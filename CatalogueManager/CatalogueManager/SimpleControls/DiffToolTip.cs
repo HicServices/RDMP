@@ -46,6 +46,8 @@ namespace CatalogueManager.SimpleControls
         {
             var report = GetReportIfDiff(e.AssociatedControl);
             
+
+
             try
             {
                 //get height of any given line
@@ -58,8 +60,8 @@ namespace CatalogueManager.SimpleControls
                 float dividerStartX = midpointX - (dividerWidth/2);
                 float dividerEndX = dividerStartX + dividerWidth;
 
-                var localBackground = e.ToolTipText.Equals("Save") ? Brushes.MediumSpringGreen : Brushes.IndianRed;
-                var dbBackground = e.ToolTipText.Equals("Discard") ? Brushes.MediumSpringGreen : Brushes.IndianRed;
+                var localBackground = e.ToolTipText.Equals("Save") ? Brushes.PaleGreen : Brushes.LightPink;
+                var dbBackground = e.ToolTipText.Equals("Discard") ? Brushes.PaleGreen : Brushes.LightPink;
                 
                 //background for local
                 e.Graphics.FillRectangle(localBackground, 0, 0, midpointX, HEIGHT);

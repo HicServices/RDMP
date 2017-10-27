@@ -76,7 +76,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private SaveMenuItem _saveToolStripMenuItem;
 
-        public RDMPMenuStrip()
+        public RDMPTopMenuStrip()
         {
             InitializeComponent();
         }

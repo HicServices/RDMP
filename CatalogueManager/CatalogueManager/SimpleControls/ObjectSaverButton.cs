@@ -49,8 +49,23 @@ namespace CatalogueManager.SimpleControls
             _refreshBus.Subscribe(this);
             o.PropertyChanged += PropertyChanged;
 
+            if (ParentForm == null)
+                throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
+
+            ParentForm.Enter += ParentForm_Enter;
+            ParentForm.Leave += ParentFormOnLeave;
             Enable(false);
             Text = "&Save";
+        }
+
+        private void ParentFormOnLeave(object sender, EventArgs eventArgs)
+        {
+            CheckForUnsavedChangesAnOfferToSave();
+        }
+
+        void ParentForm_Enter(object sender, EventArgs e)
+        {
+            CheckForOutOfDateObjectAndOfferToFix();
         }
         
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -150,42 +165,30 @@ namespace CatalogueManager.SimpleControls
             CheckForLocalChanges();
         }
 
-        public void OfferChanceToRevertOrSaveIfRequired()
+        public void CheckForOutOfDateObjectAndOfferToFix()
         {
+            if(_o == null)
+                return;
+
             var differences = _o.HasLocalChanges();
 
             if (differences.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-            {
-                if (!_isEnabled)
+                if(MessageBox.Show(_o + " is out of date with database, would you like to reload a fresh copy?","Object Changed",MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    var text = _o.GetType().Name + " '" + _o + "' (ID=" + _o.ID + ") has different values in the database, would you like to reload it?";
-                    var caption = "Reload " + _o.GetType().Name + " " + _o + " (ID = " + _o.ID + ")";
-
-                    if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        _o.RevertToDatabaseState();
-                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-                    }
+                    _o.RevertToDatabaseState();
+                    _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
                 }
-                else
-                {
-                    var text = "Would you like to save changes to " + _o.GetType().Name + " '" + _o + "' (ID=" + _o.ID + ")";
-                    var caption = "Save changes to " + _o.GetType().Name + " " + _o + " (ID = " + _o.ID + ")";
-
-                    if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        _o.SaveToDatabase();
-                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-                    }
-                    else
-                    {
-                        _o.RevertToDatabaseState();
-                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-                    }
-                }
-                
-                CheckForLocalChanges();
-            }
         }
+
+        public void CheckForUnsavedChangesAnOfferToSave()
+        {
+            if (_o == null)
+                return;
+
+            if (_isEnabled)
+                if(MessageBox.Show("Save Changes To '" + _o + "'?" ,"Save Changes" ,MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    Save();
+        }
+
     }
 }

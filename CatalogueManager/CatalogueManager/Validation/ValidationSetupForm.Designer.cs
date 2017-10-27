@@ -243,7 +243,6 @@ namespace CatalogueManager.Validation
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnConfigureStandardRegex,
-            this.btnSave,
             this.toolStripSeparator2,
             this.toolStripLabel1,
             this.cbxTimePeriodColumn,

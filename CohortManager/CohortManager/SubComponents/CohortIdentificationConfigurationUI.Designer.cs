@@ -105,7 +105,6 @@ namespace CohortManager.SubComponents
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
             this.objectSaverButton1.TabIndex = 58;
             this.objectSaverButton1.Text = "Save";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // ticket
             // 
