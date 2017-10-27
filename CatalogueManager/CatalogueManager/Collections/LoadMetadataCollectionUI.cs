@@ -78,7 +78,6 @@ namespace CatalogueManager.Collections
             var o = tlvLoadMetadata.SelectedObject;
             var hicDir = o as HICProjectDirectoryNode;
             var loadProgress = o as LoadProgress;
-            var cacheProgress = o as CacheProgress;
             
             var permissionWindow = o as PermissionWindow;
             var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
@@ -88,9 +87,6 @@ namespace CatalogueManager.Collections
 
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
-
-            if (cacheProgress != null)
-                _activator.ActivateCacheProgress(this, cacheProgress);
 
             if (permissionWindowUsage != null)
                 permissionWindow = permissionWindowUsage.PermissionWindow;

@@ -71,8 +71,6 @@ namespace CatalogueManager.ItemActivation
         /// <returns></returns>
         T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity;
         
-        void ExecuteCacheProgress(object sender, CacheProgress cp);
-
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);
         bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
 
@@ -116,7 +114,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
         void ActivateTableInfo(object sender, TableInfo tableInfo);
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
-        void ActivateCacheProgress(object sender, CacheProgress cacheProgress);
         void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
     }
 }
