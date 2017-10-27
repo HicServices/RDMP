@@ -81,7 +81,7 @@ namespace CatalogueManager.Validation
             this.olvColumns.HideSelection = false;
             this.olvColumns.Location = new System.Drawing.Point(0, 0);
             this.olvColumns.Name = "olvColumns";
-            this.olvColumns.Size = new System.Drawing.Size(260, 475);
+            this.olvColumns.Size = new System.Drawing.Size(259, 475);
             this.olvColumns.TabIndex = 0;
             this.olvColumns.UseCompatibleStateImageBehavior = false;
             this.olvColumns.View = System.Windows.Forms.View.Details;
@@ -165,7 +165,7 @@ namespace CatalogueManager.Validation
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 404);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(959, 404);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // btnAddSecondaryConstraint
@@ -207,6 +207,7 @@ namespace CatalogueManager.Validation
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel2.Controls.Add(this.label4);
             this.splitContainer1.Panel2.Controls.Add(this.ddConsequence);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
@@ -216,7 +217,7 @@ namespace CatalogueManager.Validation
             this.splitContainer1.Panel2.Controls.Add(this.btnAddSecondaryConstraint);
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Size = new System.Drawing.Size(1177, 537);
-            this.splitContainer1.SplitterDistance = 252;
+            this.splitContainer1.SplitterDistance = 251;
             this.splitContainer1.TabIndex = 9;
             // 
             // tbFilter
@@ -225,7 +226,7 @@ namespace CatalogueManager.Validation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFilter.Location = new System.Drawing.Point(41, 481);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(216, 20);
+            this.tbFilter.Size = new System.Drawing.Size(215, 20);
             this.tbFilter.TabIndex = 2;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
@@ -330,7 +331,7 @@ namespace CatalogueManager.Validation
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(38, 0);
+            this.objectSaverButton1.Location = new System.Drawing.Point(4, 500);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(56, 28);
@@ -340,7 +341,6 @@ namespace CatalogueManager.Validation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label5);
