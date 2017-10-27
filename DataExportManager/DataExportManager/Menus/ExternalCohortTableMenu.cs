@@ -20,7 +20,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CohortUI.ImportCustomData;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using DataExportManager.SimpleDialogs;
 using HIC.Logging;
 using HIC.Logging.Listeners;
@@ -41,7 +40,7 @@ namespace DataExportManager.Menus
 
         const string TaskDescriptionGenerallyHelpfulText = "Because cohort management and identifier assignment can vary considerably between companies the RDMP allows for significant adaptability here.  If there is already a pipeline with a description that sounds like what your trying to do then you should try selecting that.  If not then you will have to create new one, start by selecting an appropriate source component for your file type (e.g. if the file is CSV use DelimitedDataFlowSource) then select an appropriate destination component (if you are unsure what the correct one is try the 'BasicCohortDestination').  If you are using 'BasicCohortDestination' then you will have to make sure that your pipeline creates/populates BOTH the private and release identifier columns and that they are given the same names as in your Cohort database (or you can program in C# your own custom plugin component for the destination - See writing MEF Plugins).";
 
-        public ExternalCohortTableMenu(IActivateDataExportItems activator, ExternalCohortTable externalCohortTable): base( activator,externalCohortTable)
+        public ExternalCohortTableMenu(IActivateItems activator, ExternalCohortTable externalCohortTable): base( activator,externalCohortTable)
         {
             _externalCohortTable = externalCohortTable;
             Items.Add("Import File to Create a Cohort", CatalogueIcons.ImportFile,(s, e) => ImportFileAsCohort());
@@ -160,7 +159,7 @@ namespace DataExportManager.Menus
             //Get a new request for the source they are trying to populate
             CohortCreationRequestUI requestUI = new CohortCreationRequestUI(_externalCohortTable, _project);
             requestUI.RepositoryLocator = RepositoryLocator;
-            requestUI.Activator = (IActivateDataExportItems) _activator;
+            requestUI.Activator = (IActivateItems) _activator;
 
             if (requestUI.ShowDialog() != DialogResult.OK)
                 return null;

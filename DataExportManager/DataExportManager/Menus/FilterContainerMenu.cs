@@ -6,13 +6,13 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using RDMPStartup;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -24,7 +24,7 @@ namespace DataExportManager.Menus
         private readonly SelectedDataSets _rootSelectedDataSets;
         private ExtractionFilter[] _importableFilters;
 
-        public FilterContainerMenu(IActivateDataExportItems activator, FilterContainer filterContainer, SelectedDataSets rootSelectedDataSets):base(activator,filterContainer)
+        public FilterContainerMenu(IActivateItems activator, FilterContainer filterContainer, SelectedDataSets rootSelectedDataSets):base(activator,filterContainer)
         {
             _filterContainer = filterContainer;
             _rootSelectedDataSets= rootSelectedDataSets;

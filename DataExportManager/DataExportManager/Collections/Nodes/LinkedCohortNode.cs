@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.ItemActivation;
 
 namespace DataExportManager.Collections.Nodes
 {
@@ -27,7 +27,7 @@ namespace DataExportManager.Collections.Nodes
             return Cohort.ToString();
         }
 
-        public void DeleteWithConfirmation(IActivateDataExportItems activator)
+        public void DeleteWithConfirmation(IActivateItems activator)
         {
             if (MessageBox.Show(
                             "Clear Cohort on ExtractionConfiguration '" + Configuration +

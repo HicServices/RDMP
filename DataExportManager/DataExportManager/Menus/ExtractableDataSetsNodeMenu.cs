@@ -15,7 +15,6 @@ using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -26,7 +25,7 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ExtractableDataSetsNodeMenu:RDMPContextMenuStrip
     {
-        public ExtractableDataSetsNodeMenu(IActivateDataExportItems activator)
+        public ExtractableDataSetsNodeMenu(IActivateItems activator)
             : base(activator,null)
         {
 

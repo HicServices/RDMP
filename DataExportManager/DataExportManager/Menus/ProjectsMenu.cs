@@ -15,7 +15,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
+using DataExportManager.CommandExecution.AtomicCommands;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
@@ -32,7 +32,7 @@ namespace DataExportManager.Menus
         private readonly Project _project;
         private readonly ICoreIconProvider _coreIconProvider;
 
-        public ProjectsMenu(IActivateDataExportItems activator, DataExportChildProvider childProvider, Project project)
+        public ProjectsMenu(IActivateItems activator, DataExportChildProvider childProvider, Project project)
             : base(activator,project)
         {
             _childProvider = childProvider;
@@ -44,11 +44,8 @@ namespace DataExportManager.Menus
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks());
             Items.Add("Set Extraction Folder", CatalogueIcons.ExtractionFolderNode, (s, e) => ChooseExtractionFolder());
 
-            var release = new ToolStripMenuItem("Release Project", CatalogueIcons.Release, (s, e) => activator.ExecuteRelease(this, project));
-            release.Enabled = _childProvider.GetActiveConfigurationsOnly(project).Any();
-            Items.Add(release);
-
-
+            Add(new ExecuteCommandReleaseProject(_activator).SetTarget(project));
+            
             var importCohort = new ToolStripMenuItem("Import Cohort", _coreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Import));
 
             if (!_childProvider.CohortSources.Any())
@@ -79,7 +76,7 @@ namespace DataExportManager.Menus
         private void AddCohortImportOptionsAsDropDownItemsOf(ToolStripMenuItem toolStripMenuItem, ExternalCohortTable source)
         {
             //lets hijack the ExternalCohortTableMenu, after all anything relevant to them is probably also relevant here right
-            var proxyMenu = new ExternalCohortTableMenu((IActivateDataExportItems)_activator, source);
+            var proxyMenu = new ExternalCohortTableMenu((IActivateItems)_activator, source);
             proxyMenu.SetScopeIsProject(_project);
 
             //get all the items from the menu we just created

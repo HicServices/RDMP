@@ -19,7 +19,6 @@ using DataExportManager.CohortUI.ImportCustomData;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.DataViewing.Collections;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -32,7 +31,7 @@ namespace DataExportManager.Menus
     {
         private readonly ExtractableCohort _cohort;
 
-        public ExtractableCohortMenu(IActivateDataExportItems activator, ExtractableCohort cohort)
+        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohort cohort)
             : base(activator,cohort)
         {
             _cohort = cohort;

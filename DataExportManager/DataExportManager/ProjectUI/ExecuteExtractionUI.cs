@@ -420,10 +420,9 @@ namespace DataExportManager.ProjectUI
             return "Execute:" + base.GetTabName();
         }
 
-        public void SetRequest(ExecuteExtractionUIRequest request)
+        public void Start()
         {
-            if (request.AutoStart)
-                btnStart_Click(null, null);
+            btnStart_Click(null, null);
         }
     }
 

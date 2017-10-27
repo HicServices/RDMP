@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
@@ -12,7 +13,7 @@ using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using RDMPStartup;
@@ -26,7 +27,7 @@ namespace DataExportManager.Menus
         private readonly SelectedDataSets _selectedDataSet;
         private ExtractionConfiguration _extractionConfiguration;
 
-        public SelectedDataSetMenu(IActivateDataExportItems activator, SelectedDataSets selectedDataSet):base(activator,selectedDataSet)
+        public SelectedDataSetMenu(IActivateItems activator, SelectedDataSets selectedDataSet):base(activator,selectedDataSet)
         {
             _selectedDataSet = selectedDataSet;
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
@@ -53,18 +54,9 @@ namespace DataExportManager.Menus
             addRootFilter.Enabled = root == null;
             Items.Add(addRootFilter);
 
-            var viewSQL = new ToolStripMenuItem("View Extraction SQL", CatalogueIcons.SQL,(s,e)=>ViewSQL());
-            //must have datasets and have a cohort configured
-            viewSQL.Enabled = _selectedDataSet.ExtractionConfiguration.Cohort_ID != null;
-            Items.Add(viewSQL);
+            Add(new ExecuteCommandViewSelectedDatasetsExtractionSql(_activator).SetTarget(selectedDataSet));
 
             AddCommonMenuItems();
-        }
-
-
-        private void ViewSQL()
-        {
-            ((IActivateDataExportItems)_activator).ActivateViewExtractionSQL(this, _selectedDataSet);
         }
 
 
@@ -84,7 +76,7 @@ namespace DataExportManager.Menus
                 foreach (AggregateConfiguration graph in graphsToExecute)
                 {
                     var args = new ExtractionAggregateGraphObjectCollection(_selectedDataSet, graph);
-                    ((IActivateDataExportItems)_activator).ExecuteExtractionExtractionAggregateGraph(this,args);
+                    new ExecuteCommandExecuteExtractionAggregateGraph(_activator,args).Execute();
                 }
 
                 

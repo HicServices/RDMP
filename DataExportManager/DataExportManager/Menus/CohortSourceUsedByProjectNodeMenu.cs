@@ -4,12 +4,12 @@ using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using DataExportManager.CohortUI;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using RDMPStartup;
 
 namespace DataExportManager.Menus
@@ -20,7 +20,7 @@ namespace DataExportManager.Menus
         private readonly DataExportChildProvider _childProvider;
         private readonly CohortSourceUsedByProjectNode _cohortSourceUsedByProjectNode;
 
-        public CohortSourceUsedByProjectNodeMenu(IActivateDataExportItems activator, DataExportChildProvider childProvider, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
+        public CohortSourceUsedByProjectNodeMenu(IActivateItems activator, DataExportChildProvider childProvider, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
             : base( activator,cohortSourceUsedByProjectNode.Project)
         {
             _childProvider = childProvider;

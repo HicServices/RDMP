@@ -27,7 +27,6 @@ using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
 using DataExportManager.Icons.IconProvision;
-using DataExportManager.ItemActivation;
 using DataExportManager.Menus;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
@@ -76,7 +75,7 @@ namespace DataExportManager.Collections
     /// </summary>
     public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
-        private IActivateDataExportItems _activator;
+        private IActivateItems _activator;
         private DataExportTextFormatProvider _formatProvider;
         private DataExportIconProvider _iconProvider;
         private DataExportProblemProvider _problemProvider;
@@ -136,7 +135,7 @@ namespace DataExportManager.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = (IActivateDataExportItems)activator;
+            _activator = (IActivateItems)activator;
             _iconProvider = (DataExportIconProvider) _activator.CoreIconProvider;
 
             CommonFunctionality.SetUp(
@@ -305,24 +304,12 @@ namespace DataExportManager.Collections
         private void tlvDataExport_ItemActivate(object sender, EventArgs e)
         {
             object o = tlvDataExport.SelectedObject;
-            var externalCohortTable = o as ExternalCohortTable;
-            var cohort = o as ExtractableCohort;
             var customDataTable = o as CustomDataTableNode;
             var folder = o as ExtractionFolderNode;
-            var project = o as Project;
-            var selectedDataSet = o as SelectedDataSets;
-            
-            if (externalCohortTable != null)
-                _activator.ActivateExternalCohortTable(this, externalCohortTable);
 
             if(tlvDataExport.SelectedObject is CohortsNode)
                 new CohortsNodeMenu(_activator).ShowDetailedSummaryOfCohorts();
 
-            if (cohort != null)
-                _activator.ActivateCohort(this, cohort);
-
-            if(project != null)
-                _activator.ActivateProject(this,project);
 
             if (customDataTable != null)
             {
@@ -336,8 +323,6 @@ namespace DataExportManager.Collections
             if(folder != null && folder.CanActivate())
                 folder.Activate();
 
-            if (selectedDataSet != null)
-                _activator.ActivateEditExtractionConfigurationDataset(selectedDataSet);
         }
 
 

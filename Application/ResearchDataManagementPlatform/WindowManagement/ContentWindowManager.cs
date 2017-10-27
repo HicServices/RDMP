@@ -35,6 +35,7 @@ using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ExtractionUIs.JoinsAndLookups;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Issues;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.LoadExecutionUIs;
@@ -59,7 +60,6 @@ using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
 using DataExportManager.DataRelease;
 using DataExportManager.Icons.IconProvision;
-using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using MapsDirectlyToDatabaseTable;
@@ -76,7 +76,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
-    public class ContentWindowManager : IActivateDataExportItems
+    public class ContentWindowManager : IActivateItems
     {
         public event EmphasiseItemHandler Emphasise;
 
@@ -397,53 +397,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
         }
 
-        public void ExecuteExtractionExtractionAggregateGraph(object sender, ExtractionAggregateGraphObjectCollection objectCollection)
-        {
-            Activate<ExtractionAggregateGraph>(objectCollection);
-        }
-
-
-        public void ActivateExternalCohortTable(object sender, ExternalCohortTable externalCohortTable)
-        {
-            Activate<ExternalCohortTableUI, ExternalCohortTable>(externalCohortTable);
-        }
-
-        public void ActivateCohort(object sender, ExtractableCohort cohort)
-        {
-            Activate<ExtractableCohortUI,ExtractableCohort>(cohort,CatalogueIcons.ExtractableCohort);
-        }
-
-        public void ActivateProject(object sender, Project project)
-        {
-            Activate<ProjectUI,Project>(project);
-        }
-
-        public void ActivateExtractionConfiguration(object sender, ExtractionConfiguration config)
-        {
-            Activate<ExtractionConfigurationUI,ExtractionConfiguration>(config);
-        }
-
-        public void ExecuteExtractionConfiguration(object sender, ExecuteExtractionUIRequest request)
-        {
-            var ui = Activate<ExecuteExtractionUI,ExtractionConfiguration>(request.ExtractionConfiguration, CatalogueIcons.ExecuteArrow);
-            ui.SetRequest(request);
-        }
-
-        public void ExecuteRelease(object sender, Project project)
-        {
-            Activate<DataReleaseUI, Project>(project, CatalogueIcons.Release);
-            //Activate<ConfigureAndExecuteDataReleaseUI, Project>(project,CatalogueIcons.Release);
-        }
-
-        public void ActivateEditExtractionConfigurationDataset(SelectedDataSets selectedDataSets)
-        {
-            Activate<ConfigureDatasetUI,SelectedDataSets>(selectedDataSets);
-        }
-
-        public void ActivateViewExtractionSQL(object sender, SelectedDataSets selectedDataSet)
-        {
-            Activate<ViewExtractionConfigurationSQLUI, SelectedDataSets>(selectedDataSet);
-        }
         
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {

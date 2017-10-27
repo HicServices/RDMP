@@ -14,7 +14,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -25,7 +24,7 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ProjectsNodeMenu:RDMPContextMenuStrip
     {
-        public ProjectsNodeMenu(IActivateDataExportItems activator)
+        public ProjectsNodeMenu(IActivateItems activator)
             : base(activator,null)
         {
 
@@ -37,7 +36,7 @@ namespace DataExportManager.Menus
         {
             Project p = new Project(RepositoryLocator.DataExportRepository,"New Project " + Guid.NewGuid());
             Publish(p);
-            ((IActivateDataExportItems)_activator).ActivateProject(this, p);
+            Activate(p);
         }
     }
 }

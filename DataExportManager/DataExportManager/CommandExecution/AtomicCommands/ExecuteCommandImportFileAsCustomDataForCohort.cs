@@ -7,9 +7,9 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI.ImportCustomData;
-using DataExportManager.ItemActivation;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Icons.IconProvision;
@@ -21,7 +21,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         private ExtractableCohort _cohort;
         private FileInfo _file;
 
-        public ExecuteCommandImportFileAsCustomDataForCohort(IActivateDataExportItems activator, ExtractableCohort cohort= null, FileCollectionCommand fileCommand=null) : base(activator)
+        public ExecuteCommandImportFileAsCustomDataForCohort(IActivateItems activator, ExtractableCohort cohort= null, FileCollectionCommand fileCommand=null) : base(activator)
         {
            if(cohort != null)
                 SetTarget(cohort);

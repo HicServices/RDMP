@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueManager.CommandExecution.Proposals;
+using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
+using DataExportManager.CohortUI;
 using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.ItemActivation;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
@@ -16,7 +18,7 @@ namespace DataExportManager.CommandExecution.Proposals
 {
     public class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
     {
-        public ProposeExecutionWhenTargetIsExtractableCohort(IActivateDataExportItems activator):base(activator)
+        public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator):base(activator)
         {
         }
 
@@ -27,14 +29,14 @@ namespace DataExportManager.CommandExecution.Proposals
 
         public override void Activate(ExtractableCohort target)
         {
-            //nothing
+            ItemActivator.Activate<ExtractableCohortUI, ExtractableCohort>(target);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
         {
             var fileCommand = cmd as FileCollectionCommand; 
             if(fileCommand != null)
-                return new ExecuteCommandImportFileAsCustomDataForCohort((IActivateDataExportItems)ItemActivator, target, fileCommand);
+                return new ExecuteCommandImportFileAsCustomDataForCohort(ItemActivator, target, fileCommand);
 
             //no command possible, dragged command must have been something else
             return null;

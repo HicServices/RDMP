@@ -10,7 +10,7 @@ using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.LoadExecutionUIs;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.ItemActivation;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -64,22 +64,19 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _toolboxWindowManager.Create(RDMPCollection.DataExport, DockState.DockLeft);
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(project, int.MaxValue));
-            var activateDataExportItems = _activator as IActivateDataExportItems;
+            var activateDataExportItems = _activator as IActivateItems;
 
             bool foundAtLeastOneConfiguration = false;
 
             if (activateDataExportItems != null)
             {
-                // activateDataExportItems.ActivateProject(this, project);
+                //execute all unreleased configurations... what could possibly go wrong?
                 foreach (var config in project.ExtractionConfigurations.Cast<ExtractionConfiguration>())
                     if (!config.IsReleased)
-                    {
-                        activateDataExportItems.ExecuteExtractionConfiguration(this,new ExecuteExtractionUIRequest(config));
-                        foundAtLeastOneConfiguration = true;
-                    }
+                        new ExecuteCommandExecuteExtractionConfiguration(_activator, true).SetTarget(config).Execute();
 
                 if(!foundAtLeastOneConfiguration)
-                    activateDataExportItems.ActivateProject(this,project);
+                    new ExecuteCommandActivate(_activator,project).Execute();
             }
         }
 

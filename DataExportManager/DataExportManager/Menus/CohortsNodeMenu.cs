@@ -13,7 +13,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -24,7 +23,7 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CohortsNodeMenu:RDMPContextMenuStrip
     {
-        public CohortsNodeMenu(IActivateDataExportItems activator):base(activator,null)
+        public CohortsNodeMenu(IActivateItems activator):base(activator,null)
         {
             Items.Add("Show detailed summary of all cohorts", CatalogueIcons.CohortsSourceDetailedCounts, (s, e) => ShowDetailedSummaryOfCohorts());
 
@@ -47,8 +46,7 @@ namespace DataExportManager.Menus
         {
             var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid());
             Publish(newExternalCohortTable);
-            ((IActivateDataExportItems)_activator).ActivateExternalCohortTable(this, newExternalCohortTable);
-
+            Activate(newExternalCohortTable);
         }
 
         private void LaunchCohortDatabaseCreationWizard()

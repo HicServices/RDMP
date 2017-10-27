@@ -8,7 +8,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
 using DataExportManager.Wizard;
 using ReusableLibraryCode.CommandExecution;
@@ -34,11 +33,10 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 var p = (Project) wizard.ExtractionConfigurationCreatedIfAny.Project;
                 Publish(p);
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
-                ((IActivateDataExportItems)Activator).ExecuteExtractionConfiguration(this, 
-                    new ExecuteExtractionUIRequest(wizard.ExtractionConfigurationCreatedIfAny)
-                    {
-                        AutoStart = true
-                    });
+                
+                //now execute it
+                new ExecuteCommandExecuteExtractionConfiguration(Activator,true).SetTarget(wizard.ExtractionConfigurationCreatedIfAny).Execute(); 
+
             }
         }
 

@@ -24,7 +24,6 @@ using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using HIC.Common.Validation.Constraints.Primary;
@@ -46,7 +45,7 @@ namespace DataExportManager.Menus
 
         private IExtractableDataSet[] _importableDataSets;
 
-        public ExtractionConfigurationMenu(IActivateDataExportItems activator, ExtractionConfiguration extractionConfiguration, DataExportChildProvider childProvider)
+        public ExtractionConfigurationMenu(IActivateItems activator, ExtractionConfiguration extractionConfiguration, DataExportChildProvider childProvider)
             : base( activator,extractionConfiguration)
         {
             _extractionConfiguration = extractionConfiguration;
@@ -88,10 +87,8 @@ namespace DataExportManager.Menus
             generateDoc.Enabled = _datasets.Any() && extractionResults.Any();
             Items.Add(generateDoc);
 
-            var execute = new ToolStripMenuItem("Execute Extraction Configuration", CatalogueIcons.ExecuteArrow, (s, e) => ((IActivateDataExportItems)_activator).ExecuteExtractionConfiguration(this, new ExecuteExtractionUIRequest(_extractionConfiguration)));
-            //must have datasets, must not be released and must have a cohort
-            execute.Enabled = _datasets.Any() && !extractionConfiguration.IsReleased && extractionConfiguration.Cohort_ID != null;
-            Items.Add(execute);
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(_extractionConfiguration));
+
 
             var freeze = new ToolStripMenuItem("Freeze Extraction", CatalogueIcons.FrozenExtractionConfiguration,(s, e) => Freeze());
             freeze.Enabled = !extractionConfiguration.IsReleased && _datasets.Any();

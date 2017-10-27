@@ -14,7 +14,6 @@ using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
 using DataExportManager.DataViewing.Collections;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -26,7 +25,7 @@ namespace DataExportManager.Menus
     {
         private readonly CustomDataTableNode _customDataTableNode;
 
-        public CustomDataTableNodeMenu(IActivateDataExportItems activator, CustomDataTableNode customDataTableNode): base( activator,null)
+        public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNode customDataTableNode): base( activator,null)
         {
             
 

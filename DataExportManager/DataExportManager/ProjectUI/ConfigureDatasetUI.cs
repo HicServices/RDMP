@@ -20,7 +20,6 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableUIComponents;
@@ -85,9 +84,6 @@ namespace DataExportManager.ProjectUI
             ColumnsAlreadyInConfiguration.Clear();
             ColumnsFromCatalogue.Clear();
 
-            btnViewSQL.Enabled = !_viewSQlWindowIsActive;
-
-            
             //get the catalogue and then all the items
             ICatalogue cata;
             try
@@ -490,13 +486,6 @@ namespace DataExportManager.ProjectUI
             }
         }
         
-        private bool _viewSQlWindowIsActive = false;
-        private void btnViewSQL_Click(object sender, EventArgs e)
-        {
-            ((IActivateDataExportItems)_activator).ActivateViewExtractionSQL(this,SelectedDataSet);
-            _viewSQlWindowIsActive = true;
-        }
-
         public override void SetDatabaseObject(IActivateItems activator, SelectedDataSets databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);

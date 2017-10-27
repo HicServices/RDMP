@@ -8,11 +8,11 @@ using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
@@ -25,7 +25,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
     {
         private readonly ExtractionConfiguration _configuration;
 
-        public ExecuteCommandUnfreezeExtractionConfiguration(IActivateDataExportItems activator, ExtractionConfiguration configuration):base(activator)
+        public ExecuteCommandUnfreezeExtractionConfiguration(IActivateItems activator, ExtractionConfiguration configuration):base(activator)
         {
             _configuration = configuration;
 

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
-using DataExportManager.ItemActivation;
 using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
@@ -83,7 +83,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
         }
 
         public CohortCreationRequest Result { get; set; }
-        public IActivateDataExportItems Activator { get; set; }
+        public IActivateItems Activator { get; set; }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
