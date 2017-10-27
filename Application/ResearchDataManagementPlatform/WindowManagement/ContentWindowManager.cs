@@ -256,11 +256,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<AllLoadEventsUI,LoadMetadata>(loadMetadata, CatalogueIcons.Logging);
         }
 
-        public void ActivateExtractionFilterParameterSet(object sender, ExtractionFilterParameterSet parameterSet)
-        {
-            Activate<ExtractionFilterParameterSetUI,ExtractionFilterParameterSet>(parameterSet);
-        }
-
         public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
             var wizard = new FilterImportWizard();

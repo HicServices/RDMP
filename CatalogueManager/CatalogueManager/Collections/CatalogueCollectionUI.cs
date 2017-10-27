@@ -388,13 +388,9 @@ namespace CatalogueManager.Collections
         private void tlvCatalogues_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvCatalogues.SelectedObject;
-            var valueSet = o as ExtractionFilterParameterSet;
             var issue = o as CatalogueItemIssue;
             var doc = o as SupportingDocument;
             var sql = o as SupportingSQLTable;
-            
-            if (valueSet != null)
-                _activator.ActivateExtractionFilterParameterSet(this, valueSet);
             
             if(issue != null)
                 _activator.ActivateCatalogueItemIssue(this,issue);

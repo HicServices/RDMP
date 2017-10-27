@@ -38,7 +38,7 @@ namespace CatalogueManager.Menus
             var parameterSet = new ExtractionFilterParameterSet(RepositoryLocator.CatalogueRepository,filter);
             parameterSet.CreateNewValueEntries();
             Publish(filter);
-            _activator.ActivateExtractionFilterParameterSet(this,parameterSet);
+            Activate(parameterSet);
         }
 
         

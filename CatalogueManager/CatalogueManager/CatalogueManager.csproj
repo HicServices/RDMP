@@ -340,6 +340,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
     <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />

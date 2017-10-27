@@ -76,7 +76,6 @@ namespace CatalogueManager.ItemActivation
 
         void ActivateViewLoadMetadataLog(object sender,LoadMetadata loadMetadata);
 
-        void ActivateExtractionFilterParameterSet(object sender,ExtractionFilterParameterSet parameterSet);
 
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
         void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue);
