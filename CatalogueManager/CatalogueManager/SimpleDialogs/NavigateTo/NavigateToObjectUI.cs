@@ -278,11 +278,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 }
 
             //match on the head vs the regex tokens
-            if (IsMatchToString(regexes, kvp.Key))
-                score += Weights[0];
+            score += Weights[0] * CountMatchToString(regexes, kvp.Key);
 
-            if (IsMatchType(regexes, kvp.Key))
-                score += Weights[0];
+            score += Weights[0] * CountMatchType(regexes, kvp.Key);
 
             //match on the parents if theres a decendancy list
             if(kvp.Value != null)
@@ -303,11 +301,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     {
                         if (!(parent is CatalogueLibrary.Data.IContainer))
                         {
-                            if (IsMatchToString(regexes, parent))
-                                score += Weights[i];
-
-                            if (IsMatchType(regexes, parent))
-                                score += Weights[i];
+                            score += Weights[i] * CountMatchToString(regexes, parent);
+                            score += Weights[i] * CountMatchType(regexes, parent);
                         }
                     }
                 }
@@ -320,24 +315,24 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             return score;
         }
 
-        private bool IsMatchType(List<Regex> regexes, object key)
+        private int CountMatchType(List<Regex> regexes, object key)
         {
-            return IsMatch(regexes, key.GetType().Name);
+            return MatchCount(regexes, key.GetType().Name);
         }
-        private bool IsMatchToString(List<Regex> regexes, object key)
+        private int CountMatchToString(List<Regex> regexes, object key)
         {
-            return IsMatch(regexes, key.ToString());
+            return MatchCount(regexes, key.ToString());
         }
-        private bool IsMatch(List<Regex> regexes, string str)
+        private int MatchCount(List<Regex> regexes, string str)
         {
-            var match = regexes.FirstOrDefault(r => r.IsMatch(str));
-
-            if (match != null)
+            int matches = 0;
+            foreach(var match in regexes.Where(r => r.IsMatch(str)).ToArray())
             {
                 regexes.Remove(match);
-                return true;
+                matches ++;
             }
-            return false;
+
+            return matches;
         }
 
         protected override void OnPaint(PaintEventArgs e)
