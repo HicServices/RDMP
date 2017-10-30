@@ -81,8 +81,8 @@ namespace DataExportManager.Collections
         private DataExportProblemProvider _problemProvider;
         private TreeNodeParentFinder _parentFinder;
         private DataExportChildProvider _childProvider;
-        
-        private object[] _roots;
+
+        private ProjectsNode _allProjectsNode;
 
         public DataExportCollectionUI()
         {
@@ -143,43 +143,23 @@ namespace DataExportManager.Collections
                 _activator,
                 olvName,
                 tbFilter,
-                olvName,
-                lblHowToEdit
+                olvName
                 );
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            if (_allProjectsNode == null)
+            {
+                _allProjectsNode = ((DataExportChildProvider) _activator.CoreChildProvider).RootProjectsNode;
+                tlvDataExport.AddObject(_allProjectsNode);
+            }
+
             RefreshProviders();
-            RefreshUIFromDatabase(null);
         }
 
         private void tlvDataExport_CellRightClick(object sender, CellRightClickEventArgs e)
         {
             var o = e.Model;
-
-            if(o is CohortsNode)
-                e.MenuStrip = new CohortsNodeMenu(_activator);
-
-            if (o is ExternalCohortTable)
-                e.MenuStrip = new ExternalCohortTableMenu(_activator, (ExternalCohortTable) o);
-
-            if(o is ExtractableCohort)
-                e.MenuStrip = new ExtractableCohortMenu(_activator, (ExtractableCohort)o);
-
-            if(o is ExtractableDataSetsNode)
-                e.MenuStrip = new ExtractableDataSetsNodeMenu(_activator);
-
-            if(o is ExtractableDataSet)
-                e.MenuStrip = new ExtractableDatasetMenu(_activator,(ExtractableDataSet)o);
-
-            if(o is ProjectsNode)
-                e.MenuStrip = new ProjectsNodeMenu(_activator);
-
-            if(o is Project)
-                e.MenuStrip = new ProjectsMenu(_activator, _childProvider, (Project)o);
-
-            if (o is CohortSourceUsedByProjectNode)
-                e.MenuStrip = new CohortSourceUsedByProjectNodeMenu( _activator, _childProvider, (CohortSourceUsedByProjectNode)o);
             
             if (o is ExtractableCohortUsedByProjectNode)
                 e.MenuStrip = new ExtractableCohortMenu(_activator, ((ExtractableCohortUsedByProjectNode)o).Cohort);
@@ -210,34 +190,14 @@ namespace DataExportManager.Collections
             }
         }
         
-        private void RefreshUIFromDatabase(object oRefreshFrom)
-        {
-            if (oRefreshFrom == null)
-            {
-                tlvDataExport.ClearObjects();
-
-                _roots = new object[]
-                {
-                    _childProvider.RootCohortsNode,
-                    _childProvider.RootExtractableDataSets,
-                    _childProvider.RootProjectsNode
-                };
-
-                tlvDataExport.AddObjects(_roots);
-            }
-            else
-                tlvDataExport.RefreshObject(oRefreshFrom);
-        }
-
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             //always update the child providers etc
             RefreshProviders();
 
-            RefreshIfNewChild(typeof(ProjectsNode), typeof(Project), e.Object);
-            RefreshIfNewChild(typeof(CohortsNode), typeof(ExternalCohortTable), e.Object);
-            RefreshIfNewChild(typeof(ExtractableDataSetsNode), typeof(ExtractableDataSet), e.Object);
-            RefreshIfNewChild(typeof(ExtractableDataSetsNode), typeof(ExtractableDataSetPackage), e.Object);
+            //RefreshIfNewChild(typeof(CohortsNode), typeof(ExternalCohortTable), e.Object);
+            //RefreshIfNewChild(typeof(ExtractableDataSetsNode), typeof(ExtractableDataSet), e.Object);
+            //RefreshIfNewChild(typeof(ExtractableDataSetsNode), typeof(ExtractableDataSetPackage), e.Object);
 
 
             //Objects can appear multiple times in this tree view but thats not allowed by ObjectListView (for good reasons!).  So instead we wrap the duplicate object
@@ -248,27 +208,6 @@ namespace DataExportManager.Collections
                     tlvDataExport.RefreshObject(user.Project);//refresh the entire Project
         }
 
-        private void RefreshIfNewChild(Type singletonNodeType, Type childTypeToRefreshIfNew, DatabaseEntity childThatMightBeNew)
-        {
-            //it's not a change to a relevant type anyway e.g. ProjectNode has children of type Project and we only care if childThatMightBeNew is a Project
-            if (childTypeToRefreshIfNew != childThatMightBeNew.GetType())
-                return;
-
-            //user passed in the Type of the root they want refreshed (if a new object of the correct Type appeared)
-            var nodeUserWantsRefreshed = _roots.Single(r => r.GetType() == singletonNodeType);
-
-            //get the tree node children
-            var children = tlvDataExport.GetChildren(nodeUserWantsRefreshed).OfType<DatabaseEntity>();
-            var contains = children.Contains(childThatMightBeNew);
-
-            //objects that are deleted still come through as a refresh (as they are deleted)
-            bool childStillExists = childThatMightBeNew.Exists();
-
-            //if it contains a deleted object (OR doesn't contain an existing object)
-            if (contains != childStillExists)
-                RefreshUIFromDatabase(nodeUserWantsRefreshed);//udate the node (expensive operation)
-
-        }
 
         private void RefreshProviders()
         {
@@ -306,11 +245,7 @@ namespace DataExportManager.Collections
             object o = tlvDataExport.SelectedObject;
             var customDataTable = o as CustomDataTableNode;
             var folder = o as ExtractionFolderNode;
-
-            if(tlvDataExport.SelectedObject is CohortsNode)
-                new CohortsNodeMenu(_activator).ShowDetailedSummaryOfCohorts();
-
-
+            
             if (customDataTable != null)
             {
                 var c = new DataTableViewer(customDataTable.Cohort.ExternalCohortTable,
@@ -322,7 +257,6 @@ namespace DataExportManager.Collections
             
             if(folder != null && folder.CanActivate())
                 folder.Activate();
-
         }
 
 
@@ -334,16 +268,13 @@ namespace DataExportManager.Collections
 
         private void ExpandRoots()
         {
-            tlvDataExport.ExpandedObjects = _roots;
+            tlvDataExport.Expand(_allProjectsNode);
             tlvDataExport.RebuildAll(true);
         }
 
         public static bool IsRootObject(object root)
         {
-            return
-                root is CohortsNode ||
-                root is ExtractableDataSetsNode ||
-                root is ProjectsNode;
+            return root is ProjectsNode;
         }
     }
 }

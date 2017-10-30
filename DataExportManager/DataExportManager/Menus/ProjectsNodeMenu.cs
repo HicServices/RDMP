@@ -13,6 +13,7 @@ using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
+using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
@@ -24,7 +25,7 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ProjectsNodeMenu:RDMPContextMenuStrip
     {
-        public ProjectsNodeMenu(IActivateItems activator)
+        public ProjectsNodeMenu(IActivateItems activator,ProjectsNode node)
             : base(activator,null)
         {
 

@@ -339,12 +339,19 @@
     <Compile Include="Collections\Nodes\ProjectsNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
     <Compile Include="Collections\Providers\DataExportChildProvider.cs" />
+    <Compile Include="Collections\SavedCohortsCollectionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Collections\SavedCohortsCollectionUI.Designer.cs">
+      <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportFileAsCustomDataForCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReleaseProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowDetailedSummaryOfAllCohorts.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSelectedDatasetsExtractionSql.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalCohortTable.cs" />
@@ -532,6 +539,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\DataExportCollectionUI.resx">
       <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Collections\SavedCohortsCollectionUI.resx">
+      <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataRelease\CleanupConfirmationDialog.resx">
       <DependentUpon>CleanupConfirmationDialog.cs</DependentUpon>

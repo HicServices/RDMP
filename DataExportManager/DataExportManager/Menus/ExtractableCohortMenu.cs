@@ -16,6 +16,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CohortUI.ImportCustomData;
+using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.DataViewing.Collections;
@@ -44,6 +45,13 @@ namespace DataExportManager.Menus
             AddCommonMenuItems();
 
         }
+
+        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohortUsedByProjectNode cohortNode)
+            : this(activator, cohortNode.Cohort)
+        {
+
+        }
+
 
         private void ExecutePatientIndexTableAndImportAsCustomData()
         {

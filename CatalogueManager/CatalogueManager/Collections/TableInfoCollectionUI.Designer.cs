@@ -39,7 +39,6 @@ namespace CatalogueManager.Collections
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.lblHowToEdit = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfos)).BeginInit();
             this.SuspendLayout();
@@ -110,18 +109,6 @@ namespace CatalogueManager.Collections
             this.imageList1.Images.SetKeyName(3, "backup");
             this.imageList1.Images.SetKeyName(4, "parameters");
             // 
-            // lblHowToEdit
-            // 
-            this.lblHowToEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblHowToEdit.AutoSize = true;
-            this.lblHowToEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHowToEdit.Location = new System.Drawing.Point(3, 561);
-            this.lblHowToEdit.Name = "lblHowToEdit";
-            this.lblHowToEdit.Size = new System.Drawing.Size(98, 13);
-            this.lblHowToEdit.TabIndex = 171;
-            this.lblHowToEdit.Text = "Press F2 to rename";
-            this.lblHowToEdit.Visible = false;
-            // 
             // btnExpandOrCollapse
             // 
             this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -138,7 +125,6 @@ namespace CatalogueManager.Collections
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lblHowToEdit);
             this.Controls.Add(this.btnExpandOrCollapse);
             this.Controls.Add(this.tlvTableInfos);
             this.Controls.Add(this.label55);
@@ -159,7 +145,6 @@ namespace CatalogueManager.Collections
         private OLVColumn olvColumn1;
         private System.Windows.Forms.ImageList imageList1;
         private OLVColumn olvColumn2;
-        private System.Windows.Forms.Label lblHowToEdit;
         private System.Windows.Forms.Button btnExpandOrCollapse;
     }
 }

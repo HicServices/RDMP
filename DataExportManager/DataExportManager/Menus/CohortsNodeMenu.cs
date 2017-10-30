@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -12,7 +13,9 @@ using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
+using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
+using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -23,25 +26,18 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CohortsNodeMenu:RDMPContextMenuStrip
     {
-        public CohortsNodeMenu(IActivateItems activator):base(activator,null)
+        [ImportingConstructor]
+        public CohortsNodeMenu(IActivateItems activator,CohortsNode node):base(activator,null)
         {
-            Items.Add("Show detailed summary of all cohorts", CatalogueIcons.CohortsSourceDetailedCounts, (s, e) => ShowDetailedSummaryOfCohorts());
 
+            Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(activator));
+            
             Items.Add("Create New Empty Cohort Database Using Wizard", FamFamFamIcons.wand,(s, e) => LaunchCohortDatabaseCreationWizard());
 
             Items.Add("Create blank cohort source (Not recommended)", activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem), (s, e) => AddBlankExternalCohortTable());
             
         }
-
-        public void ShowDetailedSummaryOfCohorts()
-        {
-            var extractableCohortCollection = new ExtractableCohortCollection();
-            extractableCohortCollection.RepositoryLocator = RepositoryLocator;
-            _activator.ShowWindow(extractableCohortCollection, true);
-
-            extractableCohortCollection.SetupForAllCohorts(_activator);
-        }
-
+        
         private void AddBlankExternalCohortTable()
         {
             var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid());

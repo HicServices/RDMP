@@ -21,16 +21,12 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class FiltersParametersNodeMenu : RDMPContextMenuStrip
     {
-        private ParametersNode _parameterNode;
-
-        public FiltersParametersNodeMenu(IActivateItems activator, ParametersNode parameterNode,ICoreIconProvider coreIconProvider) : base(activator,null)
+        public FiltersParametersNodeMenu(IActivateItems activator, ParametersNode parameterNode) : base(activator,null)
         {
-            _parameterNode = parameterNode;
-
             var filter = parameterNode.Collector as ExtractionFilter;
 
             if (filter != null)
-                Items.Add(new ToolStripMenuItem("Add New 'Known Good Value(s) Set'", coreIconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add), (s, e) => AddParameterValueSet(filter)));
+                Items.Add(new ToolStripMenuItem("Add New 'Known Good Value(s) Set'", GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add), (s, e) => AddParameterValueSet(filter)));
         }
 
         private void AddParameterValueSet(ExtractionFilter filter)
@@ -40,7 +36,5 @@ namespace CatalogueManager.Menus
             Publish(filter);
             Activate(parameterSet);
         }
-
-        
     }
 }

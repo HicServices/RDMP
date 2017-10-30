@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RDMPTaskBar));
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnHome = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnCatalogues = new System.Windows.Forms.ToolStripButton();
@@ -42,37 +41,18 @@
             this.cbxDashboards = new System.Windows.Forms.ToolStripComboBox();
             this.btnAddDashboard = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnHome,
-            this.toolStripSeparator1,
-            this.btnCatalogues,
-            this.btnCohorts,
-            this.btnDataExport,
-            this.btnTables,
-            this.btnLoad,
-            this.toolStripSeparator2,
-            this.toolStripLabel1,
-            this.cbxDashboards,
-            this.btnAddDashboard,
-            this.toolStripSeparator3});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(755, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
             // btnHome
             // 
-            this.btnHome.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnHome.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnHome.Name = "btnHome";
-            this.btnHome.Size = new System.Drawing.Size(23, 22);
-            this.btnHome.Text = "Show Home Screen";
+            this.btnHome.Size = new System.Drawing.Size(44, 22);
+            this.btnHome.Text = "Home";
             this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
             // 
             // toolStripSeparator1
@@ -82,51 +62,46 @@
             // 
             // btnCatalogues
             // 
-            this.btnCatalogues.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnCatalogues.Image = ((System.Drawing.Image)(resources.GetObject("btnCatalogues.Image")));
             this.btnCatalogues.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnCatalogues.Name = "btnCatalogues";
-            this.btnCatalogues.Size = new System.Drawing.Size(23, 22);
-            this.btnCatalogues.Text = "Catalogues";
+            this.btnCatalogues.Size = new System.Drawing.Size(125, 22);
+            this.btnCatalogues.Text = "Data Management";
             this.btnCatalogues.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // btnCohorts
             // 
-            this.btnCohorts.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnCohorts.Image = ((System.Drawing.Image)(resources.GetObject("btnCohorts.Image")));
             this.btnCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnCohorts.Name = "btnCohorts";
-            this.btnCohorts.Size = new System.Drawing.Size(23, 22);
-            this.btnCohorts.Text = "Cohort Builder";
+            this.btnCohorts.Size = new System.Drawing.Size(112, 22);
+            this.btnCohorts.Text = "Cohort Creation";
             this.btnCohorts.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // btnDataExport
             // 
-            this.btnDataExport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnDataExport.Image = ((System.Drawing.Image)(resources.GetObject("btnDataExport.Image")));
             this.btnDataExport.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDataExport.Name = "btnDataExport";
-            this.btnDataExport.Size = new System.Drawing.Size(23, 22);
+            this.btnDataExport.Size = new System.Drawing.Size(87, 22);
             this.btnDataExport.Text = "Data Export";
             this.btnDataExport.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // btnTables
             // 
-            this.btnTables.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnTables.Image = ((System.Drawing.Image)(resources.GetObject("btnTables.Image")));
             this.btnTables.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnTables.Name = "btnTables";
-            this.btnTables.Size = new System.Drawing.Size(23, 22);
-            this.btnTables.Text = "Tables";
+            this.btnTables.Size = new System.Drawing.Size(125, 22);
+            this.btnTables.Text = "Tables (Advanced)";
             this.btnTables.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // btnLoad
             // 
-            this.btnLoad.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnLoad.Image = ((System.Drawing.Image)(resources.GetObject("btnLoad.Image")));
             this.btnLoad.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(23, 22);
+            this.btnLoad.Size = new System.Drawing.Size(80, 22);
             this.btnLoad.Text = "Data Load";
             this.btnLoad.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
@@ -162,13 +137,50 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
+            // toolStripSeparator
+            // 
+            this.toolStripSeparator.Name = "toolStripSeparator";
+            this.toolStripSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnHome,
+            this.toolStripSeparator1,
+            this.btnCatalogues,
+            this.btnCohorts,
+            this.btnSavedCohorts,
+            this.btnDataExport,
+            this.toolStripSeparator,
+            this.btnTables,
+            this.btnLoad,
+            this.toolStripSeparator2,
+            this.toolStripLabel1,
+            this.cbxDashboards,
+            this.btnAddDashboard,
+            this.toolStripSeparator3});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(1179, 25);
+            this.toolStrip1.TabIndex = 0;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btnSavedCohorts
+            // 
+            this.btnSavedCohorts.Image = ((System.Drawing.Image)(resources.GetObject("btnSavedCohorts.Image")));
+            this.btnSavedCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSavedCohorts.Name = "btnSavedCohorts";
+            this.btnSavedCohorts.Size = new System.Drawing.Size(103, 22);
+            this.btnSavedCohorts.Text = "Saved Cohorts";
+            this.btnSavedCohorts.Click += new System.EventHandler(this.ToolboxButtonClicked);
+            // 
             // RDMPTaskBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.toolStrip1);
             this.Name = "RDMPTaskBar";
-            this.Size = new System.Drawing.Size(755, 25);
+            this.Size = new System.Drawing.Size(1179, 25);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -178,7 +190,6 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnHome;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnCatalogues;
@@ -191,5 +202,9 @@
         private System.Windows.Forms.ToolStripComboBox cbxDashboards;
         private System.Windows.Forms.ToolStripButton btnAddDashboard;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton btnSavedCohorts;
+
     }
 }

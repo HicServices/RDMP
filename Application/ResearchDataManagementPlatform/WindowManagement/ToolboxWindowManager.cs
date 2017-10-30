@@ -87,6 +87,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     collection = new CohortIdentificationCollectionUI();
                     toReturn = Show(RDMPCollection.Cohort, collection, "Cohort Builder", CatalogueIcons.CohortIdentificationConfiguration);
                 break;
+                case RDMPCollection.SavedCohorts:
+                    collection = new SavedCohortsCollectionUI();
+                    toReturn = Show(RDMPCollection.SavedCohorts, collection,"Saved Cohorts", CatalogueIcons.ExternalCohortTable);
+                break;
 
                 default: throw new ArgumentOutOfRangeException("collectionToCreate");
             }

@@ -17,7 +17,6 @@ namespace CatalogueManager.Collections.Providers
         private readonly RefreshBus _refreshBus;
         private readonly ObjectListView _olv;
         private readonly OLVColumn _columnThatSupportsRenaming;
-        private readonly Label _lblAdviceAboutRenaming;
         
         public bool AllowRenaming {  
             get
@@ -28,15 +27,13 @@ namespace CatalogueManager.Collections.Providers
             {
                 _olv.CellEditActivation = value ? ObjectListView.CellEditActivateMode.SingleClick : ObjectListView.CellEditActivateMode.None;
                 _columnThatSupportsRenaming.IsEditable = value;
-                _lblAdviceAboutRenaming.Visible = value;
             } }
 
-        public RenameProvider(RefreshBus refreshBus, ObjectListView olv, OLVColumn columnThatSupportsRenaming, Label lblAdviceAboutRenaming)
+        public RenameProvider(RefreshBus refreshBus, ObjectListView olv, OLVColumn columnThatSupportsRenaming)
         {
             _refreshBus = refreshBus;
             _olv = olv;
             _columnThatSupportsRenaming = columnThatSupportsRenaming;
-            _lblAdviceAboutRenaming = lblAdviceAboutRenaming;
         }
 
         public void RegisterEvents()

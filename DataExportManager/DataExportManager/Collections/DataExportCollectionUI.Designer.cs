@@ -36,7 +36,6 @@ namespace DataExportManager.Collections
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.lblHowToEdit = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
             this.SuspendLayout();
@@ -44,7 +43,6 @@ namespace DataExportManager.Collections
             // tlvDataExport
             // 
             this.tlvDataExport.AllColumns.Add(this.olvName);
-            
             this.tlvDataExport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -73,10 +71,6 @@ namespace DataExportManager.Collections
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Data Export";
             // 
-            // olvFavourite
-            // 
-            
-            // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -96,18 +90,6 @@ namespace DataExportManager.Collections
             this.tbFilter.Size = new System.Drawing.Size(341, 20);
             this.tbFilter.TabIndex = 2;
             // 
-            // lblHowToEdit
-            // 
-            this.lblHowToEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblHowToEdit.AutoSize = true;
-            this.lblHowToEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHowToEdit.Location = new System.Drawing.Point(3, 655);
-            this.lblHowToEdit.Name = "lblHowToEdit";
-            this.lblHowToEdit.Size = new System.Drawing.Size(98, 13);
-            this.lblHowToEdit.TabIndex = 170;
-            this.lblHowToEdit.Text = "Press F2 to rename";
-            this.lblHowToEdit.Visible = false;
-            // 
             // btnExpandOrCollapse
             // 
             this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -124,7 +106,6 @@ namespace DataExportManager.Collections
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnExpandOrCollapse);
-            this.Controls.Add(this.lblHowToEdit);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tlvDataExport);
@@ -142,7 +123,6 @@ namespace DataExportManager.Collections
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbFilter;
         private OLVColumn olvName;
-        private System.Windows.Forms.Label lblHowToEdit;
         private System.Windows.Forms.Button btnExpandOrCollapse;
     }
 }

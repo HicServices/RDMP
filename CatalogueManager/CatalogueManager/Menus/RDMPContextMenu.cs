@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -23,9 +25,11 @@ using ReusableLibraryCode.Checks;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Dependencies;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
+    [InheritedExport(typeof(RDMPContextMenuStrip))]
     [System.ComponentModel.DesignerCategory("")]
     public abstract class RDMPContextMenuStrip:ContextMenuStrip
     {
@@ -117,6 +121,11 @@ namespace CatalogueManager.Menus
         protected void Publish(DatabaseEntity o)
         {
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
+        }
+
+        protected Image GetImage(object concept, OverlayKind shortcut = OverlayKind.None)
+        {
+            return _activator.CoreIconProvider.GetImage(concept, shortcut);
         }
     }
 }

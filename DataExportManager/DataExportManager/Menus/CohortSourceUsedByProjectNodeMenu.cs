@@ -17,13 +17,11 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CohortSourceUsedByProjectNodeMenu : RDMPContextMenuStrip
     {
-        private readonly DataExportChildProvider _childProvider;
         private readonly CohortSourceUsedByProjectNode _cohortSourceUsedByProjectNode;
 
-        public CohortSourceUsedByProjectNodeMenu(IActivateItems activator, DataExportChildProvider childProvider, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
+        public CohortSourceUsedByProjectNodeMenu(IActivateItems activator, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
             : base( activator,cohortSourceUsedByProjectNode.Project)
         {
-            _childProvider = childProvider;
             _cohortSourceUsedByProjectNode = cohortSourceUsedByProjectNode;
             
             var viewDetail = new ToolStripMenuItem("Show Detailed Summary of Project Cohorts", CatalogueIcons.CohortsSourceDetailedCounts, (s, e) => ShowDetailedSummaryOfCohorts());

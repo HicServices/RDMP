@@ -35,6 +35,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnHome.Image = FamFamFamIcons.application_home;
             btnCatalogues.Image = CatalogueIcons.Catalogue;
             btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration;
+            btnSavedCohorts.Image = CatalogueIcons.CohortsSourceDetailedCounts;
             btnDataExport.Image = CatalogueIcons.Project;
             btnTables.Image = CatalogueIcons.TableInfo;
             btnLoad.Image = CatalogueIcons.LoadMetadata;
@@ -155,6 +156,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             else
             if (button == btnLoad)
                 collectionToToggle = RDMPCollection.DataLoad;
+            else if (button == btnSavedCohorts)
+                collectionToToggle = RDMPCollection.SavedCohorts;
             else
                 throw new ArgumentOutOfRangeException();
 
@@ -177,6 +180,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                     return btnCohorts;
                 case RDMPCollection.DataLoad:
                     return btnLoad;
+                case RDMPCollection.SavedCohorts:
+                    return btnSavedCohorts;
                 default:
                     throw new ArgumentOutOfRangeException("collection");
             }

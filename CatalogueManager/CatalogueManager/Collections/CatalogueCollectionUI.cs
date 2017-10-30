@@ -455,8 +455,8 @@ namespace CatalogueManager.Collections
                 _activator,
                 olvColumn1, //the icon column
                 tbFilter,//we have our own custom filter logic so no need to pass tbFilter
-                olvColumn1, //also the renameable column
-                lblHowToEdit);
+                olvColumn1 //also the renameable column
+                );
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 

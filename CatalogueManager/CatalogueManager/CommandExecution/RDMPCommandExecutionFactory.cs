@@ -31,7 +31,6 @@ namespace CatalogueManager.CommandExecution
         private object oLockCachedAnswers = new object();
         private List<ICommandExecutionProposal> _proposers = new List<ICommandExecutionProposal>();
 
-
         public RDMPCommandExecutionFactory(IActivateItems activator)
         {
             _activator = activator;

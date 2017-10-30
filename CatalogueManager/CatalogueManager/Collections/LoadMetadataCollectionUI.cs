@@ -179,8 +179,7 @@ namespace CatalogueManager.Collections
                 activator,
                 olvName,
                 tbFilter,
-                olvName,
-                lblHowToEdit);
+                olvName);
             
             RefreshAll();
         }

@@ -32,7 +32,7 @@ namespace CohortManager.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = (IActivateItems)activator;
+            _activator = activator;
             
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonFunctionality.SetUp(
@@ -40,8 +40,8 @@ namespace CohortManager.Collections
                 _activator,
                 olvName,//column with the icon
                 tbFilter, 
-                olvName,//column that can be renamed
-                lblHowToEdit
+                olvName//column that can be renamed
+                
                 );
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);

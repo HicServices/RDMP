@@ -18,12 +18,14 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Copying;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
+using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using HIC.Common.Validation.Constraints.Primary;
@@ -84,8 +86,7 @@ namespace CatalogueManager.Collections
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        /// <param name="renameLabel">A Label for displaying the help text telling the user how to rename (F2)</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, Label renameLabel)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn)
         {
             IsSetup = true;
             _activator = activator;
@@ -120,7 +121,7 @@ namespace CatalogueManager.Collections
             
             if(renameableColumn != null)
             {
-                RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn, renameLabel);
+                RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn);
                 RenameProvider.RegisterEvents();
             }
             
@@ -272,22 +273,33 @@ namespace CatalogueManager.Collections
         public void CommonRightClick(object sender, CellRightClickEventArgs e)
         {
             var o = e.Model;
-            if (o is AggregateConfiguration)
-                e.MenuStrip = new AggregateConfigurationMenu(_activator, (AggregateConfiguration)o, CoreIconProvider);
 
-            var container = o as AggregateFilterContainer;
-            if (container != null)
-                e.MenuStrip = new AggregateFilterContainerMenu(_activator, container, ParentFinder.GetFirstOrNullParentRecursivelyOfType<AggregateConfiguration>(container), CoreIconProvider);
+            var objectConstructor = new ObjectConstructor();
 
-            if (o is IFilter)
-                e.MenuStrip = new FilterMenu( _activator, (IFilter) o, CoreIconProvider);
-
-            if (o is ParametersNode)
-                e.MenuStrip = new FiltersParametersNodeMenu( _activator, (ParametersNode)o, CoreIconProvider);
-
-            //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
             if(o != null)
+            {
+
+                //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
                 Tree.SelectedObject = o;
+
+                //now find the first RDMPContextMenuStrip with a compatible constructor
+                foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+                {
+                    if(menuType.IsAbstract || menuType.IsInterface)
+                        continue;
+
+
+                    var menu = objectConstructor.ConstructIfPossible(menuType,
+                        _activator,//parameter 1 must be activator
+                        o); //parameter 2 must be object compatible Type
+
+                    if (menu != null)
+                    {
+                        e.MenuStrip = (ContextMenuStrip) menu;
+                        return;
+                    }
+                }
+            }
         }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)

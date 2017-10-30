@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,6 +13,7 @@ using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Nodes;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
@@ -25,7 +27,8 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ExtractableDataSetsNodeMenu:RDMPContextMenuStrip
     {
-        public ExtractableDataSetsNodeMenu(IActivateItems activator)
+        [ImportingConstructor]
+        public ExtractableDataSetsNodeMenu(IActivateItems activator,ExtractableDataSetsNode node)
             : base(activator,null)
         {
 

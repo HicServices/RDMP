@@ -226,8 +226,7 @@ namespace CatalogueManager.Collections
                 activator,
                 olvColumn1,
                 tbFilter,
-                olvColumn1,
-                lblHowToEdit
+                olvColumn1
                 );
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);

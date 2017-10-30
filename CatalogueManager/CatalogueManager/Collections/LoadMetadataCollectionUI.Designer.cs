@@ -36,7 +36,6 @@ namespace CatalogueManager.Collections
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.lblHowToEdit = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tlvLoadMetadata)).BeginInit();
             this.SuspendLayout();
             // 
@@ -87,24 +86,12 @@ namespace CatalogueManager.Collections
             this.tbFilter.Name = "tbFilter";
             this.tbFilter.Size = new System.Drawing.Size(444, 20);
             this.tbFilter.TabIndex = 2;
-            // 
-            // lblHowToEdit
-            // 
-            this.lblHowToEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblHowToEdit.AutoSize = true;
-            this.lblHowToEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHowToEdit.Location = new System.Drawing.Point(3, 556);
-            this.lblHowToEdit.Name = "lblHowToEdit";
-            this.lblHowToEdit.Size = new System.Drawing.Size(98, 13);
-            this.lblHowToEdit.TabIndex = 3;
-            this.lblHowToEdit.Text = "Press F2 to rename";
-            this.lblHowToEdit.Visible = false;
+          
             // 
             // LoadMetadataCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lblHowToEdit);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tlvLoadMetadata);
@@ -122,6 +109,5 @@ namespace CatalogueManager.Collections
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbFilter;
         private OLVColumn olvName;
-        private System.Windows.Forms.Label lblHowToEdit;
     }
 }

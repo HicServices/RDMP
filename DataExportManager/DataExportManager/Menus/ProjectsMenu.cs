@@ -28,38 +28,35 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ProjectsMenu:RDMPContextMenuStrip
     {
-        private readonly DataExportChildProvider _childProvider;
         private readonly Project _project;
-        private readonly ICoreIconProvider _coreIconProvider;
 
-        public ProjectsMenu(IActivateItems activator, DataExportChildProvider childProvider, Project project)
+        public ProjectsMenu(IActivateItems activator,  Project project)
             : base(activator,project)
         {
-            _childProvider = childProvider;
             _project = project;
-            _coreIconProvider = activator.CoreIconProvider;
+            var childProvider = (DataExportChildProvider) activator.CoreChildProvider;
 
 
-            Items.Add("Add New Extraction Configuration", _coreIconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add), (s, e) => AddExtractionConfiguration());
+            Items.Add("Add New Extraction Configuration", GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add), (s, e) => AddExtractionConfiguration());
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks());
             Items.Add("Set Extraction Folder", CatalogueIcons.ExtractionFolderNode, (s, e) => ChooseExtractionFolder());
 
             Add(new ExecuteCommandReleaseProject(_activator).SetTarget(project));
             
-            var importCohort = new ToolStripMenuItem("Import Cohort", _coreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Import));
+            var importCohort = new ToolStripMenuItem("Import Cohort", GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Import));
 
-            if (!_childProvider.CohortSources.Any())
+            if (!childProvider.CohortSources.Any())
             {
                 importCohort.Text = "Import Cohort (You must create at least one 'Cohort Source' first)";
                 importCohort.Enabled = false;
             }
-            else if (_childProvider.CohortSources.Length == 1)
+            else if (childProvider.CohortSources.Length == 1)
             {
                 //there is only one so we can add the import items directly to the menu
-                AddCohortImportOptionsAsDropDownItemsOf(importCohort, _childProvider.CohortSources[0]);
+                AddCohortImportOptionsAsDropDownItemsOf(importCohort, childProvider.CohortSources[0]);
             }
             else //there are many user must pick one source to import into
-            foreach (var source in _childProvider.CohortSources)
+            foreach (var source in childProvider.CohortSources)
             {
                 var currentSource = new ToolStripMenuItem(source.Name);
 

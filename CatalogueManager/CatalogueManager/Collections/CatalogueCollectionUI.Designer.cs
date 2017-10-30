@@ -32,7 +32,6 @@ namespace CatalogueManager.Collections
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnCheckCatalogues = new System.Windows.Forms.Button();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
-            this.lblHowToEdit = new System.Windows.Forms.Label();
             this.gbColdStorage = new System.Windows.Forms.GroupBox();
             this.rbColdStorage = new System.Windows.Forms.RadioButton();
             this.rbWarmStorage = new System.Windows.Forms.RadioButton();
@@ -147,18 +146,7 @@ namespace CatalogueManager.Collections
             this.btnExpandOrCollapse.Text = "Expand";
             this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
             this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
-            // 
-            // lblHowToEdit
-            // 
-            this.lblHowToEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblHowToEdit.AutoSize = true;
-            this.lblHowToEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHowToEdit.Location = new System.Drawing.Point(0, 533);
-            this.lblHowToEdit.Name = "lblHowToEdit";
-            this.lblHowToEdit.Size = new System.Drawing.Size(98, 13);
-            this.lblHowToEdit.TabIndex = 169;
-            this.lblHowToEdit.Text = "Press F2 to rename";
-            this.lblHowToEdit.Visible = false;
+            
             // 
             // gbColdStorage
             // 
@@ -309,7 +297,6 @@ namespace CatalogueManager.Collections
             // 
             this.splitContainer1.Panel1.Controls.Add(this.btnShowFlags);
             this.splitContainer1.Panel1.Controls.Add(this.tlvCatalogues);
-            this.splitContainer1.Panel1.Controls.Add(this.lblHowToEdit);
             this.splitContainer1.Panel1.Controls.Add(this.btnExpandOrCollapse);
             this.splitContainer1.Panel1.Controls.Add(this.tbFilter);
             this.splitContainer1.Panel1.Controls.Add(this.btnCheckCatalogues);
@@ -368,7 +355,6 @@ namespace CatalogueManager.Collections
         private Button btnCheckCatalogues;
         private OLVColumn olvFilters;
         private Button btnExpandOrCollapse;
-        private Label lblHowToEdit;
         private GroupBox gbColdStorage;
         private RadioButton rbColdStorage;
         private RadioButton rbWarmStorage;

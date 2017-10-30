@@ -20,20 +20,21 @@ namespace CatalogueManager.Menus
     public class AggregateFilterContainerMenu : RDMPContextMenuStrip
     {
         private readonly AggregateFilterContainer _filterContainer;
-        private readonly AggregateConfiguration _aggregate;
         private ExtractionFilter[] _importableFilters;
 
-        public AggregateFilterContainerMenu(IActivateItems activator, AggregateFilterContainer filterContainer, AggregateConfiguration aggregate, ICoreIconProvider coreIconProvider): base( activator,filterContainer)
+        public AggregateFilterContainerMenu(IActivateItems activator, AggregateFilterContainer filterContainer): base( activator,filterContainer)
         {
             _filterContainer = filterContainer;
-            _aggregate = aggregate;
+
+            var aggregate = _filterContainer.GetAggregate();
+
             _importableFilters = aggregate.Catalogue.GetAllFilters();
 
             string operationTarget = filterContainer.Operation == FilterContainerOperation.AND ? "OR" : "AND";
 
             Items.Add("Set Operation to " + operationTarget, null, (s, e) => FlipContainerOperation());
 
-            var addFilter = new ToolStripMenuItem("Add New Filter", coreIconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add));
+            var addFilter = new ToolStripMenuItem("Add New Filter", GetImage(RDMPConcept.Filter, OverlayKind.Add));
             addFilter.DropDownItems.Add("Blank", null, (s, e) => AddBlankFilter());
 
             var import = new ToolStripMenuItem("From Catalogue", null, (s, e) => ImportFilter());
@@ -42,7 +43,7 @@ namespace CatalogueManager.Menus
             
             Items.Add(addFilter);
 
-            Items.Add("Add SubContainer", coreIconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add), (s, e) => AddSubcontainer());
+            Items.Add("Add SubContainer", GetImage(RDMPConcept.FilterContainer,OverlayKind.Add), (s, e) => AddSubcontainer());
 
             AddCommonMenuItems();
         }

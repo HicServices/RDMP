@@ -36,7 +36,6 @@ namespace CohortManager.Collections
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label55 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.lblHowToEdit = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCohortIdentificationConfigurations)).BeginInit();
             this.SuspendLayout();
@@ -87,18 +86,6 @@ namespace CohortManager.Collections
             this.tbFilter.Size = new System.Drawing.Size(454, 20);
             this.tbFilter.TabIndex = 153;
             // 
-            // lblHowToEdit
-            // 
-            this.lblHowToEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblHowToEdit.AutoSize = true;
-            this.lblHowToEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHowToEdit.Location = new System.Drawing.Point(5, 551);
-            this.lblHowToEdit.Name = "lblHowToEdit";
-            this.lblHowToEdit.Size = new System.Drawing.Size(98, 13);
-            this.lblHowToEdit.TabIndex = 171;
-            this.lblHowToEdit.Text = "Press F2 to rename";
-            this.lblHowToEdit.Visible = false;
-            // 
             // btnExpandOrCollapse
             // 
             this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -116,7 +103,6 @@ namespace CohortManager.Collections
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnExpandOrCollapse);
-            this.Controls.Add(this.lblHowToEdit);
             this.Controls.Add(this.label55);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.tlvCohortIdentificationConfigurations);
@@ -133,7 +119,6 @@ namespace CohortManager.Collections
         private TreeListView tlvCohortIdentificationConfigurations;
         private System.Windows.Forms.Label label55;
         private System.Windows.Forms.TextBox tbFilter;
-        private System.Windows.Forms.Label lblHowToEdit;
         private OLVColumn olvName;
         private System.Windows.Forms.Button btnExpandOrCollapse;
     }
