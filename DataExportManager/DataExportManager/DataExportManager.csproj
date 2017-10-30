@@ -346,6 +346,7 @@
     <Compile Include="Collections\SavedCohortsCollectionUI.Designer.cs">
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
@@ -356,6 +357,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowDetailedSummaryOfAllCohorts.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSelectedDatasetsExtractionSql.cs" />
+    <Compile Include="CommandExecution\DataExportPluginUserInterface.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalCohortTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractableCohort.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionConfiguration.cs" />

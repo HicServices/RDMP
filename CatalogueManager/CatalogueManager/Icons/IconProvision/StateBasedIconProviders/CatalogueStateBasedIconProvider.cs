@@ -11,13 +11,14 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
         private readonly Bitmap _deprecated;
         private readonly Bitmap _deprecatedAndInternal;
         private readonly Bitmap _internal;
+        private IconOverlayProvider _overlayProvider;
 
 
-        public CatalogueStateBasedIconProvider()
+        public CatalogueStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _basic = CatalogueIcons.Catalogue;
 
-            var overlayProvider = new IconOverlayProvider();
+            _overlayProvider = overlayProvider;
             _deprecated = overlayProvider.GetOverlayNoCache(_basic, OverlayKind.Deprecated);
             _deprecatedAndInternal = overlayProvider.GetOverlayNoCache(_deprecated, OverlayKind.Internal);
             _internal = overlayProvider.GetOverlayNoCache(_basic, OverlayKind.Internal);
@@ -30,16 +31,21 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             if (c == null)
                 return null;
 
+            Bitmap img = _basic;
+
             if (c.IsDeprecated && c.IsInternalDataset)
-                return _deprecatedAndInternal;
-
+                img = _deprecatedAndInternal;
+            
             if (c.IsDeprecated)
-                return _deprecated;
-
+                img = _deprecated;
+            
             if (c.IsInternalDataset)
-                return _internal;
+                img = _internal;
 
-            return _basic;
+            if (c.GetIsExtractabilityKnown() && c.GetIsExtractable())
+                img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
+
+            return img;
         }
     }
 }

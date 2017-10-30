@@ -7,6 +7,7 @@ using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -112,6 +113,14 @@ namespace DataExportManager.Collections.Providers
             
             RootProjectsNode = new ProjectsNode();
             AddChildren(RootProjectsNode,new DescendancyList(RootProjectsNode));
+
+
+            //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
+            var extractableCatalogueIds = new HashSet<int>(ExtractableDataSets.Select(ds => ds.Catalogue_ID));
+
+            //inject extractability into Catalogues
+            foreach (Catalogue catalogue in AllCatalogues)
+                catalogue.InjectExtractability(extractableCatalogueIds.Contains(catalogue.ID));
         }
 
         private void AddChildren(ExtractableDataSetsNode rootExtractableDataSetsNode, DescendancyList descendancy)

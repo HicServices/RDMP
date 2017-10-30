@@ -905,8 +905,7 @@ namespace CatalogueLibrary.Data
         private bool _isColdStorageDataset;
         private int? _liveLoggingServerID;
         private int? _testLoggingServerID;
-
-
+        
         public string GetDatabaseName(bool allowCaching = true)
         {
             if (!allowCaching)
@@ -1138,6 +1137,26 @@ namespace CatalogueLibrary.Data
                     .Where(e => e != null &&
                         (e.ExtractionCategory == category || category == ExtractionCategory.Any))
                     .ToArray();
+        }
+        private bool? _isExtractable;
+
+
+        public bool GetIsExtractabilityKnown()
+        {
+            return _isExtractable != null;
+        }
+
+        public bool GetIsExtractable()
+        {
+            if(_isExtractable == null)
+                throw new NotSupportedException("Method is only valid once InjectExtractability is called.  Catalogues do not know if they are extractable, it takes a Data Export object to tell them this fact");
+            
+            return _isExtractable.Value;
+        }
+
+        public void InjectExtractability(bool isExtractable)
+        {
+            _isExtractable = isExtractable;
         }
 
     }
