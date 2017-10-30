@@ -12,6 +12,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
 using DataExportManager.DataViewing.Collections;
 using MapsDirectlyToDatabaseTableUI;
@@ -25,10 +26,9 @@ namespace DataExportManager.Menus
     {
         private readonly CustomDataTableNode _customDataTableNode;
 
+
         public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNode customDataTableNode): base( activator,null)
         {
-            
-
             _customDataTableNode = customDataTableNode;
             Items.Add("View TOP 100 Records", CatalogueIcons.TableInfo, (s, e) => _activator.ViewDataSample(new ViewCustomCohortTableExtractionUICollection(_customDataTableNode.Cohort, _customDataTableNode.TableName)));
 
@@ -38,6 +38,12 @@ namespace DataExportManager.Menus
                 Items.Add("Re Enable Custom Data Table", CatalogueIcons.CustomDataTableNode, (s, e) => SetActive(true));
 
             Items.Add("Delete Custom Data Table", CatalogueIcons.Warning, (s, e) => Delete());
+        }
+
+        public CustomDataTableNodeMenu(IActivateItems activator,CustomDataTableNodeUsedByProjectNode projectCustomTableUsageNode):
+            this(activator, projectCustomTableUsageNode.CustomTable)
+        {
+
         }
 
         private void Delete()

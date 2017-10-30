@@ -23,12 +23,10 @@ namespace DataExportManager.Menus
         private readonly ExtractableDataSetPackage _package;
         private readonly DataExportChildProvider _childProvider;
 
-        public ExtractableDataSetPackageMenu(IActivateItems activator, ExtractableDataSetPackage package, DataExportChildProvider childProvider):base(activator,package)
+        public ExtractableDataSetPackageMenu(IActivateItems activator, ExtractableDataSetPackage package):base(activator,package)
         {
             _package = package;
-            _childProvider = childProvider;
-
-
+            _childProvider = (DataExportChildProvider) activator.CoreChildProvider;
             Items.Add("Add ExtractableDataSet(s) to Package", activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), AddExtractableDatasetToPackage);
 
             AddCommonMenuItems();

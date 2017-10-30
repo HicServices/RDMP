@@ -160,16 +160,28 @@ namespace DataExportManager.Collections.Providers
                 children.Add(cohortSourceUsedByProjectNode);
             }
 
-            var configs = ExtractionConfigurations.Where(c => c.Project_ID == project.ID).ToArray();
+            var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
+            children.Add(extractionConfigurationsNode);
+
+            AddChildren(extractionConfigurationsNode,descendancy.Add(extractionConfigurationsNode));
+            
+            var folder = new ExtractionFolderNode(project);
+            children.Add(folder);
+            AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
             foreach (ExtractionConfiguration config in configs)
             {
                 AddChildren(config, descendancy.Add(config));
                 children.Add(config);
             }
-            
-            var folder = new ExtractionFolderNode(project);
-            children.Add(folder);
-            AddToDictionaries(children,descendancy);
+
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(ExtractionConfiguration extractionConfiguration, DescendancyList descendancy)
@@ -403,7 +415,7 @@ namespace DataExportManager.Collections.Providers
 
         public IEnumerable<ExtractionConfiguration> GetActiveConfigurationsOnly(Project project)
         {
-            return GetChildren(project).OfType<ExtractionConfiguration>().Where(ec => !ec.IsReleased);
+            return GetConfigurations(project).Where(ec => !ec.IsReleased);
         }
 
         public IEnumerable<SelectedDataSets> GetDatasets(ExtractionConfiguration extractionConfiguration)
@@ -416,7 +428,11 @@ namespace DataExportManager.Collections.Providers
 
         public IEnumerable<ExtractionConfiguration> GetConfigurations(Project project)
         {
-            return GetChildren(project).OfType<ExtractionConfiguration>();
+            //Get the extraction configurations node of the project
+            var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
+
+            //then add all the children extraction configurations
+            return GetChildren(configurationsNode).OfType<ExtractionConfiguration>();
         }
 
         public IEnumerable<ExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)

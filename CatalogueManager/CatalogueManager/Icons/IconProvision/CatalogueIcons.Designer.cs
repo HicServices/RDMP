@@ -673,6 +673,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ExtractionConfigurationsNode {
+            get {
+                object obj = ResourceManager.GetObject("ExtractionConfigurationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap ExtractionFilterParameterSet {
             get {
                 object obj = ResourceManager.GetObject("ExtractionFilterParameterSet", resourceCulture);

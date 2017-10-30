@@ -10,7 +10,6 @@ namespace DataExportManager.Collections.Nodes.UsedByProject
 {
     public interface IObjectUsedByProjectNode
     {
-        
         Project Project { get; }
 
         RDMPConcept UnderlyingObjectConceptualType { get; }

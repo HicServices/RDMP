@@ -21,14 +21,13 @@ namespace DataExportManager.Menus
     public class FilterContainerMenu : RDMPContextMenuStrip
     {
         private readonly FilterContainer _filterContainer;
-        private readonly SelectedDataSets _rootSelectedDataSets;
         private ExtractionFilter[] _importableFilters;
 
-        public FilterContainerMenu(IActivateItems activator, FilterContainer filterContainer, SelectedDataSets rootSelectedDataSets):base(activator,filterContainer)
+        public FilterContainerMenu(IActivateItems activator, FilterContainer filterContainer):base(activator,filterContainer)
         {
             _filterContainer = filterContainer;
-            _rootSelectedDataSets= rootSelectedDataSets;
-            _importableFilters = _rootSelectedDataSets.ExtractableDataSet.Catalogue.GetAllFilters();
+            
+            _importableFilters = filterContainer.GetSelectedDataSetIfAny().ExtractableDataSet.Catalogue.GetAllFilters();
 
             string operationTarget = filterContainer.Operation == FilterContainerOperation.AND ? "OR" : "AND";
 

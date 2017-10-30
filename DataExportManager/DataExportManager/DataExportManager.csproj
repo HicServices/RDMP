@@ -329,6 +329,7 @@
       <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\Nodes\CohortsNode.cs" />
+    <Compile Include="Collections\Nodes\ExtractionConfigurationsNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
     <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
@@ -345,6 +346,7 @@
     <Compile Include="Collections\SavedCohortsCollectionUI.Designer.cs">
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
@@ -402,6 +404,7 @@
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
+    <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
     <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\SelectedDataSetMenu.cs" />
     <Compile Include="Menus\ProjectsMenu.cs" />

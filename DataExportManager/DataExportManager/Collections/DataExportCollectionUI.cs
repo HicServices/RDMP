@@ -156,39 +156,6 @@ namespace DataExportManager.Collections
 
             RefreshProviders();
         }
-
-        private void tlvDataExport_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            var o = e.Model;
-            
-            if (o is ExtractableCohortUsedByProjectNode)
-                e.MenuStrip = new ExtractableCohortMenu(_activator, ((ExtractableCohortUsedByProjectNode)o).Cohort);
-
-            if (o is CustomDataTableNodeUsedByProjectNode)
-                e.MenuStrip = new CustomDataTableNodeMenu(_activator, ((CustomDataTableNodeUsedByProjectNode)o).CustomTable);
-
-            if(o is ExtractionConfiguration)
-                e.MenuStrip = new ExtractionConfigurationMenu(_activator, (ExtractionConfiguration)o, _childProvider);
-
-            if (o is CustomDataTableNode)
-                e.MenuStrip = new CustomDataTableNodeMenu(_activator, (CustomDataTableNode)o);
-
-            if (o is ExtractableDataSetPackage)
-                e.MenuStrip = new ExtractableDataSetPackageMenu(_activator, (ExtractableDataSetPackage)o, _childProvider);
-
-            if (o is SelectedDataSets)
-                e.MenuStrip = new SelectedDataSetMenu(_activator, (SelectedDataSets)o);
-
-            if (o is FilterContainer)
-            {
-                var selectedDataSet = _parentFinder.GetFirstOrNullParentRecursivelyOfType<SelectedDataSets>(o);
-
-                if (selectedDataSet == null)
-                    throw new Exception("Could not find GetLinkedDatasetParentRecursivelyFor '" + o );
-
-                e.MenuStrip = new FilterContainerMenu(_activator, (FilterContainer)o, selectedDataSet);
-            }
-        }
         
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {

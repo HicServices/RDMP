@@ -35,9 +35,9 @@ namespace DataExportManager.Menus
         {
             _project = project;
             var childProvider = (DataExportChildProvider) activator.CoreChildProvider;
+            
+            Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, _project));
 
-
-            Items.Add("Add New Extraction Configuration", GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add), (s, e) => AddExtractionConfiguration());
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks());
             Items.Add("Set Extraction Folder", CatalogueIcons.ExtractionFolderNode, (s, e) => ChooseExtractionFolder());
 
@@ -105,13 +105,5 @@ namespace DataExportManager.Menus
             p.StartChecking(checker);
         }
 
-        private void AddExtractionConfiguration()
-        {
-            var newConfig = new ExtractionConfiguration(RepositoryLocator.DataExportRepository, _project);
-            
-            //refresh the project
-            Publish(_project);
-            Activate(newConfig);
-        }
     }
 }

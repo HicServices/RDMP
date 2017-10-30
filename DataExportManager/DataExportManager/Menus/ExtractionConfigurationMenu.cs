@@ -45,11 +45,11 @@ namespace DataExportManager.Menus
 
         private IExtractableDataSet[] _importableDataSets;
 
-        public ExtractionConfigurationMenu(IActivateItems activator, ExtractionConfiguration extractionConfiguration, DataExportChildProvider childProvider)
+        public ExtractionConfigurationMenu(IActivateItems activator, ExtractionConfiguration extractionConfiguration)
             : base( activator,extractionConfiguration)
         {
             _extractionConfiguration = extractionConfiguration;
-            _childProvider = childProvider;
+            _childProvider = (DataExportChildProvider) activator.CoreChildProvider;
             
             var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
 

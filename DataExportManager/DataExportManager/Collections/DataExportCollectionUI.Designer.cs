@@ -60,7 +60,6 @@ namespace DataExportManager.Collections
             this.tlvDataExport.UseCompatibleStateImageBehavior = false;
             this.tlvDataExport.View = System.Windows.Forms.View.Details;
             this.tlvDataExport.VirtualMode = true;
-            this.tlvDataExport.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.tlvDataExport_CellRightClick);
             this.tlvDataExport.ItemActivate += new System.EventHandler(this.tlvDataExport_ItemActivate);
             this.tlvDataExport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tlvDataExport_KeyUp);
             // 

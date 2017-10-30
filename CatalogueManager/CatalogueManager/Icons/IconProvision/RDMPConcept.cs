@@ -109,6 +109,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllExternalServersNode,
         DecryptionPrivateKeyNode,
         PreLoadDiscardedColumnsNode,
+        ExtractionConfigurationsNode,
 
         PermissionWindow,
         Pipeline
