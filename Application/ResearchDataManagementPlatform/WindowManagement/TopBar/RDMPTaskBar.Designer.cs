@@ -74,8 +74,8 @@
             this.btnCohorts.Image = ((System.Drawing.Image)(resources.GetObject("btnCohorts.Image")));
             this.btnCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnCohorts.Name = "btnCohorts";
-            this.btnCohorts.Size = new System.Drawing.Size(112, 22);
-            this.btnCohorts.Text = "Cohort Creation";
+            this.btnCohorts.Size = new System.Drawing.Size(104, 22);
+            this.btnCohorts.Text = "Cohort Builder";
             this.btnCohorts.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // btnDataExport

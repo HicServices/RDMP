@@ -51,7 +51,7 @@ namespace DataExportManager.Icons.IconProvision
 
             //if it is a ProjectUsageNode then get the icon for the underlying object being used e.g. ExtractableCohortUsedByProject would return the icon for ExtractableCohort
             if (concept is IObjectUsedByProjectNode)
-                return GetImage(((IObjectUsedByProjectNode) concept).UnderlyingObjectConceptualType, kind);
+                return GetImage(((IObjectUsedByProjectNode) concept).ObjectBeingUsed, kind);
             
             //fallback on parent implementation if none of the above unique snowflake cases are met
             return base.GetImage(concept, kind);

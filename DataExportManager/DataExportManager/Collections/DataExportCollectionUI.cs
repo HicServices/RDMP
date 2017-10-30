@@ -148,13 +148,15 @@ namespace DataExportManager.Collections
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            RefreshProviders();
+
             if (_allProjectsNode == null)
             {
-                _allProjectsNode = ((DataExportChildProvider) _activator.CoreChildProvider).RootProjectsNode;
+                _allProjectsNode = ((DataExportChildProvider)_activator.CoreChildProvider).RootProjectsNode;
                 tlvDataExport.AddObject(_allProjectsNode);
+                ExpandRoots();
             }
 
-            RefreshProviders();
         }
         
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -184,7 +186,6 @@ namespace DataExportManager.Collections
             _formatProvider = new DataExportTextFormatProvider(_childProvider, _problemProvider);
             _iconProvider.SetProviders(_childProvider, _problemProvider);
             _parentFinder = new TreeNodeParentFinder(tlvDataExport);
-
         }
 
         private void tlvDataExport_KeyUp(object sender, KeyEventArgs e)
