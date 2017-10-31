@@ -31,10 +31,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             var engine = new ReleaseEngine(_project, ReleaseSettings);
 
-            //_project.ExtractionDirectory = String.IsNullOrWhiteSpace(OutputBaseFolder.FullName)
-            //                                    ? _project.ExtractionDirectory
-            //                                    : OutputBaseFolder.FullName;
-
             if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
