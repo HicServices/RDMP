@@ -32,7 +32,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         {
             _project = (Project) target;
 
-            if(!_project.ExtractionConfigurations.Any(ec=>ec.IsReleased))
+            if(_project.ExtractionConfigurations.All(ec => ec.IsReleased))
                 SetImpossible("There are no unreleased ExtractionConfigurations in Project");
 
             return this;
