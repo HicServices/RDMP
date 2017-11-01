@@ -23,7 +23,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.CohortsSourceDetailedCounts;
+            return CatalogueIcons.CohortsNode;
         }
 
         public override void Execute()
