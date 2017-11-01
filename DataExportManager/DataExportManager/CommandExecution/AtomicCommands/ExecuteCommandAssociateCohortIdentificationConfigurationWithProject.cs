@@ -23,19 +23,31 @@ namespace DataExportManager.CommandExecution.AtomicCommands
     {
         private Project _project;
         private CohortIdentificationConfiguration _cic;
+        private ProjectCohortIdentificationConfigurationAssociation[] _existingAssociations;
 
         public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IActivateItems activator) : base(activator)
         {
-
+            _existingAssociations = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
         }
 
         public override void Execute()
         {
             if(_project == null)
             {
+                //project is not known so get all projects 
+                var valid = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+
+                //except if the cic is the launch point
+                if (_cic != null)
+                    valid =
+                        valid.Where(v =>
+
+                            //in which case only add projects which are not already associated with the cic launch point
+                            !_existingAssociations.Any(
+                                a => a.CohortIdentificationConfiguration_ID == _cic.ID && v.ID == a.Project_ID)).ToArray();
+
                 var dialog =
-                    new SelectIMapsDirectlyToDatabaseTableDialog(
-                        Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(),false,false);
+                    new SelectIMapsDirectlyToDatabaseTableDialog(valid,false,false);
                 if (dialog.ShowDialog() == DialogResult.OK)
                      SetTarget((Project)dialog.Selected);
                 else
@@ -44,9 +56,18 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
             if (_cic == null)
             {
+                //cic is not known (but project is thanks to above block)
+                var valid =
+                    Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
+                
+                //allow them to select any cic where it does not already belong to the project
+                valid =
+                    valid.Where(v =>
+                        !_existingAssociations.Any(
+                            a => a.Project_ID == _project.ID && v.ID == a.CohortIdentificationConfiguration_ID)).ToArray();
+
                 var dialog =
-                    new SelectIMapsDirectlyToDatabaseTableDialog(
-                        Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(), false, false);
+                    new SelectIMapsDirectlyToDatabaseTableDialog(valid, false, false);
                 if (dialog.ShowDialog() == DialogResult.OK)
                     SetTarget((CohortIdentificationConfiguration)dialog.Selected);
                 else

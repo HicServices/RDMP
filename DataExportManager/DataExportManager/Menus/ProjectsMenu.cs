@@ -34,55 +34,13 @@ namespace DataExportManager.Menus
             : base(activator,project)
         {
             _project = project;
-            var childProvider = (DataExportChildProvider) activator.CoreChildProvider;
             
-            Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, _project));
-
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks());
             Items.Add("Set Extraction Folder", CatalogueIcons.ExtractionFolderNode, (s, e) => ChooseExtractionFolder());
 
             Add(new ExecuteCommandReleaseProject(_activator).SetTarget(project));
             
-            var importCohort = new ToolStripMenuItem("Import Cohort", GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Import));
-
-            if (!childProvider.CohortSources.Any())
-            {
-                importCohort.Text = "Import Cohort (You must create at least one 'Cohort Source' first)";
-                importCohort.Enabled = false;
-            }
-            else if (childProvider.CohortSources.Length == 1)
-            {
-                //there is only one so we can add the import items directly to the menu
-                AddCohortImportOptionsAsDropDownItemsOf(importCohort, childProvider.CohortSources[0]);
-            }
-            else //there are many user must pick one source to import into
-            foreach (var source in childProvider.CohortSources)
-            {
-                var currentSource = new ToolStripMenuItem(source.Name);
-
-                AddCohortImportOptionsAsDropDownItemsOf(currentSource, source);
-
-                importCohort.DropDownItems.Add(currentSource);
-            }
-
-            this.Items.Add(importCohort);
-            
             AddCommonMenuItems();
-        }
-
-        private void AddCohortImportOptionsAsDropDownItemsOf(ToolStripMenuItem toolStripMenuItem, ExternalCohortTable source)
-        {
-            //lets hijack the ExternalCohortTableMenu, after all anything relevant to them is probably also relevant here right
-            var proxyMenu = new ExternalCohortTableMenu((IActivateItems)_activator, source);
-            proxyMenu.SetScopeIsProject(_project);
-
-            //get all the items from the menu we just created
-            var proxyItems = proxyMenu.Items.Cast<ToolStripItem>().ToArray();
-            proxyMenu.Items.Clear();
-
-            //and move them to our dropdown
-            foreach (var proxyItem in proxyItems)
-                toolStripMenuItem.DropDownItems.Add(proxyItem);
         }
 
         private void ChooseExtractionFolder()

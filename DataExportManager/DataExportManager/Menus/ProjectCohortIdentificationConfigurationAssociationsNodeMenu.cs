@@ -15,9 +15,7 @@ namespace DataExportManager.Menus
     {
         public ProjectCohortIdentificationConfigurationAssociationsNodeMenu(IActivateItems activator, ProjectCohortIdentificationConfigurationAssociationsNode node): base(activator, null)
         {
-            Add(
-                new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(activator).SetTarget(
-                    node.Project));
+            Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(activator).SetTarget(node.Project));
         }
     }
 }

@@ -13,6 +13,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
@@ -41,6 +42,8 @@ namespace CatalogueManager.Menus
 
         private AtomicCommandUIFactory AtomicCommandUIFactory;
 
+        protected ToolStripMenuItem ActivateCommandMenuItem;
+
         public RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
         {
             _activator = activator;
@@ -49,11 +52,16 @@ namespace CatalogueManager.Menus
             AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
 
             if(databaseEntity != null)
-                Add(new ExecuteCommandActivate(activator,databaseEntity));
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(activator, databaseEntity));
 
             RepositoryLocator = _activator.RepositoryLocator;
-            
-            
+        }
+
+        protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
+        {
+            //Activate is currently branded edit by parent lets tailor that
+            ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
+            ActivateCommandMenuItem.Text = newTextForActivate;
         }
         protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
         {

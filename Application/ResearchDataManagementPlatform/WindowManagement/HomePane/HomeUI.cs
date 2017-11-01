@@ -24,6 +24,7 @@ using CatalogueManager.Tutorials;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
+using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
@@ -68,13 +69,21 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             /////////////////////////////////////Cohort Creation/////////////////////////////////
 
+            AddCommand(new ExecuteCommandImportFileAsNewCohort(windowManager.ContentManager),
+                tlpCohortCreation);
+
             AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(windowManager.ContentManager),tlpCohortCreation);
 
             AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(windowManager.ContentManager),
                     windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
-
+            
+            AddCommand(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(windowManager.ContentManager), 
+                    windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
+                    cic => cic.Name,
+                    tlpCohortCreation);
+            
             /////////////////////////////////////Data Export/////////////////////////////////
             
             var dataExportChildProvider = windowManager.ContentManager.CoreChildProvider as DataExportChildProvider;

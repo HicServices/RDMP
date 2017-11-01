@@ -347,10 +347,13 @@
     <Compile Include="Collections\SavedCohortsCollectionUI.Designer.cs">
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\CohortCreationCommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportFileAsCustomDataForCohort.cs" />

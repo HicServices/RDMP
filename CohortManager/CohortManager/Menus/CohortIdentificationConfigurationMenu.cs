@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -7,7 +8,10 @@ using CatalogueManager.Menus;
 using CohortManager.Collections.Providers;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportLibrary.Data;
+using DataExportManager.CommandExecution.AtomicCommands;
+using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Icons.IconProvision;
 
 namespace CohortManager.Menus
 {
@@ -16,18 +20,29 @@ namespace CohortManager.Menus
     public class CohortIdentificationConfigurationMenu :RDMPContextMenuStrip
     {
         private CohortIdentificationConfiguration _cic;
+        private IAtomicCommandWithTarget _executeAndImportCommand;
 
         public CohortIdentificationConfigurationMenu(IActivateItems activator, CohortIdentificationConfiguration cic) : base( activator,cic)
         {
             _cic = cic;
 
-            Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator));
+            if (cic != null)
+            {
+                ReBrandActivateAs("Test Query",RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Execute);
+                
+                Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
+                
+                Items.Add(new ToolStripSeparator());
 
-            if(cic == null)
-                return;
+                _executeAndImportCommand = new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(activator).SetTarget(cic);
             
-            Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL),(s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
-
+                Add(_executeAndImportCommand);
+            }
+            
+            //associate with project
+            Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(activator).SetTarget(cic));
+            
+            Items.Add(new ToolStripSeparator());
 
             Items.Add("Clone Configuration", CohortIdentificationIcons.cloneCohortIdentificationConfiguration,
                 (s, e) => CloneCohortIdentificationConfiguration());
@@ -37,14 +52,17 @@ namespace CohortManager.Menus
                 CatalogueIcons.FrozenCohortIdentificationConfiguration, (s, e) => FreezeConfiguration());
             freeze.Enabled = !cic.Frozen;
             Items.Add(freeze);
-                
             
             AddCommonMenuItems();
+
+            Items.Add(new ToolStripSeparator());
+
+            Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator));
         }
 
         public CohortIdentificationConfigurationMenu(IActivateItems activator,ProjectCohortIdentificationConfigurationAssociation association) : this(activator,association.CohortIdentificationConfiguration)
         {
-            
+            _executeAndImportCommand.SetTarget(association.Project);
         }
 
         private void CloneCohortIdentificationConfiguration()

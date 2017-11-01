@@ -32,7 +32,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
         {
             this.label1 = new System.Windows.Forms.Label();
             this.ddExistingCohort = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.lblExternalCohortTable = new System.Windows.Forms.Label();
             this.gbRevisedCohort = new System.Windows.Forms.GroupBox();
@@ -46,29 +45,24 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.gbNewCohort = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.tbFilterProject = new System.Windows.Forms.TextBox();
             this.btnNewProject = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.listBox1 = new BrightIdeasSoftware.ObjectListView();
-            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label9 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.lblProject = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnClearProject = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.gbDescription = new System.Windows.Forms.GroupBox();
             this.pbProject = new System.Windows.Forms.PictureBox();
             this.pbCohortSource = new System.Windows.Forms.PictureBox();
+            this.btnExisting = new System.Windows.Forms.Button();
+            this.lblErrorNoProjectNumber = new System.Windows.Forms.Label();
+            this.tbSetProjectNumber = new System.Windows.Forms.TextBox();
             this.gbRevisedCohort.SuspendLayout();
             this.gbNewCohort.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.gbDescription.SuspendLayout();
@@ -97,15 +91,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.ddExistingCohort.Sorted = true;
             this.ddExistingCohort.TabIndex = 1;
             this.ddExistingCohort.SelectedIndexChanged += new System.EventHandler(this.ddExistingCohort_SelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(18, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "OR Existing:";
             // 
             // label3
             // 
@@ -243,87 +228,15 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.tbName.TabIndex = 1;
             this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
-            // label8
-            // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(51, 183);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(32, 13);
-            this.label8.TabIndex = 9;
-            this.label8.Text = "Filter:";
-            // 
-            // tbFilterProject
-            // 
-            this.tbFilterProject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbFilterProject.Location = new System.Drawing.Point(89, 180);
-            this.tbFilterProject.Name = "tbFilterProject";
-            this.tbFilterProject.Size = new System.Drawing.Size(278, 20);
-            this.tbFilterProject.TabIndex = 1;
-            this.tbFilterProject.TextChanged += new System.EventHandler(this.tbFilterProject_TextChanged);
-            // 
             // btnNewProject
             // 
-            this.btnNewProject.Location = new System.Drawing.Point(89, 19);
+            this.btnNewProject.Location = new System.Drawing.Point(328, 55);
             this.btnNewProject.Name = "btnNewProject";
-            this.btnNewProject.Size = new System.Drawing.Size(102, 23);
-            this.btnNewProject.TabIndex = 2;
-            this.btnNewProject.Text = "New Project...";
+            this.btnNewProject.Size = new System.Drawing.Size(46, 23);
+            this.btnNewProject.TabIndex = 5;
+            this.btnNewProject.Text = "New...";
             this.btnNewProject.UseVisualStyleBackColor = true;
             this.btnNewProject.Click += new System.EventHandler(this.btnNewProject_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.listBox1);
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.btnNewProject);
-            this.groupBox1.Controls.Add(this.tbFilterProject);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(27, 81);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(851, 203);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "1. Choose  / Create Project";
-            // 
-            // listBox1
-            // 
-            this.listBox1.AllColumns.Add(this.olvColumn1);
-            this.listBox1.AllColumns.Add(this.olvColumn2);
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBox1.CellEditUseWholeCell = false;
-            this.listBox1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvColumn1,
-            this.olvColumn2});
-            this.listBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.listBox1.FullRowSelect = true;
-            this.listBox1.HideSelection = false;
-            this.listBox1.Location = new System.Drawing.Point(89, 47);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.ShowGroups = false;
-            this.listBox1.Size = new System.Drawing.Size(756, 127);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.UseCompatibleStateImageBehavior = false;
-            this.listBox1.UseFiltering = true;
-            this.listBox1.View = System.Windows.Forms.View.Details;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            // 
-            // olvColumn1
-            // 
-            this.olvColumn1.AspectName = "ToString";
-            this.olvColumn1.FillsFreeSpace = true;
-            this.olvColumn1.Text = "Name";
-            // 
-            // olvColumn2
-            // 
-            this.olvColumn2.AspectName = "CountCohorts";
-            this.olvColumn2.Text = "Cohorts In Use";
-            this.olvColumn2.Width = 120;
             // 
             // groupBox2
             // 
@@ -332,10 +245,10 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.groupBox2.Controls.Add(this.rbRevisedCohort);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.rbNewCohort);
-            this.groupBox2.Location = new System.Drawing.Point(27, 290);
+            this.groupBox2.Location = new System.Drawing.Point(27, 108);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(851, 42);
-            this.groupBox2.TabIndex = 0;
+            this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "2. Choose Cohort Type";
             // 
@@ -345,10 +258,10 @@ namespace DataExportManager.CohortUI.ImportCustomData
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.gbNewCohort);
             this.groupBox3.Controls.Add(this.gbRevisedCohort);
-            this.groupBox3.Location = new System.Drawing.Point(27, 338);
+            this.groupBox3.Location = new System.Drawing.Point(27, 156);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(851, 154);
-            this.groupBox3.TabIndex = 1;
+            this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "3. Configure Cohort (doesn\'t exist yet, next screen will actually create it)";
             // 
@@ -390,24 +303,24 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.label11.TabIndex = 3;
             this.label11.Text = "Project:";
             // 
-            // btnCancel
+            // btnClearProject
             // 
-            this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancel.Location = new System.Drawing.Point(417, 593);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(121, 23);
-            this.btnCancel.TabIndex = 6;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnClearProject.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnClearProject.Location = new System.Drawing.Point(417, 411);
+            this.btnClearProject.Name = "btnClearProject";
+            this.btnClearProject.Size = new System.Drawing.Size(121, 23);
+            this.btnClearProject.TabIndex = 14;
+            this.btnClearProject.Text = "Cancel";
+            this.btnClearProject.UseVisualStyleBackColor = true;
+            this.btnClearProject.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnOk
             // 
             this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnOk.Location = new System.Drawing.Point(283, 593);
+            this.btnOk.Location = new System.Drawing.Point(283, 411);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(128, 23);
-            this.btnOk.TabIndex = 5;
+            this.btnOk.TabIndex = 13;
             this.btnOk.Text = "Ok";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
@@ -418,10 +331,10 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(251, 590);
+            this.ragSmiley1.Location = new System.Drawing.Point(251, 408);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(26, 26);
-            this.ragSmiley1.TabIndex = 4;
+            this.ragSmiley1.TabIndex = 12;
             // 
             // gbDescription
             // 
@@ -429,10 +342,10 @@ namespace DataExportManager.CohortUI.ImportCustomData
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbDescription.Controls.Add(this.label9);
             this.gbDescription.Controls.Add(this.tbDescription);
-            this.gbDescription.Location = new System.Drawing.Point(27, 498);
+            this.gbDescription.Location = new System.Drawing.Point(27, 316);
             this.gbDescription.Name = "gbDescription";
             this.gbDescription.Size = new System.Drawing.Size(851, 86);
-            this.gbDescription.TabIndex = 16;
+            this.gbDescription.TabIndex = 11;
             this.gbDescription.TabStop = false;
             this.gbDescription.Text = "4. Enter Description Of Cohort";
             // 
@@ -452,16 +365,51 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.pbCohortSource.TabIndex = 18;
             this.pbCohortSource.TabStop = false;
             // 
+            // btnExisting
+            // 
+            this.btnExisting.Location = new System.Drawing.Point(380, 55);
+            this.btnExisting.Name = "btnExisting";
+            this.btnExisting.Size = new System.Drawing.Size(67, 23);
+            this.btnExisting.TabIndex = 6;
+            this.btnExisting.Text = "Existing...";
+            this.btnExisting.UseVisualStyleBackColor = true;
+            this.btnExisting.Click += new System.EventHandler(this.btnExisting_Click);
+            // 
+            // lblErrorNoProjectNumber
+            // 
+            this.lblErrorNoProjectNumber.AutoSize = true;
+            this.lblErrorNoProjectNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblErrorNoProjectNumber.ForeColor = System.Drawing.Color.Red;
+            this.lblErrorNoProjectNumber.Location = new System.Drawing.Point(148, 84);
+            this.lblErrorNoProjectNumber.Name = "lblErrorNoProjectNumber";
+            this.lblErrorNoProjectNumber.Size = new System.Drawing.Size(244, 13);
+            this.lblErrorNoProjectNumber.TabIndex = 7;
+            this.lblErrorNoProjectNumber.Text = "Selected Project does not have a Project Number:";
+            this.lblErrorNoProjectNumber.Visible = false;
+            // 
+            // tbSetProjectNumber
+            // 
+            this.tbSetProjectNumber.Location = new System.Drawing.Point(395, 81);
+            this.tbSetProjectNumber.Name = "tbSetProjectNumber";
+            this.tbSetProjectNumber.Size = new System.Drawing.Size(119, 20);
+            this.tbSetProjectNumber.TabIndex = 8;
+            this.tbSetProjectNumber.Visible = false;
+            this.tbSetProjectNumber.TextChanged += new System.EventHandler(this.tbSetProjectNumber_TextChanged);
+            // 
             // CohortCreationRequestUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(890, 628);
+            this.ClientSize = new System.Drawing.Size(890, 446);
+            this.Controls.Add(this.tbSetProjectNumber);
+            this.Controls.Add(this.lblErrorNoProjectNumber);
+            this.Controls.Add(this.btnExisting);
             this.Controls.Add(this.pbCohortSource);
+            this.Controls.Add(this.btnNewProject);
             this.Controls.Add(this.pbProject);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.gbDescription);
-            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnClearProject);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label3);
@@ -469,7 +417,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.Controls.Add(this.lblExternalCohortTable);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "CohortCreationRequestUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -479,9 +426,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.gbRevisedCohort.PerformLayout();
             this.gbNewCohort.ResumeLayout(false);
             this.gbNewCohort.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -498,7 +442,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox ddExistingCohort;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblExternalCohortTable;
         private System.Windows.Forms.GroupBox gbRevisedCohort;
@@ -512,24 +455,21 @@ namespace DataExportManager.CohortUI.ImportCustomData
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.CheckBox cbShowEvenWhenProjectNumberDoesntMatch;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox tbFilterProject;
         private System.Windows.Forms.Button btnNewProject;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
-        private ObjectListView listBox1;
-        private OLVColumn olvColumn1;
-        private OLVColumn olvColumn2;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.Label lblProject;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnClearProject;
         private System.Windows.Forms.Button btnOk;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.GroupBox gbDescription;
         private System.Windows.Forms.PictureBox pbProject;
         private System.Windows.Forms.PictureBox pbCohortSource;
+        private System.Windows.Forms.Button btnExisting;
+        private System.Windows.Forms.Label lblErrorNoProjectNumber;
+        private System.Windows.Forms.TextBox tbSetProjectNumber;
     }
 }

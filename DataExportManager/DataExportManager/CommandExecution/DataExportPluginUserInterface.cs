@@ -10,7 +10,9 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.PluginChildProvision;
+using DataExportLibrary.Data;
 using DataExportManager.CommandExecution.AtomicCommands;
+using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using ReusableLibraryCode;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -42,17 +44,6 @@ namespace DataExportManager.CommandExecution
                 
                 };
             }
-
-
-            var cic = databaseEntity as CohortIdentificationConfiguration;
-
-            if (cic != null)
-                return new[]
-                {
-                    factory.CreateMenuItem(
-                        new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget
-                            (cic))
-                };
 
             return null;
         }
