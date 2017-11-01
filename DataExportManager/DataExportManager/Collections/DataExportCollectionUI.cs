@@ -78,10 +78,7 @@ namespace DataExportManager.Collections
     public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         private IActivateItems _activator;
-        private DataExportTextFormatProvider _formatProvider;
-        private DataExportIconProvider _iconProvider;
         private DataExportProblemProvider _problemProvider;
-        private TreeNodeParentFinder _parentFinder;
         private DataExportChildProvider _childProvider;
 
         public DataExportCollectionUI()
@@ -89,9 +86,9 @@ namespace DataExportManager.Collections
             InitializeComponent();
             
             tlvDataExport.CellToolTipGetter += CellToolTipGetter;
+            olvProjectNumber.AspectGetter += ProjectNumberAspectGetter;
         }
-
-
+        
         private string CellToolTipGetter(OLVColumn column, object modelObject)
         {
             var project = modelObject as Project;
@@ -106,11 +103,20 @@ namespace DataExportManager.Collections
             return null;
         }
 
+        private object ProjectNumberAspectGetter(object rowObject)
+        {
+            var p = rowObject as Project;
+
+            if (p != null)
+                return p.ProjectNumber;
+
+            return null;
+        }
+
         
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = (IActivateItems)activator;
-            _iconProvider = (DataExportIconProvider) _activator.CoreIconProvider;
+            _activator = activator;
 
             CommonFunctionality.SetUp(
                 tlvDataExport,
@@ -156,9 +162,6 @@ namespace DataExportManager.Collections
             _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;
             _problemProvider = new DataExportProblemProvider(_childProvider);
             _problemProvider.FindProblems();
-            _formatProvider = new DataExportTextFormatProvider(_childProvider, _problemProvider);
-            _iconProvider.SetProviders(_childProvider, _problemProvider);
-            _parentFinder = new TreeNodeParentFinder(tlvDataExport);
         }
 
         private void tlvDataExport_KeyUp(object sender, KeyEventArgs e)

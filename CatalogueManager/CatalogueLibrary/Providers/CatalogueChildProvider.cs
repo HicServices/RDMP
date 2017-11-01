@@ -32,7 +32,7 @@ namespace CatalogueLibrary.Providers
 
         //Catalogue side of things
         public Catalogue[] AllCatalogues { get; set; }
-
+        
         public SupportingDocument[] AllSupportingDocuments { get; set; }
         public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
@@ -785,7 +785,7 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        public Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
+        public virtual Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
             var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
 
@@ -798,7 +798,7 @@ namespace CatalogueLibrary.Providers
             return toReturn;
         }
 
-        private void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
+        protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {
             foreach (IMapsDirectlyToDatabaseTable m in toAdd)
                 toReturn.Add(m, null);

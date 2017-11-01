@@ -21,6 +21,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using DataExportLibrary.Data;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
 using IContainer = CatalogueLibrary.Data.IContainer;
@@ -328,7 +329,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         }
         private int CountMatchToString(List<Regex> regexes, object key)
         {
-            return MatchCount(regexes, key.ToString());
+            var s = key as ICustomSearchString;
+            string matchOn = s != null ? s.GetSearchString() : key.ToString();
+
+            return MatchCount(regexes, matchOn);
         }
         private int MatchCount(List<Regex> regexes, string str)
         {

@@ -26,6 +26,7 @@ using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.SimpleDialogs;
 using HIC.Common.Validation.Constraints.Primary;
+using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -482,6 +483,13 @@ namespace DataExportManager.Collections.Providers
 
             return GetChildren(GetChildren(project).Single(n => n is ProjectSavedCohortsNode))
                 .OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
+        }
+
+        public override Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
+        {
+            var toReturn = base.GetAllSearchables();
+            AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
+            return toReturn;
         }
     }
 }

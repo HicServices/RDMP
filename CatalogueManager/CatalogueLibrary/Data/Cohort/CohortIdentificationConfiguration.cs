@@ -24,7 +24,7 @@ namespace CatalogueLibrary.Data.Cohort
     /// for cohort generation and includes a high level description of what the cohort requirements are, an optional ticket and is the hanging off point for all the 
     /// RootCohortAggregateContainers (the bit that provides the actual filtering/technical data about how the cohort is identified).
     /// </summary>
-    public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlParameters,INamed, IHasDependencies
+    public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlParameters,INamed, IHasDependencies,ICustomSearchString
     {
         public const string CICPrefix = "cic_";
 
@@ -164,6 +164,12 @@ namespace CatalogueLibrary.Data.Cohort
         public override string ToString()
         {
             return Name;
+        }
+
+        public string GetSearchString()
+        {
+            //let the cic acronym match cohort identification configuration
+            return "cic " + Name;
         }
 
         public ISqlParameter[] GetAllParameters()

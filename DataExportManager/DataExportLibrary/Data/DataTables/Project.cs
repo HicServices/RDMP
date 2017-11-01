@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -18,7 +19,7 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. 
     /// </summary>
-    public class Project : VersionedDatabaseEntity, IProject,INamed
+    public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString
     {
         #region Database Properties
         private string _name;
@@ -125,12 +126,17 @@ namespace DataExportLibrary.Data.DataTables
 
         public override string ToString()
         {
+            return Name;
+        }
+
+        public string GetSearchString()
+        {
             if (ProjectNumber == null)
                 return Name;
-            
-            return ProjectNumber + "_"+ Name;
+
+            return ProjectNumber + "_" + Name;
         }
-        
+
         #region Stuff for updating our internal database records
 
         public int CountCohorts()
