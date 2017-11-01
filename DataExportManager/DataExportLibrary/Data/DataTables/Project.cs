@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
@@ -141,5 +142,11 @@ namespace DataExportLibrary.Data.DataTables
             return ExtractionConfigurations.Where(config => config.Cohort_ID != null).Select(c => c.Cohort_ID).Distinct().Count();
         }
         #endregion
+
+        public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
+        {
+            var associations = Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+            return associations.Select(a => a.CohortIdentificationConfiguration).ToArray();
+        }
     }
 }

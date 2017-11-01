@@ -19,6 +19,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
+using DataExportLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
@@ -49,7 +50,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private Bitmap _magnifier;
         private int _diagramBottom;
 
-        private static readonly Type[] TypesThatAreNotUsefulParents =
+        private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
+            new []
         {
             typeof(CatalogueItemsNode),
             typeof(DocumentationNode),
@@ -60,8 +62,13 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             typeof(AllProcessTasksUsedByLoadMetadataNode),
             typeof(LoadStageNode),
             typeof(PreLoadDiscardedColumnsNode)
-        };
-        
+        });
+
+        public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
+        {
+            if(!TypesThatAreNotUsefulParents.Contains(t))
+                TypesThatAreNotUsefulParents.Add(t);
+        }
         public NavigateToObjectUI(IActivateItems activator)
         {
             _activator = activator;

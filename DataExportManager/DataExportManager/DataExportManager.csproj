@@ -330,6 +330,7 @@
     </Compile>
     <Compile Include="Collections\Nodes\CohortsNode.cs" />
     <Compile Include="Collections\Nodes\ExtractionConfigurationsNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
     <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
@@ -346,6 +347,7 @@
     <Compile Include="Collections\SavedCohortsCollectionUI.Designer.cs">
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
@@ -362,6 +364,8 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractableCohort.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProject.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociation.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociations.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSet.cs" />
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
@@ -408,6 +412,7 @@
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
     <Compile Include="Menus\FilterContainerMenu.cs" />
+    <Compile Include="Menus\ProjectCohortIdentificationConfigurationAssociationsNodeMenu.cs" />
     <Compile Include="Menus\SelectedDataSetMenu.cs" />
     <Compile Include="Menus\ProjectsMenu.cs" />
     <Compile Include="Menus\ProjectsNodeMenu.cs" />

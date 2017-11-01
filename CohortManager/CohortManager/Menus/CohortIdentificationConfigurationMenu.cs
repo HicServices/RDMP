@@ -1,10 +1,12 @@
 ﻿using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CohortManager.Collections.Providers;
 using CohortManager.CommandExecution.AtomicCommands;
+using DataExportLibrary.Data;
 using ReusableUIComponents.ChecksUI;
 
 namespace CohortManager.Menus
@@ -40,6 +42,10 @@ namespace CohortManager.Menus
             AddCommonMenuItems();
         }
 
+        public CohortIdentificationConfigurationMenu(IActivateItems activator,ProjectCohortIdentificationConfigurationAssociation association) : this(activator,association.CohortIdentificationConfiguration)
+        {
+            
+        }
 
         private void CloneCohortIdentificationConfiguration()
         {

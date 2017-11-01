@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.PluginChildProvision;
@@ -17,8 +18,7 @@ namespace DataExportManager.CommandExecution
 {
     public class DataExportPluginUserInterface:PluginUserInterface
     {
-        private AtomicCommandUIFactory _atomicCommandFactory;
-
+        
         public DataExportPluginUserInterface(IActivateItems itemActivator) : base(itemActivator)
         {
             
@@ -32,18 +32,27 @@ namespace DataExportManager.CommandExecution
         public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity)
         {
             var cata = databaseEntity as Catalogue;
+            var factory = new AtomicCommandUIFactory(ItemActivator.CoreIconProvider);
 
             if (cata != null)
             {
-                _atomicCommandFactory = new AtomicCommandUIFactory(ItemActivator.CoreIconProvider);
-
                 return new[]
                 {
-                    _atomicCommandFactory.CreateMenuItem(new ExecuteCommandChangeExtractability(ItemActivator, cata))
+                    factory.CreateMenuItem(new ExecuteCommandChangeExtractability(ItemActivator, cata))
                 
                 };
             }
 
+
+            var cic = databaseEntity as CohortIdentificationConfiguration;
+
+            if (cic != null)
+                return new[]
+                {
+                    factory.CreateMenuItem(
+                        new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget
+                            (cic))
+                };
 
             return null;
         }

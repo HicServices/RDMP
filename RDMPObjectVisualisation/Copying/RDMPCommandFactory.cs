@@ -129,6 +129,10 @@ namespace RDMPObjectVisualisation.Copying
             if (processTask != null)
                 return new ProcessTaskCommand(processTask);
 
+            var cic = modelObject as CohortIdentificationConfiguration;
+            if(cic != null)
+                return new CohortIdentificationConfigurationCommand(cic);
+
             var commandSource = modelObject as ICommandSource;
 
             if (commandSource != null)

@@ -5,6 +5,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.Exceptions;
 using CatalogueManager.PluginChildProvision;
+using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportManager.Collections.Nodes;
@@ -52,7 +53,10 @@ namespace DataExportManager.Icons.IconProvision
             //if it is a ProjectUsageNode then get the icon for the underlying object being used e.g. ExtractableCohortUsedByProject would return the icon for ExtractableCohort
             if (concept is IObjectUsedByProjectNode)
                 return GetImage(((IObjectUsedByProjectNode) concept).ObjectBeingUsed, kind);
-            
+
+            if (concept is ProjectCohortIdentificationConfigurationAssociation)
+                return GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+
             //fallback on parent implementation if none of the above unique snowflake cases are met
             return base.GetImage(concept, kind);
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
@@ -39,7 +41,23 @@ namespace DataExportLibrary
 
         public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            
+            var cic = oTableWrapperObject as CohortIdentificationConfiguration;
+
+            //if the object being deleted is a CohortIdentificationConfiguration (in Catalogue database) then delete the associations it has to Projects in Data Export database
+            if (cic != null)
+            {
+                //data export functionality is not available?
+                if (_serviceLocator.DataExportRepository == null)
+                    return;
+
+                //delete all associations where the cic ID matches
+                foreach (
+                    ProjectCohortIdentificationConfigurationAssociation association in
+                        _serviceLocator.DataExportRepository
+                            .GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>()
+                            .Where(assoc => assoc.CohortIdentificationConfiguration_ID == cic.ID))
+                    association.DeleteInDatabase();
+            }
         }
     }
 }

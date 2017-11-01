@@ -17,6 +17,7 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
@@ -156,6 +157,8 @@ namespace DataExportManager.Collections
                 tlvDataExport.AddObject(_allProjectsNode);
                 ExpandRoots();
             }
+
+            NavigateToObjectUI.RecordThatTypeIsNotAUsefulParentToShow(typeof(ProjectCohortIdentificationConfigurationAssociationsNode));
 
         }
         

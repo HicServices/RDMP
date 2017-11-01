@@ -77,6 +77,7 @@ namespace CatalogueManager.Icons.IconProvision
         
         CohortsNode,
         ProjectsNode,
+        ProjectCohortIdentificationConfigurationAssociationsNode,
         ExtractableDataSetsNode,
         ExtractionFolderNode,
         CustomDataTableNode,

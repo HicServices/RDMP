@@ -24,6 +24,7 @@ using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.SimpleDialogs;
+using HIC.Common.Validation.Constraints.Primary;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -67,13 +68,15 @@ namespace DataExportManager.Collections.Providers
 
         public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
 
+        public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
+
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
             _repositoryLocator = repositoryLocator;
             _errorsCheckNotifier = errorsCheckNotifier;
             var dataExportRepository = repositoryLocator.DataExportRepository;
 
-            
+            AllProjectAssociatedCics = dataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
             CohortSources = dataExportRepository.GetAllObjects<ExternalCohortTable>();
             ExtractableDataSets = dataExportRepository.GetAllObjects<ExtractableDataSet>();
 
@@ -161,6 +164,10 @@ namespace DataExportManager.Collections.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
+            var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(project);
+            children.Add(projectCiCsNode);
+            AddChildren(projectCiCsNode,descendancy.Add(projectCiCsNode));
+
             var cohortGroups = GetAllCohortProjectUsageNodesFor(project);
 
             foreach (CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode in cohortGroups)
@@ -177,6 +184,24 @@ namespace DataExportManager.Collections.Providers
             var folder = new ExtractionFolderNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ProjectCohortIdentificationConfigurationAssociationsNode projectCiCsNode, DescendancyList descendancy)
+        {
+            //add the associations
+            HashSet<object> children = new HashSet<object>();
+            foreach (ProjectCohortIdentificationConfigurationAssociation association in AllProjectAssociatedCics.Where(assoc => assoc.Project_ID == projectCiCsNode.Project.ID))
+            {
+                //inject knowledge of what the cic is so it doesn't have to be fetched during ToString
+                association.InjectKnownCohortIdentificationConfiguration(
+                    AllCohortIdentificationConfigurations.Single(
+                        cic => cic.ID == association.CohortIdentificationConfiguration_ID));
+                
+                //document that it is a child of the project cics node 
+                children.Add(association);
+            }
+
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)

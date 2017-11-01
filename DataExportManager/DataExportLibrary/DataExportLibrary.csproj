@@ -251,6 +251,7 @@
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
     <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
     <Compile Include="Data\Hierarchy\ExtractionFilterUser.cs" />
+    <Compile Include="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollectionFactory.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs" />
