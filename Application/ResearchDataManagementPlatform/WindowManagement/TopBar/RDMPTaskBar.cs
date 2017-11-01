@@ -105,6 +105,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             RDMPCollection collection = ButtonToEnum(sender);
             var visible = _manager.IsVisible(collection);
 
+            if(_manager.IsVisibleButBurried(collection))
+                _manager.Pop(collection);
+            else
             if (visible)
                 _manager.Destroy(collection);
             else
