@@ -74,6 +74,7 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
+        [NoMappingToDatabase]
         public IDataExportRepository DataExportRepository
         {
             get { return (IDataExportRepository)Repository; }
