@@ -38,16 +38,14 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             //user wants to create a new cohort
 
             //do we know where it's going to end up?
-            if(ExternalCohortTable == null)
-            {
-                //don't know, so get user to pick one
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>(),false,false);
-                
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    ExternalCohortTable = (ExternalCohortTable) dialog.Selected;
-                else
-                    return null;
-            }
+            if (ExternalCohortTable == null)
+                ExternalCohortTable =
+                    SelectIMapsDirectlyToDatabaseTableDialog.ShowDialogSelectOne(
+                    Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>());
+
+            //user didn't select one and cancelled dialog
+            if (ExternalCohortTable == null)
+                return null;
 
             //and document the request
 

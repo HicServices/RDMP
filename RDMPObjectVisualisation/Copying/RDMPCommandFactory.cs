@@ -10,6 +10,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using RDMPObjectVisualisation.Copying.Commands;
@@ -130,8 +131,9 @@ namespace RDMPObjectVisualisation.Copying
                 return new ProcessTaskCommand(processTask);
 
             var cic = modelObject as CohortIdentificationConfiguration;
-            if(cic != null)
-                return new CohortIdentificationConfigurationCommand(cic);
+            var cicAssociation = modelObject as ProjectCohortIdentificationConfigurationAssociation;
+            if (cic != null || cicAssociation != null)
+                return new CohortIdentificationConfigurationCommand(cic ?? cicAssociation.CohortIdentificationConfiguration);
 
             var commandSource = modelObject as ICommandSource;
 

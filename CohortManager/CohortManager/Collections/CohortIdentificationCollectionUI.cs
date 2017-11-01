@@ -71,15 +71,6 @@ namespace CohortManager.Collections
             }
         }
         
-        private void tlvCohortIdentificationConfigurations_KeyUp(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Delete)
-            {
-                var deletable = tlvCohortIdentificationConfigurations.SelectedObject as IDeleteable;
-                if(deletable != null)
-                    _activator.DeleteWithConfirmation(this,deletable);
-            }
-        }
 
         private void btnExpandOrCollapse_Click(object sender, EventArgs e)
         {

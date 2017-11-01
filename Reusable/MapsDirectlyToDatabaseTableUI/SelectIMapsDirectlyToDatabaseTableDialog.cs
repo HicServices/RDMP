@@ -242,5 +242,19 @@ namespace MapsDirectlyToDatabaseTableUI
                 this.Close();
             }
         }
+
+        public static T ShowDialogSelectOne<T>(T[] selection) where T:IMapsDirectlyToDatabaseTable
+        {
+            if (selection.Length == 1)
+                return selection[0];
+            
+            //don't know, so get user to pick one
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(selection.Cast<IMapsDirectlyToDatabaseTable>(), false, false);
+                
+            if (dialog.ShowDialog() == DialogResult.OK)
+                return (T)dialog.Selected;
+            
+            return default(T);
+        }
     }
 }

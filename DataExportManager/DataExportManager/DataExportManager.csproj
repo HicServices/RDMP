@@ -369,6 +369,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProject.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociations.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectSavedCohortsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSet.cs" />
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />

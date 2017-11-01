@@ -120,10 +120,7 @@ namespace DataExportLibrary.Data.DataTables
             Name = r["Name"] as string;
             ExtractionDirectory = r["ExtractionDirectory"] as string;
 
-            if (r["ProjectNumber"] == null || r["ProjectNumber"] == DBNull.Value)
-                ProjectNumber = null;
-            else
-                ProjectNumber = int.Parse(r["ProjectNumber"].ToString());
+            ProjectNumber = ObjectToNullableInt(r["ProjectNumber"]);
         }
 
         public override string ToString()

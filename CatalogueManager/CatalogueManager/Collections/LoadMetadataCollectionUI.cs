@@ -99,11 +99,7 @@ namespace CatalogueManager.Collections
             if (e.KeyCode == Keys.Delete)
             {
                 var cataNode = tlvLoadMetadata.SelectedObject as CatalogueUsedByLoadMetadataNode;
-
-                var deletable = tlvLoadMetadata.SelectedObject as IDeleteable;
-                if (deletable != null)
-                    _activator.DeleteWithConfirmation(this, deletable);
-
+                
                 if(cataNode != null)
                     if (
                         MessageBox.Show(

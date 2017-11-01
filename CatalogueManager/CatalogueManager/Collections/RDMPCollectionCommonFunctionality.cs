@@ -113,6 +113,8 @@ namespace CatalogueManager.Collections
             iconColumn.ImageGetter += ImageGetter;
             Tree.RowHeight = 19;
 
+            Tree.KeyUp += TreeOnKeyUp;
+
             //what does this do to performance?
             Tree.UseNotifyPropertyChanged = true;
 
@@ -149,6 +151,25 @@ namespace CatalogueManager.Collections
             }
 
             _activator.Emphasise += _activator_Emphasise;
+        }
+
+        private void TreeOnKeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Delete)
+            {
+                var deletable = Tree.SelectedObject as IDeleteable;
+                if(deletable != null)
+                    _activator.DeleteWithConfirmation(this,deletable);
+            }
+            if(e.KeyCode == Keys.F5)
+            {
+                var o = Tree.SelectedObject as DatabaseEntity;
+
+                if (o != null)
+                    new ExecuteCommandRefreshObject(_activator, o).Execute();
+            }
+
+        
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)

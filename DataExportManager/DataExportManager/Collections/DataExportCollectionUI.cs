@@ -166,13 +166,9 @@ namespace DataExportManager.Collections
             if (e.KeyCode == Keys.Delete)
             {
                 var o = tlvDataExport.SelectedObject;
-                var deletable = o as IDeleteable;
                 var linkedCohortNode = o as LinkedCohortNode;
                 var packageContentNode = o as PackageContentNode;
-
-                if (deletable != null)
-                    _activator.DeleteWithConfirmation(this,deletable);
-
+                
                 if (linkedCohortNode != null)
                     linkedCohortNode.DeleteWithConfirmation(_activator);
 

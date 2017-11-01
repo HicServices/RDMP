@@ -210,16 +210,10 @@ namespace CatalogueManager.Collections
         {
             if (e.KeyCode == Keys.Delete)
             {
-                var deleteable = tlvCatalogues.SelectedObject as IDeleteable;
                 var columnInfoLink = tlvCatalogues.SelectedObject as LinkedColumnInfoNode;
 
                 if (columnInfoLink != null)
                     DeleteColumnInfoLink(columnInfoLink);
-
-                if(deleteable == null)
-                    return;
-                
-                _activator.DeleteWithConfirmation(this, deleteable);
             }
 
             if (e.KeyCode == Keys.N && e.Control)
@@ -227,8 +221,7 @@ namespace CatalogueManager.Collections
                 var c = new Catalogue(RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
                 _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
             }
-
-
+            
             var cataItem = tlvCatalogues.SelectedObject as CatalogueItem;
 
             if (cataItem != null)
