@@ -51,7 +51,7 @@ namespace DataExportManager.Collections.Providers
                 return;
             }
 
-            if(_childProvider.GetChildren(project).OfType<CohortSourceUsedByProjectNode>().All(s=>s.IsEmptyNode))
+            if(_childProvider.ProjectHasNoSavedCohorts(project))
             {
                 ProblemsWithProjects.Add(project,"Project has no cohorts");
                 return;

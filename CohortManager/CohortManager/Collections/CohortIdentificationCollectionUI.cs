@@ -7,6 +7,7 @@ using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.Menus;
 using MapsDirectlyToDatabaseTable;
 
@@ -26,9 +27,7 @@ namespace CohortManager.Collections
         public CohortIdentificationCollectionUI()
         {
             InitializeComponent();
-            
         }
-
 
         public override void SetItemActivator(IActivateItems activator)
         {
@@ -43,6 +42,8 @@ namespace CohortManager.Collections
                 olvName//column that can be renamed
                 
                 );
+
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new []{new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)};
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             
@@ -61,22 +62,13 @@ namespace CohortManager.Collections
         private void tlvCohortIdentificationConfigurations_CellRightClick(object sender, CellRightClickEventArgs e)
         {
             var o = e.Model;
-            var cic = o as CohortIdentificationConfiguration;
             var cohortContainer = o as CohortAggregateContainer;
-            var patientIndexTablesNode = o as JoinableCollectionNode;
-
-            //if user clicked on a cohort identification configuration or on whitespace
-            if(cic != null || e.Model == null)
-                e.MenuStrip = new CohortIdentificationConfigurationMenu(_activator,cic);
             
             if (cohortContainer != null)
             {
                 var rootParent = CommonFunctionality.ParentFinder.GetFirstOrNullParentRecursivelyOfType<CohortIdentificationConfiguration>(cohortContainer);
                 e.MenuStrip = new CohortAggregateContainerMenu(_activator, rootParent, cohortContainer);
             }
-
-            if (patientIndexTablesNode != null)
-                e.MenuStrip = new JoinableCollectionNodeMenu(_activator, patientIndexTablesNode);
         }
         
         private void tlvCohortIdentificationConfigurations_KeyUp(object sender, KeyEventArgs e)

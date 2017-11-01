@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -37,7 +38,6 @@ namespace DataExportManager.Collections.Providers
     {
         //root objects
         public CohortsNode RootCohortsNode { get; private set; }
-        public ProjectsNode RootProjectsNode { get;private set; }
         public ExtractableDataSetsNode RootExtractableDataSets { get; private set; }
 
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
@@ -58,7 +58,7 @@ namespace DataExportManager.Collections.Providers
         public List<CustomDataTableNode> CustomTables { get; private set; }
 
         public ExtractionConfiguration[] ExtractionConfigurations { get; private set; }
-
+        
         private Dictionary<ExtractionConfiguration, SelectedDataSets[]> _configurationToDatasetMapping;
         private DataExportFilterHierarchy _dataExportFilterHierarchy;
 
@@ -113,10 +113,9 @@ namespace DataExportManager.Collections.Providers
 
             RootExtractableDataSets = new ExtractableDataSetsNode(dataExportRepository,ExtractableDataSets, AllPackages);
             AddChildren(RootExtractableDataSets,new DescendancyList(RootExtractableDataSets));
-            
-            RootProjectsNode = new ProjectsNode();
-            AddChildren(RootProjectsNode,new DescendancyList(RootProjectsNode));
 
+            foreach (Project p in Projects)
+                AddChildren(p, new DescendancyList(p));
 
             //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
             var extractableCatalogueIds = new HashSet<int>(ExtractableDataSets.Select(ds => ds.Catalogue_ID));
@@ -151,15 +150,7 @@ namespace DataExportManager.Collections.Providers
             AddToDictionaries(children, descendancy);
 
         }
-
-        private void AddChildren(ProjectsNode projectsNode, DescendancyList descendancy)
-        {
-            foreach (Project p in Projects)
-                AddChildren(p, descendancy.Add(p));
-
-            AddToDictionaries(new HashSet<object>(Projects), descendancy);
-        }
-
+        
         private void AddChildren(Project project, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
@@ -168,13 +159,10 @@ namespace DataExportManager.Collections.Providers
             children.Add(projectCiCsNode);
             AddChildren(projectCiCsNode,descendancy.Add(projectCiCsNode));
 
-            var cohortGroups = GetAllCohortProjectUsageNodesFor(project);
+            var savedCohortsNode = new ProjectSavedCohortsNode(project);
+            children.Add(savedCohortsNode);
+            AddChildren(savedCohortsNode,descendancy.Add(savedCohortsNode));
 
-            foreach (CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode in cohortGroups)
-            {
-                AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
-                children.Add(cohortSourceUsedByProjectNode);
-            }
 
             var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
             children.Add(extractionConfigurationsNode);
@@ -184,6 +172,21 @@ namespace DataExportManager.Collections.Providers
             var folder = new ExtractionFolderNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ProjectSavedCohortsNode savedCohortsNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            var cohortGroups = GetAllCohortProjectUsageNodesFor(savedCohortsNode.Project);
+
+            foreach (CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode in cohortGroups)
+            {
+                AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
+                children.Add(cohortSourceUsedByProjectNode);
+            }
+
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(ProjectCohortIdentificationConfigurationAssociationsNode projectCiCsNode, DescendancyList descendancy)
@@ -472,6 +475,13 @@ namespace DataExportManager.Collections.Providers
         public IEnumerable<ExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)
         {
             return PackageContents.GetAllDataSets(package, ExtractableDataSets);
+        }
+
+        public bool ProjectHasNoSavedCohorts(Project project)
+        {
+
+            return GetChildren(GetChildren(project).Single(n => n is ProjectSavedCohortsNode))
+                .OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
         }
     }
 }

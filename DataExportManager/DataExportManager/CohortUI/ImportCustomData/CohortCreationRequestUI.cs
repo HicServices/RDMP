@@ -45,18 +45,12 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
             lblExternalCohortTable.Text = _target.ToString();
 
-            SelectProject(project);
+            SetProject(project);
             
             pbProject.Image = CatalogueIcons.Project;
             pbCohortSource.Image = CatalogueIcons.ExternalCohortTable;
         }
 
-        private void SetProjectLabel(string txt)
-        {
-            lblProject.Text = txt;
-            btnNewProject.Left = lblProject.Right;
-            btnExisting.Left = btnNewProject.Right;
-        }
 
         public CohortCreationRequest Result { get; set; }
         public IActivateItems Activator { get; set; }
@@ -232,7 +226,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
                 if (result == DialogResult.OK)
                 {
                     p.Project.SaveToDatabase();
-                    SelectProject(p.Project);
+                    SetProject(p.Project);
                     Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(p.Project));
                 }
                 else
@@ -245,11 +239,21 @@ namespace DataExportManager.CohortUI.ImportCustomData
             }
         }
 
-        private void SelectProject(Project project)
+        private void SetProject(Project project)
         {
             _project = project;
-            SetProjectLabel(_project != null ? _project.Name:"????");
 
+            lblProject.Text = _project != null ? _project.Name : "????";
+            
+            btnNewProject.Left = lblProject.Right;
+            btnExisting.Left = btnNewProject.Right;
+
+            btnClear.Left = lblProject.Right;
+
+            btnNewProject.Visible = _project == null;
+            btnExisting.Visible = _project == null;
+            btnClear.Visible = _project != null;
+            
             //if a project is selected and the project has no project number
             lblErrorNoProjectNumber.Visible = _project != null && _project.ProjectNumber == null;
             tbSetProjectNumber.Visible = _project != null && _project.ProjectNumber == null;
@@ -264,7 +268,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
         {
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
             if(dialog.ShowDialog()== DialogResult.OK)
-                SelectProject((Project)dialog.Selected);
+                SetProject((Project)dialog.Selected);
         }
 
         private void tbSetProjectNumber_TextChanged(object sender, EventArgs e)
@@ -280,6 +284,11 @@ namespace DataExportManager.CohortUI.ImportCustomData
             {
                 tbSetProjectNumber.ForeColor = Color.Red;
             }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            SetProject(null);
         }
         
     }

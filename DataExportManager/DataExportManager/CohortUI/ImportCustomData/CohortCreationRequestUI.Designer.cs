@@ -61,6 +61,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.btnExisting = new System.Windows.Forms.Button();
             this.lblErrorNoProjectNumber = new System.Windows.Forms.Label();
             this.tbSetProjectNumber = new System.Windows.Forms.TextBox();
+            this.btnClear = new System.Windows.Forms.Button();
             this.gbRevisedCohort.SuspendLayout();
             this.gbNewCohort.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -396,11 +397,22 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.tbSetProjectNumber.Visible = false;
             this.tbSetProjectNumber.TextChanged += new System.EventHandler(this.tbSetProjectNumber_TextChanged);
             // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(453, 55);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(43, 23);
+            this.btnClear.TabIndex = 6;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
             // CohortCreationRequestUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(890, 446);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.tbSetProjectNumber);
             this.Controls.Add(this.lblErrorNoProjectNumber);
             this.Controls.Add(this.btnExisting);
@@ -471,5 +483,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
         private System.Windows.Forms.Button btnExisting;
         private System.Windows.Forms.Label lblErrorNoProjectNumber;
         private System.Windows.Forms.TextBox tbSetProjectNumber;
+        private System.Windows.Forms.Button btnClear;
     }
 }

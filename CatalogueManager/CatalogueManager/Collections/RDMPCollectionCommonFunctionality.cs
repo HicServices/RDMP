@@ -22,6 +22,7 @@ using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Copying;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -31,7 +32,9 @@ using CatalogueManager.Refreshing;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -73,7 +76,8 @@ namespace CatalogueManager.Collections
             }
         }
 
-
+        public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
+        
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
         /// </summary>
@@ -299,6 +303,14 @@ namespace CatalogueManager.Collections
                         return;
                     }
                 }
+            }
+            else
+            {
+                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+
+                //it's a right click in whitespace (nothing right clicked)
+                if (WhitespaceRightClickMenuCommands != null)
+                    e.MenuStrip = factory.CreateMenu(WhitespaceRightClickMenuCommands);
             }
         }
 

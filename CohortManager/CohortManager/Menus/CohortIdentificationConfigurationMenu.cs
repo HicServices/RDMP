@@ -26,18 +26,16 @@ namespace CohortManager.Menus
         {
             _cic = cic;
 
-            if (cic != null)
-            {
-                ReBrandActivateAs("Test Query",RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Execute);
+            ReBrandActivateAs("Test Query",RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Execute);
                 
-                Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
+            Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
                 
-                Items.Add(new ToolStripSeparator());
+            Items.Add(new ToolStripSeparator());
 
-                _executeAndImportCommand = new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(activator).SetTarget(cic);
+            _executeAndImportCommand = new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(activator).SetTarget(cic);
             
-                Add(_executeAndImportCommand);
-            }
+            Add(_executeAndImportCommand);
+            
             
             //associate with project
             Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(activator).SetTarget(cic));
@@ -47,7 +45,6 @@ namespace CohortManager.Menus
             Items.Add("Clone Configuration", CohortIdentificationIcons.cloneCohortIdentificationConfiguration,
                 (s, e) => CloneCohortIdentificationConfiguration());
 
-            
             var freeze = new ToolStripMenuItem("Freeze Configuration",
                 CatalogueIcons.FrozenCohortIdentificationConfiguration, (s, e) => FreezeConfiguration());
             freeze.Enabled = !cic.Frozen;
