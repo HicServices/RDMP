@@ -1,5 +1,7 @@
 using System;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.Aggregation;
@@ -9,6 +11,8 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CohortManagerLibrary.Execution;
+using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
 
 namespace CohortManager.SubComponents
@@ -56,14 +60,85 @@ namespace CohortManager.SubComponents
             olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
             tlvCic.RowHeight = 19;
             olvExecute.AspectGetter += ExecuteAspectGetter;
+            tlvCic.ButtonClick += tlvCic_ButtonClick;
         }
 
         private object ExecuteAspectGetter(object rowObject)
         {
             if(rowObject is AggregateConfiguration || rowObject is CohortAggregateContainer)
-                return "Execute";
+            {
+                var plannedOp = GetNextOperation(GetState((IMapsDirectlyToDatabaseTable) rowObject));
+
+                if (plannedOp == Operation.None)
+                    return null;
+
+                return plannedOp;
+            }
             
             return null;
+        }
+
+        private Operation GetNextOperation(CompilationState currentState)
+        {
+            switch (currentState)
+            {
+                case CompilationState.NotScheduled:
+                    return Operation.Execute;
+                case CompilationState.Scheduled:
+                    return Operation.None;
+                case CompilationState.Executing:
+                    return Operation.Cancel;
+                case CompilationState.Finished:
+                    return Operation.Clear;
+                case CompilationState.Crashed:
+                    return Operation.Clear;
+                default:
+                    throw new ArgumentOutOfRangeException("currentState");
+            }
+        }
+
+        private enum Operation
+        {
+            Execute,
+            Cancel,
+            Clear,
+            None
+        }
+
+        private CompilationState GetState(IMapsDirectlyToDatabaseTable rowObject)
+        {
+            return CohortCompilerUI1.GetState(rowObject);
+        }
+
+        void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
+        {
+            var o = e.Model;
+
+            if (o is AggregateConfiguration || o is CohortAggregateContainer)
+            {
+                var m = (IMapsDirectlyToDatabaseTable) o;
+                OrderActivity(GetNextOperation(GetState(m)),m);
+            }
+        }
+
+        private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o)
+        {
+            switch (operation)
+            {
+                case Operation.Execute:
+                    CohortCompilerUI1.StartThisTaskOnly(o);
+                    break;
+                case Operation.Cancel:
+                    CohortCompilerUI1.Cancel(o);
+                    break;
+                case Operation.Clear:
+                    CohortCompilerUI1.Clear(o);
+                    break;
+                case Operation.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("operation");
+            }
         }
 
         void queryCachingServerSelector_SelectedServerChanged()

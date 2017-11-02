@@ -236,12 +236,7 @@ namespace CohortManagerLibrary.Execution
             Threads.Add(t);
             t.Start();    
         }
-
-        public CompilationState GetState(AggregateConfiguration copnfiguration)
-        {
-            return CompilationState.NotScheduled;       
-        }
-
+        
         public int GetRowCount(AggregateConfiguration aggregate)
         {
             return -1;

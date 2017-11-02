@@ -431,24 +431,9 @@ namespace CohortManager.SubComponents
 
         private void otvConfiguration_ItemActivate(object sender, EventArgs e)
         {
-            var containerTask = tlvConfiguration.SelectedObject as AggregationContainerTask;
-            
-            if(containerTask != null && containerTask.CrashMessage != null)
-                ExceptionViewer.Show(containerTask.CrashMessage);
-
-            var c = tlvConfiguration.SelectedObject as Compileable;
-
-            if(c!= null)
-            {
-                var child = c.Child;
-
-                var joinable = child as JoinableCohortAggregateConfiguration;
-                if (joinable != null)
-                    child = joinable.AggregateConfiguration;
-
-                if (child != null)
-                    _activator.RequestItemEmphasis(this,new EmphasiseRequest(child));
-            }
+            var compileable = tlvConfiguration.SelectedObject as Compileable;
+            if (compileable != null && compileable.CrashMessage != null)
+                ExceptionViewer.Show(compileable.CrashMessage);
         }
         
         private IEnumerable<ICachableTask> GetSelectedCachableTasks()
@@ -521,6 +506,12 @@ namespace CohortManager.SubComponents
             RefreshUIFromDatabase();
         }
 
+        public void Cancel(IMapsDirectlyToDatabaseTable o)
+        {
+            var task = Compiler.Tasks.Single(t=>t.Key.Child.Equals(o));
+            Compiler.CancelTask(task.Key,true);
+        }
+
         private void refreshThreadCountPeriodically_Tick(object sender, EventArgs e)
         {
             tlvConfiguration.RebuildColumns();
@@ -533,23 +524,17 @@ namespace CohortManager.SubComponents
                 RefreshUIFromDatabase();
             }
         }
-        
-        private void btnCacheSelected_Click(object sender, EventArgs e)
-        {
-            int successes = 0;
-            foreach (ICachableTask t in GetSelectedCachableTasks())
-                try
-                {
-                    CacheConfigurationResults(t);
-                    successes ++;
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show("Could not cache task "+ t,exception);
-                }
 
-            RefreshUIFromDatabase();
+        public CompilationState GetState(IMapsDirectlyToDatabaseTable o)
+        {
+            var task = GetTask(o);
+
+            if (task == null)
+                return CompilationState.NotScheduled;
+
+            return task.State;
         }
+
         
         private void btnStartSelected_Click(object sender, EventArgs e)
         {
@@ -589,8 +574,6 @@ namespace CohortManager.SubComponents
 
             RefreshUIFromDatabase();
         }
-
-
 
         private void cbIncludeCumulative_CheckedChanged(object sender, EventArgs e)
         {
@@ -647,8 +630,25 @@ namespace CohortManager.SubComponents
                     e.Cancel = true;
                 }
             }
-                
-            
+        }
+        
+        public void Clear(IMapsDirectlyToDatabaseTable o)
+        {
+            var task = GetTask(o);
+
+            if(task == null)
+                return;
+
+            var c = task as CachableTask;
+            if(c != null)
+                ClearCacheFor(new ICachableTask[] { c });
+
+            Compiler.CancelTask(task,true);
+        }
+
+        private ICompileable GetTask(IMapsDirectlyToDatabaseTable o)
+        {
+            return Compiler.Tasks.Keys.SingleOrDefault(t => t.Child.Equals(o));
         }
     }
 
