@@ -29,11 +29,12 @@ namespace CohortManager.Menus
     {
         private CohortAggregateContainer _container;
 
-        public CohortAggregateContainerMenu(IActivateItems activator, CohortIdentificationConfiguration cic, CohortAggregateContainer container)
+        public CohortAggregateContainerMenu(IActivateItems activator, CohortAggregateContainer container)
             : base( activator, container)
         {
             _container = container;
-            
+            var cic = _container.GetCohortIdentificationConfiguration();
+
             AddToolStripMenuItemSetTo(SetOperation.EXCEPT);
             AddToolStripMenuItemSetTo(SetOperation.UNION);
             AddToolStripMenuItemSetTo(SetOperation.INTERSECT);

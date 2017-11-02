@@ -60,18 +60,6 @@ namespace CohortManager.Collections
                     tlvCohortIdentificationConfigurations.AddObject(e.Object); //add it
         }
 
-        private void tlvCohortIdentificationConfigurations_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            var o = e.Model;
-            var cohortContainer = o as CohortAggregateContainer;
-            
-            if (cohortContainer != null)
-            {
-                var rootParent = CommonFunctionality.ParentFinder.GetFirstOrNullParentRecursivelyOfType<CohortIdentificationConfiguration>(cohortContainer);
-                e.MenuStrip = new CohortAggregateContainerMenu(_activator, rootParent, cohortContainer);
-            }
-        }
-        
 
         private void btnExpandOrCollapse_Click(object sender, EventArgs e)
         {

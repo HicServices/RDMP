@@ -119,7 +119,11 @@ namespace CatalogueManager.Menus
 
                         try
                         {
-                            var toAdd = plugin.GetAdditionalRightClickMenuItems(askAbout);
+                            ToolStripMenuItem[] toAdd;
+                            if (askAbout is DatabaseEntity)
+                                toAdd = plugin.GetAdditionalRightClickMenuItems((DatabaseEntity) askAbout);
+                            else
+                                toAdd = plugin.GetAdditionalRightClickMenuItems(askAbout);
 
                             if (toAdd != null && toAdd.Any())
                                 Items.AddRange(toAdd);

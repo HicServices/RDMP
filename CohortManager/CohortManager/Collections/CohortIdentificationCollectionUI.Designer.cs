@@ -57,7 +57,6 @@ namespace CohortManager.Collections
             this.tlvCohortIdentificationConfigurations.UseCompatibleStateImageBehavior = false;
             this.tlvCohortIdentificationConfigurations.View = System.Windows.Forms.View.Details;
             this.tlvCohortIdentificationConfigurations.VirtualMode = true;
-            this.tlvCohortIdentificationConfigurations.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.tlvCohortIdentificationConfigurations_CellRightClick);
             // 
             // olvName
             // 

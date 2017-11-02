@@ -83,7 +83,6 @@ namespace CohortManager.SubComponents
             this.tlvConfiguration.UseCompatibleStateImageBehavior = false;
             this.tlvConfiguration.View = System.Windows.Forms.View.Details;
             this.tlvConfiguration.VirtualMode = true;
-            this.tlvConfiguration.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.otvConfiguration_CellRightClick);
             this.tlvConfiguration.ItemActivate += new System.EventHandler(this.otvConfiguration_ItemActivate);
             this.tlvConfiguration.KeyUp += new System.Windows.Forms.KeyEventHandler(this.otvConfiguration_KeyUp);
             // 

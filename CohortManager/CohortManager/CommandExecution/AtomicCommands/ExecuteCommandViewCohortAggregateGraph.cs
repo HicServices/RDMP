@@ -23,6 +23,11 @@ namespace CohortManager.CommandExecution.AtomicCommands
             
         }
 
+        public override string GetCommandName()
+        {
+            return _collection.Graph.Name;
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph);

@@ -370,212 +370,27 @@ namespace CohortManager.SubComponents
             }
         }
 
-
-        private void otvConfiguration_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            try
-            {
-                var containerTask = e.HitTest.RowObject as AggregationContainerTask;
-                var configurationTask = e.HitTest.RowObject as AggregationTask;
-                var joinableTask = e.HitTest.RowObject as JoinableTaskExecution;
-
-                ICompileable compileable = e.HitTest.RowObject as ICompileable;
-                ICachableTask cachableTask = e.HitTest.RowObject as ICachableTask;
-
-            
-                //create right click context menu
-                var RightClickMenu = new ContextMenuStrip();
-
-                if (containerTask != null)
-                    if (containerTask.State == CompilationState.Crashed)
-                        RightClickMenu.Items.Add("View Crash Message", null,(o, args) => ExceptionViewer.Show(containerTask.CrashMessage));
-
-                //if it's a joinable or regular aggregate
-                if (configurationTask != null || joinableTask != null)
-                {
-                    if (compileable.State == CompilationState.Crashed)
-                        RightClickMenu.Items.Add("View Crash Message", null,
-                            (o, args) => ExceptionViewer.Show(compileable.CrashMessage));
-
-                    if (configurationTask != null)
-                        AddSummaryGraphOptions(configurationTask, RightClickMenu, cachableTask);
-                }
-
-                if (cachableTask != null)
-                {
-                    var cachingMenuItem = RightClickMenu.Items.Add("Save To Cache", null, (o, args) =>
-                    {
-                        //cache the task
-                        SaveToCache(cachableTask);
-                        //and refresh the interface
-                        RefreshUIFromDatabase();
-                    });
-                
-                    CachedAggregateConfigurationResultsManager manager = null;
-
-                    if(QueryCachingServer != null)
-                        manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
-
-                    var clearCachingMenuItem = RightClickMenu.Items.Add("Clear From Cache", null, (o, args) =>
-                    {
-                        //clear the one you right clicked
-                        cachableTask.ClearYourselfFromCache(manager);
-                        //and refresh the interface
-                        RefreshUIFromDatabase();
-                    });
-
-                    cachingMenuItem.Enabled =
-                        QueryCachingServer != null //there must be a caching server
-                        && cachableTask.State == CompilationState.Finished //execution must have finished
-                        && cachableTask.IsCacheableWhenFinished();//it can't already be cached
-
-                    clearCachingMenuItem.Enabled = 
-                        QueryCachingServer != null //there must be a caching server
-                        && cachableTask.CanDeleteCache(); //it must have been cached
-                }
-
-
-                if (compileable != null)
-                {
-                    var startThisTaskOnly = RightClickMenu.Items.Add("Start This Task Only", null, (o, args) => StartThisTaskOnly(compileable));
-                    startThisTaskOnly.Enabled = compileable.State == CompilationState.NotScheduled || compileable.State == CompilationState.Crashed;
-
-                    //if it's a container task
-                    if (containerTask != null)
-                    {
-                        AddSummaryGraphOptions(containerTask.Container,RightClickMenu,containerTask);
-                    }
-
-                }
-            
-                if(RightClickMenu.Items.Count >0)
-                    RightClickMenu.Show(tlvConfiguration,e.Location);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
-
-        private void AddSummaryGraphOptions(CohortAggregateContainer cohortAggregateContainer, ContextMenuStrip rightClickMenu, AggregationContainerTask containerTask)
-        {
-            var repository = cohortAggregateContainer.Repository;
-            var availableGraphs = repository.GetAllObjects<AggregateConfiguration>().Where(g => !g.IsCohortIdentificationAggregate).ToArray();
-            var allCatalogues = repository.GetAllObjectsInIDList<Catalogue>(availableGraphs.Select(g => g.Catalogue_ID).Distinct()).ToArray();
-
-            var heading1 = new ToolStripMenuItem("Generate Summary Graph (ExtractionIdentifier IN)",CatalogueIcons.Graph);
-
-            if (availableGraphs.Any())
-                foreach (var cata in allCatalogues.OrderBy(c => c.Name))
-                {
-                    var catalogueSubheading = new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue);
-
-                    int cId = cata.ID;
-                    foreach (var graph in availableGraphs.Where(g => g.Catalogue_ID == cId))
-                    {
-                        AggregateConfiguration toExecute = graph;
-                        var menuItem = new ToolStripMenuItem(graph.Name, null,
-                            (s, e) => LaunchSummaryGraph(cohortAggregateContainer, toExecute));
-                        catalogueSubheading.DropDownItems.Add(menuItem);
-                    }
-
-                    heading1.DropDownItems.Add(catalogueSubheading);
-                }
-
-            rightClickMenu.Items.Add(heading1);
-            heading1.Enabled = containerTask.AreaAllQueriesCached();
-
-            if (!heading1.Enabled)
-                heading1.Text += " (Requires 100% cached)";
-
-
-        }
-
-
-        private void AddSummaryGraphOptions(AggregationTask configurationTask, ContextMenuStrip rightClickMenu, ICachableTask cachableTask)
-        {
-            var cohort = (AggregateConfiguration) configurationTask.Child;
-            var compatibleAggregates = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(cohort);
-
-            if (compatibleAggregates.Any())
-            {
-                var heading1 = new ToolStripMenuItem("Generate Summary Graph (ExtractionIdentifier IN)",CatalogueIcons.Graph);
-                var heading2 = new ToolStripMenuItem("Generate Summary Graph (Records IN)", CatalogueIcons.Graph);
-
-                foreach (AggregateConfiguration aggregate in compatibleAggregates)
-                {
-                    AggregateConfiguration aggregate1 = aggregate;
-                    var item = new ToolStripMenuItem(aggregate.ToString(), CatalogueIcons.CohortAggregate,
-                        (o, args) =>
-                            LaunchSummaryGraph(cohort,aggregate1, CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
-                    heading1.DropDownItems.Add(item);
-
-                    var item2 = new ToolStripMenuItem(aggregate.ToString(), CatalogueIcons.CohortAggregate,
-                        (o, args) => LaunchSummaryGraph(cohort, aggregate1, CohortSummaryAdjustment.WhereRecordsIn));
-                    heading2.DropDownItems.Add(item2);
-                }
-
-                //LaunchAll
-                if (compatibleAggregates.Length > 1)
-                {
-                    var item = new ToolStripMenuItem("Launch All Graphs", null,
-                        (o, args) =>
-                            LaunchAllSummaryGraphs(cohort,compatibleAggregates,CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
-                    heading1.DropDownItems.Add(item);
-
-                    var item2 = new ToolStripMenuItem("Launch All Graphs", null,
-                        (o, args) =>
-                            LaunchAllSummaryGraphs(cohort,compatibleAggregates, CohortSummaryAdjustment.WhereRecordsIn));
-                    heading2.DropDownItems.Add(item2);
-                }
-
-                rightClickMenu.Items.Add(heading1);
-                rightClickMenu.Items.Add(heading2);
-
-
-                if (!cachableTask.CanDeleteCache())
-                {
-                    heading1.Text += " (Requires Cached Query)";
-                    heading1.Enabled = false;
-                }
-            }
-        }
-
-        private void LaunchAllSummaryGraphs(AggregateConfiguration cohort, AggregateConfiguration[] compatibleAggregates, CohortSummaryAdjustment adjustment)
-        {
-            foreach (AggregateConfiguration aggregateConfiguration in compatibleAggregates)
-                LaunchSummaryGraph(cohort, aggregateConfiguration, adjustment);
-        }
-
-        private void LaunchSummaryGraph( AggregateConfiguration cohort,AggregateConfiguration aggregate, CohortSummaryAdjustment adjustment)
-        {
-            new ExecuteCommandViewCohortAggregateGraph(_activator, new CohortSummaryAggregateGraphObjectCollection(cohort, aggregate, adjustment)).Execute();
-        }
         
-        private void LaunchSummaryGraph(CohortAggregateContainer cohortAggregateContainer, AggregateConfiguration graph)
+        public void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer)
         {
-            new ExecuteCommandViewCohortAggregateGraph(_activator, new CohortSummaryAggregateGraphObjectCollection(cohortAggregateContainer, graph)).Execute();
-        }
-
-        private void StartThisTaskOnly(ICompileable configurationTask)
-        {
+            var task = Compiler.GetTask(configOrContainer, _globals);
 
             //if it is in crashed state
-            if(configurationTask.State == CompilationState.Crashed)
+            if (task.State == CompilationState.Crashed)
             {
                 //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
-                Compiler.CancelTask(configurationTask,true);
+                Compiler.CancelTask(task, true);
 
                 //refresh the task list, this will pick up the orphaned .Child and create a new task for it in the Compiler
                 RefreshUIFromDatabase();
 
                 //fetch the new task for the child and make that the one we start (below)
-                configurationTask = Compiler.Tasks.Single(t => t.Key.Child.Equals(configurationTask.Child)).Key;
+                task = Compiler.Tasks.Single(t => t.Key.Child.Equals(task.Child)).Key;
             }
-
+            
 
             //Task is now in state NotScheduled so we can start it
-            Compiler.LaunchSingleTask(configurationTask,_timeout);
+            Compiler.LaunchSingleTask(task, _timeout);
         }
 
 
