@@ -42,6 +42,7 @@ namespace CohortManager.Collections
                 olvName//column that can be renamed
                 
                 );
+            CommonFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
 
             CommonFunctionality.WhitespaceRightClickMenuCommands = new []{new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)};
             

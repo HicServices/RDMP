@@ -77,7 +77,14 @@ namespace CatalogueManager.Collections
         }
 
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
-        
+
+        /// <summary>
+        /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
+        /// You can cut off any branch with this property, just specify the Types to stop descending at and you will get that object Type (assuming you normally would)
+        /// but no further children.
+        /// </summary>
+        public Type[] AxeChildren { get; set; }
+
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
         /// </summary>
@@ -284,12 +291,20 @@ namespace CatalogueManager.Collections
 
         private IEnumerable ChildrenGetter(object model)
         {
+            if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
+                return null;
+
             return CoreChildProvider.GetChildren(model);
         }
 
         private bool CanExpandGetter(object model)
         {
-            return CoreChildProvider.GetChildren(model).Any();
+            var result = ChildrenGetter(model);
+
+            if (result == null)
+                return false;
+            
+            return result.Cast<object>().Any();
         }
 
         private object ImageGetter(object rowObject)
