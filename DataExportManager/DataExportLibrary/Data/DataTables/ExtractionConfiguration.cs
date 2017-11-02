@@ -569,7 +569,7 @@ namespace DataExportLibrary.Data.DataTables
                 //failed to get a logging server correctly
 
                 //see if there is a default
-                var defaultGetter = new ServerDefaults(((DataExportRepository)Project.Repository).CatalogueRepository);
+                var defaultGetter = new ServerDefaults(Project.DataExportRepository.CatalogueRepository);
                 var defaultLoggingServer = defaultGetter.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
 
                 //there is a default?
