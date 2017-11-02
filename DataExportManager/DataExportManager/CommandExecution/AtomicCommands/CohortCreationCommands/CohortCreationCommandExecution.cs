@@ -57,6 +57,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             if (requestUI.ShowDialog() != DialogResult.OK)
                 return null;
 
+            if (Project == null)
+                Project = requestUI.Project;
+
             return requestUI.Result;
         }
 

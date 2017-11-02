@@ -68,14 +68,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
             //we can!
             if (!cmd.IsImpossible)
-                if (MessageBox.Show(
-                    "Would you like to associate '" + _cic + "' with the Project '" + Project + "'",
-                    "Associate Query With Project?",
-                    MessageBoxButtons.YesNo) == DialogResult.Yes) //suggest it to the user
-                {
-                    cmd.Execute();
-                }
-
+                cmd.Execute();
         }
 
         public override Image GetImage(IIconProvider iconProvider)

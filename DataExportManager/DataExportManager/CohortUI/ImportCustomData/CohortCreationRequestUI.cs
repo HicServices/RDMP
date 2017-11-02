@@ -29,7 +29,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
     public partial class CohortCreationRequestUI : RDMPForm
     {
         private readonly ExternalCohortTable _target;
-        private Project _project;
         private DataExportRepository _repository;
 
         public CohortCreationRequestUI(ExternalCohortTable target, Project project =null)
@@ -54,19 +53,20 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
         public CohortCreationRequest Result { get; set; }
         public IActivateItems Activator { get; set; }
+        public Project Project { get; set; }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            
-            if (_project == null)
+
+            if (Project == null)
             {
                 MessageBox.Show("You must select a project, if you do not have one yet then create one");
                 return;
             }
 
-            if (_project.ProjectNumber == null)
+            if (Project.ProjectNumber == null)
             {
-                MessageBox.Show("Project " + _project +
+                MessageBox.Show("Project " + Project +
                                 " does not have a project number yet, you must asign it one before it can be involved in cohort creation");
                 return;
             }
@@ -106,7 +106,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
             
             //construct the result
-            Result = new CohortCreationRequest(_project,new CohortDefinition(null,name,version,(int)_project.ProjectNumber,_target),(DataExportRepository) _project.Repository,tbDescription.Text); 
+            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (DataExportRepository)Project.Repository, tbDescription.Text); 
 
             //see if it is passing checks
             ToMemoryCheckNotifier notifier = new ToMemoryCheckNotifier();
@@ -173,7 +173,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
                     && c2.Version > c.Version)//and a higher version
                     ).ToArray();
 
-            if (_project == null)
+            if (Project == null)
             {
                 MessageBox.Show("You must select a Project");
                 return;
@@ -182,7 +182,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             if(cbShowEvenWhenProjectNumberDoesntMatch.Checked)
                 ddExistingCohort.Items.AddRange(maxVersionCohorts);
             else
-                ddExistingCohort.Items.AddRange(maxVersionCohorts.Where(c=>c.ProjectNumber == _project.ProjectNumber).ToArray());
+                ddExistingCohort.Items.AddRange(maxVersionCohorts.Where(c => c.ProjectNumber == Project.ProjectNumber).ToArray());
         }
 
         private void btnNewProject_Click(object sender, EventArgs e)
@@ -241,22 +241,22 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
         private void SetProject(Project project)
         {
-            _project = project;
+            Project = project;
 
-            lblProject.Text = _project != null ? _project.Name : "????";
+            lblProject.Text = Project != null ? Project.Name : "????";
             
             btnNewProject.Left = lblProject.Right;
             btnExisting.Left = btnNewProject.Right;
 
             btnClear.Left = lblProject.Right;
 
-            btnNewProject.Visible = _project == null;
-            btnExisting.Visible = _project == null;
-            btnClear.Visible = _project != null;
+            btnNewProject.Visible = Project == null;
+            btnExisting.Visible = Project == null;
+            btnClear.Visible = Project != null;
             
             //if a project is selected and the project has no project number
-            lblErrorNoProjectNumber.Visible = _project != null && _project.ProjectNumber == null;
-            tbSetProjectNumber.Visible = _project != null && _project.ProjectNumber == null;
+            lblErrorNoProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
+            tbSetProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)
@@ -277,13 +277,15 @@ namespace DataExportManager.CohortUI.ImportCustomData
             {
                 tbSetProjectNumber.ForeColor = Color.Black;
                 int newProjectNumber = int.Parse(tbSetProjectNumber.Text);
-                _project.ProjectNumber = newProjectNumber;
-                _project.SaveToDatabase();
+                Project.ProjectNumber = newProjectNumber;
+                Project.SaveToDatabase();
             }
             catch (Exception exception)
             {
                 tbSetProjectNumber.ForeColor = Color.Red;
             }
+
+            lblErrorNoProjectNumber.ForeColor = tbSetProjectNumber.ForeColor;
         }
 
         private void btnClear_Click(object sender, EventArgs e)

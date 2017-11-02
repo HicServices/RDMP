@@ -6,10 +6,12 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Interfaces.Pipeline;
+using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations
 {
@@ -74,6 +76,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                 toProcess.Columns.Add(_fk);
                 foreach (DataRow dr in toProcess.Rows)
                     dr[_fk] = Request.NewCohortDefinition.ID;
+                
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to calculate distinct identifiers.... Please Wait"));
 
                 //get DISTINCT values
                 DataTable dtToUpload;
