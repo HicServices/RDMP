@@ -1,7 +1,10 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
@@ -49,6 +52,18 @@ namespace CohortManager.SubComponents
         {
             InitializeComponent();
             queryCachingServerSelector.SelectedServerChanged += queryCachingServerSelector_SelectedServerChanged;
+            olvExecute.IsButton = true;
+            olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
+            tlvCic.RowHeight = 19;
+            olvExecute.AspectGetter += ExecuteAspectGetter;
+        }
+
+        private object ExecuteAspectGetter(object rowObject)
+        {
+            if(rowObject is AggregateConfiguration || rowObject is CohortAggregateContainer)
+                return "Execute";
+            
+            return null;
         }
 
         void queryCachingServerSelector_SelectedServerChanged()
@@ -81,6 +96,13 @@ namespace CohortManager.SubComponents
                 queryCachingServerSelector.SelecteExternalDatabaseServer = _configuration.QueryCachingServer;
 
             CohortCompilerUI1.SetDatabaseObject(activator,databaseObject);
+
+            if (_commonFunctionality == null)
+            {
+                _commonFunctionality = new RDMPCollectionCommonFunctionality();
+                _commonFunctionality.SetUp(tlvCic,activator,olvNameCol,null,null,false);
+                tlvCic.AddObject(_configuration);
+            }
         }
 
         public override string GetTabName()
@@ -115,6 +137,8 @@ namespace CohortManager.SubComponents
         }
 
         private bool collapse = true;
+        private RDMPCollectionCommonFunctionality _commonFunctionality;
+
         private void btnCollapseOrExpand_Click(object sender, EventArgs e)
         {
 

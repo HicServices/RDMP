@@ -1,4 +1,5 @@
-﻿using CatalogueManager.AggregationUIs;
+﻿using BrightIdeasSoftware;
+using CatalogueManager.AggregationUIs;
 
 namespace CohortManager.SubComponents
 {
@@ -30,6 +31,7 @@ namespace CohortManager.SubComponents
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
             this.lblName = new System.Windows.Forms.Label();
@@ -41,6 +43,15 @@ namespace CohortManager.SubComponents
             this.queryCachingServerSelector = new CatalogueManager.AggregationUIs.QueryCachingServerSelector();
             this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             this.btnCollapseOrExpand = new System.Windows.Forms.Button();
+            this.tlvCic = new BrightIdeasSoftware.TreeListView();
+            this.olvNameCol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -80,10 +91,12 @@ namespace CohortManager.SubComponents
             // 
             // tbDescription
             // 
+            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDescription.Location = new System.Drawing.Point(85, 58);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(1142, 80);
+            this.tbDescription.Size = new System.Drawing.Size(602, 80);
             this.tbDescription.TabIndex = 56;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
@@ -117,24 +130,21 @@ namespace CohortManager.SubComponents
             // 
             // queryCachingServerSelector
             // 
-            this.queryCachingServerSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.queryCachingServerSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.queryCachingServerSelector.AutoSize = true;
-            this.queryCachingServerSelector.Location = new System.Drawing.Point(557, 601);
+            this.queryCachingServerSelector.Location = new System.Drawing.Point(693, 58);
             this.queryCachingServerSelector.Name = "queryCachingServerSelector";
             this.queryCachingServerSelector.SelecteExternalDatabaseServer = null;
-            this.queryCachingServerSelector.Size = new System.Drawing.Size(683, 93);
+            this.queryCachingServerSelector.Size = new System.Drawing.Size(543, 93);
             this.queryCachingServerSelector.TabIndex = 1;
             // 
             // CohortCompilerUI1
             // 
-            this.CohortCompilerUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.CohortCompilerUI1.CoreIconProvider = null;
-            this.CohortCompilerUI1.Location = new System.Drawing.Point(3, 180);
+            this.CohortCompilerUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CohortCompilerUI1.Location = new System.Drawing.Point(0, 0);
             this.CohortCompilerUI1.Name = "CohortCompilerUI1";
-            this.CohortCompilerUI1.Size = new System.Drawing.Size(1237, 511);
+            this.CohortCompilerUI1.Size = new System.Drawing.Size(818, 520);
             this.CohortCompilerUI1.TabIndex = 0;
             // 
             // btnCollapseOrExpand
@@ -147,10 +157,59 @@ namespace CohortManager.SubComponents
             this.btnCollapseOrExpand.UseVisualStyleBackColor = true;
             this.btnCollapseOrExpand.Click += new System.EventHandler(this.btnCollapseOrExpand_Click);
             // 
+            // tlvCic
+            // 
+            this.tlvCic.AllColumns.Add(this.olvNameCol);
+            this.tlvCic.AllColumns.Add(this.olvExecute);
+            this.tlvCic.CellEditUseWholeCell = false;
+            this.tlvCic.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvNameCol,
+            this.olvExecute});
+            this.tlvCic.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tlvCic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlvCic.Location = new System.Drawing.Point(0, 0);
+            this.tlvCic.Name = "tlvCic";
+            this.tlvCic.ShowGroups = false;
+            this.tlvCic.Size = new System.Drawing.Size(411, 520);
+            this.tlvCic.TabIndex = 60;
+            this.tlvCic.UseCompatibleStateImageBehavior = false;
+            this.tlvCic.View = System.Windows.Forms.View.Details;
+            this.tlvCic.VirtualMode = true;
+            // 
+            // olvNameCol
+            // 
+            this.olvNameCol.AspectName = "ToString";
+            this.olvNameCol.FillsFreeSpace = true;
+            this.olvNameCol.Text = "Name";
+            // 
+            // olvExecute
+            // 
+            this.olvExecute.Text = "Execute";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(3, 171);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tlvCic);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.CohortCompilerUI1);
+            this.splitContainer1.Size = new System.Drawing.Size(1233, 520);
+            this.splitContainer1.SplitterDistance = 411;
+            this.splitContainer1.TabIndex = 61;
+            // 
             // CohortIdentificationConfigurationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.btnCollapseOrExpand);
             this.Controls.Add(this.tbDescription);
             this.Controls.Add(this.objectSaverButton1);
@@ -161,9 +220,13 @@ namespace CohortManager.SubComponents
             this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.tbName);
             this.Controls.Add(this.queryCachingServerSelector);
-            this.Controls.Add(this.CohortCompilerUI1);
             this.Name = "CohortIdentificationConfigurationUI";
             this.Size = new System.Drawing.Size(1243, 694);
+            ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -182,5 +245,9 @@ namespace CohortManager.SubComponents
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Button btnCollapseOrExpand;
+        private TreeListView tlvCic;
+        private OLVColumn olvNameCol;
+        private OLVColumn olvExecute;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

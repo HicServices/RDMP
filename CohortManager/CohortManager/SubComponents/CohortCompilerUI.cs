@@ -246,16 +246,7 @@ namespace CohortManager.SubComponents
 
             if (Configuration == null)
                 return;
-
-            //Do not allow autocaching if there isn't a cache server
-            if (Configuration.QueryCachingServer_ID == null)
-            {
-                cbAutoCache.Checked = false;
-                cbAutoCache.Enabled = false;
-            }
-            else
-                cbAutoCache.Enabled = true;
-
+            
             tlvConfiguration.Enabled = true;
 
             Configuration.CreateRootContainerIfNotExists();
@@ -415,7 +406,7 @@ namespace CohortManager.SubComponents
                     var cachingMenuItem = RightClickMenu.Items.Add("Save To Cache", null, (o, args) =>
                     {
                         //cache the task
-                        RightClickMenu_SaveToCache(cachableTask);
+                        SaveToCache(cachableTask);
                         //and refresh the interface
                         RefreshUIFromDatabase();
                     });
@@ -588,7 +579,7 @@ namespace CohortManager.SubComponents
         }
 
 
-        private void RightClickMenu_SaveToCache(ICachableTask configurationTask)
+        private void SaveToCache(ICachableTask configurationTask)
         {
             try
             {
@@ -644,52 +635,7 @@ namespace CohortManager.SubComponents
                     _activator.RequestItemEmphasis(this,new EmphasiseRequest(child));
             }
         }
-
-
-        private void otvConfiguration_SelectionChanged(object sender, EventArgs e)
-        {
-            UpdateRunnablesButtons();
-
-            tlvConfiguration.RefreshObjects(tlvConfiguration.Objects.OfType<Compileable>().ToList());
-
-        }
-
-        private void UpdateRunnablesButtons()
-        {
-            if (Configuration == null)
-                return;
-            
-            var selectedRunnables = GetRunableTasks(true).ToArray();
-            //if user has selected at least 1 unscheduled task then we can schedule it
-            btnStartSelected.Enabled = selectedRunnables.Any();
-            btnStartSelected.Text = string.Format("Selected ({0})", selectedRunnables.Length);
-
-            //if there is no caching 
-            if (Configuration.QueryCachingServer_ID == null)
-            {
-                //disable the cache selected tasks button
-                btnCacheSelected.Enabled = false;
-                return;
-            }
-
-            //caching is supported but... are there any selected aggregates that could be cached
-            var cachables = GetSelectedCachableTasks().ToArray();
-            btnCacheSelected.Enabled = cachables.Any();
-            btnCacheSelected.Text = string.Format("Cache ({0})", cachables.Length);
-
-            var clearables = GetCacheClearableTasks(true).ToArray();
-            btnClearCacheForSelected.Enabled = clearables.Any();
-            btnClearCacheForSelected.Text = string.Format("Clear ({0})", clearables.Length);
-
-            btnClearCacheAll.Enabled = GetCacheClearableTasks(false).Any();
-        }
-
-        private void otvConfiguration_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (SelectionChanged != null)
-                SelectionChanged(sender, e);
-        }
-
+        
         private IEnumerable<ICachableTask> GetSelectedCachableTasks()
         {
             return
@@ -730,7 +676,7 @@ namespace CohortManager.SubComponents
             return null;
         }
 
-        private int _timeout = 300;
+        private int _timeout = 3000;
 
         private void tbTimeout_TextChanged(object sender, EventArgs e)
         {
@@ -746,20 +692,15 @@ namespace CohortManager.SubComponents
             }
         }
 
-        private void btnStartAll_Click(object sender, EventArgs e)
+        public void StartAll()
         {
-            Reset();
+            CancelAll();
 
             Compiler.LaunchScheduledTasksAsync(_timeout);
         }
 
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            Compiler.CancelAllTasks(false);
-        }
-
-        private void Reset()
+        public void CancelAll()
         {
             Compiler.CancelAllTasks(true);
             RefreshUIFromDatabase();
@@ -767,7 +708,6 @@ namespace CohortManager.SubComponents
 
         private void refreshThreadCountPeriodically_Tick(object sender, EventArgs e)
         {
-            UpdateRunnablesButtons();
             tlvConfiguration.RebuildColumns();
             lblThreadCount.Text = "Thread Count:" + Compiler.GetAliveThreadCount();
 
@@ -854,9 +794,11 @@ namespace CohortManager.SubComponents
         {
             var cacheable = completedTask as ICachableTask;
 
-            if (cbAutoCache.Checked && cacheable != null && cacheable.State == CompilationState.Finished && cacheable.IsCacheableWhenFinished())
+            //if it is cacheable
+            if (cacheable != null && cacheable.State == CompilationState.Finished && cacheable.IsCacheableWhenFinished())
             {
-                RightClickMenu_SaveToCache(cacheable);
+                //cache it
+                SaveToCache(cacheable);
                 asyncRefreshIsOverdue = true;
             }
         }

@@ -90,7 +90,7 @@ namespace CatalogueManager.Collections
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, bool addFavouriteColumn = true)
         {
             IsSetup = true;
             _activator = activator;
@@ -130,11 +130,13 @@ namespace CatalogueManager.Collections
                 RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn);
                 RenameProvider.RegisterEvents();
             }
-            
-            FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
-            FavouriteColumn = FavouriteColumnProvider.CreateColumn();
-            FavouriteColumn.Sortable = false;
 
+            if (addFavouriteColumn)
+            {
+                FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
+                FavouriteColumn = FavouriteColumnProvider.CreateColumn();
+                FavouriteColumn.Sortable = false;
+            }
             CoreIconProvider = activator.CoreIconProvider;
 
             CopyPasteProvider = new CopyPasteProvider();
