@@ -180,9 +180,7 @@ namespace CatalogueLibrary.Data.Cohort
 
         public string GetNamingConventionPrefixForConfigurations()
         {
-            string ticket = string.IsNullOrWhiteSpace(Ticket) ? "" : Ticket + "_";
-
-            return  CICPrefix + ID + "_" + ticket;
+            return  CICPrefix + ID + "_";
         }
 
         public bool IsValidNamedConfiguration(AggregateConfiguration aggregate)
