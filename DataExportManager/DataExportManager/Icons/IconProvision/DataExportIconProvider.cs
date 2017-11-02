@@ -55,7 +55,7 @@ namespace DataExportManager.Icons.IconProvision
                 return GetImage(((IObjectUsedByProjectNode) concept).ObjectBeingUsed, kind);
 
             if (concept is ProjectCohortIdentificationConfigurationAssociation)
-                return GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+                return GetImage(((ProjectCohortIdentificationConfigurationAssociation)concept).GetCohortIdentificationConfigurationCached(), OverlayKind.Link);
 
             //fallback on parent implementation if none of the above unique snowflake cases are met
             return base.GetImage(concept, kind);

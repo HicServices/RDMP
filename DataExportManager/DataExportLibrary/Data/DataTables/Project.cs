@@ -151,5 +151,10 @@ namespace DataExportLibrary.Data.DataTables
             var associations = Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
             return associations.Select(a => a.CohortIdentificationConfiguration).ToArray();
         }
+
+        public ProjectCohortIdentificationConfigurationAssociation AssociateWithCohortIdentification(CohortIdentificationConfiguration cic)
+        {
+            return new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository) Repository, this, cic);
+        }
     }
 }

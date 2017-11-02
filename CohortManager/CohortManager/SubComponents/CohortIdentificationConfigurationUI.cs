@@ -72,8 +72,8 @@ namespace CohortManager.SubComponents
             tbName.Text = _configuration.Name;
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
-            
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+
+            objectSaverButton1.SetupFor(_configuration, activator.RefreshBus);
 
             if (_configuration.QueryCachingServer_ID == null)
                 queryCachingServerSelector.SelecteExternalDatabaseServer = null;

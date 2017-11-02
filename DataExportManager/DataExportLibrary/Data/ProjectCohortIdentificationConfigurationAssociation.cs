@@ -61,11 +61,16 @@ namespace DataExportLibrary.Data
         private CohortIdentificationConfiguration _cachedCic = null;
         public override string ToString()
         {
+            return GetCohortIdentificationConfigurationCached().Name;
+        }
+
+        public CohortIdentificationConfiguration GetCohortIdentificationConfigurationCached()
+        {
             //if we never knew it or it changed
             if (_cachedCic == null || _cachedCic.ID != CohortIdentificationConfiguration_ID)
                 _cachedCic = CohortIdentificationConfiguration;//fetch it
-
-            return _cachedCic.Name;
+            
+            return _cachedCic;
         }
 
         public void InjectKnownCohortIdentificationConfiguration(CohortIdentificationConfiguration cic)

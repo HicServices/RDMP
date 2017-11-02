@@ -46,6 +46,8 @@ namespace DataExportManager.Wizard
             this.lblCohortFile = new System.Windows.Forms.Label();
             this.btnSelectClearCohortFile = new System.Windows.Forms.Button();
             this.gbCic = new System.Windows.Forms.GroupBox();
+            this.ragCic = new ReusableUIComponents.RAGSmiley();
+            this.btnClearCohort = new System.Windows.Forms.Button();
             this.ddCicPipeline = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cbxCohort = new ReusableUIComponents.SuggestComboBox();
@@ -64,14 +66,15 @@ namespace DataExportManager.Wizard
             this.ragProjectNumber = new ReusableUIComponents.RAGSmiley();
             this.label11 = new System.Windows.Forms.Label();
             this.tbCohortName = new System.Windows.Forms.TextBox();
-            this.btnClearCohort = new System.Windows.Forms.Button();
-            this.ragCic = new ReusableUIComponents.RAGSmiley();
+            this.cbDefineCohort = new System.Windows.Forms.CheckBox();
+            this.gbCohortAndDatasets = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.olvDatasets)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortFile)).BeginInit();
             this.gbCic.SuspendLayout();
             this.gbFile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortSources)).BeginInit();
+            this.gbCohortAndDatasets.SuspendLayout();
             this.SuspendLayout();
             // 
             // olvDatasets
@@ -82,7 +85,7 @@ namespace DataExportManager.Wizard
             this.olvDatasets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1});
             this.olvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvDatasets.Location = new System.Drawing.Point(117, 259);
+            this.olvDatasets.Location = new System.Drawing.Point(114, 182);
             this.olvDatasets.Name = "olvDatasets";
             this.olvDatasets.Size = new System.Drawing.Size(400, 273);
             this.olvDatasets.TabIndex = 10;
@@ -175,7 +178,7 @@ namespace DataExportManager.Wizard
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(553, 115);
+            this.label5.Location = new System.Drawing.Point(531, 48);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(23, 13);
             this.label5.TabIndex = 3;
@@ -217,12 +220,32 @@ namespace DataExportManager.Wizard
             this.gbCic.Controls.Add(this.cbxCohort);
             this.gbCic.Controls.Add(this.label4);
             this.gbCic.Controls.Add(this.pbCohort);
-            this.gbCic.Location = new System.Drawing.Point(28, 86);
+            this.gbCic.Location = new System.Drawing.Point(6, 19);
             this.gbCic.Name = "gbCic";
             this.gbCic.Size = new System.Drawing.Size(519, 100);
             this.gbCic.TabIndex = 4;
             this.gbCic.TabStop = false;
-            this.gbCic.Text = "RDMP Cohort";
+            this.gbCic.Text = "RDMP Cohort Builder Query";
+            // 
+            // ragCic
+            // 
+            this.ragCic.AlwaysShowHandCursor = false;
+            this.ragCic.BackColor = System.Drawing.Color.Transparent;
+            this.ragCic.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragCic.Location = new System.Drawing.Point(456, 60);
+            this.ragCic.Name = "ragCic";
+            this.ragCic.Size = new System.Drawing.Size(25, 25);
+            this.ragCic.TabIndex = 17;
+            // 
+            // btnClearCohort
+            // 
+            this.btnClearCohort.Location = new System.Drawing.Point(456, 23);
+            this.btnClearCohort.Name = "btnClearCohort";
+            this.btnClearCohort.Size = new System.Drawing.Size(57, 23);
+            this.btnClearCohort.TabIndex = 1;
+            this.btnClearCohort.Text = "Clear";
+            this.btnClearCohort.UseVisualStyleBackColor = true;
+            this.btnClearCohort.Click += new System.EventHandler(this.btnClearCohort_Click);
             // 
             // ddCicPipeline
             // 
@@ -262,7 +285,7 @@ namespace DataExportManager.Wizard
             this.gbFile.Controls.Add(this.btnSelectClearCohortFile);
             this.gbFile.Controls.Add(this.lblCohortFile);
             this.gbFile.Controls.Add(this.pbCohortFile);
-            this.gbFile.Location = new System.Drawing.Point(582, 86);
+            this.gbFile.Location = new System.Drawing.Point(560, 19);
             this.gbFile.Name = "gbFile";
             this.gbFile.Size = new System.Drawing.Size(456, 100);
             this.gbFile.TabIndex = 5;
@@ -290,7 +313,7 @@ namespace DataExportManager.Wizard
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(59, 259);
+            this.label9.Location = new System.Drawing.Point(56, 182);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(52, 13);
             this.label9.TabIndex = 11;
@@ -299,24 +322,24 @@ namespace DataExportManager.Wizard
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(29, 541);
+            this.label10.Location = new System.Drawing.Point(11, 464);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(82, 13);
+            this.label10.Size = new System.Drawing.Size(97, 13);
             this.label10.TabIndex = 11;
-            this.label10.Text = "Output Pipeline:";
+            this.label10.Text = "Extraction Pipeline:";
             // 
             // ddExtractionPipeline
             // 
             this.ddExtractionPipeline.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddExtractionPipeline.FormattingEnabled = true;
-            this.ddExtractionPipeline.Location = new System.Drawing.Point(117, 538);
+            this.ddExtractionPipeline.Location = new System.Drawing.Point(114, 461);
             this.ddExtractionPipeline.Name = "ddExtractionPipeline";
             this.ddExtractionPipeline.Size = new System.Drawing.Size(390, 21);
             this.ddExtractionPipeline.TabIndex = 11;
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(116, 565);
+            this.btnExecute.Location = new System.Drawing.Point(17, 603);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(75, 23);
             this.btnExecute.TabIndex = 12;
@@ -328,7 +351,7 @@ namespace DataExportManager.Wizard
             // 
             this.ddCohortSources.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddCohortSources.FormattingEnabled = true;
-            this.ddCohortSources.Location = new System.Drawing.Point(144, 232);
+            this.ddCohortSources.Location = new System.Drawing.Point(141, 155);
             this.ddCohortSources.Name = "ddCohortSources";
             this.ddCohortSources.Size = new System.Drawing.Size(390, 21);
             this.ddCohortSources.TabIndex = 8;
@@ -336,7 +359,7 @@ namespace DataExportManager.Wizard
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 235);
+            this.label6.Location = new System.Drawing.Point(7, 158);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(99, 13);
             this.label6.TabIndex = 12;
@@ -344,7 +367,7 @@ namespace DataExportManager.Wizard
             // 
             // pbCohortSources
             // 
-            this.pbCohortSources.Location = new System.Drawing.Point(118, 233);
+            this.pbCohortSources.Location = new System.Drawing.Point(115, 156);
             this.pbCohortSources.Name = "pbCohortSources";
             this.pbCohortSources.Size = new System.Drawing.Size(20, 20);
             this.pbCohortSources.TabIndex = 13;
@@ -352,7 +375,7 @@ namespace DataExportManager.Wizard
             // 
             // btnCreateNewCohortSource
             // 
-            this.btnCreateNewCohortSource.Location = new System.Drawing.Point(543, 230);
+            this.btnCreateNewCohortSource.Location = new System.Drawing.Point(540, 153);
             this.btnCreateNewCohortSource.Name = "btnCreateNewCohortSource";
             this.btnCreateNewCohortSource.Size = new System.Drawing.Size(75, 23);
             this.btnCreateNewCohortSource.TabIndex = 9;
@@ -365,7 +388,7 @@ namespace DataExportManager.Wizard
             this.ragExecute.AlwaysShowHandCursor = false;
             this.ragExecute.BackColor = System.Drawing.Color.Transparent;
             this.ragExecute.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragExecute.Location = new System.Drawing.Point(197, 565);
+            this.ragExecute.Location = new System.Drawing.Point(98, 603);
             this.ragExecute.Name = "ragExecute";
             this.ragExecute.Size = new System.Drawing.Size(25, 25);
             this.ragExecute.TabIndex = 13;
@@ -383,7 +406,7 @@ namespace DataExportManager.Wizard
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(39, 209);
+            this.label11.Location = new System.Drawing.Point(36, 132);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(72, 13);
             this.label11.TabIndex = 6;
@@ -391,59 +414,63 @@ namespace DataExportManager.Wizard
             // 
             // tbCohortName
             // 
-            this.tbCohortName.Location = new System.Drawing.Point(116, 206);
+            this.tbCohortName.Location = new System.Drawing.Point(113, 129);
             this.tbCohortName.Name = "tbCohortName";
             this.tbCohortName.Size = new System.Drawing.Size(400, 20);
             this.tbCohortName.TabIndex = 7;
             // 
-            // btnClearCohort
+            // cbDefineCohort
             // 
-            this.btnClearCohort.Location = new System.Drawing.Point(456, 23);
-            this.btnClearCohort.Name = "btnClearCohort";
-            this.btnClearCohort.Size = new System.Drawing.Size(57, 23);
-            this.btnClearCohort.TabIndex = 1;
-            this.btnClearCohort.Text = "Clear";
-            this.btnClearCohort.UseVisualStyleBackColor = true;
-            this.btnClearCohort.Click += new System.EventHandler(this.btnClearCohort_Click);
+            this.cbDefineCohort.AutoSize = true;
+            this.cbDefineCohort.Checked = true;
+            this.cbDefineCohort.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbDefineCohort.Location = new System.Drawing.Point(17, 87);
+            this.cbDefineCohort.Name = "cbDefineCohort";
+            this.cbDefineCohort.Size = new System.Drawing.Size(347, 17);
+            this.cbDefineCohort.TabIndex = 17;
+            this.cbDefineCohort.Text = "Define Cohort and Datasets Now (You can always change this later)";
+            this.cbDefineCohort.UseVisualStyleBackColor = true;
+            this.cbDefineCohort.CheckedChanged += new System.EventHandler(this.cbDefineCohort_CheckedChanged);
             // 
-            // ragCic
+            // gbCohortAndDatasets
             // 
-            this.ragCic.AlwaysShowHandCursor = false;
-            this.ragCic.BackColor = System.Drawing.Color.Transparent;
-            this.ragCic.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragCic.Location = new System.Drawing.Point(456, 60);
-            this.ragCic.Name = "ragCic";
-            this.ragCic.Size = new System.Drawing.Size(25, 25);
-            this.ragCic.TabIndex = 17;
+            this.gbCohortAndDatasets.Controls.Add(this.gbCic);
+            this.gbCohortAndDatasets.Controls.Add(this.label5);
+            this.gbCohortAndDatasets.Controls.Add(this.tbCohortName);
+            this.gbCohortAndDatasets.Controls.Add(this.gbFile);
+            this.gbCohortAndDatasets.Controls.Add(this.label11);
+            this.gbCohortAndDatasets.Controls.Add(this.olvDatasets);
+            this.gbCohortAndDatasets.Controls.Add(this.label9);
+            this.gbCohortAndDatasets.Controls.Add(this.btnCreateNewCohortSource);
+            this.gbCohortAndDatasets.Controls.Add(this.label10);
+            this.gbCohortAndDatasets.Controls.Add(this.ddCohortSources);
+            this.gbCohortAndDatasets.Controls.Add(this.ddExtractionPipeline);
+            this.gbCohortAndDatasets.Controls.Add(this.label6);
+            this.gbCohortAndDatasets.Controls.Add(this.pbCohortSources);
+            this.gbCohortAndDatasets.Location = new System.Drawing.Point(17, 106);
+            this.gbCohortAndDatasets.Name = "gbCohortAndDatasets";
+            this.gbCohortAndDatasets.Size = new System.Drawing.Size(1023, 491);
+            this.gbCohortAndDatasets.TabIndex = 18;
+            this.gbCohortAndDatasets.TabStop = false;
+            this.gbCohortAndDatasets.Text = "Cohort and Datasets";
             // 
             // CreateNewDataExtractionProjectUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1290, 590);
-            this.Controls.Add(this.tbCohortName);
-            this.Controls.Add(this.label11);
+            this.ClientSize = new System.Drawing.Size(1054, 630);
+            this.Controls.Add(this.gbCohortAndDatasets);
+            this.Controls.Add(this.cbDefineCohort);
             this.Controls.Add(this.ragProjectNumber);
             this.Controls.Add(this.ragExecute);
-            this.Controls.Add(this.btnCreateNewCohortSource);
-            this.Controls.Add(this.ddCohortSources);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.btnExecute);
-            this.Controls.Add(this.pbCohortSources);
-            this.Controls.Add(this.ddExtractionPipeline);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.gbFile);
-            this.Controls.Add(this.gbCic);
             this.Controls.Add(this.btnBrowse);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbExtractionDirectory);
             this.Controls.Add(this.tbProjectNumber);
             this.Controls.Add(this.tbProjectName);
-            this.Controls.Add(this.olvDatasets);
             this.Name = "CreateNewDataExtractionProjectUI";
             this.Text = "CreateNewDataExtractionProjectUI";
             this.Load += new System.EventHandler(this.CreateNewDataExtractionProjectUI_Load);
@@ -455,6 +482,8 @@ namespace DataExportManager.Wizard
             this.gbFile.ResumeLayout(false);
             this.gbFile.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortSources)).EndInit();
+            this.gbCohortAndDatasets.ResumeLayout(false);
+            this.gbCohortAndDatasets.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -498,5 +527,7 @@ namespace DataExportManager.Wizard
         private System.Windows.Forms.TextBox tbCohortName;
         private System.Windows.Forms.Button btnClearCohort;
         private ReusableUIComponents.RAGSmiley ragCic;
+        private System.Windows.Forms.CheckBox cbDefineCohort;
+        private System.Windows.Forms.GroupBox gbCohortAndDatasets;
     }
 }

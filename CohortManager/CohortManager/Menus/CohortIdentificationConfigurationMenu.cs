@@ -4,6 +4,7 @@ using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Menus;
 using CohortManager.Collections.Providers;
 using CohortManager.CommandExecution.AtomicCommands;
@@ -75,6 +76,7 @@ namespace CohortManager.Menus
 
                 //Load the clone up
                 Publish(clone);
+                Emphasise(clone);
             }
         }
 

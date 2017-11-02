@@ -125,44 +125,14 @@ namespace CatalogueManager.Collections
         {
             var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
-            var lmd = e.Model as LoadMetadata;
             var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
             var hicProjectDirectory = e.Model as HICProjectDirectoryNode;
-            var schedulingNode = e.Model as LoadMetadataScheduleNode;
             
-            var loadProgress = e.Model as LoadProgress;
-            var cacheProgress = e.Model as CacheProgress;
-            var permissionWindowUsage = e.Model as PermissionWindowUsedByCacheProgress;
-
-            var loadStageNode = e.Model as LoadStageNode;
-
-            if (e.Model == null)
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandCreateNewLoadMetadata(_activator));
-
             if (allCataloguesNode != null)
                 e.MenuStrip = factory.CreateMenu(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator,allCataloguesNode.LoadMetadata));
 
             if (hicProjectDirectory != null)
                 e.MenuStrip = factory.CreateMenu(new ExecuteCommandChooseHICProjectDirectory(_activator,hicProjectDirectory.LoadMetadata));
-
-            if (loadStageNode != null)
-                e.MenuStrip = new LoadStageNodeMenu(_activator, loadStageNode);
-
-            if (schedulingNode != null)
-                e.MenuStrip = new LoadMetadataScheduleNodeMenu(_activator, schedulingNode);
-
-            if (lmd != null)
-                e.MenuStrip = new LoadMetadataMenu(_activator, lmd);
-
-            if (loadProgress != null)
-                e.MenuStrip = new LoadProgressMenu(_activator, loadProgress);
-
-            if (cacheProgress != null)
-                e.MenuStrip = new CacheProgressMenu(_activator, cacheProgress);
-
-
-            if (permissionWindowUsage != null)
-                e.MenuStrip = new PermissionWindowUsageMenu(_activator, permissionWindowUsage);
         }
         
         public override void SetItemActivator(IActivateItems activator) 
@@ -176,6 +146,8 @@ namespace CatalogueManager.Collections
                 olvName,
                 tbFilter,
                 olvName);
+
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new[] {new ExecuteCommandCreateNewLoadMetadata(_activator)};
             
             RefreshAll();
         }

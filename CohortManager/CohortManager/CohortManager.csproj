@@ -158,6 +158,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CohortManagerPluginUserInterface.cs" />
     <Compile Include="Collections\CohortIdentificationCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

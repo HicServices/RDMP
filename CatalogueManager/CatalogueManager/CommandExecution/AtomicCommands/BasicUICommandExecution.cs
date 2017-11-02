@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
+using DataExportLibrary.Data;
 using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -28,6 +30,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             var cmd = new ExecuteCommandActivate(Activator, o);
             cmd.Execute();
+        }
+
+        protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
+        {
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }
     }
 }

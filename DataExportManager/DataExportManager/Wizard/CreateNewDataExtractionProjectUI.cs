@@ -278,7 +278,6 @@ namespace DataExportManager.Wizard
 
                 if (_configuration == null)
                 {
-
                     _configuration = new ExtractionConfiguration(_activator.RepositoryLocator.DataExportRepository,
                         _project);
                     _configuration.Name = "Cases";
@@ -288,7 +287,7 @@ namespace DataExportManager.Wizard
                 foreach (ExtractableDataSet ds in olvDatasets.CheckedObjects.Cast<ExtractableDataSet>())
                     _configuration.AddDatasetToConfiguration(ds);
 
-                if (_cohortCreated == null)
+                if (_cohortCreated == null && cbDefineCohort.Checked)
                 {
                     var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1, _project.ProjectNumber.Value,
                         (ExternalCohortTable) ddCohortSources.SelectedItem);
@@ -317,16 +316,19 @@ namespace DataExportManager.Wizard
                     _cohortCreated = cohortRequest.CohortCreatedIfAny;
                 }
 
+                if(cbDefineCohort.Checked)
+                {
 
-                //associate the configuration with the cohort
-                _configuration.Cohort_ID = _cohortCreated.ID;
+                    //associate the configuration with the cohort
+                    _configuration.Cohort_ID = _cohortCreated.ID;
 
-                //set the pipeline to use
-                var pipeline = (Pipeline)ddExtractionPipeline.SelectedItem;
-                if (pipeline != null)
-                    _configuration.DefaultPipeline_ID = pipeline.ID;
+                    //set the pipeline to use
+                    var pipeline = (Pipeline)ddExtractionPipeline.SelectedItem;
+                    if (pipeline != null)
+                        _configuration.DefaultPipeline_ID = pipeline.ID;
 
-                _configuration.SaveToDatabase();
+                    _configuration.SaveToDatabase();   
+                }
 
                 Cursor = Cursors.Default;
 
@@ -361,6 +363,9 @@ namespace DataExportManager.Wizard
             if (string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
                 return "You must specify a project extraction directory where the flat files will go";
 
+            if (!cbDefineCohort.Checked)
+                return null;
+
             if (string.IsNullOrWhiteSpace(tbCohortName.Text))
                 return "You must provide a name for your cohort";
 
@@ -387,6 +392,11 @@ namespace DataExportManager.Wizard
             SingleControlForm.ShowDialog(wizard);
             IdentifyCompatibleCohortSources();
 
+        }
+
+        private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
+        {
+            gbCohortAndDatasets.Enabled = cbDefineCohort.Checked;
         }
     }
 }

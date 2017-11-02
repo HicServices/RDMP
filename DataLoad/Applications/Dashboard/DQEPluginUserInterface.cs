@@ -46,15 +46,10 @@ namespace Dashboard
 
             var lmd = databaseEntity as LoadMetadata;
 
-            if(lmd != null)
-            {
-                 var factory = new AtomicCommandUIFactory(ItemActivator.CoreIconProvider);
-
-                return new[]
-                {
-                    factory.CreateMenuItem(new ExecuteCommandViewLoadMetadataLogs(ItemActivator).SetTarget(lmd))
-                };
-            }
+            if (lmd != null)
+                return GetMenuArray(
+                    new ExecuteCommandViewLoadMetadataLogs(ItemActivator).SetTarget(lmd)
+                    );
 
             return null;
         }

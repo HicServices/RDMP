@@ -15,6 +15,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
@@ -74,14 +75,23 @@ namespace CatalogueManager.Menus
             return mi;
         }
 
-        protected void AddCommonMenuItems()
+        /// <summary>
+        /// Adds right click options that relate to the DatabaseEntity you passed into the constructor (which might be null).  This includes activate, delete, rename
+        /// etc where appropriate to that object.  Also all PluginUserInterfaces will be asked for additional menu items for the supplied DatabaseEntity (if any).
+        /// 
+        /// If you want to expose a non DatabaseEntity object (or multiple) to PluginUserInterfaces then pass that in as argument  additionalObjectsToExposeToPluginUserInterfaces
+        /// </summary>
+        /// <param name="additionalObjectsToExposeToPluginUserInterfaces">Optional additional objects, do not pass the same object in twice or you will get duplication in your menu</param>
+        protected void AddCommonMenuItems(params object[] additionalObjectsToExposeToPluginUserInterfaces)
         {
             var deletable = _databaseEntity as IDeleteable;
             var nameable = _databaseEntity as INamed;
 
-            Items.Add(new ToolStripSeparator());
-
-            Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
+            if(Items.Count > 0)
+                Items.Add(new ToolStripSeparator());
+            
+            if (_databaseEntity != null)
+                Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
             
             if (deletable != null)
                 Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
@@ -94,24 +104,31 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
                 Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
             }
-
+            
+            List<object> askPluginsAbout = new List<object>(additionalObjectsToExposeToPluginUserInterfaces);
+            
             if(_databaseEntity != null)
+                askPluginsAbout.Add(_databaseEntity);
+
+            if(askPluginsAbout.Any())
             {
                 foreach (var plugin in _activator.PluginUserInterfaces)
                 {
-                    try
+                    foreach (var askAbout in askPluginsAbout)
                     {
-                        var toAdd = plugin.GetAdditionalRightClickMenuItems(_databaseEntity);
 
-                        if (toAdd != null && toAdd.Any())
+                        try
                         {
-                            Items.Add(new ToolStripSeparator());
-                            Items.AddRange(toAdd);
+                            var toAdd = plugin.GetAdditionalRightClickMenuItems(askAbout);
+
+                            if (toAdd != null && toAdd.Any())
+                                Items.AddRange(toAdd);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,CheckResult.Fail, ex));
+                        catch (Exception ex)
+                        {
+                            _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,
+                                CheckResult.Fail, ex));
+                        }
                     }
 
                 }
@@ -134,6 +151,11 @@ namespace CatalogueManager.Menus
         protected Image GetImage(object concept, OverlayKind shortcut = OverlayKind.None)
         {
             return _activator.CoreIconProvider.GetImage(concept, shortcut);
+        }
+
+        protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
+        {
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }
     }
 }

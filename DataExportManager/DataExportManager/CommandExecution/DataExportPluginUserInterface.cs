@@ -34,16 +34,12 @@ namespace DataExportManager.CommandExecution
         public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity)
         {
             var cata = databaseEntity as Catalogue;
-            var factory = new AtomicCommandUIFactory(ItemActivator.CoreIconProvider);
+            
 
             if (cata != null)
-            {
-                return new[]
-                {
-                    factory.CreateMenuItem(new ExecuteCommandChangeExtractability(ItemActivator, cata))
-                
-                };
-            }
+                return GetMenuArray(
+                    new ExecuteCommandChangeExtractability(ItemActivator, cata)
+                    );
 
             return null;
         }

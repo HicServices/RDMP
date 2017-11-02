@@ -56,7 +56,26 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             configureAndExecute.AddInitializationObject(_cic);
             configureAndExecute.TaskDescription = "You have selected a Cohort Identification Configuration that you created in the CohortManager.  This configuration will be compiled into SQL and executed, the resulting identifier list will be commmented to the named project/cohort ready for data export.  If your query takes a million years to run, try caching some of the subqueries (in CohortManager.exe).  This dialog requires you to select/create an appropriate pipeline. " + TaskDescriptionGenerallyHelpfulText;
 
+            configureAndExecute.PipelineExecutionFinishedsuccessfully += OnImportCompletedSuccesfully;
+
             Activator.ShowWindow(configureAndExecute);
+        }
+
+        void OnImportCompletedSuccesfully(object sender, CatalogueLibrary.DataFlowPipeline.Events.PipelineEngineEventArgs args)
+        {
+            //see if we can associate the cic with the project
+            var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(Project).SetTarget(_cic);
+
+            //we can!
+            if (!cmd.IsImpossible)
+                if (MessageBox.Show(
+                    "Would you like to associate '" + _cic + "' with the Project '" + Project + "'",
+                    "Associate Query With Project?",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes) //suggest it to the user
+                {
+                    cmd.Execute();
+                }
+
         }
 
         public override Image GetImage(IIconProvider iconProvider)

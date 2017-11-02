@@ -7,7 +7,7 @@ begin
 		[ID] [int] IDENTITY(1,1) NOT NULL,
 		[Project_ID] [int] NOT NULL,
 		[CohortIdentificationConfiguration_ID] [int] NOT NULL,
-		CONSTRAINT [FK_ProjectCohortIdentificationConfigurationAssociation_Project] FOREIGN KEY([Project_ID]) REFERENCES [dbo].[Project] ([ID]),
+		CONSTRAINT [FK_ProjectCohortIdentificationConfigurationAssociation_Project] FOREIGN KEY([Project_ID]) REFERENCES [dbo].[Project] ([ID]) ON DELETE CASCADE,
 	 CONSTRAINT [PK_ProjectCohortIdentificationConfigurationAssociation] PRIMARY KEY CLUSTERED 
 	(
 		[ID] ASC

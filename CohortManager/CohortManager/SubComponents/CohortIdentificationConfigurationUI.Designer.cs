@@ -99,7 +99,6 @@ namespace CohortManager.SubComponents
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Enabled = false;
             this.objectSaverButton1.Location = new System.Drawing.Point(85, 142);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
