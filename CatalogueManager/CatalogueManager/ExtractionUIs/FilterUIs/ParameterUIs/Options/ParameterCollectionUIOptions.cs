@@ -68,10 +68,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
                         return newParam;
                     };
                 }
-                else
-                {
-                    throw new Exception("Parameter collector '" + collector.GetType() + "' was not a supported AnyTableSqlParameter user and no custom parameter creation delegate was provided");
-                }
             }
         }
 

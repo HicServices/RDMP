@@ -22,9 +22,11 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Repositories;
 using DataExportManager.CohortUI.CohortSourceManagement;
+using DataExportManager.CommandExecution.AtomicCommands;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.DataFlowSources;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.SingleControlForms;
 
@@ -287,6 +289,8 @@ namespace DataExportManager.Wizard
                 foreach (ExtractableDataSet ds in olvDatasets.CheckedObjects.Cast<ExtractableDataSet>())
                     _configuration.AddDatasetToConfiguration(ds);
 
+                ICommandExecution cmdAssociateCicWithProject = null;
+
                 if (_cohortCreated == null && cbDefineCohort.Checked)
                 {
                     var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1, _project.ProjectNumber.Value,
@@ -309,6 +313,11 @@ namespace DataExportManager.Wizard
                         cohortRequest.CohortIdentificationConfiguration =
                             (CohortIdentificationConfiguration) cbxCohort.SelectedItem;
                         dd = ddCicPipeline;
+
+
+                        //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
+                        cmdAssociateCicWithProject = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(
+                            _project).SetTarget(cohortRequest.CohortIdentificationConfiguration);
                     }
 
                     var engine = cohortRequest.GetEngine((Pipeline) dd.SelectedItem,new ThrowImmediatelyDataLoadEventListener());
@@ -327,7 +336,11 @@ namespace DataExportManager.Wizard
                     if (pipeline != null)
                         _configuration.DefaultPipeline_ID = pipeline.ID;
 
-                    _configuration.SaveToDatabase();   
+                    _configuration.SaveToDatabase();
+
+                    //User defined cohort if it came from cic then associate the cic with the project
+                    if (cmdAssociateCicWithProject != null && !cmdAssociateCicWithProject.IsImpossible)
+                        cmdAssociateCicWithProject.Execute();
                 }
 
                 Cursor = Cursors.Default;
@@ -335,7 +348,7 @@ namespace DataExportManager.Wizard
                 ExtractionConfigurationCreatedIfAny = _configuration;
                 
                 DialogResult = DialogResult.OK;
-                MessageBox.Show("Project Created Succesfully");
+                MessageBox.Show("Project Created Successfully");
                 Close();
             }
             catch (Exception exception)
