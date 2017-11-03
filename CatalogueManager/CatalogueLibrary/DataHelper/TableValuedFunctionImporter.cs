@@ -106,7 +106,7 @@ namespace CatalogueLibrary.DataHelper
 
         public string GetParamaterDeclarationSQL(DiscoveredParameter parameter)
         {
-            return "DECLARE " + parameter.ParameterName + " AS " + parameter.DataType.SQLType + ";";
+            return "DECLARE " + parameter.ParameterName + " AS " + parameter.DataType.SQLType;
         }
    
     }

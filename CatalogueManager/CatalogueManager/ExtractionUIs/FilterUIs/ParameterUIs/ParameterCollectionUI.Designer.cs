@@ -93,6 +93,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvParameters.UseCompatibleStateImageBehavior = false;
             this.olvParameters.View = System.Windows.Forms.View.Details;
             this.olvParameters.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.olvParameters_CellEditFinishing);
+            this.olvParameters.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.olvParameters_CellEditStarting);
             this.olvParameters.SelectedIndexChanged += new System.EventHandler(this.olvParameters_SelectedIndexChanged);
             this.olvParameters.KeyDown += new System.Windows.Forms.KeyEventHandler(this.olvParameters_KeyDown);
             // 

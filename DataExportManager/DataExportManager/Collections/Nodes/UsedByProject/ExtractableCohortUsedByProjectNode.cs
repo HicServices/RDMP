@@ -50,5 +50,10 @@ namespace DataExportManager.Collections.Nodes.UsedByProject
                 return ((Project != null ? Project.GetHashCode() : 0)*397) ^ (Cohort != null ? Cohort.GetHashCode() : 0);
             }
         }
+
+        public object MasqueradingAs()
+        {
+            return ObjectBeingUsed;
+        }
     }
 }

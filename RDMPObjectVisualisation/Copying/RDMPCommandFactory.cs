@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -60,6 +61,11 @@ namespace RDMPObjectVisualisation.Copying
 
         public ICommand Create(object modelObject)
         {
+            IMasqueradeAs masquerader = modelObject as IMasqueradeAs;
+
+            if (masquerader != null)
+                modelObject = masquerader.MasqueradingAs();
+
             //Extractable column e.g. ExtractionInformation,AggregateDimension etc
             var icolumn = modelObject as IColumn;
             if (icolumn != null)
@@ -108,7 +114,7 @@ namespace RDMPObjectVisualisation.Copying
             var aggregateContainer = modelObject as CohortAggregateContainer;
             if (aggregateContainer != null)
                 return new CohortAggregateContainerCommand(aggregateContainer);
-
+            
             var extractableCohort = modelObject as ExtractableCohort;
             if (extractableCohort != null)
                 return new ExtractableCohortCommand(extractableCohort);
@@ -168,4 +174,5 @@ namespace RDMPObjectVisualisation.Copying
             return toReturn.ToArray();
         }
     }
+
 }
