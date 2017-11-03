@@ -149,7 +149,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
                     for (int i = 0; i < pks.Length; i++)
                         cataRepo.JoinInfoFinder.AddJoinInfo(fks[i], pks[i], joinType, tbCollation.Text);
 
-                    MessageBox.Show("Succesfully Created Joins");
+                    MessageBox.Show("Successfully Created Joins");
                     _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_leftTableInfo));
 
                     foreach (KeyDropLocationUI ui in new[] {pk1, pk2, pk3, fk1, fk2, fk3})

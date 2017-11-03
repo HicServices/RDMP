@@ -107,7 +107,7 @@ namespace CohortManager.Menus
                         else
                         {
                             cmdExecution.Execute();
-                            checks.OnCheckPerformed(new CheckEventArgs("Succesfully added AggregateConfiguration " + aggregateConfiguration, CheckResult.Success));
+                            checks.OnCheckPerformed(new CheckEventArgs("Successfully added AggregateConfiguration " + aggregateConfiguration, CheckResult.Success));
                         }
                     }
                     catch (Exception e)
@@ -145,7 +145,7 @@ namespace CohortManager.Menus
                         else
                         {
                             cmdExecution.Execute();
-                            checks.OnCheckPerformed(new CheckEventArgs("Succesfully added Catalogue " + catalogue,CheckResult.Success));
+                            checks.OnCheckPerformed(new CheckEventArgs("Successfully added Catalogue " + catalogue,CheckResult.Success));
                         }
                     }
                     catch (Exception e)

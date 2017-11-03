@@ -435,7 +435,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(catalogue));
             
-            MessageBox.Show("Succesfully imported new Dataset '" + catalogue + "'." +
+            MessageBox.Show("Successfully imported new Dataset '" + catalogue + "'." +
                             "\r\n" +
                             "The edit functionality will now open.");
 

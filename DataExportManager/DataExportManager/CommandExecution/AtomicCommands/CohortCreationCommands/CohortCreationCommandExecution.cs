@@ -86,7 +86,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             foreach (object o in request.GetInitializationObjects(catalogueRepository))
                 configureAndExecuteDialog.AddInitializationObject(o);
 
-            configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccesfully(configureAndExecuteDialog, request);
+            configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);
 
             //add in the logging server
             var loggingServer = new ServerDefaults(catalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
@@ -101,18 +101,18 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             return configureAndExecuteDialog;
         }
 
-        private void OnCohortCreatedSuccesfully(ContainerControl responsibleControl, CohortCreationRequest request)
+        private void OnCohortCreatedSuccessfully(ContainerControl responsibleControl, CohortCreationRequest request)
         {
             if (responsibleControl.InvokeRequired)
             {
-                responsibleControl.Invoke(new MethodInvoker(() => OnCohortCreatedSuccesfully(responsibleControl, request)));
+                responsibleControl.Invoke(new MethodInvoker(() => OnCohortCreatedSuccessfully(responsibleControl, request)));
                 return;
             }
 
             if (request.CohortCreatedIfAny != null)
                 Publish(request.CohortCreatedIfAny);
 
-            if (MessageBox.Show("Pipeline reports it has successfully loaded the cohort, would you like to close the Form?", "Succesfully Created Cohort", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Pipeline reports it has successfully loaded the cohort, would you like to close the Form?", "Successfully Created Cohort", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 responsibleControl.ParentForm.Close();
         }
 
