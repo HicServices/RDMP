@@ -20,6 +20,10 @@ namespace CohortManager.SubComponents
             {
                 components.Dispose();
             }
+
+            if(_activator != null)
+                _activator.RefreshBus.Unsubscribe(this);
+
             base.Dispose(disposing);
         }
 
@@ -83,8 +87,6 @@ namespace CohortManager.SubComponents
             this.tlvConfiguration.UseCompatibleStateImageBehavior = false;
             this.tlvConfiguration.View = System.Windows.Forms.View.Details;
             this.tlvConfiguration.VirtualMode = true;
-            this.tlvConfiguration.ItemActivate += new System.EventHandler(this.otvConfiguration_ItemActivate);
-            this.tlvConfiguration.KeyUp += new System.Windows.Forms.KeyEventHandler(this.otvConfiguration_KeyUp);
             // 
             // olvAggregate
             // 
@@ -102,7 +104,7 @@ namespace CohortManager.SubComponents
             // 
             // olvIdentifierCount
             // 
-            this.olvIdentifierCount.AspectName = "FinalRowCount";
+            this.olvIdentifierCount.AspectName = "";
             this.olvIdentifierCount.Sortable = false;
             this.olvIdentifierCount.Text = "Identifier Count";
             this.olvIdentifierCount.Width = 90;
