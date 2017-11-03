@@ -197,10 +197,6 @@ namespace CatalogueManager.Collections
             
             if (e.KeyCode == Keys.Delete)
             {
-                var deletable = tlvTableInfos.SelectedObject as IDeleteable;
-                if(deletable != null)
-                    _activator.DeleteWithConfirmation(this, deletable);
-
                 var credentialUsage = tlvTableInfos.SelectedObject as DataAccessCredentialUsageNode;
 
                 if(credentialUsage != null)

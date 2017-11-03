@@ -290,6 +290,7 @@
     <Compile Include="DirectoryInfoComparer.cs" />
     <Compile Include="DoNotExtractProperty.cs" />
     <Compile Include="Exceptions\ExpectedIdenticalStringsException.cs" />
+    <Compile Include="ICustomSearchString.cs" />
     <Compile Include="IHasFullyQualifiedNameToo.cs" />
     <Compile Include="ILifelineable.cs" />
     <Compile Include="ILockable.cs" />

@@ -40,7 +40,6 @@ namespace CatalogueManager.Menus
 
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => new PopupChecksUI("Checking " + aggregate, false).Check(aggregate));
 
-
             var addFilterContainer = new ToolStripMenuItem("Add Filter Container", GetImage(RDMPConcept.FilterContainer, OverlayKind.Add), (s, e) => AddFilterContainer());
 
             //if it doesn't have a root container or a hijacked container shortcut

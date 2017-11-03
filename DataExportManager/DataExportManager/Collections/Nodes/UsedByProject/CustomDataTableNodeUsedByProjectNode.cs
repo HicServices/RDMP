@@ -42,5 +42,10 @@ namespace DataExportManager.Collections.Nodes.UsedByProject
                 return ((Project != null ? Project.GetHashCode() : 0)*397) ^ (CustomTable != null ? CustomTable.GetHashCode() : 0);
             }
         }
+
+        public object MasqueradingAs()
+        {
+            return ObjectBeingUsed;
+        }
     }
 }

@@ -55,8 +55,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality
             else
                 saveToolStripMenuItem.Enabled = false;
 
-            ContextMenuStrip = new ContextMenuStrip();
-            ContextMenuStrip.Items.Add(saveToolStripMenuItem);
+     //       ContextMenuStrip = new ContextMenuStrip();
+       //     ContextMenuStrip.Items.Add(saveToolStripMenuItem);
         }
     }
 }

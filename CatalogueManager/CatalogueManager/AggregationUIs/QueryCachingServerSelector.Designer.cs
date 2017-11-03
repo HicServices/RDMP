@@ -59,7 +59,7 @@
             this.groupBox1.Size = new System.Drawing.Size(716, 77);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Query Caching Database (Must be on the same server as your data/aggregates)";
+            this.groupBox1.Text = "Query Caching Database";
             // 
             // label1
             // 

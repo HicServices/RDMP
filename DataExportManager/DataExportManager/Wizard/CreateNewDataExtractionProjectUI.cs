@@ -22,9 +22,11 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Repositories;
 using DataExportManager.CohortUI.CohortSourceManagement;
+using DataExportManager.CommandExecution.AtomicCommands;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.DataFlowSources;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.SingleControlForms;
 
@@ -278,7 +280,6 @@ namespace DataExportManager.Wizard
 
                 if (_configuration == null)
                 {
-
                     _configuration = new ExtractionConfiguration(_activator.RepositoryLocator.DataExportRepository,
                         _project);
                     _configuration.Name = "Cases";
@@ -288,7 +289,9 @@ namespace DataExportManager.Wizard
                 foreach (ExtractableDataSet ds in olvDatasets.CheckedObjects.Cast<ExtractableDataSet>())
                     _configuration.AddDatasetToConfiguration(ds);
 
-                if (_cohortCreated == null)
+                ICommandExecution cmdAssociateCicWithProject = null;
+
+                if (_cohortCreated == null && cbDefineCohort.Checked)
                 {
                     var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1, _project.ProjectNumber.Value,
                         (ExternalCohortTable) ddCohortSources.SelectedItem);
@@ -310,6 +313,11 @@ namespace DataExportManager.Wizard
                         cohortRequest.CohortIdentificationConfiguration =
                             (CohortIdentificationConfiguration) cbxCohort.SelectedItem;
                         dd = ddCicPipeline;
+
+
+                        //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
+                        cmdAssociateCicWithProject = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(
+                            _project).SetTarget(cohortRequest.CohortIdentificationConfiguration);
                     }
 
                     var engine = cohortRequest.GetEngine((Pipeline) dd.SelectedItem,new ThrowImmediatelyDataLoadEventListener());
@@ -317,23 +325,30 @@ namespace DataExportManager.Wizard
                     _cohortCreated = cohortRequest.CohortCreatedIfAny;
                 }
 
+                if(cbDefineCohort.Checked)
+                {
 
-                //associate the configuration with the cohort
-                _configuration.Cohort_ID = _cohortCreated.ID;
+                    //associate the configuration with the cohort
+                    _configuration.Cohort_ID = _cohortCreated.ID;
 
-                //set the pipeline to use
-                var pipeline = (Pipeline)ddExtractionPipeline.SelectedItem;
-                if (pipeline != null)
-                    _configuration.DefaultPipeline_ID = pipeline.ID;
+                    //set the pipeline to use
+                    var pipeline = (Pipeline)ddExtractionPipeline.SelectedItem;
+                    if (pipeline != null)
+                        _configuration.DefaultPipeline_ID = pipeline.ID;
 
-                _configuration.SaveToDatabase();
+                    _configuration.SaveToDatabase();
+
+                    //User defined cohort if it came from cic then associate the cic with the project
+                    if (cmdAssociateCicWithProject != null && !cmdAssociateCicWithProject.IsImpossible)
+                        cmdAssociateCicWithProject.Execute();
+                }
 
                 Cursor = Cursors.Default;
 
                 ExtractionConfigurationCreatedIfAny = _configuration;
                 
                 DialogResult = DialogResult.OK;
-                MessageBox.Show("Project Created Succesfully");
+                MessageBox.Show("Project Created Successfully");
                 Close();
             }
             catch (Exception exception)
@@ -361,6 +376,9 @@ namespace DataExportManager.Wizard
             if (string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
                 return "You must specify a project extraction directory where the flat files will go";
 
+            if (!cbDefineCohort.Checked)
+                return null;
+
             if (string.IsNullOrWhiteSpace(tbCohortName.Text))
                 return "You must provide a name for your cohort";
 
@@ -387,6 +405,11 @@ namespace DataExportManager.Wizard
             SingleControlForm.ShowDialog(wizard);
             IdentifyCompatibleCohortSources();
 
+        }
+
+        private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
+        {
+            gbCohortAndDatasets.Enabled = cbDefineCohort.Checked;
         }
     }
 }

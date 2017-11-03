@@ -48,20 +48,20 @@ namespace DatabaseCreation
             _edsLogging.Database = _logging.InitialCatalog;
             _edsLogging.SaveToDatabase();
             defaults.SetDefault(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
-            Console.WriteLine("Succesfully configured default logging server");
+            Console.WriteLine("Successfully configured default logging server");
 
             var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", typeof(DataQualityEngine.Database.Class1).Assembly);
             edsDQE.Server = _dqe.DataSource;
             edsDQE.Database = _dqe.InitialCatalog;
             edsDQE.SaveToDatabase();
             defaults.SetDefault(ServerDefaults.PermissableDefaults.DQE, edsDQE);
-            Console.WriteLine("Succesfully configured default dqe server");
+            Console.WriteLine("Successfully configured default dqe server");
 
             var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null);
             edsRAW.Server = _dqe.DataSource;
             edsRAW.SaveToDatabase();
             defaults.SetDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer, edsRAW);
-            Console.WriteLine("Succesfully configured RAW server");
+            Console.WriteLine("Successfully configured RAW server");
         }
 
         private void CreatePipelines()

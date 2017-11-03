@@ -37,18 +37,21 @@ namespace DataExportManager.Collections
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
+            this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
             this.SuspendLayout();
             // 
             // tlvDataExport
             // 
             this.tlvDataExport.AllColumns.Add(this.olvName);
+            this.tlvDataExport.AllColumns.Add(this.olvProjectNumber);
             this.tlvDataExport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlvDataExport.CellEditUseWholeCell = false;
             this.tlvDataExport.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
+            this.olvName,
+            this.olvProjectNumber});
             this.tlvDataExport.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvDataExport.FullRowSelect = true;
             this.tlvDataExport.HideSelection = false;
@@ -100,6 +103,11 @@ namespace DataExportManager.Collections
             this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
             this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
             // 
+            // olvProjectNumber
+            // 
+            this.olvProjectNumber.Text = "ProjectNumber";
+            this.olvProjectNumber.Width = 89;
+            // 
             // DataExportCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -123,5 +131,6 @@ namespace DataExportManager.Collections
         private System.Windows.Forms.TextBox tbFilter;
         private OLVColumn olvName;
         private System.Windows.Forms.Button btnExpandOrCollapse;
+        private OLVColumn olvProjectNumber;
     }
 }

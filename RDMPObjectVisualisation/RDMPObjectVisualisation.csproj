@@ -139,6 +139,7 @@
     <Compile Include="Copying\Commands\CatalogueCommand.cs" />
     <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
     <Compile Include="Copying\Commands\CohortCommandHelper.cs" />
+    <Compile Include="Copying\Commands\CohortIdentificationConfigurationCommand.cs" />
     <Compile Include="Copying\Commands\ColumnCommand.cs" />
     <Compile Include="Copying\Commands\ColumnInfoCommand.cs" />
     <Compile Include="Copying\Commands\ContainerCommand.cs" />

@@ -187,7 +187,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             
 
             if(!tbl.Exists())
-                throw new Exception("Table '" + tbl + "' did not exist despite DataTableUploadDestination completing succesfully!");
+                throw new Exception("Table '" + tbl + "' did not exist despite DataTableUploadDestination completing Successfully!");
 
             tablesToCleanup.Add(tbl);
 
@@ -207,7 +207,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 //we created the db in the first place
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to drop database '" + _tempDb + "'"));
                 _tempDb.ForceDrop();
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Dropped database '" + _tempDb +"' succesfully"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Dropped database '" + _tempDb +"' Successfully"));
             }
             else
             {

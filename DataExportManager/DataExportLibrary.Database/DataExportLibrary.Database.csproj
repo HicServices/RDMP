@@ -147,6 +147,7 @@
     <EmbeddedResource Include="db\up\011_AddDescriptionFieldToCohort.sql" />
     <EmbeddedResource Include="db\up\012_AddNameToExtractionConfiguration.sql" />
     <EmbeddedResource Include="db\up\013_AddExtractionPipelineIDToExtractionConfiguration.sql" />
+    <EmbeddedResource Include="db\up\014_AssociateCicsWithProjects.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

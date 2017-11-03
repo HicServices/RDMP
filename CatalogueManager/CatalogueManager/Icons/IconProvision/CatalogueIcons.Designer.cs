@@ -1103,6 +1103,26 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ProjectCohortIdentificationConfigurationAssociationsNode {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectSavedCohortsNode {
+            get {
+                object obj = ResourceManager.GetObject("ProjectSavedCohortsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap ProjectsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectsNode", resourceCulture);

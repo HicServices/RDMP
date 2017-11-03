@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using RDMPObjectVisualisation.Copying.Commands;
@@ -59,6 +61,11 @@ namespace RDMPObjectVisualisation.Copying
 
         public ICommand Create(object modelObject)
         {
+            IMasqueradeAs masquerader = modelObject as IMasqueradeAs;
+
+            if (masquerader != null)
+                modelObject = masquerader.MasqueradingAs();
+
             //Extractable column e.g. ExtractionInformation,AggregateDimension etc
             var icolumn = modelObject as IColumn;
             if (icolumn != null)
@@ -107,7 +114,7 @@ namespace RDMPObjectVisualisation.Copying
             var aggregateContainer = modelObject as CohortAggregateContainer;
             if (aggregateContainer != null)
                 return new CohortAggregateContainerCommand(aggregateContainer);
-
+            
             var extractableCohort = modelObject as ExtractableCohort;
             if (extractableCohort != null)
                 return new ExtractableCohortCommand(extractableCohort);
@@ -128,6 +135,11 @@ namespace RDMPObjectVisualisation.Copying
             var processTask = modelObject as ProcessTask;
             if (processTask != null)
                 return new ProcessTaskCommand(processTask);
+
+            var cic = modelObject as CohortIdentificationConfiguration;
+            var cicAssociation = modelObject as ProjectCohortIdentificationConfigurationAssociation;
+            if (cic != null || cicAssociation != null)
+                return new CohortIdentificationConfigurationCommand(cic ?? cicAssociation.CohortIdentificationConfiguration);
 
             var commandSource = modelObject as ICommandSource;
 
@@ -162,4 +174,5 @@ namespace RDMPObjectVisualisation.Copying
             return toReturn.ToArray();
         }
     }
+
 }

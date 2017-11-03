@@ -29,14 +29,17 @@ namespace CohortManager.Menus
     {
         private CohortAggregateContainer _container;
 
-        public CohortAggregateContainerMenu(IActivateItems activator, CohortIdentificationConfiguration cic, CohortAggregateContainer container)
+        public CohortAggregateContainerMenu(IActivateItems activator, CohortAggregateContainer container)
             : base( activator, container)
         {
             _container = container;
-            
-            AddToolStripMenuItemSetTo(SetOperation.EXCEPT);
-            AddToolStripMenuItemSetTo(SetOperation.UNION);
-            AddToolStripMenuItemSetTo(SetOperation.INTERSECT);
+            var cic = _container.GetCohortIdentificationConfiguration();
+
+            var setOperation = new ToolStripMenuItem("Set Operation");
+            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.EXCEPT));
+            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.UNION));
+            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.INTERSECT));
+            Items.Add(setOperation);
 
             Items.Add("Add Sub Container", CohortIdentificationIcons.addCohortAggregateContainer,(s, e) => AddNewCohortAggregateContainer());
             
@@ -106,7 +109,7 @@ namespace CohortManager.Menus
                         else
                         {
                             cmdExecution.Execute();
-                            checks.OnCheckPerformed(new CheckEventArgs("Succesfully added AggregateConfiguration " + aggregateConfiguration, CheckResult.Success));
+                            checks.OnCheckPerformed(new CheckEventArgs("Successfully added AggregateConfiguration " + aggregateConfiguration, CheckResult.Success));
                         }
                     }
                     catch (Exception e)
@@ -144,7 +147,7 @@ namespace CohortManager.Menus
                         else
                         {
                             cmdExecution.Execute();
-                            checks.OnCheckPerformed(new CheckEventArgs("Succesfully added Catalogue " + catalogue,CheckResult.Success));
+                            checks.OnCheckPerformed(new CheckEventArgs("Successfully added Catalogue " + catalogue,CheckResult.Success));
                         }
                     }
                     catch (Exception e)
@@ -162,7 +165,7 @@ namespace CohortManager.Menus
             Publish(_container);
         }
 
-        private void AddToolStripMenuItemSetTo(SetOperation operation)
+        private ToolStripMenuItem GetChangeOperationMenuItem(SetOperation operation)
         {
             var setOperationMenuItem = new ToolStripMenuItem("Set " + operation, null, (o, args) => SetOperationTo(operation));
 
@@ -182,8 +185,8 @@ namespace CohortManager.Menus
             }
 
             setOperationMenuItem.Enabled = _container.Operation != operation;
-            Items.Add(setOperationMenuItem);
-
+            
+            return setOperationMenuItem;
         }
 
         public void SetOperationTo(SetOperation newOperation)

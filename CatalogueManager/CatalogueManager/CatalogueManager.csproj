@@ -1454,6 +1454,8 @@
     <None Include="Icons\Overlays\Help.png" />
     <None Include="Icons\Undo.png" />
     <None Include="Icons\Redo.png" />
+    <None Include="Icons\ProjectCohortIdentificationConfigurationAssociationsNode.png" />
+    <None Include="Icons\ProjectSavedCohortsNode.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

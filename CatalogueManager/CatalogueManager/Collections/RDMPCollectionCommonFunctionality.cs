@@ -22,6 +22,7 @@ using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Copying;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -31,7 +32,9 @@ using CatalogueManager.Refreshing;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -73,6 +76,14 @@ namespace CatalogueManager.Collections
             }
         }
 
+        public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
+
+        /// <summary>
+        /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
+        /// You can cut off any branch with this property, just specify the Types to stop descending at and you will get that object Type (assuming you normally would)
+        /// but no further children.
+        /// </summary>
+        public Type[] AxeChildren { get; set; }
 
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
@@ -86,7 +97,7 @@ namespace CatalogueManager.Collections
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, bool addFavouriteColumn = true)
         {
             IsSetup = true;
             _activator = activator;
@@ -109,6 +120,8 @@ namespace CatalogueManager.Collections
             iconColumn.ImageGetter += ImageGetter;
             Tree.RowHeight = 19;
 
+            Tree.KeyUp += TreeOnKeyUp;
+
             //what does this do to performance?
             Tree.UseNotifyPropertyChanged = true;
 
@@ -124,11 +137,13 @@ namespace CatalogueManager.Collections
                 RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn);
                 RenameProvider.RegisterEvents();
             }
-            
-            FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
-            FavouriteColumn = FavouriteColumnProvider.CreateColumn();
-            FavouriteColumn.Sortable = false;
 
+            if (addFavouriteColumn)
+            {
+                FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
+                FavouriteColumn = FavouriteColumnProvider.CreateColumn();
+                FavouriteColumn.Sortable = false;
+            }
             CoreIconProvider = activator.CoreIconProvider;
 
             CopyPasteProvider = new CopyPasteProvider();
@@ -145,6 +160,25 @@ namespace CatalogueManager.Collections
             }
 
             _activator.Emphasise += _activator_Emphasise;
+        }
+
+        private void TreeOnKeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Delete)
+            {
+                var deletable = Tree.SelectedObject as IDeleteable;
+                if(deletable != null)
+                    _activator.DeleteWithConfirmation(this,deletable);
+            }
+            if(e.KeyCode == Keys.F5)
+            {
+                var o = Tree.SelectedObject as DatabaseEntity;
+
+                if (o != null)
+                    new ExecuteCommandRefreshObject(_activator, o).Execute();
+            }
+
+        
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
@@ -257,12 +291,20 @@ namespace CatalogueManager.Collections
 
         private IEnumerable ChildrenGetter(object model)
         {
+            if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
+                return new object[0];
+
             return CoreChildProvider.GetChildren(model);
         }
 
         private bool CanExpandGetter(object model)
         {
-            return CoreChildProvider.GetChildren(model).Any();
+            var result = ChildrenGetter(model);
+
+            if (result == null)
+                return false;
+            
+            return result.Cast<object>().Any();
         }
 
         private object ImageGetter(object rowObject)
@@ -299,6 +341,14 @@ namespace CatalogueManager.Collections
                         return;
                     }
                 }
+            }
+            else
+            {
+                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+
+                //it's a right click in whitespace (nothing right clicked)
+                if (WhitespaceRightClickMenuCommands != null)
+                    e.MenuStrip = factory.CreateMenu(WhitespaceRightClickMenuCommands);
             }
         }
 
@@ -361,7 +411,14 @@ namespace CatalogueManager.Collections
                 else
                 //parent isn't in tree, could be a root object? try to refresh the object anyway
                 if(Tree.IndexOf(e.Object) != -1)
-                    Tree.RefreshObject(e.Object);
+                    try
+                    {
+                        Tree.RefreshObject(e.Object);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        
+                    }
 
 
             }

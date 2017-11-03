@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -24,6 +25,8 @@ using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.SimpleDialogs;
+using HIC.Common.Validation.Constraints.Primary;
+using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -36,7 +39,6 @@ namespace DataExportManager.Collections.Providers
     {
         //root objects
         public CohortsNode RootCohortsNode { get; private set; }
-        public ProjectsNode RootProjectsNode { get;private set; }
         public ExtractableDataSetsNode RootExtractableDataSets { get; private set; }
 
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
@@ -57,7 +59,7 @@ namespace DataExportManager.Collections.Providers
         public List<CustomDataTableNode> CustomTables { get; private set; }
 
         public ExtractionConfiguration[] ExtractionConfigurations { get; private set; }
-
+        
         private Dictionary<ExtractionConfiguration, SelectedDataSets[]> _configurationToDatasetMapping;
         private DataExportFilterHierarchy _dataExportFilterHierarchy;
 
@@ -67,13 +69,15 @@ namespace DataExportManager.Collections.Providers
 
         public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
 
+        public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
+
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
             _repositoryLocator = repositoryLocator;
             _errorsCheckNotifier = errorsCheckNotifier;
             var dataExportRepository = repositoryLocator.DataExportRepository;
 
-            
+            AllProjectAssociatedCics = dataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
             CohortSources = dataExportRepository.GetAllObjects<ExternalCohortTable>();
             ExtractableDataSets = dataExportRepository.GetAllObjects<ExtractableDataSet>();
 
@@ -110,10 +114,9 @@ namespace DataExportManager.Collections.Providers
 
             RootExtractableDataSets = new ExtractableDataSetsNode(dataExportRepository,ExtractableDataSets, AllPackages);
             AddChildren(RootExtractableDataSets,new DescendancyList(RootExtractableDataSets));
-            
-            RootProjectsNode = new ProjectsNode();
-            AddChildren(RootProjectsNode,new DescendancyList(RootProjectsNode));
 
+            foreach (Project p in Projects)
+                AddChildren(p, new DescendancyList(p));
 
             //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
             var extractableCatalogueIds = new HashSet<int>(ExtractableDataSets.Select(ds => ds.Catalogue_ID));
@@ -148,26 +151,19 @@ namespace DataExportManager.Collections.Providers
             AddToDictionaries(children, descendancy);
 
         }
-
-        private void AddChildren(ProjectsNode projectsNode, DescendancyList descendancy)
-        {
-            foreach (Project p in Projects)
-                AddChildren(p, descendancy.Add(p));
-
-            AddToDictionaries(new HashSet<object>(Projects), descendancy);
-        }
-
+        
         private void AddChildren(Project project, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
 
-            var cohortGroups = GetAllCohortProjectUsageNodesFor(project);
+            var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(project);
+            children.Add(projectCiCsNode);
+            AddChildren(projectCiCsNode,descendancy.Add(projectCiCsNode));
 
-            foreach (CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode in cohortGroups)
-            {
-                AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
-                children.Add(cohortSourceUsedByProjectNode);
-            }
+            var savedCohortsNode = new ProjectSavedCohortsNode(project);
+            children.Add(savedCohortsNode);
+            AddChildren(savedCohortsNode,descendancy.Add(savedCohortsNode));
+
 
             var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
             children.Add(extractionConfigurationsNode);
@@ -177,6 +173,39 @@ namespace DataExportManager.Collections.Providers
             var folder = new ExtractionFolderNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ProjectSavedCohortsNode savedCohortsNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            var cohortGroups = GetAllCohortProjectUsageNodesFor(savedCohortsNode.Project);
+
+            foreach (CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode in cohortGroups)
+            {
+                AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
+                children.Add(cohortSourceUsedByProjectNode);
+            }
+
+            AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(ProjectCohortIdentificationConfigurationAssociationsNode projectCiCsNode, DescendancyList descendancy)
+        {
+            //add the associations
+            HashSet<object> children = new HashSet<object>();
+            foreach (ProjectCohortIdentificationConfigurationAssociation association in AllProjectAssociatedCics.Where(assoc => assoc.Project_ID == projectCiCsNode.Project.ID))
+            {
+                //inject knowledge of what the cic is so it doesn't have to be fetched during ToString
+                association.InjectKnownCohortIdentificationConfiguration(
+                    AllCohortIdentificationConfigurations.Single(
+                        cic => cic.ID == association.CohortIdentificationConfiguration_ID));
+                
+                //document that it is a child of the project cics node 
+                children.Add(association);
+            }
+
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
@@ -447,6 +476,20 @@ namespace DataExportManager.Collections.Providers
         public IEnumerable<ExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)
         {
             return PackageContents.GetAllDataSets(package, ExtractableDataSets);
+        }
+
+        public bool ProjectHasNoSavedCohorts(Project project)
+        {
+
+            return GetChildren(GetChildren(project).Single(n => n is ProjectSavedCohortsNode))
+                .OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
+        }
+
+        public override Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
+        {
+            var toReturn = base.GetAllSearchables();
+            AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
+            return toReturn;
         }
     }
 }

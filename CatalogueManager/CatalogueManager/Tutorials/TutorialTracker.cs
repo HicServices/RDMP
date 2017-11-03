@@ -161,7 +161,10 @@ namespace CatalogueManager.Tutorials
 
         public void DisableAllTutorials()
         {
-            TutorialSeen[AllTutorialsText] = true;
+            if (!TutorialSeen.ContainsKey(AllTutorialsText))
+                TutorialSeen.Add(AllTutorialsText, true);
+            else
+                TutorialSeen[AllTutorialsText] = true;
         }
 
         public bool HasSeen(Tutorial tutorial)
@@ -182,6 +185,9 @@ namespace CatalogueManager.Tutorials
 
         public bool IsDisableAllTutorialsOn()
         {
+            if (!TutorialSeen.ContainsKey(AllTutorialsText))
+                TutorialSeen.Add(AllTutorialsText,false);
+
             return TutorialSeen[AllTutorialsText];
         }
 

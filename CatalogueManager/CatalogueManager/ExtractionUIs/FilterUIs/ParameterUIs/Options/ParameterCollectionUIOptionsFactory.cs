@@ -100,7 +100,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             }
 
             
-            return new ParameterCollectionUIOptions(UseCaseAggregateConfiguration,aggregateConfiguration,ParameterLevel.QueryLevel, pm);
+            return new ParameterCollectionUIOptions(UseCaseAggregateConfiguration,aggregateConfiguration,ParameterLevel.CompositeQueryLevel, pm);
         }
 
         

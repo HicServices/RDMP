@@ -43,7 +43,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a Cohort Identification Configuration to edit.");
 
             base.Execute();
-            Activator.WindowArranger.SetupEditCohortIdentificationConfiguration(this, CohortIdConfig);
+            Activator.WindowArranger.SetupEditAnything(this, CohortIdConfig);
         }
     }
 }

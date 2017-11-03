@@ -10,7 +10,7 @@ namespace DataExportManager.Collections.Nodes
     public class CohortsNode: SingletonNode
     {
         public CohortsNode()
-            : base("Saved Cohorts")
+            : base("ALL Saved Cohorts")
         {
             
         }

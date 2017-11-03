@@ -35,7 +35,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
                 
                 //now execute it
-                new ExecuteCommandExecuteExtractionConfiguration(Activator,true).SetTarget(wizard.ExtractionConfigurationCreatedIfAny).Execute(); 
+                var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator,true).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
+                if(!executeCommand.IsImpossible)
+                    executeCommand.Execute(); 
 
             }
         }

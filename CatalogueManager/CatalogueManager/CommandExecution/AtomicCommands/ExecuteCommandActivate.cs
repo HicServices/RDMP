@@ -17,6 +17,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {    
             _o = o;
 
+            var masquerader = _o as IMasqueradeAs;
+
+            if (masquerader != null)
+                _o = masquerader.MasqueradingAs();
+
             if(!Activator.CommandExecutionFactory.CanActivate(o))
                 SetImpossible("Object cannot be Activated");
         }

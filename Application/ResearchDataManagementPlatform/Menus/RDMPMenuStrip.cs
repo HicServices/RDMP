@@ -442,7 +442,7 @@ namespace ResearchDataManagementPlatform.Menus
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(openables, false, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
-                new ExecuteCommandActivate(_activator, dialog.Selected).Execute();
+                _activator.WindowArranger.SetupEditAnything(this,dialog.Selected);
         }
     }
 }

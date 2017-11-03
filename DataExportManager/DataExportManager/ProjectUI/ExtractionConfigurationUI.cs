@@ -12,6 +12,7 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using CatalogueLibrary.Repositories;
 using CatalogueManager;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
@@ -125,6 +126,8 @@ namespace DataExportManager.ProjectUI
         {
             var parameterManager = new ParameterManager();
 
+            foreach (var p in ExtractionConfiguration.GlobalExtractionFilterParameters)
+                parameterManager.AddGlobalParameter(p);
 
             foreach (var extractableDataSet in ExtractionConfiguration.GetAllExtractableDataSets())
             {
@@ -132,12 +135,17 @@ namespace DataExportManager.ProjectUI
                 var allFilters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(rootFilterContainer).ToList();
                 parameterManager.AddParametersFor(allFilters);//query level
             }
+            
+            ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptions(ConfigureExtractionConfigurationGlobalParametersUseCase, ExtractionConfiguration, ParameterLevel.Global, parameterManager,CreateNewParameterForExtractionConfiguration),true);
 
-            foreach (var p in ExtractionConfiguration.GlobalExtractionFilterParameters)
-                parameterManager.AddGlobalParameter(p);
+        }
 
-            ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptions(ConfigureExtractionConfigurationGlobalParametersUseCase, ExtractionConfiguration, ParameterLevel.Global, parameterManager),true);
+        private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector)
+        {
+            Random r = new Random();
 
+            var ec = (ExtractionConfiguration) collector;
+            return new GlobalExtractionFilterParameter((IDataExportRepository) ec.Repository, ec, "DECLARE @" + r.Next(100) + " as varchar(10)");
         }
 
         private void ExtractionConfigurationUI_Load(object sender, EventArgs e)
