@@ -44,15 +44,16 @@ assemblyinfo :assemblyinfo do |asm|
     major, minor, patch, build = version.split(/\./)
     asm.version = "#{major}.#{minor}.#{patch}.#{build}"
     asm.file_version = "#{major}.#{minor}.#{patch}.#{build}"
+    timestamp = Time.new.utc.to_i
     if PRERELEASE == "true"
-        puts "version: #{major}.#{minor}.#{patch}.#{build}#{rev}-pre"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{build}#{rev}-pre"
+        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}-pre"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}-pre"
     elsif CANDIDATE == "true"
-        puts "version: #{major}.#{minor}.#{patch}.#{build}#{rev}-rc"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{build}#{rev}-rc"
+        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}-rc"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}-rc"
     else
-        puts "version: #{major}.#{minor}.#{patch}.#{build}"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{build}"
+        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}"
     end
 end
 
