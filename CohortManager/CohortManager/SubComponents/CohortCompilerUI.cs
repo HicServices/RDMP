@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -103,8 +106,6 @@ namespace CohortManager.SubComponents
             if(VisualStudioDesignMode)
                 return;
 
-            Compiler.TaskCompleted += CompilerOnTaskCompleted;
-            
             tlvConfiguration.CanExpandGetter += CanExpandGetter;
             tlvConfiguration.ChildrenGetter += ChildrenGetter;
             olvAggregate.ImageGetter += ImageGetter;
@@ -261,14 +262,18 @@ namespace CohortManager.SubComponents
 
         #endregion
 
-        
+        private bool _haveSubscribed = false;
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             _cic = databaseObject;
 
             base.SetDatabaseObject(activator, databaseObject);
 
-            activator.RefreshBus.Subscribe(this);
+            if (!_haveSubscribed)
+            {
+                activator.RefreshBus.Subscribe(this);
+                _haveSubscribed = true;
+            }
 
             _queryCachingServer = _cic.QueryCachingServer;
             Compiler.CohortIdentificationConfiguration = _cic;
@@ -376,13 +381,117 @@ namespace CohortManager.SubComponents
                 ExceptionViewer.Show(exception);
             }
         }
-        
+
+        private enum Phase
+        {
+            None,
+            RunningJoinableTasks,
+            CachingJoinableTasks,
+            RunningAggregateTasks,
+            CachingAggregateTasks,
+            RunningFinalTotals,
+            Finished
+        }
+
+        private Phase executeAllPhase = Phase.None;
+
         public void StartAll()
         {
-            CancelAll();
+            //only allow starting all if we are not mid execution already
+            if (IsExecutingGlobalOperations())
+                return;
 
-            Compiler.LaunchScheduledTasksAsync(_timeout);
+            CancelAll();
+            
+            new Task(() =>
+            {
+                try
+                {
+                    Compiler.CancelAllTasks(true);
+                    
+                    SetPhase(Phase.RunningJoinableTasks);
+
+                    foreach (var j in _cic.GetAllJoinables())
+                        Compiler.AddTask(j,_globals);
+                    
+                    Invoke(new MethodInvoker(RecreateAllTasks));
+
+                    RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTaskExecution && c.State == CompilationState.NotScheduled));
+
+                    SetPhase(Phase.CachingJoinableTasks);
+
+                    CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTaskExecution>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
+
+                    SetPhase(Phase.RunningAggregateTasks);
+                    
+                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
+                        Compiler.AddTask(a, _globals);
+                    
+                    Invoke(new MethodInvoker(RecreateAllTasks));
+
+                    RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.State == CompilationState.NotScheduled));
+
+                    SetPhase(Phase.CachingAggregateTasks);
+
+                    CacheAsync(Compiler.Tasks.Keys.OfType<AggregationTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
+
+                    SetPhase(Phase.RunningFinalTotals);
+
+                    Compiler.AddTask(_cic.RootCohortAggregateContainer,_globals);
+
+                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
+                        Compiler.AddTask(a, _globals);
+                    
+                    Invoke(new MethodInvoker(RecreateAllTasks));
+
+                    RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled));
+
+                    SetPhase(Phase.Finished);
+                }
+                catch (Exception e)
+                {
+                    ExceptionViewer.Show(e);
+                }
+
+            }).Start();
         }
+
+        private void RunAsync(IEnumerable<ICompileable> toRun)
+        {
+            var tasks = toRun.ToArray();
+
+            foreach (var r in tasks)
+                Compiler.LaunchSingleTask(r, _timeout);
+
+            //while there are executing tasks
+            while (tasks.Any(t => t.State == CompilationState.Scheduled || t.State == CompilationState.Executing))
+                Thread.Sleep(1000);
+        }
+
+        private void CacheAsync(IEnumerable<ICachableTask> toCache)
+        {
+            if(_queryCachingServer == null)
+                return;
+
+            foreach (var c in toCache)
+                SaveToCache(c);
+        }
+
+        private void SetPhase(Phase p)
+        {
+           executeAllPhase = p;
+
+            if (lblExecuteAllPhase.InvokeRequired)
+                lblExecuteAllPhase.Invoke(new MethodInvoker(() => { lblExecuteAllPhase.Text = p.ToString(); }));
+            else
+                lblExecuteAllPhase.Text = p.ToString();
+        }
+
+        public bool IsExecutingGlobalOperations()
+        {
+            return executeAllPhase != Phase.None && executeAllPhase != Phase.Finished;
+        }
+
 
         public void CancelAll()
         {
@@ -400,13 +509,6 @@ namespace CohortManager.SubComponents
         {
             tlvConfiguration.RebuildColumns();
             lblThreadCount.Text = "Thread Count:" + Compiler.GetAliveThreadCount();
-
-            //If we are overdue for a reset due to AutoCache
-            if (asyncRefreshIsOverdue && Compiler.GetAliveThreadCount() == 0)
-            {
-                asyncRefreshIsOverdue = false;
-                RecreateAllTasks();
-            }
         }
 
         public CompilationState GetState(IMapsDirectlyToDatabaseTable o)
@@ -443,25 +545,7 @@ namespace CohortManager.SubComponents
         {
             Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
         }
-
-        //Because AutoCache is an even handler for completion of Compiler tasks we are launching Cache Saves but these will que up potentially or come in as Tasks finish executing (possibly over as much time as half an hour).  This means that we need
-        //to schedule a reset everything so that all Tasks repoint themselves at the cached results location but if we try to reset as we go along then it will result in the cancelling of other tasks executing within the Compiler.  So what we need to
-        //do is set this flag to true which means in our Thread polling code we can see when there are 0 executing threads and trigger the reset to get everyone pointing at the cache.
-        private bool asyncRefreshIsOverdue = false;
         
-        private void CompilerOnTaskCompleted(object sender, ICompileable completedTask)
-        {
-            var cacheable = completedTask as ICachableTask;
-
-            //if it is cacheable
-            if (cacheable != null && cacheable.State == CompilationState.Finished && cacheable.IsCacheableWhenFinished())
-            {
-                //cache it
-                SaveToCache(cacheable);
-                asyncRefreshIsOverdue = true;
-            }
-        }
-
         public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (Compiler != null)

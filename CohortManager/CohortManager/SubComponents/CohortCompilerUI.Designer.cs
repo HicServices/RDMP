@@ -21,7 +21,7 @@ namespace CohortManager.SubComponents
                 components.Dispose();
             }
 
-            if(_activator != null)
+            if (_activator != null && _haveSubscribed)
                 _activator.RefreshBus.Unsubscribe(this);
 
             base.Dispose(disposing);
@@ -50,6 +50,7 @@ namespace CohortManager.SubComponents
             this.refreshThreadCountPeriodically = new System.Windows.Forms.Timer(this.components);
             this.lblThreadCount = new System.Windows.Forms.Label();
             this.cbIncludeCumulative = new System.Windows.Forms.CheckBox();
+            this.lblExecuteAllPhase = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfiguration)).BeginInit();
             this.SuspendLayout();
             // 
@@ -187,10 +188,21 @@ namespace CohortManager.SubComponents
             this.cbIncludeCumulative.UseVisualStyleBackColor = true;
             this.cbIncludeCumulative.CheckedChanged += new System.EventHandler(this.cbIncludeCumulative_CheckedChanged);
             // 
+            // lblExecuteAllPhase
+            // 
+            this.lblExecuteAllPhase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblExecuteAllPhase.AutoSize = true;
+            this.lblExecuteAllPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblExecuteAllPhase.Location = new System.Drawing.Point(406, 611);
+            this.lblExecuteAllPhase.Name = "lblExecuteAllPhase";
+            this.lblExecuteAllPhase.Size = new System.Drawing.Size(0, 13);
+            this.lblExecuteAllPhase.TabIndex = 12;
+            // 
             // CohortCompilerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lblExecuteAllPhase);
             this.Controls.Add(this.lblThreadCount);
             this.Controls.Add(this.cbIncludeCumulative);
             this.Controls.Add(this.tbTimeout);
@@ -220,5 +232,6 @@ namespace CohortManager.SubComponents
         private OLVColumn olvCachedQueryUseCount;
         private OLVColumn olvCumulativeTotal;
         private System.Windows.Forms.CheckBox cbIncludeCumulative;
+        private System.Windows.Forms.Label lblExecuteAllPhase;
     }
 }

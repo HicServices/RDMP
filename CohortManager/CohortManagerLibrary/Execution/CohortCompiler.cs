@@ -234,7 +234,7 @@ namespace CohortManagerLibrary.Execution
 
             var t = new Thread(() => DoTaskAsync(task, execution, timeout));
             Threads.Add(t);
-            t.Start();    
+            t.Start();
         }
         
         public int GetRowCount(AggregateConfiguration aggregate)

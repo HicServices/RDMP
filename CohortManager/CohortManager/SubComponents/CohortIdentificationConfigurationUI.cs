@@ -168,6 +168,10 @@ namespace CohortManager.SubComponents
 
         private object ExecuteAspectGetter(object rowObject)
         {
+            //don't expose any buttons if global execution is in progress
+            if (CohortCompilerUI1.IsExecutingGlobalOperations())
+                return null;
+
             if (rowObject is AggregateConfiguration || rowObject is CohortAggregateContainer)
             {
                 var plannedOp = GetNextOperation(GetState((IMapsDirectlyToDatabaseTable)rowObject));
@@ -296,6 +300,9 @@ namespace CohortManager.SubComponents
 
             //if all are complete
             if (allTasks.Any(t => t is CachableTask && t.State == CompilationState.NotScheduled))
+                return Operation.Execute;
+
+            if (allTasks.All(t => t.State == CompilationState.Finished))
                 return Operation.Execute;
 
             return Operation.None;
