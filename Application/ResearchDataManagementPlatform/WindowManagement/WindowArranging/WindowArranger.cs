@@ -12,6 +12,7 @@ using CatalogueManager.LoadExecutionUIs;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
+using MapsDirectlyToDatabaseTable;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
@@ -45,15 +46,17 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(tableInfo,1));
         }
 
-        public void SetupEditCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cohortIdentificationConfiguration)
+        public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
         {
             _toolboxWindowManager.CloseAllToolboxes();
             _toolboxWindowManager.CloseAllWindows();
+            
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, int.MaxValue));
 
-            _toolboxWindowManager.Create(RDMPCollection.Cohort, DockState.DockLeft);
+            var activate = new ExecuteCommandActivate(_activator,o);
 
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(cohortIdentificationConfiguration, int.MaxValue));
-            new ExecuteCommandActivate(_activator, cohortIdentificationConfiguration).Execute();
+            if(!activate.IsImpossible)
+                activate.Execute();
         }
 
         public void SetupEditDataExtractionProject(object sender, Project project)

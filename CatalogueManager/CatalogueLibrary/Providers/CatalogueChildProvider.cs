@@ -401,7 +401,7 @@ namespace CatalogueLibrary.Providers
                 childObjects.Add(cohortNode);
 
                 //we also record all the Aggregates that are cohorts under us - but since these are also under Cohort Aggregates we will ignore it for descendancy purposes
-                var nodeDescendancy = descendancy.SetBetterRouteExists().Add(cohortNode);
+                var nodeDescendancy = descendancy.Add(cohortNode);
 
                 AddToDictionaries(new HashSet<object>(cohortAggregates),nodeDescendancy);
                 foreach (AggregateConfiguration cohortAggregate in cohortAggregates)
@@ -593,16 +593,16 @@ namespace CatalogueLibrary.Providers
             if (cic.RootCohortAggregateContainer_ID != null)
             {
                 var container = _cohortContainerChildProvider.AllContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
-                AddChildren(container,new DescendancyList(cic,container));
+                AddChildren(container, new DescendancyList(cic, container).SetBetterRouteExists());
                 children.Add(container);
             }
             
             //get the patient index tables
             var joinableNode = new JoinableCollectionNode(cic, _cohortContainerChildProvider.AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
-            AddChildren(joinableNode,new DescendancyList(cic,joinableNode));
+            AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());
             children.Add(joinableNode);
 
-            AddToDictionaries(children,new DescendancyList(cic));
+            AddToDictionaries(children, new DescendancyList(cic));
         }
 
         private void AddChildren(JoinableCollectionNode joinablesNode, DescendancyList descendancy)

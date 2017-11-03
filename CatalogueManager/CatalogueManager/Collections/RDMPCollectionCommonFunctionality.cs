@@ -292,7 +292,7 @@ namespace CatalogueManager.Collections
         private IEnumerable ChildrenGetter(object model)
         {
             if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
-                return null;
+                return new object[0];
 
             return CoreChildProvider.GetChildren(model);
         }
@@ -411,7 +411,14 @@ namespace CatalogueManager.Collections
                 else
                 //parent isn't in tree, could be a root object? try to refresh the object anyway
                 if(Tree.IndexOf(e.Object) != -1)
-                    Tree.RefreshObject(e.Object);
+                    try
+                    {
+                        Tree.RefreshObject(e.Object);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        
+                    }
 
 
             }

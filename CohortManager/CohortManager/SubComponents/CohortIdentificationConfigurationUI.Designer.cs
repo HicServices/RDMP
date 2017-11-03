@@ -43,13 +43,13 @@ namespace CohortManager.SubComponents
             this.olvNameCol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.btnClearCache = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.queryCachingServerSelector = new CatalogueManager.AggregationUIs.QueryCachingServerSelector();
-            this.btnExecute = new System.Windows.Forms.Button();
-            this.btnClearCache = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -170,6 +170,33 @@ namespace CohortManager.SubComponents
             this.splitContainer1.Size = new System.Drawing.Size(1233, 516);
             this.splitContainer1.SplitterDistance = 411;
             this.splitContainer1.TabIndex = 61;
+            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
+            // 
+            // btnExecute
+            // 
+            this.btnExecute.Location = new System.Drawing.Point(339, 145);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(75, 23);
+            this.btnExecute.TabIndex = 62;
+            this.btnExecute.Text = "Execute All";
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // btnClearCache
+            // 
+            this.btnClearCache.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearCache.Location = new System.Drawing.Point(1162, 151);
+            this.btnClearCache.Name = "btnClearCache";
+            this.btnClearCache.Size = new System.Drawing.Size(75, 23);
+            this.btnClearCache.TabIndex = 62;
+            this.btnClearCache.Text = "Clear Cache";
+            this.btnClearCache.UseVisualStyleBackColor = true;
+            this.btnClearCache.Click += new System.EventHandler(this.btnClearCache_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // CohortCompilerUI1
             // 
@@ -207,31 +234,6 @@ namespace CohortManager.SubComponents
             this.queryCachingServerSelector.SelecteExternalDatabaseServer = null;
             this.queryCachingServerSelector.Size = new System.Drawing.Size(543, 93);
             this.queryCachingServerSelector.TabIndex = 1;
-            // 
-            // btnExecute
-            // 
-            this.btnExecute.Location = new System.Drawing.Point(421, 146);
-            this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(75, 23);
-            this.btnExecute.TabIndex = 62;
-            this.btnExecute.Text = "Execute";
-            this.btnExecute.UseVisualStyleBackColor = true;
-            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
-            // 
-            // btnClearCache
-            // 
-            this.btnClearCache.Location = new System.Drawing.Point(502, 146);
-            this.btnClearCache.Name = "btnClearCache";
-            this.btnClearCache.Size = new System.Drawing.Size(75, 23);
-            this.btnClearCache.TabIndex = 62;
-            this.btnClearCache.Text = "Clear Cache";
-            this.btnClearCache.UseVisualStyleBackColor = true;
-            this.btnClearCache.Click += new System.EventHandler(this.btnClearCache_Click);
-            // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // CohortIdentificationConfigurationUI
             // 

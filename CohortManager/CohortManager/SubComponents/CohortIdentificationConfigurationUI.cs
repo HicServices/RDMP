@@ -196,9 +196,9 @@ namespace CohortManager.SubComponents
                 case CompilationState.Executing:
                     return Operation.Cancel;
                 case CompilationState.Finished:
-                    return Operation.Clear;
+                    return Operation.Execute;
                 case CompilationState.Crashed:
-                    return Operation.Clear;
+                    return Operation.Execute;
                 default:
                     throw new ArgumentOutOfRangeException("currentState");
             }
@@ -283,7 +283,7 @@ namespace CohortManager.SubComponents
                 return;
             }
             
-            btnExecute.Text = plan.ToString();
+            btnExecute.Text = plan + " All";
             btnExecute.Enabled = true;
             btnExecute.Tag = plan;
 
@@ -312,6 +312,11 @@ namespace CohortManager.SubComponents
         private void btnClearCache_Click(object sender, EventArgs e)
         {
             CohortCompilerUI1.ClearAllCaches();
+        }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            btnExecute.Left = splitContainer1.SplitterDistance - btnExecute.Width;
         }
 
     }
