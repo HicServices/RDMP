@@ -32,6 +32,7 @@ namespace CohortManager.SubComponents
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CohortIdentificationConfigurationUI));
             this.label1 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
             this.lblName = new System.Windows.Forms.Label();
@@ -43,13 +44,16 @@ namespace CohortManager.SubComponents
             this.olvNameCol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnExecute = new System.Windows.Forms.Button();
+            this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             this.btnClearCache = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.queryCachingServerSelector = new CatalogueManager.AggregationUIs.QueryCachingServerSelector();
+            this.btnAbortLoad = new System.Windows.Forms.Button();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -136,7 +140,7 @@ namespace CohortManager.SubComponents
             this.tlvCic.Location = new System.Drawing.Point(0, 0);
             this.tlvCic.Name = "tlvCic";
             this.tlvCic.ShowGroups = false;
-            this.tlvCic.Size = new System.Drawing.Size(411, 516);
+            this.tlvCic.Size = new System.Drawing.Size(411, 485);
             this.tlvCic.TabIndex = 60;
             this.tlvCic.UseCompatibleStateImageBehavior = false;
             this.tlvCic.View = System.Windows.Forms.View.Details;
@@ -157,7 +161,7 @@ namespace CohortManager.SubComponents
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(3, 175);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 206);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -167,25 +171,23 @@ namespace CohortManager.SubComponents
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.CohortCompilerUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(1233, 516);
+            this.splitContainer1.Size = new System.Drawing.Size(1233, 485);
             this.splitContainer1.SplitterDistance = 411;
             this.splitContainer1.TabIndex = 61;
-            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
-            // btnExecute
+            // CohortCompilerUI1
             // 
-            this.btnExecute.Location = new System.Drawing.Point(339, 145);
-            this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(75, 23);
-            this.btnExecute.TabIndex = 62;
-            this.btnExecute.Text = "Execute All";
-            this.btnExecute.UseVisualStyleBackColor = true;
-            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            this.CohortCompilerUI1.CoreIconProvider = null;
+            this.CohortCompilerUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CohortCompilerUI1.Location = new System.Drawing.Point(0, 0);
+            this.CohortCompilerUI1.Name = "CohortCompilerUI1";
+            this.CohortCompilerUI1.Size = new System.Drawing.Size(818, 485);
+            this.CohortCompilerUI1.TabIndex = 0;
             // 
             // btnClearCache
             // 
             this.btnClearCache.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearCache.Location = new System.Drawing.Point(1162, 151);
+            this.btnClearCache.Location = new System.Drawing.Point(1161, 157);
             this.btnClearCache.Name = "btnClearCache";
             this.btnClearCache.Size = new System.Drawing.Size(75, 23);
             this.btnClearCache.TabIndex = 62;
@@ -197,15 +199,6 @@ namespace CohortManager.SubComponents
             // 
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // CohortCompilerUI1
-            // 
-            this.CohortCompilerUI1.CoreIconProvider = null;
-            this.CohortCompilerUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CohortCompilerUI1.Location = new System.Drawing.Point(0, 0);
-            this.CohortCompilerUI1.Name = "CohortCompilerUI1";
-            this.CohortCompilerUI1.Size = new System.Drawing.Size(818, 516);
-            this.CohortCompilerUI1.TabIndex = 0;
             // 
             // objectSaverButton1
             // 
@@ -235,12 +228,53 @@ namespace CohortManager.SubComponents
             this.queryCachingServerSelector.Size = new System.Drawing.Size(543, 93);
             this.queryCachingServerSelector.TabIndex = 1;
             // 
+            // btnAbortLoad
+            // 
+            this.btnAbortLoad.Image = ((System.Drawing.Image)(resources.GetObject("btnAbortLoad.Image")));
+            this.btnAbortLoad.Location = new System.Drawing.Point(569, 151);
+            this.btnAbortLoad.Name = "btnAbortLoad";
+            this.btnAbortLoad.Size = new System.Drawing.Size(29, 23);
+            this.btnAbortLoad.TabIndex = 65;
+            this.btnAbortLoad.UseVisualStyleBackColor = true;
+            this.btnAbortLoad.Click += new System.EventHandler(this.btnAbortLoad_Click);
+            // 
+            // btnExecute
+            // 
+            this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
+            this.btnExecute.Location = new System.Drawing.Point(477, 151);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(86, 23);
+            this.btnExecute.TabIndex = 66;
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(568, 177);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.TabIndex = 63;
+            this.label5.Text = "Abort";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(496, 178);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 64;
+            this.label2.Text = "Execute";
+            // 
             // CohortIdentificationConfigurationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnClearCache);
+            this.Controls.Add(this.btnAbortLoad);
             this.Controls.Add(this.btnExecute);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.btnClearCache);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.btnCollapseOrExpand);
             this.Controls.Add(this.tbDescription);
@@ -281,8 +315,11 @@ namespace CohortManager.SubComponents
         private OLVColumn olvNameCol;
         private OLVColumn olvExecute;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button btnExecute;
         private System.Windows.Forms.Button btnClearCache;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button btnAbortLoad;
+        private System.Windows.Forms.Button btnExecute;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label2;
     }
 }

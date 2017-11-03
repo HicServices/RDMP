@@ -252,20 +252,7 @@ namespace CohortManager.SubComponents
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            if(btnExecute.Tag == null)
-                return;
-
-            switch ((Operation)btnExecute.Tag)
-            {
-                case Operation.Execute:
-                    CohortCompilerUI1.StartAll();
-                    break;
-                case Operation.Cancel:
-                    CohortCompilerUI1.CancelAll();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            CohortCompilerUI1.StartAll();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -277,16 +264,9 @@ namespace CohortManager.SubComponents
         {
             var plan = PlanGlobalOperation();
 
-            if (plan == Operation.None)
-            {
-                btnExecute.Enabled = false;
-                return;
-            }
+            btnExecute.Enabled = plan == Operation.Execute;
+            btnAbortLoad.Enabled = plan == Operation.Cancel;
             
-            btnExecute.Text = plan + " All";
-            btnExecute.Enabled = true;
-            btnExecute.Tag = plan;
-
             btnClearCache.Enabled = CohortCompilerUI1.AnyCachedTasks();
         }
 
@@ -314,11 +294,10 @@ namespace CohortManager.SubComponents
             CohortCompilerUI1.ClearAllCaches();
         }
 
-        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        private void btnAbortLoad_Click(object sender, EventArgs e)
         {
-            btnExecute.Left = splitContainer1.SplitterDistance - btnExecute.Width;
+            CohortCompilerUI1.CancelAll();
         }
-
     }
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
     public abstract class CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>

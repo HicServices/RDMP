@@ -35,9 +35,11 @@ namespace CohortManager.Menus
             _container = container;
             var cic = _container.GetCohortIdentificationConfiguration();
 
-            AddToolStripMenuItemSetTo(SetOperation.EXCEPT);
-            AddToolStripMenuItemSetTo(SetOperation.UNION);
-            AddToolStripMenuItemSetTo(SetOperation.INTERSECT);
+            var setOperation = new ToolStripMenuItem("Set Operation");
+            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.EXCEPT));
+            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.UNION));
+            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.INTERSECT));
+            Items.Add(setOperation);
 
             Items.Add("Add Sub Container", CohortIdentificationIcons.addCohortAggregateContainer,(s, e) => AddNewCohortAggregateContainer());
             
@@ -163,7 +165,7 @@ namespace CohortManager.Menus
             Publish(_container);
         }
 
-        private void AddToolStripMenuItemSetTo(SetOperation operation)
+        private ToolStripMenuItem GetChangeOperationMenuItem(SetOperation operation)
         {
             var setOperationMenuItem = new ToolStripMenuItem("Set " + operation, null, (o, args) => SetOperationTo(operation));
 
@@ -183,8 +185,8 @@ namespace CohortManager.Menus
             }
 
             setOperationMenuItem.Enabled = _container.Operation != operation;
-            Items.Add(setOperationMenuItem);
-
+            
+            return setOperationMenuItem;
         }
 
         public void SetOperationTo(SetOperation newOperation)

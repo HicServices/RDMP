@@ -336,7 +336,7 @@ namespace CohortManager.SubComponents
             var task = Compiler.GetTask(configOrContainer, _globals);
 
             //if it is in crashed state
-            if (task.State == CompilationState.Crashed)
+            if (task.State == CompilationState.Crashed || task.State == CompilationState.Finished)
             {
                 //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
                 Compiler.CancelTask(task, true);

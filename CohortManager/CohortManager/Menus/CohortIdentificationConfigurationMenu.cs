@@ -27,8 +27,6 @@ namespace CohortManager.Menus
         {
             _cic = cic;
 
-            ReBrandActivateAs("Test Query",RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Execute);
-                
             Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
                 
             Items.Add(new ToolStripSeparator());
