@@ -182,6 +182,7 @@
     <Compile Include="Revertable\RevertableObjectReport.cs" />
     <Compile Include="Revertable\RevertablePropertyDifference.cs" />
     <Compile Include="UpdateCommandStore.cs" />
+    <Compile Include="UsefulProperty.cs" />
     <Compile Include="Versioning\DatabaseVersionProvider.cs" />
     <Compile Include="Versioning\IExternalDatabasePatcher.cs" />
     <Compile Include="Versioning\InvalidPatchException.cs" />

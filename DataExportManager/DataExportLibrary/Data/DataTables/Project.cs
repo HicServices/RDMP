@@ -43,6 +43,8 @@ namespace DataExportLibrary.Data.DataTables
             get { return _extractionDirectory; }
             set { SetField(ref _extractionDirectory, value); }
         }
+
+        [UsefulProperty]
         public int? ProjectNumber
         {
             get { return _projectNumber; }
@@ -50,6 +52,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         #endregion
+
         public static int Name_MaxLength = -1;
         public static int MasterTicket_MaxLength = -1;
         public static int ExtractionDirectory_MaxLength = -1;

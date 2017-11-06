@@ -357,7 +357,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
-    <Compile Include="Collections\Providers\Filtering\TextMatchFilterWithWhiteList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
