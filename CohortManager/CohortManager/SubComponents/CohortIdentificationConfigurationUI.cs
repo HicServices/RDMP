@@ -274,18 +274,12 @@ namespace CohortManager.SubComponents
         {
             var allTasks = CohortCompilerUI1.GetAllTasks();
 
-            //if any are still executing
-            if (allTasks.Any(t => t.State == CompilationState.Executing))
+            //if any are still executing or scheduled for execution
+            if (allTasks.Any(t => t.State == CompilationState.Executing || t.State == CompilationState.Scheduled))
                 return Operation.Cancel;
 
             //if all are complete
-            if (allTasks.Any(t => t is CachableTask && t.State == CompilationState.NotScheduled))
-                return Operation.Execute;
-
-            if (allTasks.All(t => t.State == CompilationState.Finished))
-                return Operation.Execute;
-
-            return Operation.None;
+            return Operation.Execute;
         }
         #endregion
 

@@ -583,6 +583,15 @@ namespace CohortManager.SubComponents
         {
             ClearCacheFor(Compiler.Tasks.Keys.OfType<ICachableTask>().Where(t => !t.IsCacheableWhenFinished()).ToArray());
         }
+
+        private void tlvConfiguration_ItemActivate(object sender, EventArgs e)
+        {
+            var o = tlvConfiguration.SelectedObject as ICompileable;
+            if (o != null && o.CrashMessage != null)
+            {
+                ExceptionViewer.Show(o.CrashMessage);
+            }
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortCompilerUI_Design, UserControl>))]
