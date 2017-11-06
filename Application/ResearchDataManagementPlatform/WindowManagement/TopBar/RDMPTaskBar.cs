@@ -269,14 +269,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
         private void btnLaunchNavigateTo_Click(object sender, EventArgs e)
         {
-            var dialog = new NavigateToObjectUI(_manager.ContentManager,tbFind.Text);
+            ShowNavigateTo();
+        }
+
+        private void ShowNavigateTo()
+        {
+            var dialog = new NavigateToObjectUI(_manager.ContentManager, tbFind.Text);
             dialog.Show();
         }
 
         public void FocusFind()
         {
-            tbFind.Focus();
-            tbFind.SelectAll();
+            ShowNavigateTo();
         }
 
         private void tbFind_KeyDown(object sender, KeyEventArgs e)
