@@ -17,7 +17,7 @@ namespace LoadModules.Generic.Mutilators
     {
         private DiscoveredDatabase _databaseInfo;
 
-        [DemandsInitialization("An exit code that reflects the nature off the stop.  Do not set Success because loads do not stop halfway through succesfully.  If you do not want an error use LoadNotRequired")]
+        [DemandsInitialization("An exit code that reflects the nature off the stop.  Do not set Success because loads do not stop halfway through Successfully.  If you do not want an error use LoadNotRequired")]
         public ExitCodeType ExitCodeToReturnIfConditionMet { get; set; }
    
         [DemandsInitialization("Condition under which to return the exit code.  Use cases for Always are few and far between I guess if you have a big configuration but you want to stop it running ever you could put an Always abort step in")]

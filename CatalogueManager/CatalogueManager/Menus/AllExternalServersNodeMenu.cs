@@ -11,6 +11,7 @@ using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -18,16 +19,16 @@ using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    internal class AllExternalServersNodeMenu : ContextMenuStrip
+    internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
     {
-        private readonly IActivateItems _activator;
-
-        public AllExternalServersNodeMenu(IActivateItems activator)
+        public AllExternalServersNodeMenu(IActivateItems activator) : base(activator,null)
         {
             var overlayProvider = new IconOverlayProvider();
             var iconProvider = new ExternalDatabaseServerStateBasedIconProvider(overlayProvider);
@@ -76,7 +77,7 @@ namespace CatalogueManager.Menus
         private void CreateNewBlankServer(object sender, EventArgs e)
         {
             var newServer = new ExternalDatabaseServer(_activator.RepositoryLocator.CatalogueRepository, "New ExternalDatabaseServer " + Guid.NewGuid());
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newServer));
+            Publish(newServer);
         }
 
         private string GetHumanReadableNameFromPermissableDefault(ServerDefaults.PermissableDefaults def)

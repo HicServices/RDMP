@@ -133,7 +133,8 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="DataExportMenu.cs" />
+    <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
+    <Compile Include="Menus\MenuItems\SaveMenuItem.cs" />
     <Compile Include="RDMPDocumentationStore.cs" />
     <Compile Include="RDMPMainForm.cs">
       <SubType>Form</SubType>
@@ -177,15 +178,13 @@
     <Compile Include="WindowManagement\TopBar\RDMPTaskBar.Designer.cs">
       <DependentUpon>RDMPTaskBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="WindowManagement\TopMenu\MenuItems\DisableTutorialsMenuItem.cs" />
-    <Compile Include="WindowManagement\TopMenu\MenuItems\LaunchTutorialMenuItem.cs" />
-    <Compile Include="WindowManagement\TopMenu\MenuItems\ResetTutorialsMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="WindowManagement\TopMenu\RDMPMenuStrip.cs">
+    <Compile Include="Menus\MenuItems\DisableTutorialsMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\LaunchTutorialMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\ResetTutorialsMenuItem.cs" />
+    <Compile Include="Menus\RDMPMenuStrip.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="WindowManagement\TopMenu\RDMPMenuStrip.Designer.cs">
+    <Compile Include="Menus\RDMPMenuStrip.Designer.cs">
       <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
     </Compile>
     <Compile Include="WindowManagement\UIObjectConstructor.cs" />
@@ -224,7 +223,7 @@
     <EmbeddedResource Include="WindowManagement\TopBar\RDMPTaskBar.resx">
       <DependentUpon>RDMPTaskBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WindowManagement\TopMenu\RDMPMenuStrip.resx">
+    <EmbeddedResource Include="Menus\RDMPMenuStrip.resx">
       <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowManagement\UserSettings\UserSettingsFileUI.resx">

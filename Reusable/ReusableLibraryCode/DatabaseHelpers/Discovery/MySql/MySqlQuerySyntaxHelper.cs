@@ -31,7 +31,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return new TopXResponse("LIMIT " + x,QueryComponent.Postfix);
         }
 
-        public override string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request)
+        public override string GetParameterDeclaration(string proposedNewParameterName, string sqlType)
         {
             //MySql doesn't require parameter declaration you just start using it like javascript
             return "/*" + proposedNewParameterName + "*/";

@@ -752,10 +752,8 @@ namespace CatalogueManager.MainFormUITabs
             // 
             this.objectSaverButton1.Location = new System.Drawing.Point(133, 247);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(266, 32);
             this.objectSaverButton1.TabIndex = 164;
-            this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // label34
             // 
@@ -920,7 +918,6 @@ namespace CatalogueManager.MainFormUITabs
             this.Controls.Add(this.splitContainer1);
             this.Name = "CatalogueTab";
             this.Size = new System.Drawing.Size(717, 940);
-            this.Leave += new System.EventHandler(this.CatalogueTab_Leave);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);

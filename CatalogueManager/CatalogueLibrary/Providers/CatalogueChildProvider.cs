@@ -32,7 +32,7 @@ namespace CatalogueLibrary.Providers
 
         //Catalogue side of things
         public Catalogue[] AllCatalogues { get; set; }
-
+        
         public SupportingDocument[] AllSupportingDocuments { get; set; }
         public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
@@ -73,6 +73,8 @@ namespace CatalogueLibrary.Providers
 
         public JoinInfo[] AllJoinInfos { get; set; }
 
+        public AnyTableSqlParameter[] AllAnyTableParameters;
+
         //Filter / extraction side of things
 
         private Dictionary<int,ExtractionInformation> _allExtractionInformations;
@@ -91,6 +93,8 @@ namespace CatalogueLibrary.Providers
         {
             PluginChildProviders = pluginChildProviders;
             _errorsCheckNotifier = errorsCheckNotifier;
+
+            AllAnyTableParameters = repository.GetAllObjects<AnyTableSqlParameter>();
 
             AllANOTables = repository.GetAllObjects<ANOTable>();
             ANOTablesNode = new ANOTablesNode();
@@ -397,7 +401,7 @@ namespace CatalogueLibrary.Providers
                 childObjects.Add(cohortNode);
 
                 //we also record all the Aggregates that are cohorts under us - but since these are also under Cohort Aggregates we will ignore it for descendancy purposes
-                var nodeDescendancy = descendancy.SetBetterRouteExists().Add(cohortNode);
+                var nodeDescendancy = descendancy.Add(cohortNode);
 
                 AddToDictionaries(new HashSet<object>(cohortAggregates),nodeDescendancy);
                 foreach (AggregateConfiguration cohortAggregate in cohortAggregates)
@@ -442,16 +446,24 @@ namespace CatalogueLibrary.Providers
 
         private void AddChildren(AggregateConfiguration aggregateConfiguration, DescendancyList descendancy)
         {
+            var childrenObjects = new HashSet<object>();
+
+            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
+            var node = new ParametersNode(aggregateConfiguration, parameters);
+            childrenObjects.Add(node);
+
             //we can step into this twice, once via Catalogue children and once via CohortIdentificationConfiguration children
             //if we get in via Catalogue children then descendancy will be Ignore=true we don't end up emphasising into CatalogueCollectionUI when
             //really user wants to see it in CohortIdentificationCollectionUI
             if(aggregateConfiguration.RootFilterContainer_ID != null)
             {
                 var container = _filterChildProvider.AllAggregateContainers[(int) aggregateConfiguration.RootFilterContainer_ID];
-
+                
                 AddChildren(container,descendancy.Add(container));
-                AddToDictionaries(new HashSet<object>(new object[]{container}),descendancy);
+                childrenObjects.Add(container);
             }
+
+            AddToDictionaries(childrenObjects, descendancy);
         }
 
         private void AddChildren(AggregateFilterContainer container, DescendancyList descendancy)
@@ -572,20 +584,25 @@ namespace CatalogueLibrary.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
+            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(cic)).Cast<ISqlParameter>().ToArray();
+            var node = new ParametersNode(cic, parameters);
+
+            children.Add(node);
+
             //if it has a root container
             if (cic.RootCohortAggregateContainer_ID != null)
             {
                 var container = _cohortContainerChildProvider.AllContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
-                AddChildren(container,new DescendancyList(cic,container));
+                AddChildren(container, new DescendancyList(cic, container).SetBetterRouteExists());
                 children.Add(container);
             }
             
             //get the patient index tables
             var joinableNode = new JoinableCollectionNode(cic, _cohortContainerChildProvider.AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
-            AddChildren(joinableNode,new DescendancyList(cic,joinableNode));
+            AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());
             children.Add(joinableNode);
 
-            AddToDictionaries(children,new DescendancyList(cic));
+            AddToDictionaries(children, new DescendancyList(cic));
         }
 
         private void AddChildren(JoinableCollectionNode joinablesNode, DescendancyList descendancy)
@@ -768,7 +785,7 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        public Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
+        public virtual Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
             var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
 
@@ -781,7 +798,7 @@ namespace CatalogueLibrary.Providers
             return toReturn;
         }
 
-        private void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
+        protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {
             foreach (IMapsDirectlyToDatabaseTable m in toAdd)
                 toReturn.Add(m, null);

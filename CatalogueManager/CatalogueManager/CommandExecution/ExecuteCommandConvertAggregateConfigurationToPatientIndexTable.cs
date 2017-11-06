@@ -1,6 +1,7 @@
 ﻿using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
@@ -8,15 +9,13 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicCommandExecution
+    public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicUICommandExecution
     {
         private readonly AggregateConfigurationCommand _sourceAggregateConfigurationCommand;
         private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IActivateItems activator, AggregateConfigurationCommand sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration)
+        
+        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IActivateItems activator, AggregateConfigurationCommand sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
         {
-            _activator = activator;
             _sourceAggregateConfigurationCommand = sourceAggregateConfigurationCommand;
             _cohortIdentificationConfiguration = cohortIdentificationConfiguration;
 
@@ -41,8 +40,8 @@ namespace CatalogueManager.CommandExecution
                 parent.RemoveChild(sourceAggregate);
 
             //create a new patient index table usage allowance for this aggregate
-            new JoinableCohortAggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_cohortIdentificationConfiguration));
+            new JoinableCohortAggregateConfiguration(Activator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
+            Publish(_cohortIdentificationConfiguration);
         }
     }
 }

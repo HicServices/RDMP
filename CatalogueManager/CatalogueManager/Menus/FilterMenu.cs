@@ -17,7 +17,7 @@ namespace CatalogueManager.Menus
 {
     public class FilterMenu : RDMPContextMenuStrip
     {
-        public FilterMenu(IActivateItems activator, IFilter filter, ICoreIconProvider coreIconProvider):base(activator,(DatabaseEntity)filter)
+        public FilterMenu(IActivateItems activator, IFilter filter):base(activator,(DatabaseEntity)filter)
         {
             var cata = filter.GetCatalogue();
 
@@ -25,10 +25,10 @@ namespace CatalogueManager.Menus
 
             if (columnInfo != null)
             {
-                Items.Add("View Extract", coreIconProvider.GetImage(RDMPConcept.TableInfo,OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewTableInfoExtractUICollection(columnInfo.TableInfo, ViewType.TOP_100, filter)));
-                Items.Add("View Extract (" + columnInfo.GetRuntimeName() + ")", coreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.TOP_100, filter)));
+                Items.Add("View Extract", GetImage(RDMPConcept.TableInfo,OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewTableInfoExtractUICollection(columnInfo.TableInfo, ViewType.TOP_100, filter)));
+                Items.Add("View Extract (" + columnInfo.GetRuntimeName() + ")", GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.TOP_100, filter)));
                 //create right click context menu
-                Items.Add("View Aggreggate (of " + columnInfo.GetRuntimeName() + ")", coreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.Aggregate, filter)));
+                Items.Add("View Aggreggate (of " + columnInfo.GetRuntimeName() + ")", GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.Aggregate, filter)));
 
             }
             
@@ -39,12 +39,12 @@ namespace CatalogueManager.Menus
 
                 if (compatibleGraphs.Any())
                 {
-                    var graphMenu = new ToolStripMenuItem("View Aggregate Graph of Filter",coreIconProvider.GetImage(RDMPConcept.AggregateGraph));
+                    var graphMenu = new ToolStripMenuItem("View Aggregate Graph of Filter",GetImage(RDMPConcept.AggregateGraph));
 
                     foreach (AggregateConfiguration graph in compatibleGraphs)
                     {
                         var collection = new FilterGraphObjectCollection(graph, (ConcreteFilter)filter);
-                        graphMenu.DropDownItems.Add(graph.Name,coreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Filter),(s, e) => _activator.ViewFilterGraph(this, collection));
+                        graphMenu.DropDownItems.Add(graph.Name,GetImage(RDMPConcept.AggregateGraph, OverlayKind.Filter),(s, e) => _activator.ViewFilterGraph(this, collection));
                     }
                     Items.Add(graphMenu);
                 }

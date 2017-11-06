@@ -1,3 +1,4 @@
+using System;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories

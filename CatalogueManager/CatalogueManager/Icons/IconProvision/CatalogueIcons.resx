@@ -277,9 +277,6 @@
   <data name="CatalogueItemIssue" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CatalogueItemIssue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CohortsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="CustomDataTableNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CustomDataTableNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -306,9 +303,6 @@
   </data>
   <data name="CloneExtractionConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CloneExtractionConfiguration.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CohortsSourceDetailedCounts" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CohortsSourceDetailedCounts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CustomDataTableNotActive" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CustomDataTableNotActive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -516,5 +510,17 @@
   </data>
   <data name="Pipeline" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Pipeline.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtractionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ExtractionConfigurationsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\CohortsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProjectCohortIdentificationConfigurationAssociationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ProjectCohortIdentificationConfigurationAssociationsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProjectSavedCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ProjectSavedCohortsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

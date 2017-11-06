@@ -9,6 +9,8 @@ using CatalogueManager.Refreshing;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
@@ -26,8 +28,8 @@ namespace CatalogueManager.Menus
             AddMenuItem(setUsage, DataAccessContext.Logging, node);
             
             Items.Add(setUsage);
-            Items.Add(new ViewDependenciesToolStripMenuItem(node.Credentials,
-                new CatalogueObjectVisualisation(activator.CoreIconProvider)));
+
+            Add(new ExecuteCommandViewDependencies(node.Credentials,new CatalogueObjectVisualisation(activator.CoreIconProvider)));
         }
 
         private void AddMenuItem(ToolStripMenuItem setUsage, DataAccessContext context, DataAccessCredentialUsageNode node)
@@ -40,7 +42,7 @@ namespace CatalogueManager.Menus
         private void SetContext(DataAccessContext destinationContext, DataAccessCredentialUsageNode node)
         {
             RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.SetContextFor(node,destinationContext);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(node.TableInfo));
+            Publish(node.TableInfo);
 
         }
     }

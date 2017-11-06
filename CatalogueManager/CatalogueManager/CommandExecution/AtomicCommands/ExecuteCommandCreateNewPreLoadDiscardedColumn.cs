@@ -14,19 +14,19 @@ using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly TableInfo _tableInfo;
         private ColumnInfo[] _prototypes;
 
-        public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator,TableInfo tableInfo)
+        public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator,TableInfo tableInfo) : base(activator)
         {
-            _activator = activator;
             _tableInfo = tableInfo;
         }
 
@@ -82,12 +82,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         private void Publish()
         {
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
+            Publish(_tableInfo);
         }
 
         private void Create(string name, string dataType)
         {
-            var discCol = new PreLoadDiscardedColumn(_activator.RepositoryLocator.CatalogueRepository, _tableInfo, name);
+            var discCol = new PreLoadDiscardedColumn(Activator.RepositoryLocator.CatalogueRepository, _tableInfo, name);
             discCol.SqlDataType = dataType;
             discCol.SaveToDatabase();
         }

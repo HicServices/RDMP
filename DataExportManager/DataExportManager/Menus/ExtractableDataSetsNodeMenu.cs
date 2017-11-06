@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,10 +13,10 @@ using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Nodes;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -26,7 +27,8 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ExtractableDataSetsNodeMenu:RDMPContextMenuStrip
     {
-        public ExtractableDataSetsNodeMenu(IActivateDataExportItems activator)
+        [ImportingConstructor]
+        public ExtractableDataSetsNodeMenu(IActivateItems activator,ExtractableDataSetsNode node)
             : base(activator,null)
         {
 
@@ -41,7 +43,7 @@ namespace DataExportManager.Menus
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var newPackage = new ExtractableDataSetPackage(RepositoryLocator.DataExportRepository, dialog.ResultText);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(newPackage));
+                Publish(newPackage);
             }
         }
 
@@ -58,7 +60,7 @@ namespace DataExportManager.Menus
                 foreach (Catalogue c in dialog.MultiSelected)
                 {
                     var ds = new ExtractableDataSet(RepositoryLocator.DataExportRepository,c);
-                    _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(ds));
+                    Publish(ds);
                 }
             
         }

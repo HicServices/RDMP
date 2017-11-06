@@ -234,14 +234,9 @@ namespace CohortManagerLibrary.Execution
 
             var t = new Thread(() => DoTaskAsync(task, execution, timeout));
             Threads.Add(t);
-            t.Start();    
+            t.Start();
         }
-
-        public CompilationState GetState(AggregateConfiguration copnfiguration)
-        {
-            return CompilationState.NotScheduled;       
-        }
-
+        
         public int GetRowCount(AggregateConfiguration aggregate)
         {
             return -1;

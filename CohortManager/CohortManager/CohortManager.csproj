@@ -158,6 +158,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CohortManagerPluginUserInterface.cs" />
     <Compile Include="Collections\CohortIdentificationCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -169,33 +170,28 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CohortIdentificationIcons.resx</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCohortAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortIdentificationConfiguration.cs" />
-    <Compile Include="ItemActivation\IActivateCohortIdentificationItems.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortIdentificationConfiguration.cs" />
     <Compile Include="Menus\CohortAggregateContainerMenu.cs" />
     <Compile Include="Menus\CohortIdentificationConfigurationMenu.cs" />
     <Compile Include="Menus\JoinableCollectionNodeMenu.cs" />
-    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraph.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraphObjectCollection.cs" />
-    <Compile Include="SubComponents\EmptyLineElements\CohortIdentificationHeader.cs" />
-    <Compile Include="SubComponents\ExecuteCohortIdentificationConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SubComponents\ExecuteCohortIdentificationConfigurationUI.Designer.cs">
-      <DependentUpon>ExecuteCohortIdentificationConfigurationUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.Designer.cs">
-      <DependentUpon>ViewCohortIdentificationConfigurationUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="SubComponents\CohortIdentificationConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SubComponents\CohortIdentificationConfigurationUI.Designer.cs">
       <DependentUpon>CohortIdentificationConfigurationUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraph.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraphObjectCollection.cs" />
+    <Compile Include="SubComponents\EmptyLineElements\CohortIdentificationHeader.cs" />
+    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SubComponents\ViewCohortIdentificationConfigurationUI.Designer.cs">
+      <DependentUpon>ViewCohortIdentificationConfigurationUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SubComponents\CohortCompilerUI.cs">
       <SubType>UserControl</SubType>
@@ -242,9 +238,6 @@
       <LastGenOutput>CohortIdentificationIcons.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SubComponents\ExecuteCohortIdentificationConfigurationUI.resx">
-      <DependentUpon>ExecuteCohortIdentificationConfigurationUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SubComponents\CohortIdentificationConfigurationUI.resx">
       <DependentUpon>CohortIdentificationConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -282,7 +275,6 @@
     <EmbeddedResource Include="Wizard\SimpleSetOperation.resx">
       <DependentUpon>SimpleSetOperation.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="CohortManager_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -313,6 +305,10 @@
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataExportManager\DataExportManager\DataExportManager.csproj">
+      <Project>{7665AFDE-002D-4A53-B3B8-AE17BC8F2BBA}</Project>
+      <Name>DataExportManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
       <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>

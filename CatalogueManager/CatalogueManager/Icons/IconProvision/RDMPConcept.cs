@@ -77,6 +77,8 @@ namespace CatalogueManager.Icons.IconProvision
         
         CohortsNode,
         ProjectsNode,
+        ProjectCohortIdentificationConfigurationAssociationsNode,
+        ProjectSavedCohortsNode,
         ExtractableDataSetsNode,
         ExtractionFolderNode,
         CustomDataTableNode,
@@ -99,6 +101,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllProcessTasksUsedByLoadMetadataNode,
         AllCataloguesUsedByLoadMetadataNode,
         LoadMetadataScheduleNode,
+        Logging,
 
         GetFilesStage,
         LoadBubbleMounting,
@@ -108,6 +111,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllExternalServersNode,
         DecryptionPrivateKeyNode,
         PreLoadDiscardedColumnsNode,
+        ExtractionConfigurationsNode,
 
         PermissionWindow,
         Pipeline

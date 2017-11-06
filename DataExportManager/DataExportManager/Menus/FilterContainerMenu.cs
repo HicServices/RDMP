@@ -6,13 +6,13 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using RDMPStartup;
 using ReusableUIComponents.Icons.IconProvision;
 
@@ -21,14 +21,13 @@ namespace DataExportManager.Menus
     public class FilterContainerMenu : RDMPContextMenuStrip
     {
         private readonly FilterContainer _filterContainer;
-        private readonly SelectedDataSets _rootSelectedDataSets;
         private ExtractionFilter[] _importableFilters;
 
-        public FilterContainerMenu(IActivateDataExportItems activator, FilterContainer filterContainer, SelectedDataSets rootSelectedDataSets):base(activator,filterContainer)
+        public FilterContainerMenu(IActivateItems activator, FilterContainer filterContainer):base(activator,filterContainer)
         {
             _filterContainer = filterContainer;
-            _rootSelectedDataSets= rootSelectedDataSets;
-            _importableFilters = _rootSelectedDataSets.ExtractableDataSet.Catalogue.GetAllFilters();
+            
+            _importableFilters = filterContainer.GetSelectedDataSetIfAny().ExtractableDataSet.Catalogue.GetAllFilters();
 
             string operationTarget = filterContainer.Operation == FilterContainerOperation.AND ? "OR" : "AND";
 
@@ -55,14 +54,14 @@ namespace DataExportManager.Menus
                 : FilterContainerOperation.AND;
 
             _filterContainer.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+            Publish(_filterContainer);
         }
 
         private void AddSubcontainer()
         {
             var newContainer = new FilterContainer(RepositoryLocator.DataExportRepository);
             _filterContainer.AddChild(newContainer);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+            Publish(_filterContainer);
         }
 
         private void ImportFilter()
@@ -72,7 +71,7 @@ namespace DataExportManager.Menus
             if(newFilter != null)
             {
                 _filterContainer.AddChild((DeployedExtractionFilter)newFilter);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+                Publish(_filterContainer);
             }
 
         }
@@ -82,8 +81,8 @@ namespace DataExportManager.Menus
         private void AddBlankFilter()
         {
             var newFilter = new DeployedExtractionFilter(RepositoryLocator.DataExportRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            _activator.ActivateFilter(this,newFilter);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
+            Activate(newFilter);
+            Publish(_filterContainer);
         }
     }
 }

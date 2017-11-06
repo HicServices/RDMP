@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
+using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
@@ -53,6 +55,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 return DatabaseObject.ToString();
 
             return "Unamed Tab";
+        }
+        
+        public void Publish(DatabaseEntity e)
+        {
+            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
     }
 }

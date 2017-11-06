@@ -331,34 +331,6 @@ namespace CatalogueLibrary.Repositories
             return SelectAll<Catalogue>("SELECT * FROM AutomationLockedCatalogues", "Catalogue_ID").ToArray();
         }
 
-        private Type[] _compatibleTypes;
-        public IMapsDirectlyToDatabaseTable[] GetEverySingleObjectInEntireDatabase()
-        {
-            List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();
-
-            if (_compatibleTypes == null)
-                _compatibleTypes = GetCompatibleTypes();
-
-            foreach (var type in _compatibleTypes)
-                toReturn.AddRange(GetAllObjects(type));
-
-            return toReturn.ToArray();
-        }
-
-        /// <summary>
-        /// Gets all the c# class types that come from the database
-        /// </summary>
-        /// <returns></returns>
-        private Type[] GetCompatibleTypes()
-        {
-            return
-                typeof (CatalogueRepository).Assembly.GetTypes()
-                    .Where(
-                        t =>
-                            typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface &&
-                            !t.Name.Contains("Spontaneous")).ToArray();
-        }
-
         public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
         {
             var servers = GetAllObjects<ExternalDatabaseServer>();

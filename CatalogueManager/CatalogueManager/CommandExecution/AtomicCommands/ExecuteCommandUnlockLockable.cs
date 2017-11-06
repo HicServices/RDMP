@@ -6,21 +6,21 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandUnlockLockable : BasicCommandExecution,IAtomicCommand
+    internal class ExecuteCommandUnlockLockable : BasicUICommandExecution,IAtomicCommand
     {
-        private IActivateItems _activator;
         private ILockable _lockable;
 
-        public ExecuteCommandUnlockLockable(IActivateItems activator, ILockable lockable)
+        public ExecuteCommandUnlockLockable(IActivateItems activator, ILockable lockable) : base(activator)
         {
             if(!lockable.LockedBecauseRunning)
                 SetImpossible("Lockable is not locked");
             
-            _activator = activator;
             _lockable = lockable;
 
         }
@@ -35,7 +35,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var entity = _lockable as DatabaseEntity;
 
             if(entity != null)
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(entity));
+                Publish(entity);
         }
 
         public Image GetImage(IIconProvider iconProvider)

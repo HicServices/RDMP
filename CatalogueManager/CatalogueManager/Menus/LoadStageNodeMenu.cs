@@ -76,8 +76,8 @@ namespace CatalogueManager.Menus
             newTask.Name = type.Name;
 
             newTask.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(lmd));
-            _activator.ActivateProcessTask(this,newTask);
+            Publish(lmd);
+            Activate(newTask);
         }
     }
 }

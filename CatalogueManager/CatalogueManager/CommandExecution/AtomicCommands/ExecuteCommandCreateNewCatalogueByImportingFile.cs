@@ -9,14 +9,14 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewCatalogueByImportingFile:BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewCatalogueByImportingFile:BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
-
         public CatalogueFolder TargetFolder { get; set; }
 
         public FileInfo File { get; private set; }
@@ -34,9 +34,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("Only CSV or XLS files can be imported as New Catalogues");
         }
 
-        public ExecuteCommandCreateNewCatalogueByImportingFile(IActivateItems activator, FileInfo file = null)
+        public ExecuteCommandCreateNewCatalogueByImportingFile(IActivateItems activator, FileInfo file = null) : base(activator)
         {
-            _activator = activator;
             File = file;
             CheckFile();
         }
@@ -46,7 +45,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            new CreateNewCatalogueByImportingFileUI(_activator, this).ShowDialog();
+            new CreateNewCatalogueByImportingFileUI(Activator, this).ShowDialog();
         }
 
         public Image GetImage(IIconProvider iconProvider)

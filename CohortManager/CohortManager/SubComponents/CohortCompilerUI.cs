@@ -2,9 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -14,8 +18,9 @@ using CatalogueLibrary.Nodes;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManager.ItemActivation;
+using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents.EmptyLineElements;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary;
@@ -82,45 +87,18 @@ namespace CohortManager.SubComponents
     /// 
     /// 
     /// </summary>
-    public partial class CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing
+    public partial class 
+        CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing, IRefreshBusSubscriber
     {
-        public event EventHandler SelectionChanged;
-        private CohortIdentificationConfiguration _configuration;
         private CohortAggregateContainer _root;
-
+        private CohortIdentificationConfiguration _cic;
         private CohortCompiler Compiler = new CohortCompiler(null);
-        private ExternalDatabaseServer QueryCachingServer;
-        
+        private ExternalDatabaseServer _queryCachingServer;
+
+        private int _timeout = 3000;
+
         private ISqlParameter[] _globals;
-
-        public EventHandler ConfigurationChanged;
-
-        public object SelectedObject
-        {
-            get { return tlvConfiguration.SelectedObject; }
-        }
-
-        public CohortIdentificationConfiguration Configuration
-        {
-            get { return _configuration; }
-            private set
-            {
-                //they changed what we are pointing at so refresh from db
-                _configuration = value;
-
-                if (value != null && value.QueryCachingServer_ID != null)
-                    QueryCachingServer =
-                        value.QueryCachingServer;
-                else
-                    QueryCachingServer = null;
-
-                Compiler.CohortIdentificationConfiguration = value;
-
-                RefreshUIFromDatabase();
-            }
-        }
-
-
+        
         public CohortCompilerUI()
         {
             InitializeComponent();
@@ -128,19 +106,12 @@ namespace CohortManager.SubComponents
             if(VisualStudioDesignMode)
                 return;
 
-            Compiler.TaskCompleted += CompilerOnTaskCompleted;
-
-            RefreshUIFromDatabase();
-
             tlvConfiguration.CanExpandGetter += CanExpandGetter;
             tlvConfiguration.ChildrenGetter += ChildrenGetter;
             olvAggregate.ImageGetter += ImageGetter;
             tlvConfiguration.RowFormatter += RowFormatter;
-            
+            olvIdentifierCount.AspectGetter += RowCountAspectGetter;
             refreshThreadCountPeriodically.Start();
-
-            ddOptimisation.DataSource = Enum.GetValues(typeof(OptimisationStrategy));
-            ddOptimisation.SelectedItem = OptimisationStrategy.BasicOptimisation;
 
             tlvConfiguration.RowHeight = 19;
 
@@ -149,6 +120,16 @@ namespace CohortManager.SubComponents
             _cohortExceptImage = CatalogueIcons.EXCEPTCohortAggregate;
         }
 
+        #region Layout, Children Getting, Appearance etc
+        private object RowCountAspectGetter(object rowObject)
+        {
+            var compileable = rowObject as Compileable;
+
+            if (compileable != null && compileable.State == CompilationState.Finished)
+                return compileable.FinalRowCount;
+
+            return null;
+        }
 
         private void RowFormatter(OLVListItem olvItem)
         {
@@ -228,78 +209,6 @@ namespace CohortManager.SubComponents
         }
 
 
-        private void RefreshUIFromDatabase()
-        {
-            if (VisualStudioDesignMode || RepositoryLocator == null)
-                return;
-
-            var item = (OptimisationStrategy)ddOptimisation.SelectedItem;
-
-            switch (item)
-            {
-                case OptimisationStrategy.NoOptimisation:
-                    RecreateAllTasks();
-                    break;
-                case OptimisationStrategy.BasicOptimisation:
-                    using (RepositoryLocator.CatalogueRepository.SuperCachingMode())//Use super caching mode on
-                        RecreateAllTasks();
-                    break;
-                case OptimisationStrategy.PreCacheOptimisation:
-                    using (RepositoryLocator.CatalogueRepository.SuperCachingMode(new[] { typeof(AggregateDimension), typeof(ColumnInfo), typeof(TableInfo), typeof(ExtractionInformation), typeof(AnyTableSqlParameter), typeof(AggregateConfiguration), typeof(AggregateFilterContainer), typeof(AggregateFilterParameter)}))//Use super caching mode on if user has ticked the optimise button
-                        RecreateAllTasks();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            if (ConfigurationChanged != null)
-                ConfigurationChanged(this, new EventArgs());
-        }
-
-        private void RecreateAllTasks()
-        {
-
-            Compiler.CancelAllTasks(false);
-
-            tlvConfiguration.ClearObjects();
-
-            if (Configuration == null)
-                return;
-
-            //Do not allow autocaching if there isn't a cache server
-            if (Configuration.QueryCachingServer_ID == null)
-            {
-                cbAutoCache.Checked = false;
-                cbAutoCache.Enabled = false;
-            }
-            else
-                cbAutoCache.Enabled = true;
-
-            tlvConfiguration.Enabled = true;
-
-            Configuration.CreateRootContainerIfNotExists();
-            //if there is no root container,create one
-            _root = Configuration.RootCohortAggregateContainer;
-            _globals = Configuration.GetAllParameters();
-
-            //Could have configured/unconfigured a joinable state
-            foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTaskExecution>())
-                j.RefreshIsUsedState();
-
-            try
-            {
-                tlvConfiguration.AddObject(new CohortIdentificationHeader());
-                tlvConfiguration.AddObject(new JoinableCollectionNode(Configuration,Configuration.GetAllJoinables()));
-                tlvConfiguration.ExpandAll();
-            }
-            catch (Exception e)
-            {
-                tlvConfiguration.Enabled = false;
-                ExceptionViewer.Show("Failed to populate tree of Tasks", e);
-            }
-        }
-
-        #region children getting
         private bool CanExpandGetter(object model)
         {
             var container = model as AggregationContainerTask;
@@ -316,6 +225,7 @@ namespace CohortManager.SubComponents
 
             return false;
         }
+
         private IEnumerable ChildrenGetter(object model)
         {
             var containerTask = model as AggregationContainerTask;
@@ -327,428 +237,13 @@ namespace CohortManager.SubComponents
 
             var joinableColection = model as JoinableCollectionNode;
             if (joinableColection != null)
-                return Configuration.GetAllJoinables().Select(j=>Compiler.GetTask(j,_globals)).ToArray();
+                return _cic.GetAllJoinables().Select(j => Compiler.GetTask(j, _globals)).ToArray();
 
             if (model is CohortIdentificationHeader)
-                return new[] {Compiler.GetTask(_root, _globals)};
+                return new[] { Compiler.GetTask(_root, _globals) };
 
             return null;
         }
-
-
-        #endregion
-        
-        private void otvConfiguration_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-                DeleteSelectedItem();
-        }
-
-        private void DeleteSelectedItem()
-        {
-
-            try
-            {
-                var containerTask = tlvConfiguration.SelectedObject as AggregationContainerTask;
-
-                if (containerTask != null)
-                {
-                    if (Configuration.RootCohortAggregateContainer_ID ==
-                        ((IMapsDirectlyToDatabaseTable)containerTask.Container).ID)
-                    {
-                        MessageBox.Show("Cannot delete root container");
-                        return;
-                    }
-
-                    DialogResult result =
-                        MessageBox.Show("Are you sure you want to delete " + containerTask.Container + " from the database?",
-                            "Delete Record",
-                            MessageBoxButtons.YesNo);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        containerTask.Container.DeleteInDatabase();
-                        RefreshUIFromDatabase();
-                    }
-                }
-
-                var configurationTask = tlvConfiguration.SelectedObject as AggregationTask;
-
-                if (configurationTask != null)
-                {
-                    //it is likely they don't actually want to nuke the entire aggregate but instead just stop using it in this particular cohort generation activity
-                    containerTask = (AggregationContainerTask)tlvConfiguration.GetParent(configurationTask);
-                    containerTask.Container.RemoveChild(configurationTask.Aggregate);
-
-                    RefreshUIFromDatabase();
-                }
-
-                var joinableTask = tlvConfiguration.SelectedObject as JoinableTaskExecution;
-
-                if (joinableTask != null)
-                {
-                    ((IDeleteable)joinableTask.Child).DeleteInDatabase(); //will probably fail if anyone is using it?
-                    RefreshUIFromDatabase();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                ExceptionViewer.Show(ex);
-            }
-        }
-
-
-        private void otvConfiguration_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            try
-            {
-                var containerTask = e.HitTest.RowObject as AggregationContainerTask;
-                var configurationTask = e.HitTest.RowObject as AggregationTask;
-                var joinableTask = e.HitTest.RowObject as JoinableTaskExecution;
-
-                ICompileable compileable = e.HitTest.RowObject as ICompileable;
-                ICachableTask cachableTask = e.HitTest.RowObject as ICachableTask;
-
-            
-                //create right click context menu
-                var RightClickMenu = new ContextMenuStrip();
-
-                if (containerTask != null)
-                    if (containerTask.State == CompilationState.Crashed)
-                        RightClickMenu.Items.Add("View Crash Message", null,(o, args) => ExceptionViewer.Show(containerTask.CrashMessage));
-
-                //if it's a joinable or regular aggregate
-                if (configurationTask != null || joinableTask != null)
-                {
-                    if (compileable.State == CompilationState.Crashed)
-                        RightClickMenu.Items.Add("View Crash Message", null,
-                            (o, args) => ExceptionViewer.Show(compileable.CrashMessage));
-
-                    if (configurationTask != null)
-                        AddSummaryGraphOptions(configurationTask, RightClickMenu, cachableTask);
-                }
-
-                if (cachableTask != null)
-                {
-                    var cachingMenuItem = RightClickMenu.Items.Add("Save To Cache", null, (o, args) =>
-                    {
-                        //cache the task
-                        RightClickMenu_SaveToCache(cachableTask);
-                        //and refresh the interface
-                        RefreshUIFromDatabase();
-                    });
-                
-                    CachedAggregateConfigurationResultsManager manager = null;
-
-                    if(QueryCachingServer != null)
-                        manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
-
-                    var clearCachingMenuItem = RightClickMenu.Items.Add("Clear From Cache", null, (o, args) =>
-                    {
-                        //clear the one you right clicked
-                        cachableTask.ClearYourselfFromCache(manager);
-                        //and refresh the interface
-                        RefreshUIFromDatabase();
-                    });
-
-                    cachingMenuItem.Enabled =
-                        QueryCachingServer != null //there must be a caching server
-                        && cachableTask.State == CompilationState.Finished //execution must have finished
-                        && cachableTask.IsCacheableWhenFinished();//it can't already be cached
-
-                    clearCachingMenuItem.Enabled = 
-                        QueryCachingServer != null //there must be a caching server
-                        && cachableTask.CanDeleteCache(); //it must have been cached
-                }
-
-
-                if (compileable != null)
-                {
-                    var startThisTaskOnly = RightClickMenu.Items.Add("Start This Task Only", null, (o, args) => StartThisTaskOnly(compileable));
-                    startThisTaskOnly.Enabled = compileable.State == CompilationState.NotScheduled || compileable.State == CompilationState.Crashed;
-
-                    //if it's a container task
-                    if (containerTask != null)
-                    {
-                        AddSummaryGraphOptions(containerTask.Container,RightClickMenu,containerTask);
-                    }
-
-                }
-            
-                if(RightClickMenu.Items.Count >0)
-                    RightClickMenu.Show(tlvConfiguration,e.Location);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
-
-        private void AddSummaryGraphOptions(CohortAggregateContainer cohortAggregateContainer, ContextMenuStrip rightClickMenu, AggregationContainerTask containerTask)
-        {
-            var repository = cohortAggregateContainer.Repository;
-            var availableGraphs = repository.GetAllObjects<AggregateConfiguration>().Where(g => !g.IsCohortIdentificationAggregate).ToArray();
-            var allCatalogues = repository.GetAllObjectsInIDList<Catalogue>(availableGraphs.Select(g => g.Catalogue_ID).Distinct()).ToArray();
-
-            var heading1 = new ToolStripMenuItem("Generate Summary Graph (ExtractionIdentifier IN)",CatalogueIcons.Graph);
-
-            if (availableGraphs.Any())
-                foreach (var cata in allCatalogues.OrderBy(c => c.Name))
-                {
-                    var catalogueSubheading = new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue);
-
-                    int cId = cata.ID;
-                    foreach (var graph in availableGraphs.Where(g => g.Catalogue_ID == cId))
-                    {
-                        AggregateConfiguration toExecute = graph;
-                        var menuItem = new ToolStripMenuItem(graph.Name, null,
-                            (s, e) => LaunchSummaryGraph(cohortAggregateContainer, toExecute));
-                        catalogueSubheading.DropDownItems.Add(menuItem);
-                    }
-
-                    heading1.DropDownItems.Add(catalogueSubheading);
-                }
-
-            rightClickMenu.Items.Add(heading1);
-            heading1.Enabled = containerTask.AreaAllQueriesCached();
-
-            if (!heading1.Enabled)
-                heading1.Text += " (Requires 100% cached)";
-
-
-        }
-
-
-        private void AddSummaryGraphOptions(AggregationTask configurationTask, ContextMenuStrip rightClickMenu, ICachableTask cachableTask)
-        {
-            var cohort = (AggregateConfiguration) configurationTask.Child;
-            var compatibleAggregates = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(cohort);
-
-            if (compatibleAggregates.Any())
-            {
-                var heading1 = new ToolStripMenuItem("Generate Summary Graph (ExtractionIdentifier IN)",CatalogueIcons.Graph);
-                var heading2 = new ToolStripMenuItem("Generate Summary Graph (Records IN)", CatalogueIcons.Graph);
-
-                foreach (AggregateConfiguration aggregate in compatibleAggregates)
-                {
-                    AggregateConfiguration aggregate1 = aggregate;
-                    var item = new ToolStripMenuItem(aggregate.ToString(), CatalogueIcons.CohortAggregate,
-                        (o, args) =>
-                            LaunchSummaryGraph(cohort,aggregate1, CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
-                    heading1.DropDownItems.Add(item);
-
-                    var item2 = new ToolStripMenuItem(aggregate.ToString(), CatalogueIcons.CohortAggregate,
-                        (o, args) => LaunchSummaryGraph(cohort, aggregate1, CohortSummaryAdjustment.WhereRecordsIn));
-                    heading2.DropDownItems.Add(item2);
-                }
-
-                //LaunchAll
-                if (compatibleAggregates.Length > 1)
-                {
-                    var item = new ToolStripMenuItem("Launch All Graphs", null,
-                        (o, args) =>
-                            LaunchAllSummaryGraphs(cohort,compatibleAggregates,CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
-                    heading1.DropDownItems.Add(item);
-
-                    var item2 = new ToolStripMenuItem("Launch All Graphs", null,
-                        (o, args) =>
-                            LaunchAllSummaryGraphs(cohort,compatibleAggregates, CohortSummaryAdjustment.WhereRecordsIn));
-                    heading2.DropDownItems.Add(item2);
-                }
-
-                rightClickMenu.Items.Add(heading1);
-                rightClickMenu.Items.Add(heading2);
-
-
-                if (!cachableTask.CanDeleteCache())
-                {
-                    heading1.Text += " (Requires Cached Query)";
-                    heading1.Enabled = false;
-                }
-            }
-        }
-
-        private void LaunchAllSummaryGraphs(AggregateConfiguration cohort, AggregateConfiguration[] compatibleAggregates, CohortSummaryAdjustment adjustment)
-        {
-            foreach (AggregateConfiguration aggregateConfiguration in compatibleAggregates)
-                LaunchSummaryGraph(cohort, aggregateConfiguration, adjustment);
-        }
-
-        private void LaunchSummaryGraph( AggregateConfiguration cohort,AggregateConfiguration aggregate, CohortSummaryAdjustment adjustment)
-        {
-            ((IActivateCohortIdentificationItems)_activator).ExecuteCohortSummaryGraph(this,new CohortSummaryAggregateGraphObjectCollection(cohort, aggregate,adjustment));
-        }
-        
-        private void LaunchSummaryGraph(CohortAggregateContainer cohortAggregateContainer, AggregateConfiguration graph)
-        {
-            ((IActivateCohortIdentificationItems)_activator).ExecuteCohortSummaryGraph(this, new CohortSummaryAggregateGraphObjectCollection(cohortAggregateContainer, graph));
-        }
-        private void StartThisTaskOnly(ICompileable configurationTask)
-        {
-
-            //if it is in crashed state
-            if(configurationTask.State == CompilationState.Crashed)
-            {
-                //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
-                Compiler.CancelTask(configurationTask,true);
-
-                //refresh the task list, this will pick up the orphaned .Child and create a new task for it in the Compiler
-                RefreshUIFromDatabase();
-
-                //fetch the new task for the child and make that the one we start (below)
-                configurationTask = Compiler.Tasks.Single(t => t.Key.Child.Equals(configurationTask.Child)).Key;
-            }
-
-
-            //Task is now in state NotScheduled so we can start it
-            Compiler.LaunchSingleTask(configurationTask,_timeout);
-        }
-
-
-        private void RightClickMenu_SaveToCache(ICachableTask configurationTask)
-        {
-            try
-            {
-                CacheConfigurationResults(configurationTask);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
-        
-        private void CacheConfigurationResults(ICachableTask cachable)
-        {
-            CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
-            
-            var explicitTypes = new List<DatabaseColumnRequest>();
-            
-            AggregateConfiguration configuration = cachable.GetAggregateConfiguration();
-            try
-            {
-                ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c=>c.IsExtractionIdentifier).ColumnInfo;
-                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache",e);
-            }
-
-            CacheCommitArguments args = cachable.GetCacheArguments(Compiler.Tasks[cachable].CountSQL, Compiler.Tasks[cachable].Identifiers, explicitTypes.ToArray());
-
-            manager.CommitResults(args);
-        }
-  
-
-        private void otvConfiguration_ItemActivate(object sender, EventArgs e)
-        {
-            var containerTask = tlvConfiguration.SelectedObject as AggregationContainerTask;
-            
-            if(containerTask != null && containerTask.CrashMessage != null)
-                ExceptionViewer.Show(containerTask.CrashMessage);
-
-            var c = tlvConfiguration.SelectedObject as Compileable;
-
-            if(c!= null)
-            {
-                var child = c.Child;
-
-                var joinable = child as JoinableCohortAggregateConfiguration;
-                if (joinable != null)
-                    child = joinable.AggregateConfiguration;
-
-                if (child != null)
-                    _activator.RequestItemEmphasis(this,new EmphasiseRequest(child));
-            }
-        }
-
-
-        private void otvConfiguration_SelectionChanged(object sender, EventArgs e)
-        {
-            UpdateRunnablesButtons();
-
-            tlvConfiguration.RefreshObjects(tlvConfiguration.Objects.OfType<Compileable>().ToList());
-
-        }
-
-        private void UpdateRunnablesButtons()
-        {
-            if (Configuration == null)
-                return;
-            
-            var selectedRunnables = GetRunableTasks(true).ToArray();
-            //if user has selected at least 1 unscheduled task then we can schedule it
-            btnStartSelected.Enabled = selectedRunnables.Any();
-            btnStartSelected.Text = string.Format("Selected ({0})", selectedRunnables.Length);
-
-            //if there is no caching 
-            if (Configuration.QueryCachingServer_ID == null)
-            {
-                //disable the cache selected tasks button
-                btnCacheSelected.Enabled = false;
-                return;
-            }
-
-            //caching is supported but... are there any selected aggregates that could be cached
-            var cachables = GetSelectedCachableTasks().ToArray();
-            btnCacheSelected.Enabled = cachables.Any();
-            btnCacheSelected.Text = string.Format("Cache ({0})", cachables.Length);
-
-            var clearables = GetCacheClearableTasks(true).ToArray();
-            btnClearCacheForSelected.Enabled = clearables.Any();
-            btnClearCacheForSelected.Text = string.Format("Clear ({0})", clearables.Length);
-
-            btnClearCacheAll.Enabled = GetCacheClearableTasks(false).Any();
-        }
-
-        private void otvConfiguration_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (SelectionChanged != null)
-                SelectionChanged(sender, e);
-        }
-
-        private IEnumerable<ICachableTask> GetSelectedCachableTasks()
-        {
-            return
-                tlvConfiguration.SelectedObjects.OfType<ICachableTask>()
-                    .Where(t => t.State == CompilationState.Finished && t.IsCacheableWhenFinished());
-        }
-        private IEnumerable<ICachableTask> GetCacheClearableTasks(bool selectedOnly)
-        {
-            if (selectedOnly)
-                return tlvConfiguration.SelectedObjects.OfType<ICachableTask>().Where(t =>!t.IsCacheableWhenFinished());
-
-            return Compiler.Tasks.Keys.OfType<ICachableTask>().Where(t => !t.IsCacheableWhenFinished());
-        }
-        private IEnumerable<ICompileable> GetRunableTasks(bool selectedOnly)
-        {
-            if(selectedOnly)
-                return tlvConfiguration.SelectedObjects.OfType<ICompileable>().Where(t => t.State == CompilationState.NotScheduled);
-
-            return Compiler.Tasks.Keys.Where(t => t.State == CompilationState.NotScheduled);
-        }
-        public CohortIdentificationTaskExecution GetSelectedTaskExecutionResultsIfAny()
-        {
-            var task = SelectedObject as ICompileable;
-            if(task != null)
-                if (Compiler.Tasks.ContainsKey(task))
-                    return Compiler.Tasks[task];
-
-            return null;
-        }
-
-        public string GetSelectedTaskSQLIfAny()
-        {
-            var task = SelectedObject as ICompileable;
-            if(task != null)
-                if(Compiler.Tasks.ContainsKey(task))
-                    return Compiler.Tasks[task].CountSQL;
-
-            return null;
-        }
-
-        private int _timeout = 300;
 
         private void tbTimeout_TextChanged(object sender, EventArgs e)
         {
@@ -764,78 +259,271 @@ namespace CohortManager.SubComponents
             }
         }
 
-        private void btnStartAll_Click(object sender, EventArgs e)
-        {
-            Reset();
 
-            Compiler.LaunchScheduledTasksAsync(_timeout);
+        #endregion
+
+        private bool _haveSubscribed = false;
+        public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
+        {
+            _cic = databaseObject;
+
+            base.SetDatabaseObject(activator, databaseObject);
+
+            if (!_haveSubscribed)
+            {
+                activator.RefreshBus.Subscribe(this);
+                _haveSubscribed = true;
+            }
+
+            _queryCachingServer = _cic.QueryCachingServer;
+            Compiler.CohortIdentificationConfiguration = _cic;
+            CoreIconProvider = activator.CoreIconProvider;
+            RecreateAllTasks();
         }
 
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+            var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
-        private void btnCancel_Click(object sender, EventArgs e)
+            //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
+            if (descendancy != null && descendancy.Parents.Contains(_cic))
+                RecreateAllTasks();
+        }
+        
+        private void RecreateAllTasks()
         {
             Compiler.CancelAllTasks(false);
+
+            tlvConfiguration.ClearObjects();
+            
+            tlvConfiguration.Enabled = true;
+
+            _cic.CreateRootContainerIfNotExists();
+            //if there is no root container,create one
+            _root = _cic.RootCohortAggregateContainer;
+            _globals = _cic.GetAllParameters();
+
+            //Could have configured/unconfigured a joinable state
+            foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTaskExecution>())
+                j.RefreshIsUsedState();
+
+            try
+            {
+                tlvConfiguration.AddObject(new CohortIdentificationHeader());
+                tlvConfiguration.AddObject(new JoinableCollectionNode(_cic, _cic.GetAllJoinables()));
+                tlvConfiguration.ExpandAll();
+            }
+            catch (Exception e)
+            {
+                tlvConfiguration.Enabled = false;
+                ExceptionViewer.Show("Failed to populate tree of Tasks", e);
+            }
+        }
+        
+        public ICompileable GetTask(IMapsDirectlyToDatabaseTable o)
+        {
+            return Compiler.Tasks.Keys.SingleOrDefault(t => t.Child.Equals(o));
         }
 
-        private void Reset()
+        public ICompileable[] GetAllTasks()
+        {
+            return Compiler.Tasks.Keys.ToArray();
+        }
+
+
+        public void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer)
+        {
+            var task = Compiler.GetTask(configOrContainer, _globals);
+
+            //if it is in crashed state
+            if (task.State == CompilationState.Crashed || task.State == CompilationState.Finished)
+            {
+                //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
+                Compiler.CancelTask(task, true);
+
+                //refresh the task list, this will pick up the orphaned .Child and create a new task for it in the Compiler
+                RecreateAllTasks();
+
+                //fetch the new task for the child and make that the one we start (below)
+                task = Compiler.Tasks.Single(t => t.Key.Child.Equals(task.Child)).Key;
+            }
+            
+
+            //Task is now in state NotScheduled so we can start it
+            Compiler.LaunchSingleTask(task, _timeout);
+        }
+        
+        private void SaveToCache(ICachableTask cachable)
+        {
+            try
+            {
+                CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(_queryCachingServer);
+
+                var explicitTypes = new List<DatabaseColumnRequest>();
+
+                AggregateConfiguration configuration = cachable.GetAggregateConfiguration();
+                try
+                {
+                    ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
+                    explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
+                }
+
+                CacheCommitArguments args = cachable.GetCacheArguments(Compiler.Tasks[cachable].CountSQL, Compiler.Tasks[cachable].Identifiers, explicitTypes.ToArray());
+
+                manager.CommitResults(args);
+            }
+            catch (Exception exception)
+            {
+                ExceptionViewer.Show(exception);
+            }
+        }
+
+        private enum Phase
+        {
+            None,
+            RunningJoinableTasks,
+            CachingJoinableTasks,
+            RunningAggregateTasks,
+            CachingAggregateTasks,
+            RunningFinalTotals,
+            Finished
+        }
+
+        private Phase executeAllPhase = Phase.None;
+
+        public void StartAll()
+        {
+            //only allow starting all if we are not mid execution already
+            if (IsExecutingGlobalOperations())
+                return;
+
+            CancelAll();
+            
+            new Task(() =>
+            {
+                try
+                {
+                    Compiler.CancelAllTasks(true);
+                    
+                    SetPhase(Phase.RunningJoinableTasks);
+
+                    foreach (var j in _cic.GetAllJoinables())
+                        Compiler.AddTask(j,_globals);
+                    
+                    Invoke(new MethodInvoker(RecreateAllTasks));
+
+                    RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTaskExecution && c.State == CompilationState.NotScheduled));
+
+                    SetPhase(Phase.CachingJoinableTasks);
+
+                    CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTaskExecution>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
+
+                    SetPhase(Phase.RunningAggregateTasks);
+                    
+                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
+                        Compiler.AddTask(a, _globals);
+                    
+                    Invoke(new MethodInvoker(RecreateAllTasks));
+
+                    RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.State == CompilationState.NotScheduled));
+
+                    SetPhase(Phase.CachingAggregateTasks);
+
+                    CacheAsync(Compiler.Tasks.Keys.OfType<AggregationTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
+
+                    SetPhase(Phase.RunningFinalTotals);
+
+                    Compiler.AddTask(_cic.RootCohortAggregateContainer,_globals);
+
+                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
+                        Compiler.AddTask(a, _globals);
+                    
+                    Invoke(new MethodInvoker(RecreateAllTasks));
+
+                    RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled));
+
+                    SetPhase(Phase.Finished);
+                }
+                catch (Exception e)
+                {
+                    ExceptionViewer.Show(e);
+                }
+
+            }).Start();
+        }
+
+        private void RunAsync(IEnumerable<ICompileable> toRun)
+        {
+            var tasks = toRun.ToArray();
+
+            foreach (var r in tasks)
+                Compiler.LaunchSingleTask(r, _timeout);
+
+            //while there are executing tasks
+            while (tasks.Any(t => t.State == CompilationState.Scheduled || t.State == CompilationState.Executing))
+                Thread.Sleep(1000);
+        }
+
+        private void CacheAsync(IEnumerable<ICachableTask> toCache)
+        {
+            if(_queryCachingServer == null)
+                return;
+
+            foreach (var c in toCache)
+                SaveToCache(c);
+        }
+
+        private void SetPhase(Phase p)
+        {
+           executeAllPhase = p;
+
+            if (lblExecuteAllPhase.InvokeRequired)
+                lblExecuteAllPhase.Invoke(new MethodInvoker(() => { lblExecuteAllPhase.Text = p.ToString(); }));
+            else
+                lblExecuteAllPhase.Text = p.ToString();
+        }
+
+        public bool IsExecutingGlobalOperations()
+        {
+            return executeAllPhase != Phase.None && executeAllPhase != Phase.Finished;
+        }
+
+
+        public void CancelAll()
         {
             Compiler.CancelAllTasks(true);
-            RefreshUIFromDatabase();
+            RecreateAllTasks();
+        }
+
+        public void Cancel(IMapsDirectlyToDatabaseTable o)
+        {
+            var task = Compiler.Tasks.Single(t=>t.Key.Child.Equals(o));
+            Compiler.CancelTask(task.Key,true);
         }
 
         private void refreshThreadCountPeriodically_Tick(object sender, EventArgs e)
         {
-            UpdateRunnablesButtons();
             tlvConfiguration.RebuildColumns();
             lblThreadCount.Text = "Thread Count:" + Compiler.GetAliveThreadCount();
-
-            //If we are overdue for a reset due to AutoCache
-            if (asyncRefreshIsOverdue && Compiler.GetAliveThreadCount() == 0)
-            {
-                asyncRefreshIsOverdue = false;
-                RefreshUIFromDatabase();
-            }
         }
-        
-        private void btnCacheSelected_Click(object sender, EventArgs e)
+
+        public CompilationState GetState(IMapsDirectlyToDatabaseTable o)
         {
-            int successes = 0;
-            foreach (ICachableTask t in GetSelectedCachableTasks())
-                try
-                {
-                    CacheConfigurationResults(t);
-                    successes ++;
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show("Could not cache task "+ t,exception);
-                }
+            var task = GetTask(o);
 
-            RefreshUIFromDatabase();
-        }
-        
-        private void btnStartSelected_Click(object sender, EventArgs e)
-        {
-            foreach (ICompileable runnable in GetRunableTasks(true))
-                Compiler.LaunchSingleTask(runnable, _timeout);
+            if (task == null)
+                return CompilationState.NotScheduled;
+
+            return task.State;
         }
 
-        private void btnClearCacheForSelected_Click(object sender, EventArgs e)
-        {
-            ClearCacheFor(GetCacheClearableTasks(true).ToArray());
-        }
-
-        private void btnClearCacheAll_Click(object sender, EventArgs e)
-        {
-            var toClear = GetCacheClearableTasks(false).ToArray();
-
-            if(MessageBox.Show("Are you sure you want to clear " + toClear.Length + " cached results?","Confirm clearing cache",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                ClearCacheFor(toClear);
-        }
         private void ClearCacheFor(ICachableTask[] tasks)
         {
-
-            var manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
+            var manager = new CachedAggregateConfigurationResultsManager(_queryCachingServer);
 
             int successes = 0;
             foreach (ICachableTask t in tasks)
@@ -850,59 +538,14 @@ namespace CohortManager.SubComponents
                     ExceptionViewer.Show("Could not clear cache for task " + t, exception);
                 }
 
-            RefreshUIFromDatabase();
+            RecreateAllTasks();
         }
-
-
 
         private void cbIncludeCumulative_CheckedChanged(object sender, EventArgs e)
         {
             Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
         }
-
         
-
-        //Because AutoCache is an even handler for completion of Compiler tasks we are launching Cache Saves but these will que up potentially or come in as Tasks finish executing (possibly over as much time as half an hour).  This means that we need
-        //to schedule a reset everything so that all Tasks repoint themselves at the cached results location but if we try to reset as we go along then it will result in the cancelling of other tasks executing within the Compiler.  So what we need to
-        //do is set this flag to true which means in our Thread polling code we can see when there are 0 executing threads and trigger the reset to get everyone pointing at the cache.
-        private bool asyncRefreshIsOverdue = false;
-        
-
-        private void CompilerOnTaskCompleted(object sender, ICompileable completedTask)
-        {
-            var cacheable = completedTask as ICachableTask;
-
-            if (cbAutoCache.Checked && cacheable != null && cacheable.State == CompilationState.Finished && cacheable.IsCacheableWhenFinished())
-            {
-                RightClickMenu_SaveToCache(cacheable);
-                asyncRefreshIsOverdue = true;
-            }
-        }
-
-        enum OptimisationStrategy
-        {
-            NoOptimisation,
-            BasicOptimisation,
-            PreCacheOptimisation
-        }
-
-        public void Refresh(IMapsDirectlyToDatabaseTable triggeringObject)
-        {
-            RefreshUIFromDatabase();
-        }
-
-        public void RefreshAll()
-        {
-            RefreshUIFromDatabase();
-        }
-
-        public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
-        {
-            base.SetDatabaseObject(activator,databaseObject);
-            Configuration = databaseObject;
-            CoreIconProvider = activator.CoreIconProvider;
-        }
-
         public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (Compiler != null)
@@ -915,8 +558,30 @@ namespace CohortManager.SubComponents
                     e.Cancel = true;
                 }
             }
-                
-            
+        }
+        
+        public void Clear(IMapsDirectlyToDatabaseTable o)
+        {
+            var task = GetTask(o);
+
+            if(task == null)
+                return;
+
+            var c = task as CachableTask;
+            if(c != null)
+                ClearCacheFor(new ICachableTask[] { c });
+
+            Compiler.CancelTask(task,true);
+        }
+
+        public bool AnyCachedTasks()
+        {
+            return Compiler.Tasks.Keys.OfType<ICachableTask>().Any(t => !t.IsCacheableWhenFinished());
+        }
+
+        public void ClearAllCaches()
+        {
+            ClearCacheFor(Compiler.Tasks.Keys.OfType<ICachableTask>().Where(t => !t.IsCacheableWhenFinished()).ToArray());
         }
     }
 

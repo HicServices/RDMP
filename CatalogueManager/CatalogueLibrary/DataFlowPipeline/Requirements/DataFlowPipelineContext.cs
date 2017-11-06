@@ -207,6 +207,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
 
             if(typesRequired.Any())
                 throw new Exception(
+                    "Component '" + component.GetType().Name +"' reports a problem" +Environment.NewLine + 
                     "The following expected types were not passed to PreInitialize:" + string.Join(",",typesRequired.Select(GetFullName))
                     
                     +Environment.NewLine + "The object types passed were:" +Environment.NewLine +

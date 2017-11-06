@@ -378,6 +378,15 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
             RefreshParametersFromDatabase();
         }
+
+        private void olvParameters_CellEditStarting(object sender, CellEditEventArgs e)
+        {
+            var p = e.RowObject as ISqlParameter;
+
+            //cancel cell editting if it is readonly
+            if (p != null && Options.ShouldBeReadOnly(p))
+                e.Cancel = true;
+        }
         
     }
 }

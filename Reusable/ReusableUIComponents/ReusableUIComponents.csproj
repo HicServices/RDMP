@@ -226,6 +226,8 @@
     <Compile Include="ChecksUI\PopupChecksUI.Designer.cs">
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDependencies.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
     <Compile Include="ConnectionStringTextBox.cs" />
     <Compile Include="CommandExecution\ICommandExecutionFactory.cs" />
     <Compile Include="CommandExecution\ICommand.cs" />
@@ -254,9 +256,6 @@
     <Compile Include="Dependencies\Models\GraphExample.cs" />
     <Compile Include="Dependencies\Models\StringToVisibilityConverter.cs" />
     <Compile Include="Dependencies\Models\WPFBitmapConverter.cs" />
-    <Compile Include="Dependencies\ViewDependenciesToolStripMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="DoTransparencyProperly.cs" />
     <Compile Include="ExceptionCounterUI.cs" />
     <Compile Include="Heatmapping\ExampleData.cs" />
@@ -417,9 +416,7 @@
     <Compile Include="ViewSourceCodeDialog.Designer.cs">
       <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewSourceCodeToolTip.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ViewSourceCodeToolTip.cs" />
     <Compile Include="WideMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>

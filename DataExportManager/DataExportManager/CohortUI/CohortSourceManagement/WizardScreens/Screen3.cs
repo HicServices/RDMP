@@ -51,7 +51,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
                 builder, tbDatabase.Text,tbCohortSourceName.Text, checksUI1);
 
             if(_wizardUI.ExternalCohortTableCreatedIfAny != null)
-                if(MessageBox.Show("Database succesfully created, close Form?","Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if(MessageBox.Show("Database Successfully created, close Form?","Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
                     ParentForm.Close();
         }
     }

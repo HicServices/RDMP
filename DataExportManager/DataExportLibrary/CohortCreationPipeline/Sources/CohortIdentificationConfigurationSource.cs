@@ -79,10 +79,10 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             var task = cohortCompiler.Tasks.Single();
 
-            cohortCompiler.LaunchSingleTask(task.Key,Timeout);
+            cohortCompiler.LaunchSingleTask(task.Key,timeout);
 
             //timeout is in seconds
-            int countDown = Timeout * 1000;
+            int countDown = timeout * 1000;
 
             while ( 
                 //hasn't timed out
@@ -112,8 +112,13 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             if(task.Value.Identifiers == null || task.Value.Identifiers.Rows.Count  == 0)
                 throw new Exception("CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
+
+            var dt = task.Value.Identifiers;
+
+            foreach (DataColumn column in dt.Columns)
+                column.ReadOnly = false;
             
-            return task.Value.Identifiers;
+            return dt;
         }
 
         public void Check(ICheckNotifier notifier)

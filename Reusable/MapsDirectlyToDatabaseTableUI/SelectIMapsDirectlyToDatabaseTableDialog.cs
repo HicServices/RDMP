@@ -217,9 +217,16 @@ namespace MapsDirectlyToDatabaseTableUI
                     listBox1.Focus();
                     SendKeys.Send(e.KeyCode == Keys.Up ? "{UP}":"{DOWN}");
                 }
-
-        
         }
+
+
+
+        private void tbFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
+        }
+
 
         private void listBox1_CellClick(object sender, CellClickEventArgs e)
         {
@@ -236,5 +243,18 @@ namespace MapsDirectlyToDatabaseTableUI
             }
         }
 
+        public static T ShowDialogSelectOne<T>(T[] selection) where T:IMapsDirectlyToDatabaseTable
+        {
+            if (selection.Length == 1)
+                return selection[0];
+            
+            //don't know, so get user to pick one
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(selection.Cast<IMapsDirectlyToDatabaseTable>(), false, false);
+                
+            if (dialog.ShowDialog() == DialogResult.OK)
+                return (T)dialog.Selected;
+            
+            return default(T);
+        }
     }
 }

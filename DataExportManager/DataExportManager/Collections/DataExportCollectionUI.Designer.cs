@@ -36,21 +36,22 @@ namespace DataExportManager.Collections
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.lblHowToEdit = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
+            this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
             this.SuspendLayout();
             // 
             // tlvDataExport
             // 
             this.tlvDataExport.AllColumns.Add(this.olvName);
-            
+            this.tlvDataExport.AllColumns.Add(this.olvProjectNumber);
             this.tlvDataExport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlvDataExport.CellEditUseWholeCell = false;
             this.tlvDataExport.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
+            this.olvName,
+            this.olvProjectNumber});
             this.tlvDataExport.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvDataExport.FullRowSelect = true;
             this.tlvDataExport.HideSelection = false;
@@ -62,7 +63,6 @@ namespace DataExportManager.Collections
             this.tlvDataExport.UseCompatibleStateImageBehavior = false;
             this.tlvDataExport.View = System.Windows.Forms.View.Details;
             this.tlvDataExport.VirtualMode = true;
-            this.tlvDataExport.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.tlvDataExport_CellRightClick);
             this.tlvDataExport.ItemActivate += new System.EventHandler(this.tlvDataExport_ItemActivate);
             this.tlvDataExport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tlvDataExport_KeyUp);
             // 
@@ -72,10 +72,6 @@ namespace DataExportManager.Collections
             this.olvName.CellEditUseWholeCell = true;
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Data Export";
-            // 
-            // olvFavourite
-            // 
-            
             // 
             // label1
             // 
@@ -96,18 +92,6 @@ namespace DataExportManager.Collections
             this.tbFilter.Size = new System.Drawing.Size(341, 20);
             this.tbFilter.TabIndex = 2;
             // 
-            // lblHowToEdit
-            // 
-            this.lblHowToEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblHowToEdit.AutoSize = true;
-            this.lblHowToEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHowToEdit.Location = new System.Drawing.Point(3, 655);
-            this.lblHowToEdit.Name = "lblHowToEdit";
-            this.lblHowToEdit.Size = new System.Drawing.Size(98, 13);
-            this.lblHowToEdit.TabIndex = 170;
-            this.lblHowToEdit.Text = "Press F2 to rename";
-            this.lblHowToEdit.Visible = false;
-            // 
             // btnExpandOrCollapse
             // 
             this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -119,12 +103,16 @@ namespace DataExportManager.Collections
             this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
             this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
             // 
+            // olvProjectNumber
+            // 
+            this.olvProjectNumber.Text = "ProjectNumber";
+            this.olvProjectNumber.Width = 89;
+            // 
             // DataExportCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnExpandOrCollapse);
-            this.Controls.Add(this.lblHowToEdit);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tlvDataExport);
@@ -142,7 +130,7 @@ namespace DataExportManager.Collections
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbFilter;
         private OLVColumn olvName;
-        private System.Windows.Forms.Label lblHowToEdit;
         private System.Windows.Forms.Button btnExpandOrCollapse;
+        private OLVColumn olvProjectNumber;
     }
 }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.DataRelease.ReleasePipeline;
@@ -14,7 +15,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Repositories;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
@@ -62,7 +62,7 @@ namespace DataExportManager.DataRelease
         private ReleaseEnvironmentPotential _environmentPotential;
 
         private ReleaseState _releaseState = ReleaseState.Nothing;
-        private IActivateDataExportItems _activator;
+        private IActivateItems _activator;
 
         public void AddToRelease(ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
         {
@@ -225,7 +225,7 @@ namespace DataExportManager.DataRelease
             }
         }
 
-        public void SetProject(IActivateDataExportItems activator, Project project)
+        public void SetProject(IActivateItems activator, Project project)
         {
             _activator = activator;
             Project = project;
@@ -243,11 +243,7 @@ namespace DataExportManager.DataRelease
             if (_pipelineUI == null)
             {
                 var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
-                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create();
-
-                var c = (Control) _pipelineUI;
-                c.Dock = DockStyle.Fill;
-                pnlPipeline.Controls.Add(c);
+                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release",DockStyle.Fill,pnlPipeline);
             }
         }
 

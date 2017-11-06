@@ -42,15 +42,18 @@ assemblyinfo :assemblyinfo do |asm|
     describe = `git describe`.strip
     tag, rev, hash = describe.split(/-/)
     major, minor, patch, build = version.split(/\./)
-    puts "version: #{major}.#{minor}.#{patch}.#{build}"
     asm.version = "#{major}.#{minor}.#{patch}.#{build}"
     asm.file_version = "#{major}.#{minor}.#{patch}.#{build}"
+    timestamp = Time.new.utc.to_i
     if PRERELEASE == "true"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{build}-pre#{rev}"
+        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}-pre"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}-pre"
     elsif CANDIDATE == "true"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{build}-rc#{rev}"
+        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}-rc"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}-rc"
     else
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{build}"
+        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}"
+        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}"
     end
 end
 

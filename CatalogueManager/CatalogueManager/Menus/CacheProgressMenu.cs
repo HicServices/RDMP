@@ -23,12 +23,8 @@ namespace CatalogueManager.Menus
         public CacheProgressMenu(IActivateItems activator, CacheProgress cacheProgress) : base(activator,cacheProgress)
         {
             _cacheProgress = cacheProgress;
-            Items.Add(
-                "Execute Cache",
-                CatalogueIcons.ExecuteArrow,
-                (s,e)=>_activator.ExecuteCacheProgress(this,cacheProgress)
-                );
-
+            
+            Add(new ExecuteCommandExecuteCacheProgress(activator).SetTarget(cacheProgress));
 
             var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
 

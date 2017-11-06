@@ -51,15 +51,15 @@ namespace CatalogueManager.Menus
         {
             var newIssue = new CatalogueItemIssue(RepositoryLocator.CatalogueRepository, _catalogueItem);
             _activator.ActivateCatalogueItemIssue(this,newIssue);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_catalogueItem));
+            Publish(_catalogueItem);
         }
 
         private void AddExtractionInformation()
         {
             var newExtractionInformation = new ExtractionInformation(RepositoryLocator.CatalogueRepository, _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(newExtractionInformation));
-            _activator.ActivateExtractionInformation(this, newExtractionInformation);
+            Publish(newExtractionInformation);
+            Activate(newExtractionInformation);
         }
         
         private void SetColumnInfo(CatalogueItem ci)
@@ -77,7 +77,7 @@ namespace CatalogueManager.Menus
             dialog.ShowDialog();
             _catalogueItem.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogueItem));
+            Publish(_catalogueItem);
         }
 
         private void ImportAnyDescription(object sender, EventArgs e)
@@ -86,7 +86,7 @@ namespace CatalogueManager.Menus
             dialog.ShowDialog();
             _catalogueItem.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogueItem));
+            Publish(_catalogueItem);
         }
 
         public void HandleKeyPress(KeyEventArgs k)

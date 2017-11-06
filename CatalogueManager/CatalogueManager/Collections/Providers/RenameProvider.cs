@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
@@ -15,7 +17,6 @@ namespace CatalogueManager.Collections.Providers
         private readonly RefreshBus _refreshBus;
         private readonly ObjectListView _olv;
         private readonly OLVColumn _columnThatSupportsRenaming;
-        private readonly Label _lblAdviceAboutRenaming;
         
         public bool AllowRenaming {  
             get
@@ -26,15 +27,13 @@ namespace CatalogueManager.Collections.Providers
             {
                 _olv.CellEditActivation = value ? ObjectListView.CellEditActivateMode.SingleClick : ObjectListView.CellEditActivateMode.None;
                 _columnThatSupportsRenaming.IsEditable = value;
-                _lblAdviceAboutRenaming.Visible = value;
             } }
 
-        public RenameProvider(RefreshBus refreshBus, ObjectListView olv, OLVColumn columnThatSupportsRenaming, Label lblAdviceAboutRenaming)
+        public RenameProvider(RefreshBus refreshBus, ObjectListView olv, OLVColumn columnThatSupportsRenaming)
         {
             _refreshBus = refreshBus;
             _olv = olv;
             _columnThatSupportsRenaming = columnThatSupportsRenaming;
-            _lblAdviceAboutRenaming = lblAdviceAboutRenaming;
         }
 
         public void RegisterEvents()
@@ -53,8 +52,6 @@ namespace CatalogueManager.Collections.Providers
             if (!(e.RowObject is INamed))
                 e.Cancel = true;
         }
-
-        private static bool haveComplainedAboutToStringImplementationOfINamed = false;
 
         void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
         {
@@ -76,28 +73,7 @@ namespace CatalogueManager.Collections.Providers
             try
             {
                 if (name != null)
-                {
-                    name.Name = (string)e.NewValue;
-
-                    if(!haveComplainedAboutToStringImplementationOfINamed && !name.ToString().Contains(name.Name))
-                    {
-
-                        WideMessageBox.Show("ToString method of INamed class '" + name.GetType().Name + "' does not return the Name property, this makes it highly unsuitable for RenameProvider.  Try adding the following code to your class:" 
-                                            + Environment.NewLine +
-                                            @"public override string ToString()
-        {
-            return Name;
-        }"
-                        
-                            );
-                        haveComplainedAboutToStringImplementationOfINamed = true;
-                    }
-
-                    EnsureNameIfCohortIdentificationAggregate(e.RowObject);
-
-                    name.SaveToDatabase();
-                    _refreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)name));
-                }
+                    new ExecuteCommandRename(_refreshBus, name, (string) e.NewValue).Execute();
             }
             catch (Exception exception)
             {
@@ -110,17 +86,5 @@ namespace CatalogueManager.Collections.Providers
             }
         }
 
-        private void EnsureNameIfCohortIdentificationAggregate(object o)
-        {
-            //handle Aggregates that are part of cohort identification
-            var aggregate = o as AggregateConfiguration;
-            if (aggregate != null)
-            {
-                var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
-
-                if (cic != null)
-                    cic.EnsureNamingConvention(aggregate);
-            }
-        }
     }
 }

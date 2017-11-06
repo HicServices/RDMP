@@ -5,14 +5,18 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
 using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
@@ -280,7 +284,7 @@ namespace DataExportManager.DataRelease
         
         //potential of each of the datasets in the Configuration
         List<ReleasePotential> ReleasePotentials = new List<ReleasePotential>();
-        private IActivateDataExportItems _activator;
+        private IActivateItems _activator;
         
         private void GenerateSummaryOfExtractsSoFar()
         {
@@ -395,6 +399,8 @@ namespace DataExportManager.DataRelease
 
         private void ShowRightClickMenuFor(ReleasePotential tag, Point point)
         {
+            var atomicCommandExecutionFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+
 
             //create right click context menu
             RightClickMenu = new ContextMenuStrip();
@@ -439,9 +445,16 @@ namespace DataExportManager.DataRelease
             }
 
 
+            RightClickMenu.Items.Add(
+                atomicCommandExecutionFactory.CreateMenuItem(new ExecuteCommandActivate(_activator,(ExtractionConfiguration) tag.Configuration)));
 
-            RightClickMenu.Items.Add("Edit Configuration", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionConfiguration), (sender, args) => _activator.ActivateExtractionConfiguration(this, (ExtractionConfiguration)tag.Configuration));
-            RightClickMenu.Items.Add("Execute Extraction Configuration", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Execute), (sender, args) => _activator.ExecuteExtractionConfiguration(this, new ExecuteExtractionUIRequest((ExtractionConfiguration)tag.Configuration)));
+            RightClickMenu.Items.Add("Execute Extraction Configuration",
+                _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Execute),
+                (sender, args) =>
+
+                    new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget((ExtractionConfiguration) tag.Configuration).Execute()
+
+                        );
 
             RightClickMenu.Show(listView1, point);
 
@@ -490,7 +503,7 @@ namespace DataExportManager.DataRelease
                 ExceptionViewer.Show(_environmentalPotential.Exception);
         }
 
-        public void SetConfiguration(IActivateDataExportItems activator, ExtractionConfiguration configuration)
+        public void SetConfiguration(IActivateItems activator, ExtractionConfiguration configuration)
         {
             _activator = activator;
             Configuration = configuration;

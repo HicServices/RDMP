@@ -18,17 +18,23 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Copying;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
+using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -70,6 +76,14 @@ namespace CatalogueManager.Collections
             }
         }
 
+        public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
+
+        /// <summary>
+        /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
+        /// You can cut off any branch with this property, just specify the Types to stop descending at and you will get that object Type (assuming you normally would)
+        /// but no further children.
+        /// </summary>
+        public Type[] AxeChildren { get; set; }
 
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
@@ -83,15 +97,13 @@ namespace CatalogueManager.Collections
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        /// <param name="renameableObjectTypes">List of INameable object Types which can be renamed (only rows containing items of this type will be user editable)</param>
-        /// <param name="renameLabel">A Label for displaying the help text telling the user how to rename (F2)</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, IRDMPPlatformRepositoryServiceLocator repositoryLocator,ICommandFactory commandFactory, ICommandExecutionFactory commandExecutionFactory,OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, Label renameLabel)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, bool addFavouriteColumn = true)
         {
             IsSetup = true;
             _activator = activator;
             _activator.RefreshBus.Subscribe(this);
 
-            RepositoryLocator = repositoryLocator;
+            RepositoryLocator = _activator.RepositoryLocator;
 
             Tree = tree;
             Tree.FullRowSelect = true;
@@ -108,23 +120,30 @@ namespace CatalogueManager.Collections
             iconColumn.ImageGetter += ImageGetter;
             Tree.RowHeight = 19;
 
+            Tree.KeyUp += TreeOnKeyUp;
+
             //what does this do to performance?
             Tree.UseNotifyPropertyChanged = true;
 
             ParentFinder = new TreeNodeParentFinder(Tree);
 
-            DragDropProvider = new DragDropProvider(commandFactory,commandExecutionFactory,tree);
+            DragDropProvider = new DragDropProvider(
+                _activator.CommandFactory,
+                _activator.CommandExecutionFactory,
+                tree);
             
             if(renameableColumn != null)
             {
-                RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn, renameLabel);
+                RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn);
                 RenameProvider.RegisterEvents();
             }
-            
-            FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
-            FavouriteColumn = FavouriteColumnProvider.CreateColumn();
-            FavouriteColumn.Sortable = false;
 
+            if (addFavouriteColumn)
+            {
+                FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
+                FavouriteColumn = FavouriteColumnProvider.CreateColumn();
+                FavouriteColumn.Sortable = false;
+            }
             CoreIconProvider = activator.CoreIconProvider;
 
             CopyPasteProvider = new CopyPasteProvider();
@@ -141,6 +160,25 @@ namespace CatalogueManager.Collections
             }
 
             _activator.Emphasise += _activator_Emphasise;
+        }
+
+        private void TreeOnKeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Delete)
+            {
+                var deletable = Tree.SelectedObject as IDeleteable;
+                if(deletable != null)
+                    _activator.DeleteWithConfirmation(this,deletable);
+            }
+            if(e.KeyCode == Keys.F5)
+            {
+                var o = Tree.SelectedObject as DatabaseEntity;
+
+                if (o != null)
+                    new ExecuteCommandRefreshObject(_activator, o).Execute();
+            }
+
+        
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
@@ -253,12 +291,20 @@ namespace CatalogueManager.Collections
 
         private IEnumerable ChildrenGetter(object model)
         {
+            if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
+                return new object[0];
+
             return CoreChildProvider.GetChildren(model);
         }
 
         private bool CanExpandGetter(object model)
         {
-            return CoreChildProvider.GetChildren(model).Any();
+            var result = ChildrenGetter(model);
+
+            if (result == null)
+                return false;
+            
+            return result.Cast<object>().Any();
         }
 
         private object ImageGetter(object rowObject)
@@ -269,38 +315,50 @@ namespace CatalogueManager.Collections
         public void CommonRightClick(object sender, CellRightClickEventArgs e)
         {
             var o = e.Model;
-            if (o is AggregateConfiguration)
-                e.MenuStrip = new AggregateConfigurationMenu(RepositoryLocator, _activator, (AggregateConfiguration)o, CoreIconProvider);
 
-            var container = o as AggregateFilterContainer;
-            if (container != null)
-                e.MenuStrip = new AggregateFilterContainerMenu(_activator, container, ParentFinder.GetFirstOrNullParentRecursivelyOfType<AggregateConfiguration>(container), CoreIconProvider);
+            var objectConstructor = new ObjectConstructor();
 
-            if (o is IFilter)
-                e.MenuStrip = new FilterMenu( _activator, (IFilter) o, CoreIconProvider);
+            if(o != null)
+            {
 
-            if (o is ParametersNode)
-                e.MenuStrip = new FiltersParametersNodeMenu( _activator, (ParametersNode)o, CoreIconProvider);
+                //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
+                Tree.SelectedObject = o;
+
+                //now find the first RDMPContextMenuStrip with a compatible constructor
+                foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+                {
+                    if(menuType.IsAbstract || menuType.IsInterface)
+                        continue;
+
+
+                    var menu = objectConstructor.ConstructIfPossible(menuType,
+                        _activator,//parameter 1 must be activator
+                        o); //parameter 2 must be object compatible Type
+
+                    if (menu != null)
+                    {
+                        e.MenuStrip = (ContextMenuStrip) menu;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+
+                //it's a right click in whitespace (nothing right clicked)
+                if (WhitespaceRightClickMenuCommands != null)
+                    e.MenuStrip = factory.CreateMenu(WhitespaceRightClickMenuCommands);
+            }
         }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {
             var o = Tree.SelectedObject;
-            var config = o as AggregateConfiguration;
-
-            //also actually handles ExtractionFilters as well as AggregateFilters
-            var filter = o as ConcreteFilter;
-            var parameters = o as ParametersNode;
-
-            if (config != null)
-                _activator.ActivateAggregate(this, config);
-            if (filter != null)
-                _activator.ActivateFilter(this, filter);
-            if (parameters != null)
-                _activator.ActivateParameterNode(this, parameters);
-
-            foreach (IPluginUserInterface pluginUserInterface in _activator.PluginUserInterfaces)
-                pluginUserInterface.Activate(sender, o);
+            
+            var cmd = new ExecuteCommandActivate(_activator, o);
+            if(!cmd.IsImpossible)
+                cmd.Execute();
         }
 
 
@@ -353,7 +411,14 @@ namespace CatalogueManager.Collections
                 else
                 //parent isn't in tree, could be a root object? try to refresh the object anyway
                 if(Tree.IndexOf(e.Object) != -1)
-                    Tree.RefreshObject(e.Object);
+                    try
+                    {
+                        Tree.RefreshObject(e.Object);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        
+                    }
 
 
             }

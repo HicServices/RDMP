@@ -46,7 +46,7 @@ namespace CatalogueManager.Icons.IconProvision
             OverlayProvider = new IconOverlayProvider();
             ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
-            StateBasedIconProviders.Add(new CatalogueStateBasedIconProvider());
+            StateBasedIconProviders.Add(new CatalogueStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());
             StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());
             StateBasedIconProviders.Add(new CohortAggregateContainerStateBasedIconProvider());

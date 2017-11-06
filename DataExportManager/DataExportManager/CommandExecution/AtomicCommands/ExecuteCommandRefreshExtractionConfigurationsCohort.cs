@@ -17,21 +17,21 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly ExtractionConfiguration _extractionConfiguration;
         private Project _project;
 
-        public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator, ExtractionConfiguration extractionConfiguration)
+        public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
         {
-            _activator = activator;
             _extractionConfiguration = extractionConfiguration;
             _project = (Project)_extractionConfiguration.Project;
             
@@ -52,9 +52,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             //show the ui
             var progressUi = new ProgressUI();
             progressUi.Text = "Refreshing Cohort (" + _extractionConfiguration + ")";
-            _activator.ShowWindow(progressUi,true);
+            Activator.ShowWindow(progressUi,true);
 
-            var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration,_activator.RepositoryLocator.CatalogueRepository.MEF);
+            var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration);
             Task.Run(
 
                 //run the pipeline in a Thread
@@ -70,7 +70,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 {
                     _extractionConfiguration.Cohort_ID = newCohort.ID;
                     _extractionConfiguration.SaveToDatabase();
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_extractionConfiguration));
+                    Publish(_extractionConfiguration);
                 }
 
             }, TaskScheduler.FromCurrentSynchronizationContext());

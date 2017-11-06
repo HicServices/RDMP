@@ -197,10 +197,6 @@ namespace CatalogueManager.Collections
             
             if (e.KeyCode == Keys.Delete)
             {
-                var deletable = tlvTableInfos.SelectedObject as IDeleteable;
-                if(deletable != null)
-                    _activator.DeleteWithConfirmation(this, deletable);
-
                 var credentialUsage = tlvTableInfos.SelectedObject as DataAccessCredentialUsageNode;
 
                 if(credentialUsage != null)
@@ -224,13 +220,9 @@ namespace CatalogueManager.Collections
             CommonFunctionality.SetUp(
                 tlvTableInfos,
                 activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(), 
-                new RDMPCommandExecutionFactory(activator),
                 olvColumn1,
                 tbFilter,
-                olvColumn1,
-                lblHowToEdit
+                olvColumn1
                 );
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);

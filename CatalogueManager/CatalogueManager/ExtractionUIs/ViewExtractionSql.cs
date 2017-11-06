@@ -90,8 +90,6 @@ namespace CatalogueManager.ExtractionUIs
         private bool bLoading = false;
 
 
-        private bool allowReordering = false;
-
         private void RefreshUIFromDatabase()
         {
             try
@@ -103,8 +101,7 @@ namespace CatalogueManager.ExtractionUIs
                 bLoading = true;
 
                 List<ExtractionInformation> extractionInformations = new List<ExtractionInformation>();
-                allowReordering = false;
-
+                
                 //get all the extractions
                 if (rbCoreOnly.Checked)
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
@@ -118,12 +115,10 @@ namespace CatalogueManager.ExtractionUIs
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
-                    allowReordering = true;
                 }
                 else if(rbInternal.Checked)
                 {
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Internal));
-                    allowReordering = true;
                 }
                 
                 //sort by Default Order

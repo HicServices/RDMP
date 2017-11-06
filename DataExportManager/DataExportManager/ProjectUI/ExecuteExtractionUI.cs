@@ -378,16 +378,11 @@ namespace DataExportManager.ProjectUI
                 var useCase = new ExtractionPipelineHost();
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
-                _pipelineSelectionUI1 = factory.Create();
+                _pipelineSelectionUI1 = factory.Create("Extraction Pipeline",DockStyle.Fill,panel1);
                 
-                var c = (Control) _pipelineSelectionUI1;
-                c.Dock = DockStyle.Fill;
-                panel1.Controls.Add(c);
-
                 //if the configuration has a default then use that pipeline
                 if (configuration.DefaultPipeline_ID != null)
                     _pipelineSelectionUI1.Pipeline = configuration.DefaultPipeline;
-
             }
 
             TopX = -1;
@@ -425,10 +420,9 @@ namespace DataExportManager.ProjectUI
             return "Execute:" + base.GetTabName();
         }
 
-        public void SetRequest(ExecuteExtractionUIRequest request)
+        public void Start()
         {
-            if (request.AutoStart)
-                btnStart_Click(null, null);
+            btnStart_Click(null, null);
         }
     }
 

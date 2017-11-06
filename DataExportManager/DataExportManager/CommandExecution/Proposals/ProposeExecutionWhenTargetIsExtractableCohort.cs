@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueManager.CommandExecution.Proposals;
+using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
+using DataExportManager.CohortUI;
 using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.ItemActivation;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
@@ -13,26 +16,27 @@ using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsExtractableCohort:ICommandExecutionProposal
+    public class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
     {
-        private readonly IActivateDataExportItems _activator;
-
-        public ProposeExecutionWhenTargetIsExtractableCohort(IActivateDataExportItems activator)
+        public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator):base(activator)
         {
-            _activator = activator;
         }
 
-        public ICommandExecution ProposeExecution(ICommand cmd, object target, InsertOption insertOption = InsertOption.Default)
+        public override bool CanActivate(ExtractableCohort target)
         {
-            var cohort = target as ExtractableCohort;
+            return false;
+        }
 
-            //not a command that relates to us
-            if (cohort == null)
-                return null;
+        public override void Activate(ExtractableCohort target)
+        {
+            ItemActivator.Activate<ExtractableCohortUI, ExtractableCohort>(target);
+        }
 
+        public override ICommandExecution ProposeExecution(ICommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
+        {
             var fileCommand = cmd as FileCollectionCommand; 
             if(fileCommand != null)
-                return new ExecuteCommandImportFileAsCustomDataForCohort(_activator,cohort,fileCommand);
+                return new ExecuteCommandImportFileAsCustomDataForCohort(ItemActivator, target, fileCommand);
 
             //no command possible, dragged command must have been something else
             return null;

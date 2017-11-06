@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
@@ -25,6 +26,7 @@ namespace CatalogueLibrary.Providers
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
         PermissionWindow[] AllPermissionWindows { get;}
+        AggregateConfiguration[] AllAggregateConfigurations { get;}
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
     }

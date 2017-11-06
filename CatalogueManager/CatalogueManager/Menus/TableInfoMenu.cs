@@ -153,7 +153,7 @@ namespace CatalogueManager.Menus
                 ExceptionViewer.Show("Fatal error while attempting to synchronize (" + exception.Message + ")", exception);
             }
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(tableInfo));
+            Publish(tableInfo);
         }
 
         private void TableInfo_Click(TableInfo tableInfo)
@@ -173,13 +173,13 @@ namespace CatalogueManager.Menus
                 MessageBox.Show(exception.ToString());
             }
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(tableInfo));
+            Publish(tableInfo);
         }
 
         private void AddColumnInfo_Click(TableInfo tableInfo)
         {
             var newColumnInfo = new ColumnInfo(RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", tableInfo);
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(newColumnInfo));
+            Publish(newColumnInfo);
         }
         
         private void ConfigureTableInfoParameters(TableInfo tableInfo)

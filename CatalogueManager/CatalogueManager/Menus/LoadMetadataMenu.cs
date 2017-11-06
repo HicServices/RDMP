@@ -11,6 +11,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
+using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -33,20 +34,10 @@ namespace CatalogueManager.Menus
 
             Add(new ExecuteCommandCreateNewLoadMetadata(activator));
 
-            var execute = new ToolStripMenuItem("Start Data Load", CatalogueIcons.ExecuteArrow,(s,e)=>activator.ExecuteLoadMetadata(this, loadMetadata));
-            execute.Enabled = activator.AllowExecute;
-
-
+            Add(new ExecuteCommandEditExistingLoadMetadata(activator).SetTarget(loadMetadata));
+            
             Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
             
-            Items.Add(execute);
-
-            var edit = new ToolStripMenuItem("Edit", null, (s, e) => _activator.ActivateLoadMetadata(this,loadMetadata));
-            
-            Items.Add(edit);
-            
-            Items.Add("View Load Log", CatalogueIcons.Logging, (s, e) => _activator.ActivateViewLoadMetadataLog(this,loadMetadata));
-
             AddCommonMenuItems();
 
         }
@@ -58,7 +49,7 @@ namespace CatalogueManager.Menus
                 //delete it from the database
                 _loadMetadata.DeleteInDatabase();
               
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_loadMetadata));
+                Publish(_loadMetadata);
             }
         }
     }

@@ -165,7 +165,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
                     Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += (lineCount - 1), parameter, 
                         
-                        !Options.ShouldBeDisabled(parameter),
+                        !Options.ShouldBeReadOnly(parameter),
                         
                         toAdd));
 

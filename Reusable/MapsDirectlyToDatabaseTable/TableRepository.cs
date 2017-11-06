@@ -1049,5 +1049,35 @@ namespace MapsDirectlyToDatabaseTable
             if (DatabaseCommandHelper.PerformanceCounter != null)
                 Interlocked.Add(ref DatabaseCommandHelper.PerformanceCounter.CacheMisses, 1);
         }
+
+
+        private Type[] _compatibleTypes;
+        public IMapsDirectlyToDatabaseTable[] GetEverySingleObjectInEntireDatabase()
+        {
+            List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();
+
+            if (_compatibleTypes == null)
+                _compatibleTypes = GetCompatibleTypes();
+
+            foreach (var type in _compatibleTypes)
+                toReturn.AddRange(GetAllObjects(type));
+
+            return toReturn.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all the c# class types that come from the database
+        /// </summary>
+        /// <returns></returns>
+        private Type[] GetCompatibleTypes()
+        {
+            return
+                this.GetType().Assembly.GetTypes()
+                    .Where(
+                        t =>
+                            typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface &&
+                            !t.Name.Contains("Spontaneous")).ToArray();
+        }
+
     }
 }

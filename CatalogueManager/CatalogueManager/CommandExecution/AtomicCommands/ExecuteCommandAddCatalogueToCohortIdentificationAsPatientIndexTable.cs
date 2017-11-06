@@ -8,19 +8,19 @@ using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly CohortIdentificationConfiguration _configuration;
         private CatalogueCommand _catalogue;
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator, CohortIdentificationConfiguration configuration)
+        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator, CohortIdentificationConfiguration configuration) : base(activator)
         {
-            _activator = activator;
             _configuration = configuration;
         }
 
@@ -37,7 +37,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (_catalogue == null)
             {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues(),false,false);
+                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues(),false,false);
                 if (dialog.ShowDialog() == DialogResult.OK)
                     _catalogue = new CatalogueCommand((Catalogue) dialog.Selected);
                 else
@@ -45,7 +45,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             }
             AggregateConfigurationCommand aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(_configuration);
 
-            var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator, aggregateCommand,_configuration);
+            var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(Activator, aggregateCommand, _configuration);
             joinableCommandExecution.Execute();
         }
 

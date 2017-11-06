@@ -192,6 +192,12 @@
     <Compile Include="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.Designer.cs">
       <DependentUpon>ViewInsertsAndUpdatesDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
+    <Compile Include="DQEPluginUserInterface.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
+    <Compile Include="Menus\MenuItems\DQEMenuItem.cs" />
     <Compile Include="Overview\DataLoadsGraph.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -318,8 +324,6 @@
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="Dashboard_1_TemporaryKey.pfx" />
-    <None Include="Dashboard_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -351,6 +355,10 @@
     <ProjectReference Include="..\..\..\DataExportManager\DataExportManager\DataExportManager.csproj">
       <Project>{7665AFDE-002D-4A53-B3B8-AE17BC8F2BBA}</Project>
       <Name>DataExportManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
+      <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
+      <Name>DataQualityEngine.Database</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>

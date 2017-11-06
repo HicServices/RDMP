@@ -107,7 +107,7 @@ namespace CatalogueManager.Menus
                     "Guess Failed:" + failCount + Environment.NewLine
                     );
 
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
+                Publish(c);
             }
         }
 
@@ -116,7 +116,7 @@ namespace CatalogueManager.Menus
             ImportCloneOfCatalogueItem cloner = new ImportCloneOfCatalogueItem(c);
             cloner.ShowDialog();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
+            Publish(c);
         }
 
         private void PasteClipboardAsNewCatalogueItems(Catalogue c)
@@ -129,7 +129,7 @@ namespace CatalogueManager.Menus
                     foreach (string name in toImport)
                         new CatalogueItem(RepositoryLocator.CatalogueRepository, c, name);
 
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
+                    Publish(c);
                 }
         }
 
@@ -138,7 +138,7 @@ namespace CatalogueManager.Menus
             BulkProcessCatalogueItems bulkProcess = new BulkProcessCatalogueItems(c);
             bulkProcess.ShowDialog();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
+            Publish(c);
         }
     }
 }

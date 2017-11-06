@@ -19,6 +19,6 @@ namespace CatalogueManager.PluginChildProvision
     public interface IPluginUserInterface:IChildProvider,IIconProvider
     {
         ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity);
-        void Activate(object sender, object model);
+        ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object databaseEntity);
     }
 }

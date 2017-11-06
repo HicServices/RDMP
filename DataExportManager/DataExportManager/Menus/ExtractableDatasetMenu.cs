@@ -13,7 +13,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -25,7 +24,7 @@ namespace DataExportManager.Menus
     {
         private readonly ExtractableDataSet _dataset;
 
-        public ExtractableDatasetMenu(IActivateDataExportItems activator, ExtractableDataSet dataset)
+        public ExtractableDatasetMenu(IActivateItems activator, ExtractableDataSet dataset)
             : base(activator,dataset)
         {
             _dataset = dataset;
@@ -44,7 +43,7 @@ namespace DataExportManager.Menus
         {
             _dataset.DisableExtraction = disable;
             _dataset.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_dataset));
+            Publish(_dataset);
         }
     }
 }

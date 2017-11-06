@@ -264,12 +264,11 @@
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(96, 205);
+            this.objectSaverButton1.Location = new System.Drawing.Point(96, 202);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
+            this.objectSaverButton1.Size = new System.Drawing.Size(57, 28);
             this.objectSaverButton1.TabIndex = 48;
-            this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
             // 
             // ExternalDatabaseServerUI
             // 

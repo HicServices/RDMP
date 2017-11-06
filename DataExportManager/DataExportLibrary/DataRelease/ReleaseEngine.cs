@@ -256,13 +256,14 @@ namespace DataExportLibrary.DataRelease
                 if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
                     return null;
 
+                var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd_");
                 var suffix = "";
                 if (String.IsNullOrWhiteSpace(Project.MasterTicket))
                     suffix = Project.ID + "_" + Project.Name;
                 else
                     suffix = Project.MasterTicket;
 
-                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, "Release-" + suffix)); 
+                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release-" + suffix)); 
             }
             
             return ReleaseSettings.CustomExtractionDirectory;

@@ -76,29 +76,17 @@ namespace CatalogueManager.Collections
         private void otvLoadMetadata_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvLoadMetadata.SelectedObject;
-            var lmd = o as LoadMetadata;
             var hicDir = o as HICProjectDirectoryNode;
-            var processTask = o as ProcessTask;
             var loadProgress = o as LoadProgress;
-            var cacheProgress = o as CacheProgress;
             
             var permissionWindow = o as PermissionWindow;
             var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
-
-            if(lmd != null)
-                _activator.ActivateLoadMetadata(this,lmd);
-
+            
             if(hicDir != null)
                 hicDir.Activate();
 
-            if (processTask != null)
-                _activator.ActivateProcessTask(this, processTask);
-
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
-
-            if (cacheProgress != null)
-                _activator.ActivateCacheProgress(this, cacheProgress);
 
             if (permissionWindowUsage != null)
                 permissionWindow = permissionWindowUsage.PermissionWindow;
@@ -111,11 +99,7 @@ namespace CatalogueManager.Collections
             if (e.KeyCode == Keys.Delete)
             {
                 var cataNode = tlvLoadMetadata.SelectedObject as CatalogueUsedByLoadMetadataNode;
-
-                var deletable = tlvLoadMetadata.SelectedObject as IDeleteable;
-                if (deletable != null)
-                    _activator.DeleteWithConfirmation(this, deletable);
-
+                
                 if(cataNode != null)
                     if (
                         MessageBox.Show(
@@ -141,44 +125,14 @@ namespace CatalogueManager.Collections
         {
             var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
-            var lmd = e.Model as LoadMetadata;
             var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
             var hicProjectDirectory = e.Model as HICProjectDirectoryNode;
-            var schedulingNode = e.Model as LoadMetadataScheduleNode;
             
-            var loadProgress = e.Model as LoadProgress;
-            var cacheProgress = e.Model as CacheProgress;
-            var permissionWindowUsage = e.Model as PermissionWindowUsedByCacheProgress;
-
-            var loadStageNode = e.Model as LoadStageNode;
-
-            if (e.Model == null)
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandCreateNewLoadMetadata(_activator));
-
             if (allCataloguesNode != null)
                 e.MenuStrip = factory.CreateMenu(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator,allCataloguesNode.LoadMetadata));
 
             if (hicProjectDirectory != null)
                 e.MenuStrip = factory.CreateMenu(new ExecuteCommandChooseHICProjectDirectory(_activator,hicProjectDirectory.LoadMetadata));
-
-            if (loadStageNode != null)
-                e.MenuStrip = new LoadStageNodeMenu(_activator, loadStageNode);
-
-            if (schedulingNode != null)
-                e.MenuStrip = new LoadMetadataScheduleNodeMenu(_activator, schedulingNode);
-
-            if (lmd != null)
-                e.MenuStrip = new LoadMetadataMenu(_activator, lmd);
-
-            if (loadProgress != null)
-                e.MenuStrip = new LoadProgressMenu(_activator, loadProgress);
-
-            if (cacheProgress != null)
-                e.MenuStrip = new CacheProgressMenu(_activator, cacheProgress);
-
-
-            if (permissionWindowUsage != null)
-                e.MenuStrip = new PermissionWindowUsageMenu(_activator, permissionWindowUsage);
         }
         
         public override void SetItemActivator(IActivateItems activator) 
@@ -189,13 +143,11 @@ namespace CatalogueManager.Collections
             CommonFunctionality.SetUp(
                 tlvLoadMetadata,
                 activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(), 
-                new RDMPCommandExecutionFactory(activator),
                 olvName,
                 tbFilter,
-                olvName,
-                lblHowToEdit);
+                olvName);
+
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new[] {new ExecuteCommandCreateNewLoadMetadata(_activator)};
             
             RefreshAll();
         }

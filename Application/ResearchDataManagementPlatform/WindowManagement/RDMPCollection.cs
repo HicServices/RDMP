@@ -6,6 +6,8 @@
         Tables,
         Catalogue,
         DataExport,
+        SavedCohorts,
+
         Cohort,
         DataLoad,
         

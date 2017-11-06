@@ -4,12 +4,12 @@ using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using DataExportManager.CohortUI;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
-using DataExportManager.ItemActivation;
 using RDMPStartup;
 
 namespace DataExportManager.Menus
@@ -17,16 +17,14 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CohortSourceUsedByProjectNodeMenu : RDMPContextMenuStrip
     {
-        private readonly DataExportChildProvider _childProvider;
         private readonly CohortSourceUsedByProjectNode _cohortSourceUsedByProjectNode;
 
-        public CohortSourceUsedByProjectNodeMenu(IActivateDataExportItems activator, DataExportChildProvider childProvider, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
+        public CohortSourceUsedByProjectNodeMenu(IActivateItems activator, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
             : base( activator,cohortSourceUsedByProjectNode.Project)
         {
-            _childProvider = childProvider;
             _cohortSourceUsedByProjectNode = cohortSourceUsedByProjectNode;
             
-            var viewDetail = new ToolStripMenuItem("Show Detailed Summary of Project Cohorts", CatalogueIcons.CohortsSourceDetailedCounts, (s, e) => ShowDetailedSummaryOfCohorts());
+            var viewDetail = new ToolStripMenuItem("Show Detailed Summary of Project Cohorts", CatalogueIcons.CohortsNode, (s, e) => ShowDetailedSummaryOfCohorts());
             viewDetail.Enabled = !_cohortSourceUsedByProjectNode.IsEmptyNode;
             Items.Add(viewDetail);
 

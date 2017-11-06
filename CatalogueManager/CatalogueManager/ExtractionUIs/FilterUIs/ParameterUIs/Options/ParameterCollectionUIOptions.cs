@@ -87,6 +87,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;
         }
 
+        private bool IsDifferentLevel(ISqlParameter p)
+        {
+            return ParameterManager.GetLevelForParameter(p) != CurrentLevel;
+        }
+
         public bool IsOverridden(ISqlParameter sqlParameter)
         {
             return ParameterManager.GetOverrideIfAnyFor(sqlParameter) != null;
@@ -95,6 +100,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
         public bool ShouldBeDisabled(ISqlParameter p)
         {
             return IsOverridden(p) || IsHigherLevel(p) || p is SpontaneousObject;
+        }
+
+        public bool ShouldBeReadOnly(ISqlParameter p)
+        {
+            return IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject;
         }
     }
 }

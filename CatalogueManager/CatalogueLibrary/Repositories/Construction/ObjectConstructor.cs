@@ -126,5 +126,36 @@ namespace CatalogueLibrary.Repositories.Construction
         {
             return arg.GetConstructor(Type.EmptyTypes) != null;
         }
+
+        public object ConstructIfPossible(Type typeToConstruct, params object[] constructorValues)
+        {
+            List<ConstructorInfo> compatible = new List<ConstructorInfo>();
+
+            foreach (var constructor in typeToConstruct.GetConstructors())
+            {
+                
+                var p = constructor.GetParameters();
+
+                //must have the same length of arguments as expected
+                if (p.Length != constructorValues.Length)
+                    continue;
+
+                bool isCompatible = true;
+
+                for (int index = 0; index < constructorValues.Length; index++)
+                {
+                    if (!p[index].ParameterType.IsInstanceOfType(constructorValues[index]))
+                        isCompatible = false;
+                }
+
+                if(isCompatible)
+                    compatible.Add(constructor);
+            }
+
+            if (compatible.Any())
+                return InvokeBestConstructor(compatible,constructorValues);
+
+            return null;
+        }
     }
 }

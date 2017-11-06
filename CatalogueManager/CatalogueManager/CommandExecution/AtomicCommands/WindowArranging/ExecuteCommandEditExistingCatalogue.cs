@@ -9,15 +9,13 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 {
-    public class ExecuteCommandEditExistingCatalogue : BasicCommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandEditExistingCatalogue : BasicUICommandExecution, IAtomicCommandWithTarget
     {
-        private readonly IActivateItems activator;
-
         public Catalogue Catalogue { get; set; }
 
-        public ExecuteCommandEditExistingCatalogue(IActivateItems activator)
+        public ExecuteCommandEditExistingCatalogue(IActivateItems activator) : base(activator)
         {
-            this.activator = activator;
+            
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -25,9 +23,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Edit);
         }
 
-        public void SetTarget(DatabaseEntity target)
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             Catalogue = (Catalogue) target;
+            return this;
         }
 
         public override string GetCommandHelp()
@@ -43,7 +42,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a Catalogue.");
 
             base.Execute();
-            activator.WindowArranger.SetupEditCatalogue(this, Catalogue);
+            Activator.WindowArranger.SetupEditCatalogue(this, Catalogue);
         }
     }
 }

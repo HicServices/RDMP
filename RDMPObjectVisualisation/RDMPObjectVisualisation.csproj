@@ -139,6 +139,7 @@
     <Compile Include="Copying\Commands\CatalogueCommand.cs" />
     <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
     <Compile Include="Copying\Commands\CohortCommandHelper.cs" />
+    <Compile Include="Copying\Commands\CohortIdentificationConfigurationCommand.cs" />
     <Compile Include="Copying\Commands\ColumnCommand.cs" />
     <Compile Include="Copying\Commands\ColumnInfoCommand.cs" />
     <Compile Include="Copying\Commands\ContainerCommand.cs" />
@@ -170,6 +171,12 @@
     </Compile>
     <Compile Include="DataObjects\CohortCreationRequestVisualisation.Designer.cs">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataObjects\UnknownVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataObjects\UnknownVisualisation.Designer.cs">
+      <DependentUpon>UnknownVisualisation.cs</DependentUpon>
     </Compile>
     <Compile Include="DataObjects\PatientIndexTableVisualisation.cs">
       <SubType>UserControl</SubType>
@@ -314,6 +321,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\CohortCreationRequestVisualisation.resx">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataObjects\UnknownVisualisation.resx">
+      <DependentUpon>UnknownVisualisation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\PatientIndexTableVisualisation.resx">
       <DependentUpon>PatientIndexTableVisualisation.cs</DependentUpon>

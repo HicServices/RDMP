@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using DataExportLibrary.Data.DataTables;
 
@@ -60,6 +61,11 @@ namespace DataExportManager.Collections.Nodes.UsedByProject
             {
                 return ((Project != null ? Project.GetHashCode() : 0)*397) ^ (Source != null ? Source.GetHashCode() : 0);
             }
+        }
+
+        public object MasqueradingAs()
+        {
+            return ObjectBeingUsed;
         }
     }
 }

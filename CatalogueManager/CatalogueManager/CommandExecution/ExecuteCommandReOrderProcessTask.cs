@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
@@ -9,16 +10,14 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    internal class ExecuteCommandReOrderProcessTask : BasicCommandExecution
+    internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly ProcessTask _targetProcessTask;
         private readonly InsertOption _insertOption;
         private ProcessTask _sourceProcessTask;
 
-        public ExecuteCommandReOrderProcessTask(IActivateItems activator, ProcessTaskCommand sourceProcessTaskCommand, ProcessTask targetProcessTask, InsertOption insertOption)
+        public ExecuteCommandReOrderProcessTask(IActivateItems activator, ProcessTaskCommand sourceProcessTaskCommand, ProcessTask targetProcessTask, InsertOption insertOption) : base(activator)
         {
-            _activator = activator;
             _targetProcessTask = targetProcessTask;
             _insertOption = insertOption;
             _sourceProcessTask = sourceProcessTaskCommand.ProcessTask;
@@ -80,7 +79,7 @@ namespace CatalogueManager.CommandExecution
 
             _sourceProcessTask.Order = destinationOrder;
             _sourceProcessTask.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(lmd));
+            Publish(lmd);
         }
     }
 }

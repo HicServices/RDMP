@@ -9,11 +9,13 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints;
 using HIC.Common.Validation.Constraints.Primary;
 using HIC.Common.Validation.Constraints.Secondary;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
 
@@ -29,10 +31,8 @@ namespace CatalogueManager.Validation
     /// extractable columns / transforms you make available to researchers.  On the left of this form you can see all the columns/transforms.  By selecting one you can view/edit its'
     /// collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the datatype, only use a primary constraint if you have an insane
     /// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).
-    /// 
-    /// 
     /// </summary>
-    public partial class ValidationSetupForm : ValidationSetupForm_Design, IConsultableBeforeClosing
+    public partial class ValidationSetupForm : ValidationSetupForm_Design, IConsultableBeforeClosing, ISaveableUI
     {
         private string _noPrimaryConstraintText = "No Primary Constraint Defined";
         
@@ -41,7 +41,8 @@ namespace CatalogueManager.Validation
         private bool bSuppressChangeEvents = false;
         private Catalogue _catalogue;
 
-
+        private string ClearSelection = "<<Clear Selection>>";
+        
         private ItemValidator SelectedColumnItemValidator {get
         {
             var ei = olvColumns.SelectedObject as ExtractionInformation;
@@ -61,19 +62,19 @@ namespace CatalogueManager.Validation
         public ValidationSetupForm()
         {
             InitializeComponent();
-         
+            
             SetupAvailableOperations();
 
             olvColumns.RowHeight = 19;
             ddConsequence.DataSource = Enum.GetValues(typeof (Consequence));
-            
-            btnSave.Image = FamFamFamIcons.disk;
 
             int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
             tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
         }
 
         private bool isFirstTime = true;
+        
+
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
@@ -86,8 +87,12 @@ namespace CatalogueManager.Validation
 
             _catalogue = databaseObject;
 
+            objectSaverButton1.SetupFor(databaseObject, _activator.RefreshBus);
+            objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+
             olvName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
-            
+
+            SetupComboBoxes(databaseObject);
 
             //get the validation XML
             if (string.IsNullOrWhiteSpace(databaseObject.ValidatorXML))
@@ -100,6 +105,26 @@ namespace CatalogueManager.Validation
             olvColumns.AddObjects(extractionInformations);
 
             ValidateConfiguration();
+        }
+
+        private void SetupComboBoxes(Catalogue catalogue)
+        {
+            cbxTimePeriodColumn.Items.Clear();
+            cbxPivotColumn.Items.Clear();
+
+            var cis = catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+
+            cbxTimePeriodColumn.Items.Add(ClearSelection);
+            cbxTimePeriodColumn.Items.AddRange(cis);
+
+            if (catalogue.TimeCoverage_ExtractionInformation_ID != null)
+                cbxTimePeriodColumn.SelectedItem = catalogue.TimeCoverage_ExtractionInformation;
+
+            cbxPivotColumn.Items.Add(ClearSelection);
+            cbxPivotColumn.Items.AddRange(cis);
+
+            if (catalogue.PivotCategory_ExtractionInformation_ID != null)
+                cbxPivotColumn.SelectedItem = catalogue.PivotCategory_ExtractionInformation;
         }
 
         private void ValidateConfiguration()
@@ -265,12 +290,7 @@ namespace CatalogueManager.Validation
             dialog.Closed += (s, v) => PopulateFormForSelectedColumn();
             dialog.Show();
         }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-           Save();
-        }
-
+        
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
             olvColumns.UseFiltering = true;
@@ -310,12 +330,13 @@ namespace CatalogueManager.Validation
                 ExceptionViewer.Show(exception);
             }
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
+            Publish(_catalogue);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
         {
-            btnSave.Enabled = HasChanges();
+            Save();
+            return true;
         }
 
         private bool HasChanges()
@@ -329,6 +350,48 @@ namespace CatalogueManager.Validation
             {
                 return false;
             }
+        }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
+        }
+
+        private void cbxTimePeriodColumn_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetTimePeriod(cbxTimePeriodColumn.SelectedItem as ExtractionInformation);
+        }
+
+        private void cbxPivotColumn_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetPivot(cbxPivotColumn.SelectedItem as ExtractionInformation);
+        }
+        private void SetTimePeriod(ExtractionInformation selected)
+        {
+            _catalogue.TimeCoverage_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
+            _catalogue.SaveToDatabase();
+            Publish(_catalogue);
+        }
+
+        private void SetPivot(ExtractionInformation selected)
+        {
+            _catalogue.PivotCategory_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
+            _catalogue.SaveToDatabase();
+            Publish(_catalogue);
+        }
+
+        private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.CatalogueItems, true, false);
+            if (dialog.ShowDialog() == DialogResult.OK)
+                SetTimePeriod(dialog.Selected as ExtractionInformation);
+        }
+
+        private void lblPickPivotColumn_Click(object sender, EventArgs e)
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.CatalogueItems, true, false);
+            if (dialog.ShowDialog() == DialogResult.OK)
+                SetPivot(dialog.Selected as ExtractionInformation);
         }
     }
 

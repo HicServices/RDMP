@@ -1,9 +1,11 @@
 ﻿using CatalogueLibrary.Data;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueLibrary.CommandExecution.AtomicCommands
 {
     public interface IAtomicCommandWithTarget : IAtomicCommand
     {
-        void SetTarget(DatabaseEntity target);
+        IAtomicCommandWithTarget SetTarget(DatabaseEntity target);
     }
 }

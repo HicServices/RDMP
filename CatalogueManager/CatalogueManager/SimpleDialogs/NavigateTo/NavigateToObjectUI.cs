@@ -19,7 +19,9 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
+using DataExportLibrary.Data;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
 using IContainer = CatalogueLibrary.Data.IContainer;
@@ -49,7 +51,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private Bitmap _magnifier;
         private int _diagramBottom;
 
-        private static readonly Type[] TypesThatAreNotUsefulParents =
+        private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
+            new []
         {
             typeof(CatalogueItemsNode),
             typeof(DocumentationNode),
@@ -60,8 +63,13 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             typeof(AllProcessTasksUsedByLoadMetadataNode),
             typeof(LoadStageNode),
             typeof(PreLoadDiscardedColumnsNode)
-        };
-        
+        });
+
+        public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
+        {
+            if(!TypesThatAreNotUsefulParents.Contains(t))
+                TypesThatAreNotUsefulParents.Add(t);
+        }
         public NavigateToObjectUI(IActivateItems activator)
         {
             _activator = activator;
@@ -278,11 +286,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 }
 
             //match on the head vs the regex tokens
-            if (IsMatchToString(regexes, kvp.Key))
-                score += Weights[0];
+            score += Weights[0] * CountMatchToString(regexes, kvp.Key);
 
-            if (IsMatchType(regexes, kvp.Key))
-                score += Weights[0];
+            score += Weights[0] * CountMatchType(regexes, kvp.Key);
 
             //match on the parents if theres a decendancy list
             if(kvp.Value != null)
@@ -303,11 +309,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     {
                         if (!(parent is CatalogueLibrary.Data.IContainer))
                         {
-                            if (IsMatchToString(regexes, parent))
-                                score += Weights[i];
-
-                            if (IsMatchType(regexes, parent))
-                                score += Weights[i];
+                            score += Weights[i] * CountMatchToString(regexes, parent);
+                            score += Weights[i] * CountMatchType(regexes, parent);
                         }
                     }
                 }
@@ -320,24 +323,27 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             return score;
         }
 
-        private bool IsMatchType(List<Regex> regexes, object key)
+        private int CountMatchType(List<Regex> regexes, object key)
         {
-            return IsMatch(regexes, key.GetType().Name);
+            return MatchCount(regexes, key.GetType().Name);
         }
-        private bool IsMatchToString(List<Regex> regexes, object key)
+        private int CountMatchToString(List<Regex> regexes, object key)
         {
-            return IsMatch(regexes, key.ToString());
-        }
-        private bool IsMatch(List<Regex> regexes, string str)
-        {
-            var match = regexes.FirstOrDefault(r => r.IsMatch(str));
+            var s = key as ICustomSearchString;
+            string matchOn = s != null ? s.GetSearchString() : key.ToString();
 
-            if (match != null)
+            return MatchCount(regexes, matchOn);
+        }
+        private int MatchCount(List<Regex> regexes, string str)
+        {
+            int matches = 0;
+            foreach(var match in regexes.Where(r => r.IsMatch(str)).ToArray())
             {
                 regexes.Remove(match);
-                return true;
+                matches ++;
             }
-            return false;
+
+            return matches;
         }
 
         protected override void OnPaint(PaintEventArgs e)

@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -34,7 +35,7 @@ namespace CatalogueManager.Menus.MenuItems
         {
             var newAggregate = new AggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_catalogue));
-            _activator.ActivateAggregate(this,newAggregate);
+            new ExecuteCommandActivate(_activator,newAggregate).Execute();
         }
     }
 }

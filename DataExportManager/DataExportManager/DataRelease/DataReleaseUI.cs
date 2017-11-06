@@ -10,7 +10,6 @@ using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.Collections.Providers;
 using DataExportManager.Icons.IconProvision;
-using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
 using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
@@ -69,7 +68,7 @@ namespace DataExportManager.DataRelease
             Project = project;
 
             //tell children controls about the project
-            doReleaseAndAuditUI1.SetProject((IActivateDataExportItems) activator, Project);
+            doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
         }
 
         private void SetupUIForProject(Project project)
@@ -109,7 +108,7 @@ namespace DataExportManager.DataRelease
                         Width = flowLayoutPanel1.Width - 20
                     };
 
-                    configurationReleasePotentialUI.SetConfiguration((IActivateDataExportItems) _activator, (ExtractionConfiguration) configuration);
+                    configurationReleasePotentialUI.SetConfiguration((IActivateItems) _activator, (ExtractionConfiguration) configuration);
                     configurationReleasePotentialUI.RepositoryLocator = RepositoryLocator;
                     configurationReleasePotentialUI.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                     configurationReleasePotentialUI.RequestRelease += ConfigurationReleasePotentialUIOnRequestRelease;
@@ -169,7 +168,7 @@ namespace DataExportManager.DataRelease
             Project = databaseObject;
 
             //tell children controls about the project
-            doReleaseAndAuditUI1.SetProject((IActivateDataExportItems) activator, Project);
+            doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
         }
 
         public override string GetTabName()

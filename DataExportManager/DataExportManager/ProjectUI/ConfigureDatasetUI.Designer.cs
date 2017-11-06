@@ -54,7 +54,6 @@ namespace DataExportManager.ProjectUI
             this.cbShowCohortColumns = new System.Windows.Forms.CheckBox();
             this.cbShowSupplemental = new System.Windows.Forms.CheckBox();
             this.lbAvailableColumns = new System.Windows.Forms.ListBox();
-            this.btnViewSQL = new System.Windows.Forms.Button();
             this.lblExtractionInformationDeletedColor = new System.Windows.Forms.Label();
             this.lblExtractionInformationDeleted = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -175,7 +174,6 @@ namespace DataExportManager.ProjectUI
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.btnViewSQL);
             this.splitContainer1.Panel2.Controls.Add(this.lblExtractionInformationDeletedColor);
             this.splitContainer1.Panel2.Controls.Add(this.lblExtractionInformationDeleted);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
@@ -361,17 +359,6 @@ namespace DataExportManager.ProjectUI
             this.lbAvailableColumns.TabIndex = 0;
             this.lbAvailableColumns.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbAvailableColumns_DrawItem);
             // 
-            // btnViewSQL
-            // 
-            this.btnViewSQL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnViewSQL.Location = new System.Drawing.Point(8, 707);
-            this.btnViewSQL.Name = "btnViewSQL";
-            this.btnViewSQL.Size = new System.Drawing.Size(92, 23);
-            this.btnViewSQL.TabIndex = 154;
-            this.btnViewSQL.Text = "View SQL...";
-            this.btnViewSQL.UseVisualStyleBackColor = true;
-            this.btnViewSQL.Click += new System.EventHandler(this.btnViewSQL_Click);
-            // 
             // lblExtractionInformationDeletedColor
             // 
             this.lblExtractionInformationDeletedColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -437,6 +424,5 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.CheckBox cbShowDeprecatedColumns;
         private System.Windows.Forms.Label lblExtractionInformationDeleted;
         private System.Windows.Forms.Label lblExtractionInformationDeletedColor;
-        private System.Windows.Forms.Button btnViewSQL;
     }
 }

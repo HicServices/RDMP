@@ -3,12 +3,16 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.LoadExecutionUIs;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.ItemActivation;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
+using MapsDirectlyToDatabaseTable;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
@@ -34,7 +38,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _toolboxWindowManager.CloseAllWindows();
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(catalogue,2));
-            _activator.ActivateCatalogue(this, catalogue);
+            new ExecuteCommandActivate(_activator,catalogue).Execute();
 
             _toolboxWindowManager.Create(RDMPCollection.Tables, DockState.DockRight);
 
@@ -42,15 +46,17 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(tableInfo,1));
         }
 
-        public void SetupEditCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cohortIdentificationConfiguration)
+        public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
         {
             _toolboxWindowManager.CloseAllToolboxes();
             _toolboxWindowManager.CloseAllWindows();
+            
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, int.MaxValue));
 
-            _toolboxWindowManager.Create(RDMPCollection.Cohort, DockState.DockLeft);
+            var activate = new ExecuteCommandActivate(_activator,o);
 
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(cohortIdentificationConfiguration, int.MaxValue));
-            _activator.ExecuteCohortIdentificationConfiguration(this, cohortIdentificationConfiguration);
+            if(!activate.IsImpossible)
+                activate.Execute();
         }
 
         public void SetupEditDataExtractionProject(object sender, Project project)
@@ -61,22 +67,19 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _toolboxWindowManager.Create(RDMPCollection.DataExport, DockState.DockLeft);
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(project, int.MaxValue));
-            var activateDataExportItems = _activator as IActivateDataExportItems;
+            var activateDataExportItems = _activator as IActivateItems;
 
             bool foundAtLeastOneConfiguration = false;
 
             if (activateDataExportItems != null)
             {
-                // activateDataExportItems.ActivateProject(this, project);
+                //execute all unreleased configurations... what could possibly go wrong?
                 foreach (var config in project.ExtractionConfigurations.Cast<ExtractionConfiguration>())
                     if (!config.IsReleased)
-                    {
-                        activateDataExportItems.ExecuteExtractionConfiguration(this,new ExecuteExtractionUIRequest(config));
-                        foundAtLeastOneConfiguration = true;
-                    }
+                        new ExecuteCommandExecuteExtractionConfiguration(_activator, true).SetTarget(config).Execute();
 
                 if(!foundAtLeastOneConfiguration)
-                    activateDataExportItems.ActivateProject(this,project);
+                    new ExecuteCommandActivate(_activator,project).Execute();
             }
         }
 
@@ -87,7 +90,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
             _toolboxWindowManager.Create(RDMPCollection.DataLoad, DockState.DockLeft);
 
-            _activator.ExecuteLoadMetadata(this,loadMetadata);
+            _activator.Activate<ExecuteLoadMetadataUI, LoadMetadata>(loadMetadata);
+
             var diagram = (Control)_activator.ActivateViewLoadMetadataDiagram(this, loadMetadata);
             ((DockContent)diagram.Parent).DockTo(_mainDockPanel,DockStyle.Right);
         }

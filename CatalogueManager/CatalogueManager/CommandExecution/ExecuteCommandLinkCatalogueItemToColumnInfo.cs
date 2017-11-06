@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
@@ -7,15 +8,13 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
-    public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
+    public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicUICommandExecution
     {
-        private readonly IActivateItems _activator;
         private readonly ColumnInfoCommand _cmd;
         private readonly CatalogueItem _targetModel;
 
-        public ExecuteCommandLinkCatalogueItemToColumnInfo(IActivateItems activator, ColumnInfoCommand cmd, CatalogueItem targetModel)
+        public ExecuteCommandLinkCatalogueItemToColumnInfo(IActivateItems activator, ColumnInfoCommand cmd, CatalogueItem targetModel) : base(activator)
         {
-            _activator = activator;
             _cmd = cmd;
             _targetModel = targetModel;
             
@@ -43,7 +42,7 @@ namespace CatalogueManager.CommandExecution
             }
 
             //Either way refresh the catalogue item
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_targetModel));
+            Publish(_targetModel);
         }
     }
 }

@@ -82,7 +82,6 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "The following expected types were not passed to PreInitialize:LoadModuleAssembly\r\nThe object types passed were:\r\nCatalogueLibrary.Data.TableInfo:Test Table Info")]
         public void TestPipelineContextInitialization_UninitializedInterface()
         {
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
@@ -94,7 +93,9 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var testTableInfo = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "");
             testTableInfo.Name = "Test Table Info";
 
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, testTableInfo);
+            var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, testTableInfo));
+            Assert.IsTrue(ex.Message.Contains(
+                "The following expected types were not passed to PreInitialize:LoadModuleAssembly\r\nThe object types passed were:\r\nCatalogueLibrary.Data.TableInfo:Test Table Info"));
         }
 
         [Test]

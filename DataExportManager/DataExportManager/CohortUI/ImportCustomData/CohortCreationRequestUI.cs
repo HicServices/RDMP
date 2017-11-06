@@ -4,12 +4,13 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
-using DataExportManager.ItemActivation;
+using MapsDirectlyToDatabaseTableUI;
 using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
@@ -28,13 +29,11 @@ namespace DataExportManager.CohortUI.ImportCustomData
     public partial class CohortCreationRequestUI : RDMPForm
     {
         private readonly ExternalCohortTable _target;
-        private readonly Project _project;
         private DataExportRepository _repository;
 
         public CohortCreationRequestUI(ExternalCohortTable target, Project project =null)
         {
             _target = target;
-            _project = project;
 
             InitializeComponent();
             
@@ -44,60 +43,30 @@ namespace DataExportManager.CohortUI.ImportCustomData
             _repository = (DataExportRepository)_target.Repository;
 
             lblExternalCohortTable.Text = _target.ToString();
-            listBox1.MultiSelect = false;
 
-            //we already know the project
-            if (project != null)
-            {
-                //fixed project mode
-                Height -= groupBox1.Height;
-                groupBox1.Visible = false;
-                lblProject.Text = project.Name;
-                
-            }
-            else
-            {
-                groupBox1.Visible = true;
-                lblProject.Text = "???";
-            }
-
+            SetProject(project);
+            
             pbProject.Image = CatalogueIcons.Project;
             pbCohortSource.Image = CatalogueIcons.ExternalCohortTable;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if(VisualStudioDesignMode)
-                return;
-            
-            RefreshProjectsDropdown();
-            
-        }
-
-        private void RefreshProjectsDropdown()
-        {
-            listBox1.ClearObjects();
-            listBox1.AddObjects(_repository.GetAllObjects<Project>());
-        }
 
         public CohortCreationRequest Result { get; set; }
-        public IActivateDataExportItems Activator { get; set; }
+        public IActivateItems Activator { get; set; }
+        public Project Project { get; set; }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            var project = GetCurrentlySelectedProject();
 
-            if (project == null)
+            if (Project == null)
             {
-                MessageBox.Show("You must select a project, if you do not have one yet then create one in the Project tab of Data Export Manager");
+                MessageBox.Show("You must select a project, if you do not have one yet then create one");
                 return;
             }
 
-            if (project.ProjectNumber == null)
+            if (Project.ProjectNumber == null)
             {
-                MessageBox.Show("Project " + project +
+                MessageBox.Show("Project " + Project +
                                 " does not have a project number yet, you must asign it one before it can be involved in cohort creation");
                 return;
             }
@@ -137,7 +106,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
             
             //construct the result
-            Result = new CohortCreationRequest(project,new CohortDefinition(null,name,version,(int)project.ProjectNumber,_target),(DataExportRepository) project.Repository,tbDescription.Text); 
+            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (DataExportRepository)Project.Repository, tbDescription.Text); 
 
             //see if it is passing checks
             ToMemoryCheckNotifier notifier = new ToMemoryCheckNotifier();
@@ -204,9 +173,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
                     && c2.Version > c.Version)//and a higher version
                     ).ToArray();
 
-            var proj = GetCurrentlySelectedProject();
-
-            if (proj == null)
+            if (Project == null)
             {
                 MessageBox.Show("You must select a Project");
                 return;
@@ -215,17 +182,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             if(cbShowEvenWhenProjectNumberDoesntMatch.Checked)
                 ddExistingCohort.Items.AddRange(maxVersionCohorts);
             else
-                ddExistingCohort.Items.AddRange(maxVersionCohorts.Where(c=>c.ProjectNumber == proj.ProjectNumber).ToArray());
-        }
-
-        private Project GetCurrentlySelectedProject()
-        {
-            return _project ?? listBox1.SelectedObject as Project;
-        }
-
-        private void tbFilterProject_TextChanged(object sender, EventArgs e)
-        {
-            listBox1.ModelFilter = new TextMatchFilter(listBox1,tbFilterProject.Text);
+                ddExistingCohort.Items.AddRange(maxVersionCohorts.Where(c => c.ProjectNumber == Project.ProjectNumber).ToArray());
         }
 
         private void btnNewProject_Click(object sender, EventArgs e)
@@ -268,10 +225,8 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
                 if (result == DialogResult.OK)
                 {
-                    RefreshProjectsDropdown();
                     p.Project.SaveToDatabase();
-                    listBox1.SelectedObject = p.Project;
-
+                    SetProject(p.Project);
                     Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(p.Project));
                 }
                 else
@@ -284,16 +239,59 @@ namespace DataExportManager.CohortUI.ImportCustomData
             }
         }
 
+        private void SetProject(Project project)
+        {
+            Project = project;
+
+            lblProject.Text = Project != null ? Project.Name : "????";
+            
+            btnNewProject.Left = lblProject.Right;
+            btnExisting.Left = btnNewProject.Right;
+
+            btnClear.Left = lblProject.Right;
+
+            btnNewProject.Visible = Project == null;
+            btnExisting.Visible = Project == null;
+            btnClear.Visible = Project != null;
+            
+            //if a project is selected and the project has no project number
+            lblErrorNoProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
+            tbSetProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
+        }
+
         private void tbName_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnExisting_Click(object sender, EventArgs e)
         {
-            var p = GetCurrentlySelectedProject();
-            lblProject.Text = p!= null ?p.Name:"???";
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
+            if(dialog.ShowDialog()== DialogResult.OK)
+                SetProject((Project)dialog.Selected);
         }
 
+        private void tbSetProjectNumber_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                tbSetProjectNumber.ForeColor = Color.Black;
+                int newProjectNumber = int.Parse(tbSetProjectNumber.Text);
+                Project.ProjectNumber = newProjectNumber;
+                Project.SaveToDatabase();
+            }
+            catch (Exception exception)
+            {
+                tbSetProjectNumber.ForeColor = Color.Red;
+            }
+
+            lblErrorNoProjectNumber.ForeColor = tbSetProjectNumber.ForeColor;
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            SetProject(null);
+        }
+        
     }
 }

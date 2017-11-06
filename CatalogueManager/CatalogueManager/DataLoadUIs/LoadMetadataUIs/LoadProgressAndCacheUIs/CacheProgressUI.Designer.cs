@@ -30,7 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CacheProgressUI));
             this.gbCacheProgress = new System.Windows.Forms.GroupBox();
+            this.pPipeline = new System.Windows.Forms.Panel();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.ddCacheLagDelayDurationType = new System.Windows.Forms.ComboBox();
             this.udCacheLagDelayPeriodDuration = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
@@ -44,9 +47,6 @@
             this.tbChunkPeriod = new System.Windows.Forms.TextBox();
             this.tbCacheProgressID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
-            this.pPipeline = new System.Windows.Forms.Panel();
             this.gbCacheProgress.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDuration)).BeginInit();
@@ -80,6 +80,23 @@
             this.gbCacheProgress.TabStop = false;
             this.gbCacheProgress.Text = "Cache Progress:";
             // 
+            // pPipeline
+            // 
+            this.pPipeline.Location = new System.Drawing.Point(95, 159);
+            this.pPipeline.Name = "pPipeline";
+            this.pPipeline.Size = new System.Drawing.Size(777, 169);
+            this.pPipeline.TabIndex = 46;
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
+            this.btnRefresh.Location = new System.Drawing.Point(396, 17);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(26, 26);
+            this.btnRefresh.TabIndex = 45;
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // btnEdit
             // 
             this.btnEdit.Location = new System.Drawing.Point(260, 41);
@@ -89,6 +106,14 @@
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(10, 159);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(57, 26);
+            this.objectSaverButton1.TabIndex = 44;
             // 
             // ddCacheLagDelayDurationType
             // 
@@ -204,32 +229,6 @@
             this.label9.Size = new System.Drawing.Size(21, 13);
             this.label9.TabIndex = 21;
             this.label9.Text = "ID:";
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
-            this.btnRefresh.Location = new System.Drawing.Point(396, 17);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(26, 26);
-            this.btnRefresh.TabIndex = 45;
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(10, 159);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 23);
-            this.objectSaverButton1.TabIndex = 44;
-            this.objectSaverButton1.Text = "objectSaverButton1";
-            this.objectSaverButton1.UseVisualStyleBackColor = true;
-            // 
-            // pPipeline
-            // 
-            this.pPipeline.Location = new System.Drawing.Point(95, 159);
-            this.pPipeline.Name = "pPipeline";
-            this.pPipeline.Size = new System.Drawing.Size(777, 169);
-            this.pPipeline.TabIndex = 46;
             // 
             // CacheProgressUI
             // 

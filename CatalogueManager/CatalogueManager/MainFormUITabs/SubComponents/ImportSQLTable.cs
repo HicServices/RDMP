@@ -154,7 +154,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                     ParameterCollectionUI.ShowAsDialog(options,true);
                 }
 
-                MessageBox.Show("Succesfully imported table '" + parent + "'");
+                MessageBox.Show("Successfully imported table '" + parent + "'");
                 Close();
             }
             catch (SqlException exception)

@@ -12,9 +12,9 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
 using DataExportManager.DataViewing.Collections;
-using DataExportManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
@@ -26,10 +26,9 @@ namespace DataExportManager.Menus
     {
         private readonly CustomDataTableNode _customDataTableNode;
 
-        public CustomDataTableNodeMenu(IActivateDataExportItems activator, CustomDataTableNode customDataTableNode): base( activator,null)
-        {
-            
 
+        public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNode customDataTableNode): base( activator,null)
+        {
             _customDataTableNode = customDataTableNode;
             Items.Add("View TOP 100 Records", CatalogueIcons.TableInfo, (s, e) => _activator.ViewDataSample(new ViewCustomCohortTableExtractionUICollection(_customDataTableNode.Cohort, _customDataTableNode.TableName)));
 
@@ -41,12 +40,18 @@ namespace DataExportManager.Menus
             Items.Add("Delete Custom Data Table", CatalogueIcons.Warning, (s, e) => Delete());
         }
 
+        public CustomDataTableNodeMenu(IActivateItems activator,CustomDataTableNodeUsedByProjectNode projectCustomTableUsageNode):
+            this(activator, projectCustomTableUsageNode.CustomTable)
+        {
+
+        }
+
         private void Delete()
         {
             if(MessageBox.Show("This will involve DELETING the table in your cohort database aswell as the custom table record, are you sure this is what you want?","Confirm Deleting Data",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _customDataTableNode.Cohort.DeleteCustomData(_customDataTableNode.TableName);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_customDataTableNode.Cohort));
+                Publish(_customDataTableNode.Cohort);
             }
             
         }
@@ -54,8 +59,7 @@ namespace DataExportManager.Menus
         private void SetActive(bool flag)
         {
             _customDataTableNode.Cohort.SetActiveFlagOnCustomData(_customDataTableNode.TableName,flag);
-
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_customDataTableNode.Cohort));
+            Publish(_customDataTableNode.Cohort);
         }
     }
 }

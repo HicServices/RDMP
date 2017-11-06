@@ -343,16 +343,6 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CohortsSourceDetailedCounts {
-            get {
-                object obj = ResourceManager.GetObject("CohortsSourceDetailedCounts", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap CollisionResolution {
             get {
                 object obj = ResourceManager.GetObject("CollisionResolution", resourceCulture);
@@ -666,6 +656,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap ExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("ExtractionConfiguration", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ExtractionConfigurationsNode {
+            get {
+                object obj = ResourceManager.GetObject("ExtractionConfigurationsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1096,6 +1096,26 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Project {
             get {
                 object obj = ResourceManager.GetObject("Project", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectCohortIdentificationConfigurationAssociationsNode {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectSavedCohortsNode {
+            get {
+                object obj = ResourceManager.GetObject("ProjectSavedCohortsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

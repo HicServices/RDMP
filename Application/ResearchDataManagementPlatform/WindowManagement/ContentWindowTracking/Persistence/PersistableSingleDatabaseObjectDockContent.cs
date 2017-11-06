@@ -8,6 +8,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
+using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ReusableUIComponents;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
@@ -47,7 +48,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            TabText = ((IRDMPSingleDatabaseObjectControl) _control).GetTabName();
+            var newTabName = ((IRDMPSingleDatabaseObjectControl) _control).GetTabName();
+            var floatWindow = ParentForm as CustomFloatWindow;
+
+            if (floatWindow != null)
+                floatWindow.Text = newTabName;
+
+            TabText = newTabName;
         }
 
         public override void HandleUserRequestingTabRefresh(IActivateItems activator)

@@ -15,20 +15,20 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandEditPipeline : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandEditPipeline : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly PipelineUser _user;
         private readonly IPipelineUseCase _useCase;
         private IPipeline _pipeline;
 
-        public ExecuteCommandEditPipeline(IActivateItems activator, PipelineUser user,IPipelineUseCase useCase)
+        public ExecuteCommandEditPipeline(IActivateItems activator, PipelineUser user,IPipelineUseCase useCase) : base(activator)
         {
-            _activator = activator;
             _user = user;
             _useCase = useCase;
             
@@ -55,12 +55,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var cataRepo = _activator.RepositoryLocator.CatalogueRepository;
+            var cataRepo = Activator.RepositoryLocator.CatalogueRepository;
             var mef = cataRepo.MEF;
 
             var context = _useCase.GetContext();
 
-            var initObjects = _useCase.GetInitializationObjects(_activator.RepositoryLocator.CatalogueRepository);
+            var initObjects = _useCase.GetInitializationObjects(Activator.RepositoryLocator.CatalogueRepository);
 
             
             var uiFactory = new ConfigurePipelineUIFactory(mef, cataRepo);

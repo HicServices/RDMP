@@ -24,7 +24,6 @@ using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.ItemActivation;
 using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using HIC.Common.Validation.Constraints.Primary;
@@ -46,21 +45,17 @@ namespace DataExportManager.Menus
 
         private IExtractableDataSet[] _importableDataSets;
 
-        public ExtractionConfigurationMenu(IActivateDataExportItems activator, ExtractionConfiguration extractionConfiguration, DataExportChildProvider childProvider)
+        public ExtractionConfigurationMenu(IActivateItems activator, ExtractionConfiguration extractionConfiguration)
             : base( activator,extractionConfiguration)
         {
             _extractionConfiguration = extractionConfiguration;
-            _childProvider = childProvider;
+            _childProvider = (DataExportChildProvider) activator.CoreChildProvider;
             
             var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
 
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
             _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).ToArray();
-
-            var editMenuItem = new ToolStripMenuItem("Edit", CatalogueIcons.ExtractionConfiguration, (s, e) => activator.ActivateExtractionConfiguration(this, extractionConfiguration));
-            editMenuItem.Enabled = !extractionConfiguration.IsReleased;
-            Items.Add(editMenuItem);
-
+            
             ///////////////////Change Cohorts//////////////
             string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";
 
@@ -92,10 +87,8 @@ namespace DataExportManager.Menus
             generateDoc.Enabled = _datasets.Any() && extractionResults.Any();
             Items.Add(generateDoc);
 
-            var execute = new ToolStripMenuItem("Execute Extraction Configuration", CatalogueIcons.ExecuteArrow, (s, e) => ((IActivateDataExportItems)_activator).ExecuteExtractionConfiguration(this, new ExecuteExtractionUIRequest(_extractionConfiguration)));
-            //must have datasets, must not be released and must have a cohort
-            execute.Enabled = _datasets.Any() && !extractionConfiguration.IsReleased && extractionConfiguration.Cohort_ID != null;
-            Items.Add(execute);
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(_extractionConfiguration));
+
 
             var freeze = new ToolStripMenuItem("Freeze Extraction", CatalogueIcons.FrozenExtractionConfiguration,(s, e) => Freeze());
             freeze.Enabled = !extractionConfiguration.IsReleased && _datasets.Any();
@@ -119,7 +112,7 @@ namespace DataExportManager.Menus
             try
             {
                 var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(clone));
+                Publish(clone);
             }
             catch (Exception exception)
             {
@@ -132,7 +125,7 @@ namespace DataExportManager.Menus
         {
             _extractionConfiguration.IsReleased = true;
             _extractionConfiguration.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_extractionConfiguration));
+            Publish(_extractionConfiguration);
         }
 
         private void GenerateReleaseDocument()
@@ -197,7 +190,7 @@ namespace DataExportManager.Menus
                 //clear current one
                 _extractionConfiguration.Cohort_ID = ((ExtractableCohort)dialog.Selected).ID;
                 _extractionConfiguration.SaveToDatabase();
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_extractionConfiguration));
+                Publish(_extractionConfiguration);
             }
         }
 

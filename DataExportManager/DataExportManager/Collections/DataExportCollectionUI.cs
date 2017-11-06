@@ -17,6 +17,7 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
@@ -26,8 +27,8 @@ using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.Icons.IconProvision;
-using DataExportManager.ItemActivation;
 using DataExportManager.Menus;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
@@ -76,26 +77,18 @@ namespace DataExportManager.Collections
     /// </summary>
     public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
-        private IActivateDataExportItems _activator;
-        private DataExportTextFormatProvider _formatProvider;
-        private DataExportIconProvider _iconProvider;
+        private IActivateItems _activator;
         private DataExportProblemProvider _problemProvider;
-        private TreeNodeParentFinder _parentFinder;
         private DataExportChildProvider _childProvider;
-        
-        private object[] _roots;
 
         public DataExportCollectionUI()
         {
             InitializeComponent();
             
-            tlvDataExport.RowFormatter += RowFormatter;
-            
             tlvDataExport.CellToolTipGetter += CellToolTipGetter;
-            
+            olvProjectNumber.AspectGetter += ProjectNumberAspectGetter;
         }
-
-
+        
         private string CellToolTipGetter(OLVColumn column, object modelObject)
         {
             var project = modelObject as Project;
@@ -110,179 +103,65 @@ namespace DataExportManager.Collections
             return null;
         }
 
-
-        private void RowFormatter(OLVListItem olvItem)
+        private object ProjectNumberAspectGetter(object rowObject)
         {
-            if(olvItem.RowObject is CohortsNode)
-                olvItem.BackColor = Color.LightBlue;
-            if (olvItem.RowObject is ExtractableDataSetsNode)
-                olvItem.BackColor = Color.LightBlue;
-            if (olvItem.RowObject is ProjectsNode)
-                olvItem.BackColor = Color.LightBlue;
+            var p = rowObject as Project;
 
-            var p = olvItem.RowObject as Project;
             if (p != null)
-                olvItem.ForeColor = _formatProvider.GetForeColor(p);
+                return p.ProjectNumber;
 
-            var config = olvItem.RowObject as ExtractionConfiguration;
-            if (config != null)
-                olvItem.ForeColor = _formatProvider.GetForeColor(config);
-
-            var link = olvItem.RowObject as LinkedCohortNode;
-            if (link != null)
-                olvItem.ForeColor = _formatProvider.GetForeColor(link);
+            return null;
         }
 
-
+        
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = (IActivateDataExportItems)activator;
-            _iconProvider = (DataExportIconProvider) _activator.CoreIconProvider;
+            _activator = activator;
 
             CommonFunctionality.SetUp(
                 tlvDataExport,
                 _activator,
-                RepositoryLocator,
-                new RDMPCommandFactory(), 
-                new RDMPCommandExecutionFactory(_activator), 
                 olvName,
                 tbFilter,
-                olvName,
-                lblHowToEdit
+                olvName
                 );
-
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new []{new ExecuteCommandCreateNewDataExtractionProject(activator)};
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             RefreshProviders();
-            RefreshUIFromDatabase(null);
-        }
 
-        private void tlvDataExport_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            var o = e.Model;
+            tlvDataExport.AddObjects(_childProvider.Projects);
 
-            if(o is CohortsNode)
-                e.MenuStrip = new CohortsNodeMenu(_activator);
+            NavigateToObjectUI.RecordThatTypeIsNotAUsefulParentToShow(typeof(ProjectCohortIdentificationConfigurationAssociationsNode));
 
-            if (o is ExternalCohortTable)
-                e.MenuStrip = new ExternalCohortTableMenu(_activator, (ExternalCohortTable) o);
-
-            if(o is ExtractableCohort)
-                e.MenuStrip = new ExtractableCohortMenu(_activator, (ExtractableCohort)o);
-
-            if(o is ExtractableDataSetsNode)
-                e.MenuStrip = new ExtractableDataSetsNodeMenu(_activator);
-
-            if(o is ExtractableDataSet)
-                e.MenuStrip = new ExtractableDatasetMenu(_activator,(ExtractableDataSet)o);
-
-            if(o is ProjectsNode)
-                e.MenuStrip = new ProjectsNodeMenu(_activator);
-
-            if(o is Project)
-                e.MenuStrip = new ProjectsMenu(_activator, _childProvider, (Project)o);
-
-            if (o is CohortSourceUsedByProjectNode)
-                e.MenuStrip = new CohortSourceUsedByProjectNodeMenu( _activator, _childProvider, (CohortSourceUsedByProjectNode)o);
-            
-            if (o is ExtractableCohortUsedByProjectNode)
-                e.MenuStrip = new ExtractableCohortMenu(_activator, ((ExtractableCohortUsedByProjectNode)o).Cohort);
-
-            if (o is CustomDataTableNodeUsedByProjectNode)
-                e.MenuStrip = new CustomDataTableNodeMenu(_activator, ((CustomDataTableNodeUsedByProjectNode)o).CustomTable);
-
-            if(o is ExtractionConfiguration)
-                e.MenuStrip = new ExtractionConfigurationMenu(_activator, (ExtractionConfiguration)o, _childProvider);
-
-            if (o is CustomDataTableNode)
-                e.MenuStrip = new CustomDataTableNodeMenu(_activator, (CustomDataTableNode)o);
-
-            if (o is ExtractableDataSetPackage)
-                e.MenuStrip = new ExtractableDataSetPackageMenu(_activator, (ExtractableDataSetPackage)o, _childProvider);
-
-            if (o is SelectedDataSets)
-                e.MenuStrip = new SelectedDataSetMenu(_activator, (SelectedDataSets)o);
-
-            if (o is FilterContainer)
-            {
-                var selectedDataSet = _parentFinder.GetFirstOrNullParentRecursivelyOfType<SelectedDataSets>(o);
-
-                if (selectedDataSet == null)
-                    throw new Exception("Could not find GetLinkedDatasetParentRecursivelyFor '" + o );
-
-                e.MenuStrip = new FilterContainerMenu(_activator, (FilterContainer)o, selectedDataSet);
-            }
         }
         
-        private void RefreshUIFromDatabase(object oRefreshFrom)
-        {
-            if (oRefreshFrom == null)
-            {
-                tlvDataExport.ClearObjects();
-
-                _roots = new object[]
-                {
-                    _childProvider.RootCohortsNode,
-                    _childProvider.RootExtractableDataSets,
-                    _childProvider.RootProjectsNode
-                };
-
-                tlvDataExport.AddObjects(_roots);
-            }
-            else
-                tlvDataExport.RefreshObject(oRefreshFrom);
-        }
-
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             //always update the child providers etc
             RefreshProviders();
 
-            RefreshIfNewChild(typeof(ProjectsNode), typeof(Project), e.Object);
-            RefreshIfNewChild(typeof(CohortsNode), typeof(ExternalCohortTable), e.Object);
-            RefreshIfNewChild(typeof(ExtractableDataSetsNode), typeof(ExtractableDataSet), e.Object);
-            RefreshIfNewChild(typeof(ExtractableDataSetsNode), typeof(ExtractableDataSetPackage), e.Object);
-
-
+            //if it is a new Project
+            if (e.Object is Project && e.Object.Exists())
+                //it exists and we don't know about it?
+                if (!tlvDataExport.Objects.Cast<object>().Contains(e.Object))
+                    tlvDataExport.AddObject(e.Object); //add it
+            
             //Objects can appear multiple times in this tree view but thats not allowed by ObjectListView (for good reasons!).  So instead we wrap the duplicate object
             //with a UsedByProjectNode class which encapsulates the object being used (e.g. the cohort) but also the Project.  Now that solves the HashCode problem but
             //it doesn't solve the refresh problem where we get told to refresh the ExtractableCohort but we miss out the project users.  So let's refresh them now.
             if(_childProvider != null)
                 foreach (IObjectUsedByProjectNode user in _childProvider.DuplicateObjectsButUsedByProjects.Where(d => d.ObjectBeingUsed.Equals(e.Object)).ToArray())
                     tlvDataExport.RefreshObject(user.Project);//refresh the entire Project
+            
         }
 
-        private void RefreshIfNewChild(Type singletonNodeType, Type childTypeToRefreshIfNew, DatabaseEntity childThatMightBeNew)
-        {
-            //it's not a change to a relevant type anyway e.g. ProjectNode has children of type Project and we only care if childThatMightBeNew is a Project
-            if (childTypeToRefreshIfNew != childThatMightBeNew.GetType())
-                return;
-
-            //user passed in the Type of the root they want refreshed (if a new object of the correct Type appeared)
-            var nodeUserWantsRefreshed = _roots.Single(r => r.GetType() == singletonNodeType);
-
-            //get the tree node children
-            var children = tlvDataExport.GetChildren(nodeUserWantsRefreshed).OfType<DatabaseEntity>();
-            var contains = children.Contains(childThatMightBeNew);
-
-            //objects that are deleted still come through as a refresh (as they are deleted)
-            bool childStillExists = childThatMightBeNew.Exists();
-
-            //if it contains a deleted object (OR doesn't contain an existing object)
-            if (contains != childStillExists)
-                RefreshUIFromDatabase(nodeUserWantsRefreshed);//udate the node (expensive operation)
-
-        }
 
         private void RefreshProviders()
         {
             _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;
             _problemProvider = new DataExportProblemProvider(_childProvider);
             _problemProvider.FindProblems();
-            _formatProvider = new DataExportTextFormatProvider(_childProvider, _problemProvider);
-            _iconProvider.SetProviders(_childProvider, _problemProvider);
-            _parentFinder = new TreeNodeParentFinder(tlvDataExport);
-
         }
 
         private void tlvDataExport_KeyUp(object sender, KeyEventArgs e)
@@ -290,13 +169,9 @@ namespace DataExportManager.Collections
             if (e.KeyCode == Keys.Delete)
             {
                 var o = tlvDataExport.SelectedObject;
-                var deletable = o as IDeleteable;
                 var linkedCohortNode = o as LinkedCohortNode;
                 var packageContentNode = o as PackageContentNode;
-
-                if (deletable != null)
-                    _activator.DeleteWithConfirmation(this,deletable);
-
+                
                 if (linkedCohortNode != null)
                     linkedCohortNode.DeleteWithConfirmation(_activator);
 
@@ -308,27 +183,9 @@ namespace DataExportManager.Collections
         private void tlvDataExport_ItemActivate(object sender, EventArgs e)
         {
             object o = tlvDataExport.SelectedObject;
-            var externalCohortTable = o as ExternalCohortTable;
-            var cohort = o as ExtractableCohort;
             var customDataTable = o as CustomDataTableNode;
             var folder = o as ExtractionFolderNode;
-            var project = o as Project;
-            var extractionConfiguration = o as ExtractionConfiguration;
-            var selectedDataSet = o as SelectedDataSets;
-            var deployedExtractionFilter = o as DeployedExtractionFilter;
             
-            if (externalCohortTable != null)
-                _activator.ActivateExternalCohortTable(this, externalCohortTable);
-
-            if(tlvDataExport.SelectedObject is CohortsNode)
-                new CohortsNodeMenu(_activator).ShowDetailedSummaryOfCohorts();
-
-            if (cohort != null)
-                _activator.ActivateCohort(this, cohort);
-
-            if(project != null)
-                _activator.ActivateProject(this,project);
-
             if (customDataTable != null)
             {
                 var c = new DataTableViewer(customDataTable.Cohort.ExternalCohortTable,
@@ -337,39 +194,20 @@ namespace DataExportManager.Collections
 
                 _activator.ShowWindow(c, true);
             }
-
-            if(extractionConfiguration != null && !extractionConfiguration.IsReleased)//only allow opening if it is not released
-                _activator.ActivateExtractionConfiguration(this, extractionConfiguration);
-
+            
             if(folder != null && folder.CanActivate())
                 folder.Activate();
-
-            if (selectedDataSet != null)
-                _activator.ActivateEditExtractionConfigurationDataset(selectedDataSet);
-
-            if(deployedExtractionFilter != null)
-                _activator.ActivateFilter(this,deployedExtractionFilter);
         }
 
 
         private void btnExpandOrCollapse_Click(object sender, EventArgs e)
         {
-            if(!CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse))
-                ExpandRoots();
+            CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse);
         }
-
-        private void ExpandRoots()
-        {
-            tlvDataExport.ExpandedObjects = _roots;
-            tlvDataExport.RebuildAll(true);
-        }
-
+        
         public static bool IsRootObject(object root)
         {
-            return
-                root is CohortsNode ||
-                root is ExtractableDataSetsNode ||
-                root is ProjectsNode;
+            return root is Project;
         }
     }
 }

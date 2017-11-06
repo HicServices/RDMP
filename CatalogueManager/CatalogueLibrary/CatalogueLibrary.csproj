@@ -257,7 +257,6 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Cloning\MissingTableException.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\IAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
@@ -284,6 +283,7 @@
     <Compile Include="Data\ExtractionFilterParameterSetValue.cs" />
     <Compile Include="Data\Favourite.cs" />
     <Compile Include="Data\IAggregateTopX.cs" />
+    <Compile Include="Data\IMasqueradeAs.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />

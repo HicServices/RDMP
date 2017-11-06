@@ -43,7 +43,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             ContentManager = new ContentWindowManager(refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
 
             _mainDockPanel = mainDockPanel;
-            _mainDockPanel.Theme = new VS2015LightTheme();
+            _mainDockPanel.Theme = new VS2005Theme();
             _mainDockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
 
             RepositoryLocator = repositoryLocator;
@@ -80,12 +80,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     }
 
                     collection = new DataExportCollectionUI();
-                    toReturn = Show(RDMPCollection.DataExport,collection, "Data Export", CatalogueIcons.ExtractionConfiguration);
+                    toReturn = Show(RDMPCollection.DataExport,collection, "Data Export", CatalogueIcons.Project);
                 break;
 
                 case RDMPCollection.Cohort:
                     collection = new CohortIdentificationCollectionUI();
                     toReturn = Show(RDMPCollection.Cohort, collection, "Cohort Builder", CatalogueIcons.CohortIdentificationConfiguration);
+                break;
+                case RDMPCollection.SavedCohorts:
+                    collection = new SavedCohortsCollectionUI();
+                    toReturn = Show(RDMPCollection.SavedCohorts, collection,"Saved Cohorts", CatalogueIcons.CohortsNode);
                 break;
 
                 default: throw new ArgumentOutOfRangeException("collectionToCreate");
@@ -126,9 +130,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _visibleToolboxes[collection].Close();
         }
 
+        public void Pop(RDMPCollection collection)
+        {
+            if(!IsVisible(collection))
+                throw new Exception("Can only pop when toolbox is already visible");
+
+            if (_visibleToolboxes.ContainsKey(collection))
+            {
+                _visibleToolboxes[collection].Activate();
+            }
+        }
+
         public bool IsVisible(RDMPCollection collection)
         {
             return _visibleToolboxes.ContainsKey(collection);
+        }
+        public bool IsVisibleButBurried(RDMPCollection collection)
+        {
+            return _visibleToolboxes.ContainsKey(collection) && !_visibleToolboxes[collection].Visible;
         }
 
         public void ShowCollectionWhichSupportsRootObjectType(object root)

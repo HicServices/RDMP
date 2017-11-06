@@ -5,27 +5,25 @@ using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI.ImportCustomData;
-using DataExportManager.ItemActivation;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandImportFileAsCustomDataForCohort : BasicCommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandImportFileAsCustomDataForCohort : BasicUICommandExecution, IAtomicCommandWithTarget
     {
-        private readonly IActivateDataExportItems _activator;
         private ExtractableCohort _cohort;
         private FileInfo _file;
 
-        public ExecuteCommandImportFileAsCustomDataForCohort(IActivateDataExportItems activator, ExtractableCohort cohort= null, FileCollectionCommand fileCommand=null)
+        public ExecuteCommandImportFileAsCustomDataForCohort(IActivateItems activator, ExtractableCohort cohort= null, FileCollectionCommand fileCommand=null) : base(activator)
         {
-            _activator = activator;
-
-            if(cohort != null)
+           if(cohort != null)
                 SetTarget(cohort);
             
             if(fileCommand != null)
@@ -75,9 +73,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         private void ImportFile(FileInfo file)
         {
-            var importer = new ImportCustomDataFileUI(_activator, _cohort, new FlatFileToLoad(file));
-            importer.RepositoryLocator = _activator.RepositoryLocator;
-            _activator.ShowWindow(importer, true);
+            var importer = new ImportCustomDataFileUI(Activator, _cohort, new FlatFileToLoad(file));
+            importer.RepositoryLocator = Activator.RepositoryLocator;
+            Activator.ShowWindow(importer, true);
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -85,9 +83,10 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.CustomDataTableNode, OverlayKind.Add);
         }
 
-        public void SetTarget(DatabaseEntity target)
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             _cohort = (ExtractableCohort)target;
+            return this;
         }
     }
 }

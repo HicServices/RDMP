@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.ObjectModel;
+using System;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
+using BrightIdeasSoftware;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.QueryBuilding.Parameters;
-using CatalogueManager.ExtractionUIs.FilterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManagerLibrary.QueryBuilding;
+using CohortManagerLibrary;
+using CohortManagerLibrary.Execution;
+using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 
 namespace CohortManager.SubComponents
 {
@@ -55,106 +52,255 @@ namespace CohortManager.SubComponents
     public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design, ISaveableUI
     {
         private CohortIdentificationConfiguration _configuration;
-        private bool _collapse = true;
         
         public CohortIdentificationConfigurationUI()
         {
             InitializeComponent();
-            
+            queryCachingServerSelector.SelectedServerChanged += queryCachingServerSelector_SelectedServerChanged;
+            olvExecute.IsButton = true;
+            olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
+            tlvCic.RowHeight = 19;
+            olvExecute.AspectGetter += ExecuteAspectGetter;
+            tlvCic.ButtonClick += tlvCic_ButtonClick;
         }
 
-        public CohortIdentificationConfiguration Configuration
+        void queryCachingServerSelector_SelectedServerChanged()
         {
-            get { return _configuration; }
-            private set
-            {
-                _configuration = value;
-                
-            
-                Enabled = !Configuration.Frozen;
+            if (queryCachingServerSelector.SelecteExternalDatabaseServer == null)
+                _configuration.QueryCachingServer_ID = null;
+            else
+                _configuration.QueryCachingServer_ID = queryCachingServerSelector.SelecteExternalDatabaseServer.ID;
 
-                tbDescription.Text = value.Description;
-                tbName.Text = value.Name;
-                tbID.Text = value.ID.ToString();
-                ticket.TicketText = value.Ticket;
-                
-                btnSave.Enabled = false;
-            }
+            _configuration.SaveToDatabase();
+            _activator.RefreshBus.Publish(queryCachingServerSelector,new RefreshObjectEventArgs(_configuration));
+
         }
 
-
-        public void RefreshUIFromDatabase()
-        {
-            //make like we've just been opened with the same value as we had before though
-            Configuration = Configuration;
-        }
-
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            Configuration.Description = tbDescription.Text;
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            if (Configuration != null)
-            {
-                if (string.IsNullOrWhiteSpace(tbName.Text))
-                {
-                    tbName.Text = "No Name";
-                    tbName.SelectAll();
-                }
-
-                Configuration.Name = tbName.Text;
-            }
-        }
-
-        private void ticket_TicketTextChanged(object sender, EventArgs e)
-        {
-            if (Configuration != null)
-                Configuration.Ticket = ticket.TicketText;
-        }
-
-        private void btnConfigureGlobalParameters_Click(object sender, EventArgs e)
-        {
-            if (Configuration != null)
-            {
-                var builder = new CohortQueryBuilder(Configuration);
-
-                try
-                {
-                    builder.RegenerateSQL();
-                }
-                catch (QueryBuildingException ex)
-                {
-                    ExceptionViewer.Show("There was a problem resolving all the underlying parameters in all your various Aggregates, the following dialogue is reliable only for the Globals",ex);
-                }
-                
-                var paramManager = builder.ParameterManager;
-
-                var f = ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptions(ConfigureCohortIdentificationConfigurationGlobalParametersUseCase,Configuration, ParameterLevel.Global, paramManager));
-                f.Closed+=(s,ev)=> RefreshUIFromDatabase();
-            }
-            
-        }
-        
-        private const string ConfigureCohortIdentificationConfigurationGlobalParametersUseCase
-            = "You are trying to build a cohort by performing SQL set operations on number of datasets, each dataset can have many filters which can have parameters.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the 'Cohort Identification Configuration' level which will allow you to change all copies at once in one place";
-        
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            Configuration = databaseObject;
-            btnSave.SetupFor(databaseObject,activator.RefreshBus);
+            _configuration = databaseObject;
+
+            tbID.Text = _configuration.ID.ToString();
+            tbName.Text = _configuration.Name;
+            tbDescription.Text = _configuration.Description;
+            ticket.TicketText = _configuration.Ticket;
+
+            objectSaverButton1.SetupFor(_configuration, activator.RefreshBus);
+
+            if (_configuration.QueryCachingServer_ID == null)
+                queryCachingServerSelector.SelecteExternalDatabaseServer = null;
+            else
+                queryCachingServerSelector.SelecteExternalDatabaseServer = _configuration.QueryCachingServer;
+
+            CohortCompilerUI1.SetDatabaseObject(activator,databaseObject);
+
+            if (_commonFunctionality == null)
+            {
+                _commonFunctionality = new RDMPCollectionCommonFunctionality();
+                _commonFunctionality.SetUp(tlvCic,activator,olvNameCol,null,olvNameCol,false);
+                tlvCic.AddObject(_configuration);
+                tlvCic.ExpandAll();
+            }
+        }
+
+        public override string GetTabName()
+        {
+            return "Execute:" + base.GetTabName();
         }
 
         public ObjectSaverButton GetObjectSaverButton()
         {
-            return btnSave;
+            return objectSaverButton1;
+        }
+
+        private void tbName_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(tbName.Text))
+            {
+                tbName.Text = "No Name";
+                tbName.SelectAll();
+            }
+
+            _configuration.Name = tbName.Text;
+        }
+
+        private void tbDescription_TextChanged(object sender, EventArgs e)
+        {
+            _configuration.Description = tbDescription.Text;
+        }
+
+        private void ticket_TicketTextChanged(object sender, EventArgs e)
+        {
+            _configuration.Ticket = ticket.TicketText;
+        }
+
+        private bool collapse = true;
+        private RDMPCollectionCommonFunctionality _commonFunctionality;
+
+        private void btnCollapseOrExpand_Click(object sender, EventArgs e)
+        {
+
+            ticket.Visible = !collapse;
+            lblName.Visible = !collapse;
+            lblDescription.Visible = !collapse;
+            tbName.Visible = !collapse;
+            tbDescription.Visible = !collapse;
+            objectSaverButton1.Visible = !collapse;
+
+            if (collapse)
+            {
+                CohortCompilerUI1.Top = tbID.Bottom;
+                CohortCompilerUI1.Height = Bottom - tbID.Bottom;
+
+            }
+            else
+            {
+                CohortCompilerUI1.Top = objectSaverButton1.Bottom;
+                CohortCompilerUI1.Height = Bottom - objectSaverButton1.Bottom;
+            }
+
+            collapse = !collapse;
+            btnCollapseOrExpand.Text = collapse ? "-" : "+";
+        }
+
+
+
+        private object ExecuteAspectGetter(object rowObject)
+        {
+            //don't expose any buttons if global execution is in progress
+            if (CohortCompilerUI1.IsExecutingGlobalOperations())
+                return null;
+
+            if (rowObject is AggregateConfiguration || rowObject is CohortAggregateContainer)
+            {
+                var plannedOp = GetNextOperation(GetState((IMapsDirectlyToDatabaseTable)rowObject));
+
+                if (plannedOp == Operation.None)
+                    return null;
+
+                return plannedOp;
+            }
+
+            return null;
+        }
+
+        private Operation GetNextOperation(CompilationState currentState)
+        {
+            switch (currentState)
+            {
+                case CompilationState.NotScheduled:
+                    return Operation.Execute;
+                case CompilationState.Scheduled:
+                    return Operation.None;
+                case CompilationState.Executing:
+                    return Operation.Cancel;
+                case CompilationState.Finished:
+                    return Operation.Execute;
+                case CompilationState.Crashed:
+                    return Operation.Execute;
+                default:
+                    throw new ArgumentOutOfRangeException("currentState");
+            }
+        }
+
+        #region Job control
+        private enum Operation
+        {
+            Execute,
+            Cancel,
+            Clear,
+            None
+        }
+
+        private CompilationState GetState(IMapsDirectlyToDatabaseTable rowObject)
+        {
+            return CohortCompilerUI1.GetState(rowObject);
+        }
+
+        void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
+        {
+            var o = e.Model;
+
+            if (o is AggregateConfiguration || o is CohortAggregateContainer)
+            {
+                var m = (IMapsDirectlyToDatabaseTable)o;
+                OrderActivity(GetNextOperation(GetState(m)), m);
+            }
+        }
+
+        private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o)
+        {
+            switch (operation)
+            {
+                case Operation.Execute:
+                    CohortCompilerUI1.StartThisTaskOnly(o);
+                    break;
+                case Operation.Cancel:
+                    CohortCompilerUI1.Cancel(o);
+                    break;
+                case Operation.Clear:
+                    CohortCompilerUI1.Clear(o);
+                    break;
+                case Operation.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("operation");
+            }
+        }
+
+
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            CohortCompilerUI1.StartAll();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            UpdateButtonStates();
+        }
+
+        private void UpdateButtonStates()
+        {
+            var plan = PlanGlobalOperation();
+
+            btnExecute.Enabled = plan == Operation.Execute;
+            btnAbortLoad.Enabled = plan == Operation.Cancel;
+            
+            btnClearCache.Enabled = CohortCompilerUI1.AnyCachedTasks();
+        }
+
+        private Operation PlanGlobalOperation()
+        {
+            var allTasks = CohortCompilerUI1.GetAllTasks();
+
+            //if any are still executing
+            if (allTasks.Any(t => t.State == CompilationState.Executing))
+                return Operation.Cancel;
+
+            //if all are complete
+            if (allTasks.Any(t => t is CachableTask && t.State == CompilationState.NotScheduled))
+                return Operation.Execute;
+
+            if (allTasks.All(t => t.State == CompilationState.Finished))
+                return Operation.Execute;
+
+            return Operation.None;
+        }
+        #endregion
+
+        private void btnClearCache_Click(object sender, EventArgs e)
+        {
+            CohortCompilerUI1.ClearAllCaches();
+        }
+
+        private void btnAbortLoad_Click(object sender, EventArgs e)
+        {
+            CohortCompilerUI1.CancelAll();
         }
     }
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
-    public abstract class CohortIdentificationConfigurationUI_Design:RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>
+    public abstract class CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>
     {
     }
 }
