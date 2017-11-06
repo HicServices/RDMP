@@ -5,13 +5,17 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Providers;
+using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.SimpleDialogs.NavigateTo;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ReusableUIComponents.Icons.IconProvision;
@@ -222,6 +226,32 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         public void InjectButton(ToolStripButton button)
         {
             toolStrip1.Items.Add(button);
+        }
+
+        private void tbFind_TextChanged(object sender, EventArgs e)
+        {
+            var activator = _manager.ContentManager;
+
+            var scorer = new SearchablesMatchScorer();
+
+            var bestMatches = scorer.ScoreMatches(activator.CoreChildProvider.GetAllSearchables(), tbFind.Text, new CancellationToken())
+                .Where(score => score.Value > 0)
+                .OrderByDescending(score => score.Value)
+                .Take(1); //for now
+
+            var match = bestMatches.Select(k => k.Key.Key).SingleOrDefault();
+
+            if(match != null)
+            {
+                activator.RequestItemEmphasis(this, new EmphasiseRequest(match, int.MaxValue));
+                tbFind.Focus();
+            }
+        }
+
+        private void btnLaunchNavigateTo_Click(object sender, EventArgs e)
+        {
+            var dialog = new NavigateToObjectUI(_manager.ContentManager);
+            dialog.Show();
         }
     }
 }

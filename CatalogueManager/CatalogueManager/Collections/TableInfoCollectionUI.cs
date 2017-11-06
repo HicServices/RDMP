@@ -76,7 +76,6 @@ namespace CatalogueManager.Collections
             InitializeComponent();
             
             tlvTableInfos.KeyUp += olvTableInfos_KeyUp;
-            tbFilter.GotFocus += tbFilter_GotFocus;
 
             tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
             olvColumn2.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
@@ -127,41 +126,6 @@ namespace CatalogueManager.Collections
             tlvTableInfos.SelectObject(toSelect);
         }
 
-        public void SetFilter(string text)
-        {
-            tbFilter.Text = text;
-        }
-
-        #region Make tbFilter select all when you click in it
-
-        bool alreadyFocused;
-
-
-        private void tbFilter_Leave(object sender, EventArgs e)
-        {
-            alreadyFocused = false;
-        }
-
-        void tbFilter_GotFocus(object sender, EventArgs e)
-        {
-            // Select all text only if the mouse isn't down.
-            // This makes tabbing to the textbox give focus.
-            if (MouseButtons == MouseButtons.None)
-            {
-                tbFilter.SelectAll();
-                alreadyFocused = true;
-            }
-        }
-
-        private void tbFilter_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (!alreadyFocused && tbFilter.SelectionLength == 0)
-            {
-                alreadyFocused = true;
-                tbFilter.SelectAll();
-            }
-        }
-        #endregion
 
         private void olvTableInfos_CellRightClick(object sender, CellRightClickEventArgs e)
         {
@@ -221,7 +185,6 @@ namespace CatalogueManager.Collections
                 tlvTableInfos,
                 activator,
                 olvColumn1,
-                tbFilter,
                 olvColumn1
                 );
             

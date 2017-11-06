@@ -97,9 +97,7 @@ namespace CatalogueManager.Menus
             Items.Add("Clone Catalogue", null, (s, e) => CloneCatalogue(catalogue));
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////
             Items.Add(new ToolStripSeparator());
-
-            AddVisibilityOptions(catalogue);
-
+            
             Items.Add("Delete Catalogue", null,(s,e)=> DeleteCatalogue(catalogue));
 
             Items.Add(new ToolStripSeparator());
@@ -107,34 +105,7 @@ namespace CatalogueManager.Menus
             AddCatalogueImportOptions();
 
         }
-
         
-        private void AddVisibilityOptions(Catalogue catalogue)
-        {
-            /////////////////////////////////////////////////////////////End of Catalogue Items sub menu///////////////////////////
-
-            var visibility = new ToolStripMenuItem("Modify Visibility Flags", CatalogueIcons.CatalogueVisibility);
-
-            if (catalogue.IsDeprecated)
-                visibility.DropDownItems.Add("Un Deprecate", null, (s, e) => SetDeprecated(catalogue, false));
-            else
-                visibility.DropDownItems.Add("Deprecate Catalogue", null, (s, e) => SetDeprecated(catalogue, true));
-
-            if (catalogue.IsInternalDataset)
-                visibility.DropDownItems.Add("UnSet Internal Use Only", null, (s, e) => SetInternal(catalogue, false));
-            else
-                visibility.DropDownItems.Add("Set Internal Use Only", null, (s, e) => SetInternal(catalogue, true));
-
-            if (catalogue.IsColdStorageDataset)
-                visibility.DropDownItems.Add("Remove from Cold Storage (make Warm)", null, (s, e) => SetColdStorage(catalogue, false));
-            else
-                visibility.DropDownItems.Add("Set Cold Storage", null, (s, e) => SetColdStorage(catalogue, true));
-
-            Items.Add(visibility);
-
-        }
-
-
         public void DeleteCatalogue(Catalogue catalogue)
         {
 
@@ -147,36 +118,7 @@ namespace CatalogueManager.Menus
                 Publish(catalogue);
             }
         }
-
-        private void SetDeprecated(Catalogue c,bool value)
-        {
-            //make sure they really want to do it
-            if(value)
-                if(MessageBox.Show("Are you sure you want to DEPRECATE the catalogue " + c.Name + "?", "Deprecate Record",MessageBoxButtons.YesNo) != DialogResult.Yes)
-                    return;
-
-            c.IsDeprecated = value;
-            c.SaveToDatabase();
-
-            Publish(c);
-        }
-        private void SetColdStorage(Catalogue c,bool value)
-        {
-            c.IsColdStorageDataset = value;
-            c.SaveToDatabase();
-
-            Publish(c);
-        }
-
-        private void SetInternal(Catalogue c, bool value)
-        {
-            c.IsInternalDataset = value;
-            c.SaveToDatabase();
-
-            Publish(c);
-        }
         
-
         private void AddCatalogueImportOptions()
         {
             //Things that are always visible regardless
@@ -185,12 +127,6 @@ namespace CatalogueManager.Menus
                 
             Items.Add("Create new Empty Catalogue (Not Recommended)", _coreIconProvider.GetImage(RDMPConcept.Catalogue,OverlayKind.Problem), (s, e) => NewCatalogue());
         }
-
-        private void ConfigureValidation(Catalogue c)
-        {
-            _activator.ActivateConfigureValidation(this, c);
-        }
-
         
         private void CloneCatalogue(Catalogue c)
         {

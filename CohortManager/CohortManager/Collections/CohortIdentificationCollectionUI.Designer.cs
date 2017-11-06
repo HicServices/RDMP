@@ -34,8 +34,6 @@ namespace CohortManager.Collections
             this.components = new System.ComponentModel.Container();
             this.tlvCohortIdentificationConfigurations = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.label55 = new System.Windows.Forms.Label();
-            this.tbFilter = new System.Windows.Forms.TextBox();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCohortIdentificationConfigurations)).BeginInit();
             this.SuspendLayout();
@@ -52,7 +50,7 @@ namespace CohortManager.Collections
             this.tlvCohortIdentificationConfigurations.Location = new System.Drawing.Point(3, 3);
             this.tlvCohortIdentificationConfigurations.Name = "tlvCohortIdentificationConfigurations";
             this.tlvCohortIdentificationConfigurations.ShowGroups = false;
-            this.tlvCohortIdentificationConfigurations.Size = new System.Drawing.Size(497, 545);
+            this.tlvCohortIdentificationConfigurations.Size = new System.Drawing.Size(497, 566);
             this.tlvCohortIdentificationConfigurations.TabIndex = 0;
             this.tlvCohortIdentificationConfigurations.UseCompatibleStateImageBehavior = false;
             this.tlvCohortIdentificationConfigurations.View = System.Windows.Forms.View.Details;
@@ -65,30 +63,11 @@ namespace CohortManager.Collections
             this.olvName.Sortable = false;
             this.olvName.Text = "Cohort Identification Configurations";
             // 
-            // label55
-            // 
-            this.label55.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label55.AutoSize = true;
-            this.label55.Location = new System.Drawing.Point(5, 580);
-            this.label55.Name = "label55";
-            this.label55.Size = new System.Drawing.Size(32, 13);
-            this.label55.TabIndex = 154;
-            this.label55.Text = "Filter:";
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(43, 577);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(454, 20);
-            this.tbFilter.TabIndex = 153;
-            // 
             // btnExpandOrCollapse
             // 
             this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExpandOrCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(446, 551);
+            this.btnExpandOrCollapse.Location = new System.Drawing.Point(446, 575);
             this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
             this.btnExpandOrCollapse.Size = new System.Drawing.Size(51, 22);
             this.btnExpandOrCollapse.TabIndex = 172;
@@ -101,22 +80,17 @@ namespace CohortManager.Collections
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnExpandOrCollapse);
-            this.Controls.Add(this.label55);
-            this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.tlvCohortIdentificationConfigurations);
             this.Name = "CohortIdentificationCollectionUI";
             this.Size = new System.Drawing.Size(500, 600);
             ((System.ComponentModel.ISupportInitialize)(this.tlvCohortIdentificationConfigurations)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private TreeListView tlvCohortIdentificationConfigurations;
-        private System.Windows.Forms.Label label55;
-        private System.Windows.Forms.TextBox tbFilter;
         private OLVColumn olvName;
         private System.Windows.Forms.Button btnExpandOrCollapse;
     }

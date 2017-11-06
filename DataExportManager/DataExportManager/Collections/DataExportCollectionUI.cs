@@ -122,7 +122,6 @@ namespace DataExportManager.Collections
                 tlvDataExport,
                 _activator,
                 olvName,
-                tbFilter,
                 olvName
                 );
             CommonFunctionality.WhitespaceRightClickMenuCommands = new []{new ExecuteCommandCreateNewDataExtractionProject(activator)};

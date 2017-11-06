@@ -333,6 +333,7 @@
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
+    <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
@@ -343,9 +344,14 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
-    <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />
+    <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
-    <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />
+    <Compile Include="Collections\Providers\Filtering\TextMatchFilterWithWhiteList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
@@ -854,7 +860,7 @@
       <DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\Providers\Copying\DragDropProvider.cs" />
-    <Compile Include="Collections\Providers\CatalogueCollectionFilter.cs" />
+    <Compile Include="Collections\Providers\Filtering\CatalogueCollectionFilter.cs" />
     <Compile Include="Icons\IconProvision\CatalogueIconProvider.cs" />
     <Compile Include="Collections\Providers\RenameProvider.cs" />
     <Compile Include="Menus\AggregateConfigurationMenu.cs" />
@@ -1376,6 +1382,7 @@
     <None Include="Icons\AllPreLoadDiscardedColumns.png" />
     <None Include="Icons\famfamfam\information.png" />
     <None Include="Icons\ExtractionConfigurationsNode.png" />
+    <None Include="Icons\collapseAllNodes.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

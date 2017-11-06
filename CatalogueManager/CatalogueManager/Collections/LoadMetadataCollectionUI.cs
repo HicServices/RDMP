@@ -144,7 +144,6 @@ namespace CatalogueManager.Collections
                 tlvLoadMetadata,
                 activator,
                 olvName,
-                tbFilter,
                 olvName);
 
             CommonFunctionality.WhitespaceRightClickMenuCommands = new[] {new ExecuteCommandCreateNewLoadMetadata(_activator)};
@@ -183,6 +182,11 @@ namespace CatalogueManager.Collections
         public static bool IsRootObject(object root)
         {
             return root is LoadMetadata;
+        }
+
+        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
+        {
+            CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse);
         }
     }
 }
