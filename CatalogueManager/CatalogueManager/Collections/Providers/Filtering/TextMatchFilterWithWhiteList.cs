@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Providers;
 
-namespace CatalogueManager.Collections.Providers
+namespace CatalogueManager.Collections.Providers.Filtering
 {
     public class TextMatchFilterWithWhiteList : TextMatchFilter
     {
