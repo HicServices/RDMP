@@ -38,22 +38,24 @@ desc "Sets the version number from GIT"
 assemblyinfo :assemblyinfo do |asm|
 	asm.input_file = "SharedAssemblyInfo.cs"
     asm.output_file = "SharedAssemblyInfo.cs"
-    version = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
-    describe = `git describe`.strip
-    tag, rev, hash = describe.split(/-/)
-    major, minor, patch, build = version.split(/\./)
-    asm.version = "#{major}.#{minor}.#{patch}.#{build}"
-    asm.file_version = "#{major}.#{minor}.#{patch}.#{build}"
+    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
+    
+    major, minor, patch, build = asminfoversion.split(/\./)
     timestamp = Time.new.utc.to_i
+    
+    version = "#{major}.#{minor}.#{patch}.#{timestamp}"
+    
+    asm.version = version
+    asm.file_version = version
     if PRERELEASE == "true"
-        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}-pre"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}-pre"
+        puts "version: #{version}-pre"
+        asm.informational_version = "#{version}-pre"
     elsif CANDIDATE == "true"
-        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}-rc"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}-rc"
+        puts "version: #{version}-rc"
+        asm.informational_version = "#{version}-rc"
     else
-        puts "version: #{major}.#{minor}.#{patch}.#{timestamp}"
-        asm.informational_version = "#{major}.#{minor}.#{patch}.#{timestamp}"
+        puts "version: #{version}"
+        asm.informational_version = "#{version}"
     end
 end
 
