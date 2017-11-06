@@ -1,4 +1,6 @@
-﻿namespace ResearchDataManagementPlatform.WindowManagement.TopBar
+﻿using ReusableUIComponents;
+
+namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 {
     partial class RDMPTaskBar
     {
@@ -48,7 +50,7 @@
             this.tbFind = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnFavourites = new System.Windows.Forms.ToolStripButton();
-            this.btnLaunchNavigateTo = new ResearchDataManagementPlatform.WindowManagement.TopBar.SimpleCounterButton();
+            this.btnLaunchNavigateTo = new SimpleCounterButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 

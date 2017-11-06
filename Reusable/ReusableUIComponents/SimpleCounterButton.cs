@@ -1,10 +1,13 @@
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace ResearchDataManagementPlatform.WindowManagement.TopBar
+namespace ReusableUIComponents
 {
+    /// <summary>
+    /// ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+) 
+    /// </summary>
+    [TechnicalUI]
     [System.ComponentModel.DesignerCategory("")]
     public class SimpleCounterButton : ToolStripButton
     {
