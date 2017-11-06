@@ -43,19 +43,19 @@ assemblyinfo :assemblyinfo do |asm|
     major, minor, patch, build = asminfoversion.split(/\./)
     timestamp = Time.new.utc.to_i
     
-    version = "#{major}.#{minor}.#{patch}.#{timestamp}"
+    version = "#{major}.#{minor}.#{patch}"
     
     asm.version = version
     asm.file_version = version
     if PRERELEASE == "true"
         puts "version: #{version}-pre"
-        asm.informational_version = "#{version}-pre"
+        asm.informational_version = "#{version}.#{timestamp}-pre"
     elsif CANDIDATE == "true"
         puts "version: #{version}-rc"
-        asm.informational_version = "#{version}-rc"
+        asm.informational_version = "#{version}.#{timestamp}-rc"
     else
         puts "version: #{version}"
-        asm.informational_version = "#{version}"
+        asm.informational_version = "#{version}.#{timestamp}"
     end
 end
 
