@@ -230,6 +230,17 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
         private void tbFind_TextChanged(object sender, EventArgs e)
         {
+            RunFind(true);
+        }
+
+        private void tbFind_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                RunFind(false);
+        }
+
+        private void RunFind(bool returnFocusToTextBox)
+        {
             var activator = _manager.ContentManager;
 
             var scorer = new SearchablesMatchScorer();
@@ -243,7 +254,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             if (matches.Length > 0)
             {
                 activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue));
-                tbFind.Focus();
+                
+                if (returnFocusToTextBox)
+                    tbFind.Focus();
             }
             else
                 btnLaunchNavigateTo.Count = null;
@@ -260,5 +273,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             tbFind.Focus();
             tbFind.SelectAll();
         }
+
+        private void tbFind_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
+        }
+
     }
 }

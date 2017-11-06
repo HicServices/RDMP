@@ -229,9 +229,9 @@
   <data name="btnLaunchNavigateTo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACASURBVDhP1ZPBDYAgDEU7DwN4dwiPLuXdOdiEMVih2qbl
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACASURBVDhP1ZPBDYAgDEU7DwN4dwbPLuXdOdiEMVih2qbl
         AF8uJARf8hKSn76T0n8Je2SkzRAZkRqjm5munNT3PTXmlIgjh0ibuzSxEebEQtwYaTPEY7UaO5n4yJRE
-        eU+NOSXiyCHS5i5NbITPGPrmRJshHqtd5/dqkEOkzUtC9AAX5tCnIRUc9gAAAABJRU5ErkJggg==
+        eU+NOSXiyCHS5i5NbITPGPrmRJshHqtd5/dqkEOkzUtC9AACotCfYK9Y0QAAAABJRU5ErkJggg==
 </value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

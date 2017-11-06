@@ -46,8 +46,8 @@
             this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.tbFind = new System.Windows.Forms.ToolStripTextBox();
-            this.btnLaunchNavigateTo = new SimpleCounterButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnLaunchNavigateTo = new ResearchDataManagementPlatform.WindowManagement.TopBar.SimpleCounterButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -192,10 +192,18 @@
             // 
             this.tbFind.Name = "tbFind";
             this.tbFind.Size = new System.Drawing.Size(100, 25);
+            this.tbFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbFind_KeyDown);
+            this.tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbFind_KeyUp);
             this.tbFind.TextChanged += new System.EventHandler(this.tbFind_TextChanged);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // btnLaunchNavigateTo
             // 
+            this.btnLaunchNavigateTo.Count = null;
             this.btnLaunchNavigateTo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnLaunchNavigateTo.Image = ((System.Drawing.Image)(resources.GetObject("btnLaunchNavigateTo.Image")));
             this.btnLaunchNavigateTo.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -203,11 +211,6 @@
             this.btnLaunchNavigateTo.Size = new System.Drawing.Size(23, 22);
             this.btnLaunchNavigateTo.Text = "Launch Advanced Find";
             this.btnLaunchNavigateTo.Click += new System.EventHandler(this.btnLaunchNavigateTo_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // RDMPTaskBar
             // 
