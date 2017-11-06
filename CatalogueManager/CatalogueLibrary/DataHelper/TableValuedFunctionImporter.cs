@@ -6,8 +6,10 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
+using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.DataHelper
 {
@@ -106,7 +108,9 @@ namespace CatalogueLibrary.DataHelper
 
         public string GetParamaterDeclarationSQL(DiscoveredParameter parameter)
         {
-            return "DECLARE " + parameter.ParameterName + " AS " + parameter.DataType.SQLType;
+            var syntaxHelper = _tableValuedFunction.Database.Server.GetQuerySyntaxHelper();
+
+            return syntaxHelper.GetParameterDeclaration(parameter.ParameterName, parameter.DataType.SQLType);
         }
    
     }

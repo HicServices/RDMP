@@ -10,6 +10,12 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Data
 {
+
+    /// <summary>
+    /// Records the fact that a given Cohort Identification Configuration (query that identifies a cohort) is associated with a given Project.  You can have multiple
+    /// associated configurations in a given project (e.g. cases, controls, time based etc).  You can also associate the same configuration with multiple Projects if
+    /// you need to.
+    /// </summary>
     public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity
     {
         #region Database Properties

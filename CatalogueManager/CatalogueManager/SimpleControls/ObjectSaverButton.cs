@@ -16,6 +16,13 @@ using ReusableLibraryCode;
 
 namespace CatalogueManager.SimpleControls
 {
+    /// <summary>
+    /// Allows saving of any DatabaseEntity.  When public properties are changed on the object the control automatically lights up and tracks the changes.  Clicking
+    /// the Undo button will reset the DatabaseEntity to the state before the changes were made / when it was last saved.  Undo is a toggle from last saved state to 
+    /// current user edit state and back again (i.e. not a tracked history).  In order to use an object saver button you should add it to an RDMPSingleDatabaseObjectControl
+    /// and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single method on that interface so that shortcuts
+    /// are correctly routed to this control.
+    /// </summary>
     public partial class ObjectSaverButton : UserControl,IRefreshBusSubscriber
     {
         private Bitmap _undoImage;

@@ -61,7 +61,7 @@ namespace DataExportLibrary.Tests.Cohort
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Project 321_MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999")]
+        [ExpectedException(ExpectedMessage = "Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999")]
         public void CommittingNewCohortFile_ProjectNumberMismatch()
         {
             var proj = new Project(DataExportRepository, projName) {ProjectNumber = 321};
