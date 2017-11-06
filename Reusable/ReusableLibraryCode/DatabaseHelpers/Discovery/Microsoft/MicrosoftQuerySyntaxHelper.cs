@@ -24,9 +24,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return new TopXResponse("TOP " + x, QueryComponent.SELECT);
         }
 
-        public override string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request)
+        public override string GetParameterDeclaration(string proposedNewParameterName, string sqlType)
         {
-            return "DECLARE " + proposedNewParameterName + " AS " + TypeTranslater.GetSQLDBTypeForCSharpType(request) +";";
+            return "DECLARE " + proposedNewParameterName + " AS " + sqlType + ";";
         }
 
         public override string GetScalarFunctionSql(MandatoryScalarFunctions function)

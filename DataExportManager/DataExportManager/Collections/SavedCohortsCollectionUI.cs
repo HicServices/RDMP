@@ -15,6 +15,9 @@ using DataExportManager.Collections.Providers;
 
 namespace DataExportManager.Collections
 {
+    /// <summary>
+    /// RDMP Collection which shows all the Cohorts that have been committed to RDMP accross all Projects / Cohort Sources.
+    /// </summary>
     public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         private IActivateItems _activator;

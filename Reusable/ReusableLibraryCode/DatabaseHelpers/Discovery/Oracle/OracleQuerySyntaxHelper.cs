@@ -26,7 +26,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             return new TopXResponse("ROWNUM <= " + x, QueryComponent.WHERE);
         }
 
-        public override string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request)
+        public override string GetParameterDeclaration(string proposedNewParameterName, string sqlType)
         {
             throw new System.NotImplementedException();
         }

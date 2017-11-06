@@ -29,7 +29,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             return " AS ";
         }
-
+        
         public string AliasPrefix
         {
             get
@@ -82,7 +82,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return sql.Replace("'", "''");
         }
         public abstract TopXResponse HowDoWeAchieveTopX(int x);
-        public abstract string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request);
+
+        public virtual string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request)
+        {
+            return GetParameterDeclaration(proposedNewParameterName, TypeTranslater.GetSQLDBTypeForCSharpType(request));
+        }
+
+        public abstract string GetParameterDeclaration(string proposedNewParameterName, string sqlType);
 
         private string ValidateAlias(string getAlias)
         {
