@@ -332,6 +332,12 @@
     </Compile>
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
+    <Compile Include="Collections\FavouritesCollectionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Collections\FavouritesCollectionUI.Designer.cs">
+      <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
@@ -1482,6 +1488,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Collections\FavouritesCollectionUI.resx">
+      <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.resx">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>

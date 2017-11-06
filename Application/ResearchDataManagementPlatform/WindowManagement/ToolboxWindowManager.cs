@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -91,6 +92,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     collection = new SavedCohortsCollectionUI();
                     toReturn = Show(RDMPCollection.SavedCohorts, collection,"Saved Cohorts", CatalogueIcons.CohortsNode);
                 break;
+                case RDMPCollection.Favourites:
+                    collection = new FavouritesCollectionUI();
+                    toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", CatalogueIcons.Favourite);
+                break;
 
                 default: throw new ArgumentOutOfRangeException("collectionToCreate");
             }
@@ -165,6 +170,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private RDMPCollection GetCollectionForRootObject(object root)
         {
+            if (FavouritesCollectionUI.IsRootObject(ContentManager,root))
+                return RDMPCollection.Favourites;
+
             if(CatalogueCollectionUI.IsRootObject(root))
                 return RDMPCollection.Catalogue;
 

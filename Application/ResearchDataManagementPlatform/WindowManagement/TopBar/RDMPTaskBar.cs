@@ -43,6 +43,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnDataExport.Image = CatalogueIcons.Project;
             btnTables.Image = CatalogueIcons.TableInfo;
             btnLoad.Image = CatalogueIcons.LoadMetadata;
+            btnFavourites.Image = CatalogueIcons.Favourite;
         }
 
         public void SetWindowManager(ToolboxWindowManager manager)
@@ -165,6 +166,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                 collectionToToggle = RDMPCollection.DataLoad;
             else if (button == btnSavedCohorts)
                 collectionToToggle = RDMPCollection.SavedCohorts;
+            else if (button == btnFavourites)
+                collectionToToggle = RDMPCollection.Favourites;
             else
                 throw new ArgumentOutOfRangeException();
 
@@ -189,6 +192,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                     return btnLoad;
                 case RDMPCollection.SavedCohorts:
                     return btnSavedCohorts;
+                case RDMPCollection.Favourites:
+                    return btnFavourites;
                 default:
                     throw new ArgumentOutOfRangeException("collection");
             }
