@@ -60,10 +60,12 @@ namespace CatalogueManager.Collections
                 if(currentFavourite.Value == null)
                     continue;
 
-                //if the current favourite appears in the parental hierarchy of another favourite then skip that one
-                var conflicts = potentialRootFavourites.Where(kvp => kvp.Value != null && kvp.Value.Parents.Contains(currentFavourite.Key)).ToArray();
-
-                hierarchyCollisions.AddRange(conflicts.Select(kvp => kvp.Key));
+                //if any of the current favourites parents
+                foreach (object parent in currentFavourite.Value.Parents)
+                    //are favourites
+                    if (potentialRootFavourites.Any(kvp => kvp.Key.Equals(parent)))
+                        //then this is not a favourite it's a collision (already favourited under another node)
+                        hierarchyCollisions.Add(currentFavourite.Key);    
             }
 
             List<IMapsDirectlyToDatabaseTable> actualRootFavourites = new List<IMapsDirectlyToDatabaseTable>();
