@@ -88,6 +88,7 @@ namespace CohortManager.SubComponents
             this.tlvConfiguration.UseCompatibleStateImageBehavior = false;
             this.tlvConfiguration.View = System.Windows.Forms.View.Details;
             this.tlvConfiguration.VirtualMode = true;
+            this.tlvConfiguration.ItemActivate += new System.EventHandler(this.tlvConfiguration_ItemActivate);
             // 
             // olvAggregate
             // 
