@@ -34,8 +34,7 @@ namespace CatalogueManager.Collections
             this.components = new System.ComponentModel.Container();
             this.tlvLoadMetadata = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbFilter = new System.Windows.Forms.TextBox();
+            this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvLoadMetadata)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,7 +52,7 @@ namespace CatalogueManager.Collections
             this.tlvLoadMetadata.Location = new System.Drawing.Point(0, 3);
             this.tlvLoadMetadata.Name = "tlvLoadMetadata";
             this.tlvLoadMetadata.ShowGroups = false;
-            this.tlvLoadMetadata.Size = new System.Drawing.Size(494, 550);
+            this.tlvLoadMetadata.Size = new System.Drawing.Size(494, 566);
             this.tlvLoadMetadata.TabIndex = 0;
             this.tlvLoadMetadata.UseCompatibleStateImageBehavior = false;
             this.tlvLoadMetadata.View = System.Windows.Forms.View.Details;
@@ -68,46 +67,35 @@ namespace CatalogueManager.Collections
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Load Metadata";
             // 
-            // label1
+            // btnExpandOrCollapse
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 577);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(44, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Search:";
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(53, 574);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(444, 20);
-            this.tbFilter.TabIndex = 2;
-          
+            this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExpandOrCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
+            this.btnExpandOrCollapse.Location = new System.Drawing.Point(443, 575);
+            this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
+            this.btnExpandOrCollapse.Size = new System.Drawing.Size(51, 22);
+            this.btnExpandOrCollapse.TabIndex = 171;
+            this.btnExpandOrCollapse.Text = "Expand";
+            this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
+            this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
             // 
             // LoadMetadataCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tbFilter);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnExpandOrCollapse);
             this.Controls.Add(this.tlvLoadMetadata);
             this.Name = "LoadMetadataCollectionUI";
             this.Size = new System.Drawing.Size(500, 600);
             ((System.ComponentModel.ISupportInitialize)(this.tlvLoadMetadata)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private TreeListView tlvLoadMetadata;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox tbFilter;
         private OLVColumn olvName;
+        private System.Windows.Forms.Button btnExpandOrCollapse;
     }
 }

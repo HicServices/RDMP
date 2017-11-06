@@ -58,24 +58,7 @@ namespace CatalogueManager.Collections
         public OLVColumn FavouriteColumn { get; private set; }
 
         public bool IsSetup { get; private set; }
-
-        HashSet<object> filterWhitelist = new HashSet<object>();
-        private IModelFilter _secondaryFilter;
-
-        /// <summary>
-        /// Only valid if you have a filterTextBox too, this lets you specify an alternate filter that will be .All with the text/whitelist filter so that it must fulfil the requirements
-        /// of the text search AND the SecondaryFilter (good for flags that always hide stuff)
-        /// </summary>
-        public IModelFilter SecondaryFilter
-        {
-            get { return _secondaryFilter; }
-            set
-            {
-                _secondaryFilter = value;
-                ApplyFilter();
-            }
-        }
-
+        
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
 
         /// <summary>
@@ -95,9 +78,8 @@ namespace CatalogueManager.Collections
         /// <param name="commandExecutionFactory">A command execution factory for completing a started ICommand in appropriate circumstances e.g. when the user completes a drop operation onto a second item.  Try using a new RDMPCommandExecutionFactory</param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
-        /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, bool addFavouriteColumn = true)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true)
         {
             IsSetup = true;
             _activator = activator;
@@ -150,15 +132,7 @@ namespace CatalogueManager.Collections
             CopyPasteProvider.RegisterEvents(tree);
             
             OnRefreshChildProvider(_activator.CoreChildProvider);
-
-            _filterTextBox = filterTextBoxIfYouWantDefaultFilterBehaviour;
-            if(filterTextBoxIfYouWantDefaultFilterBehaviour != null)
-            {
-                filterTextBoxIfYouWantDefaultFilterBehaviour.TextChanged += FilterTextChanged;
-                tree.Expanding += TreeOnExpanding;
-                tree.Collapsing += TreeOnCollapsing;
-            }
-
+            
             _activator.Emphasise += _activator_Emphasise;
         }
 
@@ -227,68 +201,6 @@ namespace CatalogueManager.Collections
                 ExpandToDepth(expansionDepth -1,o);
         }
 
-        private void FilterTextChanged(object sender, EventArgs e)
-        {
-            //text changed so clear the whitelist
-            filterWhitelist = new HashSet<object>();
-            ApplyFilter();
-        }
-
-        private void TreeOnCollapsing(object sender, TreeBranchCollapsingEventArgs e)
-        {
-            filterWhitelist.Add(e.Model);
-            ApplyFilter();
-        }
-
-        private void TreeOnExpanding(object sender, TreeBranchExpandingEventArgs treeBranchExpandingEventArgs)
-        {
-            AddAllChildrenToFilterRecursively(treeBranchExpandingEventArgs.Model);
-            ApplyFilter();
-        }
-        private void AddAllChildrenToFilterRecursively(object model)
-        {
-            if(model == null)
-                return;
-
-            filterWhitelist.Add(model);
-
-            var children = CoreChildProvider.GetChildren(model);
-            
-            foreach (var child in children)
-                AddAllChildrenToFilterRecursively(child);
-        }
-        
-        private void ApplyFilter()
-        {
-            //create new filter
-            if (!string.IsNullOrWhiteSpace(_filterTextBox.Text))
-            {
-                Tree.UseFiltering = true;
-
-                var textFilter = new TextMatchFilterWithWhiteList(filterWhitelist, Tree, _filterTextBox.Text, StringComparison.CurrentCultureIgnoreCase);
-
-                if (_secondaryFilter == null)
-                    Tree.ModelFilter = textFilter;
-                else 
-                    Tree.ModelFilter = new CompositeAllFilter(new List<IModelFilter>(new[]{textFilter,_secondaryFilter}));
-            }
-            else
-            {
-                if(SecondaryFilter == null)
-                {
-                    Tree.UseFiltering = false;
-                    Tree.ModelFilter = null;
-                }
-                else
-                {
-                    Tree.ModelFilter = SecondaryFilter;
-                    Tree.UseFiltering = true;
-                }
-            }
-        }
-
-
-
         private IEnumerable ChildrenGetter(object model)
         {
             if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
@@ -330,7 +242,6 @@ namespace CatalogueManager.Collections
                     if(menuType.IsAbstract || menuType.IsInterface)
                         continue;
 
-
                     var menu = objectConstructor.ConstructIfPossible(menuType,
                         _activator,//parameter 1 must be activator
                         o); //parameter 2 must be object compatible Type
@@ -338,6 +249,7 @@ namespace CatalogueManager.Collections
                     if (menu != null)
                     {
                         e.MenuStrip = (ContextMenuStrip) menu;
+                        AddExpandCollapseMenuItems((ContextMenuStrip)menu, o);
                         return;
                     }
                 }
@@ -349,6 +261,19 @@ namespace CatalogueManager.Collections
                 //it's a right click in whitespace (nothing right clicked)
                 if (WhitespaceRightClickMenuCommands != null)
                     e.MenuStrip = factory.CreateMenu(WhitespaceRightClickMenuCommands);
+            }
+
+   
+
+        }
+
+        private void AddExpandCollapseMenuItems(ContextMenuStrip menuStrip, object model)
+        {
+            if (menuStrip != null)
+            {
+                menuStrip.Items.Add(new ToolStripSeparator());
+                menuStrip.Items.Add(new ExpandAllTreeNodesMenuItem(Tree, model));
+                menuStrip.Items.Add(new CollapseAllTreeNodesMenuItem(Tree, model));
             }
         }
 

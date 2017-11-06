@@ -63,6 +63,7 @@ namespace MapsDirectlyToDatabaseTableUI
             this.listBox1.UseFiltering = true;
             this.listBox1.View = System.Windows.Forms.View.Details;
             this.listBox1.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listBox1_CellClick);
+            this.listBox1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listBox1_ItemChecked);
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
             // 

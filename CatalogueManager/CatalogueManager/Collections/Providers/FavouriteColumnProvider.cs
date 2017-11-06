@@ -57,8 +57,15 @@ namespace CatalogueManager.Collections.Providers
                     _activator.FavouritesProvider.RemoveFavourite(this, o);
                 else
                     _activator.FavouritesProvider.AddFavourite(this, o);
-
-                _tlv.RefreshObject(o);
+                
+                try
+                {
+                    _tlv.RefreshObject(o);
+                }
+                catch (ArgumentException)
+                {
+                    
+                }
             }
         }
 

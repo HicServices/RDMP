@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
@@ -71,6 +72,8 @@ namespace MapsDirectlyToDatabaseTableUI
                 this.Width = Math.Min(Math.Max(Width,100 + pixelWidthofWidestText),1000);
             }
 
+            AddUsefulPropertiesIfHomogeneousTypes(o);
+
             listBox1.AfterSorting += listBox1_AfterSorting;
             try
             {
@@ -104,9 +107,49 @@ namespace MapsDirectlyToDatabaseTableUI
                 //Previous value extraction failed, ah well nevermind eh
                 Console.WriteLine(e);
             }
-
-            
         }
+
+        private void AddUsefulPropertiesIfHomogeneousTypes(IMapsDirectlyToDatabaseTable[] mapsDirectlyToDatabaseTables)
+        {
+            var types = mapsDirectlyToDatabaseTables.Select(m => m.GetType()).Distinct().ToArray();
+
+            bool addedColumns = false;
+
+            //objects are not homogeneous
+            if (types.Length == 1)
+            {
+                //all objects are the same Type
+
+                //look for useful properties
+                foreach (PropertyInfo propertyInfo in types[0].GetProperties())
+                {
+                    if (propertyInfo.GetCustomAttributes(typeof(UsefulProperty), true).Any())
+                    {
+                        //add a column
+                        var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
+                        listBox1.AllColumns.Add(newCol);
+                        addedColumns = true;
+                    }
+                }
+            }
+            else
+            {
+                //they are all different types!
+                var newCol = new OLVColumn( "Type",null);
+                newCol.AspectGetter += TypeAspectGetter;
+                listBox1.AllColumns.Add(newCol);
+                addedColumns = true;
+            }
+
+            if (addedColumns)
+                listBox1.RebuildColumns();
+        }
+
+        private object TypeAspectGetter(object rowObject)
+        {
+            return rowObject.GetType().Name;
+        }
+
 
         void listBox1_AfterSorting(object sender, AfterSortingEventArgs e)
         {
@@ -121,13 +164,17 @@ namespace MapsDirectlyToDatabaseTableUI
         public bool AllowMultiSelect
         {
             get { return listBox1.MultiSelect; }
-            set { listBox1.MultiSelect = value; }
+            set
+            {
+                listBox1.MultiSelect = value;
+                listBox1.CheckBoxes = value;
+            }
         }
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
             if (AllowMultiSelect)
-                MultiSelected = listBox1.SelectedObjects.Cast<IMapsDirectlyToDatabaseTable>();
+                MultiSelected = listBox1.CheckedObjects.Cast<IMapsDirectlyToDatabaseTable>();
             else
                 Selected = (IMapsDirectlyToDatabaseTable) listBox1.SelectedObject;
 
@@ -153,8 +200,13 @@ namespace MapsDirectlyToDatabaseTableUI
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            UpdateButtonEnabledness();
+        }
+
+        private void UpdateButtonEnabledness()
+        {
             if (AllowMultiSelect)
-                btnSelect.Enabled = listBox1.SelectedObjects.Cast<IMapsDirectlyToDatabaseTable>().Any();
+                btnSelect.Enabled = listBox1.CheckedObjects.Cast<IMapsDirectlyToDatabaseTable>().Any();
             else
                 btnSelect.Enabled = listBox1.SelectedObject != null;
         }
@@ -204,8 +256,16 @@ namespace MapsDirectlyToDatabaseTableUI
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            listBox1.ModelFilter = new TextMatchFilter(listBox1,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
+            listBox1.ModelFilter = new TextMatchFilterWithWhiteList(GetCheckedItems(),listBox1,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
+        }
 
+        private IEnumerable<object> GetCheckedItems()
+        {
+            if (!AllowMultiSelect)
+                yield break;
+
+            foreach (var checkedObject in listBox1.CheckedObjects)
+                yield return checkedObject;
         }
 
 
@@ -218,9 +278,7 @@ namespace MapsDirectlyToDatabaseTableUI
                     SendKeys.Send(e.KeyCode == Keys.Up ? "{UP}":"{DOWN}");
                 }
         }
-
-
-
+        
         private void tbFilter_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -255,6 +313,11 @@ namespace MapsDirectlyToDatabaseTableUI
                 return (T)dialog.Selected;
             
             return default(T);
+        }
+
+        private void listBox1_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            UpdateButtonEnabledness();
         }
     }
 }

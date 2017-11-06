@@ -38,7 +38,6 @@ namespace CohortManager.Collections
                 tlvCohortIdentificationConfigurations,
                 _activator,
                 olvName,//column with the icon
-                tbFilter, 
                 olvName//column that can be renamed
                 
                 );

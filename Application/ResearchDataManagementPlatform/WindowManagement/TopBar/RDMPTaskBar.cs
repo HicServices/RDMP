@@ -5,13 +5,17 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Providers;
+using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.SimpleDialogs.NavigateTo;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ReusableUIComponents.Icons.IconProvision;
@@ -39,6 +43,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnDataExport.Image = CatalogueIcons.Project;
             btnTables.Image = CatalogueIcons.TableInfo;
             btnLoad.Image = CatalogueIcons.LoadMetadata;
+            btnFavourites.Image = CatalogueIcons.Favourite;
         }
 
         public void SetWindowManager(ToolboxWindowManager manager)
@@ -161,6 +166,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                 collectionToToggle = RDMPCollection.DataLoad;
             else if (button == btnSavedCohorts)
                 collectionToToggle = RDMPCollection.SavedCohorts;
+            else if (button == btnFavourites)
+                collectionToToggle = RDMPCollection.Favourites;
             else
                 throw new ArgumentOutOfRangeException();
 
@@ -185,6 +192,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                     return btnLoad;
                 case RDMPCollection.SavedCohorts:
                     return btnSavedCohorts;
+                case RDMPCollection.Favourites:
+                    return btnFavourites;
                 default:
                     throw new ArgumentOutOfRangeException("collection");
             }
@@ -223,5 +232,62 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         {
             toolStrip1.Items.Add(button);
         }
+
+        private void tbFind_TextChanged(object sender, EventArgs e)
+        {
+            RunFind(true);
+        }
+
+        private void tbFind_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                RunFind(false);
+        }
+
+        private void RunFind(bool returnFocusToTextBox)
+        {
+            var activator = _manager.ContentManager;
+
+            var scorer = new SearchablesMatchScorer();
+
+            var matches = scorer.ScoreMatches(activator.CoreChildProvider.GetAllSearchables(), tbFind.Text, new CancellationToken())
+                .Where(score => score.Value > 0)
+                .OrderByDescending(score => score.Value).ToArray();
+
+            btnLaunchNavigateTo.Count = matches.Count();
+
+            if (matches.Length > 0)
+            {
+                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue));
+                
+                if (returnFocusToTextBox)
+                    tbFind.Focus();
+            }
+            else
+                btnLaunchNavigateTo.Count = null;
+        }
+
+        private void btnLaunchNavigateTo_Click(object sender, EventArgs e)
+        {
+            ShowNavigateTo();
+        }
+
+        private void ShowNavigateTo()
+        {
+            var dialog = new NavigateToObjectUI(_manager.ContentManager, tbFind.Text);
+            dialog.Show();
+        }
+
+        public void FocusFind()
+        {
+            ShowNavigateTo();
+        }
+
+        private void tbFind_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
+        }
+
     }
 }

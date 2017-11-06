@@ -91,6 +91,9 @@ namespace CatalogueManager.MainFormUITabs
             this.label8 = new System.Windows.Forms.Label();
             this.c_tbNumberOfThese = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.cbColdStorage = new System.Windows.Forms.CheckBox();
+            this.cbInternal = new System.Windows.Forms.CheckBox();
+            this.cbDeprecated = new System.Windows.Forms.CheckBox();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.label34 = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
@@ -662,6 +665,9 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.cbColdStorage);
+            this.splitContainer1.Panel1.Controls.Add(this.cbInternal);
+            this.splitContainer1.Panel1.Controls.Add(this.cbDeprecated);
             this.splitContainer1.Panel1.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel1.Controls.Add(this.label24);
             this.splitContainer1.Panel1.Controls.Add(this.label34);
@@ -748,9 +754,43 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.SplitterDistance = 274;
             this.splitContainer1.TabIndex = 114;
             // 
+            // cbColdStorage
+            // 
+            this.cbColdStorage.AutoSize = true;
+            this.cbColdStorage.Location = new System.Drawing.Point(11, 198);
+            this.cbColdStorage.Name = "cbColdStorage";
+            this.cbColdStorage.Size = new System.Drawing.Size(84, 17);
+            this.cbColdStorage.TabIndex = 165;
+            this.cbColdStorage.Text = "ColdStorage";
+            this.cbColdStorage.UseVisualStyleBackColor = true;
+            this.cbColdStorage.CheckedChanged += new System.EventHandler(this.cbFlag_CheckedChanged);
+            // 
+            // cbInternal
+            // 
+            this.cbInternal.AutoSize = true;
+            this.cbInternal.Location = new System.Drawing.Point(11, 175);
+            this.cbInternal.Name = "cbInternal";
+            this.cbInternal.Size = new System.Drawing.Size(61, 17);
+            this.cbInternal.TabIndex = 165;
+            this.cbInternal.Text = "Internal";
+            this.cbInternal.UseVisualStyleBackColor = true;
+            this.cbInternal.CheckedChanged += new System.EventHandler(this.cbFlag_CheckedChanged);
+            // 
+            // cbDeprecated
+            // 
+            this.cbDeprecated.AutoSize = true;
+            this.cbDeprecated.Location = new System.Drawing.Point(11, 152);
+            this.cbDeprecated.Name = "cbDeprecated";
+            this.cbDeprecated.Size = new System.Drawing.Size(82, 17);
+            this.cbDeprecated.TabIndex = 165;
+            this.cbDeprecated.Text = "Deprecated";
+            this.cbDeprecated.UseVisualStyleBackColor = true;
+            this.cbDeprecated.CheckedChanged += new System.EventHandler(this.cbFlag_CheckedChanged);
+            // 
             // objectSaverButton1
             // 
             this.objectSaverButton1.Location = new System.Drawing.Point(133, 247);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(266, 32);
             this.objectSaverButton1.TabIndex = 164;
@@ -1008,5 +1048,8 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox tbAdministrativeContactName;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.CheckBox cbColdStorage;
+        private System.Windows.Forms.CheckBox cbInternal;
+        private System.Windows.Forms.CheckBox cbDeprecated;
     }
 }

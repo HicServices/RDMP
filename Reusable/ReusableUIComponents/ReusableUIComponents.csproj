@@ -368,6 +368,7 @@
     <Compile Include="ServerDatabaseTableSelector.Designer.cs">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="SimpleCounterButton.cs" />
     <Compile Include="SingleControlForms\IConsultableBeforeClosing.cs" />
     <Compile Include="SingleControlForms\SingleControlForm.cs" />
     <Compile Include="SqlDialogs\SetSQLDialog.cs">

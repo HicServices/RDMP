@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
@@ -136,8 +137,6 @@ namespace CatalogueManager.Menus
                     }
 
                 }
-
-                Items.Add(new ExpandAllTreeNodesMenuItem(_activator, _databaseEntity));
             }
         }
 

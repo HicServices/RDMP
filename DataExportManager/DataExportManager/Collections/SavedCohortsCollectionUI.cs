@@ -32,7 +32,7 @@ namespace DataExportManager.Collections
         {
             _activator = activator;
             _commonCollectionFunctionality = new RDMPCollectionCommonFunctionality();
-            _commonCollectionFunctionality.SetUp(tlvSavedCohorts,_activator,olvName,tbFilter,olvName);
+            _commonCollectionFunctionality.SetUp(tlvSavedCohorts,_activator,olvName,olvName);
             
             tlvSavedCohorts.AddObject(((DataExportChildProvider)_activator.CoreChildProvider).RootCohortsNode);
         }
