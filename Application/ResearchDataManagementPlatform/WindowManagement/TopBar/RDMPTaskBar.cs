@@ -234,24 +234,31 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             var scorer = new SearchablesMatchScorer();
 
-            var bestMatches = scorer.ScoreMatches(activator.CoreChildProvider.GetAllSearchables(), tbFind.Text, new CancellationToken())
+            var matches = scorer.ScoreMatches(activator.CoreChildProvider.GetAllSearchables(), tbFind.Text, new CancellationToken())
                 .Where(score => score.Value > 0)
-                .OrderByDescending(score => score.Value)
-                .Take(1); //for now
+                .OrderByDescending(score => score.Value).ToArray();
 
-            var match = bestMatches.Select(k => k.Key.Key).SingleOrDefault();
+            btnLaunchNavigateTo.Count = matches.Count();
 
-            if(match != null)
+            if (matches.Length > 0)
             {
-                activator.RequestItemEmphasis(this, new EmphasiseRequest(match, int.MaxValue));
+                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue));
                 tbFind.Focus();
             }
+            else
+                btnLaunchNavigateTo.Count = null;
         }
 
         private void btnLaunchNavigateTo_Click(object sender, EventArgs e)
         {
-            var dialog = new NavigateToObjectUI(_manager.ContentManager);
+            var dialog = new NavigateToObjectUI(_manager.ContentManager,tbFind.Text);
             dialog.Show();
+        }
+
+        public void FocusFind()
+        {
+            tbFind.Focus();
+            tbFind.SelectAll();
         }
     }
 }

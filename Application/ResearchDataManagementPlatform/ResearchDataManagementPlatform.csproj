@@ -172,6 +172,7 @@
     <Compile Include="WindowManagement\TabChangedHandler.cs" />
     <Compile Include="WindowManagement\TabPageContextMenus\RDMPSingleControlTabMenu.cs" />
     <Compile Include="WindowManagement\ToolboxWindowManager.cs" />
+    <Compile Include="WindowManagement\TopBar\SimpleCounterButton.cs" />
     <Compile Include="WindowManagement\TopBar\RDMPTaskBar.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -71,7 +71,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if(!TypesThatAreNotUsefulParents.Contains(t))
                 TypesThatAreNotUsefulParents.Add(t);
         }
-        public NavigateToObjectUI(IActivateItems activator)
+        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null)
         {
             _activator = activator;
             _coreIconProvider = activator.CoreIconProvider;
@@ -85,6 +85,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             FetchMatches(CancellationToken.None);
             StartPosition = FormStartPosition.CenterScreen;
             DoubleBuffered = true;
+            tbFind.Text = initialSearchQuery;
         }
 
         protected override void OnMouseClick(MouseEventArgs e)

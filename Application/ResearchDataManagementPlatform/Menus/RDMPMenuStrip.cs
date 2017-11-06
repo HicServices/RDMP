@@ -444,6 +444,11 @@ namespace ResearchDataManagementPlatform.Menus
             if (dialog.ShowDialog() == DialogResult.OK)
                 _activator.WindowArranger.SetupEditAnything(this,dialog.Selected);
         }
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rdmpTaskBar1.FocusFind();
+        }
     }
 }
 

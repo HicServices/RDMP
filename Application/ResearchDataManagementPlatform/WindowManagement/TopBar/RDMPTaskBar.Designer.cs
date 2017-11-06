@@ -46,7 +46,7 @@
             this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.tbFind = new System.Windows.Forms.ToolStripTextBox();
-            this.btnLaunchNavigateTo = new System.Windows.Forms.ToolStripButton();
+            this.btnLaunchNavigateTo = new SimpleCounterButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -242,7 +242,7 @@
         private System.Windows.Forms.ToolStripButton btnSavedCohorts;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripTextBox tbFind;
-        private System.Windows.Forms.ToolStripButton btnLaunchNavigateTo;
+        private SimpleCounterButton btnLaunchNavigateTo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 
     }
