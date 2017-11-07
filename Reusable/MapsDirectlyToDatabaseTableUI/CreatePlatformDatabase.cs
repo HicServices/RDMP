@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 
@@ -32,6 +33,7 @@ namespace MapsDirectlyToDatabaseTableUI
         private bool _completed = false;
 
         private Thread _tCreateDatabase;
+        private bool _programaticClose;
 
         public string DatabaseConnectionString { get ; private set; }
 
@@ -92,10 +94,20 @@ namespace MapsDirectlyToDatabaseTableUI
                 _tCreateDatabase = new Thread(
                     () =>
                     {
-                        if (executor.CreateDatabase(_createSql, _initialVersionNumber, checksUI1))
+                        var memory = new ToMemoryCheckNotifier(checksUI1);
+
+                        if (executor.CreateDatabase(_createSql, _initialVersionNumber, memory))
                         {
-                            _completed = executor.PatchDatabase(_patches, checksUI1, silentlyApplyPatchCallback);
+                            _completed = executor.PatchDatabase(_patches, memory, silentlyApplyPatchCallback);
                             GenerateConnectionStringThenCopy();
+
+                            var worst = memory.GetWorst();
+                            if(worst == CheckResult.Success || worst == CheckResult.Warning)
+                                if (MessageBox.Show("Succesfully created database, close form?", "Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                {
+                                    _programaticClose = true;
+                                    Invoke(new MethodInvoker(Close));
+                                }
                         }
                         else
                             _completed = false;//failed to create database
@@ -115,7 +127,7 @@ namespace MapsDirectlyToDatabaseTableUI
         {
             if(_tCreateDatabase != null)
             {
-                if(_tCreateDatabase.ThreadState != ThreadState.Stopped)
+                if (_tCreateDatabase.ThreadState != ThreadState.Stopped && !_programaticClose)
                 {
                     if(
                         MessageBox.Show("Thread state is " + _tCreateDatabase.ThreadState +

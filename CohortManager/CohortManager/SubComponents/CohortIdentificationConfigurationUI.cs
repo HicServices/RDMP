@@ -88,6 +88,8 @@ namespace CohortManager.SubComponents
 
             objectSaverButton1.SetupFor(_configuration, activator.RefreshBus);
 
+            queryCachingServerSelector.RefreshUIFromDatabase();
+
             if (_configuration.QueryCachingServer_ID == null)
                 queryCachingServerSelector.SelecteExternalDatabaseServer = null;
             else

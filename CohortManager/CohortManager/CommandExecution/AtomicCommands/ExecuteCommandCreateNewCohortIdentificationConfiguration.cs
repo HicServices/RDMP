@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
@@ -24,6 +25,8 @@ namespace CohortManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandCreateNewCohortIdentificationConfiguration(IActivateItems activator) : base(activator)
         {
+            if(!activator.CoreChildProvider.AllCatalogues.Any())
+                SetImpossible("There are no datasets loaded yet into RDMP");
         }
 
         public Image GetImage(IIconProvider iconProvider)
