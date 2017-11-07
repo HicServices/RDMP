@@ -41,22 +41,21 @@ assemblyinfo :assemblyinfo do |asm|
     asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
     
     major, minor, patch, build = asminfoversion.split(/\./)
-    timestamp = Time.new.utc.to_i
-    
-    version = "#{major}.#{minor}.#{patch}"
+   
+    if PRERELEASE == "true"
+        build = build.to_i + 1
+        suffix = "-pre"
+    elsif CANDIDATE == "true"
+        build = build.to_i + 1
+        suffix = "-rc"
+    end
+
+    version = "#{major}.#{minor}.#{patch}.#{build}"
+    puts "version: #{version}"
     
     asm.version = version
     asm.file_version = version
-    if PRERELEASE == "true"
-        puts "version: #{version}-pre"
-        asm.informational_version = "#{version}.#{timestamp}-pre"
-    elsif CANDIDATE == "true"
-        puts "version: #{version}-rc"
-        asm.informational_version = "#{version}.#{timestamp}-rc"
-    else
-        puts "version: #{version}"
-        asm.informational_version = "#{version}.#{timestamp}"
-    end
+    asm.informational_version = "#{version}#{suffix}"
 end
 
 task :deployplugins, [:folder] do |t, args|
