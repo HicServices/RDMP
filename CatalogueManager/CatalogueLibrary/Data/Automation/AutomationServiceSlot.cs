@@ -18,7 +18,7 @@ namespace CatalogueLibrary.Data.Automation
     /// automation service does is to look for an unlocked slot (LockHeldBy is null) which it will then lock.  It will then use the settings to decide what runs to launch.  All runs (e.g. DQE/DLE)
     /// are audited at runtime as an AutomationJob (as well as any logging that takes place in the logging database). 
     /// </summary>
-    public class AutomationServiceSlot : DatabaseEntity, ILockable,ILifelineable
+    public class AutomationServiceSlot : DatabaseEntity, ILockable, ILifelineable
     {
        
         #region Database Properties
@@ -155,8 +155,6 @@ namespace CatalogueLibrary.Data.Automation
             return outVar;
         }
 
-
-
         public AutomationServiceSlot(ICatalogueRepository repository,
             AutomationFailureStrategy dqeFailureStrategy = AutomationFailureStrategy.Stop,
             AutomationFailureStrategy dleFailureStrategy = AutomationFailureStrategy.Stop,
@@ -189,7 +187,6 @@ namespace CatalogueLibrary.Data.Automation
             SaveToDatabase();
         }
 
- 
         public override string ToString()
         {
             return "AutomationServiceSlot ID=" + ID;

@@ -65,8 +65,10 @@ namespace CatalogueManager.SimpleDialogs.Automation
             this.automationServiceSlots.AllColumns.Add(this.olvColumn1);
             this.automationServiceSlots.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.automationServiceSlots.CellEditUseWholeCell = false;
             this.automationServiceSlots.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1});
+            this.automationServiceSlots.Cursor = System.Windows.Forms.Cursors.Default;
             this.automationServiceSlots.FullRowSelect = true;
             this.automationServiceSlots.HideSelection = false;
             this.automationServiceSlots.Location = new System.Drawing.Point(12, 12);

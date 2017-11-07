@@ -1,7 +1,14 @@
 ﻿using System;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.SimpleDialogs.Revertable;
+using MapsDirectlyToDatabaseTable;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using ReusableLibraryCode.Serialization;
+using ScintillaNET;
 
 namespace CatalogueManager.SimpleDialogs.Automation
 {
@@ -45,6 +52,7 @@ namespace CatalogueManager.SimpleDialogs.Automation
                     ddCacheFailureStrategy.SelectedItem = value.CacheFailureStrategy;
                     
                     overrideCommandTimeout.Value = value.GlobalTimeoutPeriod.HasValue?value.GlobalTimeoutPeriod.Value :0;
+                    button1.Enabled = true;
                 }
                 else
                 {
@@ -53,7 +61,7 @@ namespace CatalogueManager.SimpleDialogs.Automation
                     groupBox2.Enabled = false;
                     groupBox3.Enabled = false;
                     overrideCommandTimeout.Value = 0;
-
+                    button1.Enabled = false;
                     automateablePipelineCollectionUI1.Enabled = false;
                 }
             }
@@ -123,6 +131,23 @@ namespace CatalogueManager.SimpleDialogs.Automation
             {
                 AutomationServiceSlot.GlobalTimeoutPeriod = ((int)overrideCommandTimeout.Value)>0? ((int?)overrideCommandTimeout.Value):null;
                 AutomationServiceSlot.SaveToDatabase();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (AutomationServiceSlot != null)
+            {
+                var ignoreRepoResolver = new IgnorableSerializerContractResolver();
+                ignoreRepoResolver.Ignore(typeof(DatabaseEntity), new []{ "Repository" });
+
+                var settings = new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    ContractResolver = ignoreRepoResolver,
+                };
+                var json = JsonConvert.SerializeObject(AutomationServiceSlot, Formatting.Indented, settings);
+                //MessageBox.Show(this, json);
             }
         }
     }
