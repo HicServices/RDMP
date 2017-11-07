@@ -24,6 +24,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public ReleaseData CurrentRelease { get; set; }
         private Project _project;
+        private DirectoryInfo _destinationFolder;
 
         public ReleaseData ProcessPipelineData(ReleaseData currentRelease, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -54,7 +55,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             engine.DoRelease(CurrentRelease.ConfigurationsForRelease, CurrentRelease.EnvironmentPotential, isPatch: CurrentRelease.ReleaseState == ReleaseState.DoingPatch);
-            
+
+            _destinationFolder = engine.ReleaseFolder;
+
             return CurrentRelease;
         }
 
@@ -81,6 +84,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error occurred when trying to clean up remnant ReleaseLogEntries", e1));
                 }
             }
+
+            if(pipelineFailureExceptionIfAny == null && _destinationFolder != null)
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
         }
 
         public void Abort(IDataLoadEventListener listener)
