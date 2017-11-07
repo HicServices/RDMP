@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -73,8 +74,9 @@ namespace MapsDirectlyToDatabaseTableUI
             }
 
             AddUsefulPropertiesIfHomogeneousTypes(o);
-
+            listBox1.CustomSorter += CustomSorter;
             listBox1.AfterSorting += listBox1_AfterSorting;
+
             try
             {
 
@@ -107,6 +109,11 @@ namespace MapsDirectlyToDatabaseTableUI
                 //Previous value extraction failed, ah well nevermind eh
                 Console.WriteLine(e);
             }
+        }
+
+        private void CustomSorter(OLVColumn column, SortOrder sortOrder)
+        {
+            listBox1.ListViewItemSorter = new CheckedObjectsFirstComparer(listBox1,column,sortOrder);
         }
 
         private void AddUsefulPropertiesIfHomogeneousTypes(IMapsDirectlyToDatabaseTable[] mapsDirectlyToDatabaseTables)
@@ -318,6 +325,39 @@ namespace MapsDirectlyToDatabaseTableUI
         private void listBox1_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             UpdateButtonEnabledness();
+            listBox1.Sort();
+        }
+    }
+
+    internal class CheckedObjectsFirstComparer : IComparer
+    {
+        private readonly ObjectListView _olvList;
+        private ColumnComparer _columnCompare;
+
+        public CheckedObjectsFirstComparer(ObjectListView olvList, OLVColumn column, SortOrder sortOrder)
+        {
+            _olvList = olvList;
+            _columnCompare = new ColumnComparer(column, sortOrder);
+        }
+
+        public int Compare(object x, object y)
+        {
+            var xRowObject = ((OLVListItem)x).RowObject;
+            var yRowObject = ((OLVListItem)y).RowObject;
+
+            var xChecked = _olvList.IsChecked(xRowObject);
+            var yChecked = _olvList.IsChecked(yRowObject);
+
+            if (xChecked && yChecked)
+                return _columnCompare.Compare(x, y);
+
+            if (xChecked)
+                return -1;
+            
+            if (yChecked)
+                return 1;
+
+            return _columnCompare.Compare(x, y);
         }
     }
 }

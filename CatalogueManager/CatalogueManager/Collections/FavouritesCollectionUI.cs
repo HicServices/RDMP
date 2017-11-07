@@ -91,6 +91,7 @@ namespace CatalogueManager.Collections
 
             //update to the new list
             favourites = actualRootFavourites;
+            tlvFavourites.RebuildAll(true);
         }
 
         public static bool IsRootObject(IActivateItems activator, object root)
