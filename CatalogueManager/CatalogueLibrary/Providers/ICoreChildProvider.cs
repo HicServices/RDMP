@@ -27,6 +27,7 @@ namespace CatalogueLibrary.Providers
         DescendancyList GetDescendancyListIfAnyFor(object model);
         PermissionWindow[] AllPermissionWindows { get;}
         AggregateConfiguration[] AllAggregateConfigurations { get;}
+        AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
     }

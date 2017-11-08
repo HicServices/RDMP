@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
@@ -46,6 +47,10 @@ namespace CatalogueLibrary.Providers
         private CatalogueItem[] _allCatalogueItems;
         private Dictionary<int,ColumnInfo> _allColumnInfos;
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
+        
+        public AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; private set; }
+        public AutomationServiceSlot[] AllAutomationServiceSlots { get; set; }
+
         public Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; private set; }
 
         private CatalogueItemIssue[] _allCatalogueItemIssues;
@@ -109,6 +114,8 @@ namespace CatalogueLibrary.Providers
 
             AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
 
+            AllAutomationServiceSlots = repository.GetAllObjects<AutomationServiceSlot>();
+
             AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
 
             AllTableInfos = repository.GetAllObjects<TableInfo>();
@@ -153,6 +160,10 @@ namespace CatalogueLibrary.Providers
             AllExternalServersNode = new AllExternalServersNode();
             AddChildren(AllExternalServersNode);
 
+
+            AllAutomationServerSlotsNode = new AllAutomationServerSlotsNode();
+            AddChildren(AllAutomationServerSlotsNode);
+
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
 
@@ -164,12 +175,16 @@ namespace CatalogueLibrary.Providers
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
         }
-
+        
         private void AddChildren(AllExternalServersNode allExternalServersNode)
         {
             AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
         }
 
+        private void AddChildren(AllAutomationServerSlotsNode allAutomationServerSlotsNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllAutomationServiceSlots), new DescendancyList(allAutomationServerSlotsNode));
+        }
         private void BuildServerNodes()
         {
             Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();

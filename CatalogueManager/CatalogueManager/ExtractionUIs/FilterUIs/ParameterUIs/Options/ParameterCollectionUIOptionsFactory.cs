@@ -8,8 +8,15 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using CatalogueLibrary.Repositories;
 using CohortManagerLibrary.QueryBuilding;
+using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.ExtractionTime;
+using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using Microsoft.SqlServer.Management.Smo;
 using ReusableUIComponents;
 
@@ -32,6 +39,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
         private const string UseCaseCohortIdentificationConfiguration =
             "You are trying to build a cohort by performing SQL set operations on number of datasets, each dataset can have many filters which can have parameters.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the 'Cohort Identification Configuration' level which will allow you to change all copies at once in one place";
 
+        private const string UseCaseExtractionConfigurationGlobals =
+            @"You are trying to perform a data extraction of one or more datasets against a cohort.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the ExtractionConfiguration level which will allow you to change all copies at once in one place.  You will also see two global parameters the system generates automatically when doing extractions these are @CohortDefinitionID and @ProjectNumber";
+
+        
 
         public ParameterCollectionUIOptions Create(IFilter value, ISqlParameter[] globalFilterParameters)
         {
@@ -121,7 +132,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             
             if (host is CohortIdentificationConfiguration)
                 return Create((CohortIdentificationConfiguration)host);
-            
+
+            if (host is ExtractionConfiguration)
+                return Create((ExtractionConfiguration) host);
+
             throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", "host");
         }
 
@@ -141,6 +155,34 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             var paramManager = builder.ParameterManager;
 
             return new ParameterCollectionUIOptions(UseCaseCohortIdentificationConfiguration,cohortIdentificationConfiguration, ParameterLevel.Global, paramManager);
+        }
+
+        private ParameterCollectionUIOptions Create(ExtractionConfiguration extractionConfiguration)
+        {
+            var globals = extractionConfiguration.GlobalExtractionFilterParameters;
+            var paramManager = new ParameterManager(globals);
+
+            
+            foreach (var selectedDatasets in extractionConfiguration.SelectedDataSets)
+            {
+                var rootFilterContainer = selectedDatasets.RootFilterContainer;
+                
+                if(rootFilterContainer != null)
+                {
+                    var allFilters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(rootFilterContainer).ToList();
+                    paramManager.AddParametersFor(allFilters);//query level
+                }
+            }
+
+            return new ParameterCollectionUIOptions(UseCaseExtractionConfigurationGlobals, extractionConfiguration,ParameterLevel.Global, paramManager, CreateNewParameterForExtractionConfiguration);
+        }
+
+        private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector)
+        {
+            Random r = new Random();
+
+            var ec = (ExtractionConfiguration)collector;
+            return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, "DECLARE @" + r.Next(100) + " as varchar(10)");
         }
     }
 }

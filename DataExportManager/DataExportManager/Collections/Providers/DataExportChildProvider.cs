@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
@@ -71,6 +72,8 @@ namespace DataExportManager.Collections.Providers
 
         public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
 
+        public GlobalExtractionFilterParameter[] AllGlobalExtractionFilterParameters;
+
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
             _repositoryLocator = repositoryLocator;
@@ -97,6 +100,7 @@ namespace DataExportManager.Collections.Providers
 
             Projects = dataExportRepository.GetAllObjects<Project>();
             ExtractionConfigurations = dataExportRepository.GetAllObjects<ExtractionConfiguration>();
+            AllGlobalExtractionFilterParameters = dataExportRepository.GetAllObjects<GlobalExtractionFilterParameter>();
 
             _dataExportFilterHierarchy = new DataExportFilterHierarchy(dataExportRepository);
 
@@ -226,6 +230,9 @@ namespace DataExportManager.Collections.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
+            var parameterNode = new ParametersNode(extractionConfiguration, AllGlobalExtractionFilterParameters.Where(p=>p.ExtractionConfiguration_ID == extractionConfiguration.ID).ToArray());
+
+            children.Add(parameterNode);
             //if it has a cohort
             if (extractionConfiguration.Cohort_ID != null)
             {

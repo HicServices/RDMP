@@ -68,32 +68,48 @@ namespace CatalogueLibrary.Repositories.Construction
 
             return InvokeBestConstructor(repositoryLocatorConstructorInfos, o);
         }
-
+        
         private List<ConstructorInfo> GetConstructors<T>(Type type)
         {
             var toReturn = new List<ConstructorInfo>();
+            ConstructorInfo exactMatch = null;
 
             foreach (ConstructorInfo constructor in type.GetConstructors())
             {
                 var p = constructor.GetParameters();
 
-                if (p.Length == 1 && typeof(T).IsAssignableFrom(p[0].ParameterType))
-                    toReturn.Add(constructor);
+                if (p.Length == 1)
+                    if (p[0].ParameterType == typeof (T))//is it an exact match i.e. ctor(T bob) 
+                        exactMatch = constructor;
+                    else
+                        if(p[0].ParameterType.IsAssignableFrom(typeof(T))) //is it a derrived class match i.e. ctor(F bob) where F is a derrived class of T
+                            toReturn.Add(constructor);
             }
+
+            if(exactMatch != null)
+                return new List<ConstructorInfo>(new []{exactMatch});
 
             return toReturn;
         }
         private List<ConstructorInfo> GetConstructors<T,T2>(Type type)
         {
             var toReturn = new List<ConstructorInfo>();
+            ConstructorInfo exactMatch = null;
 
             foreach (ConstructorInfo constructor in type.GetConstructors())
             {
                 var p = constructor.GetParameters();
 
-                if (p.Length == 2 && typeof(T).IsAssignableFrom(p[0].ParameterType) && typeof(T2).IsAssignableFrom(p[1].ParameterType))
-                    toReturn.Add(constructor);
+                if (p.Length == 2)
+                    if (p[0].ParameterType == typeof (T) && p[1].ParameterType == typeof (T2))
+                        exactMatch = constructor;
+                    else
+                        if(p[0].ParameterType.IsAssignableFrom(typeof(T)) && p[1].ParameterType.IsAssignableFrom(typeof(T2)))
+                            toReturn.Add(constructor);
             }
+
+            if (exactMatch != null)
+                return new List<ConstructorInfo>(new[] { exactMatch });
 
             return toReturn;
         }
@@ -133,7 +149,6 @@ namespace CatalogueLibrary.Repositories.Construction
 
             foreach (var constructor in typeToConstruct.GetConstructors())
             {
-                
                 var p = constructor.GetParameters();
 
                 //must have the same length of arguments as expected

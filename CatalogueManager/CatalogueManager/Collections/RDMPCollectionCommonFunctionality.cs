@@ -228,43 +228,60 @@ namespace CatalogueManager.Collections
         {
             var o = e.Model;
 
-            var objectConstructor = new ObjectConstructor();
-
             if(o != null)
             {
-
                 //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
                 Tree.SelectedObject = o;
 
-                //now find the first RDMPContextMenuStrip with a compatible constructor
-                foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
-                {
-                    if(menuType.IsAbstract || menuType.IsInterface)
-                        continue;
+                object masquerade = null;
+                if (o is IMasqueradeAs)
+                    masquerade = ((IMasqueradeAs)o).MasqueradingAs();
 
-                    var menu = objectConstructor.ConstructIfPossible(menuType,
-                        _activator,//parameter 1 must be activator
-                        o); //parameter 2 must be object compatible Type
+                var menu = GetMenuIfExists(o);
 
-                    if (menu != null)
-                    {
-                        e.MenuStrip = (ContextMenuStrip) menu;
-                        AddExpandCollapseMenuItems((ContextMenuStrip)menu, o);
-                        return;
-                    }
-                }
+                //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
+                if (menu == null && masquerade != null)
+                    menu = GetMenuIfExists(masquerade);
+                
+                //found a menu with compatible constructor arguments
+                if (menu != null)
+                    e.MenuStrip = menu;
             }
             else
             {
+                //it's a right click in whitespace (nothing right clicked)
+
                 AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
-                //it's a right click in whitespace (nothing right clicked)
                 if (WhitespaceRightClickMenuCommands != null)
                     e.MenuStrip = factory.CreateMenu(WhitespaceRightClickMenuCommands);
             }
+        }
 
-   
+        private ContextMenuStrip GetMenuIfExists(object o)
+        {
+            var objectConstructor = new ObjectConstructor();
 
+            //now find the first RDMPContextMenuStrip with a compatible constructor
+            foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+            {
+                if (menuType.IsAbstract || menuType.IsInterface)
+                    continue;
+
+                //try constructing menu with:
+                var menu = objectConstructor.ConstructIfPossible(menuType,
+                    _activator,//parameter 1 must be activator
+                    o); //parameter 2 must be object compatible Type
+
+
+                if (menu != null)
+                {
+                    AddExpandCollapseMenuItems((ContextMenuStrip)menu, o);
+                    return (ContextMenuStrip)menu;
+                }
+            }
+
+            return null;
         }
 
         private void AddExpandCollapseMenuItems(ContextMenuStrip menuStrip, object model)

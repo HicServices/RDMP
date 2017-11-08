@@ -307,6 +307,7 @@
     <Compile Include="Unit\ExerciseData\TestDemographyCreation.cs" />
     <Compile Include="Unit\ExerciseData\TestPrescribingCreation.cs" />
     <Compile Include="Unit\LoadModuleAssemblyTests.cs" />
+    <Compile Include="Unit\ObjectConstructorTests.cs" />
     <Compile Include="Unit\ParameterManagerTests.cs" />
     <Compile Include="Unit\PermissionWindowTests.cs" />
     <Compile Include="Unit\CommitAssemblyTest.cs" />

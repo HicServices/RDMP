@@ -11,6 +11,7 @@ namespace CatalogueManager.Icons.IconProvision
         Clipboard,
         
         //catalogue database objects
+        AllAutomationServerSlotsNode,
         AutomationServiceSlot,
         Favourite,
 
