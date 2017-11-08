@@ -122,32 +122,6 @@ namespace DataExportManager.ProjectUI
         }
 
 
-        private void btnConfigureGlobalParameters_Click(object sender, EventArgs e)
-        {
-            var parameterManager = new ParameterManager();
-
-            foreach (var p in ExtractionConfiguration.GlobalExtractionFilterParameters)
-                parameterManager.AddGlobalParameter(p);
-
-            foreach (var extractableDataSet in ExtractionConfiguration.GetAllExtractableDataSets())
-            {
-                var rootFilterContainer = ExtractionConfiguration.GetFilterContainerFor(extractableDataSet);
-                var allFilters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(rootFilterContainer).ToList();
-                parameterManager.AddParametersFor(allFilters);//query level
-            }
-            
-            ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptions(ConfigureExtractionConfigurationGlobalParametersUseCase, ExtractionConfiguration, ParameterLevel.Global, parameterManager,CreateNewParameterForExtractionConfiguration),true);
-
-        }
-
-        private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector)
-        {
-            Random r = new Random();
-
-            var ec = (ExtractionConfiguration) collector;
-            return new GlobalExtractionFilterParameter((IDataExportRepository) ec.Repository, ec, "DECLARE @" + r.Next(100) + " as varchar(10)");
-        }
-
         private void ExtractionConfigurationUI_Load(object sender, EventArgs e)
         {
 
@@ -157,10 +131,7 @@ namespace DataExportManager.ProjectUI
         {
 
         }
-
-        private const string ConfigureExtractionConfigurationGlobalParametersUseCase
-            = @"You are trying to perform a data extraction of one or more datasets against a cohort.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the ExtractionConfiguration level which will allow you to change all copies at once in one place.  You will also see two global parameters the system generates automatically when doing extractions these are @CohortDefinitionID and @ProjectNumber";
-
+        
         private bool _bLoading = false;
         
         public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
@@ -207,6 +178,7 @@ namespace DataExportManager.ProjectUI
                 _cohortRefreshingPipelineSelectionUI = factory.Create("Cohort Refresh Pipeline", DockStyle.Fill,pChooseCohortRefreshPipeline);
                 _cohortRefreshingPipelineSelectionUI.Pipeline = ExtractionConfiguration.CohortRefreshPipeline;
                 _cohortRefreshingPipelineSelectionUI.PipelineChanged += _cohortRefreshingPipelineSelectionUI_PipelineChanged;
+                _cohortRefreshingPipelineSelectionUI.CollapseToSingleLineMode();
             }
             catch (Exception e)
             {
@@ -242,6 +214,7 @@ namespace DataExportManager.ProjectUI
             //create the UI for this situation
             var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
             _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline",DockStyle.Fill,pChooseExtractionPipeline);
+            _extractionPipelineSelectionUI.CollapseToSingleLineMode();
         }
         
         public ObjectSaverButton GetObjectSaverButton()

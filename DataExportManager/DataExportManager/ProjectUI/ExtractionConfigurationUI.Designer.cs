@@ -41,6 +41,7 @@ namespace DataExportManager.ProjectUI
             this.label6 = new System.Windows.Forms.Label();
             this.pChooseExtractionPipeline = new System.Windows.Forms.Panel();
             this.gbCohortRefreshing = new System.Windows.Forms.GroupBox();
+            this.ragSmiley1Refresh = new ReusableUIComponents.RAGSmiley();
             this.pChooseCohortRefreshPipeline = new System.Windows.Forms.Panel();
             this.btnClearCic = new System.Windows.Forms.Button();
             this.pbCic = new System.Windows.Forms.PictureBox();
@@ -49,7 +50,6 @@ namespace DataExportManager.ProjectUI
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.label2 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
-            this.ragSmiley1Refresh = new ReusableUIComponents.RAGSmiley();
             this.gbCohortRefreshing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCic)).BeginInit();
             this.SuspendLayout();
@@ -96,7 +96,6 @@ namespace DataExportManager.ProjectUI
             this.btnConfigureGlobalParameters.TabIndex = 45;
             this.btnConfigureGlobalParameters.Text = "Configure Global Parameters";
             this.btnConfigureGlobalParameters.UseVisualStyleBackColor = true;
-            this.btnConfigureGlobalParameters.Click += new System.EventHandler(this.btnConfigureGlobalParameters_Click);
             // 
             // tcRelease
             // 
@@ -136,9 +135,9 @@ namespace DataExportManager.ProjectUI
             // 
             // pChooseExtractionPipeline
             // 
-            this.pChooseExtractionPipeline.Location = new System.Drawing.Point(3, 257);
+            this.pChooseExtractionPipeline.Location = new System.Drawing.Point(11, 360);
             this.pChooseExtractionPipeline.Name = "pChooseExtractionPipeline";
-            this.pChooseExtractionPipeline.Size = new System.Drawing.Size(606, 201);
+            this.pChooseExtractionPipeline.Size = new System.Drawing.Size(826, 37);
             this.pChooseExtractionPipeline.TabIndex = 49;
             // 
             // gbCohortRefreshing
@@ -149,18 +148,29 @@ namespace DataExportManager.ProjectUI
             this.gbCohortRefreshing.Controls.Add(this.pbCic);
             this.gbCohortRefreshing.Controls.Add(this.cbxCohortIdentificationConfiguration);
             this.gbCohortRefreshing.Controls.Add(this.label1);
-            this.gbCohortRefreshing.Location = new System.Drawing.Point(3, 464);
+            this.gbCohortRefreshing.Location = new System.Drawing.Point(11, 100);
             this.gbCohortRefreshing.Name = "gbCohortRefreshing";
-            this.gbCohortRefreshing.Size = new System.Drawing.Size(714, 346);
+            this.gbCohortRefreshing.Size = new System.Drawing.Size(714, 104);
             this.gbCohortRefreshing.TabIndex = 50;
             this.gbCohortRefreshing.TabStop = false;
             this.gbCohortRefreshing.Text = "Cohort Refreshing";
+            // 
+            // ragSmiley1Refresh
+            // 
+            this.ragSmiley1Refresh.AlwaysShowHandCursor = false;
+            this.ragSmiley1Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ragSmiley1Refresh.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1Refresh.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragSmiley1Refresh.Location = new System.Drawing.Point(629, 44);
+            this.ragSmiley1Refresh.Name = "ragSmiley1Refresh";
+            this.ragSmiley1Refresh.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1Refresh.TabIndex = 52;
             // 
             // pChooseCohortRefreshPipeline
             // 
             this.pChooseCohortRefreshPipeline.Location = new System.Drawing.Point(17, 55);
             this.pChooseCohortRefreshPipeline.Name = "pChooseCohortRefreshPipeline";
-            this.pChooseCohortRefreshPipeline.Size = new System.Drawing.Size(606, 201);
+            this.pChooseCohortRefreshPipeline.Size = new System.Drawing.Size(606, 38);
             this.pChooseCohortRefreshPipeline.TabIndex = 50;
             // 
             // btnClearCic
@@ -209,7 +219,7 @@ namespace DataExportManager.ProjectUI
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(11, 225);
+            this.objectSaverButton1.Location = new System.Drawing.Point(10, 331);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 26);
@@ -218,7 +228,7 @@ namespace DataExportManager.ProjectUI
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 101);
+            this.label2.Location = new System.Drawing.Point(3, 207);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 52;
@@ -226,22 +236,12 @@ namespace DataExportManager.ProjectUI
             // 
             // tbDescription
             // 
-            this.tbDescription.Location = new System.Drawing.Point(11, 117);
+            this.tbDescription.Location = new System.Drawing.Point(10, 223);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.Size = new System.Drawing.Size(744, 105);
             this.tbDescription.TabIndex = 53;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
-            // 
-            // ragSmiley1Refresh
-            // 
-            this.ragSmiley1Refresh.AlwaysShowHandCursor = false;
-            this.ragSmiley1Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ragSmiley1Refresh.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1Refresh.Location = new System.Drawing.Point(629, 44);
-            this.ragSmiley1Refresh.Name = "ragSmiley1Refresh";
-            this.ragSmiley1Refresh.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1Refresh.TabIndex = 52;
             // 
             // ExtractionConfigurationUI
             // 

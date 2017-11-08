@@ -1,3 +1,4 @@
+using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -8,5 +9,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int ExtractionConfiguration_ID { get; set; }
         int ExtractableDataSet_ID { get; set; }
         int? RootFilterContainer_ID { get; set; }
+        IContainer RootFilterContainer { get; }
     }
 }
