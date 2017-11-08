@@ -1388,6 +1388,7 @@
     <None Include="Icons\famfamfam\information.png" />
     <None Include="Icons\ExtractionConfigurationsNode.png" />
     <None Include="Icons\collapseAllNodes.png" />
+    <None Include="Icons\AllAutomationServerSlotsNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

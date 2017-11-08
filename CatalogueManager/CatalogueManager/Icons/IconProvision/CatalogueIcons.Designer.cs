@@ -93,6 +93,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllAutomationServerSlotsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllAutomationServerSlotsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllCataloguesUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllCataloguesUsedByLoadMetadataNode", resourceCulture);
