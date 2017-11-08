@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
@@ -11,7 +12,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportManager.Collections.Nodes
 {
-    public class LinkedCohortNode
+    public class LinkedCohortNode:IMasqueradeAs
     {
         public ExtractionConfiguration Configuration { get; set; }
         public IExtractableCohort Cohort { get; set; }
@@ -25,6 +26,11 @@ namespace DataExportManager.Collections.Nodes
         public override string ToString()
         {
             return Cohort.ToString();
+        }
+
+        public object MasqueradingAs()
+        {
+            return Cohort;
         }
 
         public void DeleteWithConfirmation(IActivateItems activator)
