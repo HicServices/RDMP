@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
+using RDMPStartup;
+using RDMPStartup.PluginManagement;
+using ReusableLibraryCode.Checks;
 
 namespace PluginPackager
 {
@@ -14,8 +19,6 @@ namespace PluginPackager
     {
         static int Main(string[] args)
         {
-
-
             var options = new PluginPackagerProgramOptions();
             
             if (!CommandLine.Parser.Default.ParseArguments(args, options))
@@ -36,7 +39,8 @@ namespace PluginPackager
 
             Packager p = new Packager(f, options.Items[1],options.SkipSourceCodeCollection);
             var tempDir = p.PackageUpFile();
-
+            
+            //Triggers the deleting of the temp file
             if (tempDir != null)
             {
                 ProcessStartInfo Info = new ProcessStartInfo();
@@ -45,6 +49,16 @@ namespace PluginPackager
                 Info.CreateNoWindow = true;
                 Info.FileName = "cmd.exe";
                 Process.Start(Info); 
+            }
+
+            if(!string.IsNullOrWhiteSpace(options.Server))
+            {
+                var builder = new SqlConnectionStringBuilder() {DataSource = options.Server, InitialCatalog = options.Database,IntegratedSecurity = true};
+
+                CatalogueRepository.SuppressHelpLoading = true;
+                var processor = new PluginProcessor(new ThrowImmediatelyCheckNotifier(), new CatalogueRepository(builder));
+                processor.ProcessFileReturningTrueIfIsUpgrade(new FileInfo(options.Items[1]));
+                
             }
             
             return 0;
