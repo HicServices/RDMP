@@ -38,11 +38,11 @@ namespace CatalogueManager.SimpleDialogs.Automation
             this.btnSaveToRemote = new System.Windows.Forms.Button();
             this.ddCredentials = new System.Windows.Forms.ComboBox();
             this.grpRemotes = new System.Windows.Forms.GroupBox();
+            this.lblRemoteResult = new System.Windows.Forms.Label();
+            this.barRemoteSave = new System.Windows.Forms.ProgressBar();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.lblCredentials = new System.Windows.Forms.Label();
             this.lblEndpoint = new System.Windows.Forms.Label();
-            this.barRemoteSave = new System.Windows.Forms.ProgressBar();
-            this.lblRemoteResult = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.automationServiceSlots)).BeginInit();
             this.grpRemotes.SuspendLayout();
             this.SuspendLayout();
@@ -143,6 +143,24 @@ namespace CatalogueManager.SimpleDialogs.Automation
             this.grpRemotes.TabStop = false;
             this.grpRemotes.Text = "Remotes";
             // 
+            // lblRemoteResult
+            // 
+            this.lblRemoteResult.AutoSize = true;
+            this.lblRemoteResult.Location = new System.Drawing.Point(6, 137);
+            this.lblRemoteResult.Name = "lblRemoteResult";
+            this.lblRemoteResult.Size = new System.Drawing.Size(35, 13);
+            this.lblRemoteResult.TabIndex = 8;
+            this.lblRemoteResult.Text = "label1";
+            // 
+            // barRemoteSave
+            // 
+            this.barRemoteSave.Location = new System.Drawing.Point(9, 107);
+            this.barRemoteSave.MarqueeAnimationSpeed = 0;
+            this.barRemoteSave.Name = "barRemoteSave";
+            this.barRemoteSave.Size = new System.Drawing.Size(279, 23);
+            this.barRemoteSave.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.barRemoteSave.TabIndex = 7;
+            // 
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(68, 25);
@@ -167,24 +185,6 @@ namespace CatalogueManager.SimpleDialogs.Automation
             this.lblEndpoint.Size = new System.Drawing.Size(49, 13);
             this.lblEndpoint.TabIndex = 5;
             this.lblEndpoint.Text = "Endpoint";
-            // 
-            // barRemoteSave
-            // 
-            this.barRemoteSave.Location = new System.Drawing.Point(9, 107);
-            this.barRemoteSave.MarqueeAnimationSpeed = 0;
-            this.barRemoteSave.Name = "barRemoteSave";
-            this.barRemoteSave.Size = new System.Drawing.Size(279, 23);
-            this.barRemoteSave.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.barRemoteSave.TabIndex = 7;
-            // 
-            // lblRemoteResult
-            // 
-            this.lblRemoteResult.AutoSize = true;
-            this.lblRemoteResult.Location = new System.Drawing.Point(6, 137);
-            this.lblRemoteResult.Name = "lblRemoteResult";
-            this.lblRemoteResult.Size = new System.Drawing.Size(35, 13);
-            this.lblRemoteResult.TabIndex = 8;
-            this.lblRemoteResult.Text = "label1";
             // 
             // AutomationServiceSlotManagement
             // 

@@ -120,8 +120,7 @@ namespace CatalogueManager.SimpleDialogs.Automation
 
             if (slot == null || String.IsNullOrEmpty(endpoint) || credentials == null)
             {
-                MessageBox.Show(this, "Error",
-                    "Please select a slot from the list above and enter valid endpoint/credentials");
+                MessageBox.Show(this, "Please select a slot from the list above and enter valid endpoint/credentials", "Error");
                 return;
             }
             

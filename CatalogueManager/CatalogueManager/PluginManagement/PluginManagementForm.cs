@@ -8,17 +8,22 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Automation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
+using Newtonsoft.Json;
 using RDMPStartup;
 using RDMPStartup.PluginManagement;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Serialization;
 using ReusableUIComponents;
 
 namespace CatalogueManager.PluginManagement
@@ -318,6 +323,74 @@ namespace CatalogueManager.PluginManagement
                 PromptRestart();
             }
 
+        }
+
+        private async void btnSaveToRemote_Click(object sender, EventArgs e)
+        {
+            var endpoint = textBox1.Text;
+
+            var credentials = (DataAccessCredentials)ddCredentials.SelectedItem;
+
+            if (!plugins.Any() || String.IsNullOrEmpty(endpoint) || credentials == null)
+            {
+                MessageBox.Show(this, "There are no plugins or you entered invalid endpoint/credentials", "Error");
+                return;
+            }
+
+            var ignoreRepoResolver = new IgnorableSerializerContractResolver();
+            ignoreRepoResolver.Ignore(typeof(DatabaseEntity), new[] { "Repository" });
+
+            var settings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = ignoreRepoResolver,
+            };
+
+            var json = JsonConvert.SerializeObject(plugins, Formatting.Indented, settings);
+            File.WriteAllText(@"C:\temp\plugins.txt", json);
+            return;
+
+            var handler = new HttpClientHandler()
+            {
+                Credentials = new NetworkCredential(credentials.Username, credentials.GetDecryptedPassword())
+            };
+            HttpResponseMessage result;
+
+            btnSaveToRemote.Enabled = false;
+            barRemoteSave.Style = ProgressBarStyle.Marquee;
+            barRemoteSave.MarqueeAnimationSpeed = 50;
+
+            using (var client = new HttpClient(handler))
+            {
+                try
+                {
+                    result = await client.PostAsync(new Uri(endpoint), new StringContent(json, Encoding.UTF8, "application/json"));
+                }
+                catch (Exception ex)
+                {
+                    ExceptionViewer.Show(ex);
+                    result = new HttpResponseMessage(HttpStatusCode.BadRequest) { ReasonPhrase = "Error!" };
+                }
+            }
+
+            if (result.IsSuccessStatusCode)
+            {
+                lblRemoteResult.Visible = true;
+                lblRemoteResult.Text = result.ReasonPhrase;
+                lblRemoteResult.ForeColor = Color.Green;
+                barRemoteSave.Style = ProgressBarStyle.Continuous;
+                barRemoteSave.MarqueeAnimationSpeed = 0;
+            }
+            else
+            {
+                lblRemoteResult.Visible = true;
+                lblRemoteResult.Text = result.ReasonPhrase;
+                lblRemoteResult.ForeColor = Color.Red;
+                barRemoteSave.Style = ProgressBarStyle.Continuous;
+                barRemoteSave.MarqueeAnimationSpeed = 0;
+            }
+
+            btnSaveToRemote.Enabled = true;
         }
     }
 }
