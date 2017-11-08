@@ -50,9 +50,10 @@ namespace CatalogueManager.SimpleDialogs.Automation
 
                     cacheMaxJobs.Value = value.CacheMaxConcurrentJobs;
                     ddCacheFailureStrategy.SelectedItem = value.CacheFailureStrategy;
-                    
-                    overrideCommandTimeout.Value = value.GlobalTimeoutPeriod.HasValue?value.GlobalTimeoutPeriod.Value :0;
-                    button1.Enabled = true;
+
+                    overrideCommandTimeout.Value = value.GlobalTimeoutPeriod.HasValue
+                        ? value.GlobalTimeoutPeriod.Value
+                        : 0;
                 }
                 else
                 {
@@ -61,7 +62,6 @@ namespace CatalogueManager.SimpleDialogs.Automation
                     groupBox2.Enabled = false;
                     groupBox3.Enabled = false;
                     overrideCommandTimeout.Value = 0;
-                    button1.Enabled = false;
                     automateablePipelineCollectionUI1.Enabled = false;
                 }
             }
@@ -79,24 +79,36 @@ namespace CatalogueManager.SimpleDialogs.Automation
 
         private void ddDQESelectionStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (AutomationServiceSlot == null)
+                return;
+
             AutomationServiceSlot.DQESelectionStrategy = (AutomationDQEJobSelectionStrategy) ddDQESelectionStrategy.SelectedItem;
             AutomationServiceSlot.SaveToDatabase();
         }
 
         private void ddDQEFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AutomationServiceSlot.DQEFailureStrategy = (AutomationFailureStrategy) ddDQEFailureStrategy.SelectedItem;
+            if (AutomationServiceSlot == null)
+                return;
+
+            AutomationServiceSlot.DQEFailureStrategy = (AutomationFailureStrategy)ddDQEFailureStrategy.SelectedItem;
             AutomationServiceSlot.SaveToDatabase();
         }
 
         private void ddDLEFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AutomationServiceSlot.DLEFailureStrategy = (AutomationFailureStrategy) ddDLEFailureStrategy.SelectedItem;
+            if (AutomationServiceSlot == null)
+                return;
+
+            AutomationServiceSlot.DLEFailureStrategy = (AutomationFailureStrategy)ddDLEFailureStrategy.SelectedItem;
             AutomationServiceSlot.SaveToDatabase();
         }
 
         private void ddCacheFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (AutomationServiceSlot == null)
+                return;
+
             AutomationServiceSlot.CacheFailureStrategy = (AutomationFailureStrategy)ddCacheFailureStrategy.SelectedItem;
             AutomationServiceSlot.SaveToDatabase();
         }
@@ -131,23 +143,6 @@ namespace CatalogueManager.SimpleDialogs.Automation
             {
                 AutomationServiceSlot.GlobalTimeoutPeriod = ((int)overrideCommandTimeout.Value)>0? ((int?)overrideCommandTimeout.Value):null;
                 AutomationServiceSlot.SaveToDatabase();
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (AutomationServiceSlot != null)
-            {
-                var ignoreRepoResolver = new IgnorableSerializerContractResolver();
-                ignoreRepoResolver.Ignore(typeof(DatabaseEntity), new []{ "Repository" });
-
-                var settings = new JsonSerializerSettings()
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    ContractResolver = ignoreRepoResolver,
-                };
-                var json = JsonConvert.SerializeObject(AutomationServiceSlot, Formatting.Indented, settings);
-                //MessageBox.Show(this, json);
             }
         }
     }

@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Drawing;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
+using Newtonsoft.Json;
+using ReusableLibraryCode.Serialization;
 using ReusableUIComponents;
 
 namespace CatalogueManager.SimpleDialogs.Automation
@@ -26,6 +34,8 @@ namespace CatalogueManager.SimpleDialogs.Automation
     /// </summary>
     public partial class AutomationServiceSlotManagement : RDMPForm
     {
+        private const string NoneText = "<<NONE>>";
+
         public AutomationServiceSlotManagement()
         {
             InitializeComponent();
@@ -45,6 +55,13 @@ namespace CatalogueManager.SimpleDialogs.Automation
         {
             automationServiceSlots.ClearObjects();
             automationServiceSlots.AddObjects(RepositoryLocator.CatalogueRepository.GetAllObjects<AutomationServiceSlot>());
+
+            ddCredentials.Items.Clear();
+            ddCredentials.Items.Add(NoneText);
+            ddCredentials.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>().ToArray());
+
+            lblRemoteResult.Visible = false;
+            barRemoteSave.MarqueeAnimationSpeed = 0;
         }
 
         private void btnCreateNew_Click(object sender, EventArgs e)
@@ -81,8 +98,6 @@ namespace CatalogueManager.SimpleDialogs.Automation
             RefreshUIFromDatabase();
         }
 
-      
-
         private void automationServiceSlots_KeyUp(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Delete)
@@ -93,6 +108,74 @@ namespace CatalogueManager.SimpleDialogs.Automation
         {
             var slot = automationServiceSlots.SelectedObject as AutomationServiceSlot;
             automationServiceSlotUI1.AutomationServiceSlot = slot;
+        }
+
+        private async void btnSaveToRemote_Click(object sender, EventArgs e)
+        {
+            var slot = automationServiceSlots.SelectedObject as AutomationServiceSlot;
+
+            var endpoint = textBox1.Text;
+
+            var credentials = (DataAccessCredentials) ddCredentials.SelectedItem;
+
+            if (slot == null || String.IsNullOrEmpty(endpoint) || credentials == null)
+            {
+                MessageBox.Show(this, "Error",
+                    "Please select a slot from the list above and enter valid endpoint/credentials");
+                return;
+            }
+            
+            var ignoreRepoResolver = new IgnorableSerializerContractResolver();
+            ignoreRepoResolver.Ignore(typeof (DatabaseEntity), new[] {"Repository"});
+
+            var settings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = ignoreRepoResolver,
+            };
+            var json = JsonConvert.SerializeObject(slot, Formatting.Indented, settings);
+
+            var handler = new HttpClientHandler()
+            {
+                Credentials = new NetworkCredential(credentials.Username, credentials.GetDecryptedPassword())
+            };
+            HttpResponseMessage result;
+
+            btnSaveToRemote.Enabled = false;
+            barRemoteSave.Style = ProgressBarStyle.Marquee;
+            barRemoteSave.MarqueeAnimationSpeed = 50;
+
+            using (var client = new HttpClient(handler))
+            {
+                try
+                {
+                    result = await client.PostAsync(new Uri(endpoint), new StringContent(json, Encoding.UTF8, "application/json"));
+                }
+                catch (Exception ex)
+                {
+                    ExceptionViewer.Show(ex);
+                    result = new HttpResponseMessage(HttpStatusCode.BadRequest) { ReasonPhrase = "Error!" };
+                }
+            }
+
+            if (result.IsSuccessStatusCode)
+            {
+                lblRemoteResult.Visible = true;
+                lblRemoteResult.Text = result.ReasonPhrase;
+                lblRemoteResult.ForeColor = Color.Green;
+                barRemoteSave.Style = ProgressBarStyle.Continuous;
+                barRemoteSave.MarqueeAnimationSpeed = 0;
+            }
+            else
+            {
+                lblRemoteResult.Visible = true;
+                lblRemoteResult.Text = result.ReasonPhrase;
+                lblRemoteResult.ForeColor = Color.Red;
+                barRemoteSave.Style = ProgressBarStyle.Continuous;
+                barRemoteSave.MarqueeAnimationSpeed = 0;
+            }
+
+            btnSaveToRemote.Enabled = true;
         }
     }
 }
