@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,17 @@ namespace CatalogueLibraryTests.Unit
             //allowed
             constructor.Construct(typeof(TestClass3), testarg2);
 
+            //valid because even though both constructors are valid there is one that matches EXACTLY on Type
+            constructor.Construct(typeof(TestClass4), testarg2);
+
+            var testarg3 = new TestArg3();
+
+            //not valid because there are 2 constructors that are both base classes of TestArg3 so ObjectConstructor doesn't know which to invoke
+            var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>constructor.Construct(typeof (TestClass4), testarg3));
+            Assert.IsTrue(ex.Message.Contains("Could not pick the correct constructor between"));
+
+            //exactly the same as the above case but one constructor has been decorated with ImportingConstructor
+            constructor.Construct(typeof (TestClass5), testarg3);
         }
 
         class TestClass1
@@ -62,6 +74,36 @@ namespace CatalogueLibraryTests.Unit
             }
         }
 
+        class TestClass4
+        {
+            public TestArg A { get; set; }
+
+            public TestClass4(TestArg a)
+            {
+                A = a;
+            }
+
+            public TestClass4(TestArg2 a)
+            {
+                A = a;
+            }
+        }
+
+
+        class TestClass5
+        {
+            public TestArg A { get; set; }
+
+            public TestClass5(TestArg a)
+            {
+                A = a;
+            }
+            [ImportingConstructor]
+            public TestClass5(TestArg2 a)
+            {
+                A = a;
+            }
+        }
         class TestArg
         {
             public string Text { get; set; }
@@ -70,6 +112,10 @@ namespace CatalogueLibraryTests.Unit
         class TestArg2:TestArg
         {
              
+        }
+        class TestArg3 : TestArg2
+        {
+
         }
     }
 }
