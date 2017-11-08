@@ -77,7 +77,7 @@ namespace CatalogueLibrary.Repositories.Construction
             {
                 var p = constructor.GetParameters();
 
-                if (p.Length == 1 && typeof(T).IsAssignableFrom(p[0].ParameterType))
+                if (p.Length == 1 && p[0].ParameterType.IsAssignableFrom(typeof(T)))
                     toReturn.Add(constructor);
             }
 
@@ -91,7 +91,7 @@ namespace CatalogueLibrary.Repositories.Construction
             {
                 var p = constructor.GetParameters();
 
-                if (p.Length == 2 && typeof(T).IsAssignableFrom(p[0].ParameterType) && typeof(T2).IsAssignableFrom(p[1].ParameterType))
+                if (p.Length == 2 && p[0].ParameterType.IsAssignableFrom(typeof(T)) && p[1].ParameterType.IsAssignableFrom(typeof(T2)))
                     toReturn.Add(constructor);
             }
 
