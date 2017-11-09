@@ -569,9 +569,7 @@
       <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Useful\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
