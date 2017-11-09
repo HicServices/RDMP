@@ -23,7 +23,8 @@ namespace CatalogueLibrary.Data.Remoting
         private string _uRL;
         private string _name;
         private string _username;
-        private string _password;
+
+        private EncryptedPasswordHost _encryptedPasswordHost;
 
         #endregion
 
@@ -44,19 +45,26 @@ namespace CatalogueLibrary.Data.Remoting
             get { return _username; }
             set { SetField(ref _username, value); }
         }
-
+        
         public string Password
         {
-            get { return _password; }
-            set { SetField(ref _password, value); }
+            get { return _encryptedPasswordHost.Password; }
+            set
+            {
+                if (_encryptedPasswordHost.Password == value)
+                    return;
+
+                _encryptedPasswordHost.Password = value;
+                OnPropertyChanged();
+            }
         }
 
         public string GetDecryptedPassword()
         {
-            return new EncryptedString((ICatalogueRepository) Repository) { Value = Password }.GetDecryptedValue();
+            return _encryptedPasswordHost.GetDecryptedPassword();
         }
 
-        public RemoteRDMP(IRepository repository /*, TODO Required Construction Properties For NEW*/)
+        public RemoteRDMP(IRepository repository)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
@@ -70,6 +78,10 @@ namespace CatalogueLibrary.Data.Remoting
 
         public RemoteRDMP(IRepository repository, DbDataReader r) : base(repository, r)
         {
+            // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
+            var catalogueRepository = new CatalogueRepository(((TableRepository)repository).ConnectionStringBuilder);
+            _encryptedPasswordHost = new EncryptedPasswordHost(catalogueRepository);
+
             URL = r["URL"].ToString();
             Name = r["Name"].ToString();
             Username = r["Username"] as string;

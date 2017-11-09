@@ -51,7 +51,7 @@ namespace CatalogueManager.SimpleDialogs.Automation
             txtName.Text = Remote.Name;
             txtBaseUrl.Text = Remote.URL;
             txtUsername.Text = Remote.Username;
-            txtPassword.Text = Remote.GetDecryptedPassword();
+            txtPassword.Text = Remote.Password;
         }
 
         public ObjectSaverButton GetObjectSaverButton()
@@ -76,10 +76,7 @@ namespace CatalogueManager.SimpleDialogs.Automation
 
         private void txtPassword_TextChanged(object sender, EventArgs e)
         {
-            Remote.Password = new EncryptedString(_activator.RepositoryLocator.CatalogueRepository)
-            {
-                Value = txtPassword.Text
-            }.ToString();
+            Remote.Password = txtPassword.Text;
         }
     }
 
