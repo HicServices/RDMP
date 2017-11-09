@@ -39,6 +39,9 @@ namespace CatalogueLibrary.Data
             get { return _encryptedPasswordHost.Password; }
             set
             {
+                if (Equals(_encryptedPasswordHost.Password,value))
+                    return;
+
                 _encryptedPasswordHost.Password = value;
                 OnPropertyChanged();
             }
