@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
@@ -69,8 +70,27 @@ namespace DataExportLibrary.DataRelease
         protected virtual void VerifyReleasability(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment)
         {
             //make sure everything is releasable
-            if (toRelease.Any(kvp => kvp.Value.Any(p => p.Assesment != Releaseability.Releaseable && p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)))//these are the only permissable release states
-                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable");
+            var dodgyStates = toRelease.Where(
+                kvp =>
+                    kvp.Value.Any(
+                        p =>
+                            //these are the only permissable release states
+                            p.Assesment != Releaseability.Releaseable &&
+                            p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)).ToArray();
+            
+            if (dodgyStates.Any())
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in dodgyStates)
+                {
+                    sb.AppendLine(kvp.Key + ":");
+                    foreach (var releasePotential in kvp.Value)
+                        sb.AppendLine("\t" + releasePotential.Configuration.Name + " : " + releasePotential.Assesment);
+
+                }
+
+                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable.  The following Release Potentials were at a dodgy state:" + sb);
+            }
 
             if (toRelease.Any(kvp => kvp.Key.Project_ID != Project.ID))
                 throw new Exception("Mismatch between project passed into constructor and DoRelease projects");

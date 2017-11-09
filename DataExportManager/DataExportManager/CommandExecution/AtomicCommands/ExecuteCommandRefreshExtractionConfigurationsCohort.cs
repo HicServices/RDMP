@@ -65,13 +65,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                     return;
 
                 //issue save and refresh
-                var newCohort = engine.Request.CohortCreatedIfAny;
-                if (newCohort != null)
-                {
-                    _extractionConfiguration.Cohort_ID = newCohort.ID;
-                    _extractionConfiguration.SaveToDatabase();
+                if (engine.Request.CohortCreatedIfAny != null)
                     Publish(_extractionConfiguration);
-                }
 
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
