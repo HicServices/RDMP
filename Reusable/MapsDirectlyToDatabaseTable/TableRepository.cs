@@ -180,6 +180,8 @@ namespace MapsDirectlyToDatabaseTable
                     p.Value = DBNull.Value;
                 else if (propValue is Uri)
                     p.Value = propValue.ToString();
+                else if (propValue is TimeSpan)
+                    p.Value = propValue.ToString();
                 else
                     p.Value = prop.GetValue(oTableWrapperObject, null);
 
