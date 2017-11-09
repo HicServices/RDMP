@@ -10,6 +10,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
@@ -50,6 +51,9 @@ namespace CatalogueLibrary.Providers
         
         public AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; private set; }
         public AutomationServiceSlot[] AllAutomationServiceSlots { get; set; }
+
+        public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
+        public RemoteRDMP[] AllRemoteRDMPs { get; set; }
 
         public Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; private set; }
 
@@ -115,6 +119,7 @@ namespace CatalogueLibrary.Providers
             AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
 
             AllAutomationServiceSlots = repository.GetAllObjects<AutomationServiceSlot>();
+            AllRemoteRDMPs = repository.GetAllObjects<RemoteRDMP>();
 
             AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
 
@@ -164,6 +169,9 @@ namespace CatalogueLibrary.Providers
             AllAutomationServerSlotsNode = new AllAutomationServerSlotsNode();
             AddChildren(AllAutomationServerSlotsNode);
 
+            AllRDMPRemotesNode = new AllRDMPRemotesNode();
+            AddChildren(AllRDMPRemotesNode);
+
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
 
@@ -185,6 +193,12 @@ namespace CatalogueLibrary.Providers
         {
             AddToDictionaries(new HashSet<object>(AllAutomationServiceSlots), new DescendancyList(allAutomationServerSlotsNode));
         }
+
+        private void AddChildren(AllRDMPRemotesNode allRDMPRemotesNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
+        }
+
         private void BuildServerNodes()
         {
             Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();

@@ -133,6 +133,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllRDMPRemotesNode {
+            get {
+                object obj = ResourceManager.GetObject("AllRDMPRemotesNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllServersNode {
             get {
                 object obj = ResourceManager.GetObject("AllServersNode", resourceCulture);
@@ -1166,6 +1176,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Release {
             get {
                 object obj = ResourceManager.GetObject("Release", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap RemoteRDMP {
+            get {
+                object obj = ResourceManager.GetObject("RemoteRDMP", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -60,6 +60,7 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.automateablePipelineCollectionUI1 = new CatalogueManager.SimpleDialogs.Automation.AutomateablePipelineCollectionUI();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             ((System.ComponentModel.ISupportInitialize)(this.dqeMaxJobs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dqeDaysBetween)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dleMaxJobs)).BeginInit();
@@ -412,15 +413,24 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.automateablePipelineCollectionUI1.AutomationServiceSlot = null;
-            this.automateablePipelineCollectionUI1.Location = new System.Drawing.Point(9, 471);
+            this.automateablePipelineCollectionUI1.Location = new System.Drawing.Point(9, 498);
             this.automateablePipelineCollectionUI1.Name = "automateablePipelineCollectionUI1";
-            this.automateablePipelineCollectionUI1.Size = new System.Drawing.Size(1015, 382);
+            this.automateablePipelineCollectionUI1.Size = new System.Drawing.Size(1015, 355);
             this.automateablePipelineCollectionUI1.TabIndex = 7;
+            // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(9, 468);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 9;
             // 
             // AutomationServiceSlotUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.overrideCommandTimeout);
             this.Controls.Add(this.automateablePipelineCollectionUI1);
@@ -483,5 +493,6 @@
         private System.Windows.Forms.NumericUpDown overrideCommandTimeout;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

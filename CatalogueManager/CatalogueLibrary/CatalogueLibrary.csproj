@@ -290,6 +290,7 @@
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
+    <Compile Include="Data\Remoting\RemoteRDMP.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
@@ -334,6 +335,7 @@
     <Compile Include="Nodes\AggregatesNode.cs" />
     <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
+    <Compile Include="Nodes\AllRDMPRemotesNode.cs" />
     <Compile Include="Nodes\ANOTablesNode.cs" />
     <Compile Include="Nodes\CatalogueItemsNode.cs" />
     <Compile Include="Nodes\CohortSetsNode.cs" />

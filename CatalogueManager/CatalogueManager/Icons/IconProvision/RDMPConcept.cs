@@ -13,6 +13,8 @@ namespace CatalogueManager.Icons.IconProvision
         //catalogue database objects
         AllAutomationServerSlotsNode,
         AutomationServiceSlot,
+        AllRDMPRemotesNode,
+        RemoteRDMP,
         Favourite,
 
         LoadMetadata,

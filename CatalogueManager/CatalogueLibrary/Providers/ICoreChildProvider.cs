@@ -28,6 +28,7 @@ namespace CatalogueLibrary.Providers
         PermissionWindow[] AllPermissionWindows { get;}
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
+        AllRDMPRemotesNode AllRDMPRemotesNode { get; }
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
     }

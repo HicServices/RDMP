@@ -18,7 +18,7 @@ namespace CatalogueLibrary.Data.Automation
     /// automation service does is to look for an unlocked slot (LockHeldBy is null) which it will then lock.  It will then use the settings to decide what runs to launch.  All runs (e.g. DQE/DLE)
     /// are audited at runtime as an AutomationJob (as well as any logging that takes place in the logging database). 
     /// </summary>
-    public class AutomationServiceSlot : DatabaseEntity, ILockable, ILifelineable
+    public class AutomationServiceSlot : DatabaseEntity, ILockable, ILifelineable, INamed
     {
        
         #region Database Properties
@@ -34,6 +34,7 @@ namespace CatalogueLibrary.Data.Automation
         private AutomationFailureStrategy _cacheFailureStrategy;
         private DateTime? _lifeline;
         private int? _globalTimeoutPeriod;
+        private string _name;
 
         public bool LockedBecauseRunning
         {
@@ -107,6 +108,12 @@ namespace CatalogueLibrary.Data.Automation
             set {SetField(ref  _globalTimeoutPeriod , value); }
         }
 
+        public string Name
+        {
+            get { return _name; }
+            set { SetField(ref _name, value); }
+        }
+
         #endregion
       
         #region Relationships
@@ -122,6 +129,7 @@ namespace CatalogueLibrary.Data.Automation
 
         public AutomationServiceSlot(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
+            Name = r["Name"].ToString();
             LockedBecauseRunning = Convert.ToBoolean(r["LockedBecauseRunning"]);
             LockHeldBy = r["LockHeldBy"].ToString();
             DQEMaxConcurrentJobs = Convert.ToInt32(r["DQEMaxConcurrentJobs"]);
@@ -164,6 +172,7 @@ namespace CatalogueLibrary.Data.Automation
             Repository = repository;
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
+                {"Name","Unnamed Slot"},
                 {"DQEFailureStrategy",dqeFailureStrategy.ToString()},
                 {"DLEFailureStrategy",dleFailureStrategy.ToString()},
                 {"CacheFailureStrategy",cacheFailureStrategy.ToString()},
@@ -189,7 +198,7 @@ namespace CatalogueLibrary.Data.Automation
 
         public override string ToString()
         {
-            return "AutomationServiceSlot ID=" + ID;
+            return Name;
         }
 
         public override void DeleteInDatabase()
@@ -281,6 +290,7 @@ namespace CatalogueLibrary.Data.Automation
         {
             return new AutomationJob((ICatalogueRepository)Repository, this, permissionWindow);
         }
+
     }
 
     public enum AutomationFailureStrategy

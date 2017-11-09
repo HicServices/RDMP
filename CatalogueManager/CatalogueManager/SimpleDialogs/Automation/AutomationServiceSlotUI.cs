@@ -1,13 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.AggregationUIs;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ReusableLibraryCode.Serialization;
+using ReusableUIComponents;
 using ScintillaNET;
 
 namespace CatalogueManager.SimpleDialogs.Automation
@@ -16,7 +22,7 @@ namespace CatalogueManager.SimpleDialogs.Automation
     /// Part of AutomationServiceSlotManagement which lets you change the settings for the currently selected AutomationServiceSlot (See AutomationServiceSlotManagement for full description of
     /// the effects of changes in this control).
     /// </summary>
-    public partial class AutomationServiceSlotUI : UserControl
+    public partial class AutomationServiceSlotUI : AutomationServiceSlotUI_Design, ISaveableUI
     {
         private AutomationServiceSlot _automationServiceSlot;
 
@@ -70,80 +76,77 @@ namespace CatalogueManager.SimpleDialogs.Automation
         public AutomationServiceSlotUI()
         {
             InitializeComponent();
+            lockableUI1.Poll = true;
+        }
+
+        public override void SetDatabaseObject(IActivateItems activator, AutomationServiceSlot databaseObject)
+        {
+            base.SetDatabaseObject(activator, databaseObject);
+            AutomationServiceSlot = databaseObject;
+            objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
+            
             ddDQESelectionStrategy.DataSource = Enum.GetValues(typeof(AutomationDQEJobSelectionStrategy));
             ddDQEFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
-            ddDLEFailureStrategy.DataSource = Enum.GetValues(typeof (AutomationFailureStrategy));
-            ddCacheFailureStrategy.DataSource = Enum.GetValues(typeof (AutomationFailureStrategy));
-            lockableUI1.Poll = true;
+            ddDLEFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
+            ddCacheFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
         }
 
         private void ddDQESelectionStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AutomationServiceSlot == null)
-                return;
-
             AutomationServiceSlot.DQESelectionStrategy = (AutomationDQEJobSelectionStrategy) ddDQESelectionStrategy.SelectedItem;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void ddDQEFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AutomationServiceSlot == null)
-                return;
-
             AutomationServiceSlot.DQEFailureStrategy = (AutomationFailureStrategy)ddDQEFailureStrategy.SelectedItem;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void ddDLEFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AutomationServiceSlot == null)
-                return;
-
             AutomationServiceSlot.DLEFailureStrategy = (AutomationFailureStrategy)ddDLEFailureStrategy.SelectedItem;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void ddCacheFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AutomationServiceSlot == null)
-                return;
-
             AutomationServiceSlot.CacheFailureStrategy = (AutomationFailureStrategy)ddCacheFailureStrategy.SelectedItem;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void dqeDaysBetween_ValueChanged(object sender, EventArgs e)
         {
             AutomationServiceSlot.DQEDaysBetweenEvaluations = (int) dqeDaysBetween.Value;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void dqeMaxJobs_ValueChanged(object sender, EventArgs e)
         {
             AutomationServiceSlot.DQEMaxConcurrentJobs = (int) dqeMaxJobs.Value;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void dleMaxJobs_ValueChanged(object sender, EventArgs e)
         {
             AutomationServiceSlot.DLEMaxConcurrentJobs = (int) dleMaxJobs.Value;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void cacheMaxJobs_ValueChanged(object sender, EventArgs e)
         {
             AutomationServiceSlot.CacheMaxConcurrentJobs = (int) cacheMaxJobs.Value;
-            AutomationServiceSlot.SaveToDatabase();
         }
 
         private void overrideCommandTimeout_ValueChanged(object sender, EventArgs e)
         {
-            if(AutomationServiceSlot != null)
-            {
-                AutomationServiceSlot.GlobalTimeoutPeriod = ((int)overrideCommandTimeout.Value)>0? ((int?)overrideCommandTimeout.Value):null;
-                AutomationServiceSlot.SaveToDatabase();
-            }
+            if (AutomationServiceSlot != null)
+                AutomationServiceSlot.GlobalTimeoutPeriod = ((int) overrideCommandTimeout.Value) > 0
+                                                          ? ((int?) overrideCommandTimeout.Value)
+                                                          : null;
         }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AutomationServiceSlotUI_Design, UserControl>))]
+    public abstract class AutomationServiceSlotUI_Design : RDMPSingleDatabaseObjectControl<AutomationServiceSlot>
+    {
     }
 }

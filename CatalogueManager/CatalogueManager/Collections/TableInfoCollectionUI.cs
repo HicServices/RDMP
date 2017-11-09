@@ -191,13 +191,11 @@ namespace CatalogueManager.Collections
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
-
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.DataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.ANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
-            
-
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

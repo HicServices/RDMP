@@ -346,9 +346,12 @@
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot - Copy.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
@@ -763,6 +766,7 @@
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
+    <Compile Include="Menus\RemoteRDMPNodeMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1015,6 +1019,12 @@
     </Compile>
     <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.Designer.cs">
       <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.Designer.cs">
+      <DependentUpon>RemoteRDMPUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.cs">
       <SubType>Form</SubType>
@@ -1394,6 +1404,7 @@
     <None Include="Icons\ExtractionConfigurationsNode.png" />
     <None Include="Icons\collapseAllNodes.png" />
     <None Include="Icons\AllAutomationServerSlotsNode.png" />
+    <None Include="Icons\AllRDMPRemotesNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1474,6 +1485,7 @@
     <None Include="Icons\Redo.png" />
     <None Include="Icons\ProjectCohortIdentificationConfigurationAssociationsNode.png" />
     <None Include="Icons\ProjectSavedCohortsNode.png" />
+    <None Include="Icons\RemoteRDMP.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1733,6 +1745,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.resx">
       <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleDialogs\Remoting\RemoteRDMPUI.resx">
+      <DependentUpon>RemoteRDMPUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.resx">
       <DependentUpon>DocumentationReportFormsAndControlsUI.cs</DependentUpon>
