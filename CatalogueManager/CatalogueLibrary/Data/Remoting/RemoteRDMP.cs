@@ -92,5 +92,15 @@ namespace CatalogueLibrary.Data.Remoting
         {
             return Name;
         }
+
+        public string GetUrlFor<T>(bool isarray)
+        {
+            var uri = new UriBuilder(new Uri(URL, UriKind.Absolute));
+            uri.Path = "/api/" + typeof (T).Name;
+            if (isarray)
+                uri.Query = "isarray=true";
+            
+            return uri.ToString();
+        }
     }
 }
