@@ -35,5 +35,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         ISelectedDataSets[] SelectedDataSets { get; }
 
         void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet);
+        void Unfreeze();
     }
 }
