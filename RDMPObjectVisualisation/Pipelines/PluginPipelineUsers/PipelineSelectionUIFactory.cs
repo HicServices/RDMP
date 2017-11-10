@@ -17,7 +17,7 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
 
         private IPipelineSelectionUI _pipelineSelectionUIInstance;
 
-        public PipelineSelectionUIFactory(CatalogueRepository repository, PipelineUser user, IPipelineUseCase useCase)
+        public PipelineSelectionUIFactory(CatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase)
         {
             _repository = repository;
             _user = user;

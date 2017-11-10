@@ -52,6 +52,9 @@ namespace CatalogueLibrary.Data
             get { return _selfCertifyingDataAccessPoint.Server; }
             set
             {
+                if (Equals(_selfCertifyingDataAccessPoint.Server, value))
+                    return;
+
                 _selfCertifyingDataAccessPoint.Server = value;
                 OnPropertyChanged();
             }
@@ -62,6 +65,9 @@ namespace CatalogueLibrary.Data
             get { return _selfCertifyingDataAccessPoint.Database; }
             set
             {
+                if (Equals(_selfCertifyingDataAccessPoint.Database,value))
+                    return;
+
                 _selfCertifyingDataAccessPoint.Database = value;
                 OnPropertyChanged();
             }
@@ -72,6 +78,9 @@ namespace CatalogueLibrary.Data
             get { return _selfCertifyingDataAccessPoint.Username; }
             set
             {
+                if (Equals(_selfCertifyingDataAccessPoint.Username, value))
+                    return;
+
                 _selfCertifyingDataAccessPoint.Username = value;
                 OnPropertyChanged();
             }
@@ -82,6 +91,9 @@ namespace CatalogueLibrary.Data
             get { return _selfCertifyingDataAccessPoint.Password; }
             set
             {
+                if (Equals(_selfCertifyingDataAccessPoint.Password, value))
+                    return;
+
                 _selfCertifyingDataAccessPoint.Password = value;
                 OnPropertyChanged();
             }
