@@ -124,13 +124,15 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void governanceReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            throw new Exception("Comming soon");
+            /*
             var generator = new GovernanceReport(new DatasetTimespanCalculator(), RepositoryLocator.CatalogueRepository);
 
             if (generator.RequirementsMet())
                 generator.GenerateReport();
             else
                 MessageBox.Show(generator.RequirementsDescription());
-
+            */
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -163,11 +165,12 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void issueReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            throw new Exception("Comming soon to a world near yours");/*
             var generator = new CatalogueItemIssueReportGenerator(RepositoryLocator.CatalogueRepository);
             if (generator.RequirementsMet())
                 generator.GenerateReport();
             else
-                MessageBox.Show(generator.RequirementsDescription());
+                MessageBox.Show(generator.RequirementsDescription());*/
         }
 
         private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
@@ -178,17 +181,9 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RequiresMicrosoftOffice requirement = new RequiresMicrosoftOffice();
-
-            if (requirement.RequirementsMet())
-            {
-                ConfigureMetadataReport dialog = new ConfigureMetadataReport(_activator);
-                dialog.RepositoryLocator = RepositoryLocator;
-                dialog.Show();
-            }
-            else
-                MessageBox.Show(requirement.RequirementsDescription());
-
+            ConfigureMetadataReport dialog = new ConfigureMetadataReport(_activator);
+            dialog.RepositoryLocator = RepositoryLocator;
+            dialog.Show();
         }
 
 
@@ -249,14 +244,6 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                var req = new RequiresMicrosoftOffice();
-
-                if (!req.RequirementsMet())
-                {
-                    MessageBox.Show(req.RequirementsDescription());
-                    return;
-                }
-
                 FileInfo f = UsefulStuff.SprayFile(typeof(CatalogueCollectionUI).Assembly, "CatalogueManager.UserManual.docx", "UserManual.docx");
                 Process.Start(f.FullName);
             }
@@ -269,13 +256,6 @@ namespace ResearchDataManagementPlatform.Menus
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
-
-            if (!report.RequirementsMet())
-            {
-                MessageBox.Show(report.RequirementsDescription());
-                return;
-            }
-
             var imagesDictionary = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager).ToStringDictionary();
             report.GenerateReport(new PopupChecksUI("Generating class summaries", false), imagesDictionary);
         }

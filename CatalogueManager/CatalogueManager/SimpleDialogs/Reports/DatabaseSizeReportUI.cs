@@ -28,7 +28,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
         {
             var repo = RepositoryLocator.CatalogueRepository;
 
-            checksUI1.StartChecking(new DatabaseSizeReport(repo.GetAllObjects<TableInfo>().ToArray(),repo));
+            throw new Exception("Comming soon to a world near you");
+            //checksUI1.StartChecking(new DatabaseSizeReport(repo.GetAllObjects<TableInfo>().ToArray(),repo));
         }
     }
 }

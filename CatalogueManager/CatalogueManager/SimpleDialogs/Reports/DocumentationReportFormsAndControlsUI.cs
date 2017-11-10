@@ -141,7 +141,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         }
 
-        private Image GetImagesForType(Type t)
+        private Bitmap GetImagesForType(Type t)
         {
             try
             {
@@ -277,7 +277,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             }
         }
 
-        private Image AddImageOf(Control c)
+        private Bitmap AddImageOf(Control c)
         {
 
             Bitmap bmp;

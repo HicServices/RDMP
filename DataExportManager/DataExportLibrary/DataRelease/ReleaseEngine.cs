@@ -195,13 +195,9 @@ namespace DataExportLibrary.DataRelease
 
                 //generate release document
                 var generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
-                if (generator.RequirementsMet())
-                {
-                    generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
-                    AuditFileCreation("ReleaseDocument" + extractionIdentifier + ".docx", sw, 1);
-                }
-                else
-                    sw.WriteLine("Release Document Not Generated Because Office Not Installed");
+                generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
+                AuditFileCreation("ReleaseDocument" + extractionIdentifier + ".docx", sw, 1);
+                
 
                 //only copy across directories that are explicitly validated with a ReleasePotential
                 foreach (ReleasePotential rp in kvp.Value)

@@ -55,11 +55,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             try
             {
                 WordAccessRightsByUser r = new WordAccessRightsByUser(serverDatabaseTableSelector1.GetDiscoveredDatabase(), cbCurrentUsersOnly.Checked);
-
-                if (r.RequirementsMet())
-                    r.GenerateWordFile();
-                else
-                    MessageBox.Show(r.RequirementsDescription());
+                r.GenerateWordFile();
 
             }
             catch (Exception ex)
@@ -74,12 +70,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             try
             {
                 WordAccessRightsByDatabase r = new WordAccessRightsByDatabase(serverDatabaseTableSelector1.GetDiscoveredDatabase());
-
-                if (r.RequirementsMet())
-                    r.GenerateWordFile();
-                else
-                    MessageBox.Show(r.RequirementsDescription());
-
+                r.GenerateWordFile();
             }
             catch (Exception ex)
             {

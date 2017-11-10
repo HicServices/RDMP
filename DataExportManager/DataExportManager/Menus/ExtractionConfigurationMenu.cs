@@ -133,12 +133,7 @@ namespace DataExportManager.Menus
             try
             {
                 WordDataReleaseFileGenerator generator = new WordDataReleaseFileGenerator(_extractionConfiguration, RepositoryLocator.DataExportRepository);
-                if (!generator.RequirementsMet())
-                {
-                    WideMessageBox.Show(generator.RequirementsDescription());
-                    return;
-                }
-
+                
                 //null means leave word file on screen and dont save
                 generator.GenerateWordFile(null);
             }

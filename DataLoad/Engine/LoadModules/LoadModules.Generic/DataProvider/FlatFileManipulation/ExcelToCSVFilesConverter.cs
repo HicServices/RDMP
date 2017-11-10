@@ -13,7 +13,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Checks;
-
+using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
