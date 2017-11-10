@@ -27,7 +27,7 @@ namespace CatalogueLibrary.Remoting
             remotes = repository.GetAllObjects<RemoteRDMP>();
         }
 
-        public async void SendCollectionToAll<T>(T[] collection, Action callback = null)
+        public async void SendCollectionToAllRemotes<T>(T[] collection, Action callback = null)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to send " + collection.Length + " " + typeof(T).Name + " items to all remotes."));
 
