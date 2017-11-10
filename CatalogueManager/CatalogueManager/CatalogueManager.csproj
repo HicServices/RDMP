@@ -360,6 +360,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
     <Compile Include="Menus\AllAutomationServerSlotsNode.cs" />
+    <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
