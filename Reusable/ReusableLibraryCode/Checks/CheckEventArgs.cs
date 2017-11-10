@@ -1,4 +1,5 @@
 using System;
+using ReusableLibraryCode.Progress;
 
 namespace ReusableLibraryCode.Checks
 {
@@ -34,6 +35,28 @@ namespace ReusableLibraryCode.Checks
         public override string ToString()
         {
             return Message;
+        }
+
+        public NotifyEventArgs ToNotifyEventArgs()
+        {
+            ProgressEventType status;
+            
+            switch (Result)
+            {
+                case CheckResult.Success:
+                    status = ProgressEventType.Information;
+                    break;
+                case CheckResult.Warning:
+                    status = ProgressEventType.Warning;
+                    break;
+                case CheckResult.Fail:
+                    status = ProgressEventType.Error;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return new NotifyEventArgs(status, Message,Ex);
         }
     }
 }

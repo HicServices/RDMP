@@ -64,8 +64,11 @@ namespace CatalogueLibrary.Data.Remoting
             return _encryptedPasswordHost.GetDecryptedPassword();
         }
 
-        public RemoteRDMP(IRepository repository)
+        public RemoteRDMP(ICatalogueRepository repository)
         {
+            // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
+            _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
                 { "Name", "Unnamed remote" },
