@@ -1,23 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Remoting;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using ReusableLibraryCode.Serialization;
 using ReusableUIComponents;
-using ScintillaNET;
 
-namespace CatalogueManager.SimpleDialogs.Automation
+namespace CatalogueManager.SimpleDialogs.Remoting
 {
     /// <summary>
     /// Part of AutomationServiceSlotManagement which lets you change the settings for the currently selected AutomationServiceSlot (See AutomationServiceSlotManagement for full description of

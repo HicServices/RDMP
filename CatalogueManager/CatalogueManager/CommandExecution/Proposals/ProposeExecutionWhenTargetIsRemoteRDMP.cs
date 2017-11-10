@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.Remoting;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.Automation;
+using CatalogueManager.SimpleDialogs.Remoting;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;

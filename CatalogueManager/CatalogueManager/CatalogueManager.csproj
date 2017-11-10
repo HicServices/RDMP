@@ -359,7 +359,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
-    <Compile Include="Menus\AllAutomationServerSlotsNode.cs" />
+    <Compile Include="Menus\AutomationServerSlotsMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
