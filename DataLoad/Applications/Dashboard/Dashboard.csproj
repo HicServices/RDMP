@@ -114,7 +114,7 @@
     <Compile Include="Automation\AutomationServerMonitorUI.Designer.cs">
       <DependentUpon>AutomationServerMonitorUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Automation\AutomationServerMonitorUIObjectCollection.cs" />
+    <Compile Include="Automation\AutomationServerMonitorUIObjectCache.cs" />
     <Compile Include="Automation\LogView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -197,6 +197,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
     <Compile Include="DQEPluginUserInterface.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandStartAutomationServerMonitorUI.cs" />
     <Compile Include="Menus\MenuItems\DQEMenuItem.cs" />
     <Compile Include="Overview\DataLoadsGraph.cs">
       <SubType>UserControl</SubType>

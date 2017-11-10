@@ -26,7 +26,7 @@ namespace Dashboard.Automation
     public partial class AutomationServerMonitorUIRenderArea : UserControl
     {
         object oCollectionLock = new object();
-        private AutomationServerMonitorUIObjectCollection _collection;
+        private AutomationServerMonitorUIObjectCache _cache;
         private IActivateItems _activator;
 
         private Bitmap _consoleImage;
@@ -141,7 +141,7 @@ namespace Dashboard.Automation
             {
                 if (_killServerRect.Contains(e.Location))
                 {
-                    _collection.GetServerIfAny().Unlock();
+                    _cache.GetSlot().Unlock();
                     _killServerRect = Rectangle.Empty;
                 }
 
@@ -253,7 +253,7 @@ namespace Dashboard.Automation
 
                 RenderFirstLine(e);
                 
-                if (_collection == null)
+                if (_cache == null)
                     return;
 
                 RenderServiceLevelExceptions(e);
@@ -268,11 +268,11 @@ namespace Dashboard.Automation
             var startRenderingJobListAtY = 48f;
             var jobBoxHeight = 24f;
 
-            for (int i = 0; i < _collection.AutomationJobs.Length; i++)
+            for (int i = 0; i < _cache.AutomationJobs.Length; i++)
             {
                 var lineStartY = startRenderingJobListAtY + (i*jobBoxHeight);
                 
-                var job = _collection.AutomationJobs[i];
+                var job = _cache.AutomationJobs[i];
                 var img = GetImageForJobType(job.AutomationJobType);
 
                 Pen pen;
@@ -358,7 +358,7 @@ namespace Dashboard.Automation
             e.Graphics.DrawString(header, Font, _goodBrush, 2, 26 + textHeightOffset);
 
             _globalExceptionsRendered = new Dictionary<Rectangle, AutomationServiceException>();
-            for (int i = 0; i < _collection.GlobalServiceLevelExceptions.Length; i++)
+            for (int i = 0; i < _cache.GlobalServiceLevelExceptions.Length; i++)
             {
                 var xLocation = rect.Left + 2 + (i*19);
 
@@ -368,7 +368,7 @@ namespace Dashboard.Automation
 
                 var exceptionRectangle = new Rectangle(xLocation, rect.Top, 19, 19);
                 e.Graphics.DrawImage(_errorImage,exceptionRectangle);
-                _globalExceptionsRendered.Add(exceptionRectangle,_collection.GlobalServiceLevelExceptions[i]);
+                _globalExceptionsRendered.Add(exceptionRectangle,_cache.GlobalServiceLevelExceptions[i]);
             }
             
         }
@@ -379,11 +379,11 @@ namespace Dashboard.Automation
             e.Graphics.FillRectangle(Brushes.White, 1, 1, 21, 21);
             e.Graphics.DrawImage(_consoleImage,  2, 2);
 
-            if (_collection == null || _collection.GetServerIfAny() == null)
+            if (_cache == null || _cache.GetSlot() == null)
                 RenderHeader(null,"No Server Selected Yet", null, false, e.Graphics);
             else
             {
-                var server = _collection.GetServerIfAny();
+                var server = _cache.GetSlot();
 
                 if (string.IsNullOrWhiteSpace(server.LockHeldBy))
                     RenderHeader(null,"Automation Service Not Running", null, false, e.Graphics);
@@ -579,10 +579,10 @@ namespace Dashboard.Automation
 
         #endregion
 
-        public void SetupFor(IActivateItems activator, AutomationServerMonitorUIObjectCollection collection)
+        public void SetupFor(IActivateItems activator, AutomationServerMonitorUIObjectCache cache)
         {
             _activator = activator;
-            _collection = collection;
+            _cache = cache;
         }
 
         protected override void OnResize(EventArgs e)
@@ -596,12 +596,12 @@ namespace Dashboard.Automation
         {
             lock (oCollectionLock)
             {
-                if (_collection != null)
+                if (_cache != null)
                 {
                     bool invalidateRequired = false;
                     try
                     {
-                        invalidateRequired = _collection.UpdateServerStateIfAny();
+                        invalidateRequired = _cache.UpdateServerStateIfAny();
                     }
                     catch (Exception exception)
                     {
