@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueManager.AggregationUIs;
 using DataExportLibrary.Data.DataTables;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode.Checks;
 
 namespace DataExportManager.ProjectUI.Graphs

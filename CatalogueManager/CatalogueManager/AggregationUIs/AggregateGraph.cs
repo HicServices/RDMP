@@ -721,7 +721,7 @@ namespace CatalogueManager.AggregationUIs
             _defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
         }
 
-        public IEnumerable<Image> GetImages()
+        public IEnumerable<Bitmap> GetImages()
         {
             var b = new Bitmap(chart1.Width, chart1.Height);
             chart1.DrawToBitmap(b, new Rectangle(new Point(0, 0), new Size(chart1.Width, chart1.Height)));

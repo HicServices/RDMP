@@ -3,7 +3,7 @@ using System.Data;
 using System.Linq;
 using DataExportLibrary.Data.DataTables;
 using HIC.Common.Validation.Constraints.Primary;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode;
 
 namespace DataExportLibrary.CohortDescribing

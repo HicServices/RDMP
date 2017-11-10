@@ -8,7 +8,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode;
 
 namespace DataExportLibrary.ExtractionTime

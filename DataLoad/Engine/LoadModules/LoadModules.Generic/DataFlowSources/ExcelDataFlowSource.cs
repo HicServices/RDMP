@@ -16,7 +16,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Reports;
 using LoadModules.Generic.Checks;
 using LoadModules.Generic.Exceptions;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

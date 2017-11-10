@@ -1,4 +1,4 @@
-﻿using Microsoft.Office.Interop.Word;
+﻿
 
 namespace DataExportManager.ProjectUI
 {

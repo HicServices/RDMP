@@ -6,7 +6,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting.Construction;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using IFilter = CatalogueLibrary.Data.IFilter;
 

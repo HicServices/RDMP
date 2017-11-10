@@ -8,7 +8,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;

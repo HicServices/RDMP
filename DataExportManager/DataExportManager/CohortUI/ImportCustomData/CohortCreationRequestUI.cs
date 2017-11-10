@@ -11,7 +11,7 @@ using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTableUI;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using Point = System.Drawing.Point;

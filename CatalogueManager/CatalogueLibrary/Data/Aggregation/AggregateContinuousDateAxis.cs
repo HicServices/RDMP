@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
+
 using MySql.Data.MySqlClient;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;

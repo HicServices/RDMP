@@ -5,14 +5,12 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
 
 namespace CatalogueLibrary.Reports
 {
     public class CatalogueItemIssueReportGenerator: RequiresMicrosoftOffice
     {
-
-        List<CatalogueItemIssue> Issues;
+        /*List<CatalogueItemIssue> Issues;
         private Microsoft.Office.Interop.Excel.Application xlApp;
         private object _missing = false;
 
@@ -183,6 +181,6 @@ namespace CatalogueLibrary.Reports
 
             return referenceString;
         }
-
+        */
     }
 }

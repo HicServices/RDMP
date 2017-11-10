@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using ADOX;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
@@ -13,38 +12,16 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints;
-using Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode;
-using Chart = Microsoft.Office.Interop.Word.Chart;
+using Xceed.Words.NET;
+using Chart = Microsoft.Office.Interop.Excel.Chart;
 using IFilter = CatalogueLibrary.Data.IFilter;
-using Path = System.IO.Path;
-using Range = Microsoft.Office.Interop.Word.Range;
-using Table = Microsoft.Office.Interop.Word.Table;
-using XlAxisGroup = Microsoft.Office.Interop.Word.XlAxisGroup;
-using XlChartType = Microsoft.Office.Core.XlChartType;
-using XlDataLabelsType = Microsoft.Office.Interop.Word.XlDataLabelsType;
-using _Application = Microsoft.Office.Interop.Word._Application;
 
 namespace DataExportLibrary.ExtractionTime
 {
     public class WordDataWritter : RequiresMicrosoftOffice
     {
-        /// <summary>
-        /// Set this to true if you want microsoft word to be visible while it is running Interop commands (will be very confusing for users so never ship this with true)
-        /// </summary>
-        public bool DEBUG_WORD = false;
-
         public ExtractionPipelineHost Executer { get; set; }
-
-        #region stuff for Word
-        object oTrue = true;
-        object oFalse = false;
-        Object oMissing = System.Reflection.Missing.Value;
-
-        Microsoft.Office.Interop.Word.Application wrdApp;
-        Microsoft.Office.Interop.Word._Document wrdDoc;
-        #endregion
 
         public List<Exception> ExceptionsGeneratingWordFile = new List<Exception>();
 
@@ -52,7 +29,6 @@ namespace DataExportLibrary.ExtractionTime
         {
             if(executer == null)
                 throw new NullReferenceException("Cannot write meta data without the accompanying ExtractionPipelineHost");
-
 
             if (executer.Source.WasCancelled)
                 throw new NullReferenceException("Cannot write meta data since ExtractionPipelineHost reports that it was Cancelled");
@@ -65,9 +41,6 @@ namespace DataExportLibrary.ExtractionTime
                 throw new NotSupportedException(GetType().FullName + " only supports destinations which are " + typeof(ExecuteDatasetExtractionFlatFileDestination).FullName);
         }
         
-        WordHelper wordHelper;
-        private string tableStyle = "Table Grid"; 
-
         private static object oLockOnWordUsage = new object();
         private ExecuteDatasetExtractionFlatFileDestination _destination;
 
@@ -80,175 +53,106 @@ namespace DataExportLibrary.ExtractionTime
         {
             lock (oLockOnWordUsage)
             {
-                // Create an instance of Word  and make it visible.=
-                wrdApp = new Microsoft.Office.Interop.Word.Application();
-            
-                //normally we hide word and suppress popups but it might be that word is being broken in which case we would want to watch it as it outputs stuff
-                if (!DEBUG_WORD)
+                string outputFilename = Path.Combine(_destination.DirectoryPopulated.FullName, Executer.Source.Request.DatasetBundle.DataSet + ".docx");
+
+                using (DocX document = DocX.Create(outputFilename))
                 {
-                    wrdApp.Visible = false;
-                    wrdApp.DisplayAlerts = WdAlertLevel.wdAlertsNone;
-                }
-                else
-                {
-                    wrdApp.Visible = true;
-                }
-                //add blank new word
-                wrdDoc = wrdApp.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
+                    InsertTitle(document,Executer.Source.Request.DatasetBundle.DataSet + " Meta Data");
 
-                try
-                {
-                    wrdDoc.Select();
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.Contains("RETRYLATER"))
-                        Thread.Sleep(2000);
+                    document.InsertTableOfContents("Contents", new TableOfContentsSwitches());
 
-                    wrdDoc.Select();
-                }
+                    InsertHeader(document,"File Data");
 
+                    var t = document.AddTable(10, 2);
 
-           
-                wordHelper = new WordHelper(wrdApp);
+                    t.Rows[0].Cells[0].Paragraphs.First().Append("File Name");
+                    t.Rows[0].Cells[1].Paragraphs.First().Append(new FileInfo(_destination.OutputFile).Name);
 
+                    t.Rows[1].Cells[0].Paragraphs.First().Append("Cohort Size (Distinct)");
+                    t.Rows[1].Cells[1].Paragraphs.First().Append(Executer.Source.Request.ExtractableCohort.CountDistinct.ToString());
 
-                //leave room for contents to be inserted (inserted at the end of this method but at the beginning of the word file - obviously)
-                wordHelper.StartNewPageInDocument();
+                    t.Rows[2].Cells[0].Paragraphs.First().Append("Cohorts Found In Dataset");
+                    t.Rows[2].Cells[1].Paragraphs.First().Append(Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+                    
+                    t.Rows[3].Cells[0].Paragraphs.First().Append("Dataset Line Count");
+                    t.Rows[3].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.Inserts.ToString());
 
-                //file data
-                wordHelper.WriteLine("File Data",WdBuiltinStyle.wdStyleHeading1);
+                    t.Rows[4].Cells[0].Paragraphs.First().Append("MD5");
+                    t.Rows[4].Cells[1].Paragraphs.First().Append(UsefulStuff.MD5File(_destination.OutputFile));
+                    
+                    FileInfo f = new FileInfo(_destination.OutputFile);
+                    t.Rows[5].Cells[0].Paragraphs.First().Append("File Size");
+                    t.Rows[5].Cells[1].Paragraphs.First().Append(f.Length + "bytes (" + (f.Length / 1024) + "KB)");
 
-                object start = wrdApp.Selection.End;
-                object end = wrdApp.Selection.End;
-            
-                Range tableLocation = wrdDoc.Range(ref start, ref end);
-                Table table = wrdDoc.Tables.Add(tableLocation, 10, 2);
-                table.set_Style(tableStyle);
+                    t.Rows[6].Cells[0].Paragraphs.First().Append("Extraction Date");
+                    t.Rows[6].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.EndTime.ToString());
 
-                int tableLine = 1;
+                    t.Rows[7].Cells[0].Paragraphs.First().Append("Table Load ID (for HIC)");
+                    t.Rows[7].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.ID.ToString());
 
-                table.Cell(tableLine, 1).Range.Text = "File Name";
-                table.Cell(tableLine, 2).Range.Text = new FileInfo(_destination.OutputFile).Name;
-                tableLine++;
+                    t.Rows[8].Cells[0].Paragraphs.First().Append("Separator");
+                    t.Rows[8].Cells[1].Paragraphs.First().Append(Executer.Source.Request.Configuration.Separator + "\t(" + _destination.SeparatorsStrippedOut + " values stripped from data)");
 
+                    t.Rows[9].Cells[0].Paragraphs.First().Append("Date Format");
+                    t.Rows[9].Cells[1].Paragraphs.First().Append( _destination.DateFormat);
 
-                table.Cell(tableLine, 1).Range.Text = "Cohort Size (Distinct)";
-                table.Cell(tableLine, 2).Range.Text = Executer.Source.Request.ExtractableCohort.CountDistinct.ToString();
-                tableLine++;
+                    document.InsertTable(t);
+                    
 
-                table.Cell(tableLine, 1).Range.Text = "Cohorts Found In Dataset";
-                table.Cell(tableLine, 2).Range.Text = Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString();
-                tableLine++;
-
-                table.Cell(tableLine, 1).Range.Text = "Dataset Line Count";
-                table.Cell(tableLine, 2).Range.Text = Executer.Destination.TableLoadInfo.Inserts.ToString();
-                tableLine++;
-
-                table.Cell(tableLine, 1).Range.Text = "MD5";
-                table.Cell(tableLine, 2).Range.Text = UsefulStuff.MD5File(_destination.OutputFile);
-                tableLine++;
-
-                FileInfo f = new FileInfo(_destination.OutputFile);
-                table.Cell(tableLine, 1).Range.Text = "File Size";
-                table.Cell(tableLine, 2).Range.Text = f.Length + "bytes ("+(f.Length/1024)+ "KB)";
-                tableLine++;
-
-                table.Cell(tableLine, 1).Range.Text = "Extraction Date";
-                table.Cell(tableLine, 2).Range.Text = Executer.Destination.TableLoadInfo.EndTime.ToString();
-                tableLine++;
-
-                table.Cell(tableLine, 1).Range.Text = "Table Load ID (for HIC)";
-                table.Cell(tableLine, 2).Range.Text = Executer.Destination.TableLoadInfo.ID.ToString();
-                tableLine++;
-
-                table.Cell(tableLine, 1).Range.Text = "Separator";
-                table.Cell(tableLine, 2).Range.Text = Executer.Source.Request.Configuration.Separator + "\t("+_destination.SeparatorsStrippedOut + " values stripped from data)";
-                tableLine++;
-
-                table.Cell(tableLine, 1).Range.Text = "Date Format";
-                table.Cell(tableLine, 2).Range.Text = _destination.DateFormat;
-                tableLine++;
-
-                if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
-                {
-                    wordHelper.StartNewPageInDocument();
-
-                    //validation
-                    wordHelper.WriteLine("Validation Information", WdBuiltinStyle.wdStyleHeading1);
-
-                    CreateValidationRulesTable();
-                    wordHelper.StartNewPageInDocument();
-
-
-                    CreateValidationResultsTable();
-
-                    //wordHelper.WriteLine("Total Invalid Rows:" + ExecuteThatRan.ExtractionTimeValidator.Results.CountOfRowsInvalidated, WdBuiltinStyle.wdStyleNormal);
-                }
-
-            
-                //if a count of date times seen exists for this extraction create a graph of the counts seen
-                if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null && Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
-                {
-                    try
+                    if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
                     {
-                        wordHelper.StartNewPageInDocument();
-                        wordHelper.WriteLine("Dataset Timespan", WdBuiltinStyle.wdStyleHeading1);
-              
+                        document.InsertSectionPageBreak();
+
+                        InsertHeader(document,"Validation Information");
+
+                        CreateValidationRulesTable(document);
+
+                        document.InsertSectionPageBreak();
+
+                        CreateValidationResultsTable(document);
+                    }
+
+                    //if a count of date times seen exists for this extraction create a graph of the counts seen
+                    if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null && Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
+                    {
+                        try
+                        {
+                            document.InsertSectionPageBreak();
+                            InsertHeader(document, "Dataset Timespan");
+                            
                             CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
-                  
+
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionsGeneratingWordFile.Add(e);
+                        }
+
                     }
-                    catch (Exception e)
-                    {
-                        ExceptionsGeneratingWordFile.Add(e);
-                    }
-                
+
+                    document.InsertSectionPageBreak();
+
+                    AddAllCatalogueItemMetaData(document);
+
+                    //technical data
+                    document.InsertSectionPageBreak();
+
+                    AddFiltersAndParameters(document);
+
+                    AddIssuesForCatalogue(document);
                 }
-            
-                wordHelper.StartNewPageInDocument();
-
-                AddAllCatalogueItemMetaData();
-           
-                //technical data
-                wordHelper.StartNewPageInDocument();
-            
-                AddFiltersAndParameters();
-            
-                AddIssuesForCatalogue(tableStyle);
-
-                //insert table of contents
-                Range myRange = wrdDoc.Range(0, 0);
-                wrdDoc.TablesOfContents.Add(myRange);
-
-
-                Thread.Sleep(1000);
-            
-
-                //insert title - after some whitespace
-                wordHelper.GoToStartOfDocument();
-                wordHelper.WriteLine();    
-                wordHelper.GoToStartOfDocument();
-                wordHelper.WriteLine(Executer.Source.Request.DatasetBundle.DataSet + " Meta Data", WdBuiltinStyle.wdStyleTitle);
-
-
-                object outputFilename = Path.Combine(_destination.DirectoryPopulated.FullName, Executer.Source.Request.DatasetBundle.DataSet + ".docx");
-
-                wrdDoc.TrackRevisions = true;
-                wrdDoc.SaveAs(ref outputFilename);
-                wrdDoc.Close(ref oFalse);
-                ((_Application)wrdApp).Quit(ref oFalse);
             }
         }
 
-        private void AddIssuesForCatalogue(string tableStyle)
+        private void AddIssuesForCatalogue(DocX document)
         {
             var cata = Executer.Source.Request.Catalogue;
-            WordCatalogueExtractor catalogueMetaData = new WordCatalogueExtractor(cata, wrdApp, wrdDoc);
+            WordCatalogueExtractor catalogueMetaData = new WordCatalogueExtractor(cata, document);
 
-            catalogueMetaData.AddIssuesForCatalogue(tableStyle);
+            catalogueMetaData.AddIssuesForCatalogue();
         }
 
-        private void AddFiltersAndParameters()
+        private void AddFiltersAndParameters(DocX document)
         {
             var request = Executer.Source.Request;
             FilterContainer fc = (FilterContainer)request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
@@ -258,81 +162,72 @@ namespace DataExportLibrary.ExtractionTime
                 List<IFilter> filtersUsed;
                 filtersUsed = fc.GetAllFiltersIncludingInSubContainersRecursively();
 
-                WriteOutFilters(filtersUsed);
-                
-                WriteOutParameters(filtersUsed);
+                WriteOutFilters(document,filtersUsed);
+
+                WriteOutParameters(document,filtersUsed);
             }
         }
 
-        private void WriteOutParameters(List<IFilter> filtersUsed)
+        private void WriteOutParameters(DocX document, List<IFilter> filtersUsed)
         {
-            wordHelper.GoToEndOfDocument();
-            wordHelper.WriteLine("Parameters", WdBuiltinStyle.wdStyleHeading1);
-            wordHelper.GoToEndOfDocument();
+            InsertHeader(document,"Parameters");
 
             int linesRequred = filtersUsed.Aggregate(0, (s, f) => s + f.GetAllParameters().Count());
 
             var globalParameters = Executer.Source.Request.Configuration.GlobalExtractionFilterParameters.ToArray();
             linesRequred += globalParameters.Length;
 
-            Table tableOfParameters = wordHelper.CreateTable(linesRequred + 1, 3, wrdDoc);
-            tableOfParameters.Cell(1, 1).Range.Text = "Name";
-            tableOfParameters.Cell(1, 2).Range.Text = "Comment";
-            tableOfParameters.Cell(1, 3).Range.Text = "Value";
-            int currentLine = 2;
+            Table t = document.InsertTable(linesRequred + 1, 3);
+            SetTableCell(t,0,0,"Name");
+            SetTableCell(t, 0, 1, "Comment");
+            SetTableCell(t, 0, 2, "Value");
+
+            int currentLine = 1;
 
             foreach (IFilter filter in filtersUsed)
                 foreach (ISqlParameter parameter in filter.GetAllParameters())
                 {
                     //i+2 because first row is for headers and indexing in word starts at 1 not 0
-                    tableOfParameters.Cell(currentLine, 1).Range.Text = parameter.ParameterName;
-                    tableOfParameters.Cell(currentLine, 2).Range.Text = parameter.Comment;
-                    tableOfParameters.Cell(currentLine, 3).Range.Text = parameter.Value;
+                    SetTableCell(t,currentLine, 1, parameter.ParameterName);
+                    SetTableCell(t,currentLine, 2, parameter.Comment);
+                    SetTableCell(t,currentLine, 3, parameter.Value);
                     currentLine++;
                 }
+
             foreach (ISqlParameter globalParameter in globalParameters)
             {
-                tableOfParameters.Cell(currentLine, 1).Range.Text = globalParameter.ParameterName;
-                tableOfParameters.Cell(currentLine, 2).Range.Text = globalParameter.Comment;
-                tableOfParameters.Cell(currentLine, 3).Range.Text = globalParameter.Value;
+                SetTableCell(t,currentLine, 1, globalParameter.ParameterName);
+                SetTableCell(t,currentLine, 2, globalParameter.Comment);
+                SetTableCell(t,currentLine, 3, globalParameter.Value);
                 currentLine++;
             }
-
-            tableOfParameters.set_Style(tableStyle);
         }
 
-        private void  WriteOutFilters(List<IFilter> filtersUsed)
+        private void  WriteOutFilters(DocX document, List<IFilter> filtersUsed)
         {
-            wordHelper.GoToEndOfDocument();
-            wordHelper.WriteLine("Filters", WdBuiltinStyle.wdStyleHeading1);
-            wordHelper.GoToEndOfDocument();
+            InsertHeader(document,"Filters");
 
-        
-            Table tableOfFilters = wordHelper.CreateTable(filtersUsed.Count + 1, 3, wrdDoc);
+            Table t = document.InsertTable(filtersUsed.Count + 1, 3);
 
-            tableOfFilters.Cell(1, 1).Range.Text = "Name";
-            tableOfFilters.Cell(1, 2).Range.Text = "Description";
-            tableOfFilters.Cell(1, 3).Range.Text = "SQL";
+            SetTableCell(t,0, 0, "Name");
+            SetTableCell(t,0, 1, "Description");
+            SetTableCell(t,0, 2, "SQL");
 
             for (int i = 0; i < filtersUsed.Count; i++)
             {
-                //i+2 because first row is for headers and indexing in word starts at 1 not 0
-                tableOfFilters.Cell(i + 2, 1).Range.Text = filtersUsed[i].Name;
-                tableOfFilters.Cell(i + 2, 2).Range.Text = filtersUsed[i].Description;
-                tableOfFilters.Cell(i + 2, 3).Range.Text = filtersUsed[i].WhereSQL;
+                //i+2 becauset, first row is for headers and indexing in word starts at 1 not 0
+                SetTableCell(t,i + 1, 0, filtersUsed[i].Name);
+                SetTableCell(t,i + 1, 1, filtersUsed[i].Description);
+                SetTableCell(t,i + 1, 2, filtersUsed[i].WhereSQL);
             }
-
-            tableOfFilters.set_Style(tableStyle); 
-
         }
 
-        private void AddAllCatalogueItemMetaData()
+        private void AddAllCatalogueItemMetaData(DocX document)
         {
             var cata = Executer.Source.Request.Catalogue;
-            WordCatalogueExtractor catalogueMetaData = new WordCatalogueExtractor(cata,wrdApp,wrdDoc);
+            WordCatalogueExtractor catalogueMetaData = new WordCatalogueExtractor(cata,document);
             
             var supplementalData = new Dictionary<CatalogueItem, Tuple<string, string>[]>();
-
 
             foreach (ExtractTimeTransformationObserved value in Executer.Source.ExtractTimeTransformationsObserved.Values)
             {
@@ -362,11 +257,11 @@ namespace DataExportLibrary.ExtractionTime
                 
             }
 
-            catalogueMetaData.AddMetaDataForColumns(supplementalData.Keys.ToArray(), tableStyle,supplementalData);
+            catalogueMetaData.AddMetaDataForColumns(supplementalData.Keys.ToArray(),supplementalData);
         }
 
         private void CreateTimespanGraph(ExtractionTimeTimeCoverageAggregator toGraph)
-        {
+        {/*
             Chart wdChart = wrdDoc.InlineShapes.AddChart(Microsoft.Office.Core.XlChartType.xl3DColumn, ref oMissing).Chart;
             ChartData wdChartData = wdChart.ChartData;
             Workbook dataWorkbook = (Workbook)wdChartData.Workbook;
@@ -458,35 +353,28 @@ namespace DataExportLibrary.ExtractionTime
                 wordHelper.WriteLine("Dates before dataset start date(" + cata.DatasetStartDate.Value.ToString(_destination.DateFormat) + "):" + recordsPriorToDatasetStartCount + "(" + recordsPriorToDatasetStartCountAsFraction + "%)", WdBuiltinStyle.wdStyleNormal);
            
             dataWorkbook.Application.Quit();
-        
+        */
         }
 
-        private void CreateValidationRulesTable()
+        private void CreateValidationRulesTable(DocX document)
         {
-            object start = wrdApp.Selection.End;
-            object end = wrdApp.Selection.End;
-
-
-
             Validator validator = Executer.Source.ExtractionTimeValidator.Validator;
 
             int rowCount = validator.ItemValidators.Count +
                            Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed.Count + 1;
 
-            Range tableLocation = wrdDoc.Range(ref start, ref end);
-            Table table = wrdDoc.Tables.Add(tableLocation, rowCount, 2);
-            table.set_Style(tableStyle);
+            Table t = document.InsertTable(rowCount, 2);
 
-            int tableLine = 1;
+            int tableLine = 0;
             //output table header
-            table.Cell(tableLine, 1).Range.Text = "Column";
-            table.Cell(tableLine, 2).Range.Text = "Validation";
+            SetTableCell(t,tableLine, 0,"Column");
+            SetTableCell(t,tableLine, 1, "Validation");
             tableLine++;
 
             //output list of validations we carried out
             foreach (ItemValidator iv in validator.ItemValidators)
             {
-                table.Cell(tableLine, 1).Range.Text = iv.TargetProperty;
+                SetTableCell(t,tableLine, 0, iv.TargetProperty);
 
                 string definition = "";
 
@@ -511,36 +399,31 @@ namespace DataExportLibrary.ExtractionTime
                 if (string.IsNullOrWhiteSpace(definition))
                     definition = "No validation configured";
 
-                table.Cell(tableLine, 2).Range.Text = definition;
+                SetTableCell(t, tableLine, 2, definition);
                 tableLine++;
             }
 
             //ouput list of validations we skipped
             foreach (ItemValidator iv in Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed)
             {
-                table.Cell(tableLine, 1).Range.Text = iv.TargetProperty;
-                table.Cell(tableLine, 2).Range.Text = "No validations carried out because column is Hashed/Annonymised";
+                SetTableCell(t, tableLine, 1 , iv.TargetProperty);
+                SetTableCell(t, tableLine, 2, "No validations carried out because column is Hashed/Annonymised");
                 tableLine++;
             }
         }
 
-        private void CreateValidationResultsTable()
+        private void CreateValidationResultsTable(DocX document)
         {
-            object start = wrdApp.Selection.End;
-            object end = wrdApp.Selection.End;
-
             VerboseValidationResults results = Executer.Source.ExtractionTimeValidator.Results;
 
-            Range tableLocation = wrdDoc.Range(ref start, ref end);
-            Table table = wrdDoc.Tables.Add(tableLocation, results.DictionaryOfFailure.Count+1,5);
-            table.set_Style(tableStyle);
-
-            int tableLine = 1;
-
-            table.Cell(tableLine, 1).Range.Text = "";
-            table.Cell(tableLine, 2).Range.Text = Consequence.Missing.ToString();
-            table.Cell(tableLine, 4).Range.Text = Consequence.Wrong.ToString();
-            table.Cell(tableLine, 5).Range.Text = Consequence.InvalidatesRow.ToString();
+            Table t = document.InsertTable(results.DictionaryOfFailure.Count + 1, 4);
+            
+            int tableLine = 0;
+            
+            SetTableCell(t,tableLine, 0, "");
+            SetTableCell(t,tableLine, 1, Consequence.Missing.ToString());
+            SetTableCell(t,tableLine, 2, Consequence.Wrong.ToString());
+            SetTableCell(t,tableLine, 3, Consequence.InvalidatesRow.ToString());
 
             tableLine++;
 
@@ -548,10 +431,10 @@ namespace DataExportLibrary.ExtractionTime
             {
                 string colname = keyValuePair.Key;
 
-                table.Cell(tableLine, 1).Range.Text = colname;
-                table.Cell(tableLine, 2).Range.Text = keyValuePair.Value[Consequence.Missing].ToString();
-                table.Cell(tableLine, 4).Range.Text = keyValuePair.Value[Consequence.Wrong].ToString();
-                table.Cell(tableLine, 5).Range.Text = keyValuePair.Value[Consequence.InvalidatesRow].ToString();
+                SetTableCell(t,tableLine, 1,colname);
+                SetTableCell(t,tableLine, 2,keyValuePair.Value[Consequence.Missing].ToString());
+                SetTableCell(t,tableLine, 4,keyValuePair.Value[Consequence.Wrong].ToString());
+                SetTableCell(t,tableLine, 5,keyValuePair.Value[Consequence.InvalidatesRow].ToString());
                 tableLine++;
             }
         }

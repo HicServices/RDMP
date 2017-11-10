@@ -13,17 +13,19 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using Xceed.Words.NET;
 using DataTable = System.Data.DataTable;
+using Image = System.Drawing.Image;
 
 namespace CatalogueLibrary.Reports
 {
-    public delegate Image[] RequestCatalogueImagesHandler(Catalogue catalogue);
+    public delegate Bitmap[] RequestCatalogueImagesHandler(Catalogue catalogue);
 
-    public class MetadataReport
+    public class MetadataReport:RequiresMicrosoftOffice
     {
         public IDetermineDatasetTimespan TimespanCalculator { get; set; }
         private readonly CatalogueRepository _repository;
@@ -37,15 +39,6 @@ namespace CatalogueLibrary.Reports
 
         public float PageWidthInPixels { get; private set; }
         public int MaxLookupRows { get; set; }
-
-        #region stuff for Word
-        object oTrue = true;
-        object oFalse = false;
-        Object oMissing = System.Reflection.Missing.Value;
-
-        Microsoft.Office.Interop.Word.Application wrdApp;
-        Microsoft.Office.Interop.Word._Document wrdDoc;
-        #endregion
         
         /// <summary>
         /// Set this to true if you want microsoft word to be visible while it is running Interop commands (will be very confusing for users so never ship this with true)
@@ -91,158 +84,109 @@ namespace CatalogueLibrary.Reports
                 else
                     warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Found Microsoft Word " + version + " installed",
                         CheckResult.Success, null));
-
-                // Create an instance of Word  and make it visible.=
-                wrdApp = new Application();
-
-                //normally we hide word and suppress popups but it might be that word is being broken in which case we would want to watch it as it outputs stuff
-                if (!DEBUG_WORD)
-                {
-                    wrdApp.Visible = false;
-                    wrdApp.DisplayAlerts = WdAlertLevel.wdAlertsNone;
-                }
-                else
-                {
-                    wrdApp.Visible = true;
-                }
-                //add blank new word
-                wrdDoc = wrdApp.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
                 
-                
-                wrdApp.Options.EnableMisusedWordsDictionary = false;
-                wrdApp.Options.CheckSpellingAsYouType = false;
-                wrdApp.Options.CheckGrammarWithSpelling = false;
-                wrdApp.Options.CheckGrammarAsYouType = false;
-                wrdApp.Options.ContextualSpeller = false;
-                wrdApp.Options.SuggestSpellingCorrections = false;
+                using (DocX document = DocX.Create("MetadataReport.docx"))
+                {
 
-                
-                const int marginSize = 20;
-                try
-                {
-                    wrdDoc.PageSetup.LeftMargin = marginSize;
-                }
-                catch (Exception e)
-                {
-                    if (e.Message.Contains("The message filter indicated that the application is busy"))
-                        warningsAndErrorsHandler.OnCheckPerformed(
-                            new CheckEventArgs(
-                                "Word is trying to display a dialog (probably asking you about file associations or somethihg), you must manually launch Microsoft Word - resolve any popup dialogs and tick any boxes marked 'never warn me about this again'.  Once Word launches properly (without throwing up dialog boxes) this report will work",
-                                CheckResult.Fail));
-                    else
-                        throw;
-                }
-                wrdDoc.PageSetup.RightMargin = marginSize;
-                wrdDoc.PageSetup.TopMargin = marginSize;
-                wrdDoc.PageSetup.BottomMargin = marginSize;
-            
-                PageWidthInPixels = wrdApp.PointsToPixels(wrdDoc.PageSetup.PageWidth, ref oFalse);
-
-                try
-                {
+                    const int marginSize = 20;
                     try
                     {
-                        wrdDoc.Select();
+                        document.MarginLeft = marginSize;
                     }
-                    catch (Exception ex)
+                    catch (Exception e)
                     {
-                        if (ex.Message.Contains("RETRYLATER"))
-                            Thread.Sleep(2000);
-
-                        wrdDoc.Select();
+                        if (e.Message.Contains("The message filter indicated that the application is busy"))
+                            warningsAndErrorsHandler.OnCheckPerformed(
+                                new CheckEventArgs(
+                                    "Word is trying to display a dialog (probably asking you about file associations or somethihg), you must manually launch Microsoft Word - resolve any popup dialogs and tick any boxes marked 'never warn me about this again'.  Once Word launches properly (without throwing up dialog boxes) this report will work",
+                                    CheckResult.Fail));
+                        else
+                            throw;
                     }
-                
-                    WordHelper wordHelper = new WordHelper(wrdApp);
+                    document.MarginRight= marginSize;
+                    document.MarginTop = marginSize;
+                    document.MarginBottom = marginSize;
 
-                    int completed = 0;
-
+                    //todo this is in pixels?
+                    PageWidthInPixels = document.PageWidth;
                     
-                    foreach (Catalogue c in _catalogues)
+                    try
                     {
-                        CatalogueCompleted(completed++, _catalogues.Length, c);
+                        int completed = 0;
 
-                        int recordCount = -1;
-                        int distinctRecordCount = -1;
-                        string identifierName = null;
 
-                        bool gotRecordCount = false;
-                        try
+                        foreach (Catalogue c in _catalogues)
                         {
-                            if (_includeRowCounts)
+                            CatalogueCompleted(completed++, _catalogues.Length, c);
+
+                            int recordCount = -1;
+                            int distinctRecordCount = -1;
+                            string identifierName = null;
+
+                            bool gotRecordCount = false;
+                            try
                             {
-                                GetRecordCount(c, out recordCount, out distinctRecordCount, out identifierName);
-                                gotRecordCount = true;
+                                if (_includeRowCounts)
+                                {
+                                    GetRecordCount(c, out recordCount, out distinctRecordCount, out identifierName);
+                                    gotRecordCount = true;
+                                }
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Error processing record count for Catalogue " + c.Name,
-                                CheckResult.Fail, e));
-                        }
-                        
-                        wordHelper.WriteLine(c.Name, WdBuiltinStyle.wdStyleHeading1);
-
-                        if (TimespanCalculator != null)
-                        {
-
-                            string timespan = TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true);
-                            if(!string.IsNullOrWhiteSpace(timespan))
-                                wordHelper.WriteLine(timespan, TextFontSize);
-                        }
-                        
-                        wordHelper.WriteLine(c.Description,TextFontSize);
-
-                        if (gotRecordCount)
-                        {
-                            wordHelper.WriteLine("Record Count", WdBuiltinStyle.wdStyleHeading4);
-                            CreateCountTable(recordCount, distinctRecordCount, identifierName);
-                        }
-
-                        wordHelper.GoToEndOfDocument();
-
-                        if(!_skipImages)
-                        {
-                            Image[] onRequestCatalogueImages = RequestCatalogueImages(c);
-
-                            if (onRequestCatalogueImages.Any())
+                            catch (Exception e)
                             {
-                                wordHelper.WriteLine("Aggregates", WdBuiltinStyle.wdStyleHeading4);
-                                AddImages(onRequestCatalogueImages, wordHelper);
+                                warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Error processing record count for Catalogue " + c.Name,
+                                    CheckResult.Fail, e));
+                            }
+
+                            InsertHeader(document,c.Name);
+
+                            if (TimespanCalculator != null)
+                            {
+                                string timespan = TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true);
+                                if (!string.IsNullOrWhiteSpace(timespan))
+                                    InsertParagraph(document,timespan, TextFontSize);
+                            }
+
+                            InsertParagraph(document,c.Description, TextFontSize);
+
+                            if (gotRecordCount)
+                            {
+                                InsertHeader(document,"Record Count", 4);
+                                CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
                             }
                             
-                        }
-                    
-                        wordHelper.WriteLine("Columns", WdBuiltinStyle.wdStyleHeading4);
-                        CreateDescriptionsTable(c);
-                        
-                        wrdDoc.Content.NoProofing = 1;
-                        wordHelper.GoToEndOfDocument();
-                    
-                        //if this is not the last Catalogue create a new page
-                        if(completed != _catalogues.Length)
-                        {
-                            wordHelper.StartNewPageInDocument();
-                            wordHelper.GoToEndOfDocument();
+                            if (!_skipImages)
+                            {
+                                Bitmap[] onRequestCatalogueImages = RequestCatalogueImages(c);
+
+                                if (onRequestCatalogueImages.Any())
+                                {
+                                    InsertHeader(document,"Aggregates",4);
+                                    AddImages(document,onRequestCatalogueImages);
+                                }
+
+                            }
+
+                            InsertHeader(document,"Columns",4);
+                            CreateDescriptionsTable(document,c);
+
+                            //if this is not the last Catalogue create a new page
+                            if (completed != _catalogues.Length)
+                                document.InsertSectionPageBreak();
+
+                            CatalogueCompleted(completed, _catalogues.Length, c);
                         }
 
-                        CatalogueCompleted(completed, _catalogues.Length, c);
+                        if (LookupsEncounteredToAppearInAppendix.Any())
+                            CreateLookupAppendix(document, warningsAndErrorsHandler);
 
-                        
                     }
-
-                    if (LookupsEncounteredToAppearInAppendix.Any())
-                        CreateLookupAppendix(wordHelper, warningsAndErrorsHandler);
-
+                    catch (ThreadInterruptedException)
+                    {
+                        //user hit abort   
+                    }
                 }
-                catch (ThreadInterruptedException)
-                {
-                    //user hit abort   
-                }
-                finally
-                {
-                    wrdApp.Visible = true;
-                }
-
+                
             }
             catch (Exception e)
             {
@@ -250,11 +194,10 @@ namespace CatalogueLibrary.Reports
             }
         }
 
-        private void CreateLookupAppendix(WordHelper wordHelper, ICheckNotifier warningsAndErrorsHandler)
+        private void CreateLookupAppendix(DocX document, ICheckNotifier warningsAndErrorsHandler)
         {
-            wordHelper.GoToEndOfDocument();
-            wordHelper.StartNewPageInDocument();
-            wordHelper.WriteLine("Appendix 1 - Lookup Tables", WdBuiltinStyle.wdStyleTitle);
+            document.InsertSectionPageBreak();
+            InsertTitle(document,"Appendix 1 - Lookup Tables");
             
             //foreach lookup
             foreach (TableInfo lookupTable in LookupsEncounteredToAppearInAppendix)
@@ -281,36 +224,26 @@ namespace CatalogueLibrary.Reports
                 }
 
                 //write name of lookup
-                wordHelper.WriteLine(lookupTable.Name, WdBuiltinStyle.wdStyleHeading1);
+                InsertHeader(document,lookupTable.Name);
 
-                object start = wrdDoc.Content.End - 1;
-                object end = wrdDoc.Content.End - 1;
+                var table = document.InsertTable(Math.Min(dt.Rows.Count + 1, MaxLookupRows + 2), dt.Columns.Count);
 
-                Range tableLocation = wrdDoc.Range(ref start, ref end);
-
-                Table table = wrdDoc.Tables.Add(tableLocation, Math.Min(dt.Rows.Count + 1, MaxLookupRows+2), dt.Columns.Count);
-
-                table.set_Style("Table Grid");
-                table.Range.Font.Size = TextFontSize;
-
-                int tableLine = 1;
+                int tableLine = 0;
 
                 //write the headers to the table
                 for (int i = 0; i < dt.Columns.Count; i++)
-                    table.Cell(tableLine, i + 1).Range.Text = dt.Columns[i].ColumnName;
+                    SetTableCell(table, tableLine, i, dt.Columns[i].ColumnName, TextFontSize);
 
                 //move to next line
                 tableLine++;
 
                 int maxLineCountDowner = MaxLookupRows+2;//2, 1 for the headers and 1 for the ... row
-
-
+                
                 //see if it has any lookups
                 foreach (DataRow row in dt.Rows)
                 { 
                     for (int i = 0; i < dt.Columns.Count; i++)
-                        table
-                            .Cell(tableLine, i + 1).Range.Text = Convert.ToString(row[i]);
+                        SetTableCell(table,tableLine, i, Convert.ToString(row[i]));
 
                     //move to next line
                     tableLine++;
@@ -319,18 +252,15 @@ namespace CatalogueLibrary.Reports
                     if (maxLineCountDowner == 0)
                     {
                         for (int i = 0; i < dt.Columns.Count; i++)
-                            table.Cell(tableLine, i + 1).Range.Text = "...";
+                            SetTableCell(table,tableLine, i, "...");
                         break;
                     }
                 }
 
-                table.AllowAutoFit = true;
-                table.Columns.AutoFit();
+                table.AutoFit = AutoFit.Contents;
+
                 warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs(
                     "Wrote out lookup table " + lookupTable.Name + " successfully", CheckResult.Success, null));
-
-                wordHelper.GoToEndOfDocument();
-             
             }
         }
 
@@ -356,41 +286,34 @@ namespace CatalogueLibrary.Reports
 
         }
 
-        private void AddImages(Image[] onRequestCatalogueImages, WordHelper wordHelper)
+        private void AddImages(DocX document, Bitmap[] onRequestCatalogueImages)
         {
-            foreach (Image image in onRequestCatalogueImages)
-                wordHelper.WriteImage(image, wrdDoc);
+            foreach (Bitmap image in onRequestCatalogueImages)
+                InsertPicture(document,image);
         }
 
-        private void CreateDescriptionsTable(Catalogue c)
+        private void CreateDescriptionsTable(DocX document, Catalogue c)
         {
             var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).ToList();
             extractionInformations.Sort();
 
-            object start = wrdDoc.Content.End - 1;
-            object end = wrdDoc.Content.End - 1;
+            var table = document.InsertTable(extractionInformations.Count + 1, 3);
 
-            Range tableLocation = wrdDoc.Range(ref start, ref end);
+            table.AutoFit = AutoFit.Contents;
 
-            Table table = wrdDoc.Tables.Add(tableLocation, extractionInformations.Count + 1, 3);
+            int tableLine = 0;
 
-            table.set_Style("Table Grid");
-            table.Range.Font.Size = TextFontSize;
-            table.AllowAutoFit = true;
-
-            int tableLine = 1;
-
-            table.Cell(tableLine, 1).Range.Text = "Column";
-            table.Cell(tableLine, 2).Range.Text = "Datatype";
-            table.Cell(tableLine, 3).Range.Text = "Description";
+            SetTableCell(table, tableLine, 0, "Column", TextFontSize);
+            SetTableCell(table, tableLine, 1, "Datatype", TextFontSize);
+            SetTableCell(table, tableLine, 2, "Description", TextFontSize);
 
             tableLine++;
 
 
             foreach (ExtractionInformation information in extractionInformations)
             {
-                table.Cell(tableLine, 1).Range.Text = information.GetRuntimeName();
-                table.Cell(tableLine, 2).Range.Text = information.ColumnInfo.Data_type;
+                SetTableCell(table,tableLine, 0, information.GetRuntimeName(),TextFontSize);
+                SetTableCell(table,tableLine, 1, information.ColumnInfo.Data_type,TextFontSize);
                 string description = information.CatalogueItem.Description;
 
                 
@@ -411,44 +334,35 @@ namespace CatalogueLibrary.Reports
 
                 }
 
-                table.Cell(tableLine, 3).Range.Text = description;
+                SetTableCell(table,tableLine, 2,description, TextFontSize);
 
                 tableLine++;
             }
-            
-            table.Columns.AutoFit();
+
+            table.AutoFit = AutoFit.Contents;
         }
 
-        private void CreateCountTable(int recordCount,int distinctCount, string identifierName)
+        private void CreateCountTable(DocX document, int recordCount, int distinctCount, string identifierName)
         {
+            var table = document.InsertTable(2, identifierName != null && _includeDistinctRowCounts ? 2 : 1);
+            table.AutoFit = AutoFit.Contents;
 
-            object start = wrdDoc.Content.End - 1;
-            object end = wrdDoc.Content.End - 1;
+            int tableLine = 0;
 
-            Range tableLocation = wrdDoc.Range(ref start, ref end);
-
-            Table table = wrdDoc.Tables.Add(tableLocation, 2, identifierName != null && _includeDistinctRowCounts? 2:1);
-
-            table.set_Style("Table Grid");
-            table.Range.Font.Size = TextFontSize;
-            table.AllowAutoFit = true;
-
-            int tableLine = 1;
-
-            table.Cell(tableLine, 1).Range.Text = "Records";
+            SetTableCell(table,tableLine, 0, "Records",TextFontSize);
 
             //only add column values if there is an IsExtractionIdentifier returned 
             if (identifierName != null && _includeDistinctRowCounts)
-                table.Cell(tableLine, 2).Range.Text = "Distinct " + identifierName;
-
+                SetTableCell(table,tableLine, 1, "Distinct " + identifierName,TextFontSize);
+            
             tableLine++;
 
             
-            table.Cell(tableLine, 1).Range.Text = recordCount.ToString("N0");
+            SetTableCell(table,tableLine, 0,recordCount.ToString("N0"),TextFontSize);
 
             //only add column values if there is an IsExtractionIdentifier returned 
             if (identifierName != null &&  _includeDistinctRowCounts)
-                table.Cell(tableLine, 2).Range.Text = distinctCount.ToString("N0");
+                SetTableCell(table, tableLine, 1, distinctCount.ToString("N0"), TextFontSize);
         }
 
         private void GetRecordCount(Catalogue c, out int count, out int distinct, out string identifierName)

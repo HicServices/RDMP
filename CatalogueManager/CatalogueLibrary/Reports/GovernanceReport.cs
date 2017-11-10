@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Repositories;
-using Microsoft.Office.Interop.Excel;
 
 namespace CatalogueLibrary.Reports
 {
     public class GovernanceReport:RequiresMicrosoftOffice
     {
+        /*
         private readonly IDetermineDatasetTimespan _timespanCalculator;
         private readonly CatalogueRepository _repository;
         private Microsoft.Office.Interop.Excel.Application xlApp;
@@ -154,6 +154,6 @@ namespace CatalogueLibrary.Reports
                 ws.Cells[currentRow, 5] = string.Join(",", kvp.Key.GovernanceDocuments.Select(doc => doc.GetFilenameOnly()));
                 currentRow++;
             }
-        }
+        }*/
     }
 }

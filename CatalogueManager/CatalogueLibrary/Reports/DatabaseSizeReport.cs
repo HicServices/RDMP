@@ -7,22 +7,16 @@ using System.Threading.Tasks;
 using System.Web.ModelBinding;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using Application = Microsoft.Office.Interop.Excel.Application;
 
 namespace CatalogueLibrary.Reports
 {
-    public class DatabaseSizeReport : RequiresMicrosoftOffice,ICheckable
+    public class DatabaseSizeReport : RequiresMicrosoftOffice
     {
+        /*
         private readonly TableInfo[] _tableInfos;
-
-
-        private Microsoft.Office.Interop.Excel.Application xlApp;
-        private object _missing = false;
         private CatalogueRepository _repository;
 
         public DatabaseSizeReport(TableInfo[] tableInfos, CatalogueRepository repository)
@@ -193,6 +187,6 @@ namespace CatalogueLibrary.Reports
             {
                 Tables.Add(tableInfo,tableInfo.GetAllRelatedCatalogues());
             }
-        }
+        }*/
     }
 }

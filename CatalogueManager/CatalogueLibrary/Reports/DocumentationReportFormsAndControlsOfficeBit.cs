@@ -9,16 +9,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode.Checks;
+using Xceed.Words.NET;
+using Image = System.Drawing.Image;
 
 namespace CatalogueLibrary.Reports
 {
-    public delegate Image RequestTypeImagesHandler(Type t);
+    public delegate Bitmap RequestTypeImagesHandler(Type t);
 
-    public class DocumentationReportFormsAndControlsOfficeBit
+    public class DocumentationReportFormsAndControlsOfficeBit:RequiresMicrosoftOffice
     {
-        Microsoft.Office.Interop.Word.Application wrdApp;
         private Dictionary<string, Bitmap> _wordImageDictionary;
 
         public void GenerateReport(ICheckNotifier notifier, Dictionary<string, List<Type>> formsAndControlsByApplication, RequestTypeImagesHandler imageFetcher, Dictionary<string, Bitmap> wordImageDictionary)
@@ -26,46 +26,37 @@ namespace CatalogueLibrary.Reports
             _wordImageDictionary = wordImageDictionary;
             try
             {
-               object oMissing = Missing.Value;
-                object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
-
-                //word = new word.ApplicationClass();
-                wrdApp = new Application();
-
-                wrdApp.Visible = true;
-                var doc = wrdApp.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-                
-                WordHelper wordHelper = new WordHelper(wrdApp);
-                
-                wordHelper.WriteLine("User Interfaces", WdBuiltinStyle.wdStyleTitle);
-
-                foreach (var kvp in formsAndControlsByApplication)
+                using (DocX document = DocX.Create("DocumentationReport.docx"))
                 {
-                    if(!kvp.Value.Any())
-                        continue;
+                    InsertTitle(document,"User Interfaces");
 
-                    wordHelper.WriteLine(kvp.Key, WdBuiltinStyle.wdStyleHeading1);
-                    
-                    var report = new DocumentationReportFormsAndControls(kvp.Value.ToArray());
-                    report.Check(notifier); 
-                    
-                    Type[] keys = report.Summaries.Keys.ToArray();
-
-                    for (int i = 0; i < report.Summaries.Count; i++)
+                    foreach (var kvp in formsAndControlsByApplication)
                     {
-                        wordHelper.WriteLine(keys[i].Name, WdBuiltinStyle.wdStyleHeading2);
+                        if (!kvp.Value.Any())
+                            continue;
 
-                        Image img = imageFetcher(keys[i]);
+                        InsertHeader(document,kvp.Key);
 
-                        if (img != null)
-                            wordHelper.WriteImage(img, doc);
+                        var report = new DocumentationReportFormsAndControls(kvp.Value.ToArray());
+                        report.Check(notifier);
 
-                        wordHelper.WriteLine(report.Summaries[keys[i]], WdBuiltinStyle.wdStyleNormal);
+                        Type[] keys = report.Summaries.Keys.ToArray();
 
+                        for (int i = 0; i < report.Summaries.Count; i++)
+                        {
+                            InsertHeader(document, keys[i].Name,2);
+
+                            Bitmap img = imageFetcher(keys[i]);
+
+                            if (img != null)
+                                InsertPicture(document, img);
+
+                            InsertParagraph(document,report.Summaries[keys[i]]);
+                        }
                     }
-                }
 
-                AddBookmarks(doc);
+                    AddBookmarks(document);
+                }
             }
             catch (Exception e)
             {
@@ -73,12 +64,12 @@ namespace CatalogueLibrary.Reports
             }
         }
 
-        private void AddBookmarks(Document doc)
-        {
 
+        private void AddBookmarks(DocX doc)
+        {
+            /*
             object headers_r = doc.GetCrossReferenceItems(WdReferenceType.wdRefTypeHeading);
             Array headers = ((Array)(headers_r));
-
             
             string text = doc.Content.Text;
 
@@ -150,7 +141,7 @@ namespace CatalogueLibrary.Reports
 
                 //adjust start
                 lineStart += line.Length + 1;//+1 for the \r we stripped out
-            }
+            }*/
         }
     }
 }

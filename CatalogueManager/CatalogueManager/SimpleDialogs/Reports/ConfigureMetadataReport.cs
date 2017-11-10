@@ -85,13 +85,13 @@ namespace CatalogueManager.SimpleDialogs.Reports
             btnStop.Enabled = true;
         }
 
-        public Image[] report_RequestCatalogueImages(Catalogue catalogue)
+        public Bitmap[] report_RequestCatalogueImages(Catalogue catalogue)
         {
             //cross thread
             if (InvokeRequired)
-                return (Image[]) Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages),catalogue);
-            
-            List<Image> toReturn = new List<Image>();
+                return (Bitmap[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages), catalogue);
+
+            List<Bitmap> toReturn = new List<Bitmap>();
                 
             
             aggregateGraph1.Width = (int) report.PageWidthInPixels;

@@ -5,7 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 

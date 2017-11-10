@@ -213,16 +213,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Excel.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Word.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -235,6 +225,8 @@
     <Reference Include="MySql.Data">
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
@@ -244,6 +236,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -251,6 +244,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="Xceed.Words.NET, Version=1.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DocX.1.1.0\lib\Xceed.Words.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -369,7 +367,6 @@
     <Compile Include="Reports\DocumentationReportFormsAndControlsOfficeBit.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabase.cs" />
     <Compile Include="Reports\Exceptions\SourceCodeNotFoundException.cs" />
-    <Compile Include="Reports\IHasRequirements.cs" />
     <Compile Include="Repositories\Construction\Exceptions\ObjectLacksCompatibleConstructorException.cs" />
     <Compile Include="Repositories\Construction\ObjectConstructor.cs" />
     <Compile Include="Repositories\FriendlyNamedCatalogueItem.cs" />
@@ -537,12 +534,12 @@
     <Compile Include="TableInfoSynchronizer.cs" />
     <Compile Include="SimpleStringValueEncryption.cs" />
     <Compile Include="WordCatalogueExtractor.cs" />
-    <Compile Include="WordHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DataFlowPipeline\DataFlowPipeline.cd" />
     <None Include="DataStructures.cd" />
     <None Include="Arguments.cd" />
+    <None Include="packages.config" />
     <None Include="QueryBuilding\MetadataComponentsForQueryBuilding.cd" />
     <None Include="QueryBuilding\QueryBuilding.cd" />
     <None Include="Spontaneous\Spontaneous.cd" />
