@@ -72,8 +72,6 @@ namespace ReusableUIComponents.Progress
             }
         }
 
-        
-
         private int GetRowYForNewProgressBar()
         {
             if (!progressBars.Any())
