@@ -197,7 +197,7 @@ namespace CatalogueLibrary.Reports
         private void CreateLookupAppendix(DocX document, ICheckNotifier warningsAndErrorsHandler)
         {
             document.InsertSectionPageBreak();
-            InsertTitle(document,"Appendix 1 - Lookup Tables");
+            InsertHeader(document,"Appendix 1 - Lookup Tables");
             
             //foreach lookup
             foreach (TableInfo lookupTable in LookupsEncounteredToAppearInAppendix)

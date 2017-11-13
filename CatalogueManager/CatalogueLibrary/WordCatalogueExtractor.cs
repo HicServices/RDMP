@@ -98,7 +98,7 @@ namespace CatalogueLibrary
                     requiredRowsCount += supplementalData[catalogueItem].Length;
                 
                 //create a new table
-                var t = InsertTable(_document,requiredRowsCount, 2);
+                var t = InsertTable(_document, requiredRowsCount, 2, TableDesign.TableGrid);
                 
                 if(supplementalData!=null && supplementalData.ContainsKey(catalogueItem))
                     GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,supplementalData[catalogueItem]);
@@ -129,7 +129,7 @@ namespace CatalogueLibrary
                     InsertHeader(_document,header,2);
 
                     int requiredRowsCount = CountWriteableProperties(issue);
-                    var t = InsertTable(_document,requiredRowsCount, 2);
+                    var t = InsertTable(_document, requiredRowsCount, 2, TableDesign.TableGrid);
                     
                     GenerateObjectPropertiesAsRowUsingReflection(t, issue, null);
                 }
@@ -157,9 +157,8 @@ namespace CatalogueLibrary
         {
             PropertyInfo[] propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            //word tables start at 1
+            int currentRow = 0;
 
-            int currentRow = 1;
             //generate a row for each property
             foreach (PropertyInfo property in propertyInfo)
             {

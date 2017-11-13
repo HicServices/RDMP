@@ -28,7 +28,6 @@ namespace DataExportLibrary.ExtractionTime
             Configuration = configuration;
             Project = configuration.Project;
 
-
             if (Configuration.Cohort_ID == null)
                 throw new NullReferenceException("Configuration has no Cohort");
 
@@ -43,12 +42,20 @@ namespace DataExportLibrary.ExtractionTime
 
         public void GenerateWordFile(string saveAsFilename)
         {
+
+            FileInfo f;
+
+            if (string.IsNullOrWhiteSpace(saveAsFilename))
+                f = GetUniqueFilenameInWorkArea("ReleaseDocument");
+            else
+                f = new FileInfo(saveAsFilename);
+
             // Create an instance of Word  and make it visible.=
-            using (DocX document = DocX.Create(saveAsFilename??"ReleaseDocument.docx"))
+            using (DocX document = DocX.Create(f.FullName))
             {
                 
                 //actually changes it to landscape :)
-                document.PageLayout.Orientation = Orientation.Portrait;
+                document.PageLayout.Orientation = Orientation.Landscape;
                 
                 string disclaimer = new ConfigurationProperties(false, _repository)
                     .TryGetValue(ConfigurationProperties.ExpectedProperties.ReleaseDocumentDisclaimer);
@@ -61,38 +68,43 @@ namespace DataExportLibrary.ExtractionTime
 
                 if (users.Any())
                     InsertParagraph(document,"Data User(s):" + string.Join(",", users.Select(u => u.ToString())));
+                
+                InsertParagraph(document, Environment.NewLine);
 
                 CreateCohortDetailsTable(document);
 
+                InsertParagraph(document,Environment.NewLine);
+
                 CreateFileSummary(document);
 
-                if (!string.IsNullOrWhiteSpace(saveAsFilename))
-                    document.Save();
+                document.Save();
+                
+                //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
+                if (string.IsNullOrWhiteSpace(saveAsFilename))
+                    ShowFile(f);
             }
 
         }
 
         private void CreateTopTable1(DocX document)
         {
-            Table table = InsertTable(document,1, 5);
+            Table table = InsertTable(document, 1, 5, TableDesign.TableGrid);
 
-            int tableLine = 0;
-
-            SetTableCell(table,tableLine, 0, "Project:"+Environment.NewLine + Project.Name);
-            SetTableCell(table,tableLine, 1, "Master Issue:" +  Project.MasterTicket);
-            SetTableCell(table,tableLine, 2, "ReleaseIdentifier:" + SqlSyntaxHelper.GetRuntimeName(Cohort.GetReleaseIdentifier()));
-            SetTableCell(table,tableLine, 3, "Configuration ID:" + Configuration.ID + Environment.NewLine + "Name:" + Configuration.Name);
+            SetTableCell(table,0, 0, "Project:"+Environment.NewLine + Project.Name);
+            SetTableCell(table,0, 1, "Master Issue:" +  Project.MasterTicket);
+            SetTableCell(table,0, 2, "ReleaseIdentifier:" + SqlSyntaxHelper.GetRuntimeName(Cohort.GetReleaseIdentifier()));
+            SetTableCell(table,0, 3, "Configuration ID:" + Configuration.ID + Environment.NewLine + "Name:" + Configuration.Name);
 
             if (!Cohort.GetReleaseIdentifier().ToLower().Contains("prochi"))
-                SetTableCell(table,tableLine, 4,"Prefix:N/A");
+                SetTableCell(table,0, 4,"Prefix:N/A");
             else
-                SetTableCell(table,tableLine, 4, "Prefix:"+Cohort.GetFirstProCHIPrefix());
-            tableLine++;
+                SetTableCell(table,0, 4, "Prefix:"+Cohort.GetFirstProCHIPrefix());
+            
         }
 
         private void CreateCohortDetailsTable(DocX document)
         {
-            Table table = InsertTable(document, 2, 6);
+            Table table = InsertTable(document, 2, 6, TableDesign.TableGrid);
             
             int tableLine = 0;
 
@@ -115,7 +127,7 @@ namespace DataExportLibrary.ExtractionTime
 
         private void CreateFileSummary(DocX document)
         {
-            Table table = InsertTable(document,ExtractionResults.Length + 1, 5);
+            Table table = InsertTable(document, ExtractionResults.Length + 1, 5, TableDesign.TableGrid);
             
             int tableLine = 0;
 

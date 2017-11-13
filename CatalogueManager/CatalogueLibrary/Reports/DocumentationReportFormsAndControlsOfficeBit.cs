@@ -30,7 +30,7 @@ namespace CatalogueLibrary.Reports
 
                 using (DocX document = DocX.Create(f.FullName))
                 {
-                    InsertTitle(document,"User Interfaces");
+                    InsertHeader(document,"User Interfaces");
 
                     foreach (var kvp in formsAndControlsByApplication)
                     {

@@ -29,7 +29,7 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
             using (DocX document = DocX.Create(f.FullName))
             {
-                InsertTitle(document,"Database Access Report:" + Server);
+                InsertHeader(document,"Database Access Report:" + Server);
 
                 SqlConnection con = (SqlConnection)_dbInfo.Server.GetConnection();
                 con.Open();

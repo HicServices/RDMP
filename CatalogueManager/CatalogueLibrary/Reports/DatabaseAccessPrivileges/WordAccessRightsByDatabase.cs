@@ -28,7 +28,7 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
             using (DocX document = DocX.Create(f.FullName))
             {
-                InsertTitle(document,"Database Access Report:" + _dbInfo.Server.Name);
+                InsertHeader(document,"Database Access Report:" + _dbInfo.Server.Name);
 
                 InsertHeader(document,"Administrators");
 

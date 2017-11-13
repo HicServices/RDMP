@@ -12,13 +12,6 @@ namespace CatalogueLibrary.Reports
 {
     public class RequiresMicrosoftOffice
     {
-        protected void InsertTitle(DocX document, string tText)
-        {
-            var p = document.InsertParagraph();
-            p.StyleName = "Title";
-            p.InsertText(tText);
-
-        }
         protected void InsertParagraph(DocX document, string ptext, int textFontSize = -1)
         {
             var h = document.InsertParagraph();
@@ -67,7 +60,7 @@ namespace CatalogueLibrary.Reports
             p.InsertPicture(GetPicture(document,img));
         }
 
-        protected Table InsertTable(DocX document, int rowCount, int colCount, bool autoFit = true, TableDesign design = TableDesign.LightList)
+        protected Table InsertTable(DocX document, int rowCount, int colCount, TableDesign design = TableDesign.LightList,bool autoFit = true)
         {
             var t = document.InsertTable(rowCount, colCount);
 

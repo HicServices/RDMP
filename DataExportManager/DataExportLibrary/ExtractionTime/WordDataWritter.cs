@@ -57,13 +57,13 @@ namespace DataExportLibrary.ExtractionTime
 
                 using (DocX document = DocX.Create(outputFilename))
                 {
-                    InsertTitle(document,Executer.Source.Request.DatasetBundle.DataSet + " Meta Data");
+                    InsertHeader(document,Executer.Source.Request.DatasetBundle.DataSet + " Meta Data");
 
                     document.InsertTableOfContents("Contents", new TableOfContentsSwitches());
 
                     InsertHeader(document,"File Data");
 
-                    var t = InsertTable(document,10, 2);
+                    var t = InsertTable(document,10, 2,TableDesign.TableGrid);
                     t.Design = TableDesign.LightList;
                     t.Rows[0].Cells[0].Paragraphs.First().Append("File Name");
                     t.Rows[0].Cells[1].Paragraphs.First().Append(new FileInfo(_destination.OutputFile).Name);
@@ -140,6 +140,8 @@ namespace DataExportLibrary.ExtractionTime
                     AddFiltersAndParameters(document);
 
                     AddIssuesForCatalogue(document);
+                    
+                    document.Save();
                 }
             }
         }
