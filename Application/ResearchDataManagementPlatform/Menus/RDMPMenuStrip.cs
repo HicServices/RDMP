@@ -124,15 +124,8 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void governanceReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new Exception("Comming soon");
-            /*
             var generator = new GovernanceReport(new DatasetTimespanCalculator(), RepositoryLocator.CatalogueRepository);
-
-            if (generator.RequirementsMet())
-                generator.GenerateReport();
-            else
-                MessageBox.Show(generator.RequirementsDescription());
-            */
+            generator.GenerateReport();
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {

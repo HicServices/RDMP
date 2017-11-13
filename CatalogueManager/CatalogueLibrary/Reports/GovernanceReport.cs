@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Repositories;
+using Microsoft.SqlServer.Management.Smo.Agent;
 
 namespace CatalogueLibrary.Reports
 {
     public class GovernanceReport:RequiresMicrosoftOffice
     {
-        /*
         private readonly IDetermineDatasetTimespan _timespanCalculator;
         private readonly CatalogueRepository _repository;
-        private Microsoft.Office.Interop.Excel.Application xlApp;
-        private object _missing = false;
-
+        
         public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,CatalogueRepository repository)
         {
             _timespanCalculator = timespanCalculator;
@@ -25,35 +24,11 @@ namespace CatalogueLibrary.Reports
 
         public void GenerateReport()
         {
-            xlApp = new Microsoft.Office.Interop.Excel.Application();
-
-            xlApp.Visible = false;
-            xlApp.UserControl = false;
-
-            Workbook wb = xlApp.Workbooks.Add(XlWBATemplate.xlWBATWorksheet);
-            Worksheet ws = (Worksheet) wb.Worksheets[1];
-
-
-            if (ws == null)
-            {
-                Console.WriteLine("Worksheet could not be created. Check that your office installation and project references are correct.");
-            }
-
-            //excel indexes cells from 1
-            int currentRow = 1;
-
+            StringBuilder sb = new StringBuilder();
+            
             //first line of file
-            ws.Cells[currentRow, 1] = "Extractable Datasets";
-
-
-            ws.Cells[currentRow, 1] = "Folder"; 
-            ws.Cells[currentRow, 2] = "Catalogue";
-            ws.Cells[currentRow, 3] = "Current Governance";
-            ws.Cells[currentRow, 4] = "Dataset Period";
-            ws.Cells[currentRow, 5] = "Description";
-            currentRow++;
-
-
+            sb.AppendLine( "Extractable Datasets,Folder,Catalogue,Current Governance,Dataset Period,Description");
+            
             Dictionary<GovernancePeriod, Catalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
 
 
@@ -66,45 +41,44 @@ namespace CatalogueLibrary.Reports
                 var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired()).Select(g=>g.Key).ToArray();
                 var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
 
-                string relevantGovernance = "";
+                string relevantGovernance = "\"";
 
                 if (activeGovs.Any())
-                    relevantGovernance = string.Join("," , activeGovs.Select(gov => gov.Name));
+                    relevantGovernance += string.Join("," , activeGovs.Select(gov => gov.Name));
                 else if (expiredGovs.Any())
-                    relevantGovernance = "No Current Governance (Expired Governances: " + string.Join(",", expiredGovs.Select(gov => gov.Name)) + ")";
+                    relevantGovernance += "No Current Governance (Expired Governances: " + string.Join(",", expiredGovs.Select(gov => gov.Name)) + ")";
                 else
-                    relevantGovernance = "No Governance Required";
+                    relevantGovernance += "No Governance Required";
+
+                relevantGovernance += "\"";
 
                 //write the results out to Excel
-                ws.Cells[currentRow, 1] = catalogue.Folder;
-                ws.Cells[currentRow, 2] = catalogue.Name;
-                ws.Cells[currentRow, 3] = relevantGovernance;
-                ws.Cells[currentRow, 4] = _timespanCalculator.GetHumanReadableTimepsanIfKnownOf(catalogue,true);
-                ws.Cells[currentRow, 5] = ShortenDescription(catalogue.Description);
-
-                //next line
-                currentRow++;
+                sb.Append(catalogue.Folder).Append(",");
+                sb.Append(catalogue.Name).Append(",");
+                sb.Append(relevantGovernance).Append(",");
+                sb.Append(_timespanCalculator.GetHumanReadableTimepsanIfKnownOf(catalogue,true)).Append(",");
+                sb.Append(ShortenDescription(catalogue.Description)).AppendLine();
             }
 
-            //take a blank line
-            currentRow++;
+            sb.AppendLine();
             
             // next section header
-            ws.Cells[currentRow, 1] = "Active Governance";
-            currentRow++;
-
-            OutputGovernanceList(govs,ws, ref currentRow, false);
+            sb.AppendLine("Active Governance");
+            
+            OutputGovernanceList(govs,sb, false);
 
             //take a blank line
-            currentRow++;
+            sb.AppendLine();
 
             // next section header
-            ws.Cells[currentRow, 1] = "Expired Governance";
-            currentRow++;
+            sb.AppendLine("Expired Governance");
 
-            OutputGovernanceList(govs,ws, ref currentRow, true);
+            OutputGovernanceList(govs,sb, true);
 
-            xlApp.Visible = true;
+            var f = GetUniqueFilenameInWorkArea("GovernanceReport", ".csv");
+
+            File.WriteAllText(f.FullName, sb.ToString());
+            ShowFile(f);
         }
 
         private string ShortenDescription(string description)
@@ -127,15 +101,10 @@ namespace CatalogueLibrary.Reports
         /// <param name="ws"></param>
         /// <param name="currentRow"></param>
         /// <param name="expired"></param>
-        private void OutputGovernanceList(Dictionary<GovernancePeriod, Catalogue[]> govs, Worksheet ws, ref int currentRow, bool expired)
+        private void OutputGovernanceList(Dictionary<GovernancePeriod, Catalogue[]> govs, StringBuilder sb, bool expired)
         {
             //headers for this section
-            ws.Cells[currentRow, 1] = "Governance Period Name";
-            ws.Cells[currentRow, 2] = "Catalogues";
-            ws.Cells[currentRow, 3] = "Approval Start";
-            ws.Cells[currentRow, 4] = "Approval End";
-            ws.Cells[currentRow, 5] = "Documents";
-            currentRow++;
+            sb.AppendLine("Governance Period Name,Catalogues,Approval Start,Approval End,Documents");
             
             foreach (KeyValuePair<GovernancePeriod, Catalogue[]> kvp in govs)
             {
@@ -147,13 +116,12 @@ namespace CatalogueLibrary.Reports
                 if (kvp.Key.IsExpired() != expired)
                     continue;
 
-                ws.Cells[currentRow, 1] = kvp.Key.Name;
-                ws.Cells[currentRow, 2] = string.Join(",", kvp.Value.Select(cata => cata.Name));
-                ws.Cells[currentRow, 3] = kvp.Key.StartDate;
-                ws.Cells[currentRow, 4] = kvp.Key.EndDate == null ? "Never Expires" : kvp.Key.EndDate.ToString();
-                ws.Cells[currentRow, 5] = string.Join(",", kvp.Key.GovernanceDocuments.Select(doc => doc.GetFilenameOnly()));
-                currentRow++;
+                sb.Append(kvp.Key.Name).Append(",");
+                sb.Append("\""+string.Join(",", kvp.Value.Select(cata => cata.Name))).Append("\",");
+                sb.Append(kvp.Key.StartDate).Append(",");
+                sb.Append(kvp.Key.EndDate == null ? "Never Expires" : kvp.Key.EndDate.ToString()).Append(",");
+                sb.Append("\""+ string.Join(",", kvp.Key.GovernanceDocuments.Select(doc => doc.GetFilenameOnly()))).AppendLine("\"");
             }
-        }*/
+        }
     }
 }
