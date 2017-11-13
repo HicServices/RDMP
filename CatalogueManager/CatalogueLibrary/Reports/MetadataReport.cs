@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -40,10 +41,6 @@ namespace CatalogueLibrary.Reports
         public float PageWidthInPixels { get; private set; }
         public int MaxLookupRows { get; set; }
         
-        /// <summary>
-        /// Set this to true if you want microsoft word to be visible while it is running Interop commands (will be very confusing for users so never ship this with true)
-        /// </summary>
-        public bool DEBUG_WORD = false;
 
         public event CatalogueProgressHandler CatalogueCompleted;
         public event RequestCatalogueImagesHandler RequestCatalogueImages;
@@ -84,10 +81,11 @@ namespace CatalogueLibrary.Reports
                 else
                     warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Found Microsoft Word " + version + " installed",
                         CheckResult.Success, null));
-                
-                using (DocX document = DocX.Create("MetadataReport.docx"))
-                {
 
+                var f = GetUniqueFilenameInWorkArea("MetadataReport");
+
+                using (DocX document = DocX.Create(f.FullName))
+                {
                     const int marginSize = 20;
                     try
                     {
@@ -107,7 +105,6 @@ namespace CatalogueLibrary.Reports
                     document.MarginTop = marginSize;
                     document.MarginBottom = marginSize;
 
-                    //todo this is in pixels?
                     PageWidthInPixels = document.PageWidth;
                     
                     try
@@ -180,11 +177,14 @@ namespace CatalogueLibrary.Reports
                         if (LookupsEncounteredToAppearInAppendix.Any())
                             CreateLookupAppendix(document, warningsAndErrorsHandler);
 
+                        document.Save();
+                        ShowFile(f);
                     }
                     catch (ThreadInterruptedException)
                     {
                         //user hit abort   
                     }
+
                 }
                 
             }
@@ -226,7 +226,7 @@ namespace CatalogueLibrary.Reports
                 //write name of lookup
                 InsertHeader(document,lookupTable.Name);
 
-                var table = document.InsertTable(Math.Min(dt.Rows.Count + 1, MaxLookupRows + 2), dt.Columns.Count);
+                var table = InsertTable(document,Math.Min(dt.Rows.Count + 1, MaxLookupRows + 2), dt.Columns.Count);
 
                 int tableLine = 0;
 
@@ -297,10 +297,8 @@ namespace CatalogueLibrary.Reports
             var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).ToList();
             extractionInformations.Sort();
 
-            var table = document.InsertTable(extractionInformations.Count + 1, 3);
-
-            table.AutoFit = AutoFit.Contents;
-
+            var table = InsertTable(document,extractionInformations.Count + 1, 3);
+            
             int tableLine = 0;
 
             SetTableCell(table, tableLine, 0, "Column", TextFontSize);
@@ -344,9 +342,8 @@ namespace CatalogueLibrary.Reports
 
         private void CreateCountTable(DocX document, int recordCount, int distinctCount, string identifierName)
         {
-            var table = document.InsertTable(2, identifierName != null && _includeDistinctRowCounts ? 2 : 1);
-            table.AutoFit = AutoFit.Contents;
-
+            var table = InsertTable(document,2, identifierName != null && _includeDistinctRowCounts ? 2 : 1);
+            
             int tableLine = 0;
 
             SetTableCell(table,tableLine, 0, "Records",TextFontSize);
@@ -364,6 +361,7 @@ namespace CatalogueLibrary.Reports
             if (identifierName != null &&  _includeDistinctRowCounts)
                 SetTableCell(table, tableLine, 1, distinctCount.ToString("N0"), TextFontSize);
         }
+
 
         private void GetRecordCount(Catalogue c, out int count, out int distinct, out string identifierName)
         {

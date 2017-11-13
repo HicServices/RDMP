@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Threading;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -24,7 +25,9 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
         public void GenerateWordFile()
         {
-            using (DocX document = DocX.Create("WordAccessRights.docx"))
+            var f = GetUniqueFilenameInWorkArea("DatabaseAccessRightsByUser");
+
+            using (DocX document = DocX.Create(f.FullName))
             {
                 InsertTitle(document,"Database Access Report:" + Server);
 
@@ -64,6 +67,9 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
                 }
 
                 con.Close();
+
+                document.Save();
+                ShowFile(f);
             }
             
 
@@ -162,13 +168,12 @@ and
             //doubling up columns is for long datasets with few columns e.g. 100 rows, 2 columns (e.g. name, age).  In this case we half the dataset and duplicate the columns so that the table looks like name,age,<empty column to break up space>,name,age
             //this allows 2 source rows to be fit into one Word table row and save space in the document.
             if (doubleUpColumns)
-                wordTable = document.InsertTable((int)((dataTable.Rows.Count/2.0f)+0.5f) + 1, dataTable.Columns.Count*2+1); //divide number of rows in table by 2 (as a float division), then add 0.5 to make any 1.5 into 2 and then make int (int cast will drop off any incorrectly added 0.5 e.g. 1+0.5 = 1 while 1.5+0.5= 2
+                wordTable = InsertTable(document,(int)((dataTable.Rows.Count/2.0f)+0.5f) + 1, dataTable.Columns.Count*2+1); //divide number of rows in table by 2 (as a float division), then add 0.5 to make any 1.5 into 2 and then make int (int cast will drop off any incorrectly added 0.5 e.g. 1+0.5 = 1 while 1.5+0.5= 2
             else
-                wordTable = document.InsertTable( dataTable.Rows.Count + 1, dataTable.Columns.Count);
+                wordTable = InsertTable(document, dataTable.Rows.Count + 1, dataTable.Columns.Count);
 
             var fontSize = 5;
-            wordTable.AutoFit = AutoFit.Contents;
-
+            
             //make middle column invisible
             /*if(doubleUpColumns)
                 for(int row = 0 ; row < wordTable.Rows.Count+1;row++)

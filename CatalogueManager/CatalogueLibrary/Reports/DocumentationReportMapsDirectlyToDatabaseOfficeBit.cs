@@ -28,9 +28,8 @@ namespace CatalogueLibrary.Reports
                 using (DocX document = DocX.Create("RDMPDocumentation"))
                 {
 
-                    var t = document.InsertTable(_report.Summaries.Count + 1, 2);
-                    t.AutoFit = AutoFit.Contents;
-
+                    var t = InsertTable(document,_report.Summaries.Count + 1, 2);
+                    
                     //Listing Cell header
                     SetTableCell(t, 0, 0, "Table");
                     SetTableCell(t, 1, 1, "Definition");

@@ -24,7 +24,9 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
         public void GenerateWordFile()
         {
-            using (DocX document = DocX.Create("RightsByDatabase.docx"))
+            var f = GetUniqueFilenameInWorkArea("RightsByDatabase");
+
+            using (DocX document = DocX.Create(f.FullName))
             {
                 InsertTitle(document,"Database Access Report:" + _dbInfo.Server.Name);
 
@@ -40,6 +42,9 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
                     InsertHeader(document,"Database:" + database);
                     CreateDatabaseTable(document,database);
                 }
+
+                document.Save();
+                ShowFile(f);
             }
         }
 
@@ -53,10 +58,9 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
             int numberOfAdmins = int.Parse(cmdNumberOfAdmins.ExecuteScalar().ToString());
 
-            Table table = document.AddTable(numberOfAdmins+1, 9);
-            
+            Table table = InsertTable(document,numberOfAdmins+1, 9);
+
             var fontSize = 5;
-            table.AutoFit = AutoFit.Contents;
             
             int tableLine = 0;
 
@@ -110,10 +114,9 @@ AND sysadmin + securityadmin + serveradmin + setupadmin + processadmin + diskadm
 
             int numberOfUsers = int.Parse(cmdNumberOfUsers.ExecuteScalar().ToString());
             
-            Table table = document.InsertTable(numberOfUsers + 1, 5);
+            Table table = InsertTable(document,numberOfUsers + 1, 5);
 
             var fontSize = 5;
-            table.AutoFit = AutoFit.Contents;
 
             int tableLine = 0;
 

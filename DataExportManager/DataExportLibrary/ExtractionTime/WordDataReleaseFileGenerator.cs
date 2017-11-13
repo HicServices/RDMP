@@ -74,7 +74,7 @@ namespace DataExportLibrary.ExtractionTime
 
         private void CreateTopTable1(DocX document)
         {
-            Table table = document.InsertTable(1, 5);
+            Table table = InsertTable(document,1, 5);
 
             int tableLine = 0;
 
@@ -92,7 +92,7 @@ namespace DataExportLibrary.ExtractionTime
 
         private void CreateCohortDetailsTable(DocX document)
         {
-            Table table = document.InsertTable( 2, 6);
+            Table table = InsertTable(document, 2, 6);
             
             int tableLine = 0;
 
@@ -115,7 +115,8 @@ namespace DataExportLibrary.ExtractionTime
 
         private void CreateFileSummary(DocX document)
         {
-            Table table = document.AddTable(ExtractionResults.Length + 1, 5);
+            Table table = InsertTable(document,ExtractionResults.Length + 1, 5);
+            
             int tableLine = 0;
 
             SetTableCell(table,tableLine, 0, "Data Requirement");

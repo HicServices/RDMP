@@ -63,8 +63,8 @@ namespace DataExportLibrary.ExtractionTime
 
                     InsertHeader(document,"File Data");
 
-                    var t = document.AddTable(10, 2);
-
+                    var t = InsertTable(document,10, 2);
+                    t.Design = TableDesign.LightList;
                     t.Rows[0].Cells[0].Paragraphs.First().Append("File Name");
                     t.Rows[0].Cells[1].Paragraphs.First().Append(new FileInfo(_destination.OutputFile).Name);
 
@@ -177,7 +177,7 @@ namespace DataExportLibrary.ExtractionTime
             var globalParameters = Executer.Source.Request.Configuration.GlobalExtractionFilterParameters.ToArray();
             linesRequred += globalParameters.Length;
 
-            Table t = document.InsertTable(linesRequred + 1, 3);
+            Table t = InsertTable(document,linesRequred + 1, 3);
             SetTableCell(t,0,0,"Name");
             SetTableCell(t, 0, 1, "Comment");
             SetTableCell(t, 0, 2, "Value");
@@ -207,7 +207,7 @@ namespace DataExportLibrary.ExtractionTime
         {
             InsertHeader(document,"Filters");
 
-            Table t = document.InsertTable(filtersUsed.Count + 1, 3);
+            Table t = InsertTable(document,filtersUsed.Count + 1, 3);
 
             SetTableCell(t,0, 0, "Name");
             SetTableCell(t,0, 1, "Description");
@@ -363,7 +363,7 @@ namespace DataExportLibrary.ExtractionTime
             int rowCount = validator.ItemValidators.Count +
                            Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed.Count + 1;
 
-            Table t = document.InsertTable(rowCount, 2);
+            Table t = InsertTable(document,rowCount, 2);
 
             int tableLine = 0;
             //output table header
@@ -416,7 +416,7 @@ namespace DataExportLibrary.ExtractionTime
         {
             VerboseValidationResults results = Executer.Source.ExtractionTimeValidator.Results;
 
-            Table t = document.InsertTable(results.DictionaryOfFailure.Count + 1, 4);
+            Table t = InsertTable(document,results.DictionaryOfFailure.Count + 1, 4);
             
             int tableLine = 0;
             
