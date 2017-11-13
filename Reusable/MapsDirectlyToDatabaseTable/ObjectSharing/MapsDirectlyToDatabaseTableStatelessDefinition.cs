@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MapsDirectlyToDatabaseTable.Importing
+namespace MapsDirectlyToDatabaseTable.ObjectSharing
 {
     public class MapsDirectlyToDatabaseTableStatelessDefinition
     {

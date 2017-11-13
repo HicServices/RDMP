@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.Common;
-using MapsDirectlyToDatabaseTable.Importing;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 

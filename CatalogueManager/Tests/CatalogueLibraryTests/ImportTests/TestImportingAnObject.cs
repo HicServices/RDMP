@@ -8,7 +8,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.ObjectSharing;
 using CatalogueLibraryTests.Integration;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Importing;
 using MapsDirectlyToDatabaseTable.ObjectSharing;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
