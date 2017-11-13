@@ -26,7 +26,9 @@ namespace CatalogueLibrary.Reports
             _wordImageDictionary = wordImageDictionary;
             try
             {
-                using (DocX document = DocX.Create("DocumentationReport.docx"))
+                var f = GetUniqueFilenameInWorkArea("DocumentationReport");
+
+                using (DocX document = DocX.Create(f.FullName))
                 {
                     InsertTitle(document,"User Interfaces");
 
@@ -56,6 +58,9 @@ namespace CatalogueLibrary.Reports
                     }
 
                     AddBookmarks(document);
+
+                    document.Save();
+                    ShowFile(f);
                 }
             }
             catch (Exception e)

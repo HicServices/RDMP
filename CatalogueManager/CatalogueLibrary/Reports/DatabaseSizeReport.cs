@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,9 +14,8 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Reports
 {
-    public class DatabaseSizeReport : RequiresMicrosoftOffice
+    public class DatabaseSizeReport : RequiresMicrosoftOffice, ICheckable
     {
-        /*
         private readonly TableInfo[] _tableInfos;
         private CatalogueRepository _repository;
 
@@ -51,45 +51,29 @@ namespace CatalogueLibrary.Reports
                 notifier.OnCheckPerformed(new CheckEventArgs("Identified dependencies of " + t, CheckResult.Success));
             }
             
-            xlApp = new Application();
-
-            xlApp.Visible = false;
-            xlApp.UserControl = false;
-
-            Workbook wb = xlApp.Workbooks.Add(XlWBATemplate.xlWBATWorksheet);
-            Worksheet ws = (Worksheet)wb.Worksheets[1];
-
-
-            if (ws == null)
-            {
-                Console.WriteLine("Worksheet could not be created. Check that your office installation and project references are correct.");
-            }
-
-            //excel indexes cells from 1
-            int currentRow = 1;
-
+            StringBuilder sb = new StringBuilder();
+            
             foreach (KeyValuePair<DiscoveredServer, List<DatabaseSizeFacts>> kvp in servers)
             {
                 try
                 {
                     //anounce the server
-                    AddServerDetails(ws, ref currentRow, kvp.Key);
-                    currentRow++;
-                  
-                    AddDatabaseDetails(ws, ref currentRow, kvp.Key,kvp.Value,notifier);
+                    AddServerDetails(sb, kvp.Key);
+                    AddDatabaseDetails(sb, kvp.Key,kvp.Value,notifier);
                     notifier.OnCheckPerformed(new CheckEventArgs("Finished processing server " + kvp.Key, CheckResult.Success));
                 }
                 catch (Exception ex)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not process server " + kvp.Key, CheckResult.Fail,ex));
-                    currentRow ++;
                 }
             }
             
-            xlApp.Visible = true;
+            var f = GetUniqueFilenameInWorkArea("DatabaseSizeReport", ".csv");
+            File.WriteAllText(f.FullName,sb.ToString());
+            ShowFile(f);
         }
 
-        private void AddDatabaseDetails(Worksheet ws, ref int currentRow, DiscoveredServer server, List<DatabaseSizeFacts> databases,ICheckNotifier notifier)
+        private void AddDatabaseDetails(StringBuilder sb,DiscoveredServer server, List<DatabaseSizeFacts> databases,ICheckNotifier notifier)
         {
             
             foreach (var database in databases)
@@ -100,73 +84,55 @@ namespace CatalogueLibrary.Reports
                     //Get a dictionary that describes the database
                     var dbDictionary = discoveredDatabase.DescribeDatabase();
 
-                    //output 2 lines:
-                    //line 1 is headers for the database being described
-                    //line 2 is the database description
-                    ws.Cells[currentRow, 1] = "Database";
-                    ws.Cells[currentRow + 1, 1] = database.DatabaseName;
-                
-                    int currentColumn = 2;
+                    sb.Append("Database").Append(",");
+                    sb.AppendLine(string.Join(",",dbDictionary.Keys));
+                    
+                    
+                    sb.Append( database.DatabaseName).Append(",");
+                    sb.AppendLine(string.Join(",",dbDictionary.Values));
 
-                    foreach (var kvp in dbDictionary)
-                    {
-                        ws.Cells[currentRow, currentColumn] = kvp.Key;
-                        ws.Cells[currentRow+1, currentColumn] = kvp.Value;
-                        currentColumn++;
-                    }
-                    currentRow += 2;
-
-                    ws.Cells[currentRow, 1] = "TableName";
-                    ws.Cells[currentRow, 2] = "Row count (Fast)";
-                    ws.Cells[currentRow, 3] = "Dependant Catalogues";
-
-                    currentRow++;
+                    sb.AppendLine("TableName,Row count (Fast),Dependant Catalogues");
 
                     foreach (var kvp in database.Tables)
                     {
                         string tableName = kvp.Key.GetRuntimeName();
 
-                        ws.Cells[currentRow, 1] = tableName;
+                        sb.Append(tableName).Append(",");
+
                         try
                         {
                             var rowcount = discoveredDatabase.ExpectTable(tableName).GetRowCount();
-                            ws.Cells[currentRow, 2] = rowcount;
+                            sb.Append(rowcount).Append(",");
                             notifier.OnCheckPerformed(
                                 new CheckEventArgs("Processed table " + tableName + " with row count " + rowcount,
                                     CheckResult.Success));
 
-                            ws.Cells[currentRow, 3] = string.Join(",", kvp.Value.Select(c=>c.Name));
+                            sb.AppendLine("\"" + string.Join(",", kvp.Value.Select(c=>c.Name)) + "\"");
                         }
                         catch (Exception ex)
                         {
                             notifier.OnCheckPerformed(new CheckEventArgs("Could not get row count for table " + tableName,CheckResult.Warning,ex));
-                            ws.Cells[currentRow, 2] = "Unknown";
+                            sb.AppendLine("Unknown");
                         }
-                        currentRow++;    
-                    
                     }
                 }
                 catch (Exception e)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not process database " + database.DatabaseName,CheckResult.Fail, e));
                 }
-                currentRow++;
+
+                sb.AppendLine();
             }
         }
 
-        private void AddServerDetails(Worksheet ws, ref int currentRow, DiscoveredServer discoveredServer)
+        private void AddServerDetails(StringBuilder sb, DiscoveredServer discoveredServer)
         {
             Dictionary<string, string> description = discoveredServer.DescribeServer();
 
-            ws.Cells[currentRow, 1] = "Server " + discoveredServer.Name;
-            currentRow ++;
+            sb.AppendLine("Server " + discoveredServer.Name);
 
             foreach (KeyValuePair<string, string> kvp in description)
-            {
-                ws.Cells[currentRow, 1] = kvp.Key;
-                ws.Cells[currentRow, 2] = kvp.Value;
-                currentRow++;
-            }
+                sb.Append(kvp.Key).Append(",").AppendLine(kvp.Value);
         }
 
 
@@ -177,7 +143,7 @@ namespace CatalogueLibrary.Reports
 
             public DatabaseSizeFacts(CatalogueRepository repository,TableInfo t)
             {
-                DatabaseName = t.Database;
+                DatabaseName = t.GetDatabaseRuntimeName();
                 Tables = new Dictionary<TableInfo, Catalogue[]>();
 
                 AddTableInfo(t);
@@ -187,6 +153,6 @@ namespace CatalogueLibrary.Reports
             {
                 Tables.Add(tableInfo,tableInfo.GetAllRelatedCatalogues());
             }
-        }*/
+        }
     }
 }

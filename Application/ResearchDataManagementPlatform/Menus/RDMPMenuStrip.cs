@@ -156,15 +156,6 @@ namespace ResearchDataManagementPlatform.Menus
             dialog.Show();
         }
 
-        private void issueReportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            throw new Exception("Comming soon to a world near yours");/*
-            var generator = new CatalogueItemIssueReportGenerator(RepositoryLocator.CatalogueRepository);
-            if (generator.RequirementsMet())
-                generator.GenerateReport();
-            else
-                MessageBox.Show(generator.RequirementsDescription());*/
-        }
 
         private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Web.UI;
@@ -46,21 +47,17 @@ namespace CatalogueLibrary.Reports
         }
         protected Picture GetPicture(DocX document, Bitmap bmp)
         {
-            var path = Path.GetTempFileName();
-            bmp.Save(path);
-
-            try
+            using (var ms = new MemoryStream())
             {
+                bmp.Save(ms,ImageFormat.Png);
+                
+                ms.Seek(0, 0);
+
                 // Add an image into the document.    
-                var image = document.AddImage(path);
+                var image = document.AddImage(ms);
 
                 // Create a picture (A custom view of an Image).
                 return image.CreatePicture();
-            }
-            finally
-            {
-                //clean up temp bmp file
-                File.Delete(path);
             }
         }
 

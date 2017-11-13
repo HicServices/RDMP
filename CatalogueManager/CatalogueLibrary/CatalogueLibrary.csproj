@@ -528,7 +528,6 @@
     <Compile Include="Triggers\Exceptions\IrreconcilableColumnDifferencesInArchiveException.cs" />
     <Compile Include="Triggers\SpecialFieldNames.cs" />
     <Compile Include="Triggers\TriggerImplementer.cs" />
-    <Compile Include="Reports\CatalogueItemIssueReportGenerator.cs" />
     <Compile Include="Reports\DatabaseAccessPrivileges\WordAccessRightsByDatabase.cs" />
     <Compile Include="Reports\DatabaseAccessPrivileges\WordAccessRightsByUser.cs" />
     <Compile Include="TableInfoSynchronizer.cs" />

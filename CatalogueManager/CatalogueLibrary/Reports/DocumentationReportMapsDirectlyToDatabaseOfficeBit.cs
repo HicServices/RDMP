@@ -24,10 +24,9 @@ namespace CatalogueLibrary.Reports
                 _report = new DocumentationReportMapsDirectlyToDatabase(typeof (Catalogue).Assembly);
                 _report.Check(notifier);
 
-                //word = new word.ApplicationClass();
-                using (DocX document = DocX.Create("RDMPDocumentation"))
+                var f = GetUniqueFilenameInWorkArea("RDMPDocumentation");
+                using (DocX document = DocX.Create(f.FullName))
                 {
-
                     var t = InsertTable(document,_report.Summaries.Count + 1, 2);
                     
                     //Listing Cell header
@@ -48,6 +47,9 @@ namespace CatalogueLibrary.Reports
 
                         SetTableCell(t,i + 1, 1, _report.Summaries[keys[i]]);
                     }
+
+                    document.Save();
+                    ShowFile(f);
                 }
             }
             catch (Exception e)
