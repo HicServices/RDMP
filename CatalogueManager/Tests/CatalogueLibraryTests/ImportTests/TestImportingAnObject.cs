@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
@@ -31,7 +32,7 @@ namespace CatalogueLibraryTests.ImportTests
             var c = new Catalogue(CatalogueRepository, "omg cata");
             Assert.AreEqual(CatalogueRepository.GetAllCatalogues().Count(), 1);
 
-            var c2 = (Catalogue)importer.ImportObject(new MapsDirectlyToDatabaseTableStatelessDefinition(c));
+            var c2 = (Catalogue)importer.ImportObject(new MapsDirectlyToDatabaseTableStatelessDefinition<Catalogue>(c));
 
             Assert.AreEqual(c.Name, c2.Name);
             Assert.AreNotEqual(c.ID,c2.ID);
@@ -89,7 +90,7 @@ namespace CatalogueLibraryTests.ImportTests
             newDll.Add("SoftwareVersion", "2.5.0.1");
 
 
-            var n = new SharedPluginImporter(new MapsDirectlyToDatabaseTableStatelessDefinition(p), new[] { new MapsDirectlyToDatabaseTableStatelessDefinition(typeof(LoadModuleAssembly), newDll) });
+            var n = new SharedPluginImporter(new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p), new[] { new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(newDll) });
             var importer = new SharedObjectImporter(RepositoryLocator.CatalogueRepository);
 
             //accept that it is an update
@@ -112,28 +113,32 @@ namespace CatalogueLibraryTests.ImportTests
             var p = new Plugin(CatalogueRepository, fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
 
-            var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition(p);
-            var lmaStatelessArray = new[] {new MapsDirectlyToDatabaseTableStatelessDefinition(lma)};
+            var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p);
+            var lmaStatelessArray = new[] {new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(lma)};
+            
+            BinaryFormatter bf = new BinaryFormatter();
+            string s;
+            string sa;
 
-            var ignoreTypeProperty = new IgnorableSerializerContractResolver();
-            ignoreTypeProperty.Ignore(typeof(MapsDirectlyToDatabaseTableStatelessDefinition), new[] { "Type" });
-
-            var settings = new JsonSerializerSettings()
+            using (MemoryStream ms = new MemoryStream())
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                ContractResolver = ignoreTypeProperty,
-            };
-            
-            string s = JsonConvert.SerializeObject(pStateless, Formatting.Indented, settings);
-            string sa = JsonConvert.SerializeObject(lmaStatelessArray, Formatting.Indented, settings);
-            
+                bf.Serialize(ms, pStateless);
+                s = Convert.ToBase64String(ms.ToArray());
+            }
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, lmaStatelessArray);
+                sa = Convert.ToBase64String(ms.ToArray());
+            }
+
             var import = new SharedPluginImporter(s, sa);
 
-            var p2 = import.Import(new SharedObjectImporter(CatalogueRepository), new ThrowImmediatelyCheckNotifier());
+            var p2 = import.Import(new SharedObjectImporter(CatalogueRepository), new AcceptAllCheckNotifier());
 
             Assert.AreEqual(p.LoadModuleAssemblies.Count(),p2.LoadModuleAssemblies.Count());
             Assert.AreEqual(p.LoadModuleAssemblies.First().Dll,p2.LoadModuleAssemblies.First().Dll);
-            Assert.AreNotEqual(p.ID, p2.ID);
+            Assert.AreEqual(p.ID, p2.ID);
 
         }
     }

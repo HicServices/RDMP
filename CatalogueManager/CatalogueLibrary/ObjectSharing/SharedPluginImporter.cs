@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Proxies;
+using System.Runtime.Serialization.Formatters.Binary;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable.ObjectSharing;
 using Newtonsoft.Json;
@@ -10,16 +14,16 @@ namespace CatalogueLibrary.ObjectSharing
 {
     public class SharedPluginImporter
     {
-        private MapsDirectlyToDatabaseTableStatelessDefinition _plugin;
-        private List<MapsDirectlyToDatabaseTableStatelessDefinition> _lma;
+        private MapsDirectlyToDatabaseTableStatelessDefinition<Plugin> _plugin;
+        private List<MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>> _lma;
 
         public SharedPluginImporter(Plugin plugin)
         {
-            _plugin = new MapsDirectlyToDatabaseTableStatelessDefinition(plugin);
-            _lma = plugin.LoadModuleAssemblies.Select(s => new MapsDirectlyToDatabaseTableStatelessDefinition(s)).ToList();
+            _plugin = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(plugin);
+            _lma = plugin.LoadModuleAssemblies.Select(s => new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(s)).ToList();
         }
 
-        public SharedPluginImporter(MapsDirectlyToDatabaseTableStatelessDefinition plugin, MapsDirectlyToDatabaseTableStatelessDefinition[] loadModuleAssemblies)
+        public SharedPluginImporter(MapsDirectlyToDatabaseTableStatelessDefinition<Plugin> plugin, MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>[] loadModuleAssemblies)
         {
             _plugin = plugin;
             _lma = loadModuleAssemblies.ToList();
@@ -27,18 +31,22 @@ namespace CatalogueLibrary.ObjectSharing
 
         public SharedPluginImporter(string plugin, string loadModuleAssemblies)
         {
-            _plugin = JsonConvert.DeserializeObject<MapsDirectlyToDatabaseTableStatelessDefinition>(plugin);
+            var received = Convert.FromBase64String(plugin);
+            BinaryFormatter bf = new BinaryFormatter();
 
-            //Because Json doesn't know how to serialise Type properties
-            _plugin.Type = typeof(Plugin);
+            using (MemoryStream ms = new MemoryStream(received))
+            {
+                _plugin = (MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>) bf.Deserialize(ms);
+            }
 
-            _lma = JsonConvert.DeserializeObject<MapsDirectlyToDatabaseTableStatelessDefinition[]>(loadModuleAssemblies).ToList();
-            foreach (var l in _lma)
-                l.Type = typeof(LoadModuleAssembly);
-
+            received = Convert.FromBase64String(loadModuleAssemblies);
+            using (MemoryStream ms = new MemoryStream(received))
+            {
+                _lma = ((MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>[]) bf.Deserialize(ms)).ToList();
+            }
         }
 
-        public Plugin Import(SharedObjectImporter importer,ICheckNotifier collisionsAndSuggestions)
+        public Plugin Import(SharedObjectImporter importer, ICheckNotifier collisionsAndSuggestions)
         {
             var collision = importer.TargetRepository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(_plugin.Properties["Name"]));
 
@@ -56,12 +64,13 @@ namespace CatalogueLibrary.ObjectSharing
                         //LoadModuleAssembly is in the new Plugin too so overwrite it
                         if (match != null)
                         {
-                            lma.Dll = (byte[]) match.Properties["Dll"];
-                            lma.Pdb = (byte[]) match.Properties["Pdb"];
-                            lma.Committer = (string) match.Properties["Committer"];
-                            lma.Description = (string)match.Properties["Description"];
-                            lma.DllFileVersion = (string)match.Properties["DllFileVersion"];
-                            lma.UploadDate = (DateTime)match.Properties["UploadDate"];
+                            match.Rehydrate(lma);
+                            //lma.Dll = (byte[]) match.Properties["Dll"];
+                            //lma.Pdb = (byte[]) match.Properties["Pdb"];
+                            //lma.Committer = (string) match.Properties["Committer"];
+                            //lma.Description = (string)match.Properties["Description"];
+                            //lma.DllFileVersion = (string)match.Properties["DllFileVersion"];
+                            //lma.UploadDate = (DateTime)match.Properties["UploadDate"];
                             lma.SaveToDatabase();
 
                             //record that the LoadModuleAssembly was dealt with 

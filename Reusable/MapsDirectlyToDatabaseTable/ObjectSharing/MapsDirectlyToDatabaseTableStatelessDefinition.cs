@@ -4,30 +4,43 @@ using System.Linq;
 
 namespace MapsDirectlyToDatabaseTable.ObjectSharing
 {
+    [Serializable]
     public class MapsDirectlyToDatabaseTableStatelessDefinition
     {
         public Type Type { get; set; }
-        public Dictionary<string, object> Properties { get; private set; }
+        public Dictionary<string, object> Properties { get; set; }
 
-        //Json!
-        public MapsDirectlyToDatabaseTableStatelessDefinition()
-        {
-            Properties = new Dictionary<string, object>();
-        }
+        protected MapsDirectlyToDatabaseTableStatelessDefinition(Type type) : this(type, new Dictionary<string, object>())
+        { }
 
-        public MapsDirectlyToDatabaseTableStatelessDefinition(Type type, Dictionary<string,object> properties)
+        public MapsDirectlyToDatabaseTableStatelessDefinition(Type type, Dictionary<string, object> properties)
         {
             if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-                throw new ArgumentException("Type must be IMapsDirectlyToDatabaseTable","type");
+                throw new ArgumentException("Type must be IMapsDirectlyToDatabaseTable", "type");
 
             Type = type;
             Properties = properties;
         }
+    }
 
-        public MapsDirectlyToDatabaseTableStatelessDefinition(IMapsDirectlyToDatabaseTable m)
+    [Serializable]
+    public class MapsDirectlyToDatabaseTableStatelessDefinition<T> : MapsDirectlyToDatabaseTableStatelessDefinition where T : IMapsDirectlyToDatabaseTable
+    {
+        public MapsDirectlyToDatabaseTableStatelessDefinition(T mappedObject) : base(typeof(T))
         {
-            Type = m.GetType();
-            Properties = TableRepository.GetPropertyInfos(m.GetType()).ToDictionary(p => p.Name, p2 => p2.GetValue(m));
+            Properties = TableRepository.GetPropertyInfos(mappedObject.GetType()).ToDictionary(p => p.Name, p2 => p2.GetValue(mappedObject));
+        }
+
+        public MapsDirectlyToDatabaseTableStatelessDefinition(Dictionary<string, object> properties) : base(typeof(T), properties)
+        {
+        }
+
+        public void Rehydrate(T instance)
+        {
+            foreach (var property in Properties)
+            {
+                instance.GetType().GetProperty(property.Key).GetSetMethod().Invoke(instance, new [] {property.Value});
+            }
         }
     }
 }
