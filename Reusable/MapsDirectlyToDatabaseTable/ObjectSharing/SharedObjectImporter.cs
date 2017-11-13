@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Data.Common;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Remotion.Linq.Utilities;
+using MapsDirectlyToDatabaseTable.Importing;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
-namespace MapsDirectlyToDatabaseTable.Importing
+namespace MapsDirectlyToDatabaseTable.ObjectSharing
 {
-    public class ObjectImporter
+    public class SharedObjectImporter
     {
         public TableRepository TargetRepository { get; private set; }
 
-        public ObjectImporter(TableRepository targetRepository)
+        public SharedObjectImporter(TableRepository targetRepository)
         {
             TargetRepository = targetRepository;
         }

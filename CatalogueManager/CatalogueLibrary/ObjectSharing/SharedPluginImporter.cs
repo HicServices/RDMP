@@ -1,34 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Importing;
+using MapsDirectlyToDatabaseTable.ObjectSharing;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Importing
+namespace CatalogueLibrary.ObjectSharing
 {
-    public class PluginShare
+    public class SharedPluginImporter
     {
         private MapsDirectlyToDatabaseTableStatelessDefinition _plugin;
         private List<MapsDirectlyToDatabaseTableStatelessDefinition> _lma;
 
-        public PluginShare(Plugin plugin)
+        public SharedPluginImporter(Plugin plugin)
         {
             _plugin = new MapsDirectlyToDatabaseTableStatelessDefinition(plugin);
             _lma = plugin.LoadModuleAssemblies.Select(s => new MapsDirectlyToDatabaseTableStatelessDefinition(s)).ToList();
         }
 
-        public PluginShare(MapsDirectlyToDatabaseTableStatelessDefinition plugin, MapsDirectlyToDatabaseTableStatelessDefinition[] loadModuleAssemblies)
+        public SharedPluginImporter(MapsDirectlyToDatabaseTableStatelessDefinition plugin, MapsDirectlyToDatabaseTableStatelessDefinition[] loadModuleAssemblies)
         {
             _plugin = plugin;
             _lma = loadModuleAssemblies.ToList();
         }
 
-        public Plugin Import(ObjectImporter importer,ICheckNotifier collisionsAndSuggestions)
+        public Plugin Import(SharedObjectImporter importer,ICheckNotifier collisionsAndSuggestions)
         {
             var collision = importer.TargetRepository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(_plugin.Properties["Name"]));
 

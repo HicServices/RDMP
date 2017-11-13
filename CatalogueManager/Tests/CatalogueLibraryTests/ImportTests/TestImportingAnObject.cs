@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Importing;
+using CatalogueLibrary.ObjectSharing;
 using CatalogueLibraryTests.Integration;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Importing;
+using MapsDirectlyToDatabaseTable.ObjectSharing;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using Rhino.Mocks;
@@ -22,7 +23,7 @@ namespace CatalogueLibraryTests.ImportTests
         [Test]
         public void ImportACatalogue()
         {
-            ObjectImporter importer = new ObjectImporter(CatalogueRepository);
+            SharedObjectImporter importer = new SharedObjectImporter(CatalogueRepository);
 
             var c = new Catalogue(CatalogueRepository, "omg cata");
             Assert.AreEqual(CatalogueRepository.GetAllCatalogues().Count(), 1);
@@ -48,8 +49,8 @@ namespace CatalogueLibraryTests.ImportTests
             var p = new Plugin(CatalogueRepository, fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
             
-            var n = new PluginShare(p);
-            var importer = new ObjectImporter(RepositoryLocator.CatalogueRepository);
+            var n = new SharedPluginImporter(p);
+            var importer = new SharedObjectImporter(RepositoryLocator.CatalogueRepository);
 
             //reject the reuse of an existing one
             var p2 = n.Import(importer, new ThrowImmediatelyCheckNotifier());
@@ -84,9 +85,9 @@ namespace CatalogueLibraryTests.ImportTests
             newDll.Add("UploadDate",new DateTime(2001,1,1));
             newDll.Add("SoftwareVersion", "2.5.0.1");
 
-            
-            var n = new PluginShare(new MapsDirectlyToDatabaseTableStatelessDefinition(p),new []{new MapsDirectlyToDatabaseTableStatelessDefinition(typeof(LoadModuleAssembly),newDll) });
-            var importer = new ObjectImporter(RepositoryLocator.CatalogueRepository);
+
+            var n = new SharedPluginImporter(new MapsDirectlyToDatabaseTableStatelessDefinition(p), new[] { new MapsDirectlyToDatabaseTableStatelessDefinition(typeof(LoadModuleAssembly), newDll) });
+            var importer = new SharedObjectImporter(RepositoryLocator.CatalogueRepository);
 
             //accept that it is an update
             var p2 = n.Import(importer, new AcceptAllCheckNotifier());

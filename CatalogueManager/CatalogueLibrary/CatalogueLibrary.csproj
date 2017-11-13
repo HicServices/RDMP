@@ -337,7 +337,7 @@
     <Compile Include="FatalDeSyncException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
-    <Compile Include="Importing\PluginShare.cs" />
+    <Compile Include="ObjectSharing\SharedPluginImporter.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
     <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />

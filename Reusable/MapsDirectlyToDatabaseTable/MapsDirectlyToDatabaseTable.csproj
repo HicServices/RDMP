@@ -163,8 +163,8 @@
     <Compile Include="AdjustableLocation.cs" />
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeleteable.cs" />
-    <Compile Include="Importing\MapsDirectlyToDatabaseTableStatelessDefinition.cs" />
-    <Compile Include="Importing\ObjectImporter.cs" />
+    <Compile Include="ObjectSharing\MapsDirectlyToDatabaseTableStatelessDefinition.cs" />
+    <Compile Include="ObjectSharing\SharedObjectImporter.cs" />
     <Compile Include="INamed.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="IMapsDirectlyToDatabaseTable.cs" />
