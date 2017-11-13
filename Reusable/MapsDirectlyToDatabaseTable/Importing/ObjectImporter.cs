@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,31 +11,28 @@ namespace MapsDirectlyToDatabaseTable.Importing
 {
     public class ObjectImporter
     {
-        private readonly TableRepository _targetRepository;
+        public TableRepository TargetRepository { get; private set; }
 
         public ObjectImporter(TableRepository targetRepository)
         {
-            _targetRepository = targetRepository;
+            TargetRepository = targetRepository;
         }
 
-        public IMapsDirectlyToDatabaseTable ImportObject(Type t, Dictionary<string, object> properties)
+        public IMapsDirectlyToDatabaseTable ImportObject(MapsDirectlyToDatabaseTableStatelessDefinition definition)
         {
-            if(!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
-                throw new ArgumentEmptyException("Type must be IMapsDirectlyToDatabaseTable");
-
-            using (var con = _targetRepository.GetConnection())
+            using (var con = TargetRepository.GetConnection())
             {
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT * FROM " + t.Name, con.Connection);
-                var cmdbuilder = new DiscoveredServer(_targetRepository.ConnectionStringBuilder).Helper.GetCommandBuilder(cmd);
+                var cmd = DatabaseCommandHelper.GetCommand("SELECT * FROM " + definition.Type.Name, con.Connection);
+                var cmdbuilder = new DiscoveredServer(TargetRepository.ConnectionStringBuilder).Helper.GetCommandBuilder(cmd);
 
                 DbCommand cmdInsert = cmdbuilder.GetInsertCommand(true);
                 cmdInsert.CommandText += ";SELECT @@IDENTITY;";
 
-                _targetRepository.PrepareCommand(cmdInsert, properties);
+                TargetRepository.PrepareCommand(cmdInsert, definition.Properties);
 
                 var id = Convert.ToInt32(cmdInsert.ExecuteScalar());
 
-                return _targetRepository.GetObjectByID(t, id);
+                return TargetRepository.GetObjectByID(definition.Type, id);
             }
         }
     }
