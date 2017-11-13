@@ -335,19 +335,12 @@ namespace CohortManager.SubComponents
         {
             var task = Compiler.GetTask(configOrContainer, _globals);
 
-            //if it is in crashed state
-            if (task.State == CompilationState.Crashed || task.State == CompilationState.Finished)
-            {
-                //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
-                Compiler.CancelTask(task, true);
-
-                //refresh the task list, this will pick up the orphaned .Child and create a new task for it in the Compiler
-                RecreateAllTasks();
-
-                //fetch the new task for the child and make that the one we start (below)
-                task = Compiler.Tasks.Single(t => t.Key.Child.Equals(task.Child)).Key;
-            }
+            //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
+            Compiler.CancelTask(task, true);
             
+            RecreateAllTasks();
+
+            task = Compiler.GetTask(configOrContainer, _globals);
 
             //Task is now in state NotScheduled so we can start it
             Compiler.LaunchSingleTask(task, _timeout);
