@@ -7,7 +7,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

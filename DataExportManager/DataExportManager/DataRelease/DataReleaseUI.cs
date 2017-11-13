@@ -14,7 +14,7 @@ using DataExportManager.ProjectUI;
 using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
-using Microsoft.Office.Interop.Word;
+
 using ReusableUIComponents;
 using Ticketing;
 

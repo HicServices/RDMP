@@ -15,7 +15,7 @@ using DataLoadEngine.Job;
 using LoadModules.Generic.Checks;
 using LoadModules.Generic.DataFlowSources;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using DataTable = System.Data.DataTable;

@@ -5,7 +5,7 @@ using System.IO;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.FileOutputFormats;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.ExtractionTime

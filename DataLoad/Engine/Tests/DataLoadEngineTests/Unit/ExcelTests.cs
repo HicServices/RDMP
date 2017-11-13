@@ -36,9 +36,6 @@ namespace DataLoadEngineTests.Unit
         [TestFixtureSetUp]
         public void SprayToDisk()
         {
-            var requireOffice = new RequiresMicrosoftOffice();
-            officeInstalled = requireOffice.RequirementsMet();
-
             _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile));
             _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile));
         }

@@ -45,7 +45,6 @@
             this.userSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.issuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.issueReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.databaseAccessComplexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metadataReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.governanceReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -219,7 +218,6 @@
             // generateReportToolStripMenuItem
             // 
             this.generateReportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.issueReportToolStripMenuItem,
             this.databaseAccessComplexToolStripMenuItem,
             this.metadataReportToolStripMenuItem,
             this.governanceReportToolStripMenuItem,
@@ -228,13 +226,6 @@
             this.generateReportToolStripMenuItem.Name = "generateReportToolStripMenuItem";
             this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.generateReportToolStripMenuItem.Text = "Generate...";
-            // 
-            // issueReportToolStripMenuItem
-            // 
-            this.issueReportToolStripMenuItem.Name = "issueReportToolStripMenuItem";
-            this.issueReportToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.issueReportToolStripMenuItem.Text = "Issue Report";
-            this.issueReportToolStripMenuItem.Click += new System.EventHandler(this.issueReportToolStripMenuItem_Click);
             // 
             // databaseAccessComplexToolStripMenuItem
             // 
@@ -476,7 +467,6 @@
         private System.Windows.Forms.ToolStripMenuItem automationManagementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem issuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateReportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem issueReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem databaseAccessComplexToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem metadataReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem governanceReportToolStripMenuItem;

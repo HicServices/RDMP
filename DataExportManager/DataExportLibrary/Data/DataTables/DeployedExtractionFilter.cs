@@ -12,7 +12,7 @@ using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode.Checks;
 using IFilter = CatalogueLibrary.Data.IFilter;
 

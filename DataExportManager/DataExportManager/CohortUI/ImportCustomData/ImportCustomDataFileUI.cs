@@ -20,7 +20,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using HIC.Logging;
 using HIC.Logging.Listeners;
-using Microsoft.Office.Interop.Word;
+
 using RDMPObjectVisualisation.Pipelines;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;

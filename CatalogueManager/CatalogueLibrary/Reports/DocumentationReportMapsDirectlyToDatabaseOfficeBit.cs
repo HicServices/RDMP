@@ -6,72 +6,60 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Triggers;
-using Microsoft.Office.Interop.Word;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Reports
 {
     public class DocumentationReportMapsDirectlyToDatabaseOfficeBit : RequiresMicrosoftOffice
     {
-        Microsoft.Office.Interop.Word.Application wrdApp;
         private DocumentationReportMapsDirectlyToDatabase _report;
 
         public void GenerateReport(ICheckNotifier notifier, Dictionary<string, Bitmap> imagesDictionary)
         {
             try
             {
-                _report = new DocumentationReportMapsDirectlyToDatabase(typeof(Catalogue).Assembly);
+                _report = new DocumentationReportMapsDirectlyToDatabase(typeof (Catalogue).Assembly);
                 _report.Check(notifier);
-            
-                object oMissing = Missing.Value;
-                object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
-                //word = new word.ApplicationClass();
-                wrdApp = new Application();
-
-                wrdApp.Visible = true;
-                var doc = wrdApp.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-
-                Range wrdRng = doc.Bookmarks.get_Item(ref oEndOfDoc).Range;
-
-                Table newTable;
-                newTable = doc.Tables.Add(wrdRng, _report.Summaries.Count+1, 2, ref oMissing, ref oMissing);
-                newTable.Borders.InsideLineStyle = WdLineStyle.wdLineStyleSingle;
-                newTable.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleSingle;
-                newTable.AllowAutoFit = true;
-
-                var wordHelper = new WordHelper(wrdApp);
-                
-                //Listing Cell header
-                newTable.Cell(1, 1).Range.Text = "Table";
-                newTable.Cell(1, 2).Range.Text = "Definition";
-
-                Type[] keys = _report.Summaries.Keys.ToArray();
-
-                for(int i=0;i<_report.Summaries.Count;i++)
+                var f = GetUniqueFilenameInWorkArea("RDMPDocumentation");
+                using (DocX document = DocX.Create(f.FullName))
                 {
-                    newTable.Cell(i + 2, 1).Range.Text = keys[i].Name;
+                    var t = InsertTable(document,_report.Summaries.Count + 1, 2);
                     
-                    //select the start of the cell
-                    var r = newTable.Cell(i + 2, 1).Range;
-                    r.Collapse(WdCollapseDirection.wdCollapseStart);
-                    r.Select();
+                    //Listing Cell header
+                    SetTableCell(t, 0, 0, "Table");
+                    SetTableCell(t, 1, 1, "Definition");
 
-                    WriteImageIfExistsForType(keys[i], imagesDictionary,wordHelper,doc);
+                    Type[] keys = _report.Summaries.Keys.ToArray();
 
-                    newTable.Cell(i + 2, 2).Range.Text = _report.Summaries[keys[i]];
+                    for (int i = 0; i < _report.Summaries.Count; i++)
+                    {
+                        SetTableCell(t, i + 1, 0, keys[i].Name);
+
+
+                        var bmp = GetImage(keys[i],imagesDictionary);
+
+                        if (bmp != null)
+                            t.Rows[i + 1].Cells[0].Paragraphs.First().InsertPicture(GetPicture(document, bmp));
+
+                        SetTableCell(t,i + 1, 1, _report.Summaries[keys[i]]);
+                    }
+
+                    document.Save();
+                    ShowFile(f);
                 }
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Report generation failed",CheckResult.Fail ,e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Report generation failed", CheckResult.Fail, e));
             }
         }
-        
-        private void WriteImageIfExistsForType(Type type, Dictionary<string, Bitmap> imagesDictionary, WordHelper wordHelper, Document doc)
+
+
+        private Bitmap GetImage(Type type, Dictionary<string, Bitmap> imagesDictionary)
         {
             string key = type.Name;
 
@@ -86,7 +74,9 @@ namespace CatalogueLibrary.Reports
             
             //if it has an image associated with it add it
             if (imagesDictionary.ContainsKey(key))
-                wordHelper.WriteImage(imagesDictionary[key], doc, goToEndOfDocumentAfterwards: false);
+                return imagesDictionary[key];
+
+            return null;
         }
     }
 }

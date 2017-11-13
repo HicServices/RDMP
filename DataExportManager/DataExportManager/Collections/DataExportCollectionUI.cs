@@ -32,7 +32,7 @@ using DataExportManager.Icons.IconProvision;
 using DataExportManager.Menus;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Word;
+
 using RDMPObjectVisualisation.Copying;
 using ReusableUIComponents;
 using ReusableUIComponents.TreeHelper;

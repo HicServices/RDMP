@@ -11,7 +11,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Microsoft.Office.Interop.Word;
+
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
