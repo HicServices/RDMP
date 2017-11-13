@@ -151,8 +151,6 @@ namespace CatalogueManager.Collections
                 if (o != null)
                     new ExecuteCommandRefreshObject(_activator, o).Execute();
             }
-
-        
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)

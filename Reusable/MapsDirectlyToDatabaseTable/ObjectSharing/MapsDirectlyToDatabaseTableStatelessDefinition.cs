@@ -6,8 +6,14 @@ namespace MapsDirectlyToDatabaseTable.ObjectSharing
 {
     public class MapsDirectlyToDatabaseTableStatelessDefinition
     {
-        public Type Type { get; private set; }
+        public Type Type { get; set; }
         public Dictionary<string, object> Properties { get; private set; }
+
+        //Json!
+        public MapsDirectlyToDatabaseTableStatelessDefinition()
+        {
+            Properties = new Dictionary<string, object>();
+        }
 
         public MapsDirectlyToDatabaseTableStatelessDefinition(Type type, Dictionary<string,object> properties)
         {

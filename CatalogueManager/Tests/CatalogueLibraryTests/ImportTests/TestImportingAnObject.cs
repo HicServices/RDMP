@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,11 @@ using CatalogueLibrary.ObjectSharing;
 using CatalogueLibraryTests.Integration;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.ObjectSharing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Serialization;
 using Rhino.Mocks;
 using Rhino.Mocks.Utilities;
 using Tests.Common;
@@ -94,6 +98,43 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.IsFalse(lma.Exists());
             Assert.AreEqual(p,p2);
             Assert.AreEqual(p.LoadModuleAssemblies.Single().Dll, new byte[] { 0, 1, 0, 1 });
+        }
+
+        [Test]
+        public void JsonTest()
+        {
+            foreach (var oldP in CatalogueRepository.GetAllObjects<Plugin>())
+                oldP.DeleteInDatabase();
+
+            var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
+            Assert.IsTrue(fi.Exists);
+
+            var p = new Plugin(CatalogueRepository, fi);
+            var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
+
+            var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition(p);
+            var lmaStatelessArray = new[] {new MapsDirectlyToDatabaseTableStatelessDefinition(lma)};
+
+            var ignoreTypeProperty = new IgnorableSerializerContractResolver();
+            ignoreTypeProperty.Ignore(typeof(MapsDirectlyToDatabaseTableStatelessDefinition), new[] { "Type" });
+
+            var settings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = ignoreTypeProperty,
+            };
+            
+            string s = JsonConvert.SerializeObject(pStateless, Formatting.Indented, settings);
+            string sa = JsonConvert.SerializeObject(lmaStatelessArray, Formatting.Indented, settings);
+            
+            var import = new SharedPluginImporter(s, sa);
+
+            var p2 = import.Import(new SharedObjectImporter(CatalogueRepository), new ThrowImmediatelyCheckNotifier());
+
+            Assert.AreEqual(p.LoadModuleAssemblies.Count(),p2.LoadModuleAssemblies.Count());
+            Assert.AreEqual(p.LoadModuleAssemblies.First().Dll,p2.LoadModuleAssemblies.First().Dll);
+            Assert.AreNotEqual(p.ID, p2.ID);
+
         }
     }
 }

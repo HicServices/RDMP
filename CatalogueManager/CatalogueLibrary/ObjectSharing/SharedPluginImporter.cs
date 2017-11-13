@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable.ObjectSharing;
+using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.ObjectSharing
@@ -22,6 +23,19 @@ namespace CatalogueLibrary.ObjectSharing
         {
             _plugin = plugin;
             _lma = loadModuleAssemblies.ToList();
+        }
+
+        public SharedPluginImporter(string plugin, string loadModuleAssemblies)
+        {
+            _plugin = JsonConvert.DeserializeObject<MapsDirectlyToDatabaseTableStatelessDefinition>(plugin);
+
+            //Because Json doesn't know how to serialise Type properties
+            _plugin.Type = typeof(Plugin);
+
+            _lma = JsonConvert.DeserializeObject<MapsDirectlyToDatabaseTableStatelessDefinition[]>(loadModuleAssemblies).ToList();
+            foreach (var l in _lma)
+                l.Type = typeof(LoadModuleAssembly);
+
         }
 
         public Plugin Import(SharedObjectImporter importer,ICheckNotifier collisionsAndSuggestions)
