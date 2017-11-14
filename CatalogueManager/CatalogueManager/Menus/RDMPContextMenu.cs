@@ -104,6 +104,7 @@ namespace CatalogueManager.Menus
             {
                 Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
                 Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+                Add(new ExecuteCommandPin(_activator, _databaseEntity));
             }
             
             List<object> askPluginsAbout = new List<object>(additionalObjectsToExposeToPluginUserInterfaces);

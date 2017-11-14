@@ -60,6 +60,8 @@ namespace CatalogueManager.Collections
         public bool IsSetup { get; private set; }
         
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
+        
+        private CollectionScopeFilterUI _scopeFilter;
 
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
@@ -184,8 +186,21 @@ namespace CatalogueManager.Collections
             //select the object and ensure it's visible
             Tree.SelectedObject = args.Request.ObjectToEmphasise;
             Tree.EnsureVisible(index);
-            
+
+            if (args.Request.Pin)
+                Pin(args.Request.ObjectToEmphasise,decendancyList);
+
             args.FormRequestingActivation = Tree.FindForm();
+        }
+
+        private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
+        {
+            if (_scopeFilter != null)
+                _scopeFilter.UnApplyToTree();
+
+            _scopeFilter = new CollectionScopeFilterUI();
+            _scopeFilter.ApplyToTree(_activator.CoreChildProvider,Tree,objectToPin, descendancy);
+            _scopeFilter.UnApplied += (s, e) => _scopeFilter = null;
         }
 
         private void ExpandToDepth(int expansionDepth, object currentObject)
@@ -386,6 +401,8 @@ namespace CatalogueManager.Collections
         }
 
         private bool expand = true;
+        
+
 
         /// <summary>
         /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed

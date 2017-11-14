@@ -31,5 +31,6 @@ namespace CatalogueLibrary.Providers
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
+        IEnumerable<object> GetAllChildrenRecursively(object o);
     }
 }

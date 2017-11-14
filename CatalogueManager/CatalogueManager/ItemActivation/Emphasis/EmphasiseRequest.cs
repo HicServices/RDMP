@@ -11,11 +11,13 @@ namespace CatalogueManager.ItemActivation.Emphasis
     {
         public IMapsDirectlyToDatabaseTable ObjectToEmphasise { get; set; }
         public int ExpansionDepth { get; set; }
+        public bool Pin { get; set; }
 
         public EmphasiseRequest(IMapsDirectlyToDatabaseTable objectToEmphasise, int expansionDepth = 0)
         {
             ObjectToEmphasise = objectToEmphasise;
             ExpansionDepth = expansionDepth;
+            Pin = false;
         }
     }
 }

@@ -827,6 +827,19 @@ namespace CatalogueLibrary.Providers
             return toReturn;
         }
 
+        public IEnumerable<object> GetAllChildrenRecursively(object o)
+        {
+            List<object> toReturn = new List<object>();
+
+            foreach (var child in GetChildren(o))
+            {
+                toReturn.Add(child);
+                toReturn.AddRange(GetAllChildrenRecursively(child));
+            }
+
+            return toReturn;
+        }
+
         protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {
             foreach (IMapsDirectlyToDatabaseTable m in toAdd)

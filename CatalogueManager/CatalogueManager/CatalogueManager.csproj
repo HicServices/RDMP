@@ -337,6 +337,12 @@
     </Compile>
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
+    <Compile Include="Collections\CollectionScopeFilterUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Collections\CollectionScopeFilterUI.Designer.cs">
+      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Collections\FavouritesCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -350,6 +356,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
@@ -1509,6 +1516,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Collections\CollectionScopeFilterUI.resx">
+      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\FavouritesCollectionUI.resx">
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>

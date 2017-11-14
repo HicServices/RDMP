@@ -143,7 +143,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 return;
 
             Close();
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[selectedIndex]));
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[selectedIndex]){Pin = true});
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

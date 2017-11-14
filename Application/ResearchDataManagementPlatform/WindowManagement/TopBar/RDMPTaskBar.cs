@@ -241,10 +241,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private void tbFind_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                RunFind(false);
+                RunFind(false,true);
         }
 
-        private void RunFind(bool returnFocusToTextBox)
+        private void RunFind(bool returnFocusToTextBox,bool pin = false)
         {
             var activator = _manager.ContentManager;
 
@@ -258,7 +258,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             if (matches.Length > 0)
             {
-                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue));
+                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue){Pin=pin});
                 
                 if (returnFocusToTextBox)
                     tbFind.Focus();
