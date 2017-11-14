@@ -477,6 +477,7 @@ namespace DataExportManager.Collections.Providers
         {
             var toReturn = base.GetAllSearchables();
             AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
+            AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
             return toReturn;
         }
     }
