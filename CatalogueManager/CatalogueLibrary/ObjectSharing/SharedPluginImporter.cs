@@ -6,12 +6,27 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Serialization.Formatters.Binary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Automation;
 using MapsDirectlyToDatabaseTable.ObjectSharing;
 using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.ObjectSharing
 {
+    public class AutomationSlotSharer
+    {
+        private AutomateablePipeline[] _pipes;
+
+        public AutomationSlotSharer(AutomationServiceSlot slot)
+        {
+
+            _pipes = slot.AutomateablePipelines;
+
+
+
+        }
+    }
+
     public class SharedPluginImporter
     {
         private MapsDirectlyToDatabaseTableStatelessDefinition<Plugin> _plugin;

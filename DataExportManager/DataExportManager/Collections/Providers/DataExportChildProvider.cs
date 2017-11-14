@@ -21,7 +21,6 @@ using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.Hierarchy;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Nodes;
 using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
@@ -40,8 +39,7 @@ namespace DataExportManager.Collections.Providers
     {
         //root objects
         public CohortsNode RootCohortsNode { get; private set; }
-        public ExtractableDataSetsNode RootExtractableDataSets { get; private set; }
-
+        
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly ICheckNotifier _errorsCheckNotifier;
 
@@ -116,8 +114,8 @@ namespace DataExportManager.Collections.Providers
             RootCohortsNode = new CohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
 
-            RootExtractableDataSets = new ExtractableDataSetsNode(dataExportRepository,ExtractableDataSets, AllPackages);
-            AddChildren(RootExtractableDataSets,new DescendancyList(RootExtractableDataSets));
+            foreach (ExtractableDataSetPackage package in AllPackages)
+                AddChildren(package, new DescendancyList(package));
 
             foreach (Project p in Projects)
                 AddChildren(p, new DescendancyList(p));
@@ -128,23 +126,6 @@ namespace DataExportManager.Collections.Providers
             //inject extractability into Catalogues
             foreach (Catalogue catalogue in AllCatalogues)
                 catalogue.InjectExtractability(extractableCatalogueIds.Contains(catalogue.ID));
-        }
-
-        private void AddChildren(ExtractableDataSetsNode rootExtractableDataSetsNode, DescendancyList descendancy)
-        {
-            HashSet<object> children = new HashSet<object>();
-
-
-            foreach (var dataSet in rootExtractableDataSetsNode.ExtractableDataSets)
-                children.Add(dataSet);
-
-            foreach (ExtractableDataSetPackage package in rootExtractableDataSetsNode.Packages)
-            {
-                AddChildren(package,descendancy.Add(package));
-                children.Add(package);
-            }
-
-            AddToDictionaries(children,descendancy);
         }
 
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)

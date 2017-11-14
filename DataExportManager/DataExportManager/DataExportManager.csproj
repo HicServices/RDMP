@@ -351,6 +351,7 @@
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractableDataSetPackage.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults.cs" />
@@ -420,7 +421,6 @@
     <Compile Include="Menus\ProjectSavedCohortsNodeMenu.cs" />
     <Compile Include="Menus\SelectedDataSetMenu.cs" />
     <Compile Include="Menus\ProjectsMenu.cs" />
-    <Compile Include="Menus\ExtractableDataSetsNodeMenu.cs" />
     <Compile Include="Menus\ExtractableCohortMenu.cs" />
     <Compile Include="Menus\ExternalCohortTableMenu.cs" />
     <Compile Include="Menus\CohortsNodeMenu.cs" />

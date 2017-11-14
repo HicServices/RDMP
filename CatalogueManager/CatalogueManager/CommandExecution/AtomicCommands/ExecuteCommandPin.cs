@@ -1,5 +1,6 @@
 using System.Drawing;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
@@ -14,6 +15,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandPin(IActivateItems activator, DatabaseEntity databaseEntity) : base(activator)
         {
             _databaseEntity = databaseEntity;
+
+            if(!CollectionScopeFilterUI.IsPinnableType(databaseEntity))
+                SetImpossible("Object is not a Pinnable Type");
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -25,7 +29,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(_databaseEntity){Pin = true});
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(_databaseEntity,int.MaxValue){Pin = true});
         }
     }
 }

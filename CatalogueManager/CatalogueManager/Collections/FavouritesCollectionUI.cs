@@ -21,7 +21,6 @@ namespace CatalogueManager.Collections
     public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         private IActivateItems _activator;
-        private RDMPCollectionCommonFunctionality _commonCollectionFunctionality;
 
         List<IMapsDirectlyToDatabaseTable> favourites = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -33,9 +32,8 @@ namespace CatalogueManager.Collections
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
-            _commonCollectionFunctionality = new RDMPCollectionCommonFunctionality();
-            _commonCollectionFunctionality.SetUp(tlvFavourites,_activator,olvName,olvName);
-            _commonCollectionFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
+            CommonFunctionality.SetUp(tlvFavourites,_activator,olvName,olvName,true,false);
+            CommonFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             
@@ -96,9 +94,8 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(IActivateItems activator, object root)
         {
-            var m = root as IMapsDirectlyToDatabaseTable;
-
-            return m != null && activator.FavouritesProvider.IsFavourite(m);
+            //never favourite
+            return false;
         }
     }
 }

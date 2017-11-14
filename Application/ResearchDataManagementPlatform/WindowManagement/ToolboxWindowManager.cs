@@ -150,10 +150,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             return _visibleToolboxes.ContainsKey(collection);
         }
-        public bool IsVisibleButBurried(RDMPCollection collection)
-        {
-            return _visibleToolboxes.ContainsKey(collection) && !_visibleToolboxes[collection].Visible;
-        }
 
         public void ShowCollectionWhichSupportsRootObjectType(object root)
         {
@@ -187,6 +183,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if(TableInfoCollectionUI.IsRootObject(root))
                 return RDMPCollection.Tables;
+
+            if(SavedCohortsCollectionUI.IsRootObject(root))
+                return RDMPCollection.SavedCohorts;
 
             return RDMPCollection.None;
         }

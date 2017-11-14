@@ -70,6 +70,9 @@ namespace CatalogueManager.Collections
         /// </summary>
         public Type[] AxeChildren { get; set; }
 
+        public bool AllowPinning { get; set; }
+        public Type[] MaintainRootObjects { get; set; }
+
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
         /// </summary>
@@ -81,7 +84,7 @@ namespace CatalogueManager.Collections
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true,bool allowPinning = true)
         {
             IsSetup = true;
             _activator = activator;
@@ -136,6 +139,8 @@ namespace CatalogueManager.Collections
             OnRefreshChildProvider(_activator.CoreChildProvider);
             
             _activator.Emphasise += _activator_Emphasise;
+
+            AllowPinning = allowPinning;
         }
 
         private void TreeOnKeyUp(object sender, KeyEventArgs e)
@@ -187,7 +192,7 @@ namespace CatalogueManager.Collections
             Tree.SelectedObject = args.Request.ObjectToEmphasise;
             Tree.EnsureVisible(index);
 
-            if (args.Request.Pin)
+            if (args.Request.Pin && AllowPinning)
                 Pin(args.Request.ObjectToEmphasise,decendancyList);
 
             args.FormRequestingActivation = Tree.FindForm();
@@ -197,9 +202,9 @@ namespace CatalogueManager.Collections
         {
             if (_scopeFilter != null)
                 _scopeFilter.UnApplyToTree();
-
+            
             _scopeFilter = new CollectionScopeFilterUI();
-            _scopeFilter.ApplyToTree(_activator.CoreChildProvider,Tree,objectToPin, descendancy);
+            _scopeFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
             _scopeFilter.UnApplied += (s, e) => _scopeFilter = null;
         }
 
@@ -258,7 +263,20 @@ namespace CatalogueManager.Collections
                 
                 //found a menu with compatible constructor arguments
                 if (menu != null)
+                {
+                    if (!AllowPinning)
+                    {
+                        var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
+                        
+                        if(miPin != null)
+                        {
+                            miPin.Enabled = false;
+                            miPin.ToolTipText = "Pinning is disabled in this collection";
+                        }
+                    }
+
                     e.MenuStrip = menu;
+                }
             }
             else
             {
@@ -316,7 +334,6 @@ namespace CatalogueManager.Collections
                 cmd.Execute();
         }
 
-
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             OnRefreshChildProvider(_activator.CoreChildProvider);
@@ -328,7 +345,13 @@ namespace CatalogueManager.Collections
             var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
             if (knownDescendancy != null)
                 parent = knownDescendancy.Last();
-            
+
+            //if it is a root object maintained by this tree and it exists
+            if (MaintainRootObjects != null && MaintainRootObjects.Contains(e.Object.GetType()) && e.Object.Exists())
+                    //if tree doesn't yet contain the object
+                    if (!Tree.Objects.Cast<object>().Contains(e.Object))
+                        Tree.AddObject(e.Object); //add it
+
             //item deleted?
             if (!e.Object.Exists())
             {
@@ -374,8 +397,6 @@ namespace CatalogueManager.Collections
                     {
                         
                     }
-
-
             }
         }
 
@@ -394,7 +415,6 @@ namespace CatalogueManager.Collections
         {
             if(IsSetup)
             {
-
                 _activator.RefreshBus.Unsubscribe(this);
                 _activator.Emphasise -= _activator_Emphasise;
             }
@@ -402,8 +422,6 @@ namespace CatalogueManager.Collections
 
         private bool expand = true;
         
-
-
         /// <summary>
         /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
         /// </summary>

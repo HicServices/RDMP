@@ -68,7 +68,7 @@ namespace CatalogueManager.Menus
         protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
         {
             var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
-
+            
             if (shortcutKey != Keys.None)
                 mi.ShortcutKeys = shortcutKey;
             

@@ -9,7 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Automation;
+using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Providers;
+using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Data.DataTables.DataSetPackages;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 
@@ -25,14 +32,54 @@ namespace CatalogueManager.Collections
             InitializeComponent();
         }
 
+        public static Type[] PinnableTypes = new Type[]
+        {
+            typeof (Catalogue),
+            typeof (LoadMetadata),
+            typeof (Project),
+            typeof(CohortIdentificationConfiguration),
+            
+            //TableInfoCollectionUI pinnables
+            typeof(AutomationServiceSlot),
+            typeof(ExtractableDataSetPackage),
+            typeof(RemoteRDMP),
+            typeof(ExternalDatabaseServer),
+            typeof(DataAccessCredentials),
+            typeof(ANOTable),
+            typeof(TableInfo),
+
+            //saved cohorts collection
+            typeof(ExtractableCohort)
+        };
+
+        private IModelFilter _beforeModelFilter;
+        private bool _beforeUseFiltering;
+
+        public static bool IsPinnableType(object o)
+        {
+            return PinnableTypes.Contains(o.GetType());
+        }
+
         public void ApplyToTree(ICoreChildProvider childProvider,TreeListView tree, IMapsDirectlyToDatabaseTable objectToEmphasise, DescendancyList descendancy)
         {
             if(_tree != null)
                 throw new Exception("Scope filter is already applied to a tree");
 
-            _tree = tree;
-            lblFilter.Text = objectToEmphasise.ToString();
+            object toPin = null;
+
+            if (IsPinnableType(objectToEmphasise))
+                toPin = objectToEmphasise;
+            else if (descendancy != null)
+                toPin = descendancy.Parents.FirstOrDefault(IsPinnableType);
+
+            if(toPin == null)
+                return;
             
+            _tree = tree;
+
+            lblFilter.Text = toPin.ToString();
+            
+            //add the filter to the tree
             Dock = DockStyle.Top;
 
             if (_tree.Dock != DockStyle.Fill)
@@ -50,10 +97,13 @@ namespace CatalogueManager.Collections
             //add parents to whitelist
             if(descendancy != null && descendancy.Parents.Any())
                 whitelist.AddRange(descendancy.Parents);
-            
-            whitelist.Add(objectToEmphasise);
 
-            whitelist.AddRange(childProvider.GetAllChildrenRecursively(objectToEmphasise));
+            whitelist.Add(toPin);
+
+            whitelist.AddRange(childProvider.GetAllChildrenRecursively(toPin));
+
+            _beforeModelFilter = _tree.ModelFilter;
+            _beforeUseFiltering = _tree.UseFiltering;
 
             _tree.UseFiltering = true;
             _tree.ModelFilter = new WhiteListOnlyFilter(whitelist);
@@ -62,7 +112,7 @@ namespace CatalogueManager.Collections
         public void UnApplyToTree()
         {
             if (_tree == null)
-                throw new Exception("Cannot unapply filter because it is not currently applied to any tree");
+                return;
 
             //remove ourselves
             _tree.Parent.Controls.Remove(this);
@@ -72,8 +122,8 @@ namespace CatalogueManager.Collections
             _tree.Height += 19;
             
             //add the original objects back in again (clear filter)
-            _tree.UseFiltering = false;
-            _tree.ModelFilter = null;
+            _tree.UseFiltering = _beforeUseFiltering;
+            _tree.ModelFilter = _beforeModelFilter;
             _tree = null;
 
             if(UnApplied != null)
@@ -84,5 +134,6 @@ namespace CatalogueManager.Collections
         {
             UnApplyToTree();
         }
+
     }
 }

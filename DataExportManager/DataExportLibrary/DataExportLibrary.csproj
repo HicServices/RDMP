@@ -297,7 +297,6 @@
     <Compile Include="ExtractionTime\ReleaseIdentifierSubstitution.cs" />
     <Compile Include="ExtractionTime\WordDataWritter.cs" />
     <Compile Include="CsvDataTableHelper.cs" />
-    <Compile Include="Nodes\ExtractableDataSetsNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataRelease\ReleasePotential.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />

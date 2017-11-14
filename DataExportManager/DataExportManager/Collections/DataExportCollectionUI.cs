@@ -22,7 +22,6 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Nodes;
 using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
@@ -35,6 +34,7 @@ using MapsDirectlyToDatabaseTable;
 using Microsoft.Office.Interop.Word;
 using RDMPObjectVisualisation.Copying;
 using ReusableUIComponents;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace DataExportManager.Collections
@@ -124,13 +124,20 @@ namespace DataExportManager.Collections
                 olvName,
                 olvName
                 );
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new []{new ExecuteCommandCreateNewDataExtractionProject(activator)};
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
+            {
+                new ExecuteCommandCreateNewDataExtractionProject(activator),
+                new ExecuteCommandCreateNewExtractableDataSetPackage(activator)
+            };
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             RefreshProviders();
 
-            tlvDataExport.AddObjects(_childProvider.Projects);
+            CommonFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};
 
+            tlvDataExport.AddObjects(_childProvider.AllPackages);
+            tlvDataExport.AddObjects(_childProvider.Projects);
+            
             NavigateToObjectUI.RecordThatTypeIsNotAUsefulParentToShow(typeof(ProjectCohortIdentificationConfigurationAssociationsNode));
 
         }
@@ -140,12 +147,6 @@ namespace DataExportManager.Collections
             //always update the child providers etc
             RefreshProviders();
 
-            //if it is a new Project
-            if (e.Object is Project && e.Object.Exists())
-                //it exists and we don't know about it?
-                if (!tlvDataExport.Objects.Cast<object>().Contains(e.Object))
-                    tlvDataExport.AddObject(e.Object); //add it
-            
             //Objects can appear multiple times in this tree view but thats not allowed by ObjectListView (for good reasons!).  So instead we wrap the duplicate object
             //with a UsedByProjectNode class which encapsulates the object being used (e.g. the cohort) but also the Project.  Now that solves the HashCode problem but
             //it doesn't solve the refresh problem where we get told to refresh the ExtractableCohort but we miss out the project users.  So let's refresh them now.
@@ -206,7 +207,7 @@ namespace DataExportManager.Collections
         
         public static bool IsRootObject(object root)
         {
-            return root is Project;
+            return root is Project || root is ExtractableDataSetPackage;
         }
     }
 }

@@ -100,7 +100,7 @@ namespace CohortManager.SubComponents
             if (_commonFunctionality == null)
             {
                 _commonFunctionality = new RDMPCollectionCommonFunctionality();
-                _commonFunctionality.SetUp(tlvCic,activator,olvNameCol,olvNameCol,false);
+                _commonFunctionality.SetUp(tlvCic,activator,olvNameCol,olvNameCol,false,false);
                 tlvCic.AddObject(_configuration);
                 tlvCic.ExpandAll();
             }

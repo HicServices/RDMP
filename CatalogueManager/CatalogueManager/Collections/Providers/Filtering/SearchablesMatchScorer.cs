@@ -39,11 +39,11 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
             return searchables.ToDictionary(
            s => s,
-           score => ScoreMatches(score, integerTokens, regexes, cancellationToken)
+           score => ScoreMatches(score, regexes, cancellationToken)
            );
         }
 
-        private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<int> integerTokens, List<Regex> regexes, CancellationToken cancellationToken)
+        private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, CancellationToken cancellationToken)
         {
             int score = 0;
 
@@ -56,19 +56,7 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
             //make a new list so we can destructively read it
             regexes = new List<Regex>(regexes);
-
-            //match on ID of the head only
-            foreach (int integerToken in integerTokens)
-                if (kvp.Key.ID == integerToken)
-                {
-                    //matched on the ID (we could also match this in the tostring e.g. "project 132 my fishing project" where 132 is a number that is meaningful to the user only
-                    var regex = regexes.SingleOrDefault(r => r.ToString().Equals(integerToken.ToString()));
-                    if (regex != null)
-                        regexes.Remove(regex);
-
-                    score += Weights[0];
-                }
-
+            
             //match on the head vs the regex tokens
             score += Weights[0] * CountMatchToString(regexes, kvp.Key);
 

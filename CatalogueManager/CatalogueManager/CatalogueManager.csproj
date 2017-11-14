@@ -573,7 +573,6 @@
     <Compile Include="CommandExecution\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandMakeCatalogueExtractable.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMoveAggregateIntoContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMoveCohortAggregateContainerIntoSubContainer.cs" />

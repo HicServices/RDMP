@@ -90,12 +90,7 @@ namespace CatalogueManager.Collections
     public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         private IActivateItems _activator;
-
-        private string _filter;
-        private bool _showInternal = false;
-        private bool _showDeprecated = false;
-        private bool _showColdStorage = false;
-
+        
         private Catalogue[] _allCatalogues;
 
         //constructor
@@ -230,18 +225,6 @@ namespace CatalogueManager.Collections
 
         }
 
-        public bool ShowCatalogueItems
-        {
-            get { return _showCatalogueItems; }
-            set
-            {
-                //if going from not showing to showing we must refresh classifications
-                _showCatalogueItems = value; 
-            
-                ApplyFilters();
-            }
-        }
-
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
@@ -359,8 +342,8 @@ namespace CatalogueManager.Collections
         
         public void ApplyFilters()
         {
-            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(cbShowInternal.Checked, cbShowDeprecated.Checked, cbShowColdStorage.Checked);
             tlvCatalogues.UseFiltering = true;
+            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider,cbShowInternal.Checked, cbShowDeprecated.Checked, cbShowColdStorage.Checked);
         }
 
         public enum HighlightCatalogueType

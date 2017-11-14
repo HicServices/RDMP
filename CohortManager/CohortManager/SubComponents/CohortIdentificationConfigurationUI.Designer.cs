@@ -19,6 +19,9 @@ namespace CohortManager.SubComponents
             if (disposing && (components != null))
             {
                 components.Dispose();
+
+                if(_commonFunctionality.IsSetup)
+                    _commonFunctionality.TearDown();
             }
             base.Dispose(disposing);
         }

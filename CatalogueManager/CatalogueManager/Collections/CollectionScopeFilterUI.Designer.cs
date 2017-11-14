@@ -49,9 +49,10 @@
             // 
             this.pbRemoveFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbRemoveFilter.Image = ((System.Drawing.Image)(resources.GetObject("pbRemoveFilter.Image")));
-            this.pbRemoveFilter.Location = new System.Drawing.Point(305, 5);
+            this.pbRemoveFilter.Location = new System.Drawing.Point(300, 0);
             this.pbRemoveFilter.Name = "pbRemoveFilter";
-            this.pbRemoveFilter.Size = new System.Drawing.Size(12, 12);
+            this.pbRemoveFilter.Size = new System.Drawing.Size(19, 19);
+            this.pbRemoveFilter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbRemoveFilter.TabIndex = 1;
             this.pbRemoveFilter.TabStop = false;
             this.pbRemoveFilter.Click += new System.EventHandler(this.pbRemoveFilter_Click);

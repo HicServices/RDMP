@@ -12,7 +12,6 @@ using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Nodes;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.Checks;
@@ -93,12 +92,6 @@ namespace CatalogueManager.CommandExecution
             if (targetJoinableCollectionNode != null)
                 return CreateWhenTargetIsJoinableCollectionNode(cmd,targetJoinableCollectionNode);
 
-            ////////////////Data Export Drop Targets ////////////////
-            
-            var targetExtractableDatasetsNode = targetModel as ExtractableDataSetsNode;
-            if (targetExtractableDatasetsNode != null)
-                return CreateWhenTargetIsExtractableDataSetsNode(cmd,targetExtractableDatasetsNode);
-            
             ///////////////Data Loading Drop Targets ///////////////////
 
             var targetProcessTask = targetModel as ProcessTask;
@@ -178,19 +171,6 @@ namespace CatalogueManager.CommandExecution
         }
 
 
-
-        private ICommandExecution CreateWhenTargetIsExtractableDataSetsNode(ICommand cmd, ExtractableDataSetsNode targetExtractableDataSetsNode)
-        {
-            //user is trying to make a Catalogue extractable?
-            var sourceCatalogueCommand = cmd as CatalogueCommand;
-
-            if (sourceCatalogueCommand != null)
-                return new ExecuteCommandMakeCatalogueExtractable(_activator,sourceCatalogueCommand, targetExtractableDataSetsNode);
-
-            return null;
-
-        }
-        
         private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICommand cmd, JoinableCollectionNode targetJoinableCollectionNode)
         {
             var sourceAggregateConfigurationCommand = cmd as AggregateConfigurationCommand;
