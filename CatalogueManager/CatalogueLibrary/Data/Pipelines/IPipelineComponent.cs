@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using CatalogueLibrary.Data.DataLoad;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
-    public interface IPipelineComponent : IArgumentHost, ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable
+    public interface IPipelineComponent : IArgumentHost, ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable,IHasDependencies
     {
         string Name { get; set; }
         int Order { get; set; }

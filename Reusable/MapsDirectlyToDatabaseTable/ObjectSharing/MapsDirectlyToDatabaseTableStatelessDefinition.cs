@@ -39,6 +39,10 @@ namespace MapsDirectlyToDatabaseTable.ObjectSharing
         {
             foreach (var property in Properties)
             {
+                //HACK:
+                if(property.Key.EndsWith("_ID"))
+                    continue;
+                
                 instance.GetType().GetProperty(property.Key).GetSetMethod().Invoke(instance, new [] {property.Value});
             }
         }

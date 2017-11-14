@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
@@ -28,7 +29,7 @@ namespace CatalogueLibrary.Data.Pipelines
     /// Remember that Pipeline is the serialization, pipelines are used all over the place in RDMP software under different contexts (caching, data extraction etc)
     /// and sometimes we even create DataFlowPipelineEngine on the fly without even having a Pipeline serialization to create it from.
     /// </summary>
-    public class Pipeline : VersionedDatabaseEntity, IPipeline
+    public class Pipeline : VersionedDatabaseEntity, IPipeline,IHasDependencies
     {
         #region Database Properties
 
@@ -159,6 +160,16 @@ namespace CatalogueLibrary.Data.Pipelines
 
 
             return clonePipe;
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new IHasDependencies[0];
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return PipelineComponents.Cast<IHasDependencies>().ToArray();
         }
     }
 }

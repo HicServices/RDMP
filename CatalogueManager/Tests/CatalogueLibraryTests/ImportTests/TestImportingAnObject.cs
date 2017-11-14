@@ -89,7 +89,6 @@ namespace CatalogueLibraryTests.ImportTests
             newDll.Add("UploadDate",new DateTime(2001,1,1));
             newDll.Add("SoftwareVersion", "2.5.0.1");
 
-
             var n = new SharedPluginImporter(new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p), new[] { new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(newDll) });
             var importer = new SharedObjectImporter(RepositoryLocator.CatalogueRepository);
 
@@ -100,6 +99,44 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual(p,p2);
             Assert.AreEqual(p.LoadModuleAssemblies.Single().Dll, new byte[] { 0, 1, 0, 1 });
         }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TestSharingAPluginReplaceDllBinary(bool fiddleIds)
+        {
+            foreach (var oldP in CatalogueRepository.GetAllObjects<Plugin>())
+                oldP.DeleteInDatabase();
+
+            var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
+            Assert.IsTrue(fi.Exists);
+
+            var p = new Plugin(CatalogueRepository, fi);
+            var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
+
+            var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p);
+            var lmaStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(lma);
+
+            if (fiddleIds)
+            {
+                //make it look like a new object we haven't seen before (but which collides on Name) this is the case when sharing with someone that isn't yourself
+                pStateless.Properties["ID"] = -80;
+                lmaStateless.Properties["Plugin_ID"] = -80;
+            }
+
+            //edit the binary data to represent a new version of the dll that should be imported
+            lmaStateless.Properties["Dll"] =  new byte[] { 0, 1, 0, 1 };
+            
+            var n = new SharedPluginImporter(pStateless,new []{lmaStateless});
+            var importer = new SharedObjectImporter(RepositoryLocator.CatalogueRepository);
+
+            //accept that it is an update
+            var p2 = n.Import(importer, new AcceptAllCheckNotifier());
+
+            Assert.AreEqual(p, p2);
+            Assert.AreEqual(new byte[] { 0, 1, 0, 1 }, p2.LoadModuleAssemblies.Single().Dll);
+        }
+
 
         [Test]
         public void JsonTest()
@@ -115,7 +152,7 @@ namespace CatalogueLibraryTests.ImportTests
 
             var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p);
             var lmaStatelessArray = new[] {new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(lma)};
-            
+
             BinaryFormatter bf = new BinaryFormatter();
             string s;
             string sa;
