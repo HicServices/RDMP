@@ -12,6 +12,7 @@ using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -19,6 +20,7 @@ using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Collections
 {
@@ -255,8 +257,6 @@ namespace CatalogueManager.Collections
                 ExpandAllFolders(CatalogueFolder.Root);
                 isFirstTime = false;
             }
-
-
         }
 
         private void ExpandAllFolders(CatalogueFolder model)
@@ -273,14 +273,7 @@ namespace CatalogueManager.Collections
         private void tlvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
         {
             var o = e.Model;
-
             
-            if (o == null || o is CatalogueFolder)
-                e.MenuStrip = new CatalogueMenu( _activator, null);
-            
-            if (o is Catalogue)
-                e.MenuStrip = new CatalogueMenu( _activator, (Catalogue)o);
-
             if (o is CatalogueItem)
                 e.MenuStrip = new CatalogueItemMenu( _activator, (CatalogueItem)o, _classifications[((CatalogueItem)o).ID]);
             
@@ -396,6 +389,14 @@ namespace CatalogueManager.Collections
                 //we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1 //also the renameable column
                 );
+            
+            //Things that are always visible regardless
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
+            {
+                new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true),
+                new ExecuteCommandCreateNewEmptyCatalogue(_activator)
+            };
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 

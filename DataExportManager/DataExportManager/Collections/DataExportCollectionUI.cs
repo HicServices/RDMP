@@ -159,7 +159,7 @@ namespace DataExportManager.Collections
 
         private void RefreshProviders()
         {
-            _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;
+            _childProvider = _activator.CoreChildProvider as DataExportChildProvider;
             _problemProvider = new DataExportProblemProvider(_childProvider);
             _problemProvider.FindProblems();
         }

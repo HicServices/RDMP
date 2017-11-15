@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -55,35 +54,24 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CatalogueMenu:RDMPContextMenuStrip
     {
-        private readonly ICoreIconProvider _coreIconProvider;
-        
+        public CatalogueMenu(IActivateItems activator, CatalogueFolder folder) : base(activator,null)
+        {
+            AddImportOptions();
+            AddCommonMenuItems(folder);
+        }
+
         public CatalogueMenu(IActivateItems activator, Catalogue catalogue):base(activator,catalogue)
         {
-            _coreIconProvider = activator.CoreIconProvider;
-            SetupContextMenu(catalogue);
-
-            if (catalogue != null)
-                AddCommonMenuItems();
-        }
-        
-        private void SetupContextMenu(Catalogue catalogue)
-        {
-            if(catalogue == null)//no Catalogue so blank menu with import only
-            {
-                AddCatalogueImportOptions();
-                return;
-            }
-
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks(catalogue));
-            
+
             Items.Add(new ToolStripSeparator());
 
-            var addItem = new ToolStripMenuItem("Add",null,
+            var addItem = new ToolStripMenuItem("Add", null,
 
-                new AddSupportingSqlTableMenuItem(_activator,catalogue),
+                new AddSupportingSqlTableMenuItem(_activator, catalogue),
                 new AddSupportingDocumentMenuItem(_activator, catalogue),
                 new AddAggregateMenuItem(_activator, catalogue),
                 new AddLookupMenuItem(_activator, "Add new Lookup Table Relationship", catalogue, null),
@@ -93,41 +81,25 @@ namespace CatalogueManager.Menus
             Items.Add(addItem);
 
             Items.Add(new ToolStripSeparator());
-            
+
             Items.Add("Clone Catalogue", null, (s, e) => CloneCatalogue(catalogue));
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////
             Items.Add(new ToolStripSeparator());
-            
-            Items.Add("Delete Catalogue", null,(s,e)=> DeleteCatalogue(catalogue));
 
-            Items.Add(new ToolStripSeparator());
+            AddImportOptions();
 
-            AddCatalogueImportOptions();
-
+            AddCommonMenuItems();
         }
-        
-        public void DeleteCatalogue(Catalogue catalogue)
-        {
 
-            DialogResult result = MessageBox.Show("Are you sure you want to delete " + catalogue + " from the database?", "Delete Record", MessageBoxButtons.YesNo);
-
-            if (result == DialogResult.Yes)
-            {
-                catalogue.DeleteInDatabase();
-
-                Publish(catalogue);
-            }
-        }
-        
-        private void AddCatalogueImportOptions()
+        private void AddImportOptions()
         {
             //Things that are always visible regardless
             Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
             Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true));
-                
-            Items.Add("Create new Empty Catalogue (Not Recommended)", _coreIconProvider.GetImage(RDMPConcept.Catalogue,OverlayKind.Problem), (s, e) => NewCatalogue());
+            Add(new ExecuteCommandCreateNewEmptyCatalogue(_activator));
         }
-        
+
+
         private void CloneCatalogue(Catalogue c)
         {
 
@@ -158,12 +130,6 @@ namespace CatalogueManager.Menus
             }
             else
                 MessageBox.Show("Select a Catalogue first (on the left)");
-        }
-
-        public void NewCatalogue()
-        {
-            var c = new Catalogue(RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
-            Publish(c);
         }
 
         public void PopupChecks(ICheckable checkable)
