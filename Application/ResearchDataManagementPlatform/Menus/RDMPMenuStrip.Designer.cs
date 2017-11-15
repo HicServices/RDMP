@@ -30,7 +30,6 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.navigateToObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LocationsMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,21 +95,12 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.navigateToObjectToolStripMenuItem,
             this.runToolStripMenuItem,
             this.openToolStripMenuItem,
             this.findToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
-            // 
-            // navigateToObjectToolStripMenuItem
-            // 
-            this.navigateToObjectToolStripMenuItem.Name = "navigateToObjectToolStripMenuItem";
-            this.navigateToObjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.navigateToObjectToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.navigateToObjectToolStripMenuItem.Text = "Navigate to Object";
-            this.navigateToObjectToolStripMenuItem.Click += new System.EventHandler(this.navigateToObjectToolStripMenuItem_Click);
             // 
             // runToolStripMenuItem
             // 
@@ -488,7 +478,6 @@
         private System.Windows.Forms.ToolStripMenuItem generateUserInterfaceDocumentationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem navigateToObjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem managePluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem codeGenerationToolStripMenuItem;

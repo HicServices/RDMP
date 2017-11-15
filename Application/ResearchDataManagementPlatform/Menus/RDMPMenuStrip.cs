@@ -356,11 +356,6 @@ namespace ResearchDataManagementPlatform.Menus
 
 
         }
-
-        private void navigateToObjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new NavigateToObjectUI(_windowManager.ContentManager).Show();
-        }
         
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
         {
