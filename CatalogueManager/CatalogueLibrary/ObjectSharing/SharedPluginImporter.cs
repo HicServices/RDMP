@@ -44,6 +44,11 @@ namespace CatalogueLibrary.ObjectSharing
             _lma = loadModuleAssemblies.ToList();
         }
 
+        public SharedPluginImporter(string jsonPluginTree)
+        {
+            
+        }
+
         public SharedPluginImporter(string plugin, string loadModuleAssemblies)
         {
             var received = Convert.FromBase64String(plugin);
