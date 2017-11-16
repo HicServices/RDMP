@@ -5,7 +5,7 @@ using CatalogueManager.Menus.MenuItems;
 
 namespace CatalogueManager.Menus
 {
-    public class HICProjectDirectoryNodeMenu : RDMPToolStripMenuItem
+    public class HICProjectDirectoryNodeMenu : RDMPContextMenuStrip
     {
         public HICProjectDirectoryNodeMenu(IActivateItems activator, HICProjectDirectoryNode node) : base(activator, null)
         {
