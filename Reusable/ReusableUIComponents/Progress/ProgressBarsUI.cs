@@ -48,6 +48,12 @@ namespace ReusableUIComponents.Progress
 
         public void OnProgress(object sender, ProgressEventArgs e)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => OnProgress(sender, e)));
+                return;
+            }
+
             if (progressBars.ContainsKey(e.TaskDescription))
                 UpdateProgressBar(progressBars[e.TaskDescription], e);
             else

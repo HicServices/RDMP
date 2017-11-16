@@ -96,14 +96,15 @@ namespace CatalogueLibrary.Data.Remoting
             return Name;
         }
 
-        public string GetUrlFor<T>(bool isarray)
+        public string GetUrlFor<T>(bool isarray = false)
         {
-            var uri = new UriBuilder(new Uri(URL, UriKind.Absolute));
-            uri.Path = "/api/" + typeof(T).Name;
+            var baseUri = new UriBuilder(new Uri(URL));
             if (isarray)
-                uri.Query = "isarray=true";
+                baseUri.Query = "isarray=true";
+
+            baseUri.Path += "api/" + typeof(T).Name;
             
-            return uri.ToString();
+            return baseUri.ToString();
         }
     }
 }

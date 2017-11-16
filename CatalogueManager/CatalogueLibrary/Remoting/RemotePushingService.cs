@@ -97,16 +97,19 @@ namespace CatalogueLibrary.Remoting
         public async void SendPluginsToAllRemotes(Plugin[] plugins, Action callback = null)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to send " + plugins.Length + " " + typeof(Plugin).Name + " items to all remotes."));
+            var done = new Dictionary<string, int>();
 
             foreach (var remoteRDMP in remotes)
             {
-                listener.OnProgress(this, new ProgressEventArgs(remoteRDMP.Name, new ProgressMeasurement(0, ProgressType.Records), new TimeSpan()));
+                listener.OnProgress(this, new ProgressEventArgs(remoteRDMP.Name, new ProgressMeasurement(0, ProgressType.Records, plugins.Length), new TimeSpan()));
             }
 
             var tasks = new List<Task>();
 
             foreach (var remote in remotes)
             {
+                done.Add(remote.Name, 0);
+                    
                 foreach (var plugin in plugins)
                 {
                     var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(plugin);
@@ -130,7 +133,7 @@ namespace CatalogueLibrary.Remoting
                         lmasString = Convert.ToBase64String(ms.ToArray());
                     }
 
-                    var pluginJson = JsonConvert.SerializeObject(new { pluginParam = pluginString, lmasParam = lmasString}, Formatting.None);
+                    var pluginJson = JsonConvert.SerializeObject(new { pluginParam = pluginString, lmasParam = lmasString }, Formatting.None);
 
                     var handler = new HttpClientHandler()
                     {
@@ -139,9 +142,11 @@ namespace CatalogueLibrary.Remoting
 
                     HttpResponseMessage result;
 
-                    var apiUrl = remote.GetUrlFor<Plugin>(isarray: true);
+                    var apiUrl = remote.GetUrlFor<Plugin>();
 
                     RemoteRDMP remote1 = remote;
+                    Plugin plugin1 = plugin;
+                               
                     var sender = new Task(() =>
                     {
                         using (var client = new HttpClient(handler))
@@ -150,13 +155,17 @@ namespace CatalogueLibrary.Remoting
                             {
                                 result = client.PostAsync(new Uri(apiUrl), new StringContent(pluginJson, Encoding.UTF8, "application/json")).Result;
                                 if (result.IsSuccessStatusCode)
-                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Sending message to " + remote1.Name + " completed."));
+                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Sending " + plugin1.Name + " to " + remote1.Name + " completed."));
                                 else
-                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error sending message to " + remote1.Name + ": " + result.ReasonPhrase));
+                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error sending " + plugin1.Name + " to " + remote1.Name + ": " + result.ReasonPhrase));
+                                lock (done)
+                                {
+                                    listener.OnProgress(this, new ProgressEventArgs(remote1.Name, new ProgressMeasurement(++done[remote1.Name], ProgressType.Records, plugins.Length), new TimeSpan()));   
+                                }
                             }
                             catch (Exception ex)
                             {
-                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error sending message to " + remote1.Name, ex));
+                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error sending " + plugin1.Name + " to " + remote1.Name, ex));
                                 listener.OnProgress(this, new ProgressEventArgs(remote1.Name, new ProgressMeasurement(1, ProgressType.Records, 1), new TimeSpan()));
                             }
                         }

@@ -38,16 +38,8 @@ namespace CatalogueManager.PluginManagement
             this.pbAnalysing = new System.Windows.Forms.ProgressBar();
             this.lblProgressAnalysing = new System.Windows.Forms.Label();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.grpRemotes = new System.Windows.Forms.GroupBox();
-            this.lblRemoteResult = new System.Windows.Forms.Label();
-            this.barRemoteSave = new System.Windows.Forms.ProgressBar();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.lblCredentials = new System.Windows.Forms.Label();
-            this.lblEndpoint = new System.Windows.Forms.Label();
             this.btnSaveToRemote = new System.Windows.Forms.Button();
-            this.ddCredentials = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
-            this.grpRemotes.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeListView
@@ -60,7 +52,7 @@ namespace CatalogueManager.PluginManagement
             this.treeListView.Location = new System.Drawing.Point(12, 48);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
-            this.treeListView.Size = new System.Drawing.Size(654, 424);
+            this.treeListView.Size = new System.Drawing.Size(654, 393);
             this.treeListView.TabIndex = 0;
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
@@ -84,14 +76,14 @@ namespace CatalogueManager.PluginManagement
             this.pluginDependencyVisualisation1.AutoSize = true;
             this.pluginDependencyVisualisation1.Location = new System.Drawing.Point(673, 12);
             this.pluginDependencyVisualisation1.Name = "pluginDependencyVisualisation1";
-            this.pluginDependencyVisualisation1.Size = new System.Drawing.Size(702, 545);
+            this.pluginDependencyVisualisation1.Size = new System.Drawing.Size(702, 708);
             this.pluginDependencyVisualisation1.TabIndex = 1;
             // 
             // checksUI1
             // 
-            this.checksUI1.Location = new System.Drawing.Point(12, 478);
+            this.checksUI1.Location = new System.Drawing.Point(12, 492);
             this.checksUI1.Name = "checksUI1";
-            this.checksUI1.Size = new System.Drawing.Size(655, 242);
+            this.checksUI1.Size = new System.Drawing.Size(655, 228);
             this.checksUI1.TabIndex = 2;
             // 
             // pbAnalysing
@@ -123,89 +115,22 @@ namespace CatalogueManager.PluginManagement
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
-            // grpRemotes
-            // 
-            this.grpRemotes.Controls.Add(this.lblRemoteResult);
-            this.grpRemotes.Controls.Add(this.barRemoteSave);
-            this.grpRemotes.Controls.Add(this.textBox1);
-            this.grpRemotes.Controls.Add(this.lblCredentials);
-            this.grpRemotes.Controls.Add(this.lblEndpoint);
-            this.grpRemotes.Controls.Add(this.btnSaveToRemote);
-            this.grpRemotes.Controls.Add(this.ddCredentials);
-            this.grpRemotes.Location = new System.Drawing.Point(673, 563);
-            this.grpRemotes.Name = "grpRemotes";
-            this.grpRemotes.Size = new System.Drawing.Size(365, 157);
-            this.grpRemotes.TabIndex = 6;
-            this.grpRemotes.TabStop = false;
-            this.grpRemotes.Text = "Remotes";
-            // 
-            // lblRemoteResult
-            // 
-            this.lblRemoteResult.AutoSize = true;
-            this.lblRemoteResult.Location = new System.Drawing.Point(6, 137);
-            this.lblRemoteResult.Name = "lblRemoteResult";
-            this.lblRemoteResult.Size = new System.Drawing.Size(35, 13);
-            this.lblRemoteResult.TabIndex = 8;
-            this.lblRemoteResult.Text = "label1";
-            // 
-            // barRemoteSave
-            // 
-            this.barRemoteSave.Location = new System.Drawing.Point(9, 107);
-            this.barRemoteSave.MarqueeAnimationSpeed = 0;
-            this.barRemoteSave.Name = "barRemoteSave";
-            this.barRemoteSave.Size = new System.Drawing.Size(350, 23);
-            this.barRemoteSave.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.barRemoteSave.TabIndex = 7;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(68, 25);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(291, 20);
-            this.textBox1.TabIndex = 6;
-            // 
-            // lblCredentials
-            // 
-            this.lblCredentials.AutoSize = true;
-            this.lblCredentials.Location = new System.Drawing.Point(6, 54);
-            this.lblCredentials.Name = "lblCredentials";
-            this.lblCredentials.Size = new System.Drawing.Size(59, 13);
-            this.lblCredentials.TabIndex = 5;
-            this.lblCredentials.Text = "Credentials";
-            // 
-            // lblEndpoint
-            // 
-            this.lblEndpoint.AutoSize = true;
-            this.lblEndpoint.Location = new System.Drawing.Point(6, 25);
-            this.lblEndpoint.Name = "lblEndpoint";
-            this.lblEndpoint.Size = new System.Drawing.Size(49, 13);
-            this.lblEndpoint.TabIndex = 5;
-            this.lblEndpoint.Text = "Endpoint";
-            // 
             // btnSaveToRemote
             // 
-            this.btnSaveToRemote.Location = new System.Drawing.Point(9, 78);
+            this.btnSaveToRemote.Location = new System.Drawing.Point(12, 447);
             this.btnSaveToRemote.Name = "btnSaveToRemote";
-            this.btnSaveToRemote.Size = new System.Drawing.Size(350, 23);
+            this.btnSaveToRemote.Size = new System.Drawing.Size(350, 39);
             this.btnSaveToRemote.TabIndex = 3;
             this.btnSaveToRemote.Text = "Save to Remotes";
             this.btnSaveToRemote.UseVisualStyleBackColor = true;
             this.btnSaveToRemote.Click += new System.EventHandler(this.btnSaveToRemote_Click);
-            // 
-            // ddCredentials
-            // 
-            this.ddCredentials.FormattingEnabled = true;
-            this.ddCredentials.Location = new System.Drawing.Point(68, 51);
-            this.ddCredentials.Name = "ddCredentials";
-            this.ddCredentials.Size = new System.Drawing.Size(291, 21);
-            this.ddCredentials.TabIndex = 4;
             // 
             // PluginManagementForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1387, 759);
-            this.Controls.Add(this.grpRemotes);
+            this.Controls.Add(this.btnSaveToRemote);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.lblProgressAnalysing);
             this.Controls.Add(this.pbAnalysing);
@@ -215,8 +140,6 @@ namespace CatalogueManager.PluginManagement
             this.Name = "PluginManagementForm";
             this.Text = "PluginManagementForm";
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
-            this.grpRemotes.ResumeLayout(false);
-            this.grpRemotes.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -231,13 +154,6 @@ namespace CatalogueManager.PluginManagement
         private System.Windows.Forms.ProgressBar pbAnalysing;
         private System.Windows.Forms.Label lblProgressAnalysing;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.GroupBox grpRemotes;
-        private System.Windows.Forms.Label lblRemoteResult;
-        private System.Windows.Forms.ProgressBar barRemoteSave;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label lblCredentials;
-        private System.Windows.Forms.Label lblEndpoint;
         private System.Windows.Forms.Button btnSaveToRemote;
-        private System.Windows.Forms.ComboBox ddCredentials;
     }
 }
