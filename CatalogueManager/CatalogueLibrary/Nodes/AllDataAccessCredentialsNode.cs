@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.Nodes
 {
-    public class ANOTablesNode:SingletonNode
+    public class AllDataAccessCredentialsNode:SingletonNode
     {
-        public ANOTablesNode():base("Anonymisation Tables")
+        public AllDataAccessCredentialsNode(): base("Data Access Credentials")
         {
             
         }

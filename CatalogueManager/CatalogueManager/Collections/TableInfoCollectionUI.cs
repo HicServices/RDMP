@@ -140,7 +140,7 @@ namespace CatalogueManager.Collections
                 e.MenuStrip = new TableInfoMenu( _activator, tableInfo);
             else if (columnInfo != null)
                 e.MenuStrip = new ColumnInfoMenu(_activator, columnInfo);
-            else if (e.Model is DataAccessCredentialsNode)
+            else if (e.Model is AllDataAccessCredentialsNode)
                 e.MenuStrip = new DataAccessCredentialsNodeMenu(_activator);
             else if (e.Model is DataAccessCredentialUsageNode)
                 e.MenuStrip = new DataAccessCredentialUsageNodeMenu( _activator,(DataAccessCredentialUsageNode)e.Model);
@@ -193,15 +193,15 @@ namespace CatalogueManager.Collections
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.DataAccessCredentialsNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.ANOTablesNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             if(e.Object is DataAccessCredentials)
-                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<DataAccessCredentialsNode>());
+                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
             
             if(e.Object is Catalogue || e.Object is TableInfo)
                 tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllServersNode);
@@ -222,8 +222,8 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root is DataAccessCredentialsNode ||
-            root is ANOTablesNode || 
+            return root is AllDataAccessCredentialsNode ||
+            root is AllANOTablesNode || 
             root is AllServersNode || 
             root is AllExternalServersNode;
         }

@@ -36,10 +36,10 @@ namespace CatalogueManager.Icons.IconProvision
         ANOColumnInfo,
         PreLoadDiscardedColumn,
 
-        DataAccessCredentialsNode,
+        AllDataAccessCredentialsNode,
         DataAccessCredentials,
         
-        ANOTablesNode,
+        AllANOTablesNode,
         ANOTable,
 
         AllServersNode,

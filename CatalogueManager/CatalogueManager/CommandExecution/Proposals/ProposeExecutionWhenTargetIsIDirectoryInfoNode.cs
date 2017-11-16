@@ -13,9 +13,9 @@ using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsIDirectoryNode:RDMPCommandExecutionProposal<IDirectoryInfoNode>
+    public class ProposeExecutionWhenTargetIsIDirectoryInfoNode:RDMPCommandExecutionProposal<IDirectoryInfoNode>
     {
-        public ProposeExecutionWhenTargetIsIDirectoryNode(IActivateItems itemActivator) : base(itemActivator)
+        public ProposeExecutionWhenTargetIsIDirectoryInfoNode(IActivateItems itemActivator): base(itemActivator)
         {
         }
 

@@ -34,5 +34,23 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 
             return new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
         }
+
+        protected bool Equals(HICProjectDirectoryNode other)
+        {
+            return Equals(LoadMetadata, other.LoadMetadata);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((HICProjectDirectoryNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
+        }
     }
 }

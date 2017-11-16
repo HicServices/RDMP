@@ -93,6 +93,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllANOTablesNode {
+            get {
+                object obj = ResourceManager.GetObject("AllANOTablesNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllAutomationServerSlotsNode {
             get {
                 object obj = ResourceManager.GetObject("AllAutomationServerSlotsNode", resourceCulture);
@@ -106,6 +116,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap AllCataloguesUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllCataloguesUsedByLoadMetadataNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AllDataAccessCredentialsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllDataAccessCredentialsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -166,16 +186,6 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap ANOTable {
             get {
                 object obj = ResourceManager.GetObject("ANOTable", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ANOTablesNode {
-            get {
-                object obj = ResourceManager.GetObject("ANOTablesNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -443,16 +453,6 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap DataAccessCredentialsNode {
-            get {
-                object obj = ResourceManager.GetObject("DataAccessCredentialsNode", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap Database {
             get {
                 object obj = ResourceManager.GetObject("Database", resourceCulture);
@@ -703,9 +703,9 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap ExtractionFilterParameterSet {
+        public static System.Drawing.Bitmap ExtractionDirectoryNode {
             get {
-                object obj = ResourceManager.GetObject("ExtractionFilterParameterSet", resourceCulture);
+                object obj = ResourceManager.GetObject("ExtractionDirectoryNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -713,9 +713,9 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap ExtractionDirectoryNode {
+        public static System.Drawing.Bitmap ExtractionFilterParameterSet {
             get {
-                object obj = ResourceManager.GetObject("ExtractionDirectoryNode", resourceCulture);
+                object obj = ResourceManager.GetObject("ExtractionFilterParameterSet", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
