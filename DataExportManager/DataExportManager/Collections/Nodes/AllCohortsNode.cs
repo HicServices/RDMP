@@ -7,9 +7,9 @@ using CatalogueLibrary.Nodes;
 
 namespace DataExportManager.Collections.Nodes
 {
-    public class CohortsNode: SingletonNode
+    public class AllCohortsNode: SingletonNode
     {
-        public CohortsNode()
+        public AllCohortsNode()
             : base("ALL Saved Cohorts")
         {
             

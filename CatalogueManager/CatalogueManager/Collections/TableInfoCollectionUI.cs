@@ -127,35 +127,6 @@ namespace CatalogueManager.Collections
         }
 
 
-        private void olvTableInfos_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            TableInfo tableInfo = e.Model as TableInfo;
-            ColumnInfo columnInfo = e.Model as ColumnInfo;
-            var discardCollection = e.Model as PreLoadDiscardedColumnsNode;
-            
-            if (e.Model is AllExternalServersNode)
-                e.MenuStrip = new AllExternalServersNodeMenu(_activator);
-            else
-            if (tableInfo != null)
-                e.MenuStrip = new TableInfoMenu( _activator, tableInfo);
-            else if (columnInfo != null)
-                e.MenuStrip = new ColumnInfoMenu(_activator, columnInfo);
-            else if (e.Model is AllDataAccessCredentialsNode)
-                e.MenuStrip = new DataAccessCredentialsNodeMenu(_activator);
-            else if (e.Model is DataAccessCredentialUsageNode)
-                e.MenuStrip = new DataAccessCredentialUsageNodeMenu( _activator,(DataAccessCredentialUsageNode)e.Model);
-            else if (discardCollection != null)
-                e.MenuStrip = new PreLoadDiscardedColumnsCollectionMenu(_activator, discardCollection);
-            else
-            if(e.Model == null)
-            {
-                //user right clicked in an empty area
-                var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator,false));
-            }
-
-        }
-
         private void olvTableInfos_KeyUp(object sender, KeyEventArgs e)
         {
             
@@ -187,8 +158,14 @@ namespace CatalogueManager.Collections
                 olvColumn1,
                 olvColumn1
                 );
+
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new[]
+            {
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false)
+            };
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
+
 
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);

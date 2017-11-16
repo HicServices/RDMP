@@ -748,7 +748,7 @@
     <Compile Include="Menus\AllExternalServersNodeMenu.cs" />
     <Compile Include="Menus\CacheProgressMenu.cs" />
     <Compile Include="Menus\CatalogueItemsNodeMenu.cs" />
-    <Compile Include="Menus\DataAccessCredentialsNodeMenu.cs" />
+    <Compile Include="Menus\AllDataAccessCredentialsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
     <Compile Include="Menus\DocumentationNodeMenu.cs" />
     <Compile Include="Menus\FilterMenu.cs" />

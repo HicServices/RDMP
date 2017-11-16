@@ -39,7 +39,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnHome.Image = FamFamFamIcons.application_home;
             btnCatalogues.Image = CatalogueIcons.Catalogue;
             btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration;
-            btnSavedCohorts.Image = CatalogueIcons.CohortsNode;
+            btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode;
             btnDataExport.Image = CatalogueIcons.Project;
             btnTables.Image = CatalogueIcons.TableInfo;
             btnLoad.Image = CatalogueIcons.LoadMetadata;

@@ -105,7 +105,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             if(file == null)
                 return;
 
-            if (!File.ReadAllText(file).Contains(expectedString))
+            if (!File.ReadAllText(file).Replace(" ","").Contains(expectedString.Replace(" ","")))
                 problems.Add("File '" + file + "' did not contain expected text '" + expectedString + "'");
         }
     }

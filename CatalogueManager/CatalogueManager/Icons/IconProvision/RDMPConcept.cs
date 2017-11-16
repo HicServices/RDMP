@@ -78,7 +78,7 @@ namespace CatalogueManager.Icons.IconProvision
         
         StandardRegex,
         
-        CohortsNode,
+        AllCohortsNode,
         ProjectsNode,
         ProjectCohortIdentificationConfigurationAssociationsNode,
         ProjectSavedCohortsNode,

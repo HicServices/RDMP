@@ -24,7 +24,7 @@ namespace DataExportManager.Menus
         {
             _cohortSourceUsedByProjectNode = cohortSourceUsedByProjectNode;
             
-            var viewDetail = new ToolStripMenuItem("Show Detailed Summary of Project Cohorts", CatalogueIcons.CohortsNode, (s, e) => ShowDetailedSummaryOfCohorts());
+            var viewDetail = new ToolStripMenuItem("Show Detailed Summary of Project Cohorts", CatalogueIcons.AllCohortsNode, (s, e) => ShowDetailedSummaryOfCohorts());
             viewDetail.Enabled = !_cohortSourceUsedByProjectNode.IsEmptyNode;
             Items.Add(viewDetail);
 

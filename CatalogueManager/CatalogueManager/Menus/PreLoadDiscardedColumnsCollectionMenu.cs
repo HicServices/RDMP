@@ -16,6 +16,11 @@ namespace CatalogueManager.Menus
         {
             Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardNode.TableInfo));
         }
+
+        public PreLoadDiscardedColumnsCollectionMenu(IActivateItems activator, IdentifierDumpServerUsageNode discardUsageNode): base(activator, null)
+        {
+            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardUsageNode.TableInfo));
+        }
         
     }
 }

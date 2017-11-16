@@ -27,7 +27,7 @@ namespace DataExportManager.Menus
     public class CohortsNodeMenu:RDMPContextMenuStrip
     {
         [ImportingConstructor]
-        public CohortsNodeMenu(IActivateItems activator,CohortsNode node):base(activator,null)
+        public CohortsNodeMenu(IActivateItems activator,AllCohortsNode node):base(activator,null)
         {
 
             Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(activator));

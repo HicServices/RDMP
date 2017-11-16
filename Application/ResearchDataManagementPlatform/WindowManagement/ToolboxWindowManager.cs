@@ -90,7 +90,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 break;
                 case RDMPCollection.SavedCohorts:
                     collection = new SavedCohortsCollectionUI();
-                    toReturn = Show(RDMPCollection.SavedCohorts, collection,"Saved Cohorts", CatalogueIcons.CohortsNode);
+                    toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts", CatalogueIcons.AllCohortsNode);
                 break;
                 case RDMPCollection.Favourites:
                     collection = new FavouritesCollectionUI();

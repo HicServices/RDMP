@@ -38,7 +38,7 @@ namespace DataExportManager.Collections.Providers
     public class DataExportChildProvider : CatalogueChildProvider
     {
         //root objects
-        public CohortsNode RootCohortsNode { get; private set; }
+        public AllCohortsNode RootCohortsNode { get; private set; }
         
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly ICheckNotifier _errorsCheckNotifier;
@@ -111,7 +111,7 @@ namespace DataExportManager.Collections.Providers
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
                 _configurationToDatasetMapping.Add(configuration, SelectedDataSets.Where(c => c.ExtractionConfiguration_ID == configuration.ID).ToArray());
 
-            RootCohortsNode = new CohortsNode();
+            RootCohortsNode = new AllCohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
 
             foreach (ExtractableDataSetPackage package in AllPackages)
@@ -376,7 +376,7 @@ namespace DataExportManager.Collections.Providers
             }
         }
 
-        private void AddChildren(CohortsNode cohortsNode, DescendancyList descendancy)
+        private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
         {
             AddToDictionaries(new HashSet<object>(CohortSources), descendancy);
             foreach (var s in CohortSources)

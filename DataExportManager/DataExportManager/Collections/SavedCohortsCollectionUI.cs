@@ -43,7 +43,7 @@ namespace DataExportManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root is CohortsNode;
+            return root is AllCohortsNode;
         }
     }
 }
