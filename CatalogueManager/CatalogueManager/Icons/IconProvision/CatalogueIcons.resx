@@ -535,4 +535,13 @@
   <data name="RemoteRDMP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\RemoteRDMP.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AutomateablePipeline" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AutomateablePipeline.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PipelineComponent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\PipelineComponent.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PipelineComponentArgument" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\PipelineComponentArgument.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
