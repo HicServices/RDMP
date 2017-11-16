@@ -51,11 +51,6 @@ namespace CohortManager.Collections
             tlvCohortIdentificationConfigurations.AddObjects(_activator.CoreChildProvider.AllCohortIdentificationConfigurations);
         }
         
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse);
-        }
-
         public static bool IsRootObject(object root)
         {
             return root is CohortIdentificationConfiguration;

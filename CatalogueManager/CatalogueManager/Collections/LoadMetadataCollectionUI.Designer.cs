@@ -34,25 +34,22 @@ namespace CatalogueManager.Collections
             this.components = new System.ComponentModel.Container();
             this.tlvLoadMetadata = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvLoadMetadata)).BeginInit();
             this.SuspendLayout();
             // 
             // tlvLoadMetadata
             // 
             this.tlvLoadMetadata.AllColumns.Add(this.olvName);
-            this.tlvLoadMetadata.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tlvLoadMetadata.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
             this.tlvLoadMetadata.CellEditUseWholeCell = false;
             this.tlvLoadMetadata.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName});
             this.tlvLoadMetadata.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvLoadMetadata.Location = new System.Drawing.Point(0, 3);
+            this.tlvLoadMetadata.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlvLoadMetadata.Location = new System.Drawing.Point(0, 0);
             this.tlvLoadMetadata.Name = "tlvLoadMetadata";
             this.tlvLoadMetadata.ShowGroups = false;
-            this.tlvLoadMetadata.Size = new System.Drawing.Size(494, 566);
+            this.tlvLoadMetadata.Size = new System.Drawing.Size(500, 600);
             this.tlvLoadMetadata.TabIndex = 0;
             this.tlvLoadMetadata.UseCompatibleStateImageBehavior = false;
             this.tlvLoadMetadata.View = System.Windows.Forms.View.Details;
@@ -67,23 +64,10 @@ namespace CatalogueManager.Collections
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Load Metadata";
             // 
-            // btnExpandOrCollapse
-            // 
-            this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExpandOrCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(443, 575);
-            this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
-            this.btnExpandOrCollapse.Size = new System.Drawing.Size(51, 22);
-            this.btnExpandOrCollapse.TabIndex = 171;
-            this.btnExpandOrCollapse.Text = "Expand";
-            this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
-            this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
-            // 
             // LoadMetadataCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnExpandOrCollapse);
             this.Controls.Add(this.tlvLoadMetadata);
             this.Name = "LoadMetadataCollectionUI";
             this.Size = new System.Drawing.Size(500, 600);
@@ -96,6 +80,5 @@ namespace CatalogueManager.Collections
 
         private TreeListView tlvLoadMetadata;
         private OLVColumn olvName;
-        private System.Windows.Forms.Button btnExpandOrCollapse;
     }
 }

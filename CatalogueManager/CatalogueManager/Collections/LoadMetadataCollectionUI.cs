@@ -171,10 +171,5 @@ namespace CatalogueManager.Collections
         {
             return root is LoadMetadata;
         }
-
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse);
-        }
     }
 }
