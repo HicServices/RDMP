@@ -13,6 +13,7 @@ namespace CatalogueManager.Icons.IconProvision
         //catalogue database objects
         AllAutomationServerSlotsNode,
         AutomationServiceSlot,
+        AutomateablePipeline,
         AllRDMPRemotesNode,
         RemoteRDMP,
         Favourite,
@@ -117,6 +118,8 @@ namespace CatalogueManager.Icons.IconProvision
         ExtractionConfigurationsNode,
 
         PermissionWindow,
-        Pipeline
+        Pipeline,
+        PipelineComponent,
+        PipelineComponentArgument
     }
 }

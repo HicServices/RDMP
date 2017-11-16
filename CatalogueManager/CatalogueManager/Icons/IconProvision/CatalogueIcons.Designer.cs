@@ -203,6 +203,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AutomateablePipeline {
+            get {
+                object obj = ResourceManager.GetObject("AutomateablePipeline", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AutomationServiceSlot {
             get {
                 object obj = ResourceManager.GetObject("AutomationServiceSlot", resourceCulture);
@@ -1076,6 +1086,26 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Pipeline {
             get {
                 object obj = ResourceManager.GetObject("Pipeline", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap PipelineComponent {
+            get {
+                object obj = ResourceManager.GetObject("PipelineComponent", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap PipelineComponentArgument {
+            get {
+                object obj = ResourceManager.GetObject("PipelineComponentArgument", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

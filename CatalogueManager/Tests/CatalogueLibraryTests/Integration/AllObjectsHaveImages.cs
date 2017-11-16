@@ -34,7 +34,7 @@ namespace CatalogueLibraryTests.Integration
             };
 
             List<Exception> whoCares;
-            foreach (Type type in RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => typeof (IHasDependencies).IsAssignableFrom(t)))
+            foreach (Type type in RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => typeof (IHasDependencies).IsAssignableFrom(t) && !t.IsInterface))
             {
                 var typeName = type.Name;
                 if (ExceptionsAllowed.Any(s=>s.Equals(typeName)))

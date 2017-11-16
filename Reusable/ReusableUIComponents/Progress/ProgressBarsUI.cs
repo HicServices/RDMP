@@ -12,6 +12,11 @@ using ReusableLibraryCode.Progress;
 
 namespace ReusableUIComponents.Progress
 {
+    /// <summary>
+    /// Cut down version of ProgressUI which shows progress events as bars.  If a progress event has a known target number the bar will indicate progress otherwise
+    /// it will be a Marquee bar (one with a moving unknown progress animation).  All Notify events are displayed under the smiley face (or frowning if the process
+    /// has crashed)
+    /// </summary>
     public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
     {
         Dictionary<string,ProgressBar> progressBars = new Dictionary<string, ProgressBar>();

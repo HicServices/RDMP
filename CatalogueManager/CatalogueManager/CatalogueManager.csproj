@@ -1411,6 +1411,7 @@
     <None Include="Icons\collapseAllNodes.png" />
     <None Include="Icons\AllAutomationServerSlotsNode.png" />
     <None Include="Icons\AllRDMPRemotesNode.png" />
+    <None Include="Icons\AutomateablePipeline.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1492,6 +1493,8 @@
     <None Include="Icons\ProjectCohortIdentificationConfigurationAssociationsNode.png" />
     <None Include="Icons\ProjectSavedCohortsNode.png" />
     <None Include="Icons\RemoteRDMP.png" />
+    <None Include="Icons\PipelineComponentArgument.png" />
+    <None Include="Icons\PipelineComponent.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
