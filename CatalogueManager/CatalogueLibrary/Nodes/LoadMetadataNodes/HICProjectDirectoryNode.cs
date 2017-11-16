@@ -10,7 +10,7 @@ using ReusableUIComponents;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class HICProjectDirectoryNode
+    public class HICProjectDirectoryNode: IDirectoryInfoNode
     {
         public LoadMetadata LoadMetadata { get; set; }
 
@@ -27,16 +27,12 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) ? "???" : LoadMetadata.LocationOfFlatFiles;
         }
 
-        public bool CanActivate()
+        public DirectoryInfo GetDirectoryInfoIfAny()
         {
-            return !string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) && Directory.Exists(LoadMetadata.LocationOfFlatFiles);
-        }
+            if (string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles ))
+                return null;
 
-        public void Activate()
-        {
-            if(CanActivate())
-                Process.Start(LoadMetadata.LocationOfFlatFiles);
+            return new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
         }
-               
     }
 }

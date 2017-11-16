@@ -184,7 +184,6 @@ namespace DataExportManager.Collections
         {
             object o = tlvDataExport.SelectedObject;
             var customDataTable = o as CustomDataTableNode;
-            var folder = o as ExtractionFolderNode;
             
             if (customDataTable != null)
             {
@@ -194,12 +193,8 @@ namespace DataExportManager.Collections
 
                 _activator.ShowWindow(c, true);
             }
-            
-            if(folder != null && folder.CanActivate())
-                folder.Activate();
         }
-
-
+        
         private void btnExpandOrCollapse_Click(object sender, EventArgs e)
         {
             CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse);

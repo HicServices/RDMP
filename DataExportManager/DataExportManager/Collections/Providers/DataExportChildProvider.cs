@@ -155,7 +155,7 @@ namespace DataExportManager.Collections.Providers
 
             AddChildren(extractionConfigurationsNode,descendancy.Add(extractionConfigurationsNode));
             
-            var folder = new ExtractionFolderNode(project);
+            var folder = new ExtractionDirectoryNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
         }

@@ -336,7 +336,7 @@
     <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
-    <Compile Include="Collections\Nodes\ExtractionFolderNode.cs" />
+    <Compile Include="Collections\Nodes\ExtractionDirectoryNode.cs" />
     <Compile Include="Collections\Nodes\LinkedCohortNode.cs" />
     <Compile Include="Collections\Nodes\PackageContentNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
@@ -360,6 +360,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportFileAsCustomDataForCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReleaseProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetProjectExtractionDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowDetailedSummaryOfAllCohorts.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSelectedDatasetsExtractionSql.cs" />
@@ -416,6 +417,7 @@
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
+    <Compile Include="Menus\ExtractionDirectoryNodeMenu.cs" />
     <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\ProjectCohortIdentificationConfigurationAssociationsNodeMenu.cs" />
     <Compile Include="Menus\ProjectSavedCohortsNodeMenu.cs" />

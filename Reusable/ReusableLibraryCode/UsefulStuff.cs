@@ -957,6 +957,11 @@ c.name = @column_name", con);
 
             return sb.ToString();
         }
+        public void ShowFolderInWindowsExplorer(DirectoryInfo directoryInfo)
+        {
+            string argument = " \"" + directoryInfo.FullName + "\"";
+            Process.Start("explorer.exe", argument);
+        }
 
         public void ShowFileInWindowsExplorer(FileInfo fileInfo)
         {

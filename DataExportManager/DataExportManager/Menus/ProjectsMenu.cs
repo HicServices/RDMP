@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections.Providers;
@@ -21,7 +20,6 @@ using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.Menus
 {
@@ -36,25 +34,11 @@ namespace DataExportManager.Menus
             _project = project;
             
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks());
-            Items.Add("Set Extraction Folder", CatalogueIcons.ExtractionFolderNode, (s, e) => ChooseExtractionFolder());
-
             Add(new ExecuteCommandReleaseProject(_activator).SetTarget(project));
             
             AddCommonMenuItems();
         }
 
-        private void ChooseExtractionFolder()
-        {
-            using (var ofd = new FolderBrowserDialog())
-            {
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    _project.ExtractionDirectory = ofd.SelectedPath;
-                    _project.SaveToDatabase();
-                    Publish(_project);
-                }
-            }
-        }
 
         private void PopupChecks()
         {

@@ -76,15 +76,12 @@ namespace CatalogueManager.Collections
         private void otvLoadMetadata_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvLoadMetadata.SelectedObject;
-            var hicDir = o as HICProjectDirectoryNode;
             var loadProgress = o as LoadProgress;
             
             var permissionWindow = o as PermissionWindow;
             var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
             
-            if(hicDir != null)
-                hicDir.Activate();
-
+            
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
 
@@ -126,13 +123,9 @@ namespace CatalogueManager.Collections
             var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
             var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
-            var hicProjectDirectory = e.Model as HICProjectDirectoryNode;
             
             if (allCataloguesNode != null)
                 e.MenuStrip = factory.CreateMenu(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator,allCataloguesNode.LoadMetadata));
-
-            if (hicProjectDirectory != null)
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandChooseHICProjectDirectory(_activator,hicProjectDirectory.LoadMetadata));
         }
         
         public override void SetItemActivator(IActivateItems activator) 
