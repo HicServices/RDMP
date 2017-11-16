@@ -367,14 +367,6 @@ namespace CatalogueManager.Collections
             return null;
         }
 
-        
-        
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            if(!CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse))
-                ExpandAllFolders(CatalogueFolder.Root);
-        }
-
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;

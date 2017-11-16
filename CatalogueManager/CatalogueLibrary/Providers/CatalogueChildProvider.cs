@@ -60,14 +60,14 @@ namespace CatalogueLibrary.Providers
         private CatalogueItemIssue[] _allCatalogueItemIssues;
 
         //TableInfo side of things
-        public ANOTablesNode ANOTablesNode { get; private set; }
+        public AllANOTablesNode AllANOTablesNode { get; private set; }
         public ANOTable[] AllANOTables { get; set; }
 
         public ExternalDatabaseServer[] AllExternalServers { get; private set; }
         public TableInfoServerNode[] AllServers { get;private set; }
         public TableInfo[] AllTableInfos { get; private set; }
 
-        public DataAccessCredentialsNode DataAccessCredentialsNode { get; set; }
+        public AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; set; }
 
         public AllExternalServersNode AllExternalServersNode { get; private set; }
         public AllServersNode AllServersNode { get; private set; }
@@ -106,8 +106,8 @@ namespace CatalogueLibrary.Providers
             AllAnyTableParameters = repository.GetAllObjects<AnyTableSqlParameter>();
 
             AllANOTables = repository.GetAllObjects<ANOTable>();
-            ANOTablesNode = new ANOTablesNode();
-            AddChildren(ANOTablesNode);
+            AllANOTablesNode = new AllANOTablesNode();
+            AddChildren(AllANOTablesNode);
             
             AllCatalogues = repository.GetAllObjects<Catalogue>();
             AllLoadMetadatas = repository.GetAllObjects<LoadMetadata>();
@@ -125,8 +125,8 @@ namespace CatalogueLibrary.Providers
 
             AllTableInfos = repository.GetAllObjects<TableInfo>();
             AllDataAccessCredentials = repository.GetAllObjects<DataAccessCredentials>();
-            DataAccessCredentialsNode = new DataAccessCredentialsNode();
-            AddChildren(DataAccessCredentialsNode);
+            AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
+            AddChildren(AllDataAccessCredentialsNode);
             
             //which TableInfos use which Credentials under which DataAccessContexts
             AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
@@ -242,7 +242,7 @@ namespace CatalogueLibrary.Providers
         }
 
 
-        private void AddChildren(DataAccessCredentialsNode dataAccessCredentialsNode)
+        private void AddChildren(AllDataAccessCredentialsNode allDataAccessCredentialsNode)
         {
             HashSet<object> children = new HashSet<object>();
             
@@ -252,10 +252,10 @@ namespace CatalogueLibrary.Providers
                 children.Add(creds);
 
 
-            AddToDictionaries(children, new DescendancyList(dataAccessCredentialsNode));
+            AddToDictionaries(children, new DescendancyList(allDataAccessCredentialsNode));
         }
 
-        private void AddChildren(ANOTablesNode anoTablesNode)
+        private void AddChildren(AllANOTablesNode anoTablesNode)
         {
             AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
         }
@@ -344,7 +344,7 @@ namespace CatalogueLibrary.Providers
             if(cacheProgress.PermissionWindow_ID != null)
             {
                 var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
-                var windowNode = new PermissionWindowUsedByCacheProgress(cacheProgress, window);
+                var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window);
 
                 children.Add(windowNode);
             }

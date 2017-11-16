@@ -328,7 +328,7 @@
     <Compile Include="Collections\DataExportCollectionUI.Designer.cs">
       <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\Nodes\CohortsNode.cs" />
+    <Compile Include="Collections\Nodes\AllCohortsNode.cs" />
     <Compile Include="Collections\Nodes\ExtractionConfigurationsNode.cs" />
     <Compile Include="Collections\Nodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="Collections\Nodes\ProjectSavedCohortsNode.cs" />
@@ -370,9 +370,9 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProject.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociation.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociations.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectSavedCohortsNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSet.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSets.cs" />
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />
@@ -413,7 +413,7 @@
     <Compile Include="ChangesSavedHandler.cs" />
     <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
     <Compile Include="Menus\CustomDataTableNodeMenu.cs" />
-    <Compile Include="Menus\ExtractableDatasetMenu.cs" />
+    <Compile Include="Menus\ExtractableDataSetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
@@ -421,11 +421,11 @@
     <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\ProjectCohortIdentificationConfigurationAssociationsNodeMenu.cs" />
     <Compile Include="Menus\ProjectSavedCohortsNodeMenu.cs" />
-    <Compile Include="Menus\SelectedDataSetMenu.cs" />
-    <Compile Include="Menus\ProjectsMenu.cs" />
+    <Compile Include="Menus\SelectedDataSetsMenu.cs" />
+    <Compile Include="Menus\ProjectMenu.cs" />
     <Compile Include="Menus\ExtractableCohortMenu.cs" />
     <Compile Include="Menus\ExternalCohortTableMenu.cs" />
-    <Compile Include="Menus\CohortsNodeMenu.cs" />
+    <Compile Include="Menus\AllCohortsNodeMenu.cs" />
     <Compile Include="ProjectUI\ChooseExtractablesUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

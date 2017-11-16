@@ -360,13 +360,13 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParameterSet.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionFilterParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
@@ -455,14 +455,6 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CacheProgressTreeNode.cs" />
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.Designer.cs">
-      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\PermissionWindowTreeNode.cs" />
     <Compile Include="LoadExecutionUIs\ExecuteCacheProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -756,11 +748,11 @@
     <Compile Include="Menus\AllExternalServersNodeMenu.cs" />
     <Compile Include="Menus\CacheProgressMenu.cs" />
     <Compile Include="Menus\CatalogueItemsNodeMenu.cs" />
-    <Compile Include="Menus\DataAccessCredentialsNodeMenu.cs" />
+    <Compile Include="Menus\AllDataAccessCredentialsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
     <Compile Include="Menus\DocumentationNodeMenu.cs" />
     <Compile Include="Menus\FilterMenu.cs" />
-    <Compile Include="Menus\FiltersParametersNodeMenu.cs" />
+    <Compile Include="Menus\ParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
@@ -779,8 +771,8 @@
     <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
-    <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
-    <Compile Include="Menus\RemoteRDMPNodeMenu.cs" />
+    <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
+    <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1552,9 +1544,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.resx">
-      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>

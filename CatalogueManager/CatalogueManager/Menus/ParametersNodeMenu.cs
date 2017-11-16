@@ -19,9 +19,9 @@ using ReusableUIComponents.Icons.IconProvision;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class FiltersParametersNodeMenu : RDMPContextMenuStrip
+    public class ParametersNodeMenu : RDMPContextMenuStrip
     {
-        public FiltersParametersNodeMenu(IActivateItems activator, ParametersNode parameterNode) : base(activator,null)
+        public ParametersNodeMenu(IActivateItems activator, ParametersNode parameterNode) : base(activator,null)
         {
             var filter = parameterNode.Collector as ExtractionFilter;
 

@@ -116,8 +116,8 @@ namespace CatalogueManager.Icons.IconProvision
             if (concept is IContainer)
                 return GetImage(RDMPConcept.FilterContainer, kind);
             
-            if (concept is PermissionWindowUsedByCacheProgress)
-                return GetImage(((PermissionWindowUsedByCacheProgress)concept).PermissionWindow,OverlayKind.Link);
+            if (concept is PermissionWindowUsedByCacheProgressNode)
+                return GetImage(((PermissionWindowUsedByCacheProgressNode)concept).PermissionWindow, OverlayKind.Link);
 
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {

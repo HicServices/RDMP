@@ -24,11 +24,11 @@ using ReusableUIComponents.ChecksUI;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ProjectsMenu:RDMPContextMenuStrip
+    public class ProjectMenu:RDMPContextMenuStrip
     {
         private readonly Project _project;
 
-        public ProjectsMenu(IActivateItems activator,  Project project)
+        public ProjectMenu(IActivateItems activator,  Project project)
             : base(activator,project)
         {
             _project = project;

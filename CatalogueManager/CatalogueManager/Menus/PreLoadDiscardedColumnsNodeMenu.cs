@@ -10,11 +10,16 @@ using CatalogueManager.Refreshing;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    internal class PreLoadDiscardedColumnsCollectionMenu : RDMPContextMenuStrip
+    internal class PreLoadDiscardedColumnsNodeMenu : RDMPContextMenuStrip
     {
-        public PreLoadDiscardedColumnsCollectionMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode) : base(activator,null)
+        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode) : base(activator,null)
         {
             Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardNode.TableInfo));
+        }
+
+        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, IdentifierDumpServerUsageNode discardUsageNode): base(activator, null)
+        {
+            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardUsageNode.TableInfo));
         }
         
     }

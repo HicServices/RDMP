@@ -111,5 +111,29 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             State = LoadDiagramState.NotFound;
             _unplannedChildren.Clear();
         }
+
+        protected bool Equals(LoadDiagramTableNode other)
+        {
+            return Equals(_databaseNode, other._databaseNode) && Bubble == other.Bubble && string.Equals(TableName, other.TableName);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((LoadDiagramTableNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (_databaseNode != null ? _databaseNode.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (int) Bubble;
+                hashCode = (hashCode*397) ^ (TableName != null ? TableName.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
     }
 }

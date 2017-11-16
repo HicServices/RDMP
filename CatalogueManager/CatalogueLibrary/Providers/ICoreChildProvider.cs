@@ -18,9 +18,9 @@ namespace CatalogueLibrary.Providers
         TableInfo[] AllTableInfos { get;}
         CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
         Catalogue[] AllCatalogues { get; }
-        ANOTablesNode ANOTablesNode { get;}
+        AllANOTablesNode AllANOTablesNode { get; }
         ANOTable[] AllANOTables { get; }
-        DataAccessCredentialsNode DataAccessCredentialsNode { get; }
+        AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
         AllServersNode AllServersNode { get;}
         ColumnInfo[] AllColumnInfos { get;}
         AllExternalServersNode AllExternalServersNode { get; }

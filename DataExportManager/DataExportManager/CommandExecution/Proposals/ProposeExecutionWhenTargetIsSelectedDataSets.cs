@@ -11,9 +11,9 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsSelectedDataSet:RDMPCommandExecutionProposal<SelectedDataSets>
+    public class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecutionProposal<SelectedDataSets>
     {
-        public ProposeExecutionWhenTargetIsSelectedDataSet(IActivateItems itemActivator) : base(itemActivator)
+        public ProposeExecutionWhenTargetIsSelectedDataSets(IActivateItems itemActivator): base(itemActivator)
         {
         }
 

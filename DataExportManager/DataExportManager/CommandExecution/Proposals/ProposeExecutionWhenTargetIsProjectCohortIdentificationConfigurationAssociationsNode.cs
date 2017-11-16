@@ -13,9 +13,9 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociations : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
+    public class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
     {
-        public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociations(IActivateItems itemActivator) : base(itemActivator)
+        public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(IActivateItems itemActivator) : base(itemActivator)
         {
         }
 

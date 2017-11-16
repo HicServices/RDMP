@@ -36,10 +36,10 @@ namespace CatalogueManager.Icons.IconProvision
         ANOColumnInfo,
         PreLoadDiscardedColumn,
 
-        DataAccessCredentialsNode,
+        AllDataAccessCredentialsNode,
         DataAccessCredentials,
         
-        ANOTablesNode,
+        AllANOTablesNode,
         ANOTable,
 
         AllServersNode,
@@ -78,7 +78,7 @@ namespace CatalogueManager.Icons.IconProvision
         
         StandardRegex,
         
-        CohortsNode,
+        AllCohortsNode,
         ProjectsNode,
         ProjectCohortIdentificationConfigurationAssociationsNode,
         ProjectSavedCohortsNode,

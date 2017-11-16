@@ -90,5 +90,29 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             _discoveredDataType = discoveredColumn.DataType.SQLType;
             State = _discoveredDataType.Equals(_expectedDataType) ? LoadDiagramState.Found : LoadDiagramState.Different;
         }
+
+        protected bool Equals(LoadDiagramColumnNode other)
+        {
+            return _bubble == other._bubble && Equals(_tableNode, other._tableNode) && string.Equals(ColumnName, other.ColumnName);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((LoadDiagramColumnNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (int) _bubble;
+                hashCode = (hashCode*397) ^ (_tableNode != null ? _tableNode.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (ColumnName != null ? ColumnName.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
     }
 }

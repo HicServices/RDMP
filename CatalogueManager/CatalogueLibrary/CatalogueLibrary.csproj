@@ -343,14 +343,14 @@
     <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
     <Compile Include="Nodes\AllRDMPRemotesNode.cs" />
-    <Compile Include="Nodes\ANOTablesNode.cs" />
+    <Compile Include="Nodes\AllANOTablesNode.cs" />
     <Compile Include="Nodes\CatalogueItemsNode.cs" />
     <Compile Include="Nodes\CohortSetsNode.cs" />
     <Compile Include="Nodes\DataAccessCredentialUsageNode.cs" />
-    <Compile Include="Nodes\DataAccessCredentialsNode.cs" />
+    <Compile Include="Nodes\AllDataAccessCredentialsNode.cs" />
     <Compile Include="Nodes\DocumentationNode.cs" />
     <Compile Include="Nodes\IdentifierDumpServerUsageNode.cs" />
-    <Compile Include="Nodes\LoadMetadataNodes\PermissionWindowUsedByCacheProgress.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\PermissionWindowUsedByCacheProgressNode.cs" />
     <Compile Include="Nodes\PreLoadDiscardedColumnsNode.cs" />
     <Compile Include="Nodes\JoinableCollectionNode.cs" />
     <Compile Include="Nodes\LinkedColumnInfoNode.cs" />

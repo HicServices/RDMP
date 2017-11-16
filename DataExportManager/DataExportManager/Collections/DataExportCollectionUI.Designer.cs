@@ -35,7 +35,6 @@ namespace DataExportManager.Collections
             this.tlvDataExport = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,20 +42,18 @@ namespace DataExportManager.Collections
             // 
             this.tlvDataExport.AllColumns.Add(this.olvName);
             this.tlvDataExport.AllColumns.Add(this.olvProjectNumber);
-            this.tlvDataExport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tlvDataExport.CellEditUseWholeCell = false;
             this.tlvDataExport.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName,
             this.olvProjectNumber});
             this.tlvDataExport.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tlvDataExport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvDataExport.FullRowSelect = true;
             this.tlvDataExport.HideSelection = false;
             this.tlvDataExport.Location = new System.Drawing.Point(0, 0);
             this.tlvDataExport.Name = "tlvDataExport";
             this.tlvDataExport.ShowGroups = false;
-            this.tlvDataExport.Size = new System.Drawing.Size(382, 664);
+            this.tlvDataExport.Size = new System.Drawing.Size(385, 694);
             this.tlvDataExport.TabIndex = 0;
             this.tlvDataExport.UseCompatibleStateImageBehavior = false;
             this.tlvDataExport.View = System.Windows.Forms.View.Details;
@@ -76,22 +73,10 @@ namespace DataExportManager.Collections
             this.olvProjectNumber.Text = "ProjectNumber";
             this.olvProjectNumber.Width = 89;
             // 
-            // btnExpandOrCollapse
-            // 
-            this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(327, 670);
-            this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
-            this.btnExpandOrCollapse.Size = new System.Drawing.Size(55, 21);
-            this.btnExpandOrCollapse.TabIndex = 171;
-            this.btnExpandOrCollapse.Text = "Expand";
-            this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
-            this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
-            // 
             // DataExportCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnExpandOrCollapse);
             this.Controls.Add(this.tlvDataExport);
             this.Name = "DataExportCollectionUI";
             this.Size = new System.Drawing.Size(385, 694);
@@ -104,7 +89,6 @@ namespace DataExportManager.Collections
 
         private TreeListView tlvDataExport;
         private OLVColumn olvName;
-        private System.Windows.Forms.Button btnExpandOrCollapse;
         private OLVColumn olvProjectNumber;
     }
 }
