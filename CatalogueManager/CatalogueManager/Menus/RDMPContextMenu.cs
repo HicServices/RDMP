@@ -46,7 +46,7 @@ namespace CatalogueManager.Menus
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
 
-        public RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
+        protected RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
         {
             _activator = activator;
             _databaseEntity = databaseEntity;

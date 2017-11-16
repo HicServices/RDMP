@@ -7,9 +7,9 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.Menus
 {
-    public class AutomationServerSlotsMenu : RDMPContextMenuStrip
+    public class AllAutomationServerSlotsNodeMenu : RDMPContextMenuStrip
     {
-        public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
+        public AllAutomationServerSlotsNodeMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
             : base(activator, null)
         {
             Add(new ExecuteCommandCreateNewAutomationSlot(activator));

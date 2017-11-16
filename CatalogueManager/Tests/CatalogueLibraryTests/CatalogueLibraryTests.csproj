@@ -292,6 +292,7 @@
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\ExplicitDatabaseNameChecker.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousRelationshipPropertyUse.cs" />
+    <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\UserInterfaceStandardisationChecker.cs" />
     <Compile Include="SourceCodeEvaluation\CsProjFileTidy.cs" />
     <Compile Include="SourceCodeEvaluation\EvaluateNamespacesAndSolutionFoldersTests.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\RDMPFormInitializationTests.cs" />

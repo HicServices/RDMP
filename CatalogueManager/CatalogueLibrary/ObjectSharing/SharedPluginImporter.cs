@@ -13,20 +13,6 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.ObjectSharing
 {
-    public class AutomationSlotSharer
-    {
-        private AutomateablePipeline[] _pipes;
-
-        public AutomationSlotSharer(AutomationServiceSlot slot)
-        {
-
-            _pipes = slot.AutomateablePipelines;
-
-
-
-        }
-    }
-
     public class SharedPluginImporter
     {
         private MapsDirectlyToDatabaseTableStatelessDefinition<Plugin> _plugin;
