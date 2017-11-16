@@ -19,9 +19,15 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableUIComponents;
 
 namespace CatalogueManager.Collections
 {
+    /// <summary>
+    /// User interface component for indicating to the user that there is a Pinned object in an RDMPCollectionUI.  Bumps the collection tree down 19 pixels (or docks top).
+    /// And then assembles a whitelist filter that will show only the pinned object hierarchy and children.
+    /// </summary>
+    [TechnicalUI]
     public partial class CollectionScopeFilterUI : UserControl
     {
         private TreeListView _tree;
