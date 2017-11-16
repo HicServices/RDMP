@@ -413,7 +413,7 @@
     <Compile Include="ChangesSavedHandler.cs" />
     <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
     <Compile Include="Menus\CustomDataTableNodeMenu.cs" />
-    <Compile Include="Menus\ExtractableDatasetMenu.cs" />
+    <Compile Include="Menus\ExtractableDataSetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
