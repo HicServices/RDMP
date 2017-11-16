@@ -137,7 +137,7 @@ namespace CatalogueLibrary.Remoting
 
                     var handler = new HttpClientHandler()
                     {
-                        Credentials = new NetworkCredential(remote.Username, remote.Password)
+                        Credentials = new NetworkCredential(remote.Username, remote.GetDecryptedPassword())
                     };
 
                     HttpResponseMessage result;
