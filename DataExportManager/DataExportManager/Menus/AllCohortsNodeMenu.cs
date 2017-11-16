@@ -24,12 +24,11 @@ using ReusableUIComponents.Icons.IconProvision;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class CohortsNodeMenu:RDMPContextMenuStrip
+    public class AllCohortsNodeMenu:RDMPContextMenuStrip
     {
         [ImportingConstructor]
-        public CohortsNodeMenu(IActivateItems activator,AllCohortsNode node):base(activator,null)
+        public AllCohortsNodeMenu(IActivateItems activator,AllCohortsNode node):base(activator,null)
         {
-
             Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(activator));
             
             Items.Add("Create New Empty Cohort Database Using Wizard", FamFamFamIcons.wand,(s, e) => LaunchCohortDatabaseCreationWizard());

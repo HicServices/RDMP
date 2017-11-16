@@ -22,12 +22,12 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.Menus
 {
-    public class SelectedDataSetMenu : RDMPContextMenuStrip
+    public class SelectedDataSetsMenu : RDMPContextMenuStrip
     {
         private readonly SelectedDataSets _selectedDataSet;
         private ExtractionConfiguration _extractionConfiguration;
 
-        public SelectedDataSetMenu(IActivateItems activator, SelectedDataSets selectedDataSet):base(activator,selectedDataSet)
+        public SelectedDataSetsMenu(IActivateItems activator, SelectedDataSets selectedDataSet): base(activator, selectedDataSet)
         {
             _selectedDataSet = selectedDataSet;
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
