@@ -4,9 +4,10 @@ using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus
 {
-    internal class PermissionWindowUsageMenu : RDMPContextMenuStrip
+    internal class PermissionWindowUsedByCacheProgressNodeMenu : RDMPContextMenuStrip
     {
-        public PermissionWindowUsageMenu(IActivateItems activator, PermissionWindowUsedByCacheProgress permissionWindowUsage):base(activator,null)
+        public PermissionWindowUsedByCacheProgressNodeMenu(IActivateItems activator, PermissionWindowUsedByCacheProgressNode permissionWindowUsage)
+            : base(activator, null)
         {
             Add(new ExecuteCommandUnlockLockable(activator, permissionWindowUsage.PermissionWindow));
         }

@@ -344,7 +344,7 @@ namespace CatalogueLibrary.Providers
             if(cacheProgress.PermissionWindow_ID != null)
             {
                 var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
-                var windowNode = new PermissionWindowUsedByCacheProgress(cacheProgress, window);
+                var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window);
 
                 children.Add(windowNode);
             }

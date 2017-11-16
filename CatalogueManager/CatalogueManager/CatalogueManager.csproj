@@ -752,7 +752,7 @@
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
     <Compile Include="Menus\DocumentationNodeMenu.cs" />
     <Compile Include="Menus\FilterMenu.cs" />
-    <Compile Include="Menus\FiltersParametersNodeMenu.cs" />
+    <Compile Include="Menus\ParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
@@ -771,8 +771,8 @@
     <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
-    <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
-    <Compile Include="Menus\RemoteRDMPNodeMenu.cs" />
+    <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
+    <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

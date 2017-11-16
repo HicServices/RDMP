@@ -11,12 +11,12 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class PermissionWindowUsedByCacheProgress: IDeleteable,ILockable
+    public class PermissionWindowUsedByCacheProgressNode: IDeleteable,ILockable
     {
         public CacheProgress CacheProgress { get; set; }
         public PermissionWindow PermissionWindow { get; private set; }
 
-        public PermissionWindowUsedByCacheProgress(CacheProgress cacheProgress,PermissionWindow permissionWindow)
+        public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow)
         {
             CacheProgress = cacheProgress;
             PermissionWindow = permissionWindow;
@@ -59,7 +59,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             PermissionWindow.RefreshLockPropertiesFromDatabase();
         }
 
-        protected bool Equals(PermissionWindowUsedByCacheProgress other)
+        protected bool Equals(PermissionWindowUsedByCacheProgressNode other)
         {
             return Equals(CacheProgress, other.CacheProgress) && Equals(PermissionWindow, other.PermissionWindow);
         }
@@ -69,7 +69,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((PermissionWindowUsedByCacheProgress) obj);
+            return Equals((PermissionWindowUsedByCacheProgressNode)obj);
         }
 
         public override int GetHashCode()

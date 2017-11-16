@@ -79,15 +79,10 @@ namespace CatalogueManager.Collections
             var loadProgress = o as LoadProgress;
             
             var permissionWindow = o as PermissionWindow;
-            var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
-            
             
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
-
-            if (permissionWindowUsage != null)
-                permissionWindow = permissionWindowUsage.PermissionWindow;
-
+            
             if (permissionWindow != null)
                 _activator.ActivatePermissionWindow(this, permissionWindow);
         }

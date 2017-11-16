@@ -63,10 +63,12 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                     continue;
                 }
 
-                string expectedClassName = menuClass.Name.Substring(0,menuClass.Name.Length - "Menu".Length);
-                if (!csFilesList.Any(f=>Path.GetFileName(f).Equals(expectedClassName +".cs")))
+                var toLookFor = menuClass.Name.Substring(0, menuClass.Name.Length - "Menu".Length);
+                var expectedClassName = GetExpectedClassOrInterface(toLookFor);
+
+                if(expectedClassName == null)
                 {
-                    problems.Add("Found menu called '" + menuClass +"' but couldn't find a corresponding data class called '" + expectedClassName +".cs'");
+                    problems.Add("Found menu called '" + menuClass.Name + "' but couldn't find a corresponding data class called '" + toLookFor + ".cs'");
                     continue;
                 }
 
@@ -86,15 +88,30 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                     continue;
                 }
 
-                string expectedClassName = proposalClass.Name.Substring("ProposeExecutionWhenTargetIs".Length);
-                if (!csFilesList.Any(f => Path.GetFileName(f).Equals(expectedClassName + ".cs")))
-                    problems.Add("Found proposal called '" + proposalClass + "' but couldn't find a corresponding data class called '" + expectedClassName + ".cs'");
+                var toLookFor = proposalClass.Name.Substring("ProposeExecutionWhenTargetIs".Length);
+                string expectedClassName = GetExpectedClassOrInterface(toLookFor);
+
+                if (expectedClassName == null)
+                    problems.Add("Found proposal called '" + proposalClass + "' but couldn't find a corresponding data class called '" + toLookFor + ".cs'");
             }
             
             foreach (string problem in problems)
                 Console.WriteLine("FATAL ERROR PROBLEM:" + problem);
 
             Assert.AreEqual(problems.Count,0);
+        }
+
+        private string GetExpectedClassOrInterface(string expectedClassName)
+        {
+            //found it?
+            if (_csFilesList.Any(f => Path.GetFileName(f).Equals(expectedClassName + ".cs")))
+                return expectedClassName;
+
+            //expected Filter but found IFilter - acceptable
+            if (_csFilesList.Any(f => Path.GetFileName(f).Equals("I" + expectedClassName + ".cs")))
+                return "I" + expectedClassName;
+
+            return null;
         }
 
         private void ConfirmFileHasText(Type type, string expectedString)

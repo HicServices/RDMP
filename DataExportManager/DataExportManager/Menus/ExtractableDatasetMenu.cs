@@ -20,11 +20,11 @@ using ReusableUIComponents;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ExtractableDatasetMenu:RDMPContextMenuStrip
+    public class ExtractableDataSetMenu:RDMPContextMenuStrip
     {
         private readonly ExtractableDataSet _dataset;
 
-        public ExtractableDatasetMenu(IActivateItems activator, ExtractableDataSet dataset)
+        public ExtractableDataSetMenu(IActivateItems activator, ExtractableDataSet dataset)
             : base(activator,dataset)
         {
             _dataset = dataset;

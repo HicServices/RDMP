@@ -5,9 +5,10 @@ using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus
 {
-    public class RemoteRDMPNodeMenu : RDMPContextMenuStrip
+    public class AllRDMPRemotesNodeMenu : RDMPContextMenuStrip
     {
-        public RemoteRDMPNodeMenu(IActivateItems activator, AllRDMPRemotesNode node) : base(activator, null)
+        public AllRDMPRemotesNodeMenu(IActivateItems activator, AllRDMPRemotesNode node)
+            : base(activator, null)
         {
             Add(new ExecuteCommandCreateNewRemoteRDMP(activator));
         }
