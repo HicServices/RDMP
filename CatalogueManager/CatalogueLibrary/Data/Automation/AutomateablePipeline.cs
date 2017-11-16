@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Automation
 {
@@ -18,7 +19,7 @@ namespace CatalogueLibrary.Data.Automation
     /// executed until the source returns null (no more jobs).  If you are a plugin writer you should make sure to put some kind of threshold on the source so that it doesn't 
     /// serve up 1000 async jobs at once.
     /// </summary>
-    public class AutomateablePipeline:DatabaseEntity
+    public class AutomateablePipeline:DatabaseEntity,IHasDependencies
     {
         private string _pipelineName;
 
@@ -82,6 +83,17 @@ namespace CatalogueLibrary.Data.Automation
         {
             if (_pipelineName == null)
                 _pipelineName = Pipeline.Name;
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new IHasDependencies[] { AutomationServiceSlot };
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+
+            return new IHasDependencies[] {Pipeline};
         }
     }
 }

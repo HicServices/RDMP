@@ -343,6 +343,12 @@
     <Compile Include="Performance\StackTraceProcessing\StackFramesTree.cs" />
     <Compile Include="PreviewKey.cs" />
     <Compile Include="Progress\PopupErrorMessagesEventListener.cs" />
+    <Compile Include="Progress\ProgressBarsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Progress\ProgressBarsUI.Designer.cs">
+      <DependentUpon>ProgressBarsUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Progress\ProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -483,6 +489,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Performance\PerformanceStackPath\PerformanceStackPathViewerUI.resx">
       <DependentUpon>PerformanceStackPathViewerUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Progress\ProgressBarsUI.resx">
+      <DependentUpon>ProgressBarsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Progress\ProgressUI.resx">
       <DependentUpon>ProgressUI.cs</DependentUpon>

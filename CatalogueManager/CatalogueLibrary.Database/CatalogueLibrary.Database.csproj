@@ -257,6 +257,7 @@
     <EmbeddedResource Include="db\up\055_FavouritesAndNamedContainersAndTopX.sql" />
     <EmbeddedResource Include="db\up\056_DashboardLayoutSupport.sql" />
     <EmbeddedResource Include="db\up\057_MakeLoadProgressINamed.sql" />
+    <EmbeddedResource Include="db\up\058_RemoteRDMP.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

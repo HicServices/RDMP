@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(_databaseEntity,OverlayKind.Help);
+            return iconProvider.GetImage(RDMPConcept.Help);
         }
 
         public override void Execute()

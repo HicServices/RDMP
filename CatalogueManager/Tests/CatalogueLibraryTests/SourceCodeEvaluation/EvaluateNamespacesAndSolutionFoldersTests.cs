@@ -10,11 +10,12 @@ using NUnit.Framework;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
+using Tests.Common;
 
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
 {
-    public class EvaluateNamespacesAndSolutionFoldersTests
+    public class EvaluateNamespacesAndSolutionFoldersTests:DatabaseTests
     {
         private const string SolutionName = "HIC.DataManagementPlatform.sln";
         public List<string> csFilesFound = new List<string>();
@@ -74,6 +75,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Assert.AreEqual(0,errors.Count);
 
+            var uiStandardisationTest = new UserInterfaceStandardisationChecker();
+            uiStandardisationTest.FindProblems(csFilesFound,RepositoryLocator.CatalogueRepository.MEF);
 
             //Assuming all files are present and correct we can now evaluate the RDMP specific stuff:
             var otherTestRunner = new RDMPFormInitializationTests();
@@ -87,7 +90,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
             explicitDatabaseNamesChecker.FindProblems(csFilesFound);
-
 
             var singlePropertyUIs = new SinglePropertyUISourceCodeEvaluator();
             singlePropertyUIs.FindProblems(csFilesFound);

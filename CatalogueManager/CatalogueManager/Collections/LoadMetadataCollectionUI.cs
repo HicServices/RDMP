@@ -76,21 +76,13 @@ namespace CatalogueManager.Collections
         private void otvLoadMetadata_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvLoadMetadata.SelectedObject;
-            var hicDir = o as HICProjectDirectoryNode;
             var loadProgress = o as LoadProgress;
             
             var permissionWindow = o as PermissionWindow;
-            var permissionWindowUsage = o as PermissionWindowUsedByCacheProgress;
             
-            if(hicDir != null)
-                hicDir.Activate();
-
             if (loadProgress != null)
                 _activator.ActivateLoadProgress(this, loadProgress);
-
-            if (permissionWindowUsage != null)
-                permissionWindow = permissionWindowUsage.PermissionWindow;
-
+            
             if (permissionWindow != null)
                 _activator.ActivatePermissionWindow(this, permissionWindow);
         }
@@ -126,13 +118,9 @@ namespace CatalogueManager.Collections
             var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
             var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
-            var hicProjectDirectory = e.Model as HICProjectDirectoryNode;
             
             if (allCataloguesNode != null)
                 e.MenuStrip = factory.CreateMenu(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator,allCataloguesNode.LoadMetadata));
-
-            if (hicProjectDirectory != null)
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandChooseHICProjectDirectory(_activator,hicProjectDirectory.LoadMetadata));
         }
         
         public override void SetItemActivator(IActivateItems activator) 
@@ -182,11 +170,6 @@ namespace CatalogueManager.Collections
         public static bool IsRootObject(object root)
         {
             return root is LoadMetadata;
-        }
-
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse);
         }
     }
 }

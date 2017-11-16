@@ -283,14 +283,14 @@
   <data name="DataAccessCredentials" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\DataAccessCredentials.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DataAccessCredentialsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\DataAccessCredentialsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AllDataAccessCredentialsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllDataAccessCredentialsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Database" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Database.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ExtractionFolderNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ExtractionFolderNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ExtractionDirectoryNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ExtractionDirectoryNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\SQL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -334,8 +334,8 @@
   <data name="ANOTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ANOTable.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ANOTablesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\ANOTablesNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AllANOTablesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllANOTablesNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ExtractableCohort" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ExtractableCohort.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -514,8 +514,8 @@
   <data name="ExtractionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ExtractionConfigurationsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CohortsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AllCohortsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllCohortsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ProjectCohortIdentificationConfigurationAssociationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ProjectCohortIdentificationConfigurationAssociationsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -528,5 +528,20 @@
   </data>
   <data name="AllAutomationServerSlotsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AllAutomationServerSlotsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AllRDMPRemotesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllRDMPRemotesNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RemoteRDMP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\RemoteRDMP.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AutomateablePipeline" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AutomateablePipeline.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PipelineComponent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\PipelineComponent.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PipelineComponentArgument" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\PipelineComponentArgument.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

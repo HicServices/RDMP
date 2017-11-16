@@ -20,7 +20,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         private DirectoryInfo _root;
 
         //these class files are excused from having 2+ class files in them or 0
-        private string[] Whitelist = new[] { "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs"};
+        private string[] Whitelist = new[] { "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs"};
 
         public CsProjFileTidy(FileInfo csProjFile)
         {

@@ -8,18 +8,28 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Automation;
+using CatalogueLibrary.Remoting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.ObjectSharing;
+using Newtonsoft.Json;
 using RDMPStartup;
 using RDMPStartup.PluginManagement;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Serialization;
 using ReusableUIComponents;
+using ReusableUIComponents.Progress;
+using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.PluginManagement
 {
@@ -318,6 +328,22 @@ namespace CatalogueManager.PluginManagement
                 PromptRestart();
             }
 
+        }
+
+        private async void btnSaveToRemote_Click(object sender, EventArgs e)
+        {
+            if (!plugins.Any())
+            {
+                MessageBox.Show(this, "There are no plugins in the system...", "Error");
+                return;
+            }
+
+            var barsUI = new ProgressBarsUI("Pushing to remotes", true);
+            var service = new RemotePushingService(RepositoryLocator.CatalogueRepository, barsUI);
+            var f = new SingleControlForm(barsUI);
+            f.Show();
+            
+            service.SendPluginsToAllRemotes(plugins, () => barsUI.Done());
         }
     }
 }

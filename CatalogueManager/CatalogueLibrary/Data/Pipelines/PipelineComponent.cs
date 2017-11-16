@@ -5,6 +5,7 @@ using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
@@ -52,6 +53,12 @@ namespace CatalogueLibrary.Data.Pipelines
         public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments {
             get { return Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this); }
         }
+
+        [NoMappingToDatabase]
+        public IHasDependencies Pipeline {
+            get { return Repository.GetObjectByID<Pipeline>(Pipeline_ID); }
+        }
+
         #endregion
 
         public override string ToString()
@@ -159,6 +166,16 @@ namespace CatalogueLibrary.Data.Pipelines
 
                 //convert the result back from generic to specific (us)
                 .Cast<PipelineComponentArgument>().ToArray();
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new IHasDependencies[] {Pipeline};
+        }
+        
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return PipelineComponentArguments.Cast<IHasDependencies>().ToArray();
         }
     }
 }

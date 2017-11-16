@@ -85,5 +85,26 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                     _unplannedChildren.Add(new UnplannedTable(discoveredTable));
                 }
         }
+
+        protected bool Equals(LoadDiagramDatabaseNode other)
+        {
+            return string.Equals(DatabaseName, other.DatabaseName) && _bubble == other._bubble;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((LoadDiagramDatabaseNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((DatabaseName != null ? DatabaseName.GetHashCode() : 0)*397) ^ (int) _bubble;
+            }
+        }
     }
 }

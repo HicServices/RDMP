@@ -13,6 +13,9 @@ namespace CatalogueManager.Icons.IconProvision
         //catalogue database objects
         AllAutomationServerSlotsNode,
         AutomationServiceSlot,
+        AutomateablePipeline,
+        AllRDMPRemotesNode,
+        RemoteRDMP,
         Favourite,
 
         LoadMetadata,
@@ -34,10 +37,10 @@ namespace CatalogueManager.Icons.IconProvision
         ANOColumnInfo,
         PreLoadDiscardedColumn,
 
-        DataAccessCredentialsNode,
+        AllDataAccessCredentialsNode,
         DataAccessCredentials,
         
-        ANOTablesNode,
+        AllANOTablesNode,
         ANOTable,
 
         AllServersNode,
@@ -76,12 +79,12 @@ namespace CatalogueManager.Icons.IconProvision
         
         StandardRegex,
         
-        CohortsNode,
+        AllCohortsNode,
         ProjectsNode,
         ProjectCohortIdentificationConfigurationAssociationsNode,
         ProjectSavedCohortsNode,
         ExtractableDataSetsNode,
-        ExtractionFolderNode,
+        ExtractionDirectoryNode,
         CustomDataTableNode,
         
         CohortIdentificationConfiguration,
@@ -115,6 +118,8 @@ namespace CatalogueManager.Icons.IconProvision
         ExtractionConfigurationsNode,
 
         PermissionWindow,
-        Pipeline
+        Pipeline,
+        PipelineComponent,
+        PipelineComponentArgument
     }
 }

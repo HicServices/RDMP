@@ -225,6 +225,10 @@
     <Reference Include="MySql.Data">
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -235,6 +239,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -288,6 +293,7 @@
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
+    <Compile Include="Data\Remoting\RemoteRDMP.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
@@ -329,17 +335,20 @@
     <Compile Include="FatalDeSyncException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
+    <Compile Include="ObjectSharing\SharedPluginImporter.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
     <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
-    <Compile Include="Nodes\ANOTablesNode.cs" />
+    <Compile Include="Nodes\AllRDMPRemotesNode.cs" />
+    <Compile Include="Nodes\AllANOTablesNode.cs" />
     <Compile Include="Nodes\CatalogueItemsNode.cs" />
     <Compile Include="Nodes\CohortSetsNode.cs" />
     <Compile Include="Nodes\DataAccessCredentialUsageNode.cs" />
-    <Compile Include="Nodes\DataAccessCredentialsNode.cs" />
+    <Compile Include="Nodes\AllDataAccessCredentialsNode.cs" />
     <Compile Include="Nodes\DocumentationNode.cs" />
     <Compile Include="Nodes\IdentifierDumpServerUsageNode.cs" />
-    <Compile Include="Nodes\LoadMetadataNodes\PermissionWindowUsedByCacheProgress.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\PermissionWindowUsedByCacheProgressNode.cs" />
     <Compile Include="Nodes\PreLoadDiscardedColumnsNode.cs" />
     <Compile Include="Nodes\JoinableCollectionNode.cs" />
     <Compile Include="Nodes\LinkedColumnInfoNode.cs" />
@@ -364,6 +373,7 @@
     <Compile Include="Providers\DescendancyList.cs" />
     <Compile Include="Providers\IChildProvider.cs" />
     <Compile Include="Providers\ICoreChildProvider.cs" />
+    <Compile Include="Remoting\RemotePushingService.cs" />
     <Compile Include="Reports\DocumentationReportFormsAndControlsOfficeBit.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabase.cs" />
     <Compile Include="Reports\Exceptions\SourceCodeNotFoundException.cs" />

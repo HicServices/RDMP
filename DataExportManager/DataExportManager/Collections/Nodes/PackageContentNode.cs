@@ -39,5 +39,26 @@ namespace DataExportManager.Collections.Nodes
                 activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(Package));
             }
         }
+
+        protected bool Equals(PackageContentNode other)
+        {
+            return Equals(Package, other.Package) && Equals(DataSet, other.DataSet);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PackageContentNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Package != null ? Package.GetHashCode() : 0)*397) ^ (DataSet != null ? DataSet.GetHashCode() : 0);
+            }
+        }
     }
 }

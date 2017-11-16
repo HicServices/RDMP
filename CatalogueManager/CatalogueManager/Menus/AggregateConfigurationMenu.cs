@@ -28,7 +28,7 @@ namespace CatalogueManager.Menus
     {
         private readonly AggregateConfiguration _aggregate;
 
-        public AggregateConfigurationMenu(IActivateItems itemActivator, AggregateConfiguration aggregate):base(itemActivator,aggregate)
+        public AggregateConfigurationMenu(IActivateItems activator, AggregateConfiguration aggregate): base(activator, aggregate)
         {
             _aggregate = aggregate;
             

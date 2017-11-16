@@ -39,7 +39,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnHome.Image = FamFamFamIcons.application_home;
             btnCatalogues.Image = CatalogueIcons.Catalogue;
             btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration;
-            btnSavedCohorts.Image = CatalogueIcons.CohortsNode;
+            btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode;
             btnDataExport.Image = CatalogueIcons.Project;
             btnTables.Image = CatalogueIcons.TableInfo;
             btnLoad.Image = CatalogueIcons.LoadMetadata;
@@ -49,25 +49,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         public void SetWindowManager(ToolboxWindowManager manager)
         {
             _manager = manager;
-            _manager.CollectionCreated += _manager_CollectionCreated;
             btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
-
-            //needed because persistence can result in the toolboxes being visible before the events system is even registered to by oursevles at application startup
-            foreach (ToolStripButton button in new object[]{btnCatalogues,btnCohorts,btnDataExport,btnLoad,btnTables})
-            {
-                RDMPCollection collection = ButtonToEnum(button);
-                button.Checked = _manager.IsVisible(collection);
-            }
-
+            
             btnAddDashboard.Image = manager.ContentManager.CoreIconProvider.GetImage(RDMPConcept.DashboardLayout,OverlayKind.Add);
             ReCreateDashboardsDropDown();
         }
         
-        void _manager_CollectionCreated(object sender, Events.RDMPCollectionCreatedEventHandlerArgs args)
-        {
-            //a toolbox was programatically activated
-            EnumToButton(args.Collection).Checked = true;
-        }
 
         private void ReCreateDashboardsDropDown()
         {
@@ -108,32 +95,15 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private void ToolboxButtonClicked(object sender, EventArgs e)
         {
             RDMPCollection collection = ButtonToEnum(sender);
-            var visible = _manager.IsVisible(collection);
 
-            if(_manager.IsVisibleButBurried(collection))
+            if (_manager.IsVisible(collection))
                 _manager.Pop(collection);
             else
-            if (visible)
-                _manager.Destroy(collection);
-            else
-            {
-                var window = _manager.Create(collection);
-                window.FormClosed += OnFormClosed;
-            }
-
-            ((ToolStripButton) sender).Checked = !visible;
+                _manager.Create(collection);
         }
 
         private void OnFormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
         {
-            var toolbox = sender as PersistableToolboxDockContent;
-
-            if (toolbox != null)
-            {
-                var btn = EnumToButton(toolbox.CollectionType);
-                btn.Checked = false;
-            }
-
             var layoutUI = sender as DashboardLayoutUI;
 
             if (layoutUI != null)
@@ -241,10 +211,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private void tbFind_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                RunFind(false);
+                RunFind(false,true);
         }
 
-        private void RunFind(bool returnFocusToTextBox)
+        private void RunFind(bool returnFocusToTextBox,bool pin = false)
         {
             var activator = _manager.ContentManager;
 
@@ -258,7 +228,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             if (matches.Length > 0)
             {
-                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue));
+                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue){Pin=pin});
                 
                 if (returnFocusToTextBox)
                     tbFind.Focus();

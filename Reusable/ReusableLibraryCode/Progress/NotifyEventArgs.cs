@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using ReusableLibraryCode.Checks;
 
 namespace ReusableLibraryCode.Progress
 {
@@ -40,6 +41,26 @@ namespace ReusableLibraryCode.Progress
             {
                 //Stack trace not available ah well
             }
+        }
+
+        public CheckEventArgs ToCheckEventArgs()
+        {
+            CheckResult result;
+            switch (ProgressEventType)
+            {
+                case ProgressEventType.Information:
+                    result = CheckResult.Success;
+                    break;
+                case ProgressEventType.Warning:
+                    result = CheckResult.Warning;
+                    break;
+                case ProgressEventType.Error:
+                    result = CheckResult.Fail;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return new CheckEventArgs(Message, result, Exception);
         }
     }
 }

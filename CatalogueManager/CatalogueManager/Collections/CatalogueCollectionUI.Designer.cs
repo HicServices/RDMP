@@ -31,7 +31,6 @@ namespace CatalogueManager.Collections
             this.imageList_RightClickIcons = new System.Windows.Forms.ImageList(this.components);
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnCheckCatalogues = new System.Windows.Forms.Button();
-            this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             this.gbColdStorage = new System.Windows.Forms.GroupBox();
             this.cbShowInternal = new System.Windows.Forms.CheckBox();
             this.cbShowDeprecated = new System.Windows.Forms.CheckBox();
@@ -120,18 +119,6 @@ namespace CatalogueManager.Collections
             this.btnCheckCatalogues.UseVisualStyleBackColor = true;
             this.btnCheckCatalogues.Click += new System.EventHandler(this.btnCheckCatalogues_Click);
             // 
-            // btnExpandOrCollapse
-            // 
-            this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExpandOrCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(446, 411);
-            this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
-            this.btnExpandOrCollapse.Size = new System.Drawing.Size(51, 22);
-            this.btnExpandOrCollapse.TabIndex = 168;
-            this.btnExpandOrCollapse.Text = "Expand";
-            this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
-            this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
-            // 
             // gbColdStorage
             // 
             this.gbColdStorage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -180,7 +167,6 @@ namespace CatalogueManager.Collections
             // 
             // CatalogueCollectionUI
             // 
-            this.Controls.Add(this.btnExpandOrCollapse);
             this.Controls.Add(this.btnCheckCatalogues);
             this.Controls.Add(this.gbColdStorage);
             this.Controls.Add(this.tlvCatalogues);
@@ -203,7 +189,6 @@ namespace CatalogueManager.Collections
         private OLVColumn olvCheckResult;
         private Button btnCheckCatalogues;
         private OLVColumn olvFilters;
-        private Button btnExpandOrCollapse;
         private GroupBox gbColdStorage;
         private CheckBox cbShowInternal;
         private CheckBox cbShowDeprecated;

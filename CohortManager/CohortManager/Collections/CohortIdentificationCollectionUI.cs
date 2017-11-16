@@ -42,32 +42,23 @@ namespace CohortManager.Collections
                 
                 );
             CommonFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
+            CommonFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
 
             CommonFunctionality.WhitespaceRightClickMenuCommands = new []{new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)};
-            
+
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             tlvCohortIdentificationConfigurations.AddObjects(_activator.CoreChildProvider.AllCohortIdentificationConfigurations);
         }
         
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            //if it is a new cohort identification configuration
-            if (e.Object is CohortIdentificationConfiguration && e.Object.Exists())
-                //it exists and we don't know about it?
-                if (!tlvCohortIdentificationConfigurations.Objects.Cast<object>().Contains(e.Object))
-                    tlvCohortIdentificationConfigurations.AddObject(e.Object); //add it
-        }
-
-
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse);
-        }
-
         public static bool IsRootObject(object root)
         {
             return root is CohortIdentificationConfiguration;
+        }
+
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+            
         }
     }
 }

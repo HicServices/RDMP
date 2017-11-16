@@ -38,6 +38,7 @@ namespace CatalogueManager.PluginManagement
             this.pbAnalysing = new System.Windows.Forms.ProgressBar();
             this.lblProgressAnalysing = new System.Windows.Forms.Label();
             this.btnBrowse = new System.Windows.Forms.Button();
+            this.btnSaveToRemote = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,7 +52,7 @@ namespace CatalogueManager.PluginManagement
             this.treeListView.Location = new System.Drawing.Point(12, 48);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
-            this.treeListView.Size = new System.Drawing.Size(654, 424);
+            this.treeListView.Size = new System.Drawing.Size(654, 393);
             this.treeListView.TabIndex = 0;
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
@@ -80,9 +81,9 @@ namespace CatalogueManager.PluginManagement
             // 
             // checksUI1
             // 
-            this.checksUI1.Location = new System.Drawing.Point(12, 478);
+            this.checksUI1.Location = new System.Drawing.Point(12, 492);
             this.checksUI1.Name = "checksUI1";
-            this.checksUI1.Size = new System.Drawing.Size(655, 242);
+            this.checksUI1.Size = new System.Drawing.Size(655, 228);
             this.checksUI1.TabIndex = 2;
             // 
             // pbAnalysing
@@ -114,11 +115,22 @@ namespace CatalogueManager.PluginManagement
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
+            // btnSaveToRemote
+            // 
+            this.btnSaveToRemote.Location = new System.Drawing.Point(12, 447);
+            this.btnSaveToRemote.Name = "btnSaveToRemote";
+            this.btnSaveToRemote.Size = new System.Drawing.Size(350, 39);
+            this.btnSaveToRemote.TabIndex = 3;
+            this.btnSaveToRemote.Text = "Save to Remotes";
+            this.btnSaveToRemote.UseVisualStyleBackColor = true;
+            this.btnSaveToRemote.Click += new System.EventHandler(this.btnSaveToRemote_Click);
+            // 
             // PluginManagementForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1387, 759);
+            this.Controls.Add(this.btnSaveToRemote);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.lblProgressAnalysing);
             this.Controls.Add(this.pbAnalysing);
@@ -142,5 +154,6 @@ namespace CatalogueManager.PluginManagement
         private System.Windows.Forms.ProgressBar pbAnalysing;
         private System.Windows.Forms.Label lblProgressAnalysing;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.Button btnSaveToRemote;
     }
 }

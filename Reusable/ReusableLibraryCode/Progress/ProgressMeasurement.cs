@@ -11,5 +11,11 @@
             Value = value;
             UnitOfMeasurement = unit;
         }
+        public ProgressMeasurement(int value, ProgressType unit, int knownTargetValue)
+        {
+            Value = value;
+            UnitOfMeasurement = unit;
+            KnownTargetValue = knownTargetValue;
+        }
     }
 }

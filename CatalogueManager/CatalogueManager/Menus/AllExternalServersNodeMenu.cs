@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -28,7 +29,7 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
     {
-        public AllExternalServersNodeMenu(IActivateItems activator) : base(activator,null)
+        public AllExternalServersNodeMenu(IActivateItems activator, AllExternalServersNode node) : base(activator,null)
         {
             var overlayProvider = new IconOverlayProvider();
             var iconProvider = new ExternalDatabaseServerStateBasedIconProvider(overlayProvider);

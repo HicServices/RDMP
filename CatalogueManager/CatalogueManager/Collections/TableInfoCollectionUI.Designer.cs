@@ -62,7 +62,6 @@ namespace CatalogueManager.Collections
             this.tlvTableInfos.UseFiltering = true;
             this.tlvTableInfos.View = System.Windows.Forms.View.Details;
             this.tlvTableInfos.VirtualMode = true;
-            this.tlvTableInfos.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.olvTableInfos_CellRightClick);
             // 
             // olvColumn1
             // 
