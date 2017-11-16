@@ -455,14 +455,6 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CacheProgressTreeNode.cs" />
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.Designer.cs">
-      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\PermissionWindowTreeNode.cs" />
     <Compile Include="LoadExecutionUIs\ExecuteCacheProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1552,9 +1544,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.resx">
-      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
