@@ -104,11 +104,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         private string GetExpectedClassOrInterface(string expectedClassName)
         {
             //found it?
-            if (_csFilesList.Any(f => Path.GetFileName(f).Equals(expectedClassName + ".cs")))
+            if (_csFilesList.Any(f => Path.GetFileName(f).Equals(expectedClassName + ".cs", StringComparison.InvariantCultureIgnoreCase)))
                 return expectedClassName;
 
             //expected Filter but found IFilter - acceptable
-            if (_csFilesList.Any(f => Path.GetFileName(f).Equals("I" + expectedClassName + ".cs")))
+            if (_csFilesList.Any(f => Path.GetFileName(f).Equals("I" + expectedClassName + ".cs", StringComparison.InvariantCultureIgnoreCase)))
                 return "I" + expectedClassName;
 
             return null;
@@ -122,7 +122,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             if(file == null)
                 return;
 
-            if (!File.ReadAllText(file).Replace(" ","").Contains(expectedString.Replace(" ","")))
+            if (!File.ReadAllText(file).Replace(" ","").ToLowerInvariant().Contains(expectedString.Replace(" ","").ToLowerInvariant()))
                 problems.Add("File '" + file + "' did not contain expected text '" + expectedString + "'");
         }
     }
