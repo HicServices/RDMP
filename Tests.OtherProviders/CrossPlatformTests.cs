@@ -51,6 +51,11 @@ namespace Tests.OtherProviders
                 server.GetCommand(wrappedCreate, con).ExecuteNonQuery();
                 Assert.IsTrue(table.Exists());
 
+                //try adding a column
+                Assert.AreEqual(table.DiscoverColumns().Count(),1);
+                table.AddColumn("Dave",new DatabaseTypeRequest(typeof(int)),true);
+                Assert.AreEqual(table.DiscoverColumns().Count(),2);
+
                 //now we can drop it and recreate it using the wrapped query
                 table.Drop();
                 server.GetCommand(wrappedCreate, con).ExecuteNonQuery();
