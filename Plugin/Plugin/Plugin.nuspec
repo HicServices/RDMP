@@ -34,6 +34,7 @@
         <file src="Developer\PluginPackager\bin\$Configuration$\MapsDirectlyToDatabaseTable.dll" target="tools\PluginPackager" />
         <file src="Developer\PluginPackager\bin\$Configuration$\ReusableLibraryCode.dll" target="tools\PluginPackager" />
         <file src="Developer\PluginPackager\bin\$Configuration$\CommandLine.dll" target="tools\PluginPackager" />
+        <file src="Developer\PluginPackager\bin\$Configuration$\RDMPStartup.dll" target="tools\PluginPackager" />
 
     </files>
 </package>
