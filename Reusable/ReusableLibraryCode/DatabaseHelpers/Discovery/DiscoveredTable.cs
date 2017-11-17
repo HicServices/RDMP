@@ -116,9 +116,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public void AddColumn(string name, DatabaseTypeRequest type,bool allowNulls)
         {
+            AddColumn(name, Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type),allowNulls);
+        }
+
+        public void AddColumn(string name, string databaseType, bool allowNulls)
+        {
             using (IManagedConnection connection = Database.Server.GetManagedConnection())
             {
-                Helper.AddColumn(this,connection.Connection, name,type,allowNulls);
+                Helper.AddColumn(this, connection.Connection, name, databaseType, allowNulls);
             }
         }
 

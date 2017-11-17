@@ -19,12 +19,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public abstract void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
         public abstract void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop);
 
-        public void AddColumn(DiscoveredTable table, DbConnection connection, string name, DatabaseTypeRequest type, bool allowNulls)
-        {
-            AddColumn(table, connection, name, table.Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type), allowNulls);
-        }
-
-        protected virtual void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls)
+        public virtual void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls)
         {
             table.Database.Server.GetCommand("ALTER TABLE " + table + " ADD " + name + " " + dataType + " " + (allowNulls ? "NULL" : "NOT NULL"), connection).ExecuteNonQuery();
         }

@@ -21,7 +21,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
         void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop);
 
-        void AddColumn(DiscoveredTable table, DbConnection connection, string name, DatabaseTypeRequest type, bool allowNulls);
+        void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls);
 
         int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null);
         string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName);
