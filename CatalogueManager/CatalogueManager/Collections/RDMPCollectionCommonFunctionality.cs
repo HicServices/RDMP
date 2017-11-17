@@ -58,25 +58,10 @@ namespace CatalogueManager.Collections
         public OLVColumn FavouriteColumn { get; private set; }
 
         public bool IsSetup { get; private set; }
-
-        HashSet<object> filterWhitelist = new HashSet<object>();
-        private IModelFilter _secondaryFilter;
-
-        /// <summary>
-        /// Only valid if you have a filterTextBox too, this lets you specify an alternate filter that will be .All with the text/whitelist filter so that it must fulfil the requirements
-        /// of the text search AND the SecondaryFilter (good for flags that always hide stuff)
-        /// </summary>
-        public IModelFilter SecondaryFilter
-        {
-            get { return _secondaryFilter; }
-            set
-            {
-                _secondaryFilter = value;
-                ApplyFilter();
-            }
-        }
-
+        
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
+        
+        private CollectionScopeFilterUI _scopeFilter;
 
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
@@ -84,6 +69,9 @@ namespace CatalogueManager.Collections
         /// but no further children.
         /// </summary>
         public Type[] AxeChildren { get; set; }
+
+        public bool AllowPinning { get; set; }
+        public Type[] MaintainRootObjects { get; set; }
 
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
@@ -95,9 +83,8 @@ namespace CatalogueManager.Collections
         /// <param name="commandExecutionFactory">A command execution factory for completing a started ICommand in appropriate circumstances e.g. when the user completes a drop operation onto a second item.  Try using a new RDMPCommandExecutionFactory</param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
         /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
-        /// <param name="filterTextBoxIfYouWantDefaultFilterBehaviour">A text box if you want to be able to filter by text string (also includes support for always showing newly expanded nodes)</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn, TextBox filterTextBoxIfYouWantDefaultFilterBehaviour,OLVColumn renameableColumn, bool addFavouriteColumn = true)
+        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true,bool allowPinning = true)
         {
             IsSetup = true;
             _activator = activator;
@@ -150,16 +137,10 @@ namespace CatalogueManager.Collections
             CopyPasteProvider.RegisterEvents(tree);
             
             OnRefreshChildProvider(_activator.CoreChildProvider);
-
-            _filterTextBox = filterTextBoxIfYouWantDefaultFilterBehaviour;
-            if(filterTextBoxIfYouWantDefaultFilterBehaviour != null)
-            {
-                filterTextBoxIfYouWantDefaultFilterBehaviour.TextChanged += FilterTextChanged;
-                tree.Expanding += TreeOnExpanding;
-                tree.Collapsing += TreeOnCollapsing;
-            }
-
+            
             _activator.Emphasise += _activator_Emphasise;
+
+            AllowPinning = allowPinning;
         }
 
         private void TreeOnKeyUp(object sender, KeyEventArgs e)
@@ -177,8 +158,6 @@ namespace CatalogueManager.Collections
                 if (o != null)
                     new ExecuteCommandRefreshObject(_activator, o).Execute();
             }
-
-        
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
@@ -212,8 +191,21 @@ namespace CatalogueManager.Collections
             //select the object and ensure it's visible
             Tree.SelectedObject = args.Request.ObjectToEmphasise;
             Tree.EnsureVisible(index);
-            
+
+            if (args.Request.Pin && AllowPinning)
+                Pin(args.Request.ObjectToEmphasise,decendancyList);
+
             args.FormRequestingActivation = Tree.FindForm();
+        }
+
+        private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
+        {
+            if (_scopeFilter != null)
+                _scopeFilter.UnApplyToTree();
+            
+            _scopeFilter = new CollectionScopeFilterUI();
+            _scopeFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
+            _scopeFilter.UnApplied += (s, e) => _scopeFilter = null;
         }
 
         private void ExpandToDepth(int expansionDepth, object currentObject)
@@ -226,68 +218,6 @@ namespace CatalogueManager.Collections
             foreach (object o in ChildrenGetter(currentObject))
                 ExpandToDepth(expansionDepth -1,o);
         }
-
-        private void FilterTextChanged(object sender, EventArgs e)
-        {
-            //text changed so clear the whitelist
-            filterWhitelist = new HashSet<object>();
-            ApplyFilter();
-        }
-
-        private void TreeOnCollapsing(object sender, TreeBranchCollapsingEventArgs e)
-        {
-            filterWhitelist.Add(e.Model);
-            ApplyFilter();
-        }
-
-        private void TreeOnExpanding(object sender, TreeBranchExpandingEventArgs treeBranchExpandingEventArgs)
-        {
-            AddAllChildrenToFilterRecursively(treeBranchExpandingEventArgs.Model);
-            ApplyFilter();
-        }
-        private void AddAllChildrenToFilterRecursively(object model)
-        {
-            if(model == null)
-                return;
-
-            filterWhitelist.Add(model);
-
-            var children = CoreChildProvider.GetChildren(model);
-            
-            foreach (var child in children)
-                AddAllChildrenToFilterRecursively(child);
-        }
-        
-        private void ApplyFilter()
-        {
-            //create new filter
-            if (!string.IsNullOrWhiteSpace(_filterTextBox.Text))
-            {
-                Tree.UseFiltering = true;
-
-                var textFilter = new TextMatchFilterWithWhiteList(filterWhitelist, Tree, _filterTextBox.Text, StringComparison.CurrentCultureIgnoreCase);
-
-                if (_secondaryFilter == null)
-                    Tree.ModelFilter = textFilter;
-                else 
-                    Tree.ModelFilter = new CompositeAllFilter(new List<IModelFilter>(new[]{textFilter,_secondaryFilter}));
-            }
-            else
-            {
-                if(SecondaryFilter == null)
-                {
-                    Tree.UseFiltering = false;
-                    Tree.ModelFilter = null;
-                }
-                else
-                {
-                    Tree.ModelFilter = SecondaryFilter;
-                    Tree.UseFiltering = true;
-                }
-            }
-        }
-
-
 
         private IEnumerable ChildrenGetter(object model)
         {
@@ -316,39 +246,82 @@ namespace CatalogueManager.Collections
         {
             var o = e.Model;
 
-            var objectConstructor = new ObjectConstructor();
-
             if(o != null)
             {
-
                 //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
                 Tree.SelectedObject = o;
 
-                //now find the first RDMPContextMenuStrip with a compatible constructor
-                foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+                object masquerade = null;
+                if (o is IMasqueradeAs)
+                    masquerade = ((IMasqueradeAs)o).MasqueradingAs();
+
+                var menu = GetMenuIfExists(o);
+
+                //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
+                if (menu == null && masquerade != null)
+                    menu = GetMenuIfExists(masquerade);
+                
+                //found a menu with compatible constructor arguments
+                if (menu != null)
                 {
-                    if(menuType.IsAbstract || menuType.IsInterface)
-                        continue;
-
-
-                    var menu = objectConstructor.ConstructIfPossible(menuType,
-                        _activator,//parameter 1 must be activator
-                        o); //parameter 2 must be object compatible Type
-
-                    if (menu != null)
+                    if (!AllowPinning)
                     {
-                        e.MenuStrip = (ContextMenuStrip) menu;
-                        return;
+                        var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
+                        
+                        if(miPin != null)
+                        {
+                            miPin.Enabled = false;
+                            miPin.ToolTipText = "Pinning is disabled in this collection";
+                        }
                     }
+
+                    e.MenuStrip = menu;
                 }
             }
             else
             {
+                //it's a right click in whitespace (nothing right clicked)
+
                 AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
-                //it's a right click in whitespace (nothing right clicked)
                 if (WhitespaceRightClickMenuCommands != null)
                     e.MenuStrip = factory.CreateMenu(WhitespaceRightClickMenuCommands);
+            }
+        }
+
+        private ContextMenuStrip GetMenuIfExists(object o)
+        {
+            var objectConstructor = new ObjectConstructor();
+
+            //now find the first RDMPContextMenuStrip with a compatible constructor
+            foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+            {
+                if (menuType.IsAbstract || menuType.IsInterface)
+                    continue;
+
+                //try constructing menu with:
+                var menu = objectConstructor.ConstructIfPossible(menuType,
+                    _activator,//parameter 1 must be activator
+                    o); //parameter 2 must be object compatible Type
+
+
+                if (menu != null)
+                {
+                    AddExpandCollapseMenuItems((ContextMenuStrip)menu, o);
+                    return (ContextMenuStrip)menu;
+                }
+            }
+
+            return null;
+        }
+
+        private void AddExpandCollapseMenuItems(ContextMenuStrip menuStrip, object model)
+        {
+            if (menuStrip != null)
+            {
+                menuStrip.Items.Add(new ToolStripSeparator());
+                menuStrip.Items.Add(new ExpandAllTreeNodesMenuItem(Tree, model));
+                menuStrip.Items.Add(new CollapseAllTreeNodesMenuItem(Tree, model));
             }
         }
 
@@ -361,7 +334,6 @@ namespace CatalogueManager.Collections
                 cmd.Execute();
         }
 
-
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             OnRefreshChildProvider(_activator.CoreChildProvider);
@@ -373,7 +345,13 @@ namespace CatalogueManager.Collections
             var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
             if (knownDescendancy != null)
                 parent = knownDescendancy.Last();
-            
+
+            //if it is a root object maintained by this tree and it exists
+            if (MaintainRootObjects != null && MaintainRootObjects.Contains(e.Object.GetType()) && e.Object.Exists())
+                    //if tree doesn't yet contain the object
+                    if (!Tree.Objects.Cast<object>().Contains(e.Object))
+                        Tree.AddObject(e.Object); //add it
+
             //item deleted?
             if (!e.Object.Exists())
             {
@@ -419,8 +397,6 @@ namespace CatalogueManager.Collections
                     {
                         
                     }
-
-
             }
         }
 
@@ -439,14 +415,13 @@ namespace CatalogueManager.Collections
         {
             if(IsSetup)
             {
-
                 _activator.RefreshBus.Unsubscribe(this);
                 _activator.Emphasise -= _activator_Emphasise;
             }
         }
 
         private bool expand = true;
-
+        
         /// <summary>
         /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
         /// </summary>

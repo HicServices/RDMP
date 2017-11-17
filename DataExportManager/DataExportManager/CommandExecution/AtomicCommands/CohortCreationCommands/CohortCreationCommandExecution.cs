@@ -14,6 +14,7 @@ using CatalogueManager.ItemActivation;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI.ImportCustomData;
+using DataExportManager.Collections.Providers;
 using HIC.Logging;
 using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTableUI;
@@ -32,6 +33,16 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
         protected CohortCreationCommandExecution(IActivateItems activator) : base(activator)
         {
+            var dataExport = activator.CoreChildProvider as DataExportChildProvider;
+
+            if (dataExport == null)
+            {
+                SetImpossible("No data export repository available");
+                return;
+            }
+
+            if (!dataExport.CohortSources.Any())
+                SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
         }
         protected CohortCreationRequest GetCohortCreationRequest()
         {

@@ -58,9 +58,6 @@ namespace CatalogueLibrary.Repositories
         T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
             where T : IMapsDirectlyToDatabaseTable;
         
-        [Obsolete]
-        int InsertAndReturnID(string sql, Dictionary<string, object> parameters = null);
-
         DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
 
         Catalogue[] GetAllAutomationLockedCatalogues();

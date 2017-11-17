@@ -30,6 +30,13 @@ namespace DataExportLibrary.CohortCreationPipeline
         public void Execute()
         {
             Request.GetEngine(_configuration.CohortRefreshPipeline,_listener).ExecutePipeline(new GracefulCancellationToken());
+
+            var newCohort = Request.CohortCreatedIfAny;
+            if (newCohort != null)
+            {
+                _configuration.Cohort_ID = newCohort.ID;
+                _configuration.SaveToDatabase();
+            }
         }
     }
 }

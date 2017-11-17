@@ -27,6 +27,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IActivateItems activator) : base(activator)
         {
+            if(!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Any())
+                SetImpossible("There are no Cohort Identification Configurations yet");
+
             _existingAssociations = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
         }
 

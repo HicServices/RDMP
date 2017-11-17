@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
@@ -20,7 +21,6 @@ using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.Hierarchy;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Nodes;
 using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
@@ -38,9 +38,8 @@ namespace DataExportManager.Collections.Providers
     public class DataExportChildProvider : CatalogueChildProvider
     {
         //root objects
-        public CohortsNode RootCohortsNode { get; private set; }
-        public ExtractableDataSetsNode RootExtractableDataSets { get; private set; }
-
+        public AllCohortsNode RootCohortsNode { get; private set; }
+        
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly ICheckNotifier _errorsCheckNotifier;
 
@@ -71,6 +70,8 @@ namespace DataExportManager.Collections.Providers
 
         public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
 
+        public GlobalExtractionFilterParameter[] AllGlobalExtractionFilterParameters;
+
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
             _repositoryLocator = repositoryLocator;
@@ -97,6 +98,7 @@ namespace DataExportManager.Collections.Providers
 
             Projects = dataExportRepository.GetAllObjects<Project>();
             ExtractionConfigurations = dataExportRepository.GetAllObjects<ExtractionConfiguration>();
+            AllGlobalExtractionFilterParameters = dataExportRepository.GetAllObjects<GlobalExtractionFilterParameter>();
 
             _dataExportFilterHierarchy = new DataExportFilterHierarchy(dataExportRepository);
 
@@ -109,11 +111,11 @@ namespace DataExportManager.Collections.Providers
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
                 _configurationToDatasetMapping.Add(configuration, SelectedDataSets.Where(c => c.ExtractionConfiguration_ID == configuration.ID).ToArray());
 
-            RootCohortsNode = new CohortsNode();
+            RootCohortsNode = new AllCohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
 
-            RootExtractableDataSets = new ExtractableDataSetsNode(dataExportRepository,ExtractableDataSets, AllPackages);
-            AddChildren(RootExtractableDataSets,new DescendancyList(RootExtractableDataSets));
+            foreach (ExtractableDataSetPackage package in AllPackages)
+                AddChildren(package, new DescendancyList(package));
 
             foreach (Project p in Projects)
                 AddChildren(p, new DescendancyList(p));
@@ -124,23 +126,6 @@ namespace DataExportManager.Collections.Providers
             //inject extractability into Catalogues
             foreach (Catalogue catalogue in AllCatalogues)
                 catalogue.InjectExtractability(extractableCatalogueIds.Contains(catalogue.ID));
-        }
-
-        private void AddChildren(ExtractableDataSetsNode rootExtractableDataSetsNode, DescendancyList descendancy)
-        {
-            HashSet<object> children = new HashSet<object>();
-
-
-            foreach (var dataSet in rootExtractableDataSetsNode.ExtractableDataSets)
-                children.Add(dataSet);
-
-            foreach (ExtractableDataSetPackage package in rootExtractableDataSetsNode.Packages)
-            {
-                AddChildren(package,descendancy.Add(package));
-                children.Add(package);
-            }
-
-            AddToDictionaries(children,descendancy);
         }
 
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)
@@ -170,7 +155,7 @@ namespace DataExportManager.Collections.Providers
 
             AddChildren(extractionConfigurationsNode,descendancy.Add(extractionConfigurationsNode));
             
-            var folder = new ExtractionFolderNode(project);
+            var folder = new ExtractionDirectoryNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
         }
@@ -226,6 +211,9 @@ namespace DataExportManager.Collections.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
+            var parameterNode = new ParametersNode(extractionConfiguration, AllGlobalExtractionFilterParameters.Where(p=>p.ExtractionConfiguration_ID == extractionConfiguration.ID).ToArray());
+
+            children.Add(parameterNode);
             //if it has a cohort
             if (extractionConfiguration.Cohort_ID != null)
             {
@@ -388,7 +376,7 @@ namespace DataExportManager.Collections.Providers
             }
         }
 
-        private void AddChildren(CohortsNode cohortsNode, DescendancyList descendancy)
+        private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
         {
             AddToDictionaries(new HashSet<object>(CohortSources), descendancy);
             foreach (var s in CohortSources)
@@ -489,6 +477,7 @@ namespace DataExportManager.Collections.Providers
         {
             var toReturn = base.GetAllSearchables();
             AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
+            AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
             return toReturn;
         }
     }

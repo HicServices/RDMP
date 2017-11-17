@@ -3,29 +3,16 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
-using Microsoft.Office.Interop.Word;
+using System.Windows.Media;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 {
     public class WordAccessRightsByDatabase:RequiresMicrosoftOffice
     {
         private readonly string _database;
-        #region stuff for Word
-        object oTrue = true;
-        object oFalse = false;
-        Object oMissing = System.Reflection.Missing.Value;
-
-        Microsoft.Office.Interop.Word.Application wrdApp;
-        Microsoft.Office.Interop.Word._Document wrdDoc;
-        #endregion
-
-
-        /// <summary>
-        /// Set this to true if you want microsoft word to be visible while it is running Interop commands (will be very confusing for users so never ship this with true)
-        /// </summary>
-        public bool DEBUG_WORD = false;
-
+        
         private readonly DiscoveredDatabase _dbInfo;
 
         //constructor
@@ -37,71 +24,33 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
         public void GenerateWordFile()
         {
+            var f = GetUniqueFilenameInWorkArea("RightsByDatabase");
 
-            // Create an instance of Word  and make it visible.=
-            wrdApp = new Microsoft.Office.Interop.Word.Application();
-
-            //normally we hide word and suppress popups but it might be that word is being broken in which case we would want to watch it as it outputs stuff
-            if (!DEBUG_WORD)
+            using (DocX document = DocX.Create(f.FullName))
             {
-                wrdApp.Visible = false;
-                wrdApp.DisplayAlerts = WdAlertLevel.wdAlertsNone;
+                InsertHeader(document,"Database Access Report:" + _dbInfo.Server.Name);
+
+                InsertHeader(document,"Administrators");
+
+                CreateAdministratorsTable(document);
+
+                foreach (string database in _dbInfo.Server.DiscoverDatabases().Select(d => d.GetRuntimeName()))
+                {
+                    if (database.Equals("master") || database.Equals("msdb") || database.Equals("tempdb") || database.Equals("ReportServer") || database.Equals("ReportServerTempDB"))
+                        continue;
+
+                    InsertHeader(document,"Database:" + database);
+                    CreateDatabaseTable(document,database);
+                }
+
+                document.Save();
+                ShowFile(f);
             }
-            else
-            {
-                wrdApp.Visible = true;
-            }
-            //add blank new word
-            wrdDoc = wrdApp.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-
-            try
-            {
-                wrdDoc.Select();
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("RETRYLATER"))
-                    Thread.Sleep(2000);
-
-                wrdDoc.Select();
-            }
-
-
-            WordHelper wordHelper = new WordHelper(wrdApp);
-
-
-            wordHelper.WriteLine("Database Access Report:" + _dbInfo.Server.Name, WdBuiltinStyle.wdStyleTitle);
-
-            wordHelper.WriteLine("Administrators" , WdBuiltinStyle.wdStyleHeading1);
-            CreateAdministratorsTable();
-            
-            wordHelper.GoToEndOfDocument();
-
-            foreach (string database in _dbInfo.Server.DiscoverDatabases().Select(d => d.GetRuntimeName()))
-            {
-                if (database.Equals("master") || database.Equals("msdb") || database.Equals("tempdb") || database.Equals("ReportServer") || database.Equals("ReportServerTempDB"))
-                    continue;
-
-                wordHelper.WriteLine("Database:" + database , WdBuiltinStyle.wdStyleHeading1);
-                CreateDatabaseTable(database);
-
-                wordHelper.GoToEndOfDocument();
-
-            }
-
-
-            wrdApp.Visible = true;
-
         }
 
      
-        private void CreateAdministratorsTable()
+        private void CreateAdministratorsTable(DocX document)
         {
-
-            object start = wrdDoc.Content.End - 1;
-            object end = wrdDoc.Content.End - 1;
-
-            Range tableLocation = wrdDoc.Range(ref start, ref end);
 
             SqlConnection con = (SqlConnection) _dbInfo.Server.GetConnection();
             con.Open();
@@ -109,24 +58,21 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
             int numberOfAdmins = int.Parse(cmdNumberOfAdmins.ExecuteScalar().ToString());
 
+            Table table = InsertTable(document,numberOfAdmins+1, 9);
 
-            Table table = wrdDoc.Tables.Add(tableLocation, numberOfAdmins+1, 9);
+            var fontSize = 5;
             
-            table.set_Style("Table Grid");
-            table.Range.Font.Size = 5;
-            table.AllowAutoFit = true;
+            int tableLine = 0;
 
-            int tableLine = 1;
-
-            table.Cell(tableLine, 1).Range.Text = "name";
-            table.Cell(tableLine, 2).Range.Text = "sysadmin";
-            table.Cell(tableLine, 3).Range.Text = "securityadmin";
-            table.Cell(tableLine, 4).Range.Text = "serveradmin";
-            table.Cell(tableLine, 5).Range.Text = "setupadmin";
-            table.Cell(tableLine, 6).Range.Text = "processadmin";
-            table.Cell(tableLine, 7).Range.Text = "diskadmin";
-            table.Cell(tableLine, 8).Range.Text = "dbcreator";
-            table.Cell(tableLine, 9).Range.Text = "bulkadmin";
+            SetTableCell(table, tableLine, 0, "name", fontSize);
+            SetTableCell(table, tableLine, 1, "sysadmin", fontSize);
+            SetTableCell(table, tableLine, 2, "securityadmin", fontSize);
+            SetTableCell(table, tableLine, 3, "serveradmin", fontSize);
+            SetTableCell(table, tableLine, 4, "setupadmin", fontSize);
+            SetTableCell(table, tableLine, 5, "processadmin", fontSize);
+            SetTableCell(table, tableLine, 6, "diskadmin", fontSize);
+            SetTableCell(table, tableLine, 7, "dbcreator", fontSize);
+            SetTableCell(table, tableLine, 8, "bulkadmin", fontSize);
             tableLine++;
 
             SqlCommand cmdAdmins = new SqlCommand("Select * " + adminsFromAndWhere + " ORDER BY name",con);
@@ -134,17 +80,16 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 
             while (r.Read())
             {
-                table.Cell(tableLine, 1).Range.Text = r["name"].ToString();
-                table.Cell(tableLine, 2).Range.Text = r["sysadmin"].ToString();
-                table.Cell(tableLine, 3).Range.Text = r["securityadmin"].ToString();
-                table.Cell(tableLine, 4).Range.Text = r["serveradmin"].ToString();
-                table.Cell(tableLine, 5).Range.Text = r["setupadmin"].ToString();
-                table.Cell(tableLine, 6).Range.Text = r["processadmin"].ToString();
-                table.Cell(tableLine, 7).Range.Text = r["diskadmin"].ToString();
-                table.Cell(tableLine, 8).Range.Text = r["dbcreator"].ToString();
-                table.Cell(tableLine, 9).Range.Text = r["bulkadmin"].ToString();
+                SetTableCell(table, tableLine, 0, r["name"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 1, r["sysadmin"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 2, r["securityadmin"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 3, r["serveradmin"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 4, r["setupadmin"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 5, r["processadmin"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 6, r["diskadmin"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 7, r["dbcreator"].ToString(), fontSize);
+                SetTableCell(table, tableLine, 8, r["bulkadmin"].ToString(), fontSize);
                 tableLine++;
-                
             }
 
             r.Close();
@@ -161,35 +106,25 @@ AND sysadmin + securityadmin + serveradmin + setupadmin + processadmin + diskadm
         }
             
 
-        private void CreateDatabaseTable(string database)
+        private void CreateDatabaseTable(DocX document, string database)
         {
-   
-            object start = wrdDoc.Content.End - 1;
-            object end = wrdDoc.Content.End - 1;
-
-            Range tableLocation = wrdDoc.Range(ref start, ref end);
-
             SqlConnection con = (SqlConnection) _dbInfo.Server.GetConnection();
             con.Open();
             SqlCommand cmdNumberOfUsers = GetCommandForDatabase(con, database, true);
 
-
             int numberOfUsers = int.Parse(cmdNumberOfUsers.ExecuteScalar().ToString());
+            
+            Table table = InsertTable(document,numberOfUsers + 1, 5);
 
+            var fontSize = 5;
 
-            Table table = wrdDoc.Tables.Add(tableLocation, numberOfUsers + 1, 5);
+            int tableLine = 0;
 
-            table.set_Style("Table Grid");
-            table.Range.Font.Size = 5;
-            table.AllowAutoFit = true;
-
-            int tableLine = 1;
-
-            table.Cell(tableLine, 1).Range.Text = "DatabaseName";
-            table.Cell(tableLine, 2).Range.Text = "UserName";
-            table.Cell(tableLine, 3).Range.Text = "Role";
-            table.Cell(tableLine, 4).Range.Text = "PermissionType";
-            table.Cell(tableLine, 5).Range.Text = "PermissionState";
+            SetTableCell(table,tableLine, 0, "DatabaseName",fontSize);
+            SetTableCell(table,tableLine, 1, "UserName",fontSize);
+            SetTableCell(table,tableLine, 2, "Role",fontSize);
+            SetTableCell(table,tableLine, 3, "PermissionType",fontSize);
+            SetTableCell(table, tableLine, 4, "PermissionState", fontSize);
             tableLine++;
 
             SqlCommand cmdUsers = GetCommandForDatabase(con, database, false);
@@ -197,13 +132,12 @@ AND sysadmin + securityadmin + serveradmin + setupadmin + processadmin + diskadm
 
             while (r.Read())
             {
-                table.Cell(tableLine, 1).Range.Text = r["DatabaseName"].ToString();
-                table.Cell(tableLine, 2).Range.Text = r["DatabaseUserName"].ToString();
-                table.Cell(tableLine, 3).Range.Text = r["Role"].ToString();
-                table.Cell(tableLine, 4).Range.Text = r["PermissionType"].ToString();
-                table.Cell(tableLine, 5).Range.Text = r["PermissionState"].ToString();
+                SetTableCell(table,tableLine, 0,r["DatabaseName"].ToString(),fontSize);
+                SetTableCell(table,tableLine, 1,r["DatabaseUserName"].ToString(),fontSize);
+                SetTableCell(table,tableLine, 2,r["Role"].ToString(),fontSize);
+                SetTableCell(table,tableLine, 3,r["PermissionType"].ToString(),fontSize);
+                SetTableCell(table, tableLine, 4, r["PermissionState"].ToString(), fontSize);
                 tableLine++;
-
             }
 
             r.Close();

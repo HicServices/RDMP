@@ -7,6 +7,7 @@
         Catalogue,
         DataExport,
         SavedCohorts,
+        Favourites,
 
         Cohort,
         DataLoad,

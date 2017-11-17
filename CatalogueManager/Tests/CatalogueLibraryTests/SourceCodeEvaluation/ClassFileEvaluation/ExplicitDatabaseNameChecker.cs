@@ -20,6 +20,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             whitelist.Add("AutomationServiceOptions.cs");//allowed because it is the usage text for the program.
             whitelist.Add("DatabaseTests.cs"); //allowed because it is telling user about how you can setup database tests support
             whitelist.Add("ChoosePlatformDatabases.Designer.cs"); //allowed because it is a suggestion to user about what prefix to use
+            whitelist.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
 
             prohibitedStrings.Add("TEST_");
             prohibitedStrings.Add("RDMP_");

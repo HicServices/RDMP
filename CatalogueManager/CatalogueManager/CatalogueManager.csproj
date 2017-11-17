@@ -259,6 +259,10 @@
     <Reference Include="MySql.Data">
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
@@ -277,6 +281,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -332,20 +337,49 @@
     </Compile>
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
+    <Compile Include="Collections\CollectionScopeFilterUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Collections\CollectionScopeFilterUI.Designer.cs">
+      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\FavouritesCollectionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Collections\FavouritesCollectionUI.Designer.cs">
+      <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
+    <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParameterSet.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionFilterParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
-    <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs" />
+    <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
+    <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
+    <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
+    <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
-    <Compile Include="Collections\Providers\TextMatchFilterWithWhiteList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
@@ -421,14 +455,6 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CacheProgressTreeNode.cs" />
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.Designer.cs">
-      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LoadExecutionUIs\CachingDashboard\PermissionWindowTreeNode.cs" />
     <Compile Include="LoadExecutionUIs\ExecuteCacheProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -543,7 +569,6 @@
     <Compile Include="CommandExecution\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandMakeCatalogueExtractable.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMoveAggregateIntoContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMoveCohortAggregateContainerIntoSubContainer.cs" />
@@ -723,11 +748,11 @@
     <Compile Include="Menus\AllExternalServersNodeMenu.cs" />
     <Compile Include="Menus\CacheProgressMenu.cs" />
     <Compile Include="Menus\CatalogueItemsNodeMenu.cs" />
-    <Compile Include="Menus\DataAccessCredentialsNodeMenu.cs" />
+    <Compile Include="Menus\AllDataAccessCredentialsNodeMenu.cs" />
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
     <Compile Include="Menus\DocumentationNodeMenu.cs" />
     <Compile Include="Menus\FilterMenu.cs" />
-    <Compile Include="Menus\FiltersParametersNodeMenu.cs" />
+    <Compile Include="Menus\ParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
@@ -746,7 +771,8 @@
     <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
-    <Compile Include="Menus\PreLoadDiscardedColumnsCollectionMenu.cs" />
+    <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
+    <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -854,7 +880,7 @@
       <DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\Providers\Copying\DragDropProvider.cs" />
-    <Compile Include="Collections\Providers\CatalogueCollectionFilter.cs" />
+    <Compile Include="Collections\Providers\Filtering\CatalogueCollectionFilter.cs" />
     <Compile Include="Icons\IconProvision\CatalogueIconProvider.cs" />
     <Compile Include="Collections\Providers\RenameProvider.cs" />
     <Compile Include="Menus\AggregateConfigurationMenu.cs" />
@@ -999,6 +1025,12 @@
     </Compile>
     <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.Designer.cs">
       <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.Designer.cs">
+      <DependentUpon>RemoteRDMPUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.cs">
       <SubType>Form</SubType>
@@ -1376,6 +1408,10 @@
     <None Include="Icons\AllPreLoadDiscardedColumns.png" />
     <None Include="Icons\famfamfam\information.png" />
     <None Include="Icons\ExtractionConfigurationsNode.png" />
+    <None Include="Icons\collapseAllNodes.png" />
+    <None Include="Icons\AllAutomationServerSlotsNode.png" />
+    <None Include="Icons\AllRDMPRemotesNode.png" />
+    <None Include="Icons\AutomateablePipeline.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1456,6 +1492,9 @@
     <None Include="Icons\Redo.png" />
     <None Include="Icons\ProjectCohortIdentificationConfigurationAssociationsNode.png" />
     <None Include="Icons\ProjectSavedCohortsNode.png" />
+    <None Include="Icons\RemoteRDMP.png" />
+    <None Include="Icons\PipelineComponentArgument.png" />
+    <None Include="Icons\PipelineComponent.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1475,6 +1514,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Collections\CollectionScopeFilterUI.resx">
+      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Collections\FavouritesCollectionUI.resx">
+      <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.resx">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
@@ -1502,9 +1547,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoadExecutionUIs\CachingDashboard\CachingDashboardForm.resx">
-      <DependentUpon>CachingDashboardForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
@@ -1712,6 +1754,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.resx">
       <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleDialogs\Remoting\RemoteRDMPUI.resx">
+      <DependentUpon>RemoteRDMPUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.resx">
       <DependentUpon>DocumentationReportFormsAndControlsUI.cs</DependentUpon>

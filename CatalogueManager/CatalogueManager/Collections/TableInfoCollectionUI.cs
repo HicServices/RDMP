@@ -76,7 +76,6 @@ namespace CatalogueManager.Collections
             InitializeComponent();
             
             tlvTableInfos.KeyUp += olvTableInfos_KeyUp;
-            tbFilter.GotFocus += tbFilter_GotFocus;
 
             tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
             olvColumn2.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
@@ -127,70 +126,6 @@ namespace CatalogueManager.Collections
             tlvTableInfos.SelectObject(toSelect);
         }
 
-        public void SetFilter(string text)
-        {
-            tbFilter.Text = text;
-        }
-
-        #region Make tbFilter select all when you click in it
-
-        bool alreadyFocused;
-
-
-        private void tbFilter_Leave(object sender, EventArgs e)
-        {
-            alreadyFocused = false;
-        }
-
-        void tbFilter_GotFocus(object sender, EventArgs e)
-        {
-            // Select all text only if the mouse isn't down.
-            // This makes tabbing to the textbox give focus.
-            if (MouseButtons == MouseButtons.None)
-            {
-                tbFilter.SelectAll();
-                alreadyFocused = true;
-            }
-        }
-
-        private void tbFilter_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (!alreadyFocused && tbFilter.SelectionLength == 0)
-            {
-                alreadyFocused = true;
-                tbFilter.SelectAll();
-            }
-        }
-        #endregion
-
-        private void olvTableInfos_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            TableInfo tableInfo = e.Model as TableInfo;
-            ColumnInfo columnInfo = e.Model as ColumnInfo;
-            var discardCollection = e.Model as PreLoadDiscardedColumnsNode;
-            
-            if (e.Model is AllExternalServersNode)
-                e.MenuStrip = new AllExternalServersNodeMenu(_activator);
-            else
-            if (tableInfo != null)
-                e.MenuStrip = new TableInfoMenu( _activator, tableInfo);
-            else if (columnInfo != null)
-                e.MenuStrip = new ColumnInfoMenu(_activator, columnInfo);
-            else if (e.Model is DataAccessCredentialsNode)
-                e.MenuStrip = new DataAccessCredentialsNodeMenu(_activator);
-            else if (e.Model is DataAccessCredentialUsageNode)
-                e.MenuStrip = new DataAccessCredentialUsageNodeMenu( _activator,(DataAccessCredentialUsageNode)e.Model);
-            else if (discardCollection != null)
-                e.MenuStrip = new PreLoadDiscardedColumnsCollectionMenu(_activator, discardCollection);
-            else
-            if(e.Model == null)
-            {
-                //user right clicked in an empty area
-                var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator,false));
-            }
-
-        }
 
         private void olvTableInfos_KeyUp(object sender, KeyEventArgs e)
         {
@@ -221,24 +156,29 @@ namespace CatalogueManager.Collections
                 tlvTableInfos,
                 activator,
                 olvColumn1,
-                tbFilter,
                 olvColumn1
                 );
+
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new[]
+            {
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false)
+            };
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.DataAccessCredentialsNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.ANOTablesNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
-            
 
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             if(e.Object is DataAccessCredentials)
-                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<DataAccessCredentialsNode>());
+                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
             
             if(e.Object is Catalogue || e.Object is TableInfo)
                 tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllServersNode);
@@ -259,8 +199,8 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root is DataAccessCredentialsNode ||
-            root is ANOTablesNode || 
+            return root is AllDataAccessCredentialsNode ||
+            root is AllANOTablesNode || 
             root is AllServersNode || 
             root is AllExternalServersNode;
         }

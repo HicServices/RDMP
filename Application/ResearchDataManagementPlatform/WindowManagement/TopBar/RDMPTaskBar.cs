@@ -5,13 +5,17 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Providers;
+using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.SimpleDialogs.NavigateTo;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ReusableUIComponents.Icons.IconProvision;
@@ -35,34 +39,22 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnHome.Image = FamFamFamIcons.application_home;
             btnCatalogues.Image = CatalogueIcons.Catalogue;
             btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration;
-            btnSavedCohorts.Image = CatalogueIcons.CohortsNode;
+            btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode;
             btnDataExport.Image = CatalogueIcons.Project;
             btnTables.Image = CatalogueIcons.TableInfo;
             btnLoad.Image = CatalogueIcons.LoadMetadata;
+            btnFavourites.Image = CatalogueIcons.Favourite;
         }
 
         public void SetWindowManager(ToolboxWindowManager manager)
         {
             _manager = manager;
-            _manager.CollectionCreated += _manager_CollectionCreated;
             btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
-
-            //needed because persistence can result in the toolboxes being visible before the events system is even registered to by oursevles at application startup
-            foreach (ToolStripButton button in new object[]{btnCatalogues,btnCohorts,btnDataExport,btnLoad,btnTables})
-            {
-                RDMPCollection collection = ButtonToEnum(button);
-                button.Checked = _manager.IsVisible(collection);
-            }
-
+            
             btnAddDashboard.Image = manager.ContentManager.CoreIconProvider.GetImage(RDMPConcept.DashboardLayout,OverlayKind.Add);
             ReCreateDashboardsDropDown();
         }
         
-        void _manager_CollectionCreated(object sender, Events.RDMPCollectionCreatedEventHandlerArgs args)
-        {
-            //a toolbox was programatically activated
-            EnumToButton(args.Collection).Checked = true;
-        }
 
         private void ReCreateDashboardsDropDown()
         {
@@ -103,32 +95,15 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private void ToolboxButtonClicked(object sender, EventArgs e)
         {
             RDMPCollection collection = ButtonToEnum(sender);
-            var visible = _manager.IsVisible(collection);
 
-            if(_manager.IsVisibleButBurried(collection))
+            if (_manager.IsVisible(collection))
                 _manager.Pop(collection);
             else
-            if (visible)
-                _manager.Destroy(collection);
-            else
-            {
-                var window = _manager.Create(collection);
-                window.FormClosed += OnFormClosed;
-            }
-
-            ((ToolStripButton) sender).Checked = !visible;
+                _manager.Create(collection);
         }
 
         private void OnFormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
         {
-            var toolbox = sender as PersistableToolboxDockContent;
-
-            if (toolbox != null)
-            {
-                var btn = EnumToButton(toolbox.CollectionType);
-                btn.Checked = false;
-            }
-
             var layoutUI = sender as DashboardLayoutUI;
 
             if (layoutUI != null)
@@ -161,6 +136,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                 collectionToToggle = RDMPCollection.DataLoad;
             else if (button == btnSavedCohorts)
                 collectionToToggle = RDMPCollection.SavedCohorts;
+            else if (button == btnFavourites)
+                collectionToToggle = RDMPCollection.Favourites;
             else
                 throw new ArgumentOutOfRangeException();
 
@@ -185,6 +162,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                     return btnLoad;
                 case RDMPCollection.SavedCohorts:
                     return btnSavedCohorts;
+                case RDMPCollection.Favourites:
+                    return btnFavourites;
                 default:
                     throw new ArgumentOutOfRangeException("collection");
             }
@@ -223,5 +202,62 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         {
             toolStrip1.Items.Add(button);
         }
+
+        private void tbFind_TextChanged(object sender, EventArgs e)
+        {
+            RunFind(true);
+        }
+
+        private void tbFind_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                RunFind(false,true);
+        }
+
+        private void RunFind(bool returnFocusToTextBox,bool pin = false)
+        {
+            var activator = _manager.ContentManager;
+
+            var scorer = new SearchablesMatchScorer();
+
+            var matches = scorer.ScoreMatches(activator.CoreChildProvider.GetAllSearchables(), tbFind.Text, new CancellationToken())
+                .Where(score => score.Value > 0)
+                .OrderByDescending(score => score.Value).ToArray();
+
+            btnLaunchNavigateTo.Count = matches.Count();
+
+            if (matches.Length > 0)
+            {
+                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue){Pin=pin});
+                
+                if (returnFocusToTextBox)
+                    tbFind.Focus();
+            }
+            else
+                btnLaunchNavigateTo.Count = null;
+        }
+
+        private void btnLaunchNavigateTo_Click(object sender, EventArgs e)
+        {
+            ShowNavigateTo();
+        }
+
+        private void ShowNavigateTo()
+        {
+            var dialog = new NavigateToObjectUI(_manager.ContentManager, tbFind.Text);
+            dialog.Show();
+        }
+
+        public void FocusFind()
+        {
+            ShowNavigateTo();
+        }
+
+        private void tbFind_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
+        }
+
     }
 }

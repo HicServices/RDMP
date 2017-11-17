@@ -5,10 +5,12 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
@@ -46,19 +48,26 @@ namespace CatalogueLibrary.Providers
         private CatalogueItem[] _allCatalogueItems;
         private Dictionary<int,ColumnInfo> _allColumnInfos;
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
+        
+        public AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; private set; }
+        public AutomationServiceSlot[] AllAutomationServiceSlots { get; set; }
+
+        public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
+        public RemoteRDMP[] AllRemoteRDMPs { get; set; }
+
         public Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; private set; }
 
         private CatalogueItemIssue[] _allCatalogueItemIssues;
 
         //TableInfo side of things
-        public ANOTablesNode ANOTablesNode { get; private set; }
+        public AllANOTablesNode AllANOTablesNode { get; private set; }
         public ANOTable[] AllANOTables { get; set; }
 
         public ExternalDatabaseServer[] AllExternalServers { get; private set; }
         public TableInfoServerNode[] AllServers { get;private set; }
         public TableInfo[] AllTableInfos { get; private set; }
 
-        public DataAccessCredentialsNode DataAccessCredentialsNode { get; set; }
+        public AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; set; }
 
         public AllExternalServersNode AllExternalServersNode { get; private set; }
         public AllServersNode AllServersNode { get; private set; }
@@ -97,8 +106,8 @@ namespace CatalogueLibrary.Providers
             AllAnyTableParameters = repository.GetAllObjects<AnyTableSqlParameter>();
 
             AllANOTables = repository.GetAllObjects<ANOTable>();
-            ANOTablesNode = new ANOTablesNode();
-            AddChildren(ANOTablesNode);
+            AllANOTablesNode = new AllANOTablesNode();
+            AddChildren(AllANOTablesNode);
             
             AllCatalogues = repository.GetAllObjects<Catalogue>();
             AllLoadMetadatas = repository.GetAllObjects<LoadMetadata>();
@@ -109,12 +118,15 @@ namespace CatalogueLibrary.Providers
 
             AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
 
+            AllAutomationServiceSlots = repository.GetAllObjects<AutomationServiceSlot>();
+            AllRemoteRDMPs = repository.GetAllObjects<RemoteRDMP>();
+
             AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
 
             AllTableInfos = repository.GetAllObjects<TableInfo>();
             AllDataAccessCredentials = repository.GetAllObjects<DataAccessCredentials>();
-            DataAccessCredentialsNode = new DataAccessCredentialsNode();
-            AddChildren(DataAccessCredentialsNode);
+            AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
+            AddChildren(AllDataAccessCredentialsNode);
             
             //which TableInfos use which Credentials under which DataAccessContexts
             AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
@@ -153,6 +165,13 @@ namespace CatalogueLibrary.Providers
             AllExternalServersNode = new AllExternalServersNode();
             AddChildren(AllExternalServersNode);
 
+
+            AllAutomationServerSlotsNode = new AllAutomationServerSlotsNode();
+            AddChildren(AllAutomationServerSlotsNode);
+
+            AllRDMPRemotesNode = new AllRDMPRemotesNode();
+            AddChildren(AllRDMPRemotesNode);
+
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
 
@@ -164,10 +183,20 @@ namespace CatalogueLibrary.Providers
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
         }
-
+        
         private void AddChildren(AllExternalServersNode allExternalServersNode)
         {
             AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
+        }
+
+        private void AddChildren(AllAutomationServerSlotsNode allAutomationServerSlotsNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllAutomationServiceSlots), new DescendancyList(allAutomationServerSlotsNode));
+        }
+
+        private void AddChildren(AllRDMPRemotesNode allRDMPRemotesNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
         }
 
         private void BuildServerNodes()
@@ -213,7 +242,7 @@ namespace CatalogueLibrary.Providers
         }
 
 
-        private void AddChildren(DataAccessCredentialsNode dataAccessCredentialsNode)
+        private void AddChildren(AllDataAccessCredentialsNode allDataAccessCredentialsNode)
         {
             HashSet<object> children = new HashSet<object>();
             
@@ -223,10 +252,10 @@ namespace CatalogueLibrary.Providers
                 children.Add(creds);
 
 
-            AddToDictionaries(children, new DescendancyList(dataAccessCredentialsNode));
+            AddToDictionaries(children, new DescendancyList(allDataAccessCredentialsNode));
         }
 
-        private void AddChildren(ANOTablesNode anoTablesNode)
+        private void AddChildren(AllANOTablesNode anoTablesNode)
         {
             AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
         }
@@ -315,7 +344,7 @@ namespace CatalogueLibrary.Providers
             if(cacheProgress.PermissionWindow_ID != null)
             {
                 var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
-                var windowNode = new PermissionWindowUsedByCacheProgress(cacheProgress, window);
+                var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window);
 
                 children.Add(windowNode);
             }
@@ -795,6 +824,19 @@ namespace CatalogueLibrary.Providers
             AddToReturnSearchablesWithNoDecendancy(toReturn,AllLoadMetadatas);
             AddToReturnSearchablesWithNoDecendancy(toReturn,AllCohortIdentificationConfigurations);
             
+            return toReturn;
+        }
+
+        public IEnumerable<object> GetAllChildrenRecursively(object o)
+        {
+            List<object> toReturn = new List<object>();
+
+            foreach (var child in GetChildren(o))
+            {
+                toReturn.Add(child);
+                toReturn.AddRange(GetAllChildrenRecursively(child));
+            }
+
             return toReturn;
         }
 

@@ -225,11 +225,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\libs\Microsoft.Office.Interop\Microsoft.Office.Interop.Word.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
@@ -328,7 +323,7 @@
     <Compile Include="Collections\DataExportCollectionUI.Designer.cs">
       <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\Nodes\CohortsNode.cs" />
+    <Compile Include="Collections\Nodes\AllCohortsNode.cs" />
     <Compile Include="Collections\Nodes\ExtractionConfigurationsNode.cs" />
     <Compile Include="Collections\Nodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="Collections\Nodes\ProjectSavedCohortsNode.cs" />
@@ -336,7 +331,7 @@
     <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
-    <Compile Include="Collections\Nodes\ExtractionFolderNode.cs" />
+    <Compile Include="Collections\Nodes\ExtractionDirectoryNode.cs" />
     <Compile Include="Collections\Nodes\LinkedCohortNode.cs" />
     <Compile Include="Collections\Nodes\PackageContentNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
@@ -351,6 +346,7 @@
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractableDataSetPackage.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults.cs" />
@@ -359,6 +355,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportFileAsCustomDataForCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReleaseProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetProjectExtractionDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowDetailedSummaryOfAllCohorts.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSelectedDatasetsExtractionSql.cs" />
@@ -368,9 +365,9 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProject.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociation.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociations.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectSavedCohortsNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSet.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSets.cs" />
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />
@@ -415,15 +412,15 @@
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
+    <Compile Include="Menus\ExtractionDirectoryNodeMenu.cs" />
     <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\ProjectCohortIdentificationConfigurationAssociationsNodeMenu.cs" />
     <Compile Include="Menus\ProjectSavedCohortsNodeMenu.cs" />
-    <Compile Include="Menus\SelectedDataSetMenu.cs" />
-    <Compile Include="Menus\ProjectsMenu.cs" />
-    <Compile Include="Menus\ExtractableDataSetsNodeMenu.cs" />
+    <Compile Include="Menus\SelectedDataSetsMenu.cs" />
+    <Compile Include="Menus\ProjectMenu.cs" />
     <Compile Include="Menus\ExtractableCohortMenu.cs" />
     <Compile Include="Menus\ExternalCohortTableMenu.cs" />
-    <Compile Include="Menus\CohortsNodeMenu.cs" />
+    <Compile Include="Menus\AllCohortsNodeMenu.cs" />
     <Compile Include="ProjectUI\ChooseExtractablesUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -637,7 +634,6 @@
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

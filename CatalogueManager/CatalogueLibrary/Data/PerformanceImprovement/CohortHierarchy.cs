@@ -6,7 +6,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
-using Microsoft.Office.Interop.Word;
+
 
 namespace CatalogueLibrary.Data.PerformanceImprovement
 {

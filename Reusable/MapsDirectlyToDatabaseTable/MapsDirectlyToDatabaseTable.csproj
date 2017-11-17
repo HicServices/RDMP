@@ -163,6 +163,8 @@
     <Compile Include="AdjustableLocation.cs" />
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeleteable.cs" />
+    <Compile Include="ObjectSharing\MapsDirectlyToDatabaseTableStatelessDefinition.cs" />
+    <Compile Include="ObjectSharing\SharedObjectImporter.cs" />
     <Compile Include="INamed.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="IMapsDirectlyToDatabaseTable.cs" />
@@ -182,6 +184,7 @@
     <Compile Include="Revertable\RevertableObjectReport.cs" />
     <Compile Include="Revertable\RevertablePropertyDifference.cs" />
     <Compile Include="UpdateCommandStore.cs" />
+    <Compile Include="UsefulProperty.cs" />
     <Compile Include="Versioning\DatabaseVersionProvider.cs" />
     <Compile Include="Versioning\IExternalDatabasePatcher.cs" />
     <Compile Include="Versioning\InvalidPatchException.cs" />

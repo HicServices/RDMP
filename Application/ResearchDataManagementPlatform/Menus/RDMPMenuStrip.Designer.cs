@@ -30,8 +30,8 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.navigateToObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LocationsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.changeCatalogueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configureExternalServersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,7 +44,6 @@
             this.userSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.issuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.issueReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.databaseAccessComplexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metadataReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.governanceReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +70,7 @@
             this.tutorialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBar();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,27 +88,19 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(434, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(342, 24);
             this.menuStrip1.TabIndex = 56;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.navigateToObjectToolStripMenuItem,
             this.runToolStripMenuItem,
-            this.openToolStripMenuItem});
+            this.openToolStripMenuItem,
+            this.findToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
-            // 
-            // navigateToObjectToolStripMenuItem
-            // 
-            this.navigateToObjectToolStripMenuItem.Name = "navigateToObjectToolStripMenuItem";
-            this.navigateToObjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.navigateToObjectToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.navigateToObjectToolStripMenuItem.Text = "Navigate to Object";
-            this.navigateToObjectToolStripMenuItem.Click += new System.EventHandler(this.navigateToObjectToolStripMenuItem_Click);
             // 
             // runToolStripMenuItem
             // 
@@ -118,6 +109,14 @@
             this.runToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
             this.runToolStripMenuItem.Text = "Run...";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // LocationsMenu
             // 
@@ -209,7 +208,6 @@
             // generateReportToolStripMenuItem
             // 
             this.generateReportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.issueReportToolStripMenuItem,
             this.databaseAccessComplexToolStripMenuItem,
             this.metadataReportToolStripMenuItem,
             this.governanceReportToolStripMenuItem,
@@ -218,13 +216,6 @@
             this.generateReportToolStripMenuItem.Name = "generateReportToolStripMenuItem";
             this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.generateReportToolStripMenuItem.Text = "Generate...";
-            // 
-            // issueReportToolStripMenuItem
-            // 
-            this.issueReportToolStripMenuItem.Name = "issueReportToolStripMenuItem";
-            this.issueReportToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.issueReportToolStripMenuItem.Text = "Issue Report";
-            this.issueReportToolStripMenuItem.Click += new System.EventHandler(this.issueReportToolStripMenuItem_Click);
             // 
             // databaseAccessComplexToolStripMenuItem
             // 
@@ -426,16 +417,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.rdmpTaskBar1.Location = new System.Drawing.Point(3, 27);
             this.rdmpTaskBar1.Name = "rdmpTaskBar1";
-            this.rdmpTaskBar1.Size = new System.Drawing.Size(655, 25);
+            this.rdmpTaskBar1.Size = new System.Drawing.Size(1157, 25);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // openToolStripMenuItem
+            // findToolStripMenuItem
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
+            this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.findToolStripMenuItem.Text = "Find";
+            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
             // RDMPTopMenuStrip
             // 
@@ -444,7 +435,7 @@
             this.Controls.Add(this.rdmpTaskBar1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "RDMPTopMenuStrip";
-            this.Size = new System.Drawing.Size(658, 52);
+            this.Size = new System.Drawing.Size(1160, 52);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -466,7 +457,6 @@
         private System.Windows.Forms.ToolStripMenuItem automationManagementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem issuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateReportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem issueReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem databaseAccessComplexToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem metadataReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem governanceReportToolStripMenuItem;
@@ -488,7 +478,6 @@
         private System.Windows.Forms.ToolStripMenuItem generateUserInterfaceDocumentationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem navigateToObjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem managePluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem codeGenerationToolStripMenuItem;
@@ -498,6 +487,7 @@
         private System.Windows.Forms.ToolStripMenuItem userSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
 
     }
 }

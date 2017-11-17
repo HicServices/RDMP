@@ -84,6 +84,7 @@ namespace PluginPackager
                 }
 
                 ZipFile.CreateFromDirectory(_outputDirectory.FullName, _outputZipFilePath);
+
             }
             catch (Exception e)
             {

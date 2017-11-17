@@ -88,6 +88,8 @@ namespace CohortManager.SubComponents
 
             objectSaverButton1.SetupFor(_configuration, activator.RefreshBus);
 
+            queryCachingServerSelector.RefreshUIFromDatabase();
+
             if (_configuration.QueryCachingServer_ID == null)
                 queryCachingServerSelector.SelecteExternalDatabaseServer = null;
             else
@@ -98,7 +100,7 @@ namespace CohortManager.SubComponents
             if (_commonFunctionality == null)
             {
                 _commonFunctionality = new RDMPCollectionCommonFunctionality();
-                _commonFunctionality.SetUp(tlvCic,activator,olvNameCol,null,olvNameCol,false);
+                _commonFunctionality.SetUp(tlvCic,activator,olvNameCol,olvNameCol,false,false);
                 tlvCic.AddObject(_configuration);
                 tlvCic.ExpandAll();
             }

@@ -16,24 +16,7 @@ namespace ReusableLibraryCode.Progress
 
         public void OnNotify(object sender, NotifyEventArgs e)
         {
-            CheckResult result;
-
-            switch (e.ProgressEventType)
-            {
-                case ProgressEventType.Information:
-                    result = CheckResult.Success;
-                    break;
-                case ProgressEventType.Warning:
-                    result = CheckResult.Warning;
-                    break;
-                case ProgressEventType.Error:
-                    result = CheckResult.Fail;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _checker.OnCheckPerformed(new CheckEventArgs(e.Message, result, e.Exception));
+            _checker.OnCheckPerformed(e.ToCheckEventArgs());
         }
 
         private HashSet<string> _progressMessagesReceived = new HashSet<string>();

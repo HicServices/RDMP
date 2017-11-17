@@ -12,7 +12,7 @@ using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using HIC.Logging;
 using LoadModules.Generic.DataProvider;
-using Microsoft.Office.Interop.Excel;
+
 using Newtonsoft.Json;
 using RestSharp;
 using ReusableLibraryCode;

@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
@@ -45,7 +46,7 @@ namespace CatalogueManager.Menus
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
 
-        public RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
+        protected RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
         {
             _activator = activator;
             _databaseEntity = databaseEntity;
@@ -67,7 +68,7 @@ namespace CatalogueManager.Menus
         protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
         {
             var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
-
+            
             if (shortcutKey != Keys.None)
                 mi.ShortcutKeys = shortcutKey;
             
@@ -103,6 +104,7 @@ namespace CatalogueManager.Menus
             {
                 Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
                 Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+                Add(new ExecuteCommandPin(_activator, _databaseEntity));
             }
             
             List<object> askPluginsAbout = new List<object>(additionalObjectsToExposeToPluginUserInterfaces);
@@ -136,8 +138,6 @@ namespace CatalogueManager.Menus
                     }
 
                 }
-
-                Items.Add(new ExpandAllTreeNodesMenuItem(_activator, _databaseEntity));
             }
         }
 

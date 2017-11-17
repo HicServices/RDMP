@@ -33,8 +33,6 @@ namespace CatalogueManager.Collections
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TableInfoCollectionUI));
-            this.tbFilter = new System.Windows.Forms.TextBox();
-            this.label55 = new System.Windows.Forms.Label();
             this.tlvTableInfos = new BrightIdeasSoftware.TreeListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -42,27 +40,6 @@ namespace CatalogueManager.Collections
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfos)).BeginInit();
             this.SuspendLayout();
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(41, 577);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(456, 20);
-            this.tbFilter.TabIndex = 145;
-            this.tbFilter.Leave += new System.EventHandler(this.tbFilter_Leave);
-            this.tbFilter.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tbFilter_MouseUp);
-            // 
-            // label55
-            // 
-            this.label55.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label55.AutoSize = true;
-            this.label55.Location = new System.Drawing.Point(3, 580);
-            this.label55.Name = "label55";
-            this.label55.Size = new System.Drawing.Size(32, 13);
-            this.label55.TabIndex = 152;
-            this.label55.Text = "Filter:";
             // 
             // tlvTableInfos
             // 
@@ -79,13 +56,12 @@ namespace CatalogueManager.Collections
             this.tlvTableInfos.Location = new System.Drawing.Point(3, 3);
             this.tlvTableInfos.Name = "tlvTableInfos";
             this.tlvTableInfos.ShowGroups = false;
-            this.tlvTableInfos.Size = new System.Drawing.Size(494, 540);
+            this.tlvTableInfos.Size = new System.Drawing.Size(494, 566);
             this.tlvTableInfos.TabIndex = 160;
             this.tlvTableInfos.UseCompatibleStateImageBehavior = false;
             this.tlvTableInfos.UseFiltering = true;
             this.tlvTableInfos.View = System.Windows.Forms.View.Details;
             this.tlvTableInfos.VirtualMode = true;
-            this.tlvTableInfos.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.olvTableInfos_CellRightClick);
             // 
             // olvColumn1
             // 
@@ -113,7 +89,7 @@ namespace CatalogueManager.Collections
             // 
             this.btnExpandOrCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExpandOrCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(449, 549);
+            this.btnExpandOrCollapse.Location = new System.Drawing.Point(449, 575);
             this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
             this.btnExpandOrCollapse.Size = new System.Drawing.Size(51, 22);
             this.btnExpandOrCollapse.TabIndex = 170;
@@ -127,20 +103,15 @@ namespace CatalogueManager.Collections
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnExpandOrCollapse);
             this.Controls.Add(this.tlvTableInfos);
-            this.Controls.Add(this.label55);
-            this.Controls.Add(this.tbFilter);
             this.Name = "TableInfoCollectionUI";
             this.Size = new System.Drawing.Size(500, 600);
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfos)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox tbFilter;
-        private System.Windows.Forms.Label label55;
         private TreeListView tlvTableInfos;
         private OLVColumn olvColumn1;
         private System.Windows.Forms.ImageList imageList1;

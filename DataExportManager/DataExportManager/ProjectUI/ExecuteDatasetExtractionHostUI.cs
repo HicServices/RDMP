@@ -177,29 +177,20 @@ namespace DataExportManager.ProjectUI
                 return;
             }
 
-            if (wordDataWritter.RequirementsMet())//if Microsoft Word is installed
-            {
-                wordDataWritter.GenerateWordFile();//run the report
+            wordDataWritter.GenerateWordFile();//run the report
 
-                //if there were any exceptions
-                if (wordDataWritter.ExceptionsGeneratingWordFile.Any())
-                {
-                    request.State = ExtractCommandState.Warning;
+            //if there were any exceptions
+            if (wordDataWritter.ExceptionsGeneratingWordFile.Any())
+            {
+                request.State = ExtractCommandState.Warning;
                     
-                    foreach (Exception e in wordDataWritter.ExceptionsGeneratingWordFile)
-                        progressUI1.OnNotify(wordDataWritter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
-                }
-                else
-                {
-                    //word data extracted ok
-                    request.State = ExtractCommandState.Completed;
-                }
+                foreach (Exception e in wordDataWritter.ExceptionsGeneratingWordFile)
+                    progressUI1.OnNotify(wordDataWritter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
             }
             else
             {
-                // tell user that we could not run the report and set the status to warning
-                request.State = ExtractCommandState.Warning;
-                progressUI1.OnNotify(wordDataWritter, new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED because requirements were not met:" + wordDataWritter.RequirementsDescription()));
+                //word data extracted ok
+                request.State = ExtractCommandState.Completed;
             }
         }
 

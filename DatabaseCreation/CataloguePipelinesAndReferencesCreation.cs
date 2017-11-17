@@ -10,6 +10,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
 using DataExportLibrary.CohortCreationPipeline.Sources;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataLoadEngine.DataFlowPipeline.Destinations;
@@ -87,6 +88,7 @@ namespace DatabaseCreation
 
             CreatePipeline("DATA EXPORT:To CSV", typeof (ExecuteDatasetExtractionSource),typeof (ExecuteDatasetExtractionFlatFileDestination));
 
+            CreatePipeline("RELEASE PROJECT:To Directory", null, typeof (BasicDataReleaseDestination));
         }
 
         private void SetCSVSourceDelimiterToComma(Pipeline pipe)
@@ -100,11 +102,13 @@ namespace DatabaseCreation
         {
             var pipe = new Pipeline(_repositoryLocator.CatalogueRepository, nameOfPipe);
 
-            var source = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe, sourceType, 0);
-            source.CreateArgumentsForClassIfNotExists(sourceType);
-            pipe.SourcePipelineComponent_ID = source.ID;
-
-
+            if (sourceType != null)
+            {
+                var source = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe, sourceType, 0);
+                source.CreateArgumentsForClassIfNotExists(sourceType);
+                pipe.SourcePipelineComponent_ID = source.ID;    
+            }
+            
             if (destinationTypeIfAny != null)
             {
                 var destination = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe,destinationTypeIfAny, 1);

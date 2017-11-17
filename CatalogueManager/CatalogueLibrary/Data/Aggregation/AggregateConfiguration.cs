@@ -13,7 +13,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 

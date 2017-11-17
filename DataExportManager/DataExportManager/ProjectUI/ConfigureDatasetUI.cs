@@ -351,7 +351,6 @@ namespace DataExportManager.ProjectUI
         
         private Point draggingOldLeftPoint;
         private Point draggingOldRightPoint;
-        private ExtractionConfiguration _extractionConfiguration;
         
         private void lbSelectedColumns_DragOver(object sender, DragEventArgs e)
         {
@@ -412,7 +411,7 @@ namespace DataExportManager.ProjectUI
                 this.lbSelectedColumns.Items.Insert(index, data);
 
             SaveColumnPositions();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_extractionConfiguration));
+            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(SelectedDataSet));
         }
 
 

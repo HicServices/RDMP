@@ -670,10 +670,20 @@ namespace CatalogueManager.AggregationUIs
         {
             return new CachedAggregateConfigurationResultsManager(_defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID));
         }
-        
+
+        /// <summary>
+        /// Normally you dont need to work about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
+        /// after the other which violetates the 1 subscription per control rule (see base.SetDatabaseObject)
+        /// </summary>
+        private bool initialized = false;
+
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
-            base.SetDatabaseObject(activator,databaseObject);
+            if (!initialized)
+            {
+                base.SetDatabaseObject(activator,databaseObject);
+                initialized = true;
+            }
             
             SetAggregate(databaseObject);
         }
@@ -721,7 +731,7 @@ namespace CatalogueManager.AggregationUIs
             _defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
         }
 
-        public IEnumerable<Image> GetImages()
+        public IEnumerable<Bitmap> GetImages()
         {
             var b = new Bitmap(chart1.Width, chart1.Height);
             chart1.DrawToBitmap(b, new Rectangle(new Point(0, 0), new Size(chart1.Width, chart1.Height)));

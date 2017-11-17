@@ -208,6 +208,10 @@
       <HintPath>..\..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -238,6 +242,7 @@
     <Compile Include="Automation\AutomationJobTests.cs" />
     <Compile Include="Automation\AutomationServiceSlotTests.cs" />
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
+    <Compile Include="ImportTests\TestImportingAnObject.cs" />
     <Compile Include="Integration\AllKeywordsDescribedTest.cs" />
     <Compile Include="Integration\AllObjectsHaveImages.cs" />
     <Compile Include="Integration\ArgumentTests\TestArgumentedClass.cs" />
@@ -287,6 +292,7 @@
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\ExplicitDatabaseNameChecker.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousRelationshipPropertyUse.cs" />
+    <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\UserInterfaceStandardisationChecker.cs" />
     <Compile Include="SourceCodeEvaluation\CsProjFileTidy.cs" />
     <Compile Include="SourceCodeEvaluation\EvaluateNamespacesAndSolutionFoldersTests.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\RDMPFormInitializationTests.cs" />
@@ -307,6 +313,7 @@
     <Compile Include="Unit\ExerciseData\TestDemographyCreation.cs" />
     <Compile Include="Unit\ExerciseData\TestPrescribingCreation.cs" />
     <Compile Include="Unit\LoadModuleAssemblyTests.cs" />
+    <Compile Include="Unit\ObjectConstructorTests.cs" />
     <Compile Include="Unit\ParameterManagerTests.cs" />
     <Compile Include="Unit\PermissionWindowTests.cs" />
     <Compile Include="Unit\CommitAssemblyTest.cs" />

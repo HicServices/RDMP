@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
-using Microsoft.Office.Interop.Word;
+
 
 namespace CatalogueLibrary.FilterImporting
 {

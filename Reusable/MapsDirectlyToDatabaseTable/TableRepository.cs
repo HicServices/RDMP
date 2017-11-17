@@ -174,18 +174,24 @@ namespace MapsDirectlyToDatabaseTable
                 PropertyInfo prop = oTableWrapperObject.GetType().GetProperty(p.ParameterName.Trim('@'));
                 
                 object propValue = prop.GetValue(oTableWrapperObject, null);
-                if (propValue == null)
-                    p.Value = DBNull.Value;
-                else if (propValue is string && string.IsNullOrWhiteSpace((string)propValue))
-                    p.Value = DBNull.Value;
-                else if (propValue is Uri)
-                    p.Value = propValue.ToString();
-                else
-                    p.Value = prop.GetValue(oTableWrapperObject, null);
-
+                SetParameterToValue(p, propValue);
             }
 
             cmd.Parameters["@ID"].Value = oTableWrapperObject.ID;
+        }
+
+        private void SetParameterToValue(DbParameter p, object propValue)
+        {
+            if (propValue == null)
+                p.Value = DBNull.Value;
+            else if (propValue is string && string.IsNullOrWhiteSpace((string)propValue))
+                p.Value = DBNull.Value;
+            else if (propValue is Uri)
+                p.Value = propValue.ToString();
+            else if (propValue is TimeSpan)
+                p.Value = propValue.ToString();
+            else
+                p.Value = propValue;
         }
 
         /// <summary>
@@ -215,15 +221,8 @@ namespace MapsDirectlyToDatabaseTable
                         throw new Exception("could not find property called " + property + " on object of type " +
                                             oTableWrapperObject.GetType().Name);
                     object value = p.GetValue(oTableWrapperObject, null);
-
-                    if (value == null)
-                        parameter.Value = DBNull.Value;
-                    else if (value is string && string.IsNullOrWhiteSpace((string)value))
-                        parameter.Value = DBNull.Value;
-                    else if (value is Uri)
-                        parameter.Value = value.ToString();
-                    else
-                        parameter.Value = value;
+                    
+                    SetParameterToValue(parameter, value);
                 }
             }
         }
@@ -800,24 +799,7 @@ namespace MapsDirectlyToDatabaseTable
                 return int.Parse(cmd.ExecuteScalar().ToString());
             }
         }
-        [Obsolete]
-        public int InsertAndReturnID(string sql, Dictionary<string, object> parameters = null)
-        {
-            using (var opener = GetConnection())
-            {
-                // adds a 'SELECT @@IDENTITY;' on the end if not already present
-                if (!sql.EndsWith("SELECT @@IDENTITY;") && !sql.EndsWith("SELECT @@IDENTITY"))
-                    sql += ";SELECT @@IDENTITY;";
-
-                var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction);
-
-                var result = cmd.ExecuteScalar().ToString();
-                if (string.IsNullOrWhiteSpace(result))
-                    throw new InvalidOperationException("@@IDENTITY returned nothing, are you sure the table referenced in the query has an IDENTITY column?");
-
-                return int.Parse(result);
-            }
-        }
+        
         private static string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
         {
             var query = @"INSERT INTO " + typeof (T).Name;
@@ -864,19 +846,29 @@ namespace MapsDirectlyToDatabaseTable
             var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
             if (parameters == null) return cmd;
 
+            return PrepareCommand(cmd, parameters);
+        }
+
+        public DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
+        {
             foreach (var kvp in parameters)
             {
                 var paramName = kvp.Key.StartsWith("@") ? kvp.Key : "@" + kvp.Key;
 
                 // Check that this parameter name actually exists in the sql
-                if (!sql.Contains(paramName))
-                    throw new InvalidOperationException("Parameter '" + paramName + "' does not exist in the SQL command (" + sql + ")");
+                if (!cmd.CommandText.Contains(paramName))
+                    throw new InvalidOperationException("Parameter '" + paramName + "' does not exist in the SQL command (" + cmd.CommandText + ")");
 
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter(paramName, cmd));
-                cmd.Parameters[paramName].Value = kvp.Value;
+                //if it isn't yet in the command add it
+                if (!cmd.Parameters.Contains(paramName))
+                    cmd.Parameters.Add(DatabaseCommandHelper.GetParameter(paramName, cmd));
+
+                //set it's value
+                SetParameterToValue(cmd.Parameters[paramName], kvp.Value);
             }
             return cmd;
         }
+
         #endregion
         
         public void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable

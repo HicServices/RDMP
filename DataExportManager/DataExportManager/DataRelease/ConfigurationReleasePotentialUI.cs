@@ -429,7 +429,7 @@ namespace DataExportManager.DataRelease
 
             if (tag.ExtractDirectory != null && tag.ExtractDirectory.Exists)
             {
-                RightClickMenu.Items.Add("Open Folder", CatalogueIcons.ExtractionFolderNode,
+                RightClickMenu.Items.Add("Open Folder", CatalogueIcons.ExtractionDirectoryNode,
                     (sender, args) => Process.Start(tag.ExtractDirectory.FullName));
 
                 if (listView1.SelectedItems.Count <= 1)

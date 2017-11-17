@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -89,7 +90,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 break;
                 case RDMPCollection.SavedCohorts:
                     collection = new SavedCohortsCollectionUI();
-                    toReturn = Show(RDMPCollection.SavedCohorts, collection,"Saved Cohorts", CatalogueIcons.CohortsNode);
+                    toReturn = Show(RDMPCollection.SavedCohorts, collection, "Saved Cohorts", CatalogueIcons.AllCohortsNode);
+                break;
+                case RDMPCollection.Favourites:
+                    collection = new FavouritesCollectionUI();
+                    toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", CatalogueIcons.Favourite);
                 break;
 
                 default: throw new ArgumentOutOfRangeException("collectionToCreate");
@@ -145,10 +150,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             return _visibleToolboxes.ContainsKey(collection);
         }
-        public bool IsVisibleButBurried(RDMPCollection collection)
-        {
-            return _visibleToolboxes.ContainsKey(collection) && !_visibleToolboxes[collection].Visible;
-        }
 
         public void ShowCollectionWhichSupportsRootObjectType(object root)
         {
@@ -165,6 +166,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private RDMPCollection GetCollectionForRootObject(object root)
         {
+            if (FavouritesCollectionUI.IsRootObject(ContentManager,root))
+                return RDMPCollection.Favourites;
+
             if(CatalogueCollectionUI.IsRootObject(root))
                 return RDMPCollection.Catalogue;
 
@@ -179,6 +183,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if(TableInfoCollectionUI.IsRootObject(root))
                 return RDMPCollection.Tables;
+
+            if(SavedCohortsCollectionUI.IsRootObject(root))
+                return RDMPCollection.SavedCohorts;
 
             return RDMPCollection.None;
         }

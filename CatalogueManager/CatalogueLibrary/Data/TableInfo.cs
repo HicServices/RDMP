@@ -10,7 +10,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
+
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;

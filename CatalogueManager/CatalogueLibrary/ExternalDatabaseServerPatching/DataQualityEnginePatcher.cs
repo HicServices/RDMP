@@ -2,9 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
-using Microsoft.Office.Interop.Word;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {

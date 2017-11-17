@@ -9,7 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
+
 using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.QueryBuilding.Parameters

@@ -326,6 +326,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return SelfCertifyingDataAccessPoint.Password; }
             set
             {
+                if (Equals(SelfCertifyingDataAccessPoint.Password, value))
+                    return;
+
                 SelfCertifyingDataAccessPoint.Password = value; 
                 OnPropertyChanged();
             }
@@ -341,6 +344,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return SelfCertifyingDataAccessPoint.Username; }
             set
             {
+                if (Equals(SelfCertifyingDataAccessPoint.Username, value))
+                    return;
+
                 SelfCertifyingDataAccessPoint.Username = value;
                 OnPropertyChanged();
             }
@@ -351,6 +357,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return SelfCertifyingDataAccessPoint.Server; }
             set
             {
+                if (Equals(SelfCertifyingDataAccessPoint.Server, value))
+                    return;
+
                 SelfCertifyingDataAccessPoint.Server = value;
                 OnPropertyChanged();
             }
@@ -361,6 +370,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return SelfCertifyingDataAccessPoint.Database; }
             set
             {
+                if (Equals(SelfCertifyingDataAccessPoint.Database, value))
+                    return;
+
                 SelfCertifyingDataAccessPoint.Database = value; 
                 OnPropertyChanged(); 
             }

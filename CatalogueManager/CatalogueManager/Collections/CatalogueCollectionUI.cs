@@ -10,7 +10,9 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -18,6 +20,7 @@ using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Collections
 {
@@ -89,12 +92,7 @@ namespace CatalogueManager.Collections
     public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         private IActivateItems _activator;
-
-        private string _filter;
-        private bool _showInternal = false;
-        private bool _showDeprecated = false;
-        private bool _showColdStorage = false;
-
+        
         private Catalogue[] _allCatalogues;
 
         //constructor
@@ -229,60 +227,6 @@ namespace CatalogueManager.Collections
 
         }
 
-
-        public string Filter
-        {
-            get { return _filter; }
-            set
-            {
-                _filter = value;
-                ApplyFilters();
-
-            }
-        }
-
-        public bool ShowDeprecated
-        {
-            get { return _showDeprecated; }
-            set
-            {
-                _showDeprecated = value;
-                ApplyFilters();
-            }
-        }
-
-        public bool ShowInternal
-        {
-            get { return _showInternal; }
-            set
-            {
-                _showInternal = value;
-                ApplyFilters();
-            }
-        }
-
-        public bool ShowColdStorage
-        {
-            get { return _showColdStorage; }
-            set
-            {
-                _showColdStorage = value;
-                ApplyFilters();
-            }
-        }
-        
-        public bool ShowCatalogueItems
-        {
-            get { return _showCatalogueItems; }
-            set
-            {
-                //if going from not showing to showing we must refresh classifications
-                _showCatalogueItems = value; 
-            
-                ApplyFilters();
-            }
-        }
-
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
@@ -313,8 +257,6 @@ namespace CatalogueManager.Collections
                 ExpandAllFolders(CatalogueFolder.Root);
                 isFirstTime = false;
             }
-
-
         }
 
         private void ExpandAllFolders(CatalogueFolder model)
@@ -331,14 +273,7 @@ namespace CatalogueManager.Collections
         private void tlvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
         {
             var o = e.Model;
-
             
-            if (o == null || o is CatalogueFolder)
-                e.MenuStrip = new CatalogueMenu( _activator, null);
-            
-            if (o is Catalogue)
-                e.MenuStrip = new CatalogueMenu( _activator, (Catalogue)o);
-
             if (o is CatalogueItem)
                 e.MenuStrip = new CatalogueItemMenu( _activator, (CatalogueItem)o, _classifications[((CatalogueItem)o).ID]);
             
@@ -400,7 +335,8 @@ namespace CatalogueManager.Collections
         
         public void ApplyFilters()
         {
-            CommonFunctionality.SecondaryFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider,ShowInternal, ShowDeprecated, ShowColdStorage); 
+            tlvCatalogues.UseFiltering = true;
+            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider,cbShowInternal.Checked, cbShowDeprecated.Checked, cbShowColdStorage.Checked);
         }
 
         public enum HighlightCatalogueType
@@ -431,25 +367,28 @@ namespace CatalogueManager.Collections
             return null;
         }
 
-        
-        
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            if(!CommonFunctionality.ExpandOrCollapse(btnExpandOrCollapse))
-                ExpandAllFolders(CatalogueFolder.Root);
-        }
-
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
+
+            _activator.Emphasise += _activator_Emphasise;
+
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonFunctionality.SetUp(
                 tlvCatalogues,
                 _activator,
                 olvColumn1, //the icon column
-                tbFilter,//we have our own custom filter logic so no need to pass tbFilter
+                //we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1 //also the renameable column
                 );
+            
+            //Things that are always visible regardless
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
+            {
+                new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true),
+                new ExecuteCommandCreateNewEmptyCatalogue(_activator)
+            };
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
@@ -458,6 +397,30 @@ namespace CatalogueManager.Collections
             ApplyFilters();
 
             RefreshUIFromDatabase(CatalogueFolder.Root);
+        }
+
+        void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
+        {
+            //user wants this object emphasised
+            var c = args.Request.ObjectToEmphasise as Catalogue;
+            
+            if (c == null)
+            {
+                var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
+
+                if (descendancy != null)
+                    c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
+            }
+            
+            if (c != null && (c.IsColdStorageDataset || c.IsDeprecated || c.IsInternalDataset))
+            {
+                //trouble is our flags might be hiding it so make sure it is visible
+                cbShowColdStorage.Checked = cbShowColdStorage.Checked || c.IsColdStorageDataset;
+                cbShowDeprecated.Checked = cbShowDeprecated.Checked || c.IsDeprecated;
+                cbShowInternal.Checked = cbShowInternal.Checked || c.IsInternalDataset;
+
+                ApplyFilters();
+            }
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -486,37 +449,10 @@ namespace CatalogueManager.Collections
                 RefreshUIFromDatabase(o);
             }
         }
-
-        private bool _expandFlags = true;
-
-
-        private void btnShowFlags_Click(object sender, EventArgs e)
-        {
-            splitContainer1.Panel2Collapsed = !_expandFlags;
-            _expandFlags = !_expandFlags;
-
-            btnShowFlags.Text = _expandFlags ? "+" : "-";
-        }
-
+        
         private void rbFlag_CheckedChanged(object sender, EventArgs e)
         {
-            if (sender == rbColdStorage)
-                ShowColdStorage = rbColdStorage.Checked;
-            if (sender == rbWarmStorage)
-                ShowColdStorage = !rbWarmStorage.Checked;
-            if (sender == rbDeprecated)
-                ShowDeprecated = rbDeprecated.Checked;
-            if (sender == rbLive)
-                ShowDeprecated = !rbLive.Checked;
-            if (sender == rbInternal)
-                ShowInternal = rbInternal.Checked;
-            if (sender == rbNotInternal)
-                ShowInternal = !rbNotInternal.Checked;
-        }
-
-        private void tbFilter_TextChanged(object sender, EventArgs e)
-        {
-            Filter = tbFilter.Text;
+            ApplyFilters();
         }
 
         public static bool IsRootObject(object root)

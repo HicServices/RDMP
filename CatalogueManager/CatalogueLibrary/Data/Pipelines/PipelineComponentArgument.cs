@@ -4,6 +4,7 @@ using System.Data.Common;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
@@ -22,6 +23,16 @@ namespace CatalogueLibrary.Data.Pipelines
             get { return _pipelineComponentID; }
             set { SetField(ref  _pipelineComponentID, value); }
         }
+
+        #endregion
+
+        #region Relationship Properties
+
+        [NoMappingToDatabase]
+        public IHasDependencies PipelineComponent { get
+        {
+            return Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
+        }}
 
         #endregion
 
@@ -50,6 +61,14 @@ namespace CatalogueLibrary.Data.Pipelines
         }
 
 
-      
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new[] {PipelineComponent};
+        }
+        
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return new IHasDependencies[0];
+        }
     }
 }

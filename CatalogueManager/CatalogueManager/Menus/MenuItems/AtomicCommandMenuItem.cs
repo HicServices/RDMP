@@ -24,6 +24,9 @@ namespace CatalogueManager.Menus.MenuItems
             
             //disable if impossible command
             Enabled = !command.IsImpossible;
+
+            if (command.IsImpossible)
+                ToolTipText = command.ReasonCommandImpossible;
         }
 
         protected override void OnClick(EventArgs e)

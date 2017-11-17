@@ -162,11 +162,13 @@
     <Compile Include="SelectIMapsDirectlyToDatabaseTableDialog.Designer.cs">
       <DependentUpon>SelectIMapsDirectlyToDatabaseTableDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextMatchFilterWithWhiteList.cs" />
     <Compile Include="ToolTips.Designer.cs">
       <DependentUpon>ToolTips.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="WhiteListOnlyFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CreatePlatformDatabase.resx">

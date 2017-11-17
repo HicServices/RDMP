@@ -18,16 +18,19 @@ namespace CatalogueLibrary.Providers
         TableInfo[] AllTableInfos { get;}
         CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
         Catalogue[] AllCatalogues { get; }
-        ANOTablesNode ANOTablesNode { get;}
+        AllANOTablesNode AllANOTablesNode { get; }
         ANOTable[] AllANOTables { get; }
-        DataAccessCredentialsNode DataAccessCredentialsNode { get; }
+        AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
         AllServersNode AllServersNode { get;}
         ColumnInfo[] AllColumnInfos { get;}
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
         PermissionWindow[] AllPermissionWindows { get;}
         AggregateConfiguration[] AllAggregateConfigurations { get;}
+        AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
+        AllRDMPRemotesNode AllRDMPRemotesNode { get; }
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
+        IEnumerable<object> GetAllChildrenRecursively(object o);
     }
 }

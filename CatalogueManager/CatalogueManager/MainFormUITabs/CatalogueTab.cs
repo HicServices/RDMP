@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
@@ -20,6 +21,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using RDMPObjectVisualisation.Copying.Commands;
 using ReusableUIComponents;
 
 
@@ -456,6 +458,10 @@ namespace CatalogueManager.MainFormUITabs
             splitContainer1.Enabled = true;
             ticketingControl1.Enabled = true;
 
+            cbColdStorage.Checked = Catalogue.IsColdStorageDataset;
+            cbDeprecated.Checked = Catalogue.IsDeprecated;
+            cbInternal.Checked = Catalogue.IsInternalDataset;
+
             c_tbID.Text = Catalogue.ID.ToString();
             ticketingControl1.TicketText = Catalogue.Ticket;
             c_tbName.Text = Catalogue.Name;
@@ -526,6 +532,16 @@ namespace CatalogueManager.MainFormUITabs
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
+        }
+
+        private void cbFlag_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sender == cbDeprecated)
+                Catalogue.IsDeprecated = cbDeprecated.Checked;
+            if (sender == cbColdStorage)
+                Catalogue.IsColdStorageDataset = cbColdStorage.Checked;
+            if (sender == cbInternal)
+                Catalogue.IsInternalDataset = cbInternal.Checked;
         }
     }
 
