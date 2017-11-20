@@ -332,6 +332,12 @@
     <Compile Include="AggregationUIs\QueryCachingServerSelector.Designer.cs">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOVersionOfCatalogueUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOVersionOfCatalogueUI.Designer.cs">
+      <DependentUpon>ForwardEngineerANOVersionOfCatalogueUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="AutoCompleteTextbox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -352,6 +358,7 @@
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
@@ -1514,6 +1521,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ANOEngineeringUIs\ForwardEngineerANOVersionOfCatalogueUI.resx">
+      <DependentUpon>ForwardEngineerANOVersionOfCatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\CollectionScopeFilterUI.resx">
       <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>

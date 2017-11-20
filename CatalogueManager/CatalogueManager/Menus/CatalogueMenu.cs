@@ -83,6 +83,9 @@ namespace CatalogueManager.Menus
             Items.Add(new ToolStripSeparator());
 
             Items.Add("Clone Catalogue", null, (s, e) => CloneCatalogue(catalogue));
+
+            Add(new ExecuteCommandCreateANOVersion(activator, catalogue));
+
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////
             Items.Add(new ToolStripSeparator());
 

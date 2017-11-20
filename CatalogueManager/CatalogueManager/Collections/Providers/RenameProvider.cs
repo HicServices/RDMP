@@ -49,6 +49,10 @@ namespace CatalogueManager.Collections.Providers
         }
         private void OlvOnCellEditStarting(object sender, CellEditEventArgs e)
         {
+            //it's not for our name column
+            if (e.Column != _columnThatSupportsRenaming)
+                return;
+
             if (!(e.RowObject is INamed))
                 e.Cancel = true;
         }
