@@ -47,7 +47,12 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbANOTransforms = new System.Windows.Forms.GroupBox();
             this.tlvANOTables = new BrightIdeasSoftware.TreeListView();
             this.olvANOTablesName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvSuffix = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvNumberOfDigits = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvNumberOfCharacters = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.btnRefreshChecks = new System.Windows.Forms.Button();
             this.gbTables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -171,6 +176,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.serverDatabaseTableSelector1.TabIndex = 1;
             this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
+            this.serverDatabaseTableSelector1.SelectionChanged += new System.Action(this.serverDatabaseTableSelector1_SelectionChanged);
             // 
             // groupBox1
             // 
@@ -197,9 +203,15 @@ namespace CatalogueManager.ANOEngineeringUIs
             // tlvANOTables
             // 
             this.tlvANOTables.AllColumns.Add(this.olvANOTablesName);
+            this.tlvANOTables.AllColumns.Add(this.olvSuffix);
+            this.tlvANOTables.AllColumns.Add(this.olvNumberOfDigits);
+            this.tlvANOTables.AllColumns.Add(this.olvNumberOfCharacters);
             this.tlvANOTables.CellEditUseWholeCell = false;
             this.tlvANOTables.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvANOTablesName});
+            this.olvANOTablesName,
+            this.olvSuffix,
+            this.olvNumberOfDigits,
+            this.olvNumberOfCharacters});
             this.tlvANOTables.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvANOTables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvANOTables.Location = new System.Drawing.Point(3, 16);
@@ -215,8 +227,25 @@ namespace CatalogueManager.ANOEngineeringUIs
             // olvANOTablesName
             // 
             this.olvANOTablesName.AspectName = "ToString";
-            this.olvANOTablesName.FillsFreeSpace = true;
             this.olvANOTablesName.Text = "Name";
+            this.olvANOTablesName.Width = 230;
+            // 
+            // olvSuffix
+            // 
+            this.olvSuffix.AspectName = "Suffix";
+            this.olvSuffix.Text = "Suffix";
+            // 
+            // olvNumberOfDigits
+            // 
+            this.olvNumberOfDigits.AspectName = "NumberOfIntegersToUseInAnonymousRepresentation";
+            this.olvNumberOfDigits.Text = "Number of digits";
+            this.olvNumberOfDigits.Width = 100;
+            // 
+            // olvNumberOfCharacters
+            // 
+            this.olvNumberOfCharacters.AspectName = "NumberOfCharactersToUseInAnonymousRepresentation";
+            this.olvNumberOfCharacters.Text = "Number of characters";
+            this.olvNumberOfCharacters.Width = 120;
             // 
             // rdmpObjectsRibbonUI1
             // 
@@ -227,10 +256,34 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(948, 22);
             this.rdmpObjectsRibbonUI1.TabIndex = 3;
             // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragSmiley1.Location = new System.Drawing.Point(886, 415);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 4;
+            // 
+            // btnRefreshChecks
+            // 
+            this.btnRefreshChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
+            this.btnRefreshChecks.Location = new System.Drawing.Point(917, 416);
+            this.btnRefreshChecks.Name = "btnRefreshChecks";
+            this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
+            this.btnRefreshChecks.TabIndex = 6;
+            this.btnRefreshChecks.UseVisualStyleBackColor = true;
+            this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
+            // 
             // ForwardEngineerANOVersionOfCatalogueUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnRefreshChecks);
+            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.rdmpObjectsRibbonUI1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.gbTables);
@@ -266,5 +319,10 @@ namespace CatalogueManager.ANOEngineeringUIs
         private System.Windows.Forms.ImageList imageList1;
         private OLVColumn olvDilution;
         private OLVColumn olvDestinationType;
+        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private System.Windows.Forms.Button btnRefreshChecks;
+        private OLVColumn olvNumberOfDigits;
+        private OLVColumn olvNumberOfCharacters;
+        private OLVColumn olvSuffix;
     }
 }

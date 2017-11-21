@@ -15,7 +15,6 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableUIComponents;
 
 namespace CatalogueManager.ANOEngineeringUIs
@@ -47,6 +46,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             
             tlvTableInfoMigrations.CellEditStarting += tlvTableInfoMigrations_CellEditStarting;
             tlvTableInfoMigrations.CellEditFinishing += tlvTableInfoMigrations_CellEditFinishing;
+
+            tlvTableInfoMigrations.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
         }
 
         #region Aspect Getters and Setters
@@ -122,9 +123,15 @@ namespace CatalogueManager.ANOEngineeringUIs
         private object DestinationTypeAspectGetter(object rowobject)
         {
             var ci = rowobject as ColumnInfo;
-
-            if (ci != null)
-                return _migrator.GetEndpointDataType(ci);
+            try
+            {
+                if (ci != null)
+                    return _migrator.GetEndpointDataType(ci);
+            }
+            catch (Exception)
+            {
+                return "Error";
+            }
 
             return null;
         }
@@ -133,6 +140,9 @@ namespace CatalogueManager.ANOEngineeringUIs
         void tlvTableInfoMigrations_CellEditStarting(object sender, BrightIdeasSoftware.CellEditEventArgs e)
         {
             if (e.RowObject is TableInfo)
+                e.Cancel = true;
+
+            if (e.Column == olvDestinationType)
                 e.Cancel = true;
 
             var col = e.RowObject as ColumnInfo;
@@ -153,6 +163,8 @@ namespace CatalogueManager.ANOEngineeringUIs
                 {
                     if (dialog.ShowDialog() == DialogResult.OK)
                         _migrator.SetPlannedANOTable(col, dialog.Selected as ANOTable);
+                    
+                    Check();
                 }
                 catch (Exception exception)
                 {
@@ -198,37 +210,50 @@ namespace CatalogueManager.ANOEngineeringUIs
             {
                 ExceptionViewer.Show(exception);
             }
+
+            Check();
         }
         
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            _migrator = new ForwardEngineerANOVersionOfCatalogue(databaseObject);
             if (!_setup)
             {
+                _migrator = new ForwardEngineerANOVersionOfCatalogue(databaseObject);
+
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvANOTablesCommonFunctionality.SetUp(tlvANOTables,activator,olvANOTablesName,olvANOTablesName,false,false);
+                tlvANOTablesCommonFunctionality.SetUp(tlvANOTables,activator,olvANOTablesName,null,false,false);
+                
                 tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
                 tlvANOTables.ExpandAll();
                 
                 //Setup tree view to show all TableInfos that you are trying to Migrate
                 tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvTableInfoMigrationsCommonFunctionality.SetUp(tlvTableInfoMigrations,activator,olvTableInfoName,olvTableInfoName,false,false);
+                tlvTableInfoMigrationsCommonFunctionality.SetUp(tlvTableInfoMigrations,activator,olvTableInfoName,null,false,false);
                 
                 //don't display anything below ColumnInfo
                 tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
-                
-                //Add them and expand them
-                tlvTableInfoMigrations.AddObjects(databaseObject.GetTableInfoList(false));
-                tlvTableInfoMigrations.ExpandAll();
                 
                 rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
                 rdmpObjectsRibbonUI1.Add(databaseObject);
                 _setup = true;
             }
+            else
+                _migrator.RefreshTableInfos();
 
+            //Add them and expand them
+            tlvTableInfoMigrations.ClearObjects();
+            tlvTableInfoMigrations.AddObjects(_migrator.TableInfos);
+            tlvTableInfoMigrations.ExpandAll();
+
+            Check();
+        }
+
+        private void Check()
+        {
+            ragSmiley1.StartChecking(_migrator);
         }
 
         private void tlvTableInfoMigrations_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
@@ -246,6 +271,17 @@ namespace CatalogueManager.ANOEngineeringUIs
                 e.SubItem.ForeColor = Color.Blue;
                 e.SubItem.Font = new Font(e.Item.Font, FontStyle.Underline);
             }
+        }
+
+        private void btnRefreshChecks_Click(object sender, EventArgs e)
+        {
+            Check();
+        }
+
+        private void serverDatabaseTableSelector1_SelectionChanged()
+        {
+            _migrator.TargetDatabase = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+            Check();
         }
     }
 

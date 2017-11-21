@@ -7,11 +7,13 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.ANOEngineering
 {
-    public class ForwardEngineerANOVersionOfCatalogue
+    public class ForwardEngineerANOVersionOfCatalogue : ICheckable
     {
         private readonly Catalogue _catalogue;
         private ExtractionInformation[] _allExtractionInformations;
@@ -25,21 +27,14 @@ namespace CatalogueLibrary.ANOEngineering
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
         public TableInfo[] TableInfos { get; private set; }
-        
+
+        public DiscoveredDatabase TargetDatabase { get; set; }
+
         public ForwardEngineerANOVersionOfCatalogue(Catalogue catalogue)
         {
             _catalogue = catalogue;
-            _allExtractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
-            _allCatalogueItems = _catalogue.CatalogueItems.Where(ci=>ci.ColumnInfo_ID != null).ToArray();
 
-            TableInfos =
-                _allCatalogueItems.Where(ci => IsMandatoryForMigration(ci.ColumnInfo))
-                    .Select(ci => ci.ColumnInfo.TableInfo)
-                    .Distinct()
-                    .ToArray();
-
-            foreach (ColumnInfo col in TableInfos.SelectMany(t => t.ColumnInfos))
-                Plans.Add(col, IsMandatoryForMigration(col) ? Plan.PassThroughUnchanged : Plan.Drop);
+            RefreshTableInfos();
 
             DilutionOperations = new List<IDilutionOperation>();
             
@@ -47,8 +42,7 @@ namespace CatalogueLibrary.ANOEngineering
 
             foreach (var operationType in ((CatalogueRepository) catalogue.Repository).MEF.GetTypes<IDilutionOperation>())
                 DilutionOperations.Add((IDilutionOperation) constructor.Construct(operationType));
-
-
+            
             _querySyntaxHelper = TableInfos.Select(t => t.GetQuerySyntaxHelper()).FirstOrDefault();
         }
 
@@ -169,6 +163,109 @@ namespace CatalogueLibrary.ANOEngineering
             Dillute,
             PassThroughUnchanged
 
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            if (TargetDatabase == null)
+                notifier.OnCheckPerformed(new CheckEventArgs("No TargetDatabase has been set", CheckResult.Fail));
+            else
+                if (!TargetDatabase.Exists())
+                    notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabase '"+TargetDatabase+"' does not exist", CheckResult.Fail));
+                else
+                {
+                    var existingTables = TargetDatabase.DiscoverTables(false);
+
+                    foreach (var existing in TableInfos.Where(m=>existingTables.Any(e=>e.GetRuntimeName().Equals(m.GetRuntimeName()))))
+                        notifier.OnCheckPerformed(new CheckEventArgs("Table '" + existing + "' already exists in Database '" + TargetDatabase + "'",CheckResult.Fail));
+                    
+                }
+            
+
+
+
+            foreach (TableInfo tableInfo in TableInfos)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Evaluating TableInfo '" + tableInfo + "'",CheckResult.Success));
+
+                var pks = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).ToArray();
+
+                if(!pks.Any())
+                    notifier.OnCheckPerformed(new CheckEventArgs("TableInfo '" + tableInfo + "' does not have any Primary Keys, it cannot be anonymised", CheckResult.Fail));
+
+                foreach (ColumnInfo pk in pks)
+                {
+                    var plan = GetPlanForColumnInfo(pk);
+
+                    if (plan == Plan.Dillute || plan == Plan.Drop)
+                        notifier.OnCheckPerformed(new CheckEventArgs("Current plan for column '" + pk + "' ('" + plan +"') is invalid because it is a primary key", CheckResult.Fail));
+                }
+
+                if (tableInfo.IsTableValuedFunction)
+                    notifier.OnCheckPerformed(new CheckEventArgs("TableInfo '" + tableInfo + "' is an IsTableValuedFunction so cannot be anonymised",CheckResult.Fail));
+
+            }
+
+            foreach (KeyValuePair<ColumnInfo, ANOTable> kvp in PlannedANOTables.Where(k=>k.Value == null))
+                notifier.OnCheckPerformed(new CheckEventArgs("No ANOTable has been picked for ColumnInfo '" + kvp.Key + "'",CheckResult.Fail));
+
+            foreach (KeyValuePair<ColumnInfo, IDilutionOperation> kvp in PlannedDilution.Where(k => k.Value == null))
+                notifier.OnCheckPerformed(new CheckEventArgs("No Dilution Operation has been picked for ColumnInfo '" + kvp.Key + "'", CheckResult.Fail));
+                
+            foreach (KeyValuePair<ColumnInfo, Plan> kvp in Plans)
+            {
+                if (kvp.Value != Plan.Drop)
+                {
+                    try
+                    {
+                        var datatype = GetEndpointDataType(kvp.Key);
+                        notifier.OnCheckPerformed(new CheckEventArgs("Determined endpoint data type '"+datatype+"' for ColumnInfo '" + kvp.Key + "'", CheckResult.Success));
+
+                    }
+                    catch (Exception e)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs("Could not determine endpoint data type for ColumnInfo '" + kvp.Key + "'", CheckResult.Fail,e));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Re checks the TableInfos associated with the Catalogue incase some have changed
+        /// </summary>
+        public void RefreshTableInfos()
+        {
+            _allExtractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+            _allCatalogueItems = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
+
+            TableInfos =
+                _allCatalogueItems.Where(ci => IsMandatoryForMigration(ci.ColumnInfo))
+                    .Select(ci => ci.ColumnInfo.TableInfo)
+                    .Distinct()
+                    .ToArray();
+
+            //Remove unplanned columns
+            foreach (var col in Plans.Keys.ToArray())
+                if (!IsStillNeeded(col))
+                    Plans.Remove(col);
+
+            foreach (var col in PlannedANOTables.Keys.ToArray())
+                if (!IsStillNeeded(col))
+                    PlannedANOTables.Remove(col);
+
+            foreach (var col in PlannedDilution.Keys.ToArray())
+                if (!IsStillNeeded(col))
+                    PlannedDilution.Remove(col);
+
+            //Add new column infos
+            foreach (ColumnInfo col in TableInfos.SelectMany(t => t.ColumnInfos))
+                if(!Plans.ContainsKey(col))
+                    Plans.Add(col, IsMandatoryForMigration(col) ? Plan.PassThroughUnchanged : Plan.Drop);
+        }
+
+        private bool IsStillNeeded(ColumnInfo columnInfo)
+        {
+            return TableInfos.Any(t => t.ID == columnInfo.TableInfo_ID);
         }
     }
 }
