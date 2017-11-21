@@ -2,7 +2,7 @@
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
-    partial class ForwardEngineerANOVersionOfCatalogueUI
+    partial class ForwardEngineerANOCatalogueUI
     {
         /// <summary> 
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForwardEngineerANOVersionOfCatalogueUI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForwardEngineerANOCatalogueUI));
             this.gbTables = new System.Windows.Forms.GroupBox();
             this.tbMandatory = new System.Windows.Forms.Label();
             this.tlvTableInfoMigrations = new BrightIdeasSoftware.TreeListView();
@@ -288,7 +288,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.gbTables);
             this.Controls.Add(this.gbANOTransforms);
-            this.Name = "ForwardEngineerANOVersionOfCatalogueUI";
+            this.Name = "ForwardEngineerANOCatalogueUI";
             this.Size = new System.Drawing.Size(948, 631);
             this.gbTables.ResumeLayout(false);
             this.gbTables.PerformLayout();

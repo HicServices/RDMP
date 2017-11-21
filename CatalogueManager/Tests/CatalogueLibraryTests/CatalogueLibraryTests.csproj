@@ -259,7 +259,7 @@
     <Compile Include="Integration\EncryptionTests.cs" />
     <Compile Include="Integration\FilterImportingTests\FilterImporterTests.cs" />
     <Compile Include="Integration\FilterImportingTests\ParameterCreatorTests.cs" />
-    <Compile Include="Integration\ForwardEngineerANOVersionOfCatalogueTests.cs" />
+    <Compile Include="Integration\ForwardEngineerANOCatalogueTests.cs" />
     <Compile Include="Integration\GetDatabaseDiagramBinaryTest.cs" />
     <Compile Include="Integration\GovernanceTests.cs" />
     <Compile Include="Integration\HangingConnectionTest.cs" />

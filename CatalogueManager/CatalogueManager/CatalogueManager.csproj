@@ -332,11 +332,11 @@
     <Compile Include="AggregationUIs\QueryCachingServerSelector.Designer.cs">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOVersionOfCatalogueUI.cs">
+    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOVersionOfCatalogueUI.Designer.cs">
-      <DependentUpon>ForwardEngineerANOVersionOfCatalogueUI.cs</DependentUpon>
+    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.Designer.cs">
+      <DependentUpon>ForwardEngineerANOCatalogueUI.cs</DependentUpon>
     </Compile>
     <Compile Include="AutoCompleteTextbox.cs">
       <SubType>Component</SubType>
@@ -1522,8 +1522,8 @@
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ANOEngineeringUIs\ForwardEngineerANOVersionOfCatalogueUI.resx">
-      <DependentUpon>ForwardEngineerANOVersionOfCatalogueUI.cs</DependentUpon>
+    <EmbeddedResource Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.resx">
+      <DependentUpon>ForwardEngineerANOCatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\CollectionScopeFilterUI.resx">
       <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>

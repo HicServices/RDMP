@@ -19,15 +19,15 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
-    public partial class ForwardEngineerANOVersionOfCatalogueUI : ForwardEngineerANOVersionOfCatalogueUI_Design
+    public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogueUI_Design
     {
 
         private bool _setup = false;
         private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
         private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;
-        private ForwardEngineerANOVersionOfCatalogue _migrator;
+        private ForwardEngineerANOCataloguePlanManager _planManager;
 
-        public ForwardEngineerANOVersionOfCatalogueUI()
+        public ForwardEngineerANOCatalogueUI()
         {
             InitializeComponent();
             serverDatabaseTableSelector1.HideTableComponents();
@@ -57,7 +57,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             var col = rowobject as ColumnInfo;
 
             if (col != null)
-                return _migrator.GetPlanForColumnInfo(col);
+                return _planManager.GetPlanForColumnInfo(col);
 
             return null;
         }
@@ -66,7 +66,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             var ci = rowObject as ColumnInfo;
 
-            if (ci != null && _migrator.GetPlannedANOTable(ci) != null)
+            if (ci != null && _planManager.GetPlannedANOTable(ci) != null)
                 return imageList1.Images["ANOTable"];
 
             return null;
@@ -78,12 +78,12 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (col != null)
             {
-                var ano = _migrator.GetPlannedANOTable(col);
+                var ano = _planManager.GetPlannedANOTable(col);
 
                 if (ano != null)
                     return ano.ToString();
 
-                if (_migrator.GetPlanForColumnInfo(col) == ForwardEngineerANOVersionOfCatalogue.Plan.ANO)
+                if (_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.ANO)
                     return "pick";
             }
 
@@ -96,12 +96,12 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (col != null)
             {
-                var dilution = _migrator.GetPlannedDilution(col);
+                var dilution = _planManager.GetPlannedDilution(col);
 
                 if (dilution != null)
                     return dilution;
 
-                if (_migrator.GetPlanForColumnInfo(col) == ForwardEngineerANOVersionOfCatalogue.Plan.Dillute)
+                if (_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.Dillute)
                     return "pick";
             }
 
@@ -113,7 +113,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (col != null)
             {
-                if (_migrator.GetPlannedDilution(col) != null)
+                if (_planManager.GetPlannedDilution(col) != null)
                     return "PreLoadDiscardedColumn";
             }
 
@@ -126,7 +126,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             try
             {
                 if (ci != null)
-                    return _migrator.GetEndpointDataType(ci);
+                    return _planManager.GetEndpointDataType(ci);
             }
             catch (Exception)
             {
@@ -152,7 +152,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (col != null && e.Column == olvPickedANOTable)
             {
-                if(_migrator.GetPlanForColumnInfo(col) != ForwardEngineerANOVersionOfCatalogue.Plan.ANO)
+                if(_planManager.GetPlanForColumnInfo(col) != ForwardEngineerANOCataloguePlanManager.Plan.ANO)
                 {
                     e.Cancel = true;
                     return;
@@ -162,7 +162,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                 try
                 {
                     if (dialog.ShowDialog() == DialogResult.OK)
-                        _migrator.SetPlannedANOTable(col, dialog.Selected as ANOTable);
+                        _planManager.SetPlannedANOTable(col, dialog.Selected as ANOTable);
                     
                     Check();
                 }
@@ -177,7 +177,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             if (col != null && e.Column == olvDilution)
             {
 
-                if (_migrator.GetPlanForColumnInfo(col) != ForwardEngineerANOVersionOfCatalogue.Plan.Dillute)
+                if (_planManager.GetPlanForColumnInfo(col) != ForwardEngineerANOCataloguePlanManager.Plan.Dillute)
                 {
                     e.Cancel = true;
                     return;
@@ -186,7 +186,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                 var cbx = new ComboBox();
                 cbx.DropDownStyle = ComboBoxStyle.DropDownList;
                 cbx.Bounds = e.CellBounds;
-                cbx.Items.AddRange(_migrator.DilutionOperations.ToArray());
+                cbx.Items.AddRange(_planManager.DilutionOperations.ToArray());
                 e.Control = cbx;
             }
         }
@@ -198,12 +198,12 @@ namespace CatalogueManager.ANOEngineeringUIs
                 var col = e.RowObject as ColumnInfo;
 
                 if(e.Column == olvMigrationPlan)
-                    _migrator.SetPlan(col,(ForwardEngineerANOVersionOfCatalogue.Plan) e.NewValue);
+                    _planManager.SetPlan(col,(ForwardEngineerANOCataloguePlanManager.Plan) e.NewValue);
 
                 if(e.Column == olvDilution)
                 {
                     var cbx = (ComboBox)e.Control;
-                    _migrator.SetPlannedDilution(col,(IDilutionOperation)cbx.SelectedItem);
+                    _planManager.SetPlannedDilution(col,(IDilutionOperation)cbx.SelectedItem);
                 }
             }
             catch (Exception exception)
@@ -220,7 +220,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (!_setup)
             {
-                _migrator = new ForwardEngineerANOVersionOfCatalogue(databaseObject);
+                _planManager = new ForwardEngineerANOCataloguePlanManager(databaseObject);
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
@@ -241,11 +241,11 @@ namespace CatalogueManager.ANOEngineeringUIs
                 _setup = true;
             }
             else
-                _migrator.RefreshTableInfos();
+                _planManager.RefreshTableInfos();
 
             //Add them and expand them
             tlvTableInfoMigrations.ClearObjects();
-            tlvTableInfoMigrations.AddObjects(_migrator.TableInfos);
+            tlvTableInfoMigrations.AddObjects(_planManager.TableInfos);
             tlvTableInfoMigrations.ExpandAll();
 
             Check();
@@ -253,14 +253,14 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void Check()
         {
-            ragSmiley1.StartChecking(_migrator);
+            ragSmiley1.StartChecking(_planManager);
         }
 
         private void tlvTableInfoMigrations_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
         {
             var ci = e.Model as ColumnInfo;
 
-            if (ci != null && _migrator.IsMandatoryForMigration(ci))
+            if (ci != null && _planManager.IsMandatoryForMigration(ci))
                 e.Item.BackColor = tbMandatory.BackColor;
         }
 
@@ -280,13 +280,45 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void serverDatabaseTableSelector1_SelectionChanged()
         {
-            _migrator.TargetDatabase = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+            _planManager.TargetDatabase = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+            
+            if (_planManager.TargetDatabase != null)
+            {
+                Exception ex;
+                if(_planManager.TargetDatabase.Server.RespondsWithinTime(5, out ex))
+                {
+
+                    _planManager.SkippedTables.Clear();
+
+                    foreach (var t in _planManager.TableInfos)
+                    {
+                        var existing = _planManager.TargetDatabase.DiscoverTables(true);
+
+                        //it is already migrated
+                        if(existing.Any(e => e.GetRuntimeName().Equals(t.GetRuntimeName())))
+                            _planManager.SkippedTables.Add(t);
+                    }
+                }
+            }
+
+            DisableObjects();
+            
             Check();
+        }
+
+        private void DisableObjects()
+        {
+            List<object> toDisable = new List<object>();
+
+            toDisable.AddRange(_planManager.SkippedTables);
+            toDisable.AddRange(_planManager.SkippedTables.SelectMany(t=>t.ColumnInfos));
+
+            tlvTableInfoMigrations.DisabledObjects = toDisable;
         }
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ForwardEngineerANOVersionOfCatalogueUI_Design, UserControl>))]
-    public abstract class ForwardEngineerANOVersionOfCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ForwardEngineerANOCatalogueUI_Design, UserControl>))]
+    public abstract class ForwardEngineerANOCatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
     {
     }
 }

@@ -13,7 +13,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.ANOEngineering
 {
-    public class ForwardEngineerANOVersionOfCatalogue : ICheckable
+    public class ForwardEngineerANOCataloguePlanManager : ICheckable
     {
         private readonly Catalogue _catalogue;
         private ExtractionInformation[] _allExtractionInformations;
@@ -30,7 +30,9 @@ namespace CatalogueLibrary.ANOEngineering
 
         public DiscoveredDatabase TargetDatabase { get; set; }
 
-        public ForwardEngineerANOVersionOfCatalogue(Catalogue catalogue)
+        public HashSet<TableInfo> SkippedTables = new HashSet<TableInfo>();
+
+        public ForwardEngineerANOCataloguePlanManager(Catalogue catalogue)
         {
             _catalogue = catalogue;
 
@@ -121,6 +123,8 @@ namespace CatalogueLibrary.ANOEngineering
 
         public void SetPlannedANOTable(ColumnInfo col, ANOTable anoTable)
         {
+            SetPlan(col,Plan.ANO);
+
             if(GetPlanForColumnInfo(col) != Plan.ANO)
                 throw new ArgumentException("ColumnInfo '" + col + "' is not planned to be ANO. First call SetPlan ANO", "col");
 
@@ -162,7 +166,6 @@ namespace CatalogueLibrary.ANOEngineering
             ANO,
             Dillute,
             PassThroughUnchanged
-
         }
 
         public void Check(ICheckNotifier notifier)
@@ -172,21 +175,18 @@ namespace CatalogueLibrary.ANOEngineering
             else
                 if (!TargetDatabase.Exists())
                     notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabase '"+TargetDatabase+"' does not exist", CheckResult.Fail));
-                else
-                {
-                    var existingTables = TargetDatabase.DiscoverTables(false);
 
-                    foreach (var existing in TableInfos.Where(m=>existingTables.Any(e=>e.GetRuntimeName().Equals(m.GetRuntimeName()))))
-                        notifier.OnCheckPerformed(new CheckEventArgs("Table '" + existing + "' already exists in Database '" + TargetDatabase + "'",CheckResult.Fail));
-                    
-                }
-            
+            var toMigrateTables = TableInfos.Except(SkippedTables).ToArray();
 
+            if (!toMigrateTables.Any())
+                notifier.OnCheckPerformed(new CheckEventArgs("There are no TableInfos selected for anonymisation",CheckResult.Fail));
 
-
-            foreach (TableInfo tableInfo in TableInfos)
+            foreach (TableInfo tableInfo in toMigrateTables)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Evaluating TableInfo '" + tableInfo + "'",CheckResult.Success));
+
+                if (TargetDatabase != null && TargetDatabase.ExpectTable(tableInfo.GetRuntimeName()).Exists())
+                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableInfo + "' already exists in Database '" + TargetDatabase + "'",CheckResult.Fail));
 
                 var pks = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).ToArray();
 
@@ -203,7 +203,6 @@ namespace CatalogueLibrary.ANOEngineering
 
                 if (tableInfo.IsTableValuedFunction)
                     notifier.OnCheckPerformed(new CheckEventArgs("TableInfo '" + tableInfo + "' is an IsTableValuedFunction so cannot be anonymised",CheckResult.Fail));
-
             }
 
             foreach (KeyValuePair<ColumnInfo, ANOTable> kvp in PlannedANOTables.Where(k=>k.Value == null))

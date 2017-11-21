@@ -31,7 +31,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<ForwardEngineerANOVersionOfCatalogueUI, Catalogue>(_catalogue);
+            Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
         }
     }
 }
