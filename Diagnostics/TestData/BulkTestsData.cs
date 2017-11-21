@@ -443,5 +443,10 @@ dt.Columns.Add(MigrationColumnSet.DataLoadRunField);
 
             catalogue.SaveToDatabase();
         }
+
+        public ColumnInfo GetColumnInfo(string colName)
+        {
+            return columnInfos.Single(c => c.GetRuntimeName().Equals(colName));
+        }
     }
 }

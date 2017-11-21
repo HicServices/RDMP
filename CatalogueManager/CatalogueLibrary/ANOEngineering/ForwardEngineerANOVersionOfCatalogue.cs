@@ -92,7 +92,7 @@ namespace CatalogueLibrary.ANOEngineering
                 return;
 
             if (IsMandatoryForMigration(col) && plan == Plan.Drop)
-                throw new ArgumentException("Cannot drop column because it is Mandatory", "col");
+                throw new ArgumentException("Cannot drop column '" + col + "' because it is Mandatory (An ExtractionInformation exists for it in Catalogue(s))", "col");
 
             //change plan
             Plans[col] = plan;
