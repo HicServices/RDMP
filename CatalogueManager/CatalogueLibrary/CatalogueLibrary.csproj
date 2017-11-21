@@ -260,6 +260,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ANOEngineering\ForwardEngineerANOVersionOfCatalogue.cs" />
+    <Compile Include="ANOEngineering\IDilutionOperation.cs" />
     <Compile Include="Cloning\MissingTableException.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />

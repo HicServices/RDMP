@@ -38,6 +38,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvTableInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvMigrationPlan = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvPickedANOTable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvDilution = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvDestinationType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
@@ -71,7 +73,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             // tbMandatory
             // 
             this.tbMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbMandatory.BackColor = System.Drawing.Color.Azure;
+            this.tbMandatory.BackColor = System.Drawing.Color.LightCyan;
             this.tbMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tbMandatory.Location = new System.Drawing.Point(7, 156);
@@ -84,6 +86,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.AllColumns.Add(this.olvTableInfoName);
             this.tlvTableInfoMigrations.AllColumns.Add(this.olvMigrationPlan);
             this.tlvTableInfoMigrations.AllColumns.Add(this.olvPickedANOTable);
+            this.tlvTableInfoMigrations.AllColumns.Add(this.olvDilution);
+            this.tlvTableInfoMigrations.AllColumns.Add(this.olvDestinationType);
             this.tlvTableInfoMigrations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -91,7 +95,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvTableInfoName,
             this.olvMigrationPlan,
-            this.olvPickedANOTable});
+            this.olvPickedANOTable,
+            this.olvDilution,
+            this.olvDestinationType});
             this.tlvTableInfoMigrations.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvTableInfoMigrations.Location = new System.Drawing.Point(3, 19);
             this.tlvTableInfoMigrations.Name = "tlvTableInfoMigrations";
@@ -99,9 +105,11 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.Size = new System.Drawing.Size(936, 134);
             this.tlvTableInfoMigrations.SmallImageList = this.imageList1;
             this.tlvTableInfoMigrations.TabIndex = 0;
+            this.tlvTableInfoMigrations.UseCellFormatEvents = true;
             this.tlvTableInfoMigrations.UseCompatibleStateImageBehavior = false;
             this.tlvTableInfoMigrations.View = System.Windows.Forms.View.Details;
             this.tlvTableInfoMigrations.VirtualMode = true;
+            this.tlvTableInfoMigrations.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.tlvTableInfoMigrations_FormatCell);
             this.tlvTableInfoMigrations.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.tlvTableInfoMigrations_FormatRow);
             // 
             // olvTableInfoName
@@ -119,13 +127,26 @@ namespace CatalogueManager.ANOEngineeringUIs
             // olvPickedANOTable
             // 
             this.olvPickedANOTable.Text = "ANOTable";
-            this.olvPickedANOTable.Width = 90;
+            this.olvPickedANOTable.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.olvPickedANOTable.Width = 120;
+            // 
+            // olvDilution
+            // 
+            this.olvDilution.Text = "Dilution";
+            this.olvDilution.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.olvDilution.Width = 120;
+            // 
+            // olvDestinationType
+            // 
+            this.olvDestinationType.Text = "Destination Type";
+            this.olvDestinationType.Width = 100;
             // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "ANOTable");
+            this.imageList1.Images.SetKeyName(1, "PreLoadDiscardedColumn");
             // 
             // label1
             // 
@@ -243,5 +264,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private OLVColumn olvMigrationPlan;
         private OLVColumn olvPickedANOTable;
         private System.Windows.Forms.ImageList imageList1;
+        private OLVColumn olvDilution;
+        private OLVColumn olvDestinationType;
     }
 }

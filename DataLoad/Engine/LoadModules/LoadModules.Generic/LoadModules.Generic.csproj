@@ -264,7 +264,6 @@
     <Compile Include="Mutilators\Dilution\Dilution.cs" />
     <Compile Include="Mutilators\Dilution\DilutionOperationFactory.cs" />
     <Compile Include="Mutilators\Dilution\Exceptions\DilutionColumnNotSetException.cs" />
-    <Compile Include="Mutilators\Dilution\IDilutionOperation.cs" />
     <Compile Include="Mutilators\Dilution\Operations\CrushToBitFlag.cs" />
     <Compile Include="Mutilators\Dilution\Operations\DilutionOperation.cs" />
     <Compile Include="Mutilators\Dilution\Operations\ExcludeRight3OfUKPostcodes.cs" />

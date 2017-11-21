@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 
 namespace CatalogueLibrary.ANOEngineering
 {
@@ -16,8 +18,12 @@ namespace CatalogueLibrary.ANOEngineering
         
         private readonly Dictionary<ColumnInfo,Plan> Plans = new Dictionary<ColumnInfo, Plan>();
         private readonly Dictionary<ColumnInfo, ANOTable> PlannedANOTables = new Dictionary<ColumnInfo, ANOTable>();
-        public TableInfo[] TableInfos { get; private set; }
+        private readonly Dictionary<ColumnInfo, IDilutionOperation> PlannedDilution = new Dictionary<ColumnInfo, IDilutionOperation>();
+        
+        public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
+        public TableInfo[] TableInfos { get; private set; }
+        
         public ForwardEngineerANOVersionOfCatalogue(Catalogue catalogue)
         {
             _catalogue = catalogue;
@@ -32,6 +38,24 @@ namespace CatalogueLibrary.ANOEngineering
 
             foreach (ColumnInfo col in TableInfos.SelectMany(t => t.ColumnInfos))
                 Plans.Add(col, IsMandatoryForMigration(col) ? Plan.PassThroughUnchanged : Plan.Drop);
+
+            DilutionOperations = new List<IDilutionOperation>();
+            
+            ObjectConstructor constructor = new ObjectConstructor();
+
+            foreach (var operationType in ((CatalogueRepository) catalogue.Repository).MEF.GetTypes<IDilutionOperation>())
+                DilutionOperations.Add((IDilutionOperation) constructor.Construct(operationType));
+            
+        }
+
+        public string GetEndpointDataType(ColumnInfo col)
+        {
+            var anoTable = GetPlannedANOTable(col);
+
+            if (anoTable != null)
+                return anoTable.GetRuntimeDataType(LoadStage.PostLoad);
+
+            return col.Data_type;
         }
 
         public Plan GetPlanForColumnInfo(ColumnInfo col)
@@ -41,15 +65,7 @@ namespace CatalogueLibrary.ANOEngineering
 
             return Plans[col];
         }
-
-        public ANOTable GetPlannedANOTable(ColumnInfo col)
-        {
-            if (GetPlanForColumnInfo(col) == Plan.ANO)
-                return PlannedANOTables[col];
-
-            return null;
-        }
-
+        
         public void SetPlan(ColumnInfo col, Plan plan)
         {
             var oldPlan = GetPlanForColumnInfo(col);
@@ -63,14 +79,27 @@ namespace CatalogueLibrary.ANOEngineering
 
             //change plan
             Plans[col] = plan;
+
+            //Set diluteness dictionary key depending on plan
+            if(plan == Plan.Dillute)
+                PlannedDilution.Add(col,null);
+            else if (PlannedDilution.ContainsKey(col))
+                PlannedDilution.Remove(col);
             
-            //no longer planning to ANO
-            if (oldPlan == Plan.ANO)
-                PlannedANOTables.Remove(col);
-            
-            //new plan is to ANO
+            //Set ANO dictionary key depending on plan
             if(plan == Plan.ANO)
                 PlannedANOTables.Add(col,null);
+            else
+                if(PlannedANOTables.ContainsKey(col)) //plan is not to ANO
+                    PlannedANOTables.Remove(col);
+        }
+
+        public ANOTable GetPlannedANOTable(ColumnInfo col)
+        {
+            if (GetPlanForColumnInfo(col) == Plan.ANO)
+                return PlannedANOTables[col];
+
+            return null;
         }
 
         public void SetPlannedANOTable(ColumnInfo col, ANOTable anoTable)
@@ -79,10 +108,24 @@ namespace CatalogueLibrary.ANOEngineering
                 throw new ArgumentException("ColumnInfo '" + col + "' is not planned to be ANO. First call SetPlan ANO", "col");
 
             PlannedANOTables[col] = anoTable;
-
         }
 
+        public IDilutionOperation GetPlannedDilution(ColumnInfo ci)
+        {
+            if (PlannedDilution.ContainsKey(ci))
+                return PlannedDilution[ci];
 
+            return null;
+        }
+
+        public void SetPlannedDilution(ColumnInfo col, IDilutionOperation operation)
+        {
+            if (GetPlanForColumnInfo(col) != Plan.Dillute)
+                throw new ArgumentException("ColumnInfo '" + col + "' is not planned to be Dilluted. First call SetPlan Dillute", "col");
+
+            PlannedDilution[col] = operation;
+        }
+        
         public bool IsMandatoryForMigration(ColumnInfo col)
         {
             return 

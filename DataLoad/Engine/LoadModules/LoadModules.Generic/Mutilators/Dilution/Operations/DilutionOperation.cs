@@ -21,7 +21,12 @@ namespace LoadModules.Generic.Mutilators.Dilution.Operations
             if (string.IsNullOrWhiteSpace(ColumnToDilute.SqlDataType))
                 notifier.OnCheckPerformed(new CheckEventArgs("IPreLoadDiscardedColumn " + ColumnToDilute + " is of unknown datatype", CheckResult.Fail));
         }
-        
+
+        public override string ToString()
+        {
+            return GetType().Name;
+        }
+
         public abstract string GetMutilationSql();
     }
 }

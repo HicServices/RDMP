@@ -32,15 +32,33 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             InitializeComponent();
             serverDatabaseTableSelector1.HideTableComponents();
+
+            olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
             
             olvPickedANOTable.HeaderImageKey = "ANOTable";
-
             olvPickedANOTable.AspectGetter += PickedANOTableAspectGetter;
-            olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
+            olvPickedANOTable.ImageGetter += PickedANOTable_ImageGetter;
+
+            olvDilution.HeaderImageKey = "PreLoadDiscardedColumn";
+            olvDilution.AspectGetter += DilutionAspectGetter;
+            olvDilution.ImageGetter += Dilution_ImageGetter;
+            
+            olvDestinationType.AspectGetter += DestinationTypeAspectGetter;
             
             tlvTableInfoMigrations.CellEditStarting += tlvTableInfoMigrations_CellEditStarting;
             tlvTableInfoMigrations.CellEditFinishing += tlvTableInfoMigrations_CellEditFinishing;
-            olvPickedANOTable.ImageGetter += PickedANOTable_ImageGetter;
+        }
+
+        #region Aspect Getters and Setters
+
+        private object MigrationPlanAspectGetter(object rowobject)
+        {
+            var col = rowobject as ColumnInfo;
+
+            if (col != null)
+                return _migrator.GetPlanForColumnInfo(col);
+
+            return null;
         }
 
         private object PickedANOTable_ImageGetter(object rowObject)
@@ -52,6 +70,65 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             return null;
         }
+
+        private object PickedANOTableAspectGetter(object rowobject)
+        {
+            var col = rowobject as ColumnInfo;
+
+            if (col != null)
+            {
+                var ano = _migrator.GetPlannedANOTable(col);
+
+                if (ano != null)
+                    return ano.ToString();
+
+                if (_migrator.GetPlanForColumnInfo(col) == ForwardEngineerANOVersionOfCatalogue.Plan.ANO)
+                    return "pick";
+            }
+
+            return null;
+        }
+
+        private object DilutionAspectGetter(object rowobject)
+        {
+            var col = rowobject as ColumnInfo;
+
+            if (col != null)
+            {
+                var dilution = _migrator.GetPlannedDilution(col);
+
+                if (dilution != null)
+                    return dilution;
+
+                if (_migrator.GetPlanForColumnInfo(col) == ForwardEngineerANOVersionOfCatalogue.Plan.Dillute)
+                    return "pick";
+            }
+
+            return null;
+        }
+        private object Dilution_ImageGetter(object rowobject)
+        {
+            var col = rowobject as ColumnInfo;
+
+            if (col != null)
+            {
+                if (_migrator.GetPlannedDilution(col) != null)
+                    return "PreLoadDiscardedColumn";
+            }
+
+            return null;
+        }
+
+        private object DestinationTypeAspectGetter(object rowobject)
+        {
+            var ci = rowobject as ColumnInfo;
+
+            if (ci != null)
+                return _migrator.GetEndpointDataType(ci);
+
+            return null;
+        }
+        #endregion
 
         void tlvTableInfoMigrations_CellEditStarting(object sender, BrightIdeasSoftware.CellEditEventArgs e)
         {
@@ -84,6 +161,22 @@ namespace CatalogueManager.ANOEngineeringUIs
 
                 e.Cancel = true;
             }
+
+            if (col != null && e.Column == olvDilution)
+            {
+
+                if (_migrator.GetPlanForColumnInfo(col) != ForwardEngineerANOVersionOfCatalogue.Plan.Dillute)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+
+                var cbx = new ComboBox();
+                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbx.Bounds = e.CellBounds;
+                cbx.Items.AddRange(_migrator.DilutionOperations.ToArray());
+                e.Control = cbx;
+            }
         }
         
         void tlvTableInfoMigrations_CellEditFinishing(object sender, BrightIdeasSoftware.CellEditEventArgs e)
@@ -94,35 +187,17 @@ namespace CatalogueManager.ANOEngineeringUIs
 
                 if(e.Column == olvMigrationPlan)
                     _migrator.SetPlan(col,(ForwardEngineerANOVersionOfCatalogue.Plan) e.NewValue);
+
+                if(e.Column == olvDilution)
+                {
+                    var cbx = (ComboBox)e.Control;
+                    _migrator.SetPlannedDilution(col,(IDilutionOperation)cbx.SelectedItem);
+                }
             }
             catch (Exception exception)
             {
                 ExceptionViewer.Show(exception);
             }
-        }
-        private object MigrationPlanAspectGetter(object rowobject)
-        {
-            var col = rowobject as ColumnInfo;
-
-            if (col != null)
-                return _migrator.GetPlanForColumnInfo(col);
-
-            return null;
-        }
-
-        private object PickedANOTableAspectGetter(object rowobject)
-        {
-            var col = rowobject as ColumnInfo;
-
-            if (col != null)
-            {
-                var ano = _migrator.GetPlannedANOTable(col);
-
-                if (ano != null)
-                    return ano.ToString();
-            }
-
-            return null;
         }
         
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -162,6 +237,15 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (ci != null && _migrator.IsMandatoryForMigration(ci))
                 e.Item.BackColor = tbMandatory.BackColor;
+        }
+
+        private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)
+        {
+            if (e.CellValue as string == "pick")
+            {
+                e.SubItem.ForeColor = Color.Blue;
+                e.SubItem.Font = new Font(e.Item.Font, FontStyle.Underline);
+            }
         }
     }
 
