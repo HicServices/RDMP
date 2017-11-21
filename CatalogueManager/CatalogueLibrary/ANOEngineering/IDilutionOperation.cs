@@ -1,5 +1,6 @@
 ﻿using CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.ANOEngineering
 {
@@ -7,5 +8,6 @@ namespace CatalogueLibrary.ANOEngineering
     {
         IPreLoadDiscardedColumn ColumnToDilute { set; }
         string GetMutilationSql();
+        DatabaseTypeRequest ExpectedDestinationType { get; }
     }
 }

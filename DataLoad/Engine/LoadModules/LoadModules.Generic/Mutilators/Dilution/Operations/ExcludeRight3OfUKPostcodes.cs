@@ -5,11 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
     public class ExcludeRight3OfUKPostcodes: DilutionOperation
     {
+        public ExcludeRight3OfUKPostcodes() : 
+            base(new DatabaseTypeRequest(typeof(string),4))
+        {
+        }
 
         public override void Check(ICheckNotifier notifier)
         {

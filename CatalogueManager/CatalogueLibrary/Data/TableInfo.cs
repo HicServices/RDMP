@@ -14,6 +14,8 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 
 namespace CatalogueLibrary.Data
@@ -365,6 +367,11 @@ select 0", con.Connection, con.Transaction);
                     continue;
                 else
                     yield return c;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return new DatabaseHelperFactory(DatabaseType).CreateInstance().GetQuerySyntaxHelper();
         }
     }
 }

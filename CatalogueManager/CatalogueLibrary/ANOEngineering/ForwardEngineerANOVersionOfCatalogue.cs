@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.ANOEngineering
 {
@@ -19,7 +20,8 @@ namespace CatalogueLibrary.ANOEngineering
         private readonly Dictionary<ColumnInfo,Plan> Plans = new Dictionary<ColumnInfo, Plan>();
         private readonly Dictionary<ColumnInfo, ANOTable> PlannedANOTables = new Dictionary<ColumnInfo, ANOTable>();
         private readonly Dictionary<ColumnInfo, IDilutionOperation> PlannedDilution = new Dictionary<ColumnInfo, IDilutionOperation>();
-        
+        private IQuerySyntaxHelper _querySyntaxHelper;
+
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
         public TableInfo[] TableInfos { get; private set; }
@@ -45,17 +47,38 @@ namespace CatalogueLibrary.ANOEngineering
 
             foreach (var operationType in ((CatalogueRepository) catalogue.Repository).MEF.GetTypes<IDilutionOperation>())
                 DilutionOperations.Add((IDilutionOperation) constructor.Construct(operationType));
-            
+
+
+            _querySyntaxHelper = TableInfos.Select(t => t.GetQuerySyntaxHelper()).FirstOrDefault();
         }
 
         public string GetEndpointDataType(ColumnInfo col)
         {
-            var anoTable = GetPlannedANOTable(col);
+            switch (GetPlanForColumnInfo(col))
+            {
+                case Plan.Drop:
+                    return null;
+                case Plan.ANO:
+                    var anoTable = GetPlannedANOTable(col);
 
-            if (anoTable != null)
-                return anoTable.GetRuntimeDataType(LoadStage.PostLoad);
+                    if (anoTable == null)
+                        return "Unknown";
 
-            return col.Data_type;
+                    return anoTable.GetRuntimeDataType(LoadStage.PostLoad);
+                case Plan.Dillute:
+                    var dilution = GetPlannedDilution(col);
+
+                    if (dilution == null)
+                        return "Unknown";
+                    
+                    return _querySyntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(dilution.ExpectedDestinationType);
+
+                case Plan.PassThroughUnchanged:
+                    return col.Data_type;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public Plan GetPlanForColumnInfo(ColumnInfo col)

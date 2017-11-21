@@ -6,11 +6,20 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data.DataLoad;
 using LoadModules.Generic.Mutilators.Dilution.Exceptions;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
     public abstract class DilutionOperation : IPluginDilutionOperation
     {
+        public DatabaseTypeRequest ExpectedDestinationType { get; private set; }
+
+        protected DilutionOperation(DatabaseTypeRequest expectedDestinationType)
+        {
+            ExpectedDestinationType = expectedDestinationType;
+        }
+
+
         public IPreLoadDiscardedColumn ColumnToDilute { set; protected get; }
 
         public virtual void Check(ICheckNotifier notifier)
@@ -28,5 +37,6 @@ namespace LoadModules.Generic.Mutilators.Dilution.Operations
         }
 
         public abstract string GetMutilationSql();
+        
     }
 }
