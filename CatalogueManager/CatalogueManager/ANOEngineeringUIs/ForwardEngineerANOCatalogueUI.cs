@@ -285,9 +285,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             if (_planManager.TargetDatabase != null)
             {
                 Exception ex;
-                if(_planManager.TargetDatabase.Server.RespondsWithinTime(5, out ex))
+                if(_planManager.TargetDatabase.Exists())
                 {
-
                     _planManager.SkippedTables.Clear();
 
                     foreach (var t in _planManager.TableInfos)
@@ -314,6 +313,33 @@ namespace CatalogueManager.ANOEngineeringUIs
             toDisable.AddRange(_planManager.SkippedTables.SelectMany(t=>t.ColumnInfos));
 
             tlvTableInfoMigrations.DisabledObjects = toDisable;
+        }
+
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var engine = new ForwardEngineerANOCatalogueEngine(_activator.RepositoryLocator.CatalogueRepository, _planManager);
+                engine.Execute();
+
+                if(engine.NewCatalogue != null)
+                {
+
+                    Publish(engine.NewCatalogue);
+
+                    if(MessageBox.Show("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        ParentForm.Close();
+                }
+                else
+                    throw new Exception("Engine did not create a NewCatalogue...");
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+            }
         }
     }
 

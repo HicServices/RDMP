@@ -15,7 +15,7 @@ namespace CatalogueLibrary.ANOEngineering
 {
     public class ForwardEngineerANOCataloguePlanManager : ICheckable
     {
-        private readonly Catalogue _catalogue;
+        public Catalogue Catalogue { get; private set; }
         private ExtractionInformation[] _allExtractionInformations;
         private CatalogueItem[] _allCatalogueItems;
         
@@ -34,7 +34,7 @@ namespace CatalogueLibrary.ANOEngineering
 
         public ForwardEngineerANOCataloguePlanManager(Catalogue catalogue)
         {
-            _catalogue = catalogue;
+            Catalogue = catalogue;
 
             RefreshTableInfos();
 
@@ -234,8 +234,8 @@ namespace CatalogueLibrary.ANOEngineering
         /// </summary>
         public void RefreshTableInfos()
         {
-            _allExtractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
-            _allCatalogueItems = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
+            _allExtractionInformations = Catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+            _allCatalogueItems = Catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
 
             TableInfos =
                 _allCatalogueItems.Where(ci => IsMandatoryForMigration(ci.ColumnInfo))

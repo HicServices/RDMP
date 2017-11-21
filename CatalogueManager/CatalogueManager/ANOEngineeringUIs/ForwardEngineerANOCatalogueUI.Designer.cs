@@ -53,6 +53,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.btnRefreshChecks = new System.Windows.Forms.Button();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.gbTables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -68,9 +71,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbTables.Controls.Add(this.tbMandatory);
             this.gbTables.Controls.Add(this.tlvTableInfoMigrations);
             this.gbTables.Controls.Add(this.label1);
-            this.gbTables.Location = new System.Drawing.Point(3, 446);
+            this.gbTables.Location = new System.Drawing.Point(3, 464);
             this.gbTables.Name = "gbTables";
-            this.gbTables.Size = new System.Drawing.Size(942, 182);
+            this.gbTables.Size = new System.Drawing.Size(942, 258);
             this.gbTables.TabIndex = 0;
             this.gbTables.TabStop = false;
             this.gbTables.Text = "Table Migration";
@@ -81,7 +84,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tbMandatory.BackColor = System.Drawing.Color.LightCyan;
             this.tbMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tbMandatory.Location = new System.Drawing.Point(7, 156);
+            this.tbMandatory.Location = new System.Drawing.Point(7, 232);
             this.tbMandatory.Name = "tbMandatory";
             this.tbMandatory.Size = new System.Drawing.Size(20, 20);
             this.tbMandatory.TabIndex = 4;
@@ -107,7 +110,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.Location = new System.Drawing.Point(3, 19);
             this.tlvTableInfoMigrations.Name = "tlvTableInfoMigrations";
             this.tlvTableInfoMigrations.ShowGroups = false;
-            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(936, 134);
+            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(936, 210);
             this.tlvTableInfoMigrations.SmallImageList = this.imageList1;
             this.tlvTableInfoMigrations.TabIndex = 0;
             this.tlvTableInfoMigrations.UseCellFormatEvents = true;
@@ -157,7 +160,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(28, 160);
+            this.label1.Location = new System.Drawing.Point(28, 236);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 13);
             this.label1.TabIndex = 4;
@@ -259,29 +262,58 @@ namespace CatalogueManager.ANOEngineeringUIs
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(886, 415);
+            this.ragSmiley1.Location = new System.Drawing.Point(255, 423);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 4;
             // 
             // btnRefreshChecks
             // 
-            this.btnRefreshChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
-            this.btnRefreshChecks.Location = new System.Drawing.Point(917, 416);
+            this.btnRefreshChecks.Location = new System.Drawing.Point(286, 424);
             this.btnRefreshChecks.Name = "btnRefreshChecks";
             this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
             this.btnRefreshChecks.TabIndex = 6;
             this.btnRefreshChecks.UseVisualStyleBackColor = true;
             this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
             // 
-            // ForwardEngineerANOVersionOfCatalogueUI
+            // btnExecute
+            // 
+            this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
+            this.btnExecute.Location = new System.Drawing.Point(330, 425);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(86, 23);
+            this.btnExecute.TabIndex = 68;
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(349, 452);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 67;
+            this.label2.Text = "Execute";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(264, 452);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(38, 13);
+            this.label3.TabIndex = 69;
+            this.label3.Text = "Check";
+            // 
+            // ForwardEngineerANOCatalogueUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.btnExecute);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.btnRefreshChecks);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.rdmpObjectsRibbonUI1);
@@ -289,7 +321,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.Controls.Add(this.gbTables);
             this.Controls.Add(this.gbANOTransforms);
             this.Name = "ForwardEngineerANOCatalogueUI";
-            this.Size = new System.Drawing.Size(948, 631);
+            this.Size = new System.Drawing.Size(948, 725);
             this.gbTables.ResumeLayout(false);
             this.gbTables.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).EndInit();
@@ -298,6 +330,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbANOTransforms.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tlvANOTables)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -324,5 +357,8 @@ namespace CatalogueManager.ANOEngineeringUIs
         private OLVColumn olvNumberOfDigits;
         private OLVColumn olvNumberOfCharacters;
         private OLVColumn olvSuffix;
+        private System.Windows.Forms.Button btnExecute;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }

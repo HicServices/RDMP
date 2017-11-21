@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AnonymisationTests;
 using CatalogueLibrary.ANOEngineering;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using Diagnostics.TestData;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
@@ -18,9 +19,9 @@ namespace CatalogueLibraryTests.Integration
     public class ForwardEngineerANOCatalogueTests:TestsRequiringANOStore
     {
         [Test]
-        public void PreRunChecks()
+        public void PlanManagementTest()
         {
-            var dbName = TestDatabaseNames.GetConsistentName("ForwardEngineerANOVersionOfCatalogueTests");
+            var dbName = TestDatabaseNames.GetConsistentName("PlanManagementTests");
 
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
             
@@ -59,10 +60,41 @@ namespace CatalogueLibraryTests.Integration
             var chi_num_of_curr_record = bulk.GetColumnInfo("chi_num_of_curr_record");
             Assert.Throws<ArgumentException>(() => planManager.SetPlan(chi_num_of_curr_record, ForwardEngineerANOCataloguePlanManager.Plan.Drop));
 
+            db.ForceDrop();
+        }
 
+
+        [Test]
+        public void CreateANOVersionTest()
+        {
+            var dbName = TestDatabaseNames.GetConsistentName("CreateANOVersionTest");
+
+            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
+
+            db.Create(true);
+
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            bulk.SetupTestData();
+            bulk.ImportAsCatalogue();
+
+            var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
+            planManager.TargetDatabase = db;
+
+            //setup test rules for migrator
+            CreateMigrationRules(planManager, bulk);
+
+            //rules should pass checks
+            Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
+
+            var engine = new ForwardEngineerANOCatalogueEngine(CatalogueRepository, planManager);
+            engine.Execute();
+
+            var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            Assert.IsTrue(anoCatalogue.Exists());
 
             db.ForceDrop();
         }
+
 
         private void CreateMigrationRules(ForwardEngineerANOCataloguePlanManager planManager, BulkTestsData bulk)
         {
