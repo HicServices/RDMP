@@ -60,5 +60,10 @@ namespace CatalogueLibrary.Data
             LocalTypeName = r["LocalTypeName"].ToString();
             RepositoryTypeName = r["RepositoryTypeName"].ToString();
         }
+
+        public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
+        {
+            return o.ID == LocalObjectID && o.GetType().Name.Equals(LocalTypeName) && o.Repository.GetType().Name.Equals(RepositoryTypeName);
+        }
     }
 }

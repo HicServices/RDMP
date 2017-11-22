@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.ObjectSharing;
 using CatalogueLibrary.Reports.Exceptions;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
@@ -86,13 +87,16 @@ namespace RDMPStartup
             //get the catalogues obscure dependency finder
             var finder = (CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder;
 
-            //and add one of this type if there isn't already one of that type
-            if (finder.OtherDependencyFinders.All(f => f.GetType() != typeof(BetweenCatalogueAndDataExportObscureDependencyFinder)))
-                finder.OtherDependencyFinders.Add(new BetweenCatalogueAndDataExportObscureDependencyFinder(this));
+            finder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(this);
+            finder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(this);
+            finder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(this);
 
-            //same again in green, but for validationxml dependencies
-            if (finder.OtherDependencyFinders.All(f => f.GetType() != typeof(ValidationXMLObscureDependencyFinder)))
-                finder.OtherDependencyFinders.Add(new ValidationXMLObscureDependencyFinder(this));
+
+            if (DataExportRepository.ObscureDependencyFinder == null)
+                DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
+            else
+                if(!(DataExportRepository.ObscureDependencyFinder is ObjectSharingObscureDependencyFinder))
+                    throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
         }
 
 

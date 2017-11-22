@@ -140,7 +140,7 @@ namespace CatalogueLibrary.ANOEngineering
         private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
         {
             //make it shareable
-            var export = ObjectExport.GetExportFor(_catalogueRepository, parent);
+            var export = _catalogueRepository.GetExportFor(parent);
 
             //share it to yourself where the child is the realisation of the share (this creates relationship in database)
             var import = new ObjectImport(_catalogueRepository, export.SharingUID, child);

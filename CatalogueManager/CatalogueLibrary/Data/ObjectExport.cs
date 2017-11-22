@@ -69,12 +69,5 @@ namespace CatalogueLibrary.Data
         {
             return o.ID == ObjectID && o.GetType().Name == ObjectTypeName && o.Repository.GetType().Name == RepositoryTypeName;
         }
-
-        public static ObjectExport GetExportFor(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable o)
-        { 
-            var existing = repository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
-
-            return existing ?? new ObjectExport(repository, o);
-        }
     }
 }

@@ -8,7 +8,7 @@ namespace MapsDirectlyToDatabaseTable
 {
     public interface ITableRepository : IRepository
     {
-        IObscureDependencyFinder ObscureDependencyFinder { get; }
+        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
         string ConnectionString { get; }
         DbConnectionStringBuilder ConnectionStringBuilder { get; }
         DiscoveredServer DiscoveredServer { get; }

@@ -23,7 +23,7 @@ namespace MapsDirectlyToDatabaseTable
     {
         //fields
         protected DbConnectionStringBuilder _connectionStringBuilder;
-        public IObscureDependencyFinder ObscureDependencyFinder { get; protected set; }
+        public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
         static List<Type> MaxLengthsFetchedFor = new List<Type>();
         private static object _oLockUpdateCommands = new object();

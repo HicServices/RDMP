@@ -405,6 +405,23 @@ Catalogue_ID asc,
             }
         }
 
+        public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
+        {
+            return GetAllObjects<ObjectExport>("WHERE ObjectID = " + o.ID + " AND ObjectTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
+        }
+
+
+        public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
+        {
+            return GetAllObjects<ObjectImport>("WHERE LocalObjectID = " + o.ID + " AND LocalTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
+        }
+
+        public ObjectExport GetExportFor(IMapsDirectlyToDatabaseTable o)
+        {
+            var existing = GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
+
+            return existing ?? new ObjectExport(this, o);
+        }
 
     }
 

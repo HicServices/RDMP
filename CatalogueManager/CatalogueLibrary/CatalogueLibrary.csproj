@@ -341,6 +341,7 @@
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
+    <Compile Include="ObjectSharing\ObjectSharingObscureDependencyFinder.cs" />
     <Compile Include="ObjectSharing\SharedPluginImporter.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
     <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
