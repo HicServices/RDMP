@@ -293,6 +293,9 @@ delete from {0}..PipelineComponentArgument
 delete from {0}..Pipeline
 delete from {0}..PipelineComponent
 
+delete from {0}..ObjectExport
+delete from {0}..ObjectImport
+
 delete from {0}..LoadModuleAssembly
 delete from {0}..Plugin
 

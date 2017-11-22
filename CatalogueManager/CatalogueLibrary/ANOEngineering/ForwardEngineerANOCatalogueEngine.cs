@@ -70,7 +70,19 @@ namespace CatalogueLibrary.ANOEngineering
                         AuditParenthood(t, newTableInfo);
 
                         foreach (ColumnInfo newColumnInfo in newColumnInfos)
-                            AuditParenthood(migratedColumns[newColumnInfo.GetRuntimeName()], newColumnInfo);
+                        {
+                            var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
+
+                            var anoTable = _planManager.GetPlannedANOTable(oldColumnInfo);
+
+                            if (anoTable != null)
+                            {
+                                newColumnInfo.ANOTable_ID = anoTable.ID;
+                                newColumnInfo.SaveToDatabase();
+                            }
+
+                            AuditParenthood(oldColumnInfo, newColumnInfo);
+                        }
                     }
 
                     NewCatalogue = _catalogueRepository.CloneObjectInTable(_planManager.Catalogue);
@@ -111,6 +123,8 @@ namespace CatalogueLibrary.ANOEngineering
                         AuditParenthood(oldExtractionInformation, newExtractionInformation);
                     }
 
+                    //todo create data load
+                    
                     _catalogueRepository.EndTransactedConnection(true);
                 }
                 catch (Exception)
@@ -125,6 +139,13 @@ namespace CatalogueLibrary.ANOEngineering
 
         private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
         {
+            //make it shareable
+            var export = ObjectExport.GetExportFor(_catalogueRepository, parent);
+
+            //share it to yourself where the child is the realisation of the share (this creates relationship in database)
+            var import = new ObjectImport(_catalogueRepository, export.SharingUID, child);
+
+            //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);
         }
     }

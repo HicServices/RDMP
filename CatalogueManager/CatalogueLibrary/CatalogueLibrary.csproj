@@ -290,6 +290,8 @@
     <Compile Include="Data\Favourite.cs" />
     <Compile Include="Data\IAggregateTopX.cs" />
     <Compile Include="Data\IMasqueradeAs.cs" />
+    <Compile Include="Data\ObjectExport.cs" />
+    <Compile Include="Data\ObjectImport.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />

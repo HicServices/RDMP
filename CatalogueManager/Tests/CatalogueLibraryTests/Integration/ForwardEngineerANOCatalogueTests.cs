@@ -93,6 +93,12 @@ namespace CatalogueLibraryTests.Integration
             Assert.IsTrue(anoCatalogue.Exists());
 
             db.ForceDrop();
+
+            var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
+            var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+
+            Assert.AreEqual(exports, imports);
+            Assert.IsTrue(exports > 0);
         }
 
 
@@ -117,8 +123,6 @@ namespace CatalogueLibraryTests.Integration
             var postcode = bulk.GetColumnInfo("current_postcode");
             planManager.SetPlan(postcode, ForwardEngineerANOCataloguePlanManager.Plan.Dillute);
             planManager.SetPlannedDilution(postcode,new ExcludeRight3OfUKPostcodes());
-
-
         }
     }
 }
