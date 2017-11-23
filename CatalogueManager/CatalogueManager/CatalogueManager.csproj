@@ -332,6 +332,12 @@
     <Compile Include="AggregationUIs\QueryCachingServerSelector.Designer.cs">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="ANOEngineeringUIs\ANOTableUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ANOEngineeringUIs\ANOTableUI.Designer.cs">
+      <DependentUpon>ANOTableUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -359,6 +365,7 @@
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
@@ -367,6 +374,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
@@ -379,6 +387,7 @@
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
+    <Compile Include="Menus\AllANOTablesNodeMenu.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
     <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
       <SubType>Component</SubType>
@@ -1521,6 +1530,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ANOEngineeringUIs\ANOTableUI.resx">
+      <DependentUpon>ANOTableUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.resx">
       <DependentUpon>ForwardEngineerANOCatalogueUI.cs</DependentUpon>

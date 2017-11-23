@@ -17,10 +17,12 @@ namespace ReusableUIComponents
     [TechnicalUI]
     public partial class TypeTextOrCancelDialog : Form
     {
-        public string ResultText {get { return textBox1.Text; }}
+        private readonly bool _allowBlankText;
+        public string ResultText {get { return textBox1.Text.Trim(); }}
 
-        public TypeTextOrCancelDialog(string header, string label, int maxCharacters, string startingTextForInputBox = null)
+        public TypeTextOrCancelDialog(string header, string label, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false)
         {
+            _allowBlankText = allowBlankText;
             InitializeComponent();
 
             this.Text = header;
@@ -28,6 +30,7 @@ namespace ReusableUIComponents
             this.textBox1.MaxLength = maxCharacters;
 
             textBox1.Text = startingTextForInputBox;
+            SetEnabledness();
 
         }
 
@@ -57,10 +60,18 @@ namespace ReusableUIComponents
             if (e.KeyCode == Keys.Escape)
                 btnCancel_Click(null, null);
 
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && btnOk.Enabled)
                 btnOk_Click(null, null);
-
         }
 
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            SetEnabledness();
+        }
+
+        private void SetEnabledness()
+        {
+            btnOk.Enabled = (!string.IsNullOrWhiteSpace(textBox1.Text)) || _allowBlankText;
+        }
     }
 }
