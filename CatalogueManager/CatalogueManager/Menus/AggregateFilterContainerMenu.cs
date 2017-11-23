@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs.Advanced.Options;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
@@ -22,7 +23,7 @@ namespace CatalogueManager.Menus
         private readonly AggregateFilterContainer _filterContainer;
         private ExtractionFilter[] _importableFilters;
 
-        public AggregateFilterContainerMenu(IActivateItems activator, AggregateFilterContainer filterContainer): base( activator,filterContainer)
+        public AggregateFilterContainerMenu(IActivateItems activator, AggregateFilterContainer filterContainer, RDMPCollectionCommonFunctionality collection): base( activator,filterContainer, collection)
         {
             _filterContainer = filterContainer;
 

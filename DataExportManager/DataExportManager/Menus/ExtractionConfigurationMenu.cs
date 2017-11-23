@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -45,8 +46,8 @@ namespace DataExportManager.Menus
 
         private IExtractableDataSet[] _importableDataSets;
 
-        public ExtractionConfigurationMenu(IActivateItems activator, ExtractionConfiguration extractionConfiguration)
-            : base( activator,extractionConfiguration)
+        public ExtractionConfigurationMenu(IActivateItems activator, ExtractionConfiguration extractionConfiguration, RDMPCollectionCommonFunctionality collection)
+            : base( activator,extractionConfiguration, collection)
         {
             _extractionConfiguration = extractionConfiguration;
             _childProvider = (DataExportChildProvider) activator.CoreChildProvider;

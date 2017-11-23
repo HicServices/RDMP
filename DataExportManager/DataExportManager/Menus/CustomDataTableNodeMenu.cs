@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconProvision;
@@ -27,7 +28,7 @@ namespace DataExportManager.Menus
         private readonly CustomDataTableNode _customDataTableNode;
 
 
-        public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNode customDataTableNode): base( activator,null)
+        public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNode customDataTableNode, RDMPCollectionCommonFunctionality collection): base( activator,null, collection)
         {
             _customDataTableNode = customDataTableNode;
             Items.Add("View TOP 100 Records", CatalogueIcons.TableInfo, (s, e) => _activator.ViewDataSample(new ViewCustomCohortTableExtractionUICollection(_customDataTableNode.Cohort, _customDataTableNode.TableName)));
@@ -40,8 +41,8 @@ namespace DataExportManager.Menus
             Items.Add("Delete Custom Data Table", CatalogueIcons.Warning, (s, e) => Delete());
         }
 
-        public CustomDataTableNodeMenu(IActivateItems activator,CustomDataTableNodeUsedByProjectNode projectCustomTableUsageNode):
-            this(activator, projectCustomTableUsageNode.CustomTable)
+        public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNodeUsedByProjectNode projectCustomTableUsageNode, RDMPCollectionCommonFunctionality collection):
+            this(activator, projectCustomTableUsageNode.CustomTable, collection)
         {
 
         }

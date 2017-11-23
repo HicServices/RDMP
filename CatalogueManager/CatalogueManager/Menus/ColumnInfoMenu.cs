@@ -1,6 +1,8 @@
-﻿using System.Windows.Forms;
+﻿using System.Linq;
+using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconProvision;
@@ -15,7 +17,7 @@ namespace CatalogueManager.Menus
     {
         private readonly ColumnInfo _columnInfo;
 
-        public ColumnInfoMenu(IActivateItems activator, ColumnInfo columnInfo):base(activator,columnInfo)
+        public ColumnInfoMenu(IActivateItems activator, ColumnInfo columnInfo, RDMPCollectionCommonFunctionality collection):base(activator,columnInfo, collection)
         {
             _columnInfo = columnInfo;
 

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
@@ -17,7 +18,7 @@ namespace CatalogueManager.Menus
 {
     public class FilterMenu : RDMPContextMenuStrip
     {
-        public FilterMenu(IActivateItems activator, IFilter filter):base(activator,(DatabaseEntity)filter)
+        public FilterMenu(IActivateItems activator, IFilter filter, RDMPCollectionCommonFunctionality collection1):base(activator,(DatabaseEntity)filter, collection1)
         {
             var cata = filter.GetCatalogue();
 

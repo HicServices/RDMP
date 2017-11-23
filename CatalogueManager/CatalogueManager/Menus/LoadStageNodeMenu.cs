@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
@@ -21,7 +22,7 @@ namespace CatalogueManager.Menus
         private readonly LoadStageNode _loadStageNode;
         private MEF _mef;
 
-        public LoadStageNodeMenu(IActivateItems activator, LoadStageNode loadStageNode):base(activator,null)
+        public LoadStageNodeMenu(IActivateItems activator, LoadStageNode loadStageNode, RDMPCollectionCommonFunctionality collection):base(activator,null, collection)
         {
             _loadStageNode = loadStageNode;
             _mef = activator.RepositoryLocator.CatalogueRepository.MEF;

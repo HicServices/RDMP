@@ -6,6 +6,7 @@ using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -20,7 +21,7 @@ namespace CatalogueManager.Menus
     {
         private readonly CacheProgress _cacheProgress;
 
-        public CacheProgressMenu(IActivateItems activator, CacheProgress cacheProgress) : base(activator,cacheProgress)
+        public CacheProgressMenu(IActivateItems activator, CacheProgress cacheProgress, RDMPCollectionCommonFunctionality collection) : base(activator,cacheProgress, collection)
         {
             _cacheProgress = cacheProgress;
             

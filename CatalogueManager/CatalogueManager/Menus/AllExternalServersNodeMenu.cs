@@ -11,6 +11,7 @@ using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -29,7 +30,7 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
     {
-        public AllExternalServersNodeMenu(IActivateItems activator, AllExternalServersNode node) : base(activator,null)
+        public AllExternalServersNodeMenu(IActivateItems activator, AllExternalServersNode node, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
         {
             var overlayProvider = new IconOverlayProvider();
             var iconProvider = new ExternalDatabaseServerStateBasedIconProvider(overlayProvider);

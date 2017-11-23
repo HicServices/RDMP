@@ -373,6 +373,7 @@
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
+    <Compile Include="Menus\LinkedColumnInfoNodeMenu.cs" />
     <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1511,6 +1512,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\AggregateGraph.resx">
       <DependentUpon>AggregateGraph.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>

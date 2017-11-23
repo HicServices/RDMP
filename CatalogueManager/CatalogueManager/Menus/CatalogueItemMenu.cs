@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconOverlays;
@@ -24,16 +25,16 @@ namespace CatalogueManager.Menus
         private readonly CatalogueItem _catalogueItem;
         private CatalogueItemClassification _classification;
 
-        public CatalogueItemMenu(IActivateItems activator, CatalogueItem catalogueItem, CatalogueItemClassification classification) :base(activator,catalogueItem)
+        public CatalogueItemMenu(IActivateItems activator, CatalogueItem catalogueItem, RDMPCollectionCommonFunctionality collection) :base(activator,catalogueItem, collection)
         {
             _catalogueItem = catalogueItem;
-            _classification = classification;
+            _classification = activator.CoreChildProvider.CatalogueItemClassifications[catalogueItem.ID];
 
             Items.Add("Add Issue", activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemIssue,OverlayKind.Add),(s,e)=> AddIssue());
 
             if (catalogueItem.ColumnInfo_ID == null)
                 Items.Add("Set Column Info (Currently MISSING)", activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo,OverlayKind.Problem),(s,e)=>SetColumnInfo(catalogueItem));
-            else if (classification.ExtractionInformation_ID == null)
+            else if (_classification.ExtractionInformation_ID == null)
                 //it does not yet have extractability
                 Items.Add("Add Extract Logic", activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation,OverlayKind.Add),(s, e) => AddExtractionInformation());
 

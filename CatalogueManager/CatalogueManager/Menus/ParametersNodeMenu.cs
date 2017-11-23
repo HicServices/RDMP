@@ -6,6 +6,7 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -21,7 +22,7 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ParametersNodeMenu : RDMPContextMenuStrip
     {
-        public ParametersNodeMenu(IActivateItems activator, ParametersNode parameterNode) : base(activator,null)
+        public ParametersNodeMenu(IActivateItems activator, ParametersNode parameterNode, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
         {
             var filter = parameterNode.Collector as ExtractionFilter;
 

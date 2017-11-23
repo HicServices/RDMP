@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -32,8 +33,8 @@ namespace DataExportManager.Menus
     {
         private readonly ExtractableCohort _cohort;
 
-        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohort cohort)
-            : base(activator,cohort)
+        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohort cohort, RDMPCollectionCommonFunctionality collection)
+            : base(activator,cohort, collection)
         {
             _cohort = cohort;
             Items.Add("View TOP 100 identifiers",null, (s, e) => ViewTop100());
@@ -46,8 +47,8 @@ namespace DataExportManager.Menus
 
         }
 
-        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohortUsedByProjectNode cohortNode)
-            : this(activator, cohortNode.Cohort)
+        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohortUsedByProjectNode cohortNode, RDMPCollectionCommonFunctionality collection)
+            : this(activator, cohortNode.Cohort, collection)
         {
 
         }

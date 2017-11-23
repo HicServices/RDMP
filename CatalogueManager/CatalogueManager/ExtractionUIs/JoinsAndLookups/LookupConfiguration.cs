@@ -333,7 +333,7 @@ Only define secondary columns if you really need them! if any of the key fields 
             if(c == null)
                 return;
 
-            e.MenuStrip = new ColumnInfoMenu(_activator,c);
+            e.MenuStrip = new ColumnInfoMenu(_activator, c, null);
         }
 
         private void olvSelectedDescriptionColumns_KeyUp(object sender, KeyEventArgs e)

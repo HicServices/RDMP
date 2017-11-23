@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -40,7 +41,7 @@ namespace DataExportManager.Menus
         private Project _project;
         private ToolStripMenuItem _importExistingCohort;
 
-        public ExternalCohortTableMenu(IActivateItems activator, ExternalCohortTable externalCohortTable): base( activator,externalCohortTable)
+        public ExternalCohortTableMenu(IActivateItems activator, ExternalCohortTable externalCohortTable, RDMPCollectionCommonFunctionality collection): base( activator,externalCohortTable, collection)
         {
             _externalCohortTable = externalCohortTable;
             Add(new ExecuteCommandImportFileAsNewCohort(activator));

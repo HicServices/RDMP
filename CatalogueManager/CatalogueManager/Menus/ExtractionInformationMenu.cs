@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
@@ -23,8 +24,8 @@ namespace CatalogueManager.Menus
     {
         private readonly ExtractionInformation _extractionInformation;
 
-        public ExtractionInformationMenu(IActivateItems activator, ExtractionInformation extractionInformation)
-            : base(activator,extractionInformation)
+        public ExtractionInformationMenu(IActivateItems activator, ExtractionInformation extractionInformation, RDMPCollectionCommonFunctionality collection)
+            : base(activator,extractionInformation, collection)
         {
             _extractionInformation = extractionInformation;
 

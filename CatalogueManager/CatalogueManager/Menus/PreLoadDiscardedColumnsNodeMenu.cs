@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
@@ -12,12 +13,12 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     internal class PreLoadDiscardedColumnsNodeMenu : RDMPContextMenuStrip
     {
-        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode) : base(activator,null)
+        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
         {
             Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardNode.TableInfo));
         }
 
-        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, IdentifierDumpServerUsageNode discardUsageNode): base(activator, null)
+        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, IdentifierDumpServerUsageNode discardUsageNode, RDMPCollectionCommonFunctionality collection): base(activator, null, collection)
         {
             Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardUsageNode.TableInfo));
         }

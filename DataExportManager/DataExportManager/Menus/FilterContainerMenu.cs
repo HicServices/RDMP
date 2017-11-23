@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -23,7 +24,7 @@ namespace DataExportManager.Menus
         private readonly FilterContainer _filterContainer;
         private ExtractionFilter[] _importableFilters;
 
-        public FilterContainerMenu(IActivateItems activator, FilterContainer filterContainer):base(activator,filterContainer)
+        public FilterContainerMenu(IActivateItems activator, FilterContainer filterContainer, RDMPCollectionCommonFunctionality collection):base(activator,filterContainer, collection)
         {
             _filterContainer = filterContainer;
             

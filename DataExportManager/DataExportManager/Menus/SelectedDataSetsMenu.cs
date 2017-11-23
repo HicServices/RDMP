@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -27,7 +28,7 @@ namespace DataExportManager.Menus
         private readonly SelectedDataSets _selectedDataSet;
         private ExtractionConfiguration _extractionConfiguration;
 
-        public SelectedDataSetsMenu(IActivateItems activator, SelectedDataSets selectedDataSet): base(activator, selectedDataSet)
+        public SelectedDataSetsMenu(IActivateItems activator, SelectedDataSets selectedDataSet, RDMPCollectionCommonFunctionality collection): base(activator, selectedDataSet, collection)
         {
             _selectedDataSet = selectedDataSet;
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;

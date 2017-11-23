@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -24,8 +25,8 @@ namespace DataExportManager.Menus
     {
         private readonly ExtractableDataSet _dataset;
 
-        public ExtractableDatasetMenu(IActivateItems activator, ExtractableDataSet dataset)
-            : base(activator,dataset)
+        public ExtractableDatasetMenu(IActivateItems activator, ExtractableDataSet dataset, RDMPCollectionCommonFunctionality collection)
+            : base(activator,dataset, collection)
         {
             _dataset = dataset;
 

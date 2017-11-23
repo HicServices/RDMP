@@ -145,12 +145,13 @@ namespace CatalogueManager.Collections
 
         private void TreeOnKeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Delete)
-            {
-                var deletable = Tree.SelectedObject as IDeleteable;
-                if(deletable != null)
-                    _activator.DeleteWithConfirmation(this,deletable);
-            }
+            //if(e.KeyCode == Keys.Delete)
+            //{
+            //    var deletable = Tree.SelectedObject as IDeleteable;
+            //    if(deletable != null)
+            //        _activator.DeleteWithConfirmation(this,deletable);
+            //}
+
             if(e.KeyCode == Keys.F5)
             {
                 var o = Tree.SelectedObject as DatabaseEntity;
@@ -300,15 +301,15 @@ namespace CatalogueManager.Collections
                     continue;
 
                 //try constructing menu with:
-                var menu = objectConstructor.ConstructIfPossible(menuType,
+                var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(menuType,
                     _activator,//parameter 1 must be activator
-                    o); //parameter 2 must be object compatible Type
-
+                    o, //parameter 2 must be object compatible Type
+                    this); //parameter 3 is the collection being right-clicked
 
                 if (menu != null)
                 {
-                    AddExpandCollapseMenuItems((ContextMenuStrip)menu, o);
-                    return (ContextMenuStrip)menu;
+                    AddExpandCollapseMenuItems(menu, o);
+                    return menu;
                 }
             }
 

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -27,7 +28,7 @@ namespace DataExportManager.Menus
     public class AllCohortsNodeMenu:RDMPContextMenuStrip
     {
         [ImportingConstructor]
-        public AllCohortsNodeMenu(IActivateItems activator,AllCohortsNode node):base(activator,null)
+        public AllCohortsNodeMenu(IActivateItems activator, AllCohortsNode node, RDMPCollectionCommonFunctionality collection):base(activator,null, collection)
         {
             Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(activator));
             

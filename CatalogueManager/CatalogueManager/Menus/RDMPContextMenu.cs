@@ -11,6 +11,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -46,7 +47,7 @@ namespace CatalogueManager.Menus
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
 
-        protected RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
+        protected RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity, RDMPCollectionCommonFunctionality collection)
         {
             _activator = activator;
             _databaseEntity = databaseEntity;
@@ -95,7 +96,7 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
             
             if (deletable != null)
-                Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
+                Add(new ExecuteCommandDelete(_activator, deletable), Keys.Delete);
 
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
@@ -104,6 +105,7 @@ namespace CatalogueManager.Menus
             {
                 Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
                 Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+
                 Add(new ExecuteCommandPin(_activator, _databaseEntity));
             }
             

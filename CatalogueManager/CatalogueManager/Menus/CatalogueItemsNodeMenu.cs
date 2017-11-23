@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -21,7 +22,7 @@ namespace CatalogueManager.Menus
 {
     public class CatalogueItemsNodeMenu : RDMPContextMenuStrip
     {
-        public CatalogueItemsNodeMenu(IActivateItems activator, CatalogueItemsNode node) : base(activator, null)
+        public CatalogueItemsNodeMenu(IActivateItems activator, CatalogueItemsNode node, RDMPCollectionCommonFunctionality collection) : base(activator, null, collection)
         {
             var iconProvider = activator.CoreIconProvider;
 

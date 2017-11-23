@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -54,13 +55,13 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CatalogueMenu:RDMPContextMenuStrip
     {
-        public CatalogueMenu(IActivateItems activator, CatalogueFolder folder) : base(activator,null)
+        public CatalogueMenu(IActivateItems activator, CatalogueFolder folder, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
         {
             AddImportOptions();
             AddCommonMenuItems(folder);
         }
 
-        public CatalogueMenu(IActivateItems activator, Catalogue catalogue):base(activator,catalogue)
+        public CatalogueMenu(IActivateItems activator, Catalogue catalogue, RDMPCollectionCommonFunctionality collection):base(activator,catalogue, collection)
         {
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));

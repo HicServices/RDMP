@@ -2,6 +2,7 @@
 using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
@@ -23,7 +24,7 @@ namespace CohortManager.Menus
         private CohortIdentificationConfiguration _cic;
         private IAtomicCommandWithTarget _executeAndImportCommand;
 
-        public CohortIdentificationConfigurationMenu(IActivateItems activator, CohortIdentificationConfiguration cic) : base( activator,cic)
+        public CohortIdentificationConfigurationMenu(IActivateItems activator, CohortIdentificationConfiguration cic, RDMPCollectionCommonFunctionality collection) : base( activator,cic, collection)
         {
             _cic = cic;
 
@@ -56,7 +57,7 @@ namespace CohortManager.Menus
             Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator));
         }
 
-        public CohortIdentificationConfigurationMenu(IActivateItems activator,ProjectCohortIdentificationConfigurationAssociation association) : this(activator,association.CohortIdentificationConfiguration)
+        public CohortIdentificationConfigurationMenu(IActivateItems activator, ProjectCohortIdentificationConfigurationAssociation association, RDMPCollectionCommonFunctionality collection) : this(activator,association.CohortIdentificationConfiguration, collection)
         {
             _executeAndImportCommand.SetTarget(association.Project);
         }

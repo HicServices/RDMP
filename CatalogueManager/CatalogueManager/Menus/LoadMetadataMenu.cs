@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -28,7 +29,7 @@ namespace CatalogueManager.Menus
     {
         private LoadMetadata _loadMetadata;
         
-        public LoadMetadataMenu( IActivateItems activator, LoadMetadata loadMetadata):base(activator,loadMetadata)
+        public LoadMetadataMenu(IActivateItems activator, LoadMetadata loadMetadata, RDMPCollectionCommonFunctionality collection):base(activator,loadMetadata, collection)
         {
             _loadMetadata = loadMetadata;
 

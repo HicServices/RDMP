@@ -6,6 +6,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Providers;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconOverlays;
@@ -29,8 +30,8 @@ namespace CohortManager.Menus
     {
         private CohortAggregateContainer _container;
 
-        public CohortAggregateContainerMenu(IActivateItems activator, CohortAggregateContainer container)
-            : base( activator, container)
+        public CohortAggregateContainerMenu(IActivateItems activator, CohortAggregateContainer container, RDMPCollectionCommonFunctionality collection)
+            : base( activator, container, collection)
         {
             _container = container;
             var cic = _container.GetCohortIdentificationConfiguration();

@@ -1,4 +1,5 @@
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -8,7 +9,7 @@ namespace CatalogueManager.Menus
 {
     internal class LoadProgressMenu : RDMPContextMenuStrip
     {
-        public LoadProgressMenu(IActivateItems activator, LoadProgress loadProgress) : base(activator,loadProgress)
+        public LoadProgressMenu(IActivateItems activator, LoadProgress loadProgress, RDMPCollectionCommonFunctionality collection) : base(activator,loadProgress, collection)
         {
             Add(new ExecuteCommandUnlockLockable(activator, loadProgress));
             Add(new ExecuteCommandAddCachingSupportToLoadProgress(activator, loadProgress));

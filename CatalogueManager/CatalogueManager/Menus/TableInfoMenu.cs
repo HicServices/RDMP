@@ -9,6 +9,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -47,7 +48,7 @@ namespace CatalogueManager.Menus
     {
         private DataAccessCredentials[] _availableCredentials;
 
-        public TableInfoMenu(IActivateItems activator, TableInfo tableInfo) : base( activator, tableInfo)
+        public TableInfoMenu(IActivateItems activator, TableInfo tableInfo, RDMPCollectionCommonFunctionality collection) : base( activator, tableInfo, collection)
         {
             Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, false));
 

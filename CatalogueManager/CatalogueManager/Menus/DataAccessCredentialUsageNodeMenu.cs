@@ -1,6 +1,7 @@
 using System.Windows.Forms;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -17,7 +18,7 @@ namespace CatalogueManager.Menus
 {
     public class DataAccessCredentialUsageNodeMenu : RDMPContextMenuStrip
     {
-        public DataAccessCredentialUsageNodeMenu(IActivateItems activator, DataAccessCredentialUsageNode node):base(activator,null)
+        public DataAccessCredentialUsageNodeMenu(IActivateItems activator, DataAccessCredentialUsageNode node, RDMPCollectionCommonFunctionality collection):base(activator,null, collection)
         {
             var setUsage = new ToolStripMenuItem("Set Context");
 
