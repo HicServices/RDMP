@@ -124,10 +124,7 @@ namespace CatalogueLibrary.ANOEngineering
         public void SetPlannedANOTable(ColumnInfo col, ANOTable anoTable)
         {
             SetPlan(col,Plan.ANO);
-
-            if(GetPlanForColumnInfo(col) != Plan.ANO)
-                throw new ArgumentException("ColumnInfo '" + col + "' is not planned to be ANO. First call SetPlan ANO", "col");
-
+            
             PlannedANOTables[col] = anoTable;
         }
 
@@ -141,9 +138,8 @@ namespace CatalogueLibrary.ANOEngineering
 
         public void SetPlannedDilution(ColumnInfo col, IDilutionOperation operation)
         {
-            if (GetPlanForColumnInfo(col) != Plan.Dillute)
-                throw new ArgumentException("ColumnInfo '" + col + "' is not planned to be Dilluted. First call SetPlan Dillute", "col");
-
+            SetPlan(col,Plan.Dillute);
+            
             PlannedDilution[col] = operation;
         }
         
