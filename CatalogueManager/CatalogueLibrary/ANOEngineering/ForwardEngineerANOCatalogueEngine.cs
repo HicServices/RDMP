@@ -96,18 +96,37 @@ namespace CatalogueLibrary.ANOEngineering
                     {
                         var col = oldCatalogueItem.ColumnInfo;
 
-                        //it wasn't migrated
-                        if (!_parenthoodDictionary.ContainsKey(col))
-                            continue;//skip it
+                        //catalogue item is not connected to any ColumnInfo
+                        if(col == null)
+                            continue;
 
+                        ColumnInfo newColumnInfo;
+
+                        if (_parenthoodDictionary.ContainsKey(col))
+                            newColumnInfo = (ColumnInfo) _parenthoodDictionary[col];
+                        else
+                        {
+                            //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
+                            var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
+                            string expectedNewName = syntaxHelper.EnsureFullyQualified(
+                                _planManager.TargetDatabase.GetRuntimeName(),
+                                null,
+                                col.TableInfo.GetRuntimeName(),
+                                col.GetRuntimeName());
+
+                            newColumnInfo = _catalogueRepository.GetColumnInfoWithNameExactly(expectedNewName);
+
+                            if (newColumnInfo == null)
+                                throw new Exception("Catalogue '"+_planManager.Catalogue+"' contained a CatalogueItem referencing Column '"+col+"' the ColumnInfo was not migrated (which is fine) but we then could not find ColumnInfo with expected name '" + expectedNewName + "' (if it was part of SkippedTables why doesn't the Catalogue have a reference to the new location?)");
+                        }
+                        
                         var newCatalogueItem = _catalogueRepository.CloneObjectInTable(oldCatalogueItem);
-
+                        
                         //wire it to the new Catalogue
                         newCatalogueItem.Catalogue_ID = NewCatalogue.ID;
 
                         //and rewire it's ColumnInfo to the cloned child one
-                        var newColumnInfo = (ColumnInfo)_parenthoodDictionary[oldCatalogueItem.ColumnInfo];
-                        newCatalogueItem.ColumnInfo_ID =newColumnInfo.ID;
+                        newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
                         newCatalogueItem.SaveToDatabase();
 
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;

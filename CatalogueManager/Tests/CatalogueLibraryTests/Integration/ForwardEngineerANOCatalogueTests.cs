@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AnonymisationTests;
 using CatalogueLibrary;
@@ -21,6 +22,26 @@ namespace CatalogueLibraryTests.Integration
 {
     public class ForwardEngineerANOCatalogueTests:TestsRequiringANOStore
     {
+        [SetUp]
+        public void ClearRemnants()
+        {
+            foreach (var e in CatalogueRepository.GetAllObjects<ObjectExport>())
+                e.DeleteInDatabase();
+
+            foreach (var i in CatalogueRepository.GetAllObjects<ObjectImport>())
+                i.DeleteInDatabase();
+
+            //cleanup
+            foreach (var t in CatalogueRepository.GetAllObjects<TableInfo>())
+                t.DeleteInDatabase();
+
+            foreach (var c in CatalogueRepository.GetAllObjects<Catalogue>())
+                c.DeleteInDatabase();
+
+            foreach (var a in CatalogueRepository.GetAllObjects<ANOTable>())
+                a.DeleteInDatabase();
+        }
+
         [Test]
         public void PlanManagementTest()
         {
@@ -172,62 +193,54 @@ namespace CatalogueLibraryTests.Integration
                 anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 10;
                 anoTable.SaveToDatabase();
                 anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
-                try
-                {
-                    //////////////////The actual test!/////////////////
-                    var plan = new ForwardEngineerANOCataloguePlanManager(cata);
+             
+                //////////////////The actual test!/////////////////
+                var plan = new ForwardEngineerANOCataloguePlanManager(cata);
                 
-                    //ano the table SkullColor
-                    plan.SetPlannedANOTable(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")), anoTable);
-                    plan.TargetDatabase = dbTo;
-                    plan.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
+                //ano the table SkullColor
+                plan.SetPlannedANOTable(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")), anoTable);
+                plan.TargetDatabase = dbTo;
+                plan.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
 
-                    var engine =  new ForwardEngineerANOCatalogueEngine(CatalogueRepository, plan);
+                var engine =  new ForwardEngineerANOCatalogueEngine(CatalogueRepository, plan);
+
+                if (!tableInfoAlreadyExistsForSkippedTable)
+                {
+                    var ex = Assert.Throws<Exception>(engine.Execute);
+                    Assert.IsTrue(Regex.IsMatch(ex.Message, "find ColumnInfo with expected name .*SpineColor"));
+                    return;
+                }
+                else
                     engine.Execute();
-                
-                    var newCata = CatalogueRepository.GetAllCatalogues().Single(c => c.Name.Equals("ANOHeads"));
-                    Assert.IsTrue(newCata.Exists());
 
-                    var newCataItems = newCata.CatalogueItems;
-                    Assert.AreEqual(newCataItems.Count(),4);
+                var newCata = CatalogueRepository.GetAllCatalogues().Single(c => c.Name.Equals("ANOHeads"));
+                Assert.IsTrue(newCata.Exists());
 
-                    //should be extraction informations
-                    //all extraction informations should point to the new table location
-                    Assert.IsTrue(newCataItems.All(ci => ci.ExtractionInformation.SelectSQL.Contains(dbTo.GetRuntimeName())));
+                var newCataItems = newCata.CatalogueItems;
+                Assert.AreEqual(newCataItems.Count(),4);
 
-                    //these columns should all exist
-                    Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SkullColor")));
-                    Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SpineColor")));
-                    Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("Vertebrae"))); //actually there will be 2 copies of this one from Necks one from Heads
+                //should be extraction informations
+                //all extraction informations should point to the new table location
+                Assert.IsTrue(newCataItems.All(ci => ci.ExtractionInformation.SelectSQL.Contains(dbTo.GetRuntimeName())));
 
-                    //new ColumnInfo should have a reference to the anotable
-                    Assert.IsTrue(newCataItems.Single(ci => ci.Name.Equals("SkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
+                //these columns should all exist
+                Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SkullColor")));
+                Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SpineColor")));
+                Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("Vertebrae"))); //actually there will be 2 copies of this one from Necks one from Heads
+
+                //new ColumnInfo should have a reference to the anotable
+                Assert.IsTrue(newCataItems.Single(ci => ci.Name.Equals("SkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
 
 
-                    var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("SpineColor")).ColumnInfo;
+                var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("SpineColor")).ColumnInfo;
 
-                    if (tableInfoAlreadyExistsForSkippedTable)
-                    {
-                        //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
-                        Assert.IsTrue(toNecksColumnInfo.Contains(newSpineColorColumnInfo));
-                    }
-                    else
-                        Assert.IsTrue(newSpineColorColumnInfo != null);
-                }
-                finally
+                if (tableInfoAlreadyExistsForSkippedTable)
                 {
-                    foreach (var export in CatalogueRepository.GetAllObjects<ObjectExport>())
-                        export.DeleteInDatabase();
-
-                    //cleanup
-                    foreach (var t in CatalogueRepository.GetAllObjects<TableInfo>())
-                        t.DeleteInDatabase();
-
-                    foreach (var c in CatalogueRepository.GetAllObjects<Catalogue>())
-                        c.DeleteInDatabase();
-                    
-                    anoTable.DeleteInDatabase();
+                    //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
+                    Assert.IsTrue(toNecksColumnInfo.Contains(newSpineColorColumnInfo));
                 }
+                else
+                    Assert.IsTrue(newSpineColorColumnInfo != null);
                 
             }
             finally
