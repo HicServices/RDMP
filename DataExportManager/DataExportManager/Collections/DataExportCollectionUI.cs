@@ -80,15 +80,29 @@ namespace DataExportManager.Collections
         private IActivateItems _activator;
         private DataExportProblemProvider _problemProvider;
         private DataExportChildProvider _childProvider;
-
+        
         public DataExportCollectionUI()
         {
             InitializeComponent();
             
-            tlvDataExport.CellToolTipGetter += CellToolTipGetter;
-            olvProjectNumber.AspectGetter += ProjectNumberAspectGetter;
+            tlvDataExport.CellToolTipGetter = CellToolTipGetter;
+            olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
+            olvProjectNumber.AspectToStringConverter = ProjectNumberToStringConverter;
+
+            tlvDataExport.BeforeSorting += BlastAspectGetter;
+            tlvDataExport.AfterSorting += RestoreAspectGetter;
         }
-        
+
+        private void BlastAspectGetter(object sender, BeforeSortingEventArgs e)
+        {
+            olvName.AspectGetter = ProjectNameAspectGetter;
+        }
+
+        private void RestoreAspectGetter(object sender, AfterSortingEventArgs afterSortingEventArgs)
+        {
+            olvName.AspectGetter = null;
+        }
+
         private string CellToolTipGetter(OLVColumn column, object modelObject)
         {
             var project = modelObject as Project;
@@ -110,10 +124,25 @@ namespace DataExportManager.Collections
             if (p != null)
                 return p.ProjectNumber;
 
-            return null;
+            return 0;
         }
 
-        
+        private string ProjectNumberToStringConverter(object value)
+        {
+            var num = (int)value;
+            return num == 0 ? String.Empty : num.ToString();
+        }
+
+        private object ProjectNameAspectGetter(object rowObject)
+        {
+            var p = rowObject as Project;
+
+            if (p != null)
+                return p.Name;
+
+            return String.Empty;
+        }
+
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
