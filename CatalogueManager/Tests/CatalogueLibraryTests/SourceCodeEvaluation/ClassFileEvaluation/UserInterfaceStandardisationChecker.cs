@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Nodes;
@@ -62,6 +63,13 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                     problems.Add("Class '" + menuClass + "' is a RDMPContextMenuStrip but it's name doesn't end with Menu");
                     continue;
                 }
+
+                foreach (ConstructorInfo c in menuClass.GetConstructors())
+                {
+                    if(c.GetParameters().Count() != 2)
+                        problems.Add("Constructor of class '" + menuClass + "' which is an RDMPContextMenuStrip contained " + c.GetParameters().Count() + " constructor arguments.  These menus are driven by reflection (See RDMPCollectionCommonFunctionality.GetMenuWithCompatibleConstructorIfExists )");
+                }
+
 
                 var toLookFor = menuClass.Name.Substring(0, menuClass.Name.Length - "Menu".Length);
                 var expectedClassName = GetExpectedClassOrInterface(toLookFor);
