@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -27,13 +28,14 @@ namespace DataExportManager.Menus
     public class AllCohortsNodeMenu:RDMPContextMenuStrip
     {
         [ImportingConstructor]
-        public AllCohortsNodeMenu(IActivateItems activator,AllCohortsNode node):base(activator,null)
+        public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)
+            : base(args, null)
         {
-            Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(activator));
+            Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(_activator));
             
             Items.Add("Create New Empty Cohort Database Using Wizard", FamFamFamIcons.wand,(s, e) => LaunchCohortDatabaseCreationWizard());
 
-            Items.Add("Create blank cohort source (Not recommended)", activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem), (s, e) => AddBlankExternalCohortTable());
+            Items.Add("Create blank cohort source (Not recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem), (s, e) => AddBlankExternalCohortTable());
             
         }
         

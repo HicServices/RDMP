@@ -1,41 +1,38 @@
 using System;
-using System.Windows.Forms;
+using System.Drawing;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CatalogueManager.Menus.MenuItems
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    [System.ComponentModel.DesignerCategory("")]
-    internal class AddAggregateMenuItem : ToolStripMenuItem
+    internal class ExecuteCommandAddNewAggregateGraph : BasicUICommandExecution,IAtomicCommand
     {
         private readonly IActivateItems _activator;
         private readonly Catalogue _catalogue;
 
-        public AddAggregateMenuItem(IActivateItems activator, Catalogue catalogue):base("Add New Aggregate Graph")
+        public ExecuteCommandAddNewAggregateGraph(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
-            Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
             _activator = activator;
             _catalogue = catalogue;
         }
-
-        protected override void OnClick(EventArgs e)
+        
+        public override void Execute()
         {
-            base.OnClick(e);
-            AddNewAggregate();
-        }
+            base.Execute();
 
-        private void AddNewAggregate()
-        {
             var newAggregate = new AggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_catalogue));
             new ExecuteCommandActivate(_activator,newAggregate).Execute();
+        }
+
+        public Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
         }
     }
 }

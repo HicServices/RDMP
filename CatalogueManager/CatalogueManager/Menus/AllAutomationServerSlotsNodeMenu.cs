@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using ReusableUIComponents;
@@ -9,12 +10,12 @@ namespace CatalogueManager.Menus
 {
     public class AllAutomationServerSlotsNodeMenu : RDMPContextMenuStrip
     {
-        public AllAutomationServerSlotsNodeMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
-            : base(activator, null)
+        public AllAutomationServerSlotsNodeMenu(RDMPContextMenuStripArgs args, AllAutomationServerSlotsNode databaseEntity)
+            : base(args, null)
         {
-            Add(new ExecuteCommandCreateNewAutomationSlot(activator));
+            Add(new ExecuteCommandCreateNewAutomationSlot(_activator));
 
-            Add(new ExecuteCommandPushToRemotes(activator));
+            Add(new ExecuteCommandPushToRemotes(_activator));
         }
     }
 }

@@ -11,6 +11,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -38,6 +39,7 @@ namespace CatalogueManager.Menus
     {
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         protected IActivateItems _activator;
+        private readonly RDMPContextMenuStripArgs _args;
         private readonly DatabaseEntity _databaseEntity;
 
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
@@ -45,16 +47,17 @@ namespace CatalogueManager.Menus
         private AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
-
-        protected RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
+        
+        protected RDMPContextMenuStrip(RDMPContextMenuStripArgs args, DatabaseEntity databaseEntity)
         {
-            _activator = activator;
+            _activator = args.ItemActivator;
+            _args = args;
             _databaseEntity = databaseEntity;
 
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
             if(databaseEntity != null)
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(activator, databaseEntity));
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator, databaseEntity));
 
             RepositoryLocator = _activator.RepositoryLocator;
         }
@@ -65,14 +68,18 @@ namespace CatalogueManager.Menus
             ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
-        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
+        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None, ToolStripMenuItem addAsSubItemForThis = null)
         {
             var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
             
             if (shortcutKey != Keys.None)
                 mi.ShortcutKeys = shortcutKey;
-            
-            Items.Add(mi);
+
+            if (addAsSubItemForThis != null)
+                addAsSubItemForThis.DropDownItems.Add(mi);
+            else
+                Items.Add(mi);
+
             return mi;
         }
 
@@ -93,9 +100,13 @@ namespace CatalogueManager.Menus
             
             if (_databaseEntity != null)
                 Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
-            
+
+            //Delete logic - prefer to delete the Masquerader (if any) not the underlying object if both implement IDeletable
+            if (_args.Masquerader is IDeleteable)
+                deletable = (IDeleteable) _args.Masquerader;
+
             if (deletable != null)
-                Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
+                Add(new ExecuteCommandDelete(_activator, deletable), Keys.Delete);
 
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
@@ -104,7 +115,10 @@ namespace CatalogueManager.Menus
             {
                 Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
                 Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
-                Add(new ExecuteCommandPin(_activator, _databaseEntity));
+                if (_databaseEntity.Equals(_args.CurrentlyPinnedObject))
+                    Add(new ExecuteCommandUnpin(_activator, _databaseEntity));
+                else
+                    Add(new ExecuteCommandPin(_activator, _databaseEntity));
             }
             
             List<object> askPluginsAbout = new List<object>(additionalObjectsToExposeToPluginUserInterfaces);

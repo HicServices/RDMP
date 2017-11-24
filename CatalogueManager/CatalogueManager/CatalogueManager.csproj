@@ -337,11 +337,11 @@
     </Compile>
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
-    <Compile Include="Collections\CollectionScopeFilterUI.cs">
+    <Compile Include="Collections\CollectionPinFilterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Collections\CollectionScopeFilterUI.Designer.cs">
-      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
+    <Compile Include="Collections\CollectionPinFilterUI.Designer.cs">
+      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\FavouritesCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -351,7 +351,12 @@
     </Compile>
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewLookupTableRelationship.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
@@ -359,6 +364,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
@@ -757,12 +763,7 @@
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
-    <Compile Include="Menus\MenuItems\AddAggregateMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddJoinInfoMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddLookupMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddSupportingDocumentMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddSupportingSqlTableMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddCatalogueItemMenuItem.cs" />
     <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
@@ -773,6 +774,7 @@
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
     <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
+    <Compile Include="Menus\RDMPContextMenuStripArgs.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1511,12 +1513,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\AggregateGraph.resx">
       <DependentUpon>AggregateGraph.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Collections\CollectionScopeFilterUI.resx">
-      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
+    <EmbeddedResource Include="Collections\CollectionPinFilterUI.resx">
+      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\FavouritesCollectionUI.resx">
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>

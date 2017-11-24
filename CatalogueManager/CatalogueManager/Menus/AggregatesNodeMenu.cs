@@ -1,6 +1,8 @@
 using System;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
@@ -10,9 +12,9 @@ namespace CatalogueManager.Menus
 {
     public class AggregatesNodeMenu : RDMPContextMenuStrip
     {
-        public AggregatesNodeMenu(IActivateItems activator, AggregatesNode aggregatesNode):base(activator,null)
+        public AggregatesNodeMenu(RDMPContextMenuStripArgs args, AggregatesNode aggregatesNode):base(args,null)
         {
-            Items.Add(new AddAggregateMenuItem(activator, aggregatesNode.Catalogue));
+            Add(new ExecuteCommandAddNewAggregateGraph(_activator, aggregatesNode.Catalogue));
         }
     }
 }

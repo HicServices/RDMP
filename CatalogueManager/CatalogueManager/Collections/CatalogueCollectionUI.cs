@@ -204,29 +204,6 @@ namespace CatalogueManager.Collections
             base.Dispose(disposing);
         }
 
-        private void tlvCatalogues_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                var columnInfoLink = tlvCatalogues.SelectedObject as LinkedColumnInfoNode;
-
-                if (columnInfoLink != null)
-                    DeleteColumnInfoLink(columnInfoLink);
-            }
-
-            if (e.KeyCode == Keys.N && e.Control)
-            {
-                var c = new Catalogue(RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
-            }
-            
-            var cataItem = tlvCatalogues.SelectedObject as CatalogueItem;
-
-            if (cataItem != null)
-                new CatalogueItemMenu(_activator,cataItem,_classifications[cataItem.ID]).HandleKeyPress(e);
-
-        }
-
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
@@ -269,50 +246,7 @@ namespace CatalogueManager.Collections
         }
 
         #region RightClick Menu and Double Clicking
-
-        private void tlvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            var o = e.Model;
-            
-            if (o is CatalogueItem)
-                e.MenuStrip = new CatalogueItemMenu( _activator, (CatalogueItem)o, _classifications[((CatalogueItem)o).ID]);
-            
-            if(o is ExtractionInformation)
-                e.MenuStrip = new ExtractionInformationMenu(_activator,(ExtractionInformation)o);
-            
-            if (o is LinkedColumnInfoNode)
-                e.MenuStrip = new ColumnInfoMenu( _activator, ((LinkedColumnInfoNode)o).ColumnInfo);
-
-            if (o is DocumentationNode)
-                e.MenuStrip = new DocumentationNodeMenu(_activator, (DocumentationNode) o);
-
-            if (o is AggregatesNode)
-                e.MenuStrip = new AggregatesNodeMenu(_activator, (AggregatesNode) o);
-
-            if (o is CatalogueItemsNode)
-                e.MenuStrip = new CatalogueItemsNodeMenu(_activator, (CatalogueItemsNode) o);
-        }
-
-        private void DeleteColumnInfoLink(LinkedColumnInfoNode col)
-        {
-            //delete the relationship to the CatalogueItem
-            var colInfo = col.ColumnInfo;
-            var cataItem = col.CatalogueItem;
-
-            if (MessageBox.Show("Delete relationship between CatalogueItem " + cataItem + " and ColumnInfo " + colInfo + "?", "Break Relationship", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                cataItem.SetColumnInfo(null);
-
-                var ei = cataItem.ExtractionInformation;
-
-                if (ei != null && MessageBox.Show("Also DELETE ExtractionInformation and all Filters etc?", "Delete ExtractionInformation", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    ei.DeleteInDatabase();
-
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cataItem));
-            }
-        }
-
-
+        
         private void tlvCatalogues_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvCatalogues.SelectedObject;

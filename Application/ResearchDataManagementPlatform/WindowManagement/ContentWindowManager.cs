@@ -210,7 +210,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable, string overrideConfirmationText = null)
         {
-
             DialogResult result = MessageBox.Show(
                 overrideConfirmationText??
                 ("Are you sure you want to delete " + deleteable + " from the database?"), "Delete Record", MessageBoxButtons.YesNo);

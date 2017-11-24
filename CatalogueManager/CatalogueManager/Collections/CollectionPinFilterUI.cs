@@ -28,12 +28,12 @@ namespace CatalogueManager.Collections
     /// And then assembles a whitelist filter that will show only the pinned object hierarchy and children.
     /// </summary>
     [TechnicalUI]
-    public partial class CollectionScopeFilterUI : UserControl
+    public partial class CollectionPinFilterUI : UserControl
     {
         private TreeListView _tree;
         public event EventHandler UnApplied;
 
-        public CollectionScopeFilterUI()
+        public CollectionPinFilterUI()
         {
             InitializeComponent();
         }

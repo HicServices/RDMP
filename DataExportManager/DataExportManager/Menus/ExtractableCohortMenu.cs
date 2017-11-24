@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -32,22 +33,22 @@ namespace DataExportManager.Menus
     {
         private readonly ExtractableCohort _cohort;
 
-        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohort cohort)
-            : base(activator,cohort)
+        public ExtractableCohortMenu(RDMPContextMenuStripArgs args, ExtractableCohort cohort)
+            : base(args,cohort)
         {
             _cohort = cohort;
             Items.Add("View TOP 100 identifiers",null, (s, e) => ViewTop100());
 
-            Add(new ExecuteCommandImportFileAsCustomDataForCohort(activator,cohort));
+            Add(new ExecuteCommandImportFileAsCustomDataForCohort(_activator,cohort));
 
-            Items.Add("Import CohortIdentificationConfiguration PatientIndexTable as custom data", activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import), (s, e) => ExecutePatientIndexTableAndImportAsCustomData());
+            Items.Add("Import CohortIdentificationConfiguration PatientIndexTable as custom data", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import), (s, e) => ExecutePatientIndexTableAndImportAsCustomData());
 
             AddCommonMenuItems();
 
         }
 
-        public ExtractableCohortMenu(IActivateItems activator, ExtractableCohortUsedByProjectNode cohortNode)
-            : this(activator, cohortNode.Cohort)
+        public ExtractableCohortMenu(RDMPContextMenuStripArgs args, ExtractableCohortUsedByProjectNode cohortNode)
+            : this(args, cohortNode.Cohort)
         {
 
         }
