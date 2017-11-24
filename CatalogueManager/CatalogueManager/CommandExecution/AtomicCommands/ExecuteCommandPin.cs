@@ -16,7 +16,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             _databaseEntity = databaseEntity;
 
-            if(!CollectionScopeFilterUI.IsPinnableType(databaseEntity))
+            if(!CollectionPinFilterUI.IsPinnableType(databaseEntity))
                 SetImpossible("Object is not a Pinnable Type");
         }
 

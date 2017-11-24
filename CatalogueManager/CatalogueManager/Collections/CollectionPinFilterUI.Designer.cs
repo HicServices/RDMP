@@ -1,6 +1,6 @@
 ﻿namespace CatalogueManager.Collections
 {
-    partial class CollectionScopeFilterUI
+    partial class CollectionPinFilterUI
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CollectionScopeFilterUI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CollectionPinFilterUI));
             this.lblFilter = new System.Windows.Forms.Label();
             this.pbRemoveFilter = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).BeginInit();

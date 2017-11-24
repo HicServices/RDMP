@@ -74,7 +74,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                 //expect something like this
                 //public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
-                string expectedConstructorSignature = menuClass.Name + "(IActivateItems activator," + expectedClassName;
+                string expectedConstructorSignature = menuClass.Name + "(RDMPContextMenuStripArgs args," + expectedClassName;
                 ConfirmFileHasText(menuClass,expectedConstructorSignature);
             }
             

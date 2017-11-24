@@ -61,7 +61,7 @@ namespace CatalogueManager.Collections
         
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
         
-        private CollectionScopeFilterUI _scopeFilter;
+        private CollectionPinFilterUI _scopeFilter;
 
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
@@ -195,7 +195,7 @@ namespace CatalogueManager.Collections
             if (_scopeFilter != null)
                 _scopeFilter.UnApplyToTree();
             
-            _scopeFilter = new CollectionScopeFilterUI();
+            _scopeFilter = new CollectionPinFilterUI();
             _scopeFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
             _scopeFilter.UnApplied += (s, e) => _scopeFilter = null;
         }

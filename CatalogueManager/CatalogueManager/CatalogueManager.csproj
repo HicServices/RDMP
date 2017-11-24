@@ -337,11 +337,11 @@
     </Compile>
     <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
     <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
-    <Compile Include="Collections\CollectionScopeFilterUI.cs">
+    <Compile Include="Collections\CollectionPinFilterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Collections\CollectionScopeFilterUI.Designer.cs">
-      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
+    <Compile Include="Collections\CollectionPinFilterUI.Designer.cs">
+      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\FavouritesCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -351,10 +351,10 @@
     </Compile>
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\AddCatalogueItemMenuItem.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\AddLookupMenuItem.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\AddSupportingDocumentMenuItem.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\AddSupportingSqlTableMenuItem.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewLookupTableRelationship.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
@@ -1518,8 +1518,8 @@
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Collections\CollectionScopeFilterUI.resx">
-      <DependentUpon>CollectionScopeFilterUI.cs</DependentUpon>
+    <EmbeddedResource Include="Collections\CollectionPinFilterUI.resx">
+      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\FavouritesCollectionUI.resx">
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
