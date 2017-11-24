@@ -268,6 +268,9 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)
         {
+            if(e.Column == olvMigrationPlan)
+                e.SubItem.Font = new Font(e.Item.Font, FontStyle.Underline);
+
             if (e.CellValue as string == "pick")
             {
                 e.SubItem.ForeColor = Color.Blue;
@@ -349,8 +352,35 @@ namespace CatalogueManager.ANOEngineeringUIs
         private void cbDateBasedLoad_CheckedChanged(object sender, EventArgs e)
         {
             ddDateColumn.Enabled = cbDateBasedLoad.Checked;
+            tbStartDate.Enabled = cbDateBasedLoad.Checked;
             _planManager.DateColumn = cbDateBasedLoad.Checked ? ddDateColumn.SelectedItem as ColumnInfo : null;
+            _planManager.StartDate = GetStartDate();
             Check();
+        }
+
+        private void tbStartDate_TextChanged(object sender, EventArgs e)
+        {
+            _planManager.StartDate = GetStartDate();
+        }
+
+        private DateTime? GetStartDate()
+        {
+
+            if (cbDateBasedLoad.Checked)
+            {
+                try
+                {
+                    var dt = DateTime.Parse(tbStartDate.Text);
+                    tbStartDate.ForeColor = Color.Black;
+                    return dt;
+                }
+                catch (Exception)
+                {
+                    tbStartDate.ForeColor = Color.Red;
+                }
+            }
+
+            return null;
         }
     }
 

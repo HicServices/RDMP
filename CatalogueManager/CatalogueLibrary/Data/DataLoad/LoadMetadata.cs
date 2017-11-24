@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Repositories;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Microsoft.SqlServer.Management.Smo;
@@ -257,6 +258,35 @@ namespace CatalogueLibrary.Data.DataLoad
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return GetAllCatalogues().ToArray();
+        }
+
+        public void EnsureLoggingWorksFor(Catalogue catalogue)
+        {
+            //if theres no logging task / logging server set them up with the same name as the lmd
+            IExternalDatabaseServer loggingServer;
+
+            if (catalogue.LiveLoggingServer_ID == null)
+            {
+                loggingServer = new ServerDefaults((CatalogueRepository) Repository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+
+                if (loggingServer != null)
+                    catalogue.LiveLoggingServer_ID = loggingServer.ID;
+                else
+                    throw new NotSupportedException("You do not yet have any logging servers configured so cannot create data loads");
+            }
+            else
+                loggingServer = Repository.GetObjectByID<ExternalDatabaseServer>(catalogue.LiveLoggingServer_ID.Value);
+
+            //if theres no logging task yet and theres a logging server
+            if (string.IsNullOrWhiteSpace(catalogue.LoggingDataTask))
+            {
+                var lm = new LogManager(loggingServer);
+                var loggingTaskName = Name;
+
+                lm.CreateNewLoggingTaskIfNotExists(loggingTaskName);
+                catalogue.LoggingDataTask = loggingTaskName;
+            }
+
         }
     }
 }

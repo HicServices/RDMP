@@ -22,9 +22,10 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewLoadMetadata : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewLoadMetadata : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         private Catalogue[] _availableCatalogues;
+        private Catalogue _catalogue;
 
         public ExecuteCommandCreateNewLoadMetadata(IActivateItems activator):base(activator)
         {
@@ -38,53 +39,36 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues,false,false);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (_catalogue == null)
+                GetUserToPickACatalogue();
+            
+            //create the load
+            if (_catalogue != null)
             {
-                //create the load
-                var cata = dialog.Selected as Catalogue;
+                var cataRepository = (CatalogueRepository)_catalogue.Repository;
+
+                var lmd = new LoadMetadata(cataRepository, "Loading " + _catalogue.Name);
+
+                lmd.EnsureLoggingWorksFor(_catalogue);
+
+                _catalogue.LoadMetadata_ID = lmd.ID;
+                _catalogue.SaveToDatabase();
+
+                Publish(lmd);
+
+                var arrangeEditting = new ExecuteCommandEditExistingLoadMetadata(Activator);
+                arrangeEditting.LoadMetadata = lmd;
+                arrangeEditting.Execute();
                 
-                if(cata != null)
-                {
-                    var cataRepository = (CatalogueRepository) cata.Repository;
-
-                    var lmd = new LoadMetadata(cataRepository, "Loading " + cata.Name);
-
-                    //if theres no logging task / logging server set them up with the same name as the lmd
-                    IExternalDatabaseServer loggingServer;
-
-                    if (cata.LiveLoggingServer_ID == null)
-                    {
-                        loggingServer = new ServerDefaults(cataRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
-
-                        if (loggingServer != null)
-                            cata.LiveLoggingServer_ID = loggingServer.ID;
-                        else
-                            throw new NotSupportedException("You do not yet have any logging servers configured so cannot create data loads");
-                    }
-                    else
-                        loggingServer = cataRepository.GetObjectByID<ExternalDatabaseServer>(cata.LiveLoggingServer_ID.Value);
-
-                    //if theres no logging task yet and theres a logging server
-                    if (string.IsNullOrWhiteSpace(cata.LoggingDataTask))
-                    {
-                        var lm = new LogManager(loggingServer);
-                        var loggingTaskName = lmd.Name;
-                        
-                        lm.CreateNewLoggingTaskIfNotExists(loggingTaskName);
-                        cata.LoggingDataTask = loggingTaskName;
-                    }
-
-                    cata.LoadMetadata_ID = lmd.ID;
-                    cata.SaveToDatabase();
-
-                    Publish(lmd);
-
-                    var arrangeEditting = new ExecuteCommandEditExistingLoadMetadata(Activator);
-                    arrangeEditting.LoadMetadata = lmd;
-                    arrangeEditting.Execute();
-                }
             }
+        }
+
+        private void GetUserToPickACatalogue()
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues,false,false);
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+                _catalogue = dialog.Selected as Catalogue;
         }
 
         public override string GetCommandName()
@@ -95,6 +79,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Add);
+        }
+
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+        {
+            _catalogue = (Catalogue) target;
+            return this;
         }
     }
 }

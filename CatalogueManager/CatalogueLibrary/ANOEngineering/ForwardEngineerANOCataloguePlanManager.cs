@@ -30,6 +30,7 @@ namespace CatalogueLibrary.ANOEngineering
 
         public DiscoveredDatabase TargetDatabase { get; set; }
         public ColumnInfo DateColumn { get; set; }
+        public DateTime? StartDate { get; set; }
 
         public HashSet<TableInfo> SkippedTables = new HashSet<TableInfo>();
 

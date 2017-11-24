@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
@@ -142,8 +144,21 @@ namespace CatalogueLibrary.ANOEngineering
                         AuditParenthood(oldExtractionInformation, newExtractionInformation);
                     }
 
-                    //todo create data load
-                    
+                    //create new data load confguration
+                    var lmd = new LoadMetadata(_catalogueRepository, "Anonymising " + NewCatalogue);
+                    lmd.EnsureLoggingWorksFor(NewCatalogue);
+
+                    NewCatalogue.LoadMetadata_ID = lmd.ID;
+                    NewCatalogue.SaveToDatabase();
+
+                    //todo add a RemoteSqlServerTableAttacher to the dle configuration
+
+                    if (_planManager.DateColumn != null)
+                    {
+                        var lp = new LoadProgress(_catalogueRepository, lmd);
+
+                    }
+
                     _catalogueRepository.EndTransactedConnection(true);
                 }
                 catch (Exception)

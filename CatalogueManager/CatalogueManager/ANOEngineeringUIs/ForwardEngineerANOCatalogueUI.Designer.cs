@@ -33,6 +33,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForwardEngineerANOCatalogueUI));
             this.gbTables = new System.Windows.Forms.GroupBox();
+            this.tbStartDate = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.ddDateColumn = new System.Windows.Forms.ComboBox();
             this.cbDateBasedLoad = new System.Windows.Forms.CheckBox();
             this.tbMandatory = new System.Windows.Forms.Label();
@@ -70,6 +72,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbTables.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbTables.Controls.Add(this.tbStartDate);
+            this.gbTables.Controls.Add(this.label4);
             this.gbTables.Controls.Add(this.ddDateColumn);
             this.gbTables.Controls.Add(this.cbDateBasedLoad);
             this.gbTables.Controls.Add(this.tbMandatory);
@@ -78,9 +82,30 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbTables.Location = new System.Drawing.Point(3, 464);
             this.gbTables.Name = "gbTables";
             this.gbTables.Size = new System.Drawing.Size(942, 315);
-            this.gbTables.TabIndex = 0;
+            this.gbTables.TabIndex = 6;
             this.gbTables.TabStop = false;
             this.gbTables.Text = "Table Migration";
+            // 
+            // tbStartDate
+            // 
+            this.tbStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbStartDate.Enabled = false;
+            this.tbStartDate.Location = new System.Drawing.Point(806, 290);
+            this.tbStartDate.Name = "tbStartDate";
+            this.tbStartDate.Size = new System.Drawing.Size(130, 20);
+            this.tbStartDate.TabIndex = 6;
+            this.tbStartDate.Text = "2001-01-01";
+            this.tbStartDate.TextChanged += new System.EventHandler(this.tbStartDate_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(744, 293);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(56, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Starting At";
             // 
             // ddDateColumn
             // 
@@ -91,7 +116,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.ddDateColumn.Location = new System.Drawing.Point(244, 289);
             this.ddDateColumn.Name = "ddDateColumn";
             this.ddDateColumn.Size = new System.Drawing.Size(494, 21);
-            this.ddDateColumn.TabIndex = 6;
+            this.ddDateColumn.TabIndex = 4;
             this.ddDateColumn.SelectedIndexChanged += new System.EventHandler(this.ddDateColumn_SelectedIndexChanged);
             // 
             // cbDateBasedLoad
@@ -101,7 +126,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.cbDateBasedLoad.Location = new System.Drawing.Point(90, 292);
             this.cbDateBasedLoad.Name = "cbDateBasedLoad";
             this.cbDateBasedLoad.Size = new System.Drawing.Size(159, 17);
-            this.cbDateBasedLoad.TabIndex = 5;
+            this.cbDateBasedLoad.TabIndex = 3;
             this.cbDateBasedLoad.Text = "Load Data In Date Batches:";
             this.cbDateBasedLoad.UseVisualStyleBackColor = true;
             this.cbDateBasedLoad.CheckedChanged += new System.EventHandler(this.cbDateBasedLoad_CheckedChanged);
@@ -115,7 +140,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tbMandatory.Location = new System.Drawing.Point(7, 289);
             this.tbMandatory.Name = "tbMandatory";
             this.tbMandatory.Size = new System.Drawing.Size(20, 20);
-            this.tbMandatory.TabIndex = 4;
+            this.tbMandatory.TabIndex = 1;
             // 
             // tlvTableInfoMigrations
             // 
@@ -191,7 +216,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.label1.Location = new System.Drawing.Point(28, 293);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 13);
-            this.label1.TabIndex = 4;
+            this.label1.TabIndex = 2;
             this.label1.Text = "Mandatory";
             // 
             // serverDatabaseTableSelector1
@@ -204,7 +229,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.serverDatabaseTableSelector1.Password = "";
             this.serverDatabaseTableSelector1.Server = "";
             this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(581, 146);
-            this.serverDatabaseTableSelector1.TabIndex = 1;
+            this.serverDatabaseTableSelector1.TabIndex = 0;
             this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
             this.serverDatabaseTableSelector1.SelectionChanged += new System.Action(this.serverDatabaseTableSelector1_SelectionChanged);
@@ -227,7 +252,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbANOTransforms.Location = new System.Drawing.Point(3, 25);
             this.gbANOTransforms.Name = "gbANOTransforms";
             this.gbANOTransforms.Size = new System.Drawing.Size(942, 222);
-            this.gbANOTransforms.TabIndex = 0;
+            this.gbANOTransforms.TabIndex = 1;
             this.gbANOTransforms.TabStop = false;
             this.gbANOTransforms.Text = "ANO Concepts";
             // 
@@ -286,7 +311,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.ragSmiley1.Location = new System.Drawing.Point(255, 423);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 4;
+            this.ragSmiley1.TabIndex = 3;
             // 
             // btnRefreshChecks
             // 
@@ -294,7 +319,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.btnRefreshChecks.Location = new System.Drawing.Point(286, 424);
             this.btnRefreshChecks.Name = "btnRefreshChecks";
             this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
-            this.btnRefreshChecks.TabIndex = 6;
+            this.btnRefreshChecks.TabIndex = 4;
             this.btnRefreshChecks.UseVisualStyleBackColor = true;
             this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
             // 
@@ -304,7 +329,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.btnExecute.Location = new System.Drawing.Point(330, 425);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(86, 23);
-            this.btnExecute.TabIndex = 68;
+            this.btnExecute.TabIndex = 5;
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
@@ -333,7 +358,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
             this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
             this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(948, 22);
-            this.rdmpObjectsRibbonUI1.TabIndex = 3;
+            this.rdmpObjectsRibbonUI1.TabIndex = 0;
             // 
             // ForwardEngineerANOCatalogueUI
             // 
@@ -390,5 +415,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox cbDateBasedLoad;
         private System.Windows.Forms.ComboBox ddDateColumn;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbStartDate;
     }
 }
