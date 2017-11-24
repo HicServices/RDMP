@@ -39,6 +39,7 @@ namespace CatalogueManager.Menus
     {
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         protected IActivateItems _activator;
+        private readonly RDMPContextMenuStripArgs _args;
         private readonly DatabaseEntity _databaseEntity;
 
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
@@ -52,6 +53,7 @@ namespace CatalogueManager.Menus
         protected RDMPContextMenuStrip(RDMPContextMenuStripArgs args, DatabaseEntity databaseEntity)
         {
             _activator = args.ItemActivator;
+            _args = args;
             _databaseEntity = databaseEntity;
 
             AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
@@ -100,7 +102,11 @@ namespace CatalogueManager.Menus
             
             if (_databaseEntity != null)
                 Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
-            
+
+            //Delete logic - prefer to delete the Masquerader (if any) not the underlying object if both implement IDeletable
+            if (_args.Masquerader is IDeleteable)
+                deletable = (IDeleteable) _args.Masquerader;
+
             if (deletable != null)
                 Add(new ExecuteCommandDelete(_activator, deletable), Keys.Delete);
 

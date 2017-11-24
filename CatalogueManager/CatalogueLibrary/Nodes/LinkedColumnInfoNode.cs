@@ -4,7 +4,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Nodes
 {
-    public class LinkedColumnInfoNode : IDeleteable
+    public class LinkedColumnInfoNode : IDeleteable, IMasqueradeAs
     {
         public CatalogueItem CatalogueItem { get; set; }
         public ColumnInfo ColumnInfo { get; set; }
@@ -41,12 +41,14 @@ namespace CatalogueLibrary.Nodes
             }
         }
 
+        public object MasqueradingAs()
+        {
+            return ColumnInfo;
+        }
+
         public void DeleteInDatabase()
         {
             CatalogueItem.SetColumnInfo(null);
-            var ei = CatalogueItem.ExtractionInformation;
-
-            ei.DeleteInDatabase();
         }
     }
 }

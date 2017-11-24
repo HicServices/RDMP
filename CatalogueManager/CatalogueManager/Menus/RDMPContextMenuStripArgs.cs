@@ -6,6 +6,7 @@ namespace CatalogueManager.Menus
     {
         public IActivateItems ItemActivator { get; set; }
         public object CurrentlyPinnedObject { get; set; }
+        public object Masquerader { get; set; }
 
         public RDMPContextMenuStripArgs(IActivateItems itemActivator)
         {

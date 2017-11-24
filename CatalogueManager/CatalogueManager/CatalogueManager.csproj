@@ -378,7 +378,6 @@
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
-    <Compile Include="Menus\LinkedColumnInfoNodeMenu.cs" />
     <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>

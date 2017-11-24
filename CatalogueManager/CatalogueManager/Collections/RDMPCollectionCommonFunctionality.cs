@@ -242,15 +242,15 @@ namespace CatalogueManager.Collections
                 //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
                 Tree.SelectedObject = o;
 
-                object masquerade = null;
+                object masqueradingAs = null;
                 if (o is IMasqueradeAs)
-                    masquerade = ((IMasqueradeAs)o).MasqueradingAs();
+                    masqueradingAs = ((IMasqueradeAs)o).MasqueradingAs();
 
                 var menu = GetMenuWithCompatibleConstructorIfExists(o);
 
                 //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
-                if (menu == null && masquerade != null)
-                    menu = GetMenuWithCompatibleConstructorIfExists(masquerade);
+                if (menu == null && masqueradingAs != null)
+                    menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, o);
 
                 //found a menu with compatible constructor arguments
                 if (menu != null)
@@ -282,9 +282,9 @@ namespace CatalogueManager.Collections
             return null;
         }
 
-        private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o)
+        private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, object oMasquerader = null)
         {
-            RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator);
+            RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator){Masquerader = oMasquerader};
 
 
             var objectConstructor = new ObjectConstructor();
