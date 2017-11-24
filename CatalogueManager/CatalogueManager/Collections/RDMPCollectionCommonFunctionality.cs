@@ -295,8 +295,9 @@ namespace CatalogueManager.Collections
 
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, object oMasquerader = null)
         {
-            RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator){Masquerader = oMasquerader};
+            RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator);
             args.CurrentlyPinnedObject = _currentlyPinned;
+            args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
             var objectConstructor = new ObjectConstructor();
 

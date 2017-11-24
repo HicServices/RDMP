@@ -92,19 +92,16 @@ namespace CatalogueManager.Menus
         /// <param name="additionalObjectsToExposeToPluginUserInterfaces">Optional additional objects, do not pass the same object in twice or you will get duplication in your menu</param>
         protected void AddCommonMenuItems(params object[] additionalObjectsToExposeToPluginUserInterfaces)
         {
-            var deletable = _databaseEntity as IDeleteable;
+            //Delete logic - prefer to delete the Masquerader (if any) not the underlying object if both implement IDeletable
+            var deletable = _args.Masquerader as IDeleteable ?? _databaseEntity;
             var nameable = _databaseEntity as INamed;
 
             if(Items.Count > 0)
                 Items.Add(new ToolStripSeparator());
             
             if (_databaseEntity != null)
-                Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
-
-            //Delete logic - prefer to delete the Masquerader (if any) not the underlying object if both implement IDeletable
-            if (_args.Masquerader is IDeleteable)
-                deletable = (IDeleteable) _args.Masquerader;
-
+                Add(new ExecuteCommandRefreshObject(_activator,_args.Masquerader as DatabaseEntity ?? _databaseEntity),Keys.F5);
+            
             if (deletable != null)
                 Add(new ExecuteCommandDelete(_activator, deletable), Keys.Delete);
 
@@ -132,7 +129,6 @@ namespace CatalogueManager.Menus
                 {
                     foreach (var askAbout in askPluginsAbout)
                     {
-
                         try
                         {
                             ToolStripMenuItem[] toAdd;

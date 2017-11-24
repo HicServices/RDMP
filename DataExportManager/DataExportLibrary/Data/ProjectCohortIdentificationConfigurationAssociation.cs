@@ -16,7 +16,7 @@ namespace DataExportLibrary.Data
     /// associated configurations in a given project (e.g. cases, controls, time based etc).  You can also associate the same configuration with multiple Projects if
     /// you need to.
     /// </summary>
-    public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity
+    public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IMasqueradeAs
     {
         #region Database Properties
 
@@ -68,6 +68,11 @@ namespace DataExportLibrary.Data
         public override string ToString()
         {
             return GetCohortIdentificationConfigurationCached().Name;
+        }
+
+        public object MasqueradingAs()
+        {
+            return GetCohortIdentificationConfigurationCached();
         }
 
         public CohortIdentificationConfiguration GetCohortIdentificationConfigurationCached()
