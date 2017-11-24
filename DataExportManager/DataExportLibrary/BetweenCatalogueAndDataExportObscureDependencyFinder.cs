@@ -22,21 +22,21 @@ namespace DataExportLibrary
         public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             var cata = oTableWrapperObject as Catalogue;
-
+            
             //if there isn't a data export database then we don't care, delete away
             if (_serviceLocator.DataExportRepository == null)
                 return;
 
-            //they are trying to delete something that isn't a Catalogue thats fine too
-            if (cata == null) return;
+            //they are trying to delete a catalogue
+            if (cata != null)
+            {
+                //they are deleting a catalogue! see if it has an ExtractableDataSet associated with it
+                ExtractableDataSet[] dependencies = _serviceLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>("WHERE Catalogue_ID = " + cata.ID).ToArray();
             
-            //they are deleting a catalogue! see if it has an ExtractableDataSet associated with it
-            ExtractableDataSet[] dependencies = _serviceLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>("WHERE Catalogue_ID = " + cata.ID).ToArray();
-            
-
-            //we have any dependant catalogues?
-            if(dependencies.Any())
-                throw new Exception("Cannot delete Catalogue " + cata + " because there are ExtractableDataSets which depend on them (IDs=" +string.Join(",",dependencies.Select(ds=>ds.ID.ToString())) +")");
+                //we have any dependant catalogues?
+                if(dependencies.Any())
+                    throw new Exception("Cannot delete Catalogue " + cata + " because there are ExtractableDataSets which depend on them (IDs=" +string.Join(",",dependencies.Select(ds=>ds.ID.ToString())) +")");
+            }
         }
 
         public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
