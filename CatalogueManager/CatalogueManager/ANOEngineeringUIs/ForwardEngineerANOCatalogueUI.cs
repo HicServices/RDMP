@@ -365,7 +365,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             if(loadProgressIfAny != null)
             {
                 pt.SetArgumentValue("Progress", loadProgressIfAny);
-//                pt.SetArgumentValue("ProgressUpdateStrategy", DataLoadProgressUpdateStrategy.UseMaxRequestedDay);
+//              pt.SetArgumentValue("ProgressUpdateStrategy", DataLoadProgressUpdateStrategy.UseMaxRequestedDay);
                 pt.SetArgumentValue("LoadNotRequiredIfNoRowsRead",true);
             }
 
