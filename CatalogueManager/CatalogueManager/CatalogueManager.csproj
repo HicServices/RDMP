@@ -364,6 +364,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />

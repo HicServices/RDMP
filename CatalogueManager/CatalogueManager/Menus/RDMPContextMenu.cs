@@ -47,9 +47,7 @@ namespace CatalogueManager.Menus
         private AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
-
-
-
+        
         protected RDMPContextMenuStrip(RDMPContextMenuStripArgs args, DatabaseEntity databaseEntity)
         {
             _activator = args.ItemActivator;
@@ -117,8 +115,10 @@ namespace CatalogueManager.Menus
             {
                 Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
                 Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
-
-                Add(new ExecuteCommandPin(_activator, _databaseEntity));
+                if (_databaseEntity.Equals(_args.CurrentlyPinnedObject))
+                    Add(new ExecuteCommandUnpin(_activator, _databaseEntity));
+                else
+                    Add(new ExecuteCommandPin(_activator, _databaseEntity));
             }
             
             List<object> askPluginsAbout = new List<object>(additionalObjectsToExposeToPluginUserInterfaces);

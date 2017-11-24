@@ -62,6 +62,7 @@ namespace CatalogueManager.Collections
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
         
         private CollectionPinFilterUI _scopeFilter;
+        private object _currentlyPinned;
 
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
@@ -154,6 +155,10 @@ namespace CatalogueManager.Collections
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
         {
+            // unpin first if the request does not want to pin
+            if (!args.Request.Pin && _scopeFilter != null)
+                _scopeFilter.UnApplyToTree();
+
             //get the parental hierarchy
             var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
             
@@ -186,7 +191,7 @@ namespace CatalogueManager.Collections
 
             if (args.Request.Pin && AllowPinning)
                 Pin(args.Request.ObjectToEmphasise,decendancyList);
-
+            
             args.FormRequestingActivation = Tree.FindForm();
         }
 
@@ -197,7 +202,13 @@ namespace CatalogueManager.Collections
             
             _scopeFilter = new CollectionPinFilterUI();
             _scopeFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
-            _scopeFilter.UnApplied += (s, e) => _scopeFilter = null;
+            _currentlyPinned = objectToPin;
+
+            _scopeFilter.UnApplied += (s, e) =>
+            {
+                _scopeFilter = null;
+                _currentlyPinned = null;
+            };
         }
 
         private void ExpandToDepth(int expansionDepth, object currentObject)
@@ -285,7 +296,7 @@ namespace CatalogueManager.Collections
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, object oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator){Masquerader = oMasquerader};
-
+            args.CurrentlyPinnedObject = _currentlyPinned;
 
             var objectConstructor = new ObjectConstructor();
 
