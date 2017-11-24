@@ -14,7 +14,8 @@ namespace DataExportManager.Menus
 {
     public class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
     {
-        public ExtractionConfigurationsNodeMenu(IActivateItems activator, ExtractionConfigurationsNode extractionConfigurationsNode, RDMPCollectionCommonFunctionality collection): base(activator, null, collection)
+        public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode)
+            : base(args, null)
         {
             Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, extractionConfigurationsNode.Project));
         }

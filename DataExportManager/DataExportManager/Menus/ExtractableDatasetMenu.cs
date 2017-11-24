@@ -25,13 +25,13 @@ namespace DataExportManager.Menus
     {
         private readonly ExtractableDataSet _dataset;
 
-        public ExtractableDatasetMenu(IActivateItems activator, ExtractableDataSet dataset, RDMPCollectionCommonFunctionality collection)
-            : base(activator,dataset, collection)
+        public ExtractableDatasetMenu(RDMPContextMenuStripArgs args, ExtractableDataSet dataset)
+            : base(args,dataset)
         {
             _dataset = dataset;
 
             if (_dataset.DisableExtraction)
-                Items.Add("ReEnable Extraction", activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet),
+                Items.Add("ReEnable Extraction", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet),
                     (s, e) => SetDisabled(false));
             else
                 Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled,

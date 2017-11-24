@@ -22,7 +22,7 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ParametersNodeMenu : RDMPContextMenuStrip
     {
-        public ParametersNodeMenu(IActivateItems activator, ParametersNode parameterNode, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
+        public ParametersNodeMenu(RDMPContextMenuStripArgs args, ParametersNode parameterNode): base(args, null)
         {
             var filter = parameterNode.Collector as ExtractionFilter;
 

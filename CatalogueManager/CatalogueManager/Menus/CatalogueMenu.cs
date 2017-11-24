@@ -55,13 +55,13 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CatalogueMenu:RDMPContextMenuStrip
     {
-        public CatalogueMenu(IActivateItems activator, CatalogueFolder folder, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
+        public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args,null)
         {
             AddImportOptions();
             AddCommonMenuItems(folder);
         }
 
-        public CatalogueMenu(IActivateItems activator, Catalogue catalogue, RDMPCollectionCommonFunctionality collection):base(activator,catalogue, collection)
+        public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
         {
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
@@ -70,14 +70,12 @@ namespace CatalogueManager.Menus
 
             Items.Add(new ToolStripSeparator());
 
-            var addItem = new ToolStripMenuItem("Add", null,
-
-                new AddSupportingSqlTableMenuItem(_activator, catalogue),
-                new AddSupportingDocumentMenuItem(_activator, catalogue),
-                new AddAggregateMenuItem(_activator, catalogue),
-                new AddLookupMenuItem(_activator, "Add new Lookup Table Relationship", catalogue, null),
-                new AddCatalogueItemMenuItem(_activator, catalogue)
-                );
+            var addItem = new ToolStripMenuItem("Add", null);
+            Add(new ExecuteCommandAddNewSupportingSqlTable(_activator, catalogue), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewSupportingDocument(_activator, catalogue), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewAggregateGraph(_activator, catalogue), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue), Keys.None, addItem);
 
             Items.Add(addItem);
 

@@ -18,7 +18,7 @@ namespace CatalogueManager.Menus
 {
     public class FilterMenu : RDMPContextMenuStrip
     {
-        public FilterMenu(IActivateItems activator, IFilter filter, RDMPCollectionCommonFunctionality collection1):base(activator,(DatabaseEntity)filter, collection1)
+        public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
         {
             var cata = filter.GetCatalogue();
 

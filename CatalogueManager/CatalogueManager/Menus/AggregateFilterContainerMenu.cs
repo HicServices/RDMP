@@ -23,7 +23,7 @@ namespace CatalogueManager.Menus
         private readonly AggregateFilterContainer _filterContainer;
         private ExtractionFilter[] _importableFilters;
 
-        public AggregateFilterContainerMenu(IActivateItems activator, AggregateFilterContainer filterContainer, RDMPCollectionCommonFunctionality collection): base( activator,filterContainer, collection)
+        public AggregateFilterContainerMenu(RDMPContextMenuStripArgs args, AggregateFilterContainer filterContainer): base(args, filterContainer)
         {
             _filterContainer = filterContainer;
 

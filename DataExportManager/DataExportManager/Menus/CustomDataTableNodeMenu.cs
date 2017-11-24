@@ -28,7 +28,8 @@ namespace DataExportManager.Menus
         private readonly CustomDataTableNode _customDataTableNode;
 
 
-        public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNode customDataTableNode, RDMPCollectionCommonFunctionality collection): base( activator,null, collection)
+        public CustomDataTableNodeMenu(RDMPContextMenuStripArgs args, CustomDataTableNode customDataTableNode)
+            : base(args, null)
         {
             _customDataTableNode = customDataTableNode;
             Items.Add("View TOP 100 Records", CatalogueIcons.TableInfo, (s, e) => _activator.ViewDataSample(new ViewCustomCohortTableExtractionUICollection(_customDataTableNode.Cohort, _customDataTableNode.TableName)));
@@ -41,8 +42,8 @@ namespace DataExportManager.Menus
             Items.Add("Delete Custom Data Table", CatalogueIcons.Warning, (s, e) => Delete());
         }
 
-        public CustomDataTableNodeMenu(IActivateItems activator, CustomDataTableNodeUsedByProjectNode projectCustomTableUsageNode, RDMPCollectionCommonFunctionality collection):
-            this(activator, projectCustomTableUsageNode.CustomTable, collection)
+        public CustomDataTableNodeMenu(RDMPContextMenuStripArgs args, CustomDataTableNodeUsedByProjectNode projectCustomTableUsageNode) :
+            this(args, projectCustomTableUsageNode.CustomTable)
         {
 
         }

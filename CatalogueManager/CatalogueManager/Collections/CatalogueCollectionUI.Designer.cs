@@ -63,7 +63,6 @@ namespace CatalogueManager.Collections
             this.tlvCatalogues.View = System.Windows.Forms.View.Details;
             this.tlvCatalogues.VirtualMode = true;
             this.tlvCatalogues.ItemActivate += new System.EventHandler(this.tlvCatalogues_ItemActivate);
-            this.tlvCatalogues.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tlvCatalogues_KeyUp);
             // 
             // olvColumn1
             // 

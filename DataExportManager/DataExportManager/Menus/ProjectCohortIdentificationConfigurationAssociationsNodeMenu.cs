@@ -14,9 +14,10 @@ namespace DataExportManager.Menus
 {
     public class ProjectCohortIdentificationConfigurationAssociationsNodeMenu:RDMPContextMenuStrip
     {
-        public ProjectCohortIdentificationConfigurationAssociationsNodeMenu(IActivateItems activator, ProjectCohortIdentificationConfigurationAssociationsNode node, RDMPCollectionCommonFunctionality collection): base(activator, null, collection)
+        public ProjectCohortIdentificationConfigurationAssociationsNodeMenu(RDMPContextMenuStripArgs args, ProjectCohortIdentificationConfigurationAssociationsNode node)
+            : base(args, null)
         {
-            Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(activator).SetTarget(node.Project));
+            Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(node.Project));
 
             AddCommonMenuItems(node);
         }

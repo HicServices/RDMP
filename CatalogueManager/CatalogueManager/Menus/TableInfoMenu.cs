@@ -48,13 +48,14 @@ namespace CatalogueManager.Menus
     {
         private DataAccessCredentials[] _availableCredentials;
 
-        public TableInfoMenu(IActivateItems activator, TableInfo tableInfo, RDMPCollectionCommonFunctionality collection) : base( activator, tableInfo, collection)
+        public TableInfoMenu(RDMPContextMenuStripArgs args, TableInfo tableInfo)
+            : base(args, tableInfo)
         {
-            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, false));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
 
             Items.Add(new ToolStripSeparator());
-            Items.Add(new AddLookupMenuItem(activator, "Add new Lookup Table Relationship", null, tableInfo));
-            Items.Add(new AddJoinInfoMenuItem(activator, tableInfo));
+            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo));
+            Items.Add(new AddJoinInfoMenuItem(_activator, tableInfo));
             Items.Add(new ToolStripSeparator());
 
             Items.Add("Synchronize TableInfo ", CatalogueIcons.Sync, delegate { TableInfo_Click(tableInfo); });
@@ -63,7 +64,7 @@ namespace CatalogueManager.Menus
             Items.Add("Add ColumnInfo ", null, delegate { AddColumnInfo_Click(tableInfo); });
 
             _availableCredentials = RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
-            var addPermission = new ToolStripMenuItem("Add Credential Usage Permission", activator.CoreIconProvider.GetImage(RDMPConcept.DataAccessCredentials,OverlayKind.Add),(s, e) => AddCredentialPermission(tableInfo));
+            var addPermission = new ToolStripMenuItem("Add Credential Usage Permission", _activator.CoreIconProvider.GetImage(RDMPConcept.DataAccessCredentials, OverlayKind.Add), (s, e) => AddCredentialPermission(tableInfo));
             addPermission.Enabled = _availableCredentials.Any();
             Items.Add(addPermission);
 
@@ -77,12 +78,12 @@ namespace CatalogueManager.Menus
             Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution, delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
             Items.Add(new ToolStripSeparator());
-            Items.Add(new SetDumpServerMenuItem(activator, tableInfo));
-            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, tableInfo));
+            Items.Add(new SetDumpServerMenuItem(_activator, tableInfo));
+            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, tableInfo));
             Items.Add(new ToolStripSeparator());
 
             if (tableInfo != null && tableInfo.IsTableValuedFunction)
-                Items.Add("Configure Parameters...", activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
+                Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
 
             AddCommonMenuItems();
         }

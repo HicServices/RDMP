@@ -13,14 +13,14 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     internal class PreLoadDiscardedColumnsNodeMenu : RDMPContextMenuStrip
     {
-        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, PreLoadDiscardedColumnsNode discardNode, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
+        public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, PreLoadDiscardedColumnsNode discardNode) : base(args,null)
         {
-            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardNode.TableInfo));
+            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, discardNode.TableInfo));
         }
 
-        public PreLoadDiscardedColumnsNodeMenu(IActivateItems activator, IdentifierDumpServerUsageNode discardUsageNode, RDMPCollectionCommonFunctionality collection): base(activator, null, collection)
+        public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, IdentifierDumpServerUsageNode discardUsageNode): base(args, null)
         {
-            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(activator, discardUsageNode.TableInfo));
+            Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, discardUsageNode.TableInfo));
         }
         
     }

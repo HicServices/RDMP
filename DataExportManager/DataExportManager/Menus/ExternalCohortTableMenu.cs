@@ -41,14 +41,14 @@ namespace DataExportManager.Menus
         private Project _project;
         private ToolStripMenuItem _importExistingCohort;
 
-        public ExternalCohortTableMenu(IActivateItems activator, ExternalCohortTable externalCohortTable, RDMPCollectionCommonFunctionality collection): base( activator,externalCohortTable, collection)
+        public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
         {
             _externalCohortTable = externalCohortTable;
-            Add(new ExecuteCommandImportFileAsNewCohort(activator));
+            Add(new ExecuteCommandImportFileAsNewCohort(_activator));
 
-            Add(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(activator));
+            Add(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
 
-            _importExistingCohort = new ToolStripMenuItem("Import an Already Existing Cohort", activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import), (s, e) => ImportAlreadyExistingCohort());
+            _importExistingCohort = new ToolStripMenuItem("Import an Already Existing Cohort", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import), (s, e) => ImportAlreadyExistingCohort());
             Items.Add(_importExistingCohort);
 
             AddCommonMenuItems();

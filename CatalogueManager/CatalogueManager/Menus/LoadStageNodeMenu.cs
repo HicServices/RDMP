@@ -22,17 +22,17 @@ namespace CatalogueManager.Menus
         private readonly LoadStageNode _loadStageNode;
         private MEF _mef;
 
-        public LoadStageNodeMenu(IActivateItems activator, LoadStageNode loadStageNode, RDMPCollectionCommonFunctionality collection):base(activator,null, collection)
+        public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode):base(args,null)
         {
             _loadStageNode = loadStageNode;
-            _mef = activator.RepositoryLocator.CatalogueRepository.MEF;
+            _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
             
            AddMenu<IDataProvider>("Add New Data Provider");
            AddMenu<IAttacher>("Add New Attacher");
            AddMenu<IMutilateDataTables>("Add New Mutilator");
 
-           Add(new ExecuteCommandCreateNewProcessTask(activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage));
-           Add(new ExecuteCommandCreateNewProcessTask(activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage));
+           Add(new ExecuteCommandCreateNewProcessTask(_activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage));
+           Add(new ExecuteCommandCreateNewProcessTask(_activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage));
         }
         
         private void AddMenu<T>(string menuName)

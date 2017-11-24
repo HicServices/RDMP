@@ -20,8 +20,8 @@ namespace DataExportManager.Menus
     {
         private readonly CohortSourceUsedByProjectNode _cohortSourceUsedByProjectNode;
 
-        public CohortSourceUsedByProjectNodeMenu(IActivateItems activator, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode, RDMPCollectionCommonFunctionality collection)
-            : base( activator,cohortSourceUsedByProjectNode.Project, collection)
+        public CohortSourceUsedByProjectNodeMenu(RDMPContextMenuStripArgs args, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
+            : base( args,cohortSourceUsedByProjectNode.Project)
         {
             _cohortSourceUsedByProjectNode = cohortSourceUsedByProjectNode;
             

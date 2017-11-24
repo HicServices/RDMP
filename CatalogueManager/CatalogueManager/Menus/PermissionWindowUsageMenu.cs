@@ -7,10 +7,10 @@ namespace CatalogueManager.Menus
 {
     internal class PermissionWindowUsedByCacheProgressNodeMenu : RDMPContextMenuStrip
     {
-        public PermissionWindowUsedByCacheProgressNodeMenu(IActivateItems activator, PermissionWindowUsedByCacheProgressNode permissionWindowUsage, RDMPCollectionCommonFunctionality collection)
-            : base(activator, null, collection)
+        public PermissionWindowUsedByCacheProgressNodeMenu(RDMPContextMenuStripArgs args, PermissionWindowUsedByCacheProgressNode permissionWindowUsage)
+            : base(args, null)
         {
-            Add(new ExecuteCommandUnlockLockable(activator, permissionWindowUsage.PermissionWindow));
+            Add(new ExecuteCommandUnlockLockable(_activator, permissionWindowUsage.PermissionWindow));
         }
     }
 }

@@ -30,14 +30,14 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
     {
-        public AllExternalServersNodeMenu(IActivateItems activator, AllExternalServersNode node, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
+        public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args,null)
         {
             var overlayProvider = new IconOverlayProvider();
             var iconProvider = new ExternalDatabaseServerStateBasedIconProvider(overlayProvider);
 
             var assemblyDictionary = new Dictionary<ServerDefaults.PermissableDefaults, Assembly>();
             
-            Items.Add(new ToolStripMenuItem("Create New External Server Reference",activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Add),CreateNewBlankServer));
+            Items.Add(new ToolStripMenuItem("Create New External Server Reference",_activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Add),CreateNewBlankServer));
             Items.Add(new ToolStripSeparator());
 
             assemblyDictionary.Add(ServerDefaults.PermissableDefaults.DQE, typeof(DataQualityEngine.Database.Class1).Assembly);
@@ -46,8 +46,6 @@ namespace CatalogueManager.Menus
             assemblyDictionary.Add(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID, typeof(IdentifierDump.Database.Class1).Assembly);
             assemblyDictionary.Add(ServerDefaults.PermissableDefaults.ANOStore, typeof(ANOStore.Database.Class1).Assembly);
             assemblyDictionary.Add(ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
-
-            _activator = activator;
 
             foreach (KeyValuePair<ServerDefaults.PermissableDefaults, Assembly> kvp in assemblyDictionary)
             {
@@ -62,16 +60,14 @@ namespace CatalogueManager.Menus
                 Items.Add(new ToolStripMenuItem("Create New '" + name + "' Server...",addIcon, (s, e) => CreateNewExternalServer(defaultToSet, databaseAssembly)));
             }
 
-            var factory = new AtomicCommandUIFactory(activator.CoreIconProvider);
-
-            var types = activator.RepositoryLocator.CatalogueRepository.MEF
+            var types = _activator.RepositoryLocator.CatalogueRepository.MEF
                 .GetTypes<IAtomicCommand>().Where(t =>
                     typeof (PluginDatabaseAtomicCommand).IsAssignableFrom(t));
 
             foreach (var type in types)
             {
-                var instance = new ObjectConstructor().Construct(type,activator.RepositoryLocator);
-                Items.Add(factory.CreateMenuItem((IAtomicCommand)instance));
+                var instance = new ObjectConstructor().Construct(type,_activator.RepositoryLocator);
+                Add((IAtomicCommand)instance);
             }
                
         }

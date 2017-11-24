@@ -16,10 +16,10 @@ namespace DataExportManager.Menus
 {
     public class ProjectSavedCohortsNodeMenu:RDMPContextMenuStrip
     {
-        public ProjectSavedCohortsNodeMenu(IActivateItems activator, ProjectSavedCohortsNode savedCohortsNode, RDMPCollectionCommonFunctionality collection): base(activator, null, collection)
+        public ProjectSavedCohortsNodeMenu(RDMPContextMenuStripArgs args, ProjectSavedCohortsNode savedCohortsNode): base(args, null)
         {
-            Add(new ExecuteCommandImportFileAsNewCohort(activator).SetTarget(savedCohortsNode.Project));
-            Add(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(activator).SetTarget(savedCohortsNode.Project));
+            Add(new ExecuteCommandImportFileAsNewCohort(_activator).SetTarget(savedCohortsNode.Project));
+            Add(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator).SetTarget(savedCohortsNode.Project));
         }
     }
 }

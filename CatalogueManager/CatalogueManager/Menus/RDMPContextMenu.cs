@@ -47,15 +47,17 @@ namespace CatalogueManager.Menus
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
 
-        protected RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity, RDMPCollectionCommonFunctionality collection)
+
+
+        protected RDMPContextMenuStrip(RDMPContextMenuStripArgs args, DatabaseEntity databaseEntity)
         {
-            _activator = activator;
+            _activator = args.ItemActivator;
             _databaseEntity = databaseEntity;
 
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
             if(databaseEntity != null)
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(activator, databaseEntity));
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator, databaseEntity));
 
             RepositoryLocator = _activator.RepositoryLocator;
         }
@@ -66,14 +68,18 @@ namespace CatalogueManager.Menus
             ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
-        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
+        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None, ToolStripMenuItem addAsSubItemForThis = null)
         {
             var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
             
             if (shortcutKey != Keys.None)
                 mi.ShortcutKeys = shortcutKey;
-            
-            Items.Add(mi);
+
+            if (addAsSubItemForThis != null)
+                addAsSubItemForThis.DropDownItems.Add(mi);
+            else
+                Items.Add(mi);
+
             return mi;
         }
 

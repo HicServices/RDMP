@@ -9,10 +9,10 @@ namespace CatalogueManager.Menus
 {
     internal class LoadProgressMenu : RDMPContextMenuStrip
     {
-        public LoadProgressMenu(IActivateItems activator, LoadProgress loadProgress, RDMPCollectionCommonFunctionality collection) : base(activator,loadProgress, collection)
+        public LoadProgressMenu(RDMPContextMenuStripArgs args,LoadProgress loadProgress) : base(args,loadProgress)
         {
-            Add(new ExecuteCommandUnlockLockable(activator, loadProgress));
-            Add(new ExecuteCommandAddCachingSupportToLoadProgress(activator, loadProgress));
+            Add(new ExecuteCommandUnlockLockable(_activator, loadProgress));
+            Add(new ExecuteCommandAddCachingSupportToLoadProgress(_activator, loadProgress));
 
             AddCommonMenuItems();
 

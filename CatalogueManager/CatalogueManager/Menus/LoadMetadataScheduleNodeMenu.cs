@@ -9,10 +9,10 @@ namespace CatalogueManager.Menus
 {
     internal class LoadMetadataScheduleNodeMenu : RDMPContextMenuStrip
     {
-        public LoadMetadataScheduleNodeMenu(IActivateItems activator, LoadMetadataScheduleNode schedulingNode, RDMPCollectionCommonFunctionality collection) : base(activator,null, collection)
+        public LoadMetadataScheduleNodeMenu(RDMPContextMenuStripArgs args, LoadMetadataScheduleNode schedulingNode) : base(args,null)
         {
-            Add(new ExecuteCommandCreateNewLoadProgress(activator, schedulingNode.LoadMetadata));
-            Add(new ExecuteCommandCreateNewLoadPeriodically(activator, schedulingNode.LoadMetadata));
+            Add(new ExecuteCommandCreateNewLoadProgress(_activator, schedulingNode.LoadMetadata));
+            Add(new ExecuteCommandCreateNewLoadPeriodically(_activator, schedulingNode.LoadMetadata));
         }
 
     }

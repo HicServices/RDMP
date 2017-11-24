@@ -8,10 +8,10 @@ namespace CatalogueManager.Menus
 {
     public class AllRDMPRemotesNodeMenu : RDMPContextMenuStrip
     {
-        public AllRDMPRemotesNodeMenu(IActivateItems activator, AllRDMPRemotesNode node, RDMPCollectionCommonFunctionality collection)
-            : base(activator, null, collection)
+        public AllRDMPRemotesNodeMenu(RDMPContextMenuStripArgs args, AllRDMPRemotesNode node)
+            : base(args, null)
         {
-            Add(new ExecuteCommandCreateNewRemoteRDMP(activator));
+            Add(new ExecuteCommandCreateNewRemoteRDMP(_activator));
         }
     }
 }

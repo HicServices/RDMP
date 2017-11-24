@@ -30,8 +30,7 @@ namespace CohortManager.Menus
     {
         private CohortAggregateContainer _container;
 
-        public CohortAggregateContainerMenu(IActivateItems activator, CohortAggregateContainer container, RDMPCollectionCommonFunctionality collection)
-            : base( activator, container, collection)
+        public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container): base( args, container)
         {
             _container = container;
             var cic = _container.GetCohortIdentificationConfiguration();

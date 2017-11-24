@@ -204,21 +204,6 @@ namespace CatalogueManager.Collections
             base.Dispose(disposing);
         }
 
-        private void tlvCatalogues_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.N && e.Control)
-            {
-                var c = new Catalogue(RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(c));
-            }
-            
-            var cataItem = tlvCatalogues.SelectedObject as CatalogueItem;
-
-            if (cataItem != null)
-                new CatalogueItemMenu(_activator,cataItem, CommonFunctionality).HandleKeyPress(e);
-
-        }
-
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)

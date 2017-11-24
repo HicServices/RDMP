@@ -28,7 +28,7 @@ namespace DataExportManager.Menus
         private readonly SelectedDataSets _selectedDataSet;
         private ExtractionConfiguration _extractionConfiguration;
 
-        public SelectedDataSetsMenu(IActivateItems activator, SelectedDataSets selectedDataSet, RDMPCollectionCommonFunctionality collection): base(activator, selectedDataSet, collection)
+        public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet): base(args, selectedDataSet)
         {
             _selectedDataSet = selectedDataSet;
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
@@ -51,7 +51,7 @@ namespace DataExportManager.Menus
             Items.Add(graphs);
             ////////////////////////////////////////////////////////////////////
 
-            var addRootFilter = new ToolStripMenuItem("Add Filter Container", activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add) , (s, e) => AddFilterContainer());
+            var addRootFilter = new ToolStripMenuItem("Add Filter Container", _activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add) , (s, e) => AddFilterContainer());
             addRootFilter.Enabled = root == null;
             Items.Add(addRootFilter);
 

@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconProvision;
@@ -17,22 +18,22 @@ namespace CatalogueManager.Menus
     {
         private readonly ColumnInfo _columnInfo;
 
-        public ColumnInfoMenu(IActivateItems activator, ColumnInfo columnInfo, RDMPCollectionCommonFunctionality collection):base(activator,columnInfo, collection)
+        public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo)
+            : base(args, columnInfo)
         {
             _columnInfo = columnInfo;
 
             Items.Add("View Extract", null, (s,e)=> _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo,ViewType.TOP_100)));
             //create right click context menu
             Items.Add("View Aggreggate", null, (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.Aggregate)));
-
-
-            Items.Add(new AddLookupMenuItem(activator,"Configure new Lookup Table Relationship", null,columnInfo.TableInfo));
+            
+            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
 
             Items.Add(new ToolStripSeparator());
 
-            Items.Add(new AddJoinInfoMenuItem(activator, columnInfo.TableInfo));
+            Items.Add(new AddJoinInfoMenuItem(_activator, columnInfo.TableInfo));
 
-            var convertToANO = new ToolStripMenuItem("Configure ANO Transform", activator.CoreIconProvider.GetImage(RDMPConcept.ANOColumnInfo), (s, e) => activator.ActivateConvertColumnInfoIntoANOColumnInfo(columnInfo));
+            var convertToANO = new ToolStripMenuItem("Configure ANO Transform", _activator.CoreIconProvider.GetImage(RDMPConcept.ANOColumnInfo), (s, e) => _activator.ActivateConvertColumnInfoIntoANOColumnInfo(columnInfo));
 
             string reason;
             convertToANO.Enabled = _columnInfo.CouldSupportConvertingToANOColumnInfo(out reason);

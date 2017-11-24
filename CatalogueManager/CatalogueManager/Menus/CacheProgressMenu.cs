@@ -21,16 +21,17 @@ namespace CatalogueManager.Menus
     {
         private readonly CacheProgress _cacheProgress;
 
-        public CacheProgressMenu(IActivateItems activator, CacheProgress cacheProgress, RDMPCollectionCommonFunctionality collection) : base(activator,cacheProgress, collection)
+        public CacheProgressMenu(RDMPContextMenuStripArgs args, CacheProgress cacheProgress)
+            : base(args, cacheProgress)
         {
             _cacheProgress = cacheProgress;
             
-            Add(new ExecuteCommandExecuteCacheProgress(activator).SetTarget(cacheProgress));
+            Add(new ExecuteCommandExecuteCacheProgress(_activator).SetTarget(cacheProgress));
 
             var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
 
-            foreach (var window in activator.CoreChildProvider.AllPermissionWindows)
-                Add(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window));
+            foreach (var window in _activator.CoreChildProvider.AllPermissionWindows)
+                Add(new ExecuteCommandSetPermissionWindow(_activator, cacheProgress, window));
 
             setWindow.DropDownItems.Add(new ToolStripSeparator());
             
@@ -43,7 +44,7 @@ namespace CatalogueManager.Menus
             try
             {
                 Items.Add(new ChoosePipelineMenuItem(
-                    activator,
+                    _activator,
                     new PipelineUser(_cacheProgress),
                     new CachingPipelineUseCase(_cacheProgress,false, fetchRequest,false),
                     "Set Caching Pipeline")

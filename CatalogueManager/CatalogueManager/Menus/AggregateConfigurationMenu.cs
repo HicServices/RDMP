@@ -29,7 +29,7 @@ namespace CatalogueManager.Menus
     {
         private readonly AggregateConfiguration _aggregate;
 
-        public AggregateConfigurationMenu(IActivateItems activator, AggregateConfiguration aggregate, RDMPCollectionCommonFunctionality collection): base(activator, aggregate, collection)
+        public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
         {
             _aggregate = aggregate;
             

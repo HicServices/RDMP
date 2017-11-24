@@ -29,8 +29,8 @@ namespace DataExportManager.Menus
     {
         private readonly Project _project;
 
-        public ProjectMenu(IActivateItems activator, Project project, RDMPCollectionCommonFunctionality collection)
-            : base(activator,project, collection)
+        public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
+            : base(args,project)
         {
             _project = project;
             

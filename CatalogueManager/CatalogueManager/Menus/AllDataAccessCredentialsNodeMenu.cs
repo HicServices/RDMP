@@ -14,9 +14,9 @@ namespace CatalogueManager.Menus
 {
     internal class AllDataAccessCredentialsNodeMenu : RDMPContextMenuStrip
     {
-        public AllDataAccessCredentialsNodeMenu(IActivateItems activator, AllDataAccessCredentialsNode node, RDMPCollectionCommonFunctionality collection):base(activator,null, collection)
+        public AllDataAccessCredentialsNodeMenu(RDMPContextMenuStripArgs args, AllDataAccessCredentialsNode node): base(args, null)
         {
-            Items.Add("Add New Credentials", activator.CoreIconProvider.GetImage(RDMPConcept.DataAccessCredentials,OverlayKind.Add), (s, e) => AddCredentials());
+            Items.Add("Add New Credentials", _activator.CoreIconProvider.GetImage(RDMPConcept.DataAccessCredentials,OverlayKind.Add), (s, e) => AddCredentials());
         }
 
         private void AddCredentials()

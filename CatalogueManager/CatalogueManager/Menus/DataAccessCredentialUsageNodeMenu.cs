@@ -18,7 +18,7 @@ namespace CatalogueManager.Menus
 {
     public class DataAccessCredentialUsageNodeMenu : RDMPContextMenuStrip
     {
-        public DataAccessCredentialUsageNodeMenu(IActivateItems activator, DataAccessCredentialUsageNode node, RDMPCollectionCommonFunctionality collection):base(activator,null, collection)
+        public DataAccessCredentialUsageNodeMenu(RDMPContextMenuStripArgs args, DataAccessCredentialUsageNode node): base(args, null)
         {
             var setUsage = new ToolStripMenuItem("Set Context");
 
@@ -30,7 +30,7 @@ namespace CatalogueManager.Menus
             
             Items.Add(setUsage);
 
-            Add(new ExecuteCommandViewDependencies(node.Credentials,new CatalogueObjectVisualisation(activator.CoreIconProvider)));
+            Add(new ExecuteCommandViewDependencies(node.Credentials,new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
         }
 
         private void AddMenuItem(ToolStripMenuItem setUsage, DataAccessContext context, DataAccessCredentialUsageNode node)

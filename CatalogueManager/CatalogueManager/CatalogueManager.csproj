@@ -351,7 +351,12 @@
     </Compile>
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\AddCatalogueItemMenuItem.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\AddLookupMenuItem.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\AddSupportingDocumentMenuItem.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\AddSupportingSqlTableMenuItem.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
@@ -758,12 +763,7 @@
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
-    <Compile Include="Menus\MenuItems\AddAggregateMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AddJoinInfoMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddLookupMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddSupportingDocumentMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddSupportingSqlTableMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\AddCatalogueItemMenuItem.cs" />
     <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
@@ -774,6 +774,7 @@
     <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
     <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
+    <Compile Include="Menus\RDMPContextMenuStripArgs.cs" />
     <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -25,18 +25,18 @@ namespace CatalogueManager.Menus
         private readonly CatalogueItem _catalogueItem;
         private CatalogueItemClassification _classification;
 
-        public CatalogueItemMenu(IActivateItems activator, CatalogueItem catalogueItem, RDMPCollectionCommonFunctionality collection) :base(activator,catalogueItem, collection)
+        public CatalogueItemMenu(RDMPContextMenuStripArgs args, CatalogueItem catalogueItem): base(args, catalogueItem)
         {
             _catalogueItem = catalogueItem;
-            _classification = activator.CoreChildProvider.CatalogueItemClassifications[catalogueItem.ID];
+            _classification = _activator.CoreChildProvider.CatalogueItemClassifications[catalogueItem.ID];
 
-            Items.Add("Add Issue", activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemIssue,OverlayKind.Add),(s,e)=> AddIssue());
+            Items.Add("Add Issue", _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemIssue,OverlayKind.Add),(s,e)=> AddIssue());
 
             if (catalogueItem.ColumnInfo_ID == null)
-                Items.Add("Set Column Info (Currently MISSING)", activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo,OverlayKind.Problem),(s,e)=>SetColumnInfo(catalogueItem));
+                Items.Add("Set Column Info (Currently MISSING)", _activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem), (s, e) => SetColumnInfo(catalogueItem));
             else if (_classification.ExtractionInformation_ID == null)
                 //it does not yet have extractability
-                Items.Add("Add Extract Logic", activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation,OverlayKind.Add),(s, e) => AddExtractionInformation());
+                Items.Add("Add Extract Logic", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation, OverlayKind.Add), (s, e) => AddExtractionInformation());
 
             var importDescription = new ToolStripMenuItem("Import Description From Another CatalogueItem");
             

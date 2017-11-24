@@ -14,7 +14,7 @@ namespace CatalogueManager.Menus
 {
     public class AutomationServiceSlotMenu:RDMPContextMenuStrip
     {
-        public AutomationServiceSlotMenu(IActivateItems activator, AutomationServiceSlot slot, RDMPCollectionCommonFunctionality collection) : base(activator, slot, collection)
+        public AutomationServiceSlotMenu(RDMPContextMenuStripArgs args, AutomationServiceSlot slot): base(args, slot)
         {
             AddCommonMenuItems();
         }

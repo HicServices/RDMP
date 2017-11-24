@@ -10,12 +10,12 @@ namespace CatalogueManager.Menus
 {
     public class AllAutomationServerSlotsNodeMenu : RDMPContextMenuStrip
     {
-        public AllAutomationServerSlotsNodeMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity, RDMPCollectionCommonFunctionality collection)
-            : base(activator, null, collection)
+        public AllAutomationServerSlotsNodeMenu(RDMPContextMenuStripArgs args, AllAutomationServerSlotsNode databaseEntity)
+            : base(args, null)
         {
-            Add(new ExecuteCommandCreateNewAutomationSlot(activator));
+            Add(new ExecuteCommandCreateNewAutomationSlot(_activator));
 
-            Add(new ExecuteCommandPushToRemotes(activator));
+            Add(new ExecuteCommandPushToRemotes(_activator));
         }
     }
 }

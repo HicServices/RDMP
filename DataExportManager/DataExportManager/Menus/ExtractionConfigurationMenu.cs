@@ -46,11 +46,11 @@ namespace DataExportManager.Menus
 
         private IExtractableDataSet[] _importableDataSets;
 
-        public ExtractionConfigurationMenu(IActivateItems activator, ExtractionConfiguration extractionConfiguration, RDMPCollectionCommonFunctionality collection)
-            : base( activator,extractionConfiguration, collection)
+        public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
+            : base( args,extractionConfiguration)
         {
             _extractionConfiguration = extractionConfiguration;
-            _childProvider = (DataExportChildProvider) activator.CoreChildProvider;
+            _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
             
             var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
 
@@ -61,18 +61,18 @@ namespace DataExportManager.Menus
             string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";
 
 
-            var cohortMenuItem = new ToolStripMenuItem(message, activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Link), (s, e) => LinkCohortToExtractionConfiguration());
+            var cohortMenuItem = new ToolStripMenuItem(message, _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Link), (s, e) => LinkCohortToExtractionConfiguration());
             cohortMenuItem.Enabled = !extractionConfiguration.IsReleased;
             Items.Add(cohortMenuItem);
 
             /////////////////Add Datasets/////////////
-            var addDataSets = new ToolStripMenuItem("Add DataSet(s)", activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), (s, e) => AddDatasetsToConfiguration());
+            var addDataSets = new ToolStripMenuItem("Add DataSet(s)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), (s, e) => AddDatasetsToConfiguration());
             addDataSets.Enabled = !extractionConfiguration.IsReleased && _importableDataSets.Any();//not frozen and must be at least 1 dataset that is not in the configuration!
             Items.Add(addDataSets);
 
             if (_childProvider.AllPackages.Any())
             {
-                var addPackageMenuItem = new ToolStripMenuItem("Add DataSet Package", activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage));
+                var addPackageMenuItem = new ToolStripMenuItem("Add DataSet Package", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage));
                 foreach (ExtractableDataSetPackage package in _childProvider.AllPackages)
                 {
                     ExtractableDataSetPackage package1 = package;
@@ -96,7 +96,7 @@ namespace DataExportManager.Menus
             Items.Add(freeze);
 
             if (extractionConfiguration.IsReleased)
-                Add(new ExecuteCommandUnfreezeExtractionConfiguration(activator, extractionConfiguration));
+                Add(new ExecuteCommandUnfreezeExtractionConfiguration(_activator, extractionConfiguration));
             
             var clone = new ToolStripMenuItem("Clone Extraction", CatalogueIcons.CloneExtractionConfiguration,(s, e) => Clone());
             clone.Enabled = _datasets.Any();

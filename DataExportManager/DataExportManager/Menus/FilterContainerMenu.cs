@@ -24,7 +24,7 @@ namespace DataExportManager.Menus
         private readonly FilterContainer _filterContainer;
         private ExtractionFilter[] _importableFilters;
 
-        public FilterContainerMenu(IActivateItems activator, FilterContainer filterContainer, RDMPCollectionCommonFunctionality collection):base(activator,filterContainer, collection)
+        public FilterContainerMenu(RDMPContextMenuStripArgs args, FilterContainer filterContainer): base(args, filterContainer)
         {
             _filterContainer = filterContainer;
             
@@ -34,7 +34,7 @@ namespace DataExportManager.Menus
 
             Items.Add("Set Operation to " + operationTarget, null, (s, e) => FlipContainerOperation());
             
-            var addFilter = new ToolStripMenuItem("Add New Filter", activator.CoreIconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add));
+            var addFilter = new ToolStripMenuItem("Add New Filter", _activator.CoreIconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add));
             addFilter.DropDownItems.Add("Blank", null, (s, e) => AddBlankFilter());
             
             var import = new ToolStripMenuItem("From Catalogue", null, (s, e) => ImportFilter());
@@ -43,7 +43,7 @@ namespace DataExportManager.Menus
 
             Items.Add(addFilter);
 
-            Items.Add("Add SubContainer", activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add), (s, e) => AddSubcontainer());
+            Items.Add("Add SubContainer", _activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add), (s, e) => AddSubcontainer());
 
             AddCommonMenuItems();
         }

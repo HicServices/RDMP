@@ -8,9 +8,9 @@ namespace CohortManager.Menus
 {
     internal class JoinableCollectionNodeMenu : RDMPContextMenuStrip
     {
-        public JoinableCollectionNodeMenu(IActivateItems activator, JoinableCollectionNode patientIndexTablesNode, RDMPCollectionCommonFunctionality collection):base(activator,null, collection)
+        public JoinableCollectionNodeMenu(RDMPContextMenuStripArgs args, JoinableCollectionNode patientIndexTablesNode): base(args, null)
         {
-            Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(activator,patientIndexTablesNode.Configuration));
+            Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,patientIndexTablesNode.Configuration));
         }
 
     }
