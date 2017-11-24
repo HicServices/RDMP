@@ -181,13 +181,22 @@ namespace DataExportManager.Collections.Providers
             HashSet<object> children = new HashSet<object>();
             foreach (ProjectCohortIdentificationConfigurationAssociation association in AllProjectAssociatedCics.Where(assoc => assoc.Project_ID == projectCiCsNode.Project.ID))
             {
-                //inject knowledge of what the cic is so it doesn't have to be fetched during ToString
-                association.InjectKnownCohortIdentificationConfiguration(
-                    AllCohortIdentificationConfigurations.Single(
-                        cic => cic.ID == association.CohortIdentificationConfiguration_ID));
-                
-                //document that it is a child of the project cics node 
-                children.Add(association);
+
+                var matchingCic = AllCohortIdentificationConfigurations.SingleOrDefault(cic => cic.ID == association.CohortIdentificationConfiguration_ID);
+
+                if (matchingCic == null)
+                    _errorsCheckNotifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Failed to find Associated Cohort Identification Configuration with ID " +
+                            association.CohortIdentificationConfiguration_ID +
+                            " which was supposed to be associated with " + association.Project, CheckResult.Fail));//inject knowledge of what the cic is so it doesn't have to be fetched during ToString
+                else
+                {
+                    association.InjectKnownCohortIdentificationConfiguration(matchingCic);
+
+                    //document that it is a child of the project cics node 
+                    children.Add(association);
+                }
             }
 
             AddToDictionaries(children, descendancy);

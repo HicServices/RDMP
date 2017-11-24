@@ -72,7 +72,7 @@ namespace DataExportLibrary.Data
 
         public object MasqueradingAs()
         {
-            return CohortIdentificationConfiguration;
+            return GetCohortIdentificationConfigurationCached();
         }
 
         public CohortIdentificationConfiguration GetCohortIdentificationConfigurationCached()

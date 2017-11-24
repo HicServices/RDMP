@@ -19,6 +19,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
@@ -91,6 +92,9 @@ namespace DataExportManager.Collections
         
         private string CellToolTipGetter(OLVColumn column, object modelObject)
         {
+            if (_problemProvider == null)
+                return null;
+
             var project = modelObject as Project;
             var config = modelObject as ExtractionConfiguration;
 
@@ -151,17 +155,25 @@ namespace DataExportManager.Collections
             //with a UsedByProjectNode class which encapsulates the object being used (e.g. the cohort) but also the Project.  Now that solves the HashCode problem but
             //it doesn't solve the refresh problem where we get told to refresh the ExtractableCohort but we miss out the project users.  So let's refresh them now.
             if(_childProvider != null)
+            {
                 foreach (IObjectUsedByProjectNode user in _childProvider.DuplicateObjectsButUsedByProjects.Where(d => d.ObjectBeingUsed.Equals(e.Object)).ToArray())
                     tlvDataExport.RefreshObject(user.Project);//refresh the entire Project
-            
+
+                foreach (ProjectCohortIdentificationConfigurationAssociation assoc in _childProvider.AllProjectAssociatedCics.Where(d => d.GetCohortIdentificationConfigurationCached().Equals(e.Object)).ToArray())
+                    tlvDataExport.RefreshObject(assoc.Project);//refresh linked cic
+            }
         }
 
 
         private void RefreshProviders()
         {
             _childProvider = _activator.CoreChildProvider as DataExportChildProvider;
-            _problemProvider = new DataExportProblemProvider(_childProvider);
-            _problemProvider.FindProblems();
+
+            if (_childProvider != null)
+            {
+                _problemProvider = new DataExportProblemProvider(_childProvider);
+                _problemProvider.FindProblems();
+            }
         }
 
         private void tlvDataExport_KeyUp(object sender, KeyEventArgs e)
