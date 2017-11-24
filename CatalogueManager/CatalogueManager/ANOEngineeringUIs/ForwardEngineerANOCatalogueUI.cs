@@ -11,9 +11,12 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using LoadModules.Generic.Attachers;
+using LoadModules.Generic.LoadProgressUpdating;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
 
@@ -327,21 +330,50 @@ namespace CatalogueManager.ANOEngineeringUIs
                 var engine = new ForwardEngineerANOCatalogueEngine(_activator.RepositoryLocator.CatalogueRepository, _planManager);
                 engine.Execute();
 
-                if(engine.NewCatalogue != null)
+                if(engine.NewCatalogue != null && engine.LoadMetadata != null)
                 {
-
+                    foreach (KeyValuePair<TableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
+                        CreateAttacher(sqls.Key, sqls.Value, engine.LoadMetadata, engine.LoadProgressIfAny);
+                    
                     Publish(engine.NewCatalogue);
 
                     if(MessageBox.Show("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        ParentForm.Close();
+                        _activator.WindowArranger.SetupEditLoadMetadata(this,engine.LoadMetadata);
                 }
                 else
-                    throw new Exception("Engine did not create a NewCatalogue...");
+                    throw new Exception("Engine did not create a NewCatalogue/LoadMetadata");
             }
             catch (Exception ex)
             {
                 ExceptionViewer.Show(ex);
             }
+        }
+
+        private void CreateAttacher(TableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
+        {
+            var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
+            pt.CreateArgumentsForClassIfNotExists<RemoteSqlServerTableAttacher>();
+
+            pt.SetArgumentValue("RemoteServer", t.Server);
+            pt.SetArgumentValue("RemoteDatabaseName", t.Database);
+            pt.SetArgumentValue("RemoteTableName", t.GetRuntimeName());
+
+            pt.SetArgumentValue("RemoteSelectSQL", qb.SQL);
+
+            pt.SetArgumentValue("RAWTableName", t.GetRuntimeName(LoadBubble.Raw));
+
+            if(loadProgressIfAny != null)
+            {
+                pt.SetArgumentValue("Progress", loadProgressIfAny);
+//                pt.SetArgumentValue("ProgressUpdateStrategy", DataLoadProgressUpdateStrategy.UseMaxRequestedDay);
+                pt.SetArgumentValue("LoadNotRequiredIfNoRowsRead",true);
+            }
+
+            /*
+
+        [DemandsInitialization("Indicates how you want to update the Progress.DataLoadProgress value on successful load batches (only required if you have a LoadProgress)")]
+        public DataLoadProgressUpdateInfo { get; set; }
+            */
         }
 
         private void ddDateColumn_SelectedIndexChanged(object sender, EventArgs e)

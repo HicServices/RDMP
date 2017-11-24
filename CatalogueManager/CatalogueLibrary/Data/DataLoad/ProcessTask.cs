@@ -371,6 +371,16 @@ namespace CatalogueLibrary.Data.DataLoad
         {
             return ProcessTaskType == ProcessTaskType.Attacher || ProcessTaskType == ProcessTaskType.MutilateDataTable || ProcessTaskType == ProcessTaskType.DataProvider;
         }
+
+        public void SetArgumentValue(string parameterName, object o)
+        {
+            var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName));
+            if (matchingArgument == null)
+                throw new Exception("Could not find a ProcessTaskArgument called '" + parameterName + "', have you called CreateArgumentsForClassIfNotExists<T> yet?");
+
+            matchingArgument.SetValue(o);
+            matchingArgument.SaveToDatabase();
+        }
     }
 
     public enum ProcessTaskType

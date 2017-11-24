@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -19,6 +21,10 @@ namespace CatalogueLibrary.ANOEngineering
         private readonly ICatalogueRepository _catalogueRepository;
         private readonly ForwardEngineerANOCataloguePlanManager _planManager;
         public Catalogue NewCatalogue { get; private set; }
+        public LoadMetadata LoadMetadata { get; private set; }
+        public LoadProgress LoadProgressIfAny { get; set; }
+
+        public Dictionary<TableInfo, QueryBuilder> SelectSQLForMigrations = new Dictionary<TableInfo, QueryBuilder>();
 
         public ForwardEngineerANOCatalogueEngine(ICatalogueRepository catalogueRepository,ForwardEngineerANOCataloguePlanManager planManager)
         {
@@ -39,6 +45,8 @@ namespace CatalogueLibrary.ANOEngineering
 
                         Dictionary<string, ColumnInfo> migratedColumns = new Dictionary<string, ColumnInfo>();
 
+                        var querybuilderForMigratingTable = new QueryBuilder(null, null);
+
                         //for each column we are not skipping (Drop) work out the endpoint datatype (planner knows this)
                         foreach (ColumnInfo columnInfo in t.ColumnInfos)
                         {
@@ -46,8 +54,11 @@ namespace CatalogueLibrary.ANOEngineering
 
                             if (columnPlan != ForwardEngineerANOCataloguePlanManager.Plan.Drop)
                             {
-                                string colName = columnInfo.GetRuntimeName();
+                                //add the column verbatim to the query builder because we know we have to read it from source
+                                querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(columnInfo));
 
+                                string colName = columnInfo.GetRuntimeName();
+                                
                                 //if it is being ano tabled then give the table name ANO as a prefix
                                 if (columnPlan == ForwardEngineerANOCataloguePlanManager.Plan.ANO)
                                     colName = "ANO" + colName;
@@ -57,6 +68,8 @@ namespace CatalogueLibrary.ANOEngineering
                                 columnsToCreate.Add(new DatabaseColumnRequest(colName, _planManager.GetEndpointDataType(columnInfo), !columnInfo.IsPrimaryKey));
                             }
                         }
+
+                        SelectSQLForMigrations.Add(t, querybuilderForMigratingTable);
 
                         //Create the actual table
                         var tbl = _planManager.TargetDatabase.CreateTable(t.GetRuntimeName(), columnsToCreate.ToArray());
@@ -93,7 +106,7 @@ namespace CatalogueLibrary.ANOEngineering
                     NewCatalogue.SaveToDatabase();
 
                     AuditParenthood(_planManager.Catalogue, NewCatalogue);
-
+                    
                     foreach (CatalogueItem oldCatalogueItem in _planManager.Catalogue.CatalogueItems)
                     {
                         var col = oldCatalogueItem.ColumnInfo;
@@ -145,18 +158,36 @@ namespace CatalogueLibrary.ANOEngineering
                     }
 
                     //create new data load confguration
-                    var lmd = new LoadMetadata(_catalogueRepository, "Anonymising " + NewCatalogue);
-                    lmd.EnsureLoggingWorksFor(NewCatalogue);
+                    LoadMetadata = new LoadMetadata(_catalogueRepository, "Anonymising " + NewCatalogue);
+                    LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);
 
-                    NewCatalogue.LoadMetadata_ID = lmd.ID;
+                    NewCatalogue.LoadMetadata_ID = LoadMetadata.ID;
                     NewCatalogue.SaveToDatabase();
-
-                    //todo add a RemoteSqlServerTableAttacher to the dle configuration
 
                     if (_planManager.DateColumn != null)
                     {
-                        var lp = new LoadProgress(_catalogueRepository, lmd);
+                        LoadProgressIfAny = new LoadProgress(_catalogueRepository, LoadMetadata);
+                        LoadProgressIfAny.OriginDate = _planManager.StartDate;
+                        LoadProgressIfAny.SaveToDatabase();
 
+                        //date column based migration only works for single TableInfo migrations (see Plan Manager checks)
+                        var qb = SelectSQLForMigrations.Single().Value;
+                        qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,
+                            new[]
+                            {
+                                new SpontaneouslyInventedFilter(null,_planManager.DateColumn + " >= @startDate","After batch start date","",null),
+                                new SpontaneouslyInventedFilter(null,_planManager.DateColumn + " <= @endDate","Before batch end date","",null),
+                            }
+                            ,FilterContainerOperation.AND);
+                    }
+                    try
+                    {
+                        foreach (QueryBuilder qb in SelectSQLForMigrations.Values)
+                            Console.WriteLine(qb.SQL);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Failed to generate migration SQL",e);
                     }
 
                     _catalogueRepository.EndTransactedConnection(true);

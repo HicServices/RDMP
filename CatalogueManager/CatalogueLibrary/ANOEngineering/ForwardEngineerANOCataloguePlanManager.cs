@@ -231,6 +231,15 @@ namespace CatalogueLibrary.ANOEngineering
                 if(GetPlanForColumnInfo(DateColumn) != Plan.PassThroughUnchanged)
                     if(notifier.OnCheckPerformed(new CheckEventArgs("Plan for " + DateColumn + " must be PassThroughUnchanged",CheckResult.Fail,null,"Set plan to PassThroughUnchanged")))
                         SetPlan(DateColumn,Plan.PassThroughUnchanged);
+
+                var usedTables = TableInfos.Except(SkippedTables).Count();
+                
+                if (usedTables > 1)
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "You cannot have a date based migration because you are trying to migrate " + usedTables +
+                            " TableInfos at once", CheckResult.Fail));
+
             }
         }
 
