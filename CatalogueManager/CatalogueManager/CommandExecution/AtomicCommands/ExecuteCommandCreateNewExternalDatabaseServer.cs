@@ -27,6 +27,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             _databaseAssembly = databaseAssembly;
             _defaultToSet = defaultToSet;
+
+            //do we already have a default server for this?
+            var defaults = new ServerDefaults(Activator.RepositoryLocator.CatalogueRepository);
+            var existingDefault = defaults.GetDefaultFor(_defaultToSet);
+            
+            if(existingDefault != null)
+                SetImpossible("There is already an existing " + _defaultToSet + " database");
         }
 
         public override string GetCommandName()
@@ -39,32 +46,17 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
             
             //user wants to create a new server e.g. a new Logging server
-
-            //do we already have a default server for this?
-            var defaults = new ServerDefaults(Activator.RepositoryLocator.CatalogueRepository);
-            var existingDefault = defaults.GetDefaultFor(_defaultToSet);
-
+            
             //create the new server
             ServerCreatedIfAny = CreatePlatformDatabase.CreateNewExternalServer(
                 Activator.RepositoryLocator.CatalogueRepository,
-
-                //if we already have an existing default of this type then don't set the default yet
-                existingDefault != null ? ServerDefaults.PermissableDefaults.None : _defaultToSet,
+                _defaultToSet,
                 _databaseAssembly);
 
             //user cancelled creating a server
             if (ServerCreatedIfAny == null)
                 return;
-
-            if (existingDefault != null)
-            {
-                if (MessageBox.Show(
-                    "Would you like the new default '" + _defaultToSet +
-                    "' server to the newly created server? The current default is '" + existingDefault + "'",
-                    "Overwrite Default", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    defaults.SetDefault(_defaultToSet, ServerCreatedIfAny);
-            }
-
+            
             Publish(ServerCreatedIfAny);
         }
 

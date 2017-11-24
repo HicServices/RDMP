@@ -29,6 +29,7 @@ namespace CatalogueLibrary.ANOEngineering
         public TableInfo[] TableInfos { get; private set; }
 
         public DiscoveredDatabase TargetDatabase { get; set; }
+        public ColumnInfo DateColumn { get; set; }
 
         public HashSet<TableInfo> SkippedTables = new HashSet<TableInfo>();
 
@@ -222,6 +223,13 @@ namespace CatalogueLibrary.ANOEngineering
                         notifier.OnCheckPerformed(new CheckEventArgs("Could not determine endpoint data type for ColumnInfo '" + kvp.Key + "'", CheckResult.Fail,e));
                     }
                 }
+            }
+
+            if (DateColumn != null)
+            {
+                if(GetPlanForColumnInfo(DateColumn) != Plan.PassThroughUnchanged)
+                    if(notifier.OnCheckPerformed(new CheckEventArgs("Plan for " + DateColumn + " must be PassThroughUnchanged",CheckResult.Fail,null,"Set plan to PassThroughUnchanged")))
+                        SetPlan(DateColumn,Plan.PassThroughUnchanged);
             }
         }
 

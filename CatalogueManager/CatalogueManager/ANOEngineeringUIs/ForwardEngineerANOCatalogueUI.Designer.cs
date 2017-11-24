@@ -33,6 +33,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForwardEngineerANOCatalogueUI));
             this.gbTables = new System.Windows.Forms.GroupBox();
+            this.ddDateColumn = new System.Windows.Forms.ComboBox();
+            this.cbDateBasedLoad = new System.Windows.Forms.CheckBox();
             this.tbMandatory = new System.Windows.Forms.Label();
             this.tlvTableInfoMigrations = new BrightIdeasSoftware.TreeListView();
             this.olvTableInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -50,12 +52,12 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvSuffix = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumberOfDigits = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumberOfCharacters = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.btnRefreshChecks = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.gbTables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -68,15 +70,41 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbTables.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbTables.Controls.Add(this.ddDateColumn);
+            this.gbTables.Controls.Add(this.cbDateBasedLoad);
             this.gbTables.Controls.Add(this.tbMandatory);
             this.gbTables.Controls.Add(this.tlvTableInfoMigrations);
             this.gbTables.Controls.Add(this.label1);
             this.gbTables.Location = new System.Drawing.Point(3, 464);
             this.gbTables.Name = "gbTables";
-            this.gbTables.Size = new System.Drawing.Size(942, 258);
+            this.gbTables.Size = new System.Drawing.Size(942, 315);
             this.gbTables.TabIndex = 0;
             this.gbTables.TabStop = false;
             this.gbTables.Text = "Table Migration";
+            // 
+            // ddDateColumn
+            // 
+            this.ddDateColumn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ddDateColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddDateColumn.Enabled = false;
+            this.ddDateColumn.FormattingEnabled = true;
+            this.ddDateColumn.Location = new System.Drawing.Point(244, 289);
+            this.ddDateColumn.Name = "ddDateColumn";
+            this.ddDateColumn.Size = new System.Drawing.Size(494, 21);
+            this.ddDateColumn.TabIndex = 6;
+            this.ddDateColumn.SelectedIndexChanged += new System.EventHandler(this.ddDateColumn_SelectedIndexChanged);
+            // 
+            // cbDateBasedLoad
+            // 
+            this.cbDateBasedLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbDateBasedLoad.AutoSize = true;
+            this.cbDateBasedLoad.Location = new System.Drawing.Point(90, 292);
+            this.cbDateBasedLoad.Name = "cbDateBasedLoad";
+            this.cbDateBasedLoad.Size = new System.Drawing.Size(159, 17);
+            this.cbDateBasedLoad.TabIndex = 5;
+            this.cbDateBasedLoad.Text = "Load Data In Date Batches:";
+            this.cbDateBasedLoad.UseVisualStyleBackColor = true;
+            this.cbDateBasedLoad.CheckedChanged += new System.EventHandler(this.cbDateBasedLoad_CheckedChanged);
             // 
             // tbMandatory
             // 
@@ -84,7 +112,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tbMandatory.BackColor = System.Drawing.Color.LightCyan;
             this.tbMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tbMandatory.Location = new System.Drawing.Point(7, 232);
+            this.tbMandatory.Location = new System.Drawing.Point(7, 289);
             this.tbMandatory.Name = "tbMandatory";
             this.tbMandatory.Size = new System.Drawing.Size(20, 20);
             this.tbMandatory.TabIndex = 4;
@@ -110,7 +138,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.Location = new System.Drawing.Point(3, 19);
             this.tlvTableInfoMigrations.Name = "tlvTableInfoMigrations";
             this.tlvTableInfoMigrations.ShowGroups = false;
-            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(936, 210);
+            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(936, 267);
             this.tlvTableInfoMigrations.SmallImageList = this.imageList1;
             this.tlvTableInfoMigrations.TabIndex = 0;
             this.tlvTableInfoMigrations.UseCellFormatEvents = true;
@@ -160,7 +188,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(28, 236);
+            this.label1.Location = new System.Drawing.Point(28, 293);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 13);
             this.label1.TabIndex = 4;
@@ -250,15 +278,6 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvNumberOfCharacters.Text = "Number of characters";
             this.olvNumberOfCharacters.Width = 120;
             // 
-            // rdmpObjectsRibbonUI1
-            // 
-            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
-            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
-            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
-            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(948, 22);
-            this.rdmpObjectsRibbonUI1.TabIndex = 3;
-            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
@@ -307,6 +326,15 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.label3.TabIndex = 69;
             this.label3.Text = "Check";
             // 
+            // rdmpObjectsRibbonUI1
+            // 
+            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
+            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
+            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
+            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(948, 22);
+            this.rdmpObjectsRibbonUI1.TabIndex = 3;
+            // 
             // ForwardEngineerANOCatalogueUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -321,7 +349,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.Controls.Add(this.gbTables);
             this.Controls.Add(this.gbANOTransforms);
             this.Name = "ForwardEngineerANOCatalogueUI";
-            this.Size = new System.Drawing.Size(948, 725);
+            this.Size = new System.Drawing.Size(948, 782);
             this.gbTables.ResumeLayout(false);
             this.gbTables.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).EndInit();
@@ -360,5 +388,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private System.Windows.Forms.Button btnExecute;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox cbDateBasedLoad;
+        private System.Windows.Forms.ComboBox ddDateColumn;
     }
 }

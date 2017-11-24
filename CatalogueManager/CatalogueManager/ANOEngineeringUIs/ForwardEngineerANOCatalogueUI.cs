@@ -248,6 +248,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             tlvTableInfoMigrations.AddObjects(_planManager.TableInfos);
             tlvTableInfoMigrations.ExpandAll();
 
+            ddDateColumn.DataSource =_planManager.TableInfos.SelectMany(t => t.ColumnInfos).Where(c => c.Data_type != null && c.Data_type.Contains("date")).ToArray();
+
             Check();
         }
 
@@ -332,14 +334,23 @@ namespace CatalogueManager.ANOEngineeringUIs
                 }
                 else
                     throw new Exception("Engine did not create a NewCatalogue...");
-
-                
-
             }
             catch (Exception ex)
             {
                 ExceptionViewer.Show(ex);
             }
+        }
+
+        private void ddDateColumn_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _planManager.DateColumn = ddDateColumn.SelectedItem as ColumnInfo;
+        }
+
+        private void cbDateBasedLoad_CheckedChanged(object sender, EventArgs e)
+        {
+            ddDateColumn.Enabled = cbDateBasedLoad.Checked;
+            _planManager.DateColumn = cbDateBasedLoad.Checked ? ddDateColumn.SelectedItem as ColumnInfo : null;
+            Check();
         }
     }
 
