@@ -74,7 +74,12 @@ namespace CatalogueLibrary.Data
 
         public bool LocalObjectStillExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            return repositoryLocator.GetArbitraryDatabaseObject(RepositoryTypeName, LocalTypeName, LocalObjectID) != null;
+            return repositoryLocator.ArbitraryDatabaseObjectExists(RepositoryTypeName, LocalTypeName, LocalObjectID);
+        }
+
+        public IMapsDirectlyToDatabaseTable GetLocalObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            return repositoryLocator.GetArbitraryDatabaseObject(RepositoryTypeName, LocalTypeName, LocalObjectID);
         }
     }
 }

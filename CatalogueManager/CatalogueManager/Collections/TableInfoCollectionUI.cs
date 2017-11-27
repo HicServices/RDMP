@@ -129,19 +129,6 @@ namespace CatalogueManager.Collections
 
         private void olvTableInfos_KeyUp(object sender, KeyEventArgs e)
         {
-            
-            if (e.KeyCode == Keys.Delete)
-            {
-                var credentialUsage = tlvTableInfos.SelectedObject as DataAccessCredentialUsageNode;
-
-                if(credentialUsage != null)
-                    if(MessageBox.Show("Are you sure you want to remove usage rights under Context " + credentialUsage.Context + " for TableInfo " + credentialUsage.TableInfo,"Revoke Usage Permission",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.BreakLinkBetween(credentialUsage.Credentials, credentialUsage.TableInfo, credentialUsage.Context);
-                        _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(credentialUsage.TableInfo));
-
-                    }
-            }
             if (e.KeyCode == Keys.C && e.Control && tlvTableInfos.SelectedObject != null)
             {
                 Clipboard.SetText(tlvTableInfos.SelectedObject.ToString());

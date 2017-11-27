@@ -12,7 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable.ObjectSharing;
+using CatalogueLibrary.Repositories.Sharing;
 using Newtonsoft.Json;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Serialization;

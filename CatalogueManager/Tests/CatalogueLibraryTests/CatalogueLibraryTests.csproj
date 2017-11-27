@@ -263,7 +263,7 @@
     <Compile Include="Integration\GetDatabaseDiagramBinaryTest.cs" />
     <Compile Include="Integration\GovernanceTests.cs" />
     <Compile Include="Integration\HangingConnectionTest.cs" />
-    <Compile Include="Integration\ObscureDependencyTests\SharedObjectsObscureDependencyFinderTest.cs" />
+    <Compile Include="Integration\ObscureDependencyTests\ObjectSharingObscureDependencyFinderTests.cs" />
     <Compile Include="Integration\PerformanceImprovementTests.cs" />
     <Compile Include="Integration\MEFCheckerTests.cs" />
     <Compile Include="Integration\ObscureDependencyTests\BetweenCatalogueAndDataExportObscureDependencyFinderTests.cs" />

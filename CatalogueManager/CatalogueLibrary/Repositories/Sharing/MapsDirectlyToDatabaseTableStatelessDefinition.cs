@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MapsDirectlyToDatabaseTable;
 
-namespace MapsDirectlyToDatabaseTable.ObjectSharing
+namespace CatalogueLibrary.Repositories.Sharing
 {
     [Serializable]
     public class MapsDirectlyToDatabaseTableStatelessDefinition

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
 using Tests.Common;
@@ -12,6 +13,14 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
 {
     public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     {
+        private ShareManager _share;
+
+        [SetUp]
+        public void StoreShareManager()
+        {
+            _share = RepositoryLocator.CatalogueRepository.ShareManager;
+        }
+
         [Test]
         public void TestPruning()
         {
@@ -22,11 +31,11 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
             var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 
             Assert.AreEqual(CatalogueRepository.GetAllObjects<ObjectExport>().Count(), 0);
-            var ec = CatalogueRepository.GetExportFor(c);
-            var eci = CatalogueRepository.GetExportFor(ci);
+            var ec = _share.GetExportFor(c);
+            var eci = _share.GetExportFor(ci);
 
-            CatalogueRepository.GetImportAs(ec.SharingUID, c2);
-            CatalogueRepository.GetImportAs(eci.SharingUID, ci2);
+            _share.GetImportAs(ec.SharingUID, c2);
+            _share.GetImportAs(eci.SharingUID, ci2);
             
             Assert.AreEqual(2,CatalogueRepository.GetAllObjects<ObjectExport>().Count());
             Assert.AreEqual(2,CatalogueRepository.GetAllObjects<ObjectImport>().Count());
@@ -41,8 +50,8 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
 
             //now that we deleted the import it should have deleted everything else including the CatalogueItem import which magically disapeared when we deleted the Catalogue via database level cascade events
             Assert.AreEqual(0,CatalogueRepository.GetAllObjects<ObjectImport>().Count());
-            
-            CatalogueRepository.GetImportAs(eci.SharingUID, ci2);
+
+            _share.GetImportAs(eci.SharingUID, ci2);
         }
 
         [Test]
@@ -50,13 +59,13 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
         {
             //create a test catalogue
             Catalogue c = new Catalogue(CatalogueRepository,"blah");
-            
-            Assert.IsFalse(CatalogueRepository.IsExportedObject(c));
+
+            Assert.IsFalse(_share.IsExportedObject(c));
 
             //make it exportable
-            var exportDefinition = CatalogueRepository.GetExportFor(c);
-            
-            Assert.IsTrue(CatalogueRepository.IsExportedObject(c));
+            var exportDefinition = _share.GetExportFor(c);
+
+            Assert.IsTrue(_share.IsExportedObject(c));
 
             //cannot delete because object is shared externally
             Assert.Throws<Exception>(c.DeleteInDatabase);
@@ -65,7 +74,7 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
             exportDefinition.DeleteInDatabase();
 
             //no longer shared
-            Assert.IsFalse(CatalogueRepository.IsExportedObject(c));
+            Assert.IsFalse(_share.IsExportedObject(c));
 
             //now we can delete it
             c.DeleteInDatabase();
@@ -76,11 +85,11 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
         {
             Project p = new Project(DataExportRepository, "prah");
 
-            var exportDefinition = CatalogueRepository.GetExportFor(p);
+            var exportDefinition = _share.GetExportFor(p);
 
             Project p2 = new Project(DataExportRepository, "prah2");
 
-            var importDefinition = CatalogueRepository.GetImportAs(exportDefinition.SharingUID, p2);
+            var importDefinition = _share.GetImportAs(exportDefinition.SharingUID, p2);
 
             //import definition exists
             Assert.IsTrue(importDefinition.Exists());

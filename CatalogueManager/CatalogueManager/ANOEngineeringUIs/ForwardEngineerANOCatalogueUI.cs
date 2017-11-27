@@ -352,6 +352,10 @@ namespace CatalogueManager.ANOEngineeringUIs
         private void CreateAttacher(TableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
         {
             var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
+            pt.ProcessTaskType = ProcessTaskType.Attacher;
+            pt.Name = "Read from " + t;
+            pt.SaveToDatabase();
+
             pt.CreateArgumentsForClassIfNotExists<RemoteSqlServerTableAttacher>();
 
             pt.SetArgumentValue("RemoteServer", t.Server);
@@ -378,7 +382,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void ddDateColumn_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _planManager.DateColumn = ddDateColumn.SelectedItem as ColumnInfo;
+            _planManager.DateColumn = cbDateBasedLoad.Checked ? ddDateColumn.SelectedItem as ColumnInfo : null;
         }
 
         private void cbDateBasedLoad_CheckedChanged(object sender, EventArgs e)
@@ -392,7 +396,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void tbStartDate_TextChanged(object sender, EventArgs e)
         {
-            _planManager.StartDate = GetStartDate();
+            _planManager.StartDate = cbDateBasedLoad.Checked ? GetStartDate():null;
         }
 
         private DateTime? GetStartDate()

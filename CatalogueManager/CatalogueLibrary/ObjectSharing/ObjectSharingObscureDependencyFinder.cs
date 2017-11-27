@@ -21,7 +21,7 @@ namespace CatalogueLibrary.ObjectSharing
 
         public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            if(_repositoryLocator.CatalogueRepository.IsExportedObject(oTableWrapperObject))
+            if(_repositoryLocator.CatalogueRepository.ShareManager.IsExportedObject(oTableWrapperObject))
                 throw new Exception("You cannot Delete '" + oTableWrapperObject + "' because it is an Exported object declared in the ObjectExport table");
         }
 

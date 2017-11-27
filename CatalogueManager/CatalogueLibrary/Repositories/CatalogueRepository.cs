@@ -27,6 +27,7 @@ namespace CatalogueLibrary.Repositories
         public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
         public JoinInfoFinder JoinInfoFinder { get; set; }
         public MEF MEF { get; set; }
+        public ShareManager ShareManager { get; set; }
 
         readonly ObjectConstructor _constructor = new ObjectConstructor();
         
@@ -46,6 +47,7 @@ namespace CatalogueLibrary.Repositories
             PasswordEncryptionKeyLocation = new PasswordEncryptionKeyLocation(this);
             JoinInfoFinder = new JoinInfoFinder(this);
             MEF = new MEF(this);
+            ShareManager = new ShareManager(this);
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
 
@@ -403,30 +405,6 @@ Catalogue_ID asc,
 
                 return classifications;
             }
-        }
-
-        public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
-        {
-            return GetAllObjects<ObjectExport>("WHERE ObjectID = " + o.ID + " AND ObjectTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
-        }
-
-
-        public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
-        {
-            return GetAllObjects<ObjectImport>("WHERE LocalObjectID = " + o.ID + " AND LocalTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
-        }
-
-        public ObjectExport GetExportFor(IMapsDirectlyToDatabaseTable o)
-        {
-            var existing = GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
-
-            return existing ?? new ObjectExport(this, o);
-        }
-        public ObjectImport GetImportAs(string sharingUID,IMapsDirectlyToDatabaseTable o)
-        {
-            var existing = GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsImportedObject(o));
-
-            return existing ?? new ObjectImport(this,sharingUID,o);
         }
 
     }

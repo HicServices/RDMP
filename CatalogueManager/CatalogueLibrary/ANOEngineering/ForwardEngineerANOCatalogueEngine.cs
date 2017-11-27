@@ -205,10 +205,10 @@ namespace CatalogueLibrary.ANOEngineering
         private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
         {
             //make it shareable
-            var export = _catalogueRepository.GetExportFor(parent);
+            var export = _catalogueRepository.ShareManager.GetExportFor(parent);
 
             //share it to yourself where the child is the realisation of the share (this creates relationship in database)
-            var import = _catalogueRepository.GetImportAs(export.SharingUID, child);
+            var import = _catalogueRepository.ShareManager.GetImportAs(export.SharingUID, child);
 
             //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);

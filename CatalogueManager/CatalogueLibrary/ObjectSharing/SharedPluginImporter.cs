@@ -7,7 +7,8 @@ using System.Runtime.Remoting.Proxies;
 using System.Runtime.Serialization.Formatters.Binary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
-using MapsDirectlyToDatabaseTable.ObjectSharing;
+using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Sharing;
 using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
 
@@ -52,9 +53,9 @@ namespace CatalogueLibrary.ObjectSharing
             }
         }
 
-        public Plugin Import(SharedObjectImporter importer, ICheckNotifier collisionsAndSuggestions)
+        public Plugin Import(CatalogueRepository targetRepository, ICheckNotifier collisionsAndSuggestions)
         {
-            var collision = importer.TargetRepository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(_plugin.Properties["Name"]));
+            var collision = targetRepository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(_plugin.Properties["Name"]));
 
             if (collision != null)
             {
@@ -93,7 +94,7 @@ namespace CatalogueLibrary.ObjectSharing
                     foreach (var newNotArrivedYet in _lma)
                     {
                         newNotArrivedYet.Properties["Plugin_ID"] = collision.ID;
-                        importer.ImportObject(newNotArrivedYet);
+                        targetRepository.ShareManager.ImportObject(newNotArrivedYet,null);
                     }
 
                     //it was an update to an existing one so return the existing one
@@ -105,13 +106,13 @@ namespace CatalogueLibrary.ObjectSharing
             }
             
             //import the plugin (now that it has a unique name or never collided in the first place)
-            var newPlugin = (Plugin)importer.ImportObject(_plugin);
+            var newPlugin = (Plugin)targetRepository.ShareManager.ImportObject(_plugin,null);
             var newPluginID = newPlugin.ID;
 
             foreach (var definition in _lma)
             {
                 definition.Properties["Plugin_ID"] = newPluginID;
-                importer.ImportObject(definition);
+                targetRepository.ShareManager.ImportObject(definition,null);
             }
 
             return newPlugin;

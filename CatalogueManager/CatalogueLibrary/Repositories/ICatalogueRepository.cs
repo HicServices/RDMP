@@ -16,6 +16,7 @@ namespace CatalogueLibrary.Repositories
         PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
         JoinInfoFinder JoinInfoFinder { get; set; }
         MEF MEF { get; set; }
+        ShareManager ShareManager { get; set; }
         IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase);
 
         /// <summary>
@@ -62,9 +63,5 @@ namespace CatalogueLibrary.Repositories
 
         Catalogue[] GetAllAutomationLockedCatalogues();
         
-        ObjectExport GetExportFor(IMapsDirectlyToDatabaseTable o);
-        ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o);
-        bool IsExportedObject(IMapsDirectlyToDatabaseTable o);
-        bool IsImportedObject(IMapsDirectlyToDatabaseTable o);
     }
 }
