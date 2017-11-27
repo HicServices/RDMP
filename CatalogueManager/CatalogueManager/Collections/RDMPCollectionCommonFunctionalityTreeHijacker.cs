@@ -1,3 +1,4 @@
+using System.Windows.Forms;
 using BrightIdeasSoftware;
 
 namespace CatalogueManager.Collections
@@ -8,17 +9,29 @@ namespace CatalogueManager.Collections
     /// </summary>
     internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
     {
+        private OLVColumn _lastSortColumn;
+        private SortOrder _lastSortOrder;
+
         public RDMPCollectionCommonFunctionalityTreeHijacker(TreeListView treeView) : base(treeView)
         {
                 
         }
 
+        public override void Sort(OLVColumn column, SortOrder order)
+        {
+            _lastSortColumn = column;
+            _lastSortOrder = order;
+
+            base.Sort(column, order);
+
+        }
+
         protected override TreeListView.BranchComparer GetBranchComparer()
         {
-            if (TreeView.PrimarySortColumn == null)
+            if (_lastSortColumn == null)
                 return null;
 
-            return new TreeListView.BranchComparer(new OrderableComparer(TreeView.PrimarySortColumn,TreeView.PrimarySortOrder));
+            return new TreeListView.BranchComparer(new OrderableComparer(_lastSortColumn, _lastSortOrder));
         }
     }
 }
