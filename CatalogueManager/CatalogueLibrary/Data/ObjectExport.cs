@@ -37,7 +37,13 @@ namespace CatalogueLibrary.Data
             get { return _repositoryTypeName; }
             set { SetField(ref _repositoryTypeName, value); }
         }
-        public ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing)
+
+        /// <summary>
+        /// use CatalogueRepository.GetExportFor to access this constructor
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="objectForSharing"></param>
+        internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {

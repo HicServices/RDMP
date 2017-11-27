@@ -61,8 +61,9 @@ namespace CatalogueLibrary.Repositories
         DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
 
         Catalogue[] GetAllAutomationLockedCatalogues();
-
+        
         ObjectExport GetExportFor(IMapsDirectlyToDatabaseTable o);
+        ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o);
         bool IsExportedObject(IMapsDirectlyToDatabaseTable o);
         bool IsImportedObject(IMapsDirectlyToDatabaseTable o);
     }

@@ -24,6 +24,11 @@ namespace DatabaseCreation
             throw new NotImplementedException();
         }
 
+        public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+        {
+            return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName,databaseObjectTypeName,objectID);
+        }
+
         public DatabaseCreationRepositoryFinder(string servername,string prefix)
         {
             var cata = DatabaseCreationProgram.GetBuilder(servername, prefix,DatabaseCreationProgram.DefaultCatalogueDatabaseName);

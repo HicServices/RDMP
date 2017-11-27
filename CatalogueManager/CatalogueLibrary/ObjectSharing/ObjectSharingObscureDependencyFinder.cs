@@ -27,8 +27,15 @@ namespace CatalogueLibrary.ObjectSharing
 
         public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            if(_repositoryLocator.CatalogueRepository.IsImportedObject(oTableWrapperObject))
-                _repositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>().Single(o=>o.IsImportedObject(oTableWrapperObject)).DeleteInDatabase();
+            if (oTableWrapperObject.GetType() != typeof (ObjectImport))
+            {
+                foreach (var import in _repositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>())
+                {
+                    if (!import.LocalObjectStillExists(_repositoryLocator))
+                        import.DeleteInDatabase();
+                }
+
+            }
         }
     
     }

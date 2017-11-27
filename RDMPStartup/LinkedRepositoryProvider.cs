@@ -111,6 +111,14 @@ namespace RDMPStartup
             return repository.GetObjectByID(objectType, objectId);
         }
 
+        public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+        {
+            IRepository repository = GetRepository(repositoryTypeName);
+            Type objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
+
+            return repository.StillExists(objectType, objectID);
+        }
+
         private IRepository GetRepository(string s)
         {
             var repoType = GetTypeByName(s, typeof(IRepository));

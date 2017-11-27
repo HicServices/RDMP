@@ -422,6 +422,12 @@ Catalogue_ID asc,
 
             return existing ?? new ObjectExport(this, o);
         }
+        public ObjectImport GetImportAs(string sharingUID,IMapsDirectlyToDatabaseTable o)
+        {
+            var existing = GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsImportedObject(o));
+
+            return existing ?? new ObjectImport(this,sharingUID,o);
+        }
 
     }
 

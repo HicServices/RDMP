@@ -41,7 +41,12 @@ namespace RDMPStartup
         {
             return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName,objectID);
         }
-        
+
+        public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+        {
+            return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
+        }
+
         public const string RDMPRegistryRoot = @"HKEY_CURRENT_USER\Software\HICDataManagementPlatform";
 
         public bool KeyExists

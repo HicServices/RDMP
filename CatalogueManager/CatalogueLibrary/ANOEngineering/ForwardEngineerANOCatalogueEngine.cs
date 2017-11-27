@@ -208,7 +208,7 @@ namespace CatalogueLibrary.ANOEngineering
             var export = _catalogueRepository.GetExportFor(parent);
 
             //share it to yourself where the child is the realisation of the share (this creates relationship in database)
-            var import = new ObjectImport(_catalogueRepository, export.SharingUID, child);
+            var import = _catalogueRepository.GetImportAs(export.SharingUID, child);
 
             //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);

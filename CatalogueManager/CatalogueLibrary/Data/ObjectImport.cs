@@ -39,7 +39,13 @@ namespace CatalogueLibrary.Data
             get { return _repositoryTypeName; }
             set { SetField(ref _repositoryTypeName, value); }
         }
-        public ObjectImport(ICatalogueRepository repository, string sharingUID,IMapsDirectlyToDatabaseTable localObject)
+        /// <summary>
+        /// Use GetImportAs to access this
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="sharingUID"></param>
+        /// <param name="localObject"></param>
+        internal ObjectImport(ICatalogueRepository repository, string sharingUID,IMapsDirectlyToDatabaseTable localObject)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
@@ -64,6 +70,11 @@ namespace CatalogueLibrary.Data
         public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
         {
             return o.ID == LocalObjectID && o.GetType().Name.Equals(LocalTypeName) && o.Repository.GetType().Name.Equals(RepositoryTypeName);
+        }
+
+        public bool LocalObjectStillExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            return repositoryLocator.GetArbitraryDatabaseObject(RepositoryTypeName, LocalTypeName, LocalObjectID) != null;
         }
     }
 }
