@@ -1,39 +1,37 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CatalogueManager.Menus.MenuItems
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    [System.ComponentModel.DesignerCategory("")]
-    public class AddCatalogueItemMenuItem : ToolStripMenuItem
+    public class ExecuteCommandAddNewCatalogueItem : BasicUICommandExecution,IAtomicCommand
     {
         private IActivateItems _activator;
         private Catalogue _catalogue;
 
-        public AddCatalogueItemMenuItem(IActivateItems activator, Catalogue catalogue):base("Add New Catalogue Item")
+        public ExecuteCommandAddNewCatalogueItem(IActivateItems activator, Catalogue catalogue):base(activator)
         {
-            Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
             _activator = activator;
             _catalogue = catalogue;
         }
 
-        protected override void OnClick(EventArgs e)
+        public override void Execute()
         {
-            base.OnClick(e);
+            base.Execute();
+        
             MessageBox.Show("Select which column the new CatalogueItem will describe/extract", "Choose underlying Column");
 
             SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.CoreChildProvider.AllColumnInfos, true, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var colInfo = dialog.Selected as ColumnInfo;
-
                 
                 var ci = new CatalogueItem(_activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
 
@@ -50,8 +48,13 @@ namespace CatalogueManager.Menus.MenuItems
                     ci.SetColumnInfo(colInfo);
                 }
 
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
+                Publish(_catalogue);
             }
+        }
+
+        public Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
         }
     }
 }

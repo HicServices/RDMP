@@ -1,4 +1,5 @@
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -7,9 +8,9 @@ namespace CohortManager.Menus
 {
     internal class JoinableCollectionNodeMenu : RDMPContextMenuStrip
     {
-        public JoinableCollectionNodeMenu(IActivateItems activator, JoinableCollectionNode patientIndexTablesNode):base(activator,null)
+        public JoinableCollectionNodeMenu(RDMPContextMenuStripArgs args, JoinableCollectionNode patientIndexTablesNode): base(args, null)
         {
-            Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(activator,patientIndexTablesNode.Configuration));
+            Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,patientIndexTablesNode.Configuration));
         }
 
     }

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
@@ -28,7 +29,7 @@ namespace CatalogueManager.Menus
     {
         private readonly AggregateConfiguration _aggregate;
 
-        public AggregateConfigurationMenu(IActivateItems activator, AggregateConfiguration aggregate): base(activator, aggregate)
+        public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
         {
             _aggregate = aggregate;
             

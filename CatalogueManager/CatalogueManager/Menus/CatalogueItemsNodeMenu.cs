@@ -5,7 +5,9 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -21,11 +23,11 @@ namespace CatalogueManager.Menus
 {
     public class CatalogueItemsNodeMenu : RDMPContextMenuStrip
     {
-        public CatalogueItemsNodeMenu(IActivateItems activator, CatalogueItemsNode node) : base(activator, null)
+        public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node): base(args, null)
         {
-            var iconProvider = activator.CoreIconProvider;
+            var iconProvider = _activator.CoreIconProvider;
 
-            Items.Add(new AddCatalogueItemMenuItem(activator, node.Catalogue));
+            Add(new ExecuteCommandAddNewCatalogueItem(_activator, node.Catalogue));
             Items.Add("Bulk Process Catalogue Items...", null, (s, e) => BulkProcessCatalogueItems(node.Catalogue));
             Items.Add("Paste Clipboard as new Catalogue Items", iconProvider.GetImage(RDMPConcept.Clipboard,OverlayKind.Import), (s, e) => PasteClipboardAsNewCatalogueItems(node.Catalogue));
             Items.Add("Re-Order Columns", iconProvider.GetImage(RDMPConcept.ReOrder),(s, e) => ReOrderCatalogueItems(node.Catalogue));

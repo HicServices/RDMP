@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -54,13 +55,13 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CatalogueMenu:RDMPContextMenuStrip
     {
-        public CatalogueMenu(IActivateItems activator, CatalogueFolder folder) : base(activator,null)
+        public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args,null)
         {
             AddImportOptions();
             AddCommonMenuItems(folder);
         }
 
-        public CatalogueMenu(IActivateItems activator, Catalogue catalogue):base(activator,catalogue)
+        public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
         {
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
@@ -69,14 +70,12 @@ namespace CatalogueManager.Menus
 
             Items.Add(new ToolStripSeparator());
 
-            var addItem = new ToolStripMenuItem("Add", null,
-
-                new AddSupportingSqlTableMenuItem(_activator, catalogue),
-                new AddSupportingDocumentMenuItem(_activator, catalogue),
-                new AddAggregateMenuItem(_activator, catalogue),
-                new AddLookupMenuItem(_activator, "Add new Lookup Table Relationship", catalogue, null),
-                new AddCatalogueItemMenuItem(_activator, catalogue)
-                );
+            var addItem = new ToolStripMenuItem("Add", null);
+            Add(new ExecuteCommandAddNewSupportingSqlTable(_activator, catalogue), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewSupportingDocument(_activator, catalogue), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewAggregateGraph(_activator, catalogue), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null), Keys.None, addItem);
+            Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue), Keys.None, addItem);
 
             Items.Add(addItem);
 
@@ -84,7 +83,7 @@ namespace CatalogueManager.Menus
 
             Items.Add("Clone Catalogue", null, (s, e) => CloneCatalogue(catalogue));
 
-            Add(new ExecuteCommandCreateANOVersion(activator, catalogue));
+            Add(new ExecuteCommandCreateANOVersion(_activator, catalogue));
 
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////
             Items.Add(new ToolStripSeparator());

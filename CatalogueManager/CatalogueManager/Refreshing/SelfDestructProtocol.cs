@@ -31,7 +31,10 @@ namespace CatalogueManager.Refreshing
             //if the original object does not exist anymore (could be a CASCADE event so we do have to check it every time regardless of what object type is refreshing)
             if (!OriginalObject.Exists())//object no longer exists!
             {
-                User.ParentForm.Close();//self destruct because object was deleted
+                var parent = User.ParentForm;
+                if (parent != null && !parent.IsDisposed)
+                    parent.Close();//self destruct because object was deleted
+
                 return;
             }
             if (o != null && o.ID == OriginalObject.ID && o.GetType() == OriginalObject.GetType())//object was refreshed, probably an update to some fields in it

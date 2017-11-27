@@ -12,10 +12,10 @@ namespace CatalogueManager.Menus
 {
     public class AllANOTablesNodeMenu:RDMPContextMenuStrip
     {
-        public AllANOTablesNodeMenu(IActivateItems activator, AllANOTablesNode node)
-            : base(activator, null)
+        public AllANOTablesNodeMenu(RDMPContextMenuStripArgs args, AllANOTablesNode node)
+            : base(args, null)
         {
-            Add(new ExecuteCommandCreateNewANOTable(activator));
+            Add(new ExecuteCommandCreateNewANOTable(_activator));
             
             Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
                 typeof(ANOStore.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.ANOStore) 

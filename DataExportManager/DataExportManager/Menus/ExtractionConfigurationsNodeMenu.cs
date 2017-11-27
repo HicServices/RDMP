@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using DataExportManager.Collections.Nodes;
@@ -13,7 +14,8 @@ namespace DataExportManager.Menus
 {
     public class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
     {
-        public ExtractionConfigurationsNodeMenu(IActivateItems activator, ExtractionConfigurationsNode extractionConfigurationsNode): base(activator, null)
+        public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode)
+            : base(args, null)
         {
             Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, extractionConfigurationsNode.Project));
         }

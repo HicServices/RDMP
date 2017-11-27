@@ -1,8 +1,10 @@
+using System.Windows;
 using CatalogueLibrary.Data;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Nodes
 {
-    public class LinkedColumnInfoNode
+    public class LinkedColumnInfoNode : IDeleteable, IMasqueradeAs
     {
         public CatalogueItem CatalogueItem { get; set; }
         public ColumnInfo ColumnInfo { get; set; }
@@ -37,6 +39,16 @@ namespace CatalogueLibrary.Nodes
             {
                 return ((CatalogueItem != null ? CatalogueItem.GetHashCode() : 0)*397) ^ (ColumnInfo != null ? ColumnInfo.GetHashCode() : 0);
             }
+        }
+
+        public object MasqueradingAs()
+        {
+            return ColumnInfo;
+        }
+
+        public void DeleteInDatabase()
+        {
+            CatalogueItem.SetColumnInfo(null);
         }
     }
 }
