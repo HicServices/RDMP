@@ -7,13 +7,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using DataExportLibrary.Data.DataTables;
 using ReusableUIComponents;
 
 namespace DataExportManager.Collections.Nodes
 {
-    public class ExtractionDirectoryNode : IDirectoryInfoNode
+    public class ExtractionDirectoryNode : IDirectoryInfoNode, IOrderable
     {
         public Project Project { get; private set; }
 
@@ -21,7 +22,7 @@ namespace DataExportManager.Collections.Nodes
         {
             Project = project;
         }
-        
+
         public override string ToString()
         {
             if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
@@ -55,5 +56,7 @@ namespace DataExportManager.Collections.Nodes
 
             return new DirectoryInfo(Project.ExtractionDirectory);
         }
+
+        public int Order{ get { return 4; } set { }}
     }
 }

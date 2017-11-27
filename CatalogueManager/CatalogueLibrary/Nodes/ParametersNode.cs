@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueLibrary.Nodes
 {
-    public class ParametersNode
+    public class ParametersNode:IOrderable
     {
         private readonly ISqlParameter[] _parameters;
         public ICollectSqlParameters Collector { get; set; }
@@ -33,5 +34,7 @@ namespace CatalogueLibrary.Nodes
 
             return other.GetHashCode() == GetHashCode();
         }
+
+        public int Order { get { return -9999; } set{} }
     }
 }

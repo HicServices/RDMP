@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueManager.Collections;
@@ -88,21 +89,8 @@ namespace DataExportManager.Collections
             
             tlvDataExport.CellToolTipGetter = CellToolTipGetter;
             olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
-            olvProjectNumber.AspectToStringConverter = ProjectNumberToStringConverter;
-
-            tlvDataExport.BeforeSorting += BlastAspectGetter;
-            tlvDataExport.AfterSorting += RestoreAspectGetter;
         }
 
-        private void BlastAspectGetter(object sender, BeforeSortingEventArgs e)
-        {
-            olvName.AspectGetter = ProjectNameAspectGetter;
-        }
-
-        private void RestoreAspectGetter(object sender, AfterSortingEventArgs afterSortingEventArgs)
-        {
-            olvName.AspectGetter = null;
-        }
 
         private string CellToolTipGetter(OLVColumn column, object modelObject)
         {
@@ -128,23 +116,7 @@ namespace DataExportManager.Collections
             if (p != null)
                 return p.ProjectNumber;
 
-            return 0;
-        }
-
-        private string ProjectNumberToStringConverter(object value)
-        {
-            var num = (int)value;
-            return num == 0 ? String.Empty : num.ToString();
-        }
-
-        private object ProjectNameAspectGetter(object rowObject)
-        {
-            var p = rowObject as Project;
-
-            if (p != null)
-                return p.Name;
-
-            return String.Empty;
+            return null;
         }
 
         public override void SetItemActivator(IActivateItems activator)
@@ -241,4 +213,6 @@ namespace DataExportManager.Collections
             return root is Project || root is ExtractableDataSetPackage;
         }
     }
+
+    
 }

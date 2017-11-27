@@ -141,6 +141,16 @@ namespace CatalogueManager.Collections
             _activator.Emphasise += _activator_Emphasise;
 
             AllowPinning = allowPinning;
+
+            
+            Tree.TreeFactory = TreeFactory;
+            Tree.RebuildAll(true);
+            
+        }
+
+        private TreeListView.Tree TreeFactory(TreeListView view)
+        {
+            return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
         }
 
         void Tree_SelectionChanged(object sender, EventArgs e)

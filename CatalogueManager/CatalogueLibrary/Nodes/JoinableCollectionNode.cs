@@ -5,7 +5,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Nodes
 {
-    public class JoinableCollectionNode
+    public class JoinableCollectionNode:IOrderable
     {
         public CohortIdentificationConfiguration Configuration { get; set; }
         public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
@@ -85,6 +85,12 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
         public override int GetHashCode()
         {
             return (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
+        }
+
+        int IOrderable.Order
+        {
+            get { return 9999; }
+            set { }
         }
     }
 }
