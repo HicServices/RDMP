@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data.Cohort;
 using DataExportLibrary.Data.DataTables;
 
 namespace DataExportManager.Collections.Nodes
 {
-    public class ExtractionConfigurationsNode
+    public class ExtractionConfigurationsNode:IOrderable
     {
         public Project Project { get; set; }
 
@@ -38,5 +39,8 @@ namespace DataExportManager.Collections.Nodes
         {
             return (Project != null ? Project.GetHashCode() : 0);
         }
+
+        public int Order { get { return 3; } set{} }
+
     }
 }
