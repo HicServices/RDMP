@@ -278,6 +278,7 @@ namespace CatalogueLibrary.Data.Cohort
                     notifier.OnCheckPerformed(new CheckEventArgs("Clone creation successful, about to commit Super Transaction", CheckResult.Success));
                     cataRepo.EndTransactedConnection(true);
                     notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction committed successfully", CheckResult.Success));
+
                     return clone;
                 }
                 catch (Exception e)
