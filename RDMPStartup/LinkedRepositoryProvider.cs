@@ -99,6 +99,7 @@ namespace RDMPStartup
                     throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
         }
 
+        
 
         public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
         {
@@ -158,17 +159,25 @@ namespace RDMPStartup
             foreach (Type type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
                 _pluginRepositoryFinders.Add((IPluginRepositoryFinder) constructor.Construct(type, this));
         }
+        
+        Dictionary<string, Type> _cachedTypesByNameDictionary = new Dictionary<string, Type>();
 
         private Type GetTypeByName(string s, Type expectedBaseClassType)
         {
-            var toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s);
+            if (_cachedTypesByNameDictionary.ContainsKey(s))
+                return _cachedTypesByNameDictionary[s];
+               
+            var toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s,expectedBaseClassType);
 
             if (toReturn == null)
                 throw new TypeLoadException("Could not find Type called '" + s + "'");
 
             if (expectedBaseClassType != null)
                 if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                    throw new TypeLoadException("Persistence string included a reference to Type '" + s + "' which we managed to find but it did not match an expected base Type (" + expectedBaseClassType + ")");
+                    throw new TypeLoadException("Found Type '" + s + "' which we managed to find but it did not match an expected base Type (" + expectedBaseClassType + ")");
+
+            //cache known type to not hammer reflection all the time!
+            _cachedTypesByNameDictionary.Add(s, toReturn);
 
             return toReturn;
         }

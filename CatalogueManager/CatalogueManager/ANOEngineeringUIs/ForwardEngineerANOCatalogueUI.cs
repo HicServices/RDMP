@@ -258,7 +258,27 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void Check()
         {
+            if (_planManager.TargetDatabase != null)
+            {
+                Exception ex;
+                if (_planManager.TargetDatabase.Exists())
+                {
+                    _planManager.SkippedTables.Clear();
+
+                    foreach (var t in _planManager.TableInfos)
+                    {
+                        var existing = _planManager.TargetDatabase.DiscoverTables(true);
+
+                        //it is already migrated
+                        if (existing.Any(e => e.GetRuntimeName().Equals(t.GetRuntimeName())))
+                            _planManager.SkippedTables.Add(t);
+                    }
+                }
+            }
+            
             ragSmiley1.StartChecking(_planManager);
+
+            DisableObjects();
         }
 
         private void tlvTableInfoMigrations_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
@@ -289,26 +309,6 @@ namespace CatalogueManager.ANOEngineeringUIs
         private void serverDatabaseTableSelector1_SelectionChanged()
         {
             _planManager.TargetDatabase = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-            
-            if (_planManager.TargetDatabase != null)
-            {
-                Exception ex;
-                if(_planManager.TargetDatabase.Exists())
-                {
-                    _planManager.SkippedTables.Clear();
-
-                    foreach (var t in _planManager.TableInfos)
-                    {
-                        var existing = _planManager.TargetDatabase.DiscoverTables(true);
-
-                        //it is already migrated
-                        if(existing.Any(e => e.GetRuntimeName().Equals(t.GetRuntimeName())))
-                            _planManager.SkippedTables.Add(t);
-                    }
-                }
-            }
-
-            DisableObjects();
             
             Check();
         }
@@ -354,6 +354,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
             pt.ProcessTaskType = ProcessTaskType.Attacher;
             pt.Name = "Read from " + t;
+            pt.Path = typeof (RemoteSqlServerTableAttacher).FullName;
             pt.SaveToDatabase();
 
             pt.CreateArgumentsForClassIfNotExists<RemoteSqlServerTableAttacher>();
