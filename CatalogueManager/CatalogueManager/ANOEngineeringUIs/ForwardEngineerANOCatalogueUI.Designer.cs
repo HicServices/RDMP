@@ -37,7 +37,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.label4 = new System.Windows.Forms.Label();
             this.ddDateColumn = new System.Windows.Forms.ComboBox();
             this.cbDateBasedLoad = new System.Windows.Forms.CheckBox();
-            this.tbMandatory = new System.Windows.Forms.Label();
+            this.lblMandatory = new System.Windows.Forms.Label();
             this.tlvTableInfoMigrations = new BrightIdeasSoftware.TreeListView();
             this.olvTableInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvMigrationPlan = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -60,6 +60,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lblPlanIsSuggestion = new System.Windows.Forms.Label();
             this.gbTables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -76,12 +78,14 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbTables.Controls.Add(this.label4);
             this.gbTables.Controls.Add(this.ddDateColumn);
             this.gbTables.Controls.Add(this.cbDateBasedLoad);
-            this.gbTables.Controls.Add(this.tbMandatory);
+            this.gbTables.Controls.Add(this.lblPlanIsSuggestion);
+            this.gbTables.Controls.Add(this.lblMandatory);
             this.gbTables.Controls.Add(this.tlvTableInfoMigrations);
+            this.gbTables.Controls.Add(this.label5);
             this.gbTables.Controls.Add(this.label1);
             this.gbTables.Location = new System.Drawing.Point(3, 464);
             this.gbTables.Name = "gbTables";
-            this.gbTables.Size = new System.Drawing.Size(942, 315);
+            this.gbTables.Size = new System.Drawing.Size(1113, 315);
             this.gbTables.TabIndex = 6;
             this.gbTables.TabStop = false;
             this.gbTables.Text = "Table Migration";
@@ -90,7 +94,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             this.tbStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbStartDate.Enabled = false;
-            this.tbStartDate.Location = new System.Drawing.Point(806, 290);
+            this.tbStartDate.Location = new System.Drawing.Point(921, 290);
             this.tbStartDate.Name = "tbStartDate";
             this.tbStartDate.Size = new System.Drawing.Size(130, 20);
             this.tbStartDate.TabIndex = 6;
@@ -101,7 +105,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(744, 293);
+            this.label4.Location = new System.Drawing.Point(859, 293);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 5;
@@ -113,7 +117,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.ddDateColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddDateColumn.Enabled = false;
             this.ddDateColumn.FormattingEnabled = true;
-            this.ddDateColumn.Location = new System.Drawing.Point(244, 289);
+            this.ddDateColumn.Location = new System.Drawing.Point(359, 289);
             this.ddDateColumn.Name = "ddDateColumn";
             this.ddDateColumn.Size = new System.Drawing.Size(494, 21);
             this.ddDateColumn.TabIndex = 4;
@@ -123,7 +127,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             this.cbDateBasedLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbDateBasedLoad.AutoSize = true;
-            this.cbDateBasedLoad.Location = new System.Drawing.Point(90, 292);
+            this.cbDateBasedLoad.Location = new System.Drawing.Point(205, 292);
             this.cbDateBasedLoad.Name = "cbDateBasedLoad";
             this.cbDateBasedLoad.Size = new System.Drawing.Size(159, 17);
             this.cbDateBasedLoad.TabIndex = 3;
@@ -131,16 +135,16 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.cbDateBasedLoad.UseVisualStyleBackColor = true;
             this.cbDateBasedLoad.CheckedChanged += new System.EventHandler(this.cbDateBasedLoad_CheckedChanged);
             // 
-            // tbMandatory
+            // lblMandatory
             // 
-            this.tbMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbMandatory.BackColor = System.Drawing.Color.LightCyan;
-            this.tbMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tbMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tbMandatory.Location = new System.Drawing.Point(7, 289);
-            this.tbMandatory.Name = "tbMandatory";
-            this.tbMandatory.Size = new System.Drawing.Size(20, 20);
-            this.tbMandatory.TabIndex = 1;
+            this.lblMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblMandatory.BackColor = System.Drawing.Color.LightCyan;
+            this.lblMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblMandatory.Location = new System.Drawing.Point(7, 289);
+            this.lblMandatory.Name = "lblMandatory";
+            this.lblMandatory.Size = new System.Drawing.Size(20, 20);
+            this.lblMandatory.TabIndex = 1;
             // 
             // tlvTableInfoMigrations
             // 
@@ -163,7 +167,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.Location = new System.Drawing.Point(3, 19);
             this.tlvTableInfoMigrations.Name = "tlvTableInfoMigrations";
             this.tlvTableInfoMigrations.ShowGroups = false;
-            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(936, 267);
+            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(1107, 267);
             this.tlvTableInfoMigrations.SmallImageList = this.imageList1;
             this.tlvTableInfoMigrations.TabIndex = 0;
             this.tlvTableInfoMigrations.UseCellFormatEvents = true;
@@ -251,7 +255,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbANOTransforms.Controls.Add(this.tlvANOTables);
             this.gbANOTransforms.Location = new System.Drawing.Point(3, 25);
             this.gbANOTransforms.Name = "gbANOTransforms";
-            this.gbANOTransforms.Size = new System.Drawing.Size(942, 222);
+            this.gbANOTransforms.Size = new System.Drawing.Size(1113, 222);
             this.gbANOTransforms.TabIndex = 1;
             this.gbANOTransforms.TabStop = false;
             this.gbANOTransforms.Text = "ANO Concepts";
@@ -273,7 +277,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvANOTables.Location = new System.Drawing.Point(3, 16);
             this.tlvANOTables.Name = "tlvANOTables";
             this.tlvANOTables.ShowGroups = false;
-            this.tlvANOTables.Size = new System.Drawing.Size(936, 203);
+            this.tlvANOTables.Size = new System.Drawing.Size(1107, 203);
             this.tlvANOTables.TabIndex = 0;
             this.tlvANOTables.Text = "label1";
             this.tlvANOTables.UseCompatibleStateImageBehavior = false;
@@ -357,8 +361,29 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
             this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
             this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
-            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(948, 22);
+            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(1119, 22);
             this.rdmpObjectsRibbonUI1.TabIndex = 0;
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(108, 293);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(95, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Plan Is Suggestion";
+            // 
+            // lblPlanIsSuggestion
+            // 
+            this.lblPlanIsSuggestion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblPlanIsSuggestion.BackColor = System.Drawing.Color.Turquoise;
+            this.lblPlanIsSuggestion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblPlanIsSuggestion.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblPlanIsSuggestion.Location = new System.Drawing.Point(87, 289);
+            this.lblPlanIsSuggestion.Name = "lblPlanIsSuggestion";
+            this.lblPlanIsSuggestion.Size = new System.Drawing.Size(20, 20);
+            this.lblPlanIsSuggestion.TabIndex = 1;
             // 
             // ForwardEngineerANOCatalogueUI
             // 
@@ -374,7 +399,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.Controls.Add(this.gbTables);
             this.Controls.Add(this.gbANOTransforms);
             this.Name = "ForwardEngineerANOCatalogueUI";
-            this.Size = new System.Drawing.Size(948, 782);
+            this.Size = new System.Drawing.Size(1119, 782);
             this.gbTables.ResumeLayout(false);
             this.gbTables.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).EndInit();
@@ -399,7 +424,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private OLVColumn olvANOTablesName;
         private ObjectVisualisation.RDMPObjectsRibbonUI rdmpObjectsRibbonUI1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label tbMandatory;
+        private System.Windows.Forms.Label lblMandatory;
         private OLVColumn olvMigrationPlan;
         private OLVColumn olvPickedANOTable;
         private System.Windows.Forms.ImageList imageList1;
@@ -417,5 +442,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private System.Windows.Forms.ComboBox ddDateColumn;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbStartDate;
+        private System.Windows.Forms.Label lblPlanIsSuggestion;
+        private System.Windows.Forms.Label label5;
     }
 }

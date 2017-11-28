@@ -29,6 +29,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
         private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;
         private ForwardEngineerANOCataloguePlanManager _planManager;
+        private ColumnInfo[] _suggestions;
 
         public ForwardEngineerANOCatalogueUI()
         {
@@ -249,6 +250,9 @@ namespace CatalogueManager.ANOEngineeringUIs
                 
                 rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
                 rdmpObjectsRibbonUI1.Add(databaseObject);
+
+                _suggestions = _planManager.MakeSuggestions();
+
                 _setup = true;
             }
             else
@@ -293,8 +297,12 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             var ci = e.Model as ColumnInfo;
 
-            if (ci != null && _planManager.IsMandatoryForMigration(ci))
-                e.Item.BackColor = tbMandatory.BackColor;
+            if (ci != null )
+                if (_suggestions != null && _suggestions.Contains(ci))
+                    e.Item.BackColor = lblPlanIsSuggestion.BackColor;
+                else
+                if( _planManager.IsMandatoryForMigration(ci))
+                    e.Item.BackColor = lblMandatory.BackColor;
         }
 
         private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)

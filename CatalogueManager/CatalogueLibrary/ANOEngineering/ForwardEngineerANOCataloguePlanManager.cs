@@ -299,6 +299,35 @@ namespace CatalogueLibrary.ANOEngineering
             return qb.JoinsUsedInQuery;
         }
 
+        /// <summary>
+        /// Make up ANOTable plans based on existing ANOTable/column usages.  For example if the column chi is being migrated and there is at least one column
+        /// called chi or ANOchi already existing (probably from another table) then we should suggest using ANOTable ANOchi.  Calling this method will set the
+        /// Plan for the matching columns and then return an array of the ColumnInfos where a match was found and Plan set
+        /// </summary>
+        /// <returns></returns>
+        public ColumnInfo[] MakeSuggestions()
+        {
+            List<ColumnInfo> toReturn = new List<ColumnInfo>();
+
+            var allColumnInfos = Catalogue.Repository.GetAllObjects<ColumnInfo>();
+
+            foreach (var col in Plans.Keys.ToArray())
+            {
+                var matchingOnName = allColumnInfos.Where(a =>a.GetRuntimeName() == col.GetRuntimeName() || a.GetRuntimeName() == "ANO" + col.GetRuntimeName()).ToArray();
+
+                var agreedAnoTableID = matchingOnName.Where(c=>c.ANOTable_ID != null).Select(c=>c.ANOTable_ID).Distinct().ToArray();
+
+                //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables 
+                if (agreedAnoTableID.Count() == 1)
+                {
+                    SetPlannedANOTable(col,Catalogue.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value));
+                    toReturn.Add(col);
+                }
+            }
+
+            return toReturn.ToArray();
+        }
+        
         private bool IsStillNeeded(ColumnInfo columnInfo)
         {
             return TableInfos.Any(t => t.ID == columnInfo.TableInfo_ID);
