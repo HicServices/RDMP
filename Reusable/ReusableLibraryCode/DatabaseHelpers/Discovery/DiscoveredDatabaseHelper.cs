@@ -70,8 +70,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
 
                 //add the column name and accompanying datatype
-                bodySql += SqlSyntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls? " NULL":" NOT NULL") +  "," + Environment.NewLine;
+                bodySql += SqlSyntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey? " NULL":" NOT NULL") +  "," + Environment.NewLine;
             }
+
+            var pks = columns.Where(c => c.IsPrimaryKey).ToArray();
+            if (pks.Any())
+                bodySql += GetPrimaryKeyDeclarationSql(tableName,pks);
+
             bodySql = bodySql.TrimEnd('\r', '\n', ',');
 
             bodySql += ")" + Environment.NewLine;
@@ -83,6 +88,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
             
             return database.ExpectTable(tableName);
+        }
+
+        protected virtual string GetPrimaryKeyDeclarationSql(string tableName, DatabaseColumnRequest[] pks)
+        {
+            return string.Format(" CONSTRAINT PK_{0} PRIMARY KEY ({1})",tableName,string.Join(",",pks.Select(c=>c.ColumnName))) + "," + Environment.NewLine;
         }
     }
 }

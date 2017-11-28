@@ -8,6 +8,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public string ColumnName { get; set; }
         private readonly DatabaseTypeRequest _typeRequested;
         public bool AllowNulls { get; set; }
+        public bool IsPrimaryKey { get; set; }
 
         public DatabaseColumnRequest(string columnName, DatabaseTypeRequest typeRequested, bool allowNulls = true)
         {
