@@ -37,7 +37,6 @@ namespace DataExportLibrary.DataRelease
             ReleaseSettings = settings;
             if (ReleaseSettings == null)
                 ReleaseSettings = new ReleaseEngineSettings();
-                
         }
 
         public virtual void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
@@ -159,14 +158,12 @@ namespace DataExportLibrary.DataRelease
             //if we found at least one global folder and all the global folders we did find had the same contents
             if (SourceGlobalFolder != null)
             {
+                var destination = new DirectoryInfo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
+                SourceGlobalFolder.CopyAll(destination);
+
                 if (ReleaseSettings.DeleteFilesOnSuccess)
                 {
-                    SourceGlobalFolder.MoveTo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
-                }
-                else
-                {
-                    var destination = new DirectoryInfo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
-                    SourceGlobalFolder.CopyAll(destination);
+                    SourceGlobalFolder.Delete(recursive: true);
                 }
             }
         }
@@ -267,13 +264,13 @@ namespace DataExportLibrary.DataRelease
 
         protected DirectoryInfo GetIntendedReleaseDirectory()
         {
-            if (ReleaseSettings.UseProjectExtractionFolder)
+            if (ReleaseSettings.CustomExtractionDirectory == null || String.IsNullOrWhiteSpace(ReleaseSettings.CustomExtractionDirectory.FullName))
             {
                 if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
                     return null;
 
                 var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd_");
-                var suffix = "";
+                string suffix;
                 if (String.IsNullOrWhiteSpace(Project.MasterTicket))
                     suffix = Project.ID + "_" + Project.Name;
                 else

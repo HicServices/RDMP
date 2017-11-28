@@ -113,8 +113,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                 if (_releaseIdentifier == null)
                     _releaseIdentifier = syntaxHelper.GetRuntimeName(_cohort.GetReleaseIdentifier());
 
-                bool filecontainsReleaseIdentifier = toProcess.Columns.Contains(_releaseIdentifier);
-                bool fileContainsPrivateIdentifier = toProcess.Columns.Contains(_privateIdentifier);
+                bool filecontainsReleaseIdentifier = toProcess.Columns.Cast<DataColumn>().Any(dc => dc.ColumnName.Equals(_releaseIdentifier, StringComparison.InvariantCulture));
+                bool fileContainsPrivateIdentifier = toProcess.Columns.Cast<DataColumn>().Any(dc => dc.ColumnName.Equals(_privateIdentifier, StringComparison.InvariantCulture));
 
                 //special case, we have release identifier but not private identifier!- let's reverse the anonymisation so that we can add it and still link on private id like all the other datasets do
                 if (filecontainsReleaseIdentifier && !fileContainsPrivateIdentifier)
