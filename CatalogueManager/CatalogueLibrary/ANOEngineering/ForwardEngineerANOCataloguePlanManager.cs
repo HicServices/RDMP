@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
@@ -145,6 +146,12 @@ namespace CatalogueLibrary.ANOEngineering
             
             PlannedDilution[col] = operation;
         }
+
+        public IExternalDatabaseServer GetIdentifierDumpServer()
+        {
+            return new ServerDefaults((CatalogueRepository)Catalogue.Repository).GetDefaultFor(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID);
+        }
+
         
         public bool IsMandatoryForMigration(ColumnInfo col)
         {
@@ -224,6 +231,10 @@ namespace CatalogueLibrary.ANOEngineering
             foreach (KeyValuePair<ColumnInfo, IDilutionOperation> kvp in PlannedDilution.Where(k => k.Value == null))
                 notifier.OnCheckPerformed(new CheckEventArgs("No Dilution Operation has been picked for ColumnInfo '" + kvp.Key + "'", CheckResult.Fail));
                 
+            if(PlannedDilution.Any())
+                if (GetIdentifierDumpServer() == null)
+                    notifier.OnCheckPerformed(new CheckEventArgs("No default Identifier Dump server has been configured", CheckResult.Fail));
+
             foreach (KeyValuePair<ColumnInfo, Plan> kvp in Plans)
             {
                 if (kvp.Value != Plan.Drop)

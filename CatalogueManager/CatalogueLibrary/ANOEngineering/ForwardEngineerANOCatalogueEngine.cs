@@ -117,7 +117,15 @@ namespace CatalogueLibrary.ANOEngineering
 
                             AuditParenthood(oldColumnInfo, newColumnInfo);
                         }
+
+                        if (DilutionOperationsForMigrations.Any())
+                        {
+                            newTableInfo.IdentifierDumpServer_ID = _planManager.GetIdentifierDumpServer().ID;
+                            newTableInfo.SaveToDatabase();
+                        }
                     }
+
+                    
 
                     NewCatalogue = _catalogueRepository.CloneObjectInTable(_planManager.Catalogue);
                     NewCatalogue.Name = "ANO" + NewCatalogue.Name;
