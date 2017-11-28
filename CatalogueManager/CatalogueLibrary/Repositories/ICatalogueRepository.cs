@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Repositories.Sharing;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories

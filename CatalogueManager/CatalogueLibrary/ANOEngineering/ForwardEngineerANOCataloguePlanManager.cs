@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -223,6 +224,9 @@ namespace CatalogueLibrary.ANOEngineering
 
                 if (tableInfo.IsTableValuedFunction)
                     notifier.OnCheckPerformed(new CheckEventArgs("TableInfo '" + tableInfo + "' is an IsTableValuedFunction so cannot be anonymised",CheckResult.Fail));
+
+                EnsureNotAlreadySharedLocally(notifier,tableInfo);
+                EnsureNotAlreadySharedLocally(notifier, Catalogue);
             }
 
             foreach (KeyValuePair<ColumnInfo, ANOTable> kvp in PlannedANOTables.Where(k=>k.Value == null))
@@ -266,6 +270,23 @@ namespace CatalogueLibrary.ANOEngineering
                             "You cannot have a date based migration because you are trying to migrate " + usedTables +
                             " TableInfos at once", CheckResult.Fail));
 
+            }
+        }
+
+        private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier,T m) where T:IMapsDirectlyToDatabaseTable
+        {
+            var shareManager = ((CatalogueRepository)m.Repository).ShareManager;
+
+            if (shareManager.IsExportedObject(m))
+            {
+                var existingExport = shareManager.GetExportFor(m);
+                var existingImportReference = shareManager.GetExistingImport(existingExport.SharingUID);
+
+                if (existingImportReference != null)
+                {
+                    T existingImportInstance = m.Repository.GetObjectByID<T>(existingImportReference.LocalObjectID);
+                    notifier.OnCheckPerformed(new CheckEventArgs(typeof(T) + " '" + m + "' is already locally shared as '" + existingImportInstance + "'", CheckResult.Fail));
+                }
             }
         }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Sharing;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
 using Tests.Common;

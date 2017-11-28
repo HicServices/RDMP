@@ -14,6 +14,7 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Properties;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueLibrary.Repositories.Sharing;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

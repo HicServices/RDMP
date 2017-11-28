@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories.Sharing;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
-namespace CatalogueLibrary.Repositories
+namespace CatalogueLibrary.Repositories.Sharing
 {
     public class ShareManager
     {
@@ -44,12 +40,16 @@ namespace CatalogueLibrary.Repositories
 
         public IMapsDirectlyToDatabaseTable GetExistingImport(string sharingUID, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            var import = _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+            var import = GetExistingImport(sharingUID);
 
             if (import == null)
                 return null;
 
             return import.GetLocalObject(repositoryLocator);
+        }
+        public ObjectImport GetExistingImport(string sharingUID)
+        {
+            return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
         }
 
         public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o)
@@ -82,5 +82,6 @@ namespace CatalogueLibrary.Repositories
 
             }
         }
+
     }
 }
