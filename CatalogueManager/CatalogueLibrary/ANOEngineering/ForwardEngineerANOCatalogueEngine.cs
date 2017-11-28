@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Security;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
@@ -13,6 +14,7 @@ using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.ANOEngineering
 {
@@ -31,6 +33,7 @@ namespace CatalogueLibrary.ANOEngineering
             _catalogueRepository = catalogueRepository;
             _planManager = planManager;
         }
+
 
         public void Execute()
         {
@@ -65,7 +68,7 @@ namespace CatalogueLibrary.ANOEngineering
 
                                 migratedColumns.Add(colName, columnInfo);
 
-                                columnsToCreate.Add(new DatabaseColumnRequest(colName, _planManager.GetEndpointDataType(columnInfo), !columnInfo.IsPrimaryKey));
+                                columnsToCreate.Add(new DatabaseColumnRequest(colName, _planManager.GetEndpointDataType(columnInfo), !columnInfo.IsPrimaryKey){IsPrimaryKey = columnInfo.IsPrimaryKey});
                             }
                         }
 
@@ -115,26 +118,8 @@ namespace CatalogueLibrary.ANOEngineering
                         if(col == null)
                             continue;
 
-                        ColumnInfo newColumnInfo;
+                        ColumnInfo newColumnInfo = GetNewColumnInfoForOld(col);
 
-                        if (_parenthoodDictionary.ContainsKey(col))
-                            newColumnInfo = (ColumnInfo) _parenthoodDictionary[col];
-                        else
-                        {
-                            //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
-                            var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
-                            string expectedNewName = syntaxHelper.EnsureFullyQualified(
-                                _planManager.TargetDatabase.GetRuntimeName(),
-                                null,
-                                col.TableInfo.GetRuntimeName(),
-                                col.GetRuntimeName());
-
-                            newColumnInfo = _catalogueRepository.GetColumnInfoWithNameExactly(expectedNewName);
-
-                            if (newColumnInfo == null)
-                                throw new Exception("Catalogue '"+_planManager.Catalogue+"' contained a CatalogueItem referencing Column '"+col+"' the ColumnInfo was not migrated (which is fine) but we then could not find ColumnInfo with expected name '" + expectedNewName + "' (if it was part of SkippedTables why doesn't the Catalogue have a reference to the new location?)");
-                        }
-                        
                         var newCatalogueItem = _catalogueRepository.CloneObjectInTable(oldCatalogueItem);
                         
                         //wire it to the new Catalogue
@@ -158,6 +143,19 @@ namespace CatalogueLibrary.ANOEngineering
                         AuditParenthood(oldExtractionInformation, newExtractionInformation);
                     }
 
+                    var existingJoinInfos = _catalogueRepository.JoinInfoFinder.GetAllJoinInfos();
+
+                    //migrate join infos
+                    foreach (JoinInfo joinInfo in _planManager.GetJoinInfosRequiredCatalogue())
+                    {
+                        var newFk = GetNewColumnInfoForOld(joinInfo.ForeignKey);
+                        var newPk = GetNewColumnInfoForOld(joinInfo.PrimaryKey);
+
+                        //already exists
+                        if(!existingJoinInfos.Any(ej=>ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
+                            _catalogueRepository.JoinInfoFinder.AddJoinInfo(newFk,newPk,joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
+                    }
+                    
                     //create new data load confguration
                     LoadMetadata = new LoadMetadata(_catalogueRepository, "Anonymising " + NewCatalogue);
                     LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);
@@ -199,6 +197,46 @@ namespace CatalogueLibrary.ANOEngineering
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns the newly created / already existing NEW ANO column info when passed the old (identifiable original) ColumnInfo
+        /// </summary>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        private ColumnInfo GetNewColumnInfoForOld(ColumnInfo col)
+        {
+            //it's one we migrated ourselves
+            if (_parenthoodDictionary.ContainsKey(col))
+                return (ColumnInfo)_parenthoodDictionary[col];
+            else
+            {
+                //it's one that was already existing before we did ANO migration e.g. a SkippedTableInfo (this can happen when there are 2+ tables underlying a Catalogue and you have already ANO one of those Tables previously (e.g. when it is a shared table with other Catalogues)
+
+                //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
+                var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
+
+                var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName());
+                
+                if (toReturn == null)
+                    toReturn = FindNewColumnNamed(syntaxHelper,col,"ANO" + col.GetRuntimeName());
+
+                if(toReturn == null)
+                    throw new Exception("Catalogue '" + _planManager.Catalogue + "' contained a CatalogueItem referencing Column '" + col + "' the ColumnInfo was not migrated (which is fine) but we then could not find ColumnInfo in the new ANO dataset (if it was part of SkippedTables why doesn't the Catalogue have a reference to the new location?)");
+
+                return toReturn;
+            }
+        }
+
+        private ColumnInfo FindNewColumnNamed(IQuerySyntaxHelper syntaxHelper, ColumnInfo col, string expectedName)
+        {
+            string expectedNewName = syntaxHelper.EnsureFullyQualified(
+                _planManager.TargetDatabase.GetRuntimeName(),
+                null,
+                col.TableInfo.GetRuntimeName(),
+                expectedName);
+
+            return _catalogueRepository.GetColumnInfoWithNameExactly(expectedNewName);
         }
 
         Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();

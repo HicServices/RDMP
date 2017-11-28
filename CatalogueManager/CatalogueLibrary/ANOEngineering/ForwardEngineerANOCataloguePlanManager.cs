@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using ReusableLibraryCode.Checks;
@@ -179,6 +180,20 @@ namespace CatalogueLibrary.ANOEngineering
             if (!toMigrateTables.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs("There are no TableInfos selected for anonymisation",CheckResult.Fail));
 
+            try
+            {
+                
+                var joinInfos = GetJoinInfosRequiredCatalogue();
+                notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL succesfully", CheckResult.Success));
+
+                foreach (JoinInfo joinInfo in joinInfos)
+                    notifier.OnCheckPerformed(new CheckEventArgs("Found required JoinInfo '" + joinInfo + "' that will have to be migrated",CheckResult.Success));
+            }
+            catch (Exception ex)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to generate Catalogue SQL", CheckResult.Fail,ex));
+            }
+
             foreach (TableInfo tableInfo in toMigrateTables)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Evaluating TableInfo '" + tableInfo + "'",CheckResult.Success));
@@ -274,6 +289,14 @@ namespace CatalogueLibrary.ANOEngineering
             foreach (ColumnInfo col in TableInfos.SelectMany(t => t.ColumnInfos))
                 if(!Plans.ContainsKey(col))
                     Plans.Add(col, IsMandatoryForMigration(col) ? Plan.PassThroughUnchanged : Plan.Drop);
+        }
+
+        public List<JoinInfo> GetJoinInfosRequiredCatalogue()
+        {
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumnRange(Catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+            qb.RegenerateSQL();
+            return qb.JoinsUsedInQuery;
         }
 
         private bool IsStillNeeded(ColumnInfo columnInfo)
