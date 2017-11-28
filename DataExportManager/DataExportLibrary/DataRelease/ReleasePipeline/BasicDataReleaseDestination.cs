@@ -30,7 +30,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         {
             this.CurrentRelease = currentRelease;
 
-            var engine = new ReleaseEngine(_project, ReleaseSettings);
+            var engine = new ReleaseEngine(_project, ReleaseSettings, listener);
 
             if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
             {

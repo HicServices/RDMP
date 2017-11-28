@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
@@ -11,12 +13,14 @@ using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.ExtractionTime;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Progress;
 using Ticketing;
 
 namespace DataExportLibrary.DataRelease
 {
     public class ReleaseEngine
     {
+        protected readonly IDataLoadEventListener _listener;
         protected readonly IRepository _repository;
         public Project Project { get; private set; }
         public bool ReleaseSuccessful { get; protected set; }
@@ -27,16 +31,15 @@ namespace DataExportLibrary.DataRelease
         public DirectoryInfo SourceGlobalFolder { get; set; }
         public DirectoryInfo ReleaseFolder { get; set; }
 
-        public ReleaseEngine(Project project, ReleaseEngineSettings settings = null)
+        public ReleaseEngine(Project project, ReleaseEngineSettings settings = null, IDataLoadEventListener listener = null)
         {
             _repository = project.Repository;
             Project = project;
             ReleaseSuccessful = false;
             ConfigurationsReleased = new List<IExtractionConfiguration>();
 
-            ReleaseSettings = settings;
-            if (ReleaseSettings == null)
-                ReleaseSettings = new ReleaseEngineSettings();
+            ReleaseSettings = settings ?? new ReleaseEngineSettings();
+            _listener = listener ?? new ToMemoryDataLoadEventListener(false);
         }
 
         public virtual void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
@@ -60,12 +63,18 @@ namespace DataExportLibrary.DataRelease
             }
 
             ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
-            
+
             sw.Flush();
             sw.Close();
             ReleaseSuccessful = true;
-        }
 
+            if (ReleaseSettings.DeleteFilesOnSuccess)
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
+                CleanupExtractionFolders(this.Project.ExtractionDirectory);
+            }
+        }
+        
         protected virtual void VerifyReleasability(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment)
         {
             //make sure everything is releasable
@@ -161,10 +170,10 @@ namespace DataExportLibrary.DataRelease
                 var destination = new DirectoryInfo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
                 SourceGlobalFolder.CopyAll(destination);
 
-                if (ReleaseSettings.DeleteFilesOnSuccess)
-                {
-                    SourceGlobalFolder.Delete(recursive: true);
-                }
+                //if (ReleaseSettings.DeleteFilesOnSuccess)
+                //{
+                //    SourceGlobalFolder.Delete(recursive: true);
+                //}
             }
         }
 
@@ -220,15 +229,72 @@ namespace DataExportLibrary.DataRelease
             DirectoryInfo fromCustomData = ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(kvp);
             if (fromCustomData != null)
             {
-                if (ReleaseSettings.DeleteFilesOnSuccess)
-                    fromCustomData.MoveTo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
-                else
-                {
-                    var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
-                    fromCustomData.CopyAll(destination);
-                }
+                var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
+                fromCustomData.CopyAll(destination);
+                //if (ReleaseSettings.DeleteFilesOnSuccess)
+                //    fromCustomData.MoveTo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
+                //else
+                //{
+                //    var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
+                //    fromCustomData.CopyAll(destination);
+                //}
             }
             return fromCustomData;
+        }
+
+        protected void CleanupExtractionFolders(string extractionDirectory)
+        {
+            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(extractionDirectory);
+            var directoriesToDelete = new List<DirectoryInfo>();
+            var filesToDelete = new List<FileInfo>();
+
+            foreach (var extractionConfiguration in this.ConfigurationsReleased)
+            {
+                var config = extractionConfiguration;
+                var directoryInfos = projectExtractionDirectory.GetDirectories().Where(d => ExtractionDirectory.IsOwnerOf(config, d));
+
+                foreach (DirectoryInfo toCleanup in directoryInfos)
+                    AddDirectoryToCleanupList(toCleanup, true, directoriesToDelete, filesToDelete);
+            }
+
+            foreach (var fileInfo in filesToDelete)
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting: " + fileInfo.FullName));
+                try
+                {
+                    fileInfo.Delete();
+                }
+                catch (Exception e)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + fileInfo.FullName, e));
+                }
+            }
+
+            foreach (var directoryInfo in directoriesToDelete)
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Recursively deleting folder: " + directoryInfo.FullName));
+                try
+                {
+                    directoryInfo.Delete(true);
+                }
+                catch (Exception e)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + directoryInfo.FullName, e));
+                }
+            }
+        }
+
+        private void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot, List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
+        {
+            //only add root folders to the delete queue
+            if (isRoot)
+                if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //dont add the same folder twice
+                    directoriesToDelete.Add(toCleanup);
+
+            filesToDelete.AddRange(toCleanup.EnumerateFiles());
+
+            foreach (var dir in toCleanup.EnumerateDirectories())
+                AddDirectoryToCleanupList(dir, false, directoriesToDelete, filesToDelete);
         }
 
         protected virtual void AuditExtractionConfigurationDetails(StreamWriter sw, DirectoryInfo configurationSubDirectory, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
@@ -264,7 +330,7 @@ namespace DataExportLibrary.DataRelease
 
         protected DirectoryInfo GetIntendedReleaseDirectory()
         {
-            if (ReleaseSettings.CustomExtractionDirectory == null || String.IsNullOrWhiteSpace(ReleaseSettings.CustomExtractionDirectory.FullName))
+            if (ReleaseSettings.CustomReleaseFolder == null || String.IsNullOrWhiteSpace(ReleaseSettings.CustomReleaseFolder.FullName))
             {
                 if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
                     return null;
@@ -279,7 +345,7 @@ namespace DataExportLibrary.DataRelease
                 return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release-" + suffix)); 
             }
             
-            return ReleaseSettings.CustomExtractionDirectory;
+            return ReleaseSettings.CustomReleaseFolder;
         }
 
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
@@ -352,10 +418,11 @@ namespace DataExportLibrary.DataRelease
             {
                 //audit as -Filename at tab indent 
                 AuditFileCreation(file.Name, audit, tabDepth);
-                if (ReleaseSettings.DeleteFilesOnSuccess)
-                    file.MoveTo(Path.Combine(into.FullName, file.Name));
-                else
-                    file.CopyTo(Path.Combine(into.FullName, file.Name));
+                file.CopyTo(Path.Combine(into.FullName, file.Name));
+                //if (ReleaseSettings.DeleteFilesOnSuccess)
+                //    file.MoveTo(Path.Combine(into.FullName, file.Name));
+                //else
+                //    file.CopyTo(Path.Combine(into.FullName, file.Name));
             }
 
             //found subdirectory

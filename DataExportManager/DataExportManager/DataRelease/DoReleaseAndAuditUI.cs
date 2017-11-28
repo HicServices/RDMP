@@ -30,27 +30,9 @@ namespace DataExportManager.DataRelease
     /// </summary>
     public partial class DoReleaseAndAuditUI : UserControl
     {
-        public Project Project
-        {
-            get { return _project; }
-            private set
-            {
-                _project = value; 
-
-                ConfigurationsForRelease.Clear();
-                ReloadTreeView();
-
-                if (_project != null)
-                {
-                    _releaseEngine = new ReleaseEngine(value);
-                }
-            }
-        }
-     
-        public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; private set;}
-
         private Project _project;
-        ReleaseEngine _releaseEngine;
+        
+        public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; private set; }
         
         public DoReleaseAndAuditUI()
         {
@@ -131,7 +113,7 @@ namespace DataExportManager.DataRelease
 
             _environmentPotential = environmentPotential;
 
-            if (toPatchIn.Configuration.Project_ID != Project.ID)
+            if (toPatchIn.Configuration.Project_ID != _project.ID)
                 throw new Exception("Mismatch between ProjectID of datasets selected for release and what this UI component recons the project is");
 
             if (ConfigurationsForRelease.Values.Any(array => array.Any(releasePotential => releasePotential.DataSet.ID == toPatchIn.DataSet.ID)))
@@ -228,7 +210,9 @@ namespace DataExportManager.DataRelease
         public void SetProject(IActivateItems activator, Project project)
         {
             _activator = activator;
-            Project = project;
+            _project = project;
+            ConfigurationsForRelease.Clear();
+            ReloadTreeView();
             this.FixedDataReleaseSource = new FixedDataReleaseSource();
 
             SetupPipeline();
