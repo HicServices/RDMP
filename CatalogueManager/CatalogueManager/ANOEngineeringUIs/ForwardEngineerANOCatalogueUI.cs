@@ -35,6 +35,10 @@ namespace CatalogueManager.ANOEngineeringUIs
             InitializeComponent();
             serverDatabaseTableSelector1.HideTableComponents();
 
+            olvSuffix.AspectGetter = (o) => o is ANOTable ? ((ANOTable) o).Suffix : null;
+            olvNumberOfCharacters.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfCharactersToUseInAnonymousRepresentation: null;
+            olvNumberOfDigits.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfIntegersToUseInAnonymousRepresentation : null;
+
             olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
             
             olvPickedANOTable.HeaderImageKey = "ANOTable";
@@ -58,10 +62,14 @@ namespace CatalogueManager.ANOEngineeringUIs
         private object MigrationPlanAspectGetter(object rowobject)
         {
             var col = rowobject as ColumnInfo;
+            var table = rowobject as TableInfo;
 
             if (col != null)
                 return _planManager.GetPlanForColumnInfo(col);
 
+            if (_planManager.SkippedTables.Contains(table))
+                return "Already Exists";
+            
             return null;
         }
 
@@ -292,7 +300,13 @@ namespace CatalogueManager.ANOEngineeringUIs
         private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)
         {
             if(e.Column == olvMigrationPlan)
-                e.SubItem.Font = new Font(e.Item.Font, FontStyle.Underline);
+                if(e.Model is ColumnInfo)
+                    e.SubItem.Font = new Font(e.Item.Font, FontStyle.Underline);
+                else
+                {
+                    e.SubItem.Font = new Font(e.Item.Font, FontStyle.Italic);
+                    e.SubItem.ForeColor = Color.Gray;
+                }
 
             if (e.CellValue as string == "pick")
             {

@@ -142,6 +142,7 @@ namespace CatalogueLibrary.ANOEngineering
 
                         //and rewire it's ColumnInfo to the cloned child one
                         newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
+                        newCatalogueItem.Name = newColumnInfo.GetRuntimeName();
                         newCatalogueItem.SaveToDatabase();
 
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;

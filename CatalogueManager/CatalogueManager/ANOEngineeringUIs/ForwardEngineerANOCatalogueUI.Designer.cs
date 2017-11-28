@@ -288,18 +288,18 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             // olvSuffix
             // 
-            this.olvSuffix.AspectName = "Suffix";
+            this.olvSuffix.AspectName = "";
             this.olvSuffix.Text = "Suffix";
             // 
             // olvNumberOfDigits
             // 
-            this.olvNumberOfDigits.AspectName = "NumberOfIntegersToUseInAnonymousRepresentation";
+            this.olvNumberOfDigits.AspectName = "";
             this.olvNumberOfDigits.Text = "Number of digits";
             this.olvNumberOfDigits.Width = 100;
             // 
             // olvNumberOfCharacters
             // 
-            this.olvNumberOfCharacters.AspectName = "NumberOfCharactersToUseInAnonymousRepresentation";
+            this.olvNumberOfCharacters.AspectName = "";
             this.olvNumberOfCharacters.Text = "Number of characters";
             this.olvNumberOfCharacters.Width = 120;
             // 
