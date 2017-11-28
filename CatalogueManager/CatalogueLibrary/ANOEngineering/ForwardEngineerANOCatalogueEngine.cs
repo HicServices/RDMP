@@ -27,6 +27,7 @@ namespace CatalogueLibrary.ANOEngineering
         public LoadProgress LoadProgressIfAny { get; set; }
 
         public Dictionary<TableInfo, QueryBuilder> SelectSQLForMigrations = new Dictionary<TableInfo, QueryBuilder>();
+        public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new Dictionary<PreLoadDiscardedColumn, IDilutionOperation>(); 
 
         public ForwardEngineerANOCatalogueEngine(ICatalogueRepository catalogueRepository,ForwardEngineerANOCataloguePlanManager planManager)
         {
@@ -92,11 +93,26 @@ namespace CatalogueLibrary.ANOEngineering
                             var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
 
                             var anoTable = _planManager.GetPlannedANOTable(oldColumnInfo);
+                            var dilution = _planManager.GetPlannedDilution(oldColumnInfo);
 
                             if (anoTable != null)
                             {
                                 newColumnInfo.ANOTable_ID = anoTable.ID;
                                 newColumnInfo.SaveToDatabase();
+                            }
+
+                            //if there was a dilution configured we need to setup a virtual DLE load only column of the input type (this ensures RAW has a valid datatype)
+                            if (dilution != null)
+                            {
+                                //Create a discarded (load only) column with name matching the new columninfo
+                                var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,newColumnInfo.GetRuntimeName());
+
+                                //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
+                                discard.Destination = DiscardedColumnDestination.Dilute;
+                                discard.SqlDataType = oldColumnInfo.Data_type;
+                                discard.SaveToDatabase();
+
+                                DilutionOperationsForMigrations.Add(discard,dilution);
                             }
 
                             AuditParenthood(oldColumnInfo, newColumnInfo);
@@ -155,7 +171,7 @@ namespace CatalogueLibrary.ANOEngineering
                         if(!existingJoinInfos.Any(ej=>ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
                             _catalogueRepository.JoinInfoFinder.AddJoinInfo(newFk,newPk,joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
                     }
-                    
+
                     //create new data load confguration
                     LoadMetadata = new LoadMetadata(_catalogueRepository, "Anonymising " + NewCatalogue);
                     LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);

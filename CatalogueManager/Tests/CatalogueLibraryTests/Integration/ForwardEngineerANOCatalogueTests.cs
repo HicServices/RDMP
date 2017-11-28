@@ -267,11 +267,11 @@ namespace CatalogueLibraryTests.Integration
             planManager.SetPlannedANOTable(chi,anoChi);
 
             var dob = bulk.GetColumnInfo("date_of_birth");
-            planManager.SetPlan(dob, ForwardEngineerANOCataloguePlanManager.Plan.Dillute);
+            planManager.SetPlan(dob, ForwardEngineerANOCataloguePlanManager.Plan.Dilute);
             planManager.SetPlannedDilution(dob,new RoundDateToMiddleOfQuarter());
 
             var postcode = bulk.GetColumnInfo("current_postcode");
-            planManager.SetPlan(postcode, ForwardEngineerANOCataloguePlanManager.Plan.Dillute);
+            planManager.SetPlan(postcode, ForwardEngineerANOCataloguePlanManager.Plan.Dilute);
             planManager.SetPlannedDilution(postcode,new ExcludeRight3OfUKPostcodes());
         }
     }

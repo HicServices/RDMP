@@ -148,7 +148,7 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <summary>
-        /// true if destination for column is to store in identifier dump including undilluted versions of dillutes 
+        /// true if destination for column is to store in identifier dump including undiluted versions of dilutes 
         /// (Dillution involves making clean values dirty for purposes of anonymisation and storing the clean values in
         /// the Identifier Dump).
         /// </summary>

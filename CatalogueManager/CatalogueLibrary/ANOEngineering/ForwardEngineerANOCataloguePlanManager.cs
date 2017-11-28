@@ -64,7 +64,7 @@ namespace CatalogueLibrary.ANOEngineering
                         return "Unknown";
 
                     return anoTable.GetRuntimeDataType(LoadStage.PostLoad);
-                case Plan.Dillute:
+                case Plan.Dilute:
                     var dilution = GetPlannedDilution(col);
 
                     if (dilution == null)
@@ -103,7 +103,7 @@ namespace CatalogueLibrary.ANOEngineering
             Plans[col] = plan;
 
             //Set diluteness dictionary key depending on plan
-            if(plan == Plan.Dillute)
+            if(plan == Plan.Dilute)
                 PlannedDilution.Add(col,null);
             else if (PlannedDilution.ContainsKey(col))
                 PlannedDilution.Remove(col);
@@ -141,7 +141,7 @@ namespace CatalogueLibrary.ANOEngineering
 
         public void SetPlannedDilution(ColumnInfo col, IDilutionOperation operation)
         {
-            SetPlan(col,Plan.Dillute);
+            SetPlan(col,Plan.Dilute);
             
             PlannedDilution[col] = operation;
         }
@@ -163,7 +163,7 @@ namespace CatalogueLibrary.ANOEngineering
         {
             Drop,
             ANO,
-            Dillute,
+            Dilute,
             PassThroughUnchanged
         }
 
@@ -210,7 +210,7 @@ namespace CatalogueLibrary.ANOEngineering
                 {
                     var plan = GetPlanForColumnInfo(pk);
 
-                    if (plan == Plan.Dillute || plan == Plan.Drop)
+                    if (plan == Plan.Dilute || plan == Plan.Drop)
                         notifier.OnCheckPerformed(new CheckEventArgs("Current plan for column '" + pk + "' ('" + plan +"') is invalid because it is a primary key", CheckResult.Fail));
                 }
 

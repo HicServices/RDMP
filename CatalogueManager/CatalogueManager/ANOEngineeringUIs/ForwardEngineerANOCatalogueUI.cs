@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.LoadProgressUpdating;
+using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
 
@@ -113,7 +115,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                 if (dilution != null)
                     return dilution;
 
-                if (_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.Dillute)
+                if (_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.Dilute)
                     return "pick";
             }
 
@@ -189,7 +191,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             if (col != null && e.Column == olvDilution)
             {
 
-                if (_planManager.GetPlanForColumnInfo(col) != ForwardEngineerANOCataloguePlanManager.Plan.Dillute)
+                if (_planManager.GetPlanForColumnInfo(col) != ForwardEngineerANOCataloguePlanManager.Plan.Dilute)
                 {
                     e.Cancel = true;
                     return;
@@ -356,7 +358,11 @@ namespace CatalogueManager.ANOEngineeringUIs
                 {
                     foreach (KeyValuePair<TableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
                         CreateAttacher(sqls.Key, sqls.Value, engine.LoadMetadata, engine.LoadProgressIfAny);
+
+                    foreach (KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOps in engine.DilutionOperationsForMigrations)
+                        CreateDilutionMutilation(dilutionOps,engine.LoadMetadata);
                     
+
                     Publish(engine.NewCatalogue);
 
                     if(MessageBox.Show("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -382,7 +388,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             pt.CreateArgumentsForClassIfNotExists<RemoteSqlServerTableAttacher>();
 
             pt.SetArgumentValue("RemoteServer", t.Server);
-            pt.SetArgumentValue("RemoteDatabaseName", t.Database);
+            pt.SetArgumentValue("RemoteDatabaseName", t.GetDatabaseRuntimeName());
             pt.SetArgumentValue("RemoteTableName", t.GetRuntimeName());
 
             pt.SetArgumentValue("RemoteSelectSQL", qb.SQL);
@@ -401,6 +407,20 @@ namespace CatalogueManager.ANOEngineeringUIs
         [DemandsInitialization("Indicates how you want to update the Progress.DataLoadProgress value on successful load batches (only required if you have a LoadProgress)")]
         public DataLoadProgressUpdateInfo { get; set; }
             */
+        }
+
+        private void CreateDilutionMutilation(KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOp,LoadMetadata lmd)
+        {
+            var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.AdjustStaging);
+            pt.CreateArgumentsForClassIfNotExists<Dilution>();
+            pt.ProcessTaskType = ProcessTaskType.MutilateDataTable;
+            pt.Name = "Dilute " + dilutionOp.Key.GetRuntimeName();
+            pt.Path = typeof(Dilution).FullName;
+            pt.SaveToDatabase();
+
+            pt.SetArgumentValue("ColumnToDilute",dilutionOp.Key);
+            pt.SetArgumentValue("Operation",dilutionOp.Value.GetType());
+
         }
 
         private void ddDateColumn_SelectedIndexChanged(object sender, EventArgs e)
