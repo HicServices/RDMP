@@ -54,7 +54,6 @@ namespace CatalogueManager.Menus
             {
                 _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not assemble CacheProgress Pipeline Options", CheckResult.Fail, e));
             }
-            AddCommonMenuItems();
         }
 
         private void AddNewPermissionWindow(object sender, EventArgs e)

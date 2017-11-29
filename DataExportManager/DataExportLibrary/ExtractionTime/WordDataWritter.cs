@@ -184,7 +184,7 @@ namespace DataExportLibrary.ExtractionTime
             SetTableCell(t, 0, 1, "Comment");
             SetTableCell(t, 0, 2, "Value");
 
-            int currentLine = 1;
+            int currentLine = 0;
 
             foreach (IFilter filter in filtersUsed)
                 foreach (ISqlParameter parameter in filter.GetAllParameters())

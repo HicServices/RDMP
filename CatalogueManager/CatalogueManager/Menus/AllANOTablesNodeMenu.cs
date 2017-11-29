@@ -20,8 +20,6 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
                 typeof(ANOStore.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.ANOStore) 
                 { OverrideCommandName = "Create ANOStore Database" });
-
-            AddCommonMenuItems(node);
         }
     }
 }

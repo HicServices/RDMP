@@ -16,7 +16,7 @@ namespace CatalogueManager.Menus
     {
         public AutomationServiceSlotMenu(RDMPContextMenuStripArgs args, AutomationServiceSlot slot): base(args, slot)
         {
-            AddCommonMenuItems();
+            
         }
     }
 }

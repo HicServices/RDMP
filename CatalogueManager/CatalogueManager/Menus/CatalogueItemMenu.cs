@@ -44,8 +44,6 @@ namespace CatalogueManager.Menus
             importDescription.DropDownItems.Add("With same name (Ctrl + I)",null, ImportWithSameName);
 
             Items.Add(importDescription);
-
-            AddCommonMenuItems();
         }
 
         private void AddIssue()

@@ -404,8 +404,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             /*
 
-        [DemandsInitialization("Indicates how you want to update the Progress.DataLoadProgress value on successful load batches (only required if you have a LoadProgress)")]
-        public DataLoadProgressUpdateInfo { get; set; }
+                public DataLoadProgressUpdateInfo { get; set; }
             */
         }
 

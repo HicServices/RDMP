@@ -51,7 +51,6 @@ namespace DataExportManager.Menus
             _importExistingCohort = new ToolStripMenuItem("Import an Already Existing Cohort", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import), (s, e) => ImportAlreadyExistingCohort());
             Items.Add(_importExistingCohort);
 
-            AddCommonMenuItems();
         }
 
         

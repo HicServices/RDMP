@@ -31,8 +31,6 @@ namespace CatalogueManager.Menus
 
             var addFilter = new ToolStripMenuItem("Add New Extraction Filter", _activator.CoreIconProvider.GetImage(RDMPConcept.Filter,OverlayKind.Add), (s, e) => AddFilter());
             Items.Add(addFilter);
-
-            AddCommonMenuItems();
         }
         
         private void AddFilter()

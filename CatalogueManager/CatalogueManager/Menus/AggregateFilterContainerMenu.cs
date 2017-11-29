@@ -46,7 +46,6 @@ namespace CatalogueManager.Menus
 
             Items.Add("Add SubContainer", GetImage(RDMPConcept.FilterContainer,OverlayKind.Add), (s, e) => AddSubcontainer());
 
-            AddCommonMenuItems();
         }
 
         private void FlipContainerOperation()

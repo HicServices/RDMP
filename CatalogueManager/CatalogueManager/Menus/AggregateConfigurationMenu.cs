@@ -59,8 +59,6 @@ namespace CatalogueManager.Menus
             var clearShortcutFilterContainer = new ToolStripMenuItem("Clear Shortcut", GetImage(aggregate, OverlayKind.Shortcut), (s, e) => ClearShortcut());
             clearShortcutFilterContainer.Enabled = aggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null;
             Items.Add(clearShortcutFilterContainer);
-
-            AddCommonMenuItems();
         }
 
         private void ViewDatasetSample(object sender,EventArgs e)

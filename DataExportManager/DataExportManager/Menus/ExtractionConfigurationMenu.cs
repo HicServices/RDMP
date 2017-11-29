@@ -104,7 +104,6 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
-            AddCommonMenuItems();
         }
 
 

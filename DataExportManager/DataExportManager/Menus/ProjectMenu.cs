@@ -37,7 +37,6 @@ namespace DataExportManager.Menus
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks());
             Add(new ExecuteCommandReleaseProject(_activator).SetTarget(project));
             
-            AddCommonMenuItems();
         }
 
 

@@ -34,7 +34,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                 if(index == -1)
                 {
-                    _fails.Add("FAIL:File " + file + " does not have a Check method implementation");
+                    _fails.Add("FAIL:File " + file + " does not have a Check method implementation but contains the text [DemandsInitialization");
                     continue;
                 }
 

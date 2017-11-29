@@ -38,8 +38,6 @@ namespace CatalogueManager.Menus
             string reason;
             convertToANO.Enabled = _columnInfo.CouldSupportConvertingToANOColumnInfo(out reason);
             Items.Add(convertToANO);
-
-            AddCommonMenuItems();
         }
     }
 }
