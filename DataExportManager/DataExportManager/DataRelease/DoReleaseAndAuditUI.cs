@@ -65,7 +65,7 @@ namespace DataExportManager.DataRelease
             if(datasetReleasePotentials.Any(p=>p.Configuration.ID != toAdd.ID))
                 throw new Exception("ReleasePotential array contained datasets from multiple configurations");
 
-            if(toAdd.Project_ID != Project.ID)
+            if(toAdd.Project_ID != _project.ID)
                 throw new Exception("Mismatch between ProjectID of datasets selected for release and what this UI component recons the project is");
 
             if (ConfigurationsForRelease.Keys.Any(config=>config.ID == toAdd.ID))
