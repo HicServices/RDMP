@@ -184,23 +184,22 @@ namespace DataExportLibrary.ExtractionTime
             SetTableCell(t, 0, 1, "Comment");
             SetTableCell(t, 0, 2, "Value");
 
-            int currentLine = 0;
+            int currentLine = 1;
 
             foreach (IFilter filter in filtersUsed)
                 foreach (ISqlParameter parameter in filter.GetAllParameters())
                 {
-                    //i+2 because first row is for headers and indexing in word starts at 1 not 0
-                    SetTableCell(t,currentLine, 1, parameter.ParameterName);
-                    SetTableCell(t,currentLine, 2, parameter.Comment);
-                    SetTableCell(t,currentLine, 3, parameter.Value);
+                    SetTableCell(t,currentLine, 0, parameter.ParameterName);
+                    SetTableCell(t,currentLine, 1, parameter.Comment);
+                    SetTableCell(t,currentLine, 2, parameter.Value);
                     currentLine++;
                 }
 
             foreach (ISqlParameter globalParameter in globalParameters)
             {
-                SetTableCell(t,currentLine, 1, globalParameter.ParameterName);
-                SetTableCell(t,currentLine, 2, globalParameter.Comment);
-                SetTableCell(t,currentLine, 3, globalParameter.Value);
+                SetTableCell(t,currentLine, 0, globalParameter.ParameterName);
+                SetTableCell(t,currentLine, 1, globalParameter.Comment);
+                SetTableCell(t,currentLine, 2, globalParameter.Value);
                 currentLine++;
             }
         }
@@ -401,15 +400,15 @@ namespace DataExportLibrary.ExtractionTime
                 if (string.IsNullOrWhiteSpace(definition))
                     definition = "No validation configured";
 
-                SetTableCell(t, tableLine, 2, definition);
+                SetTableCell(t, tableLine,1, definition);
                 tableLine++;
             }
 
             //ouput list of validations we skipped
             foreach (ItemValidator iv in Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed)
             {
-                SetTableCell(t, tableLine, 1 , iv.TargetProperty);
-                SetTableCell(t, tableLine, 2, "No validations carried out because column is Hashed/Annonymised");
+                SetTableCell(t, tableLine, 0 , iv.TargetProperty);
+                SetTableCell(t, tableLine, 1, "No validations carried out because column is Hashed/Annonymised");
                 tableLine++;
             }
         }
@@ -433,10 +432,10 @@ namespace DataExportLibrary.ExtractionTime
             {
                 string colname = keyValuePair.Key;
 
-                SetTableCell(t,tableLine, 1,colname);
-                SetTableCell(t,tableLine, 2,keyValuePair.Value[Consequence.Missing].ToString());
-                SetTableCell(t,tableLine, 4,keyValuePair.Value[Consequence.Wrong].ToString());
-                SetTableCell(t,tableLine, 5,keyValuePair.Value[Consequence.InvalidatesRow].ToString());
+                SetTableCell(t,tableLine, 0,colname);
+                SetTableCell(t,tableLine, 1,keyValuePair.Value[Consequence.Missing].ToString());
+                SetTableCell(t,tableLine, 2,keyValuePair.Value[Consequence.Wrong].ToString());
+                SetTableCell(t,tableLine, 3,keyValuePair.Value[Consequence.InvalidatesRow].ToString());
                 tableLine++;
             }
         }
