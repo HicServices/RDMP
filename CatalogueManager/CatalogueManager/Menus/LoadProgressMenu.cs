@@ -14,8 +14,6 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandUnlockLockable(_activator, loadProgress));
             Add(new ExecuteCommandAddCachingSupportToLoadProgress(_activator, loadProgress));
 
-            AddCommonMenuItems();
-
         }
     }
 }

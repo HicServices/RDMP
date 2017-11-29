@@ -30,7 +30,6 @@ namespace DataExportManager.Menus
             _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
             Items.Add("Add ExtractableDataSet(s) to Package", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), AddExtractableDatasetToPackage);
 
-            AddCommonMenuItems();
         }
 
         private void AddExtractableDatasetToPackage(object sender, EventArgs e)

@@ -45,7 +45,6 @@ namespace DataExportManager.Menus
 
             Items.Add("Add SubContainer", _activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add), (s, e) => AddSubcontainer());
 
-            AddCommonMenuItems();
         }
 
         private void FlipContainerOperation()

@@ -43,7 +43,6 @@ namespace DataExportManager.Menus
 
             Items.Add("Import CohortIdentificationConfiguration PatientIndexTable as custom data", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import), (s, e) => ExecutePatientIndexTableAndImportAsCustomData());
 
-            AddCommonMenuItems();
 
         }
 

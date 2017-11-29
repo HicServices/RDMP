@@ -57,7 +57,6 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandViewSelectedDatasetsExtractionSql(_activator).SetTarget(selectedDataSet));
 
-            AddCommonMenuItems();
         }
 
 

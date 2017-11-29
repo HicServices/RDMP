@@ -305,7 +305,7 @@ namespace CatalogueManager.Collections
 
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, object oMasquerader = null)
         {
-            RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator);
+            RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
             args.CurrentlyPinnedObject = _currentlyPinned;
             args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
@@ -314,7 +314,7 @@ namespace CatalogueManager.Collections
             //now find the first RDMPContextMenuStrip with a compatible constructor
             foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
             {
-                if (menuType.IsAbstract || menuType.IsInterface)
+                if (menuType.IsAbstract || menuType.IsInterface || menuType == typeof(RDMPContextMenuStrip))
                     continue;
 
                 //try constructing menu with:
@@ -323,25 +323,20 @@ namespace CatalogueManager.Collections
                     o //parameter 2 must be object compatible Type
                     );
 
+                //find first menu that's compatible
                 if (menu != null)
                 {
-                    AddExpandCollapseMenuItems(menu, o);
+                    menu.AddCommonMenuItems();
                     return menu;
                 }
             }
 
-            return null;
+            //there are no derrived classes with compatible constructors so just use the basic one
+            var defaultMenu = new RDMPContextMenuStrip(args,o);
+            defaultMenu.AddCommonMenuItems();
+            return defaultMenu;
         }
 
-        private void AddExpandCollapseMenuItems(ContextMenuStrip menuStrip, object model)
-        {
-            if (menuStrip != null)
-            {
-                menuStrip.Items.Add(new ToolStripSeparator());
-                menuStrip.Items.Add(new ExpandAllTreeNodesMenuItem(Tree, model));
-                menuStrip.Items.Add(new CollapseAllTreeNodesMenuItem(Tree, model));
-            }
-        }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {

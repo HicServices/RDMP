@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using NUnit.Framework;
 using ReusableUIComponents.CommandExecution.Proposals;
@@ -57,6 +58,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             //All Menus should correspond to a data class
             foreach (Type menuClass in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
             {
+                if(menuClass == typeof(RDMPContextMenuStrip)) //the basic class from which all are inherited
+                    continue;
+                
                 //We are looking at something like AutomationServerSlotsMenu
                 if (!menuClass.Name.EndsWith("Menu"))
                 {
@@ -80,10 +84,21 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                     continue;
                 }
 
+                ConfirmFileHasText(menuClass, "AddCommonMenuItems()",false);
+
                 //expect something like this
                 //public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
                 string expectedConstructorSignature = menuClass.Name + "(RDMPContextMenuStripArgs args," + expectedClassName;
                 ConfirmFileHasText(menuClass,expectedConstructorSignature);
+                
+                FieldInfo[] fields = menuClass.GetFields(
+                         BindingFlags.NonPublic |
+                         BindingFlags.Instance);
+
+                //find private fields declared at the object level (i.e. not in base class that are of type IActivateItem)
+                var activatorField = fields.FirstOrDefault(f =>f.DeclaringType == menuClass &&  f.FieldType == typeof (IActivateItems));
+                if(activatorField != null)
+                    problems.Add("Menu '" + menuClass + "' contains a private field called '" + activatorField.Name + "'.  You should instead use base class protected field RDMPContextMenuStrip._activator");
             }
             
             //Drag and drop / Activation - Execution Proposal system
@@ -122,16 +137,29 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             return null;
         }
 
-        private void ConfirmFileHasText(Type type, string expectedString)
+        private void ConfirmFileHasText(Type type, string expectedString,bool mustHaveText = true)
         {
             var file = _csFilesList.SingleOrDefault(f => Path.GetFileName(f).Equals(type.Name + ".cs"));
 
             //probably not our class
             if(file == null)
                 return;
+            bool hasText = File.ReadAllText(file)
+                .Replace(" ", "")
+                .ToLowerInvariant()
+                .Contains(expectedString.Replace(" ", "").ToLowerInvariant());
 
-            if (!File.ReadAllText(file).Replace(" ","").ToLowerInvariant().Contains(expectedString.Replace(" ","").ToLowerInvariant()))
-                problems.Add("File '" + file + "' did not contain expected text '" + expectedString + "'");
+            if (mustHaveText)
+            {
+                if(!hasText)
+                    problems.Add("File '" + file + "' did not contain expected text '" + expectedString + "'");
+            }
+            else
+            {
+                if(hasText)
+                    problems.Add("File '" + file + "' contains unexpected text '" + expectedString + "'");
+            }
+            
         }
     }
 }

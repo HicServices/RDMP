@@ -39,8 +39,6 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandEditExistingLoadMetadata(_activator).SetTarget(loadMetadata));
             
             Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
-            
-            AddCommonMenuItems();
 
         }
 

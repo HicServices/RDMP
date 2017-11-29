@@ -37,7 +37,6 @@ namespace DataExportManager.Menus
                 Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled,
                     (s, e) => SetDisabled(true));
 
-            AddCommonMenuItems();
         }
 
         private void SetDisabled(bool disable)

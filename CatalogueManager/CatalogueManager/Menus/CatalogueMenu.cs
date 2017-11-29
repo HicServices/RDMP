@@ -58,7 +58,6 @@ namespace CatalogueManager.Menus
         public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args,null)
         {
             AddImportOptions();
-            AddCommonMenuItems(folder);
         }
 
         public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
@@ -86,8 +85,6 @@ namespace CatalogueManager.Menus
             Items.Add(new ToolStripSeparator());
 
             AddImportOptions();
-
-            AddCommonMenuItems();
         }
 
         private void AddImportOptions()

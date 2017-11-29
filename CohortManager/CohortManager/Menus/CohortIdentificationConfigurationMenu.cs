@@ -49,8 +49,6 @@ namespace CohortManager.Menus
             freeze.Enabled = !cic.Frozen;
             Items.Add(freeze);
             
-            AddCommonMenuItems();
-
             Items.Add(new ToolStripSeparator());
 
             Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));

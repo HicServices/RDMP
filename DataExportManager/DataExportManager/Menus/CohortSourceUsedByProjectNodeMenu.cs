@@ -29,7 +29,6 @@ namespace DataExportManager.Menus
             viewDetail.Enabled = !_cohortSourceUsedByProjectNode.IsEmptyNode;
             Items.Add(viewDetail);
 
-            AddCommonMenuItems();
         }
 
         private void ShowDetailedSummaryOfCohorts()

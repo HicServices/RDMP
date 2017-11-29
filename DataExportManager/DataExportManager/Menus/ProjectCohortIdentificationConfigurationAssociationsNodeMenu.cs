@@ -19,7 +19,6 @@ namespace DataExportManager.Menus
         {
             Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(node.Project));
 
-            AddCommonMenuItems(node);
         }
     }
 }

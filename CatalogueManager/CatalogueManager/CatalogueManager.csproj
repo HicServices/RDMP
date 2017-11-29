@@ -381,12 +381,6 @@
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
-    <Compile Include="Menus\MenuItems\CollapseAllTreeNodesMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Menus\MenuItems\ExpandAllTreeNodesMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
@@ -760,6 +754,8 @@
     <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
     <Compile Include="Menus\DocumentationNodeMenu.cs" />
     <Compile Include="Menus\FilterMenu.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCollapseChildNodes.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExpandAllNodes.cs" />
     <Compile Include="Menus\ParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
@@ -891,7 +887,7 @@
     <Compile Include="Menus\CatalogueItemMenu.cs" />
     <Compile Include="Menus\ColumnInfoMenu.cs" />
     <Compile Include="Menus\LoadMetadataMenu.cs" />
-    <Compile Include="Menus\RDMPContextMenu.cs" />
+    <Compile Include="Menus\RDMPContextMenuStrip.cs" />
     <Compile Include="Menus\CatalogueMenu.cs" />
     <Compile Include="Menus\TableInfoMenu.cs" />
     <Compile Include="ObjectVisualisation\CatalogueObjectVisualisation.cs" />

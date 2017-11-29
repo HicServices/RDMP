@@ -50,8 +50,6 @@ namespace CatalogueManager.Menus
                     Items.Add(graphMenu);
                 }
             }
-
-            AddCommonMenuItems();
         }
     }
 }

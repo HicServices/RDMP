@@ -84,8 +84,6 @@ namespace CatalogueManager.Menus
 
             if (tableInfo != null && tableInfo.IsTableValuedFunction)
                 Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
-
-            AddCommonMenuItems();
         }
 
         private void AddCredentialPermission(TableInfo tableInfo)
