@@ -61,7 +61,7 @@ namespace CatalogueManager.Collections
         
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
         
-        private CollectionPinFilterUI _scopeFilter;
+        private CollectionPinFilterUI _pinFilter;
         private object _currentlyPinned;
 
         /// <summary>
@@ -166,8 +166,8 @@ namespace CatalogueManager.Collections
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
         {
             // unpin first if the request does not want to pin
-            if (!args.Request.Pin && _scopeFilter != null)
-                _scopeFilter.UnApplyToTree();
+            if (!args.Request.Pin && _pinFilter != null)
+                _pinFilter.UnApplyToTree();
 
             //get the parental hierarchy
             var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
@@ -207,16 +207,16 @@ namespace CatalogueManager.Collections
 
         private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
         {
-            if (_scopeFilter != null)
-                _scopeFilter.UnApplyToTree();
+            if (_pinFilter != null)
+                _pinFilter.UnApplyToTree();
             
-            _scopeFilter = new CollectionPinFilterUI();
-            _scopeFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
+            _pinFilter = new CollectionPinFilterUI();
+            _pinFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
             _currentlyPinned = objectToPin;
 
-            _scopeFilter.UnApplied += (s, e) =>
+            _pinFilter.UnApplied += (s, e) =>
             {
-                _scopeFilter = null;
+                _pinFilter = null;
                 _currentlyPinned = null;
             };
         }
@@ -358,6 +358,9 @@ namespace CatalogueManager.Collections
             var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
             if (knownDescendancy != null)
                 parent = knownDescendancy.Last();
+
+            if (_pinFilter != null && knownDescendancy != null)
+                _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e.Object, knownDescendancy);
 
             //if it is a root object maintained by this tree and it exists
             if (MaintainRootObjects != null && MaintainRootObjects.Contains(e.Object.GetType()) && e.Object.Exists())
