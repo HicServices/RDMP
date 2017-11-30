@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using DataExportManager.Collections.Nodes;
@@ -13,11 +14,11 @@ namespace DataExportManager.Menus
 {
     public class ProjectCohortIdentificationConfigurationAssociationsNodeMenu:RDMPContextMenuStrip
     {
-        public ProjectCohortIdentificationConfigurationAssociationsNodeMenu(IActivateItems activator, ProjectCohortIdentificationConfigurationAssociationsNode node): base(activator, null)
+        public ProjectCohortIdentificationConfigurationAssociationsNodeMenu(RDMPContextMenuStripArgs args, ProjectCohortIdentificationConfigurationAssociationsNode node)
+            : base(args, null)
         {
-            Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(activator).SetTarget(node.Project));
+            Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(node.Project));
 
-            AddCommonMenuItems(node);
         }
     }
 }

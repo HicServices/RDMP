@@ -1,5 +1,7 @@
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
@@ -11,12 +13,12 @@ namespace CatalogueManager.Menus
     {
         public DocumentationNode DocumentationNode { get; set; }
 
-        public DocumentationNodeMenu(IActivateItems activator, DocumentationNode documentationNode):base(activator,null)
+        public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode):base(args,null)
         {
             DocumentationNode = documentationNode;
 
-            Items.Add(new AddSupportingDocumentMenuItem(activator, DocumentationNode.Catalogue));
-            Items.Add(new AddSupportingSqlTableMenuItem(activator, DocumentationNode.Catalogue));
+            Add(new ExecuteCommandAddNewSupportingDocument(_activator, DocumentationNode.Catalogue));
+            Add(new ExecuteCommandAddNewSupportingSqlTable(_activator, DocumentationNode.Catalogue));
         }
     }
 }

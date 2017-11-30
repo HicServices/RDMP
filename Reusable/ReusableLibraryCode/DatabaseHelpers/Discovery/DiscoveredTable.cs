@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -111,6 +112,19 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
                 return Helper.GetRowCount(connection.Connection, this, connection.Transaction);
+        }
+
+        public void AddColumn(string name, DatabaseTypeRequest type,bool allowNulls)
+        {
+            AddColumn(name, Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type),allowNulls);
+        }
+
+        public void AddColumn(string name, string databaseType, bool allowNulls)
+        {
+            using (IManagedConnection connection = Database.Server.GetManagedConnection())
+            {
+                Helper.AddColumn(this, connection.Connection, name, databaseType, allowNulls);
+            }
         }
 
         public void DropColumn(DiscoveredColumn column)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -34,29 +34,35 @@ namespace CatalogueManager.Menus
 {
     [InheritedExport(typeof(RDMPContextMenuStrip))]
     [System.ComponentModel.DesignerCategory("")]
-    public abstract class RDMPContextMenuStrip:ContextMenuStrip
+    public class RDMPContextMenuStrip:ContextMenuStrip
     {
+        private readonly object _o;
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         protected IActivateItems _activator;
-        private readonly DatabaseEntity _databaseEntity;
-
+        
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
         private AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
+        private RDMPContextMenuStripArgs _args;
 
-        protected RDMPContextMenuStrip(IActivateItems activator, DatabaseEntity databaseEntity)
+        public RDMPContextMenuStrip(RDMPContextMenuStripArgs args, object o)
         {
-            _activator = activator;
-            _databaseEntity = databaseEntity;
+            _o = o;
+            _args = args;
 
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
+            _activator = _args.ItemActivator;
 
-            if(databaseEntity != null)
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(activator, databaseEntity));
-
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+            
             RepositoryLocator = _activator.RepositoryLocator;
+        }
+
+        public RDMPContextMenuStrip(RDMPContextMenuStripArgs args, DatabaseEntity databaseEntity): this(args, (object)databaseEntity)
+        {
+            if (databaseEntity != null)
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator, databaseEntity));
         }
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
@@ -65,34 +71,32 @@ namespace CatalogueManager.Menus
             ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
-        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None)
+        protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None, ToolStripMenuItem toAddTo = null)
         {
             var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
-            
+
             if (shortcutKey != Keys.None)
                 mi.ShortcutKeys = shortcutKey;
-            
-            Items.Add(mi);
+
+            if (toAddTo == null)
+                Items.Add(mi);
+            else
+                toAddTo.DropDownItems.Add(mi);
+
             return mi;
         }
 
-        /// <summary>
-        /// Adds right click options that relate to the DatabaseEntity you passed into the constructor (which might be null).  This includes activate, delete, rename
-        /// etc where appropriate to that object.  Also all PluginUserInterfaces will be asked for additional menu items for the supplied DatabaseEntity (if any).
-        /// 
-        /// If you want to expose a non DatabaseEntity object (or multiple) to PluginUserInterfaces then pass that in as argument  additionalObjectsToExposeToPluginUserInterfaces
-        /// </summary>
-        /// <param name="additionalObjectsToExposeToPluginUserInterfaces">Optional additional objects, do not pass the same object in twice or you will get duplication in your menu</param>
-        protected void AddCommonMenuItems(params object[] additionalObjectsToExposeToPluginUserInterfaces)
+        public void AddCommonMenuItems()
         {
-            var deletable = _databaseEntity as IDeleteable;
-            var nameable = _databaseEntity as INamed;
+            var deletable = _o as IDeleteable;
+            var nameable = _o as INamed;
+            var databaseEntity = _o as DatabaseEntity;
 
             if(Items.Count > 0)
                 Items.Add(new ToolStripSeparator());
             
-            if (_databaseEntity != null)
-                Add(new ExecuteCommandRefreshObject(_activator, _databaseEntity),Keys.F5);
+            if (databaseEntity != null)
+                Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
             if (deletable != null)
                 Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
@@ -100,44 +104,36 @@ namespace CatalogueManager.Menus
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
 
-            if(_databaseEntity != null)
+            if (databaseEntity != null)
             {
-                Add(new ExecuteCommandShowKeywordHelp(_activator, _databaseEntity));
-                Add(new ExecuteCommandViewDependencies(_databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
-                Add(new ExecuteCommandPin(_activator, _databaseEntity));
+                Add(new ExecuteCommandShowKeywordHelp(_activator, databaseEntity));
+                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
             }
             
-            List<object> askPluginsAbout = new List<object>(additionalObjectsToExposeToPluginUserInterfaces);
-            
-            if(_databaseEntity != null)
-                askPluginsAbout.Add(_databaseEntity);
-
-            if(askPluginsAbout.Any())
+            foreach (var plugin in _activator.PluginUserInterfaces)
             {
-                foreach (var plugin in _activator.PluginUserInterfaces)
+                try
                 {
-                    foreach (var askAbout in askPluginsAbout)
-                    {
+                    ToolStripMenuItem[] toAdd;
+                    if (_o is DatabaseEntity)
+                        toAdd = plugin.GetAdditionalRightClickMenuItems((DatabaseEntity)_o);
+                    else
+                        toAdd = plugin.GetAdditionalRightClickMenuItems(_o);
 
-                        try
-                        {
-                            ToolStripMenuItem[] toAdd;
-                            if (askAbout is DatabaseEntity)
-                                toAdd = plugin.GetAdditionalRightClickMenuItems((DatabaseEntity) askAbout);
-                            else
-                                toAdd = plugin.GetAdditionalRightClickMenuItems(askAbout);
-
-                            if (toAdd != null && toAdd.Any())
-                                Items.AddRange(toAdd);
-                        }
-                        catch (Exception ex)
-                        {
-                            _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,
-                                CheckResult.Fail, ex));
-                        }
-                    }
-
+                    if (toAdd != null && toAdd.Any())
+                        Items.AddRange(toAdd);
                 }
+                catch (Exception ex)
+                {
+                    _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,
+                        CheckResult.Fail, ex));
+                }
+            }
+
+            if (_args.Tree != null)
+            {
+                Add(new ExecuteCommandExpandAllNodes(_activator, _args.Tree, _args.Model));
+                Add(new ExecuteCommandCollapseChildNodes(_activator, _args.Tree, _args.Model));
             }
         }
 

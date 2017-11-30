@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -27,7 +28,7 @@ namespace DataExportManager.Menus
         private readonly SelectedDataSets _selectedDataSet;
         private ExtractionConfiguration _extractionConfiguration;
 
-        public SelectedDataSetsMenu(IActivateItems activator, SelectedDataSets selectedDataSet): base(activator, selectedDataSet)
+        public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet): base(args, selectedDataSet)
         {
             _selectedDataSet = selectedDataSet;
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
@@ -50,13 +51,12 @@ namespace DataExportManager.Menus
             Items.Add(graphs);
             ////////////////////////////////////////////////////////////////////
 
-            var addRootFilter = new ToolStripMenuItem("Add Filter Container", activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add) , (s, e) => AddFilterContainer());
+            var addRootFilter = new ToolStripMenuItem("Add Filter Container", _activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add) , (s, e) => AddFilterContainer());
             addRootFilter.Enabled = root == null;
             Items.Add(addRootFilter);
 
             Add(new ExecuteCommandViewSelectedDatasetsExtractionSql(_activator).SetTarget(selectedDataSet));
 
-            AddCommonMenuItems();
         }
 
 

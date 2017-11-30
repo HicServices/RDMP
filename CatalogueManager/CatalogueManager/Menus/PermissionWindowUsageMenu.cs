@@ -1,4 +1,5 @@
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 
@@ -6,10 +7,10 @@ namespace CatalogueManager.Menus
 {
     internal class PermissionWindowUsedByCacheProgressNodeMenu : RDMPContextMenuStrip
     {
-        public PermissionWindowUsedByCacheProgressNodeMenu(IActivateItems activator, PermissionWindowUsedByCacheProgressNode permissionWindowUsage)
-            : base(activator, null)
+        public PermissionWindowUsedByCacheProgressNodeMenu(RDMPContextMenuStripArgs args, PermissionWindowUsedByCacheProgressNode permissionWindowUsage)
+            : base(args, null)
         {
-            Add(new ExecuteCommandUnlockLockable(activator, permissionWindowUsage.PermissionWindow));
+            Add(new ExecuteCommandUnlockLockable(_activator, permissionWindowUsage.PermissionWindow));
         }
     }
 }

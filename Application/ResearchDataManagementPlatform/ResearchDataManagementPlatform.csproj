@@ -17,11 +17,11 @@
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Background</UpdateMode>
+    <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>1</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>true</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
+    <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>https://hic.dundee.ac.uk/Installers/RDMP/ResearchDataManagementPlatform/</InstallUrl>
     <UpdateUrl>https://hic.dundee.ac.uk/Installers/RDMP/ResearchDataManagementPlatform/</UpdateUrl>

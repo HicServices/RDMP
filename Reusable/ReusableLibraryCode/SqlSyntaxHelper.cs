@@ -7,6 +7,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace ReusableLibraryCode
 {
+    [Obsolete("This class is not recommended for use, instead use an appropriate IQuerySyntaxHelper (ideally fetched from a DiscoveredServer)")]
     public class SqlSyntaxHelper
     {
         //todo it is hacky to just wrap this here! for no good reason

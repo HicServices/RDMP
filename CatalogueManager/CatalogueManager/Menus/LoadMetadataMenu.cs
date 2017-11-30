@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -27,18 +28,17 @@ namespace CatalogueManager.Menus
     public class LoadMetadataMenu:RDMPContextMenuStrip
     {
         private LoadMetadata _loadMetadata;
-        
-        public LoadMetadataMenu( IActivateItems activator, LoadMetadata loadMetadata):base(activator,loadMetadata)
+
+        public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata)
+            : base(args, loadMetadata)
         {
             _loadMetadata = loadMetadata;
 
-            Add(new ExecuteCommandCreateNewLoadMetadata(activator));
+            Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
 
-            Add(new ExecuteCommandEditExistingLoadMetadata(activator).SetTarget(loadMetadata));
+            Add(new ExecuteCommandEditExistingLoadMetadata(_activator).SetTarget(loadMetadata));
             
             Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
-            
-            AddCommonMenuItems();
 
         }
 

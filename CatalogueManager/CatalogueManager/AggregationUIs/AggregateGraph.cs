@@ -104,6 +104,12 @@ namespace CatalogueManager.AggregationUIs
 
         public void AbortLoadGraph()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(AbortLoadGraph));
+                return;
+            }
+
             if(_cmd != null)
                 _cmd.Cancel();
 
@@ -129,7 +135,8 @@ namespace CatalogueManager.AggregationUIs
             SetToolbarButtonsEnabled(false);
             Done = false;
             Crashed = false;
-            
+            Exception = null; 
+
             chart1.Visible = false;
 
             chart1.Series.Clear();
@@ -187,7 +194,7 @@ namespace CatalogueManager.AggregationUIs
                         throw new TimeoutException(
                             "Window Handle was not created on AggregateGraph control after 10 seconds of calling LoadGraph!");
                 }
-
+                
                 this.Invoke(new MethodInvoker(() =>
                 {
                     lblLoadStage.Visible = true;
@@ -210,306 +217,279 @@ namespace CatalogueManager.AggregationUIs
                 using (var con = server.GetConnection())
                 {
                     con.Open();
-                    try
-                    {
-                        _cmd = server.GetCommand(builder.SQL, con);
-                        _cmd.CommandTimeout = Timeout;
+                    
+                    _cmd = server.GetCommand(builder.SQL, con);
+                    _cmd.CommandTimeout = Timeout;
 
-                        _dt = new DataTable();
+                    _dt = new DataTable();
 
-                        this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
+                    this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
 
-                        DbDataAdapter adapter = server.GetDataAdapter(_cmd);
-                        adapter.Fill(_dt);
-                        _cmd = null;
-
+                    DbDataAdapter adapter = server.GetDataAdapter(_cmd);
+                    adapter.Fill(_dt);
+                    _cmd = null;
 
 
-                        if (_dt.Rows.Count == 0)
-                            throw new Exception("Query Returned No Rows");
+
+                    if (_dt.Rows.Count == 0)
+                        throw new Exception("Query Returned No Rows");
 
 
-                        //setup the heatmap if there is a pivot
-                        if (_dt.Columns.Count > 2 && AggregateConfiguration.PivotOnDimensionID != null)
-                            this.Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
-                        else
-                            this.Invoke(new MethodInvoker(() => heatmapUI.Clear()));
+                    //setup the heatmap if there is a pivot
+                    if (_dt.Columns.Count > 2 && AggregateConfiguration.PivotOnDimensionID != null)
+                        this.Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
+                    else
+                        this.Invoke(new MethodInvoker(() => heatmapUI.Clear()));
 
 
-                        if (GraphTableRetrieved != null)
-                            GraphTableRetrieved(this, _dt);
+                    if (GraphTableRetrieved != null)
+                        GraphTableRetrieved(this, _dt);
 
-                        if (_dt.Columns.Count < 2)
-                            throw new NotSupportedException("Aggregates must have 2 columns at least");
+                    if (_dt.Columns.Count < 2)
+                        throw new NotSupportedException("Aggregates must have 2 columns at least");
 
-                        bool haveSetSource = false;
-
-                        //Invoke onto main UI thread so we can setup the chart
-                        this.Invoke(new MethodInvoker(() =>
-                        {
-                            //last column is always the X axis, then for each column before it add a series with Y values coming from that column
-                            for (int i = 0; i < _dt.Columns.Count - 1; i++)
-                            {
-                                int index = i;
-
-
-                                if (!haveSetSource)
-                                {
-
-                                    try
-                                    {
-                                        dataGridView1.DataSource = _dt;
-                                        lblCannotLoadData.Visible = false;
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        lblCannotLoadData.Visible = true;
-                                        lblCannotLoadData.Text = "Could not load data table:" + e.Message;
-                                        dataGridView1.DataSource = null;
-                                    }
-
-                                    chart1.DataSource = _dt;
-                                    haveSetSource = true;
-                                }
-
-                                if (countColumn != null)
-                                    try
-                                    {
-                                        chart1.ChartAreas[0].AxisY.Title = countColumn.IColumn.GetRuntimeName();
-                                    }
-                                    catch (Exception)
-                                    {
-                                        chart1.ChartAreas[0].AxisY.Title = "Count";
-                                            //sometimes you can't get a runtime name e.g. it is count(*) with no alias
-                                    }
-
-                                chart1.ChartAreas[0].AxisX.IsMarginVisible = false;
-                                chart1.ChartAreas[0].AxisY.IsMarginVisible = false;
-
-                                if (axis != null)
-                                {
-                                    switch (axis.AxisIncrement)
-                                    {
-                                        case AxisIncrement.Day:
-                                            chart1.ChartAreas[0].AxisX.Title = "Day";
-
-
-                                            if (_dt.Rows.Count <= 370)
-                                            {
-                                                //by two months
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 7;
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 14;
-                                                chart1.ChartAreas[0].AxisX.Interval = 14;
-                                            }
-                                            else
-                                            {
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 28;
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 7;
-                                                chart1.ChartAreas[0].AxisX.Interval = 28;
-                                            }
-
-
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
-
-                                            break;
-                                        case AxisIncrement.Month:
-
-                                            //x axis is the number of rows in the data table
-                                            chart1.ChartAreas[0].AxisX.Title = "Month";
-
-
-                                            //if it is less than or equal to ~3 years at once - with 
-                                            if (_dt.Rows.Count <= 40)
-                                            {
-                                                //by month
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 3;
-                                                chart1.ChartAreas[0].AxisX.Interval = 1;
-                                            }
-                                            else
-                                            {
-                                                //by year
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 6;
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 12;
-                                                chart1.ChartAreas[0].AxisX.Interval = 12;
-                                            }
-
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
-
-
-                                            break;
-                                        case AxisIncrement.Year:
-
-                                            chart1.ChartAreas[0].AxisX.Title = "Year";
-
-                                            if (_dt.Rows.Count <= 10)
-                                            {
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 1;
-                                                chart1.ChartAreas[0].AxisX.Interval = 1;
-                                            }
-                                            else
-                                            {
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 5;
-                                                chart1.ChartAreas[0].AxisX.Interval = 5;
-                                            }
-
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
-
-                                            break;
-
-                                        case AxisIncrement.Quarter:
-
-                                            //x axis is the number of rows in the data table
-                                            chart1.ChartAreas[0].AxisX.Title = "Quarter";
-
-
-                                            //if it is less than or equal to ~3 years at once - with 
-                                            if (_dt.Rows.Count <= 12)
-                                            {
-                                                //by quarter
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 4;
-                                                chart1.ChartAreas[0].AxisX.Interval = 4;
-                                            }
-                                            else
-                                            {
-                                                //by year
-                                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
-                                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 16;
-                                                chart1.ChartAreas[0].AxisX.Interval = 16;
-                                            }
-
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-                                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
-
-
-                                            break;
-                                        default:
-                                            throw new ArgumentOutOfRangeException();
-                                    }
-                                }
-                                else
-                                    chart1.ChartAreas[0] = new ChartArea(); //reset it
-
-                                chart1.ChartAreas[0].AxisY.MinorGrid.Enabled = true;
-                                chart1.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-                                chart1.ChartAreas[0].AxisY.LabelStyle.Format = "{0:#,#}";
-
-                                //avoid buffer overun
-                                if (index > chart1.Series.Count - 1)
-                                    chart1.Series.Add(new Series());
-
-                                chart1.Series[index].XValueMember = _dt.Columns[0].ColumnName;
-                                chart1.Series[index].YValueMembers = _dt.Columns[index + 1].ColumnName;
-
-                                if (axis != null)
-                                {
-                                    chart1.Series[index].ChartType = SeriesChartType.Line;
-
-                                    //alternate in rotating style the various lines on the graph
-                                    chart1.Series[index].BorderDashStyle = StyleList[index%StyleList.Length];
-                                    chart1.Series[index].BorderWidth = 2;
-
-                                }
-                                else
-                                {
-                                    chart1.Series[index].ChartType = SeriesChartType.Column;
-                                    chart1.ChartAreas[0].AxisX.Interval = 1;
-                                    chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
-                                }
-
-                                //name series based on column 3 or the aggregate name
-                                chart1.Series[index].Name = _dt.Columns[index + 1].ColumnName;
-                            }
-
-                            lblLoadStage.Text = "Data Binding Chart (" + _dt.Columns.Count + " columns)";
-                            lblLoadStage.Refresh();
-
-                            chart1.DataBind();
-
-                            chart1.Visible = true;
-                            pbLoading.Visible = false;
-                            llCancel.Visible = false;
-                            lblLoadStage.Visible = false;
-
-                            //set publish enabledness to the enabledness of 
-                            btnPublishToWebsite.Enabled =
-                                _defaults.GetDefaultFor(
-                                    ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
-                            btnClearFromCache.Enabled = false;
-
-                            //Make publish button enabledness be dependant on cache
-                            if (btnPublishToWebsite.Enabled)
-                            {
-                                //let them clear if there is a query caching server and the manager has cached results already
-                                btnClearFromCache.Enabled =
-                                    GetCacheManager()
-                                        .GetLatestResultsTableUnsafe(AggregateConfiguration,
-                                            AggregateOperation.ExtractableAggregateResults) != null;
-                            }
-
-                            //End invoke onto UI thread
-                        }));
-
-                        Done = true;
-                    }
-                    catch (Exception e)
-                    {
-                        Crashed = true;
-                        Exception = e;
-                        throw new Exception("Failed to generate graph", e);
-                    }
-
+                    //Invoke onto main UI thread so we can setup the chart
+                    this.Invoke(new MethodInvoker(() => PopulateGraphResults(countColumn, axis)));
                 }
+             
+                Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Crashed"; }));
             }
             catch (Exception e)
             {
-                //don't bother if it is closing
+                //don't bother if it is closing / closed
                 if (IsDisposed)
                     return;
-                try
-                {
-                    Invoke(new MethodInvoker(() =>
-                    {
-                        try
-                        {
-                            AbortLoadGraph();
-                        }
-                        catch (Exception)
-                        {
-                            return;
-                        }
-                    }));
-                }
-                catch (Exception ex)
-                {
-                    //probably the Handle hasn't been created or some other garbage problem occurred
-                    Console.WriteLine(ex);
 
-                }
-
-
-                Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Crashed"; }));
+                Crashed = true;
+                Exception = e; 
 
                 ragSmiley1.SetVisible(true);
                 ragSmiley1.Fatal(e);
-            }
-            finally
-            {
+                
+                AbortLoadGraph();
+                
                 ShowHeatmapTab(heatmapUI.HasDataTable());
 
                 SetToolbarButtonsEnabled(true);
+
+            }
+            finally
+            {
+                Done = true;
+            }
+        }
+
+        private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
+        {
+            bool haveSetSource = false;
+
+            //last column is always the X axis, then for each column before it add a series with Y values coming from that column
+            for (int i = 0; i < _dt.Columns.Count - 1; i++)
+            {
+                int index = i;
+
+
+                if (!haveSetSource)
+                {
+                    try
+                    {
+                        dataGridView1.DataSource = _dt;
+                        lblCannotLoadData.Visible = false;
+                    }
+                    catch (Exception e)
+                    {
+                        lblCannotLoadData.Visible = true;
+                        lblCannotLoadData.Text = "Could not load data table:" + e.Message;
+                        dataGridView1.DataSource = null;
+                    }
+
+                    chart1.DataSource = _dt;
+                    haveSetSource = true;
+                }
+
+                if (countColumn != null)
+                    try
+                    {
+                        chart1.ChartAreas[0].AxisY.Title = countColumn.IColumn.GetRuntimeName();
+                    }
+                    catch (Exception)
+                    {
+                        chart1.ChartAreas[0].AxisY.Title = "Count";
+                        //sometimes you can't get a runtime name e.g. it is count(*) with no alias
+                    }
+
+                chart1.ChartAreas[0].AxisX.IsMarginVisible = false;
+                chart1.ChartAreas[0].AxisY.IsMarginVisible = false;
+
+                if (axis != null)
+                {
+                    switch (axis.AxisIncrement)
+                    {
+                        case AxisIncrement.Day:
+                            chart1.ChartAreas[0].AxisX.Title = "Day";
+
+
+                            if (_dt.Rows.Count <= 370)
+                            {
+                                //by two months
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 7;
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 14;
+                                chart1.ChartAreas[0].AxisX.Interval = 14;
+                            }
+                            else
+                            {
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 28;
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 7;
+                                chart1.ChartAreas[0].AxisX.Interval = 28;
+                            }
+
+
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
+
+                            break;
+                        case AxisIncrement.Month:
+
+                            //x axis is the number of rows in the data table
+                            chart1.ChartAreas[0].AxisX.Title = "Month";
+
+
+                            //if it is less than or equal to ~3 years at once - with 
+                            if (_dt.Rows.Count <= 40)
+                            {
+                                //by month
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 3;
+                                chart1.ChartAreas[0].AxisX.Interval = 1;
+                            }
+                            else
+                            {
+                                //by year
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 6;
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 12;
+                                chart1.ChartAreas[0].AxisX.Interval = 12;
+                            }
+
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
+
+
+                            break;
+                        case AxisIncrement.Year:
+
+                            chart1.ChartAreas[0].AxisX.Title = "Year";
+
+                            if (_dt.Rows.Count <= 10)
+                            {
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 1;
+                                chart1.ChartAreas[0].AxisX.Interval = 1;
+                            }
+                            else
+                            {
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 5;
+                                chart1.ChartAreas[0].AxisX.Interval = 5;
+                            }
+
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
+
+                            break;
+
+                        case AxisIncrement.Quarter:
+
+                            //x axis is the number of rows in the data table
+                            chart1.ChartAreas[0].AxisX.Title = "Quarter";
+
+
+                            //if it is less than or equal to ~3 years at once - with 
+                            if (_dt.Rows.Count <= 12)
+                            {
+                                //by quarter
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 4;
+                                chart1.ChartAreas[0].AxisX.Interval = 4;
+                            }
+                            else
+                            {
+                                //by year
+                                chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
+                                chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 16;
+                                chart1.ChartAreas[0].AxisX.Interval = 16;
+                            }
+
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
+                            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
+
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+                else
+                    chart1.ChartAreas[0] = new ChartArea(); //reset it
+
+                chart1.ChartAreas[0].AxisY.MinorGrid.Enabled = true;
+                chart1.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
+                chart1.ChartAreas[0].AxisY.LabelStyle.Format = "{0:#,#}";
+
+                //avoid buffer overun
+                if (index > chart1.Series.Count - 1)
+                    chart1.Series.Add(new Series());
+
+                chart1.Series[index].XValueMember = _dt.Columns[0].ColumnName;
+                chart1.Series[index].YValueMembers = _dt.Columns[index + 1].ColumnName;
+
+                if (axis != null)
+                {
+                    chart1.Series[index].ChartType = SeriesChartType.Line;
+
+                    //alternate in rotating style the various lines on the graph
+                    chart1.Series[index].BorderDashStyle = StyleList[index%StyleList.Length];
+                    chart1.Series[index].BorderWidth = 2;
+                }
+                else
+                {
+                    chart1.Series[index].ChartType = SeriesChartType.Column;
+                    chart1.ChartAreas[0].AxisX.Interval = 1;
+                    chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
+                }
+
+                //name series based on column 3 or the aggregate name
+                chart1.Series[index].Name = _dt.Columns[index + 1].ColumnName;
             }
 
+            lblLoadStage.Text = "Data Binding Chart (" + _dt.Columns.Count + " columns)";
+            lblLoadStage.Refresh();
+
+            chart1.DataBind();
+
+            chart1.Visible = true;
+            pbLoading.Visible = false;
+            llCancel.Visible = false;
+            lblLoadStage.Visible = false;
+
+            //set publish enabledness to the enabledness of 
+            btnPublishToWebsite.Enabled =
+                _defaults.GetDefaultFor(
+                    ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
+            btnClearFromCache.Enabled = false;
+
+            //Make publish button enabledness be dependant on cache
+            if (btnPublishToWebsite.Enabled)
+            {
+                //let them clear if there is a query caching server and the manager has cached results already
+                btnClearFromCache.Enabled =
+                    GetCacheManager()
+                        .GetLatestResultsTableUnsafe(AggregateConfiguration,
+                            AggregateOperation.ExtractableAggregateResults) != null;
+            }
         }
 
         private void ShowHeatmapTab(bool show)

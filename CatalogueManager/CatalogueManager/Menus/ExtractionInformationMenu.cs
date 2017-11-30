@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
@@ -23,15 +24,13 @@ namespace CatalogueManager.Menus
     {
         private readonly ExtractionInformation _extractionInformation;
 
-        public ExtractionInformationMenu(IActivateItems activator, ExtractionInformation extractionInformation)
-            : base(activator,extractionInformation)
+        public ExtractionInformationMenu(RDMPContextMenuStripArgs args, ExtractionInformation extractionInformation)
+            : base(args,extractionInformation)
         {
             _extractionInformation = extractionInformation;
 
-            var addFilter = new ToolStripMenuItem("Add New Extraction Filter", activator.CoreIconProvider.GetImage(RDMPConcept.Filter,OverlayKind.Add), (s, e) => AddFilter());
+            var addFilter = new ToolStripMenuItem("Add New Extraction Filter", _activator.CoreIconProvider.GetImage(RDMPConcept.Filter,OverlayKind.Add), (s, e) => AddFilter());
             Items.Add(addFilter);
-
-            AddCommonMenuItems();
         }
         
         private void AddFilter()

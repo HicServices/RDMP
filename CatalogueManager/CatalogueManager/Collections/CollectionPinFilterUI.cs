@@ -17,6 +17,7 @@ using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
+using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
@@ -28,12 +29,12 @@ namespace CatalogueManager.Collections
     /// And then assembles a whitelist filter that will show only the pinned object hierarchy and children.
     /// </summary>
     [TechnicalUI]
-    public partial class CollectionScopeFilterUI : UserControl
+    public partial class CollectionPinFilterUI : UserControl
     {
         private TreeListView _tree;
         public event EventHandler UnApplied;
 
-        public CollectionScopeFilterUI()
+        public CollectionPinFilterUI()
         {
             InitializeComponent();
         }
@@ -60,7 +61,8 @@ namespace CatalogueManager.Collections
 
         private IModelFilter _beforeModelFilter;
         private bool _beforeUseFiltering;
-
+        private object _toPin;
+        
         public static bool IsPinnableType(object o)
         {
             return PinnableTypes.Contains(o.GetType());
@@ -71,19 +73,19 @@ namespace CatalogueManager.Collections
             if(_tree != null)
                 throw new Exception("Scope filter is already applied to a tree");
 
-            object toPin = null;
+            _toPin = null;
 
             if (IsPinnableType(objectToEmphasise))
-                toPin = objectToEmphasise;
+                _toPin = objectToEmphasise;
             else if (descendancy != null)
-                toPin = descendancy.Parents.FirstOrDefault(IsPinnableType);
+                _toPin = descendancy.Parents.FirstOrDefault(IsPinnableType);
 
-            if(toPin == null)
+            if (_toPin == null)
                 return;
             
             _tree = tree;
 
-            lblFilter.Text = toPin.ToString();
+            lblFilter.Text = _toPin.ToString();
             
             //add the filter to the tree
             Dock = DockStyle.Top;
@@ -104,9 +106,9 @@ namespace CatalogueManager.Collections
             if(descendancy != null && descendancy.Parents.Any())
                 whitelist.AddRange(descendancy.Parents);
 
-            whitelist.Add(toPin);
+            whitelist.Add(_toPin);
 
-            whitelist.AddRange(childProvider.GetAllChildrenRecursively(toPin));
+            whitelist.AddRange(childProvider.GetAllChildrenRecursively(_toPin));
 
             _beforeModelFilter = _tree.ModelFilter;
             _beforeUseFiltering = _tree.UseFiltering;
@@ -141,5 +143,33 @@ namespace CatalogueManager.Collections
             UnApplyToTree();
         }
 
+        public void OnRefreshObject(ICoreChildProvider childProvider,DatabaseEntity oRefreshedObject, DescendancyList knownDescendancy)
+        {
+            var whitelistFilter = _tree.ModelFilter as WhiteListOnlyFilter;
+            
+            //someone somehow erased the pin filter? or overwrote it with another filter
+            if(whitelistFilter == null)
+                return;
+
+            //if this is an object being refreshed is to the pinned object or a child of the pinned object
+            if (oRefreshedObject.Equals(_toPin) ||  knownDescendancy.Parents.Contains(_toPin))
+                {
+                    //create a new whitelist filter that is the old one + oRefreshedObject + all children recursively
+                    var oldList = whitelistFilter.Whitelist;
+                    var newList = new HashSet<object>(oldList);
+
+                    //hashset ignores duplicates
+                    newList.Add(oRefreshedObject);
+                
+                    //and all children of oRefreshedObject incase it has multiple new children under it
+                    foreach (var child in childProvider.GetAllChildrenRecursively(oRefreshedObject))
+                        newList.Add(child);
+
+                    //if there are new objects
+                    if(oldList.Count < newList.Count)
+                        _tree.ModelFilter = new WhiteListOnlyFilter(newList);
+                }
+                 
+        }
     }
 }

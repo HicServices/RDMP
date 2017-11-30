@@ -1,23 +1,23 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Icons.IconProvision;
 
-namespace CatalogueManager.Menus.MenuItems
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    [System.ComponentModel.DesignerCategory("")]
-    public class AddLookupMenuItem : ToolStripMenuItem
+    public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecution,IAtomicCommand
     {
         private readonly IActivateItems _activator;
         private readonly Catalogue _catalogueIfKnown;
         private readonly TableInfo _lookupTableInfoIfKnown;
 
-        public AddLookupMenuItem(IActivateItems activator, string text, Catalogue catalogueIfKnown, TableInfo lookupTableInfoIfKnown)
+        public ExecuteCommandAddNewLookupTableRelationship(IActivateItems activator, Catalogue catalogueIfKnown, TableInfo lookupTableInfoIfKnown) : base(activator)
         {
             _activator = activator;
             _catalogueIfKnown = catalogueIfKnown;
@@ -25,16 +25,13 @@ namespace CatalogueManager.Menus.MenuItems
 
             if(catalogueIfKnown == null && lookupTableInfoIfKnown == null)
                 throw new NotSupportedException("You must know either the lookup table or the Catalogue you want to configure it on");
-
-            Text = text;
-            Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
         }
 
-        protected override void OnClick(EventArgs e)
+        public override void Execute()
         {
-            base.OnClick(e);
-
-            if (_catalogueIfKnown == null)
+            base.Execute();
+        
+            if (_catalogueIfKnown == null)  
                 PickCatalogueAndLaunchForTableInfo(_lookupTableInfoIfKnown);
             else
                 _activator.ActivateLookupConfiguration(this, _catalogueIfKnown, _lookupTableInfoIfKnown);
@@ -59,8 +56,12 @@ provides a description for (a given TableInfo can be a Lookup for many columns i
             catch (Exception exception)
             {
                 ExceptionViewer.Show("Error creating Lookup", exception);
-
             }
+        }
+
+        public Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -19,8 +20,8 @@ namespace DataExportManager.Menus
     {
         private readonly CohortSourceUsedByProjectNode _cohortSourceUsedByProjectNode;
 
-        public CohortSourceUsedByProjectNodeMenu(IActivateItems activator, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
-            : base( activator,cohortSourceUsedByProjectNode.Project)
+        public CohortSourceUsedByProjectNodeMenu(RDMPContextMenuStripArgs args, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
+            : base( args,cohortSourceUsedByProjectNode.Project)
         {
             _cohortSourceUsedByProjectNode = cohortSourceUsedByProjectNode;
             
@@ -28,7 +29,6 @@ namespace DataExportManager.Menus
             viewDetail.Enabled = !_cohortSourceUsedByProjectNode.IsEmptyNode;
             Items.Add(viewDetail);
 
-            AddCommonMenuItems();
         }
 
         private void ShowDetailedSummaryOfCohorts()

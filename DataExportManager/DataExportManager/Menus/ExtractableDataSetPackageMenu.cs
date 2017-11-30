@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security;
 using System.Windows.Forms;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -23,13 +24,12 @@ namespace DataExportManager.Menus
         private readonly ExtractableDataSetPackage _package;
         private readonly DataExportChildProvider _childProvider;
 
-        public ExtractableDataSetPackageMenu(IActivateItems activator, ExtractableDataSetPackage package):base(activator,package)
+        public ExtractableDataSetPackageMenu(RDMPContextMenuStripArgs args, ExtractableDataSetPackage package): base(args, package)
         {
             _package = package;
-            _childProvider = (DataExportChildProvider) activator.CoreChildProvider;
-            Items.Add("Add ExtractableDataSet(s) to Package", activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), AddExtractableDatasetToPackage);
+            _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
+            Items.Add("Add ExtractableDataSet(s) to Package", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), AddExtractableDatasetToPackage);
 
-            AddCommonMenuItems();
         }
 
         private void AddExtractableDatasetToPackage(object sender, EventArgs e)

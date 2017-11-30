@@ -1,5 +1,6 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 
@@ -7,10 +8,10 @@ namespace CatalogueManager.Menus
 {
     public class AllRDMPRemotesNodeMenu : RDMPContextMenuStrip
     {
-        public AllRDMPRemotesNodeMenu(IActivateItems activator, AllRDMPRemotesNode node)
-            : base(activator, null)
+        public AllRDMPRemotesNodeMenu(RDMPContextMenuStripArgs args, AllRDMPRemotesNode node)
+            : base(args, null)
         {
-            Add(new ExecuteCommandCreateNewRemoteRDMP(activator));
+            Add(new ExecuteCommandCreateNewRemoteRDMP(_activator));
         }
     }
 }

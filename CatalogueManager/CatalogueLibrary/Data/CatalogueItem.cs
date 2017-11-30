@@ -54,7 +54,7 @@ namespace CatalogueLibrary.Data
         public int Catalogue_ID
         {
             get { return _catalogueID; }
-            private set { _catalogueID = value; }
+            set { SetField(ref _catalogueID , value); }
         }
         
         public string Name {

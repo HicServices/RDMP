@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -20,6 +21,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
         void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop);
 
+        void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls);
+
         int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null);
         string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName);
 
@@ -28,5 +31,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection);
         
         void TruncateTable(DiscoveredTable discoveredTable);
+        
     }
 }

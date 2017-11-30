@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -28,15 +29,14 @@ namespace DataExportManager.Menus
     {
         private readonly Project _project;
 
-        public ProjectMenu(IActivateItems activator,  Project project)
-            : base(activator,project)
+        public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
+            : base(args,project)
         {
             _project = project;
             
             Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => PopupChecks());
             Add(new ExecuteCommandReleaseProject(_activator).SetTarget(project));
             
-            AddCommonMenuItems();
         }
 
 

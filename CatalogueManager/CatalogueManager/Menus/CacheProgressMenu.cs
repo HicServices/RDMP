@@ -6,6 +6,7 @@ using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -20,16 +21,17 @@ namespace CatalogueManager.Menus
     {
         private readonly CacheProgress _cacheProgress;
 
-        public CacheProgressMenu(IActivateItems activator, CacheProgress cacheProgress) : base(activator,cacheProgress)
+        public CacheProgressMenu(RDMPContextMenuStripArgs args, CacheProgress cacheProgress)
+            : base(args, cacheProgress)
         {
             _cacheProgress = cacheProgress;
             
-            Add(new ExecuteCommandExecuteCacheProgress(activator).SetTarget(cacheProgress));
+            Add(new ExecuteCommandExecuteCacheProgress(_activator).SetTarget(cacheProgress));
 
             var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
 
-            foreach (var window in activator.CoreChildProvider.AllPermissionWindows)
-                Add(new ExecuteCommandSetPermissionWindow(activator, cacheProgress,window));
+            foreach (var window in _activator.CoreChildProvider.AllPermissionWindows)
+                Add(new ExecuteCommandSetPermissionWindow(_activator, cacheProgress, window));
 
             setWindow.DropDownItems.Add(new ToolStripSeparator());
             
@@ -42,7 +44,7 @@ namespace CatalogueManager.Menus
             try
             {
                 Items.Add(new ChoosePipelineMenuItem(
-                    activator,
+                    _activator,
                     new PipelineUser(_cacheProgress),
                     new CachingPipelineUseCase(_cacheProgress,false, fetchRequest,false),
                     "Set Caching Pipeline")
@@ -52,7 +54,6 @@ namespace CatalogueManager.Menus
             {
                 _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not assemble CacheProgress Pipeline Options", CheckResult.Fail, e));
             }
-            AddCommonMenuItems();
         }
 
         private void AddNewPermissionWindow(object sender, EventArgs e)

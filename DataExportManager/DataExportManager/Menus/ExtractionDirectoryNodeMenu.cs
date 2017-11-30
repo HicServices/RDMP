@@ -1,4 +1,5 @@
 using System.IO;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -10,11 +11,11 @@ namespace DataExportManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
     {
-        public ExtractionDirectoryNodeMenu(IActivateItems activator, ExtractionDirectoryNode folder)
-            : base(activator, null)
+        public ExtractionDirectoryNodeMenu(RDMPContextMenuStripArgs args, ExtractionDirectoryNode folder)
+            : base(args, null)
         {
             if (folder.Project.ExtractionDirectory != null)
-                Add(new ExecuteCommandOpenInExplorer(activator, new DirectoryInfo(folder.Project.ExtractionDirectory)));
+                Add(new ExecuteCommandOpenInExplorer(_activator, new DirectoryInfo(folder.Project.ExtractionDirectory)));
             
             Add(new ExecuteCommandSetProjectExtractionDirectory(_activator, folder.Project));
         }

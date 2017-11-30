@@ -61,7 +61,8 @@ namespace CatalogueManager.Collections
         
         public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
         
-        private CollectionScopeFilterUI _scopeFilter;
+        private CollectionPinFilterUI _pinFilter;
+        private object _currentlyPinned;
 
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
@@ -103,11 +104,10 @@ namespace CatalogueManager.Collections
 
             Tree.ItemActivate += CommonItemActivation;
             Tree.CellRightClick += CommonRightClick;
+            Tree.SelectionChanged += Tree_SelectionChanged;
 
             iconColumn.ImageGetter += ImageGetter;
             Tree.RowHeight = 19;
-
-            Tree.KeyUp += TreeOnKeyUp;
 
             //what does this do to performance?
             Tree.UseNotifyPropertyChanged = true;
@@ -141,27 +141,34 @@ namespace CatalogueManager.Collections
             _activator.Emphasise += _activator_Emphasise;
 
             AllowPinning = allowPinning;
+
+            
+            Tree.TreeFactory = TreeFactory;
+            Tree.RebuildAll(true);
+            
         }
 
-        private void TreeOnKeyUp(object sender, KeyEventArgs e)
+        private TreeListView.Tree TreeFactory(TreeListView view)
         {
-            if(e.KeyCode == Keys.Delete)
-            {
-                var deletable = Tree.SelectedObject as IDeleteable;
-                if(deletable != null)
-                    _activator.DeleteWithConfirmation(this,deletable);
-            }
-            if(e.KeyCode == Keys.F5)
-            {
-                var o = Tree.SelectedObject as DatabaseEntity;
+            return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
+        }
 
-                if (o != null)
-                    new ExecuteCommandRefreshObject(_activator, o).Execute();
-            }
+        void Tree_SelectionChanged(object sender, EventArgs e)
+        {
+            Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObject);
+        }
+        public void CommonRightClick(object sender, CellRightClickEventArgs e)
+        {
+            Tree.SelectedObject = e.Model;
+            Tree.ContextMenuStrip = GetMenuIfExists(e.Model);
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
         {
+            // unpin first if the request does not want to pin
+            if (!args.Request.Pin && _pinFilter != null)
+                _pinFilter.UnApplyToTree();
+
             //get the parental hierarchy
             var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
             
@@ -194,18 +201,24 @@ namespace CatalogueManager.Collections
 
             if (args.Request.Pin && AllowPinning)
                 Pin(args.Request.ObjectToEmphasise,decendancyList);
-
+            
             args.FormRequestingActivation = Tree.FindForm();
         }
 
         private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
         {
-            if (_scopeFilter != null)
-                _scopeFilter.UnApplyToTree();
+            if (_pinFilter != null)
+                _pinFilter.UnApplyToTree();
             
-            _scopeFilter = new CollectionScopeFilterUI();
-            _scopeFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
-            _scopeFilter.UnApplied += (s, e) => _scopeFilter = null;
+            _pinFilter = new CollectionPinFilterUI();
+            _pinFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
+            _currentlyPinned = objectToPin;
+
+            _pinFilter.UnApplied += (s, e) =>
+            {
+                _pinFilter = null;
+                _currentlyPinned = null;
+            };
         }
 
         private void ExpandToDepth(int expansionDepth, object currentObject)
@@ -242,40 +255,39 @@ namespace CatalogueManager.Collections
             return CoreIconProvider.GetImage(rowObject);
         }
         
-        public void CommonRightClick(object sender, CellRightClickEventArgs e)
-        {
-            var o = e.Model;
 
-            if(o != null)
+        private ContextMenuStrip GetMenuIfExists(object o)
+        {
+            if (o != null)
             {
                 //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
                 Tree.SelectedObject = o;
 
-                object masquerade = null;
+                object masqueradingAs = null;
                 if (o is IMasqueradeAs)
-                    masquerade = ((IMasqueradeAs)o).MasqueradingAs();
+                    masqueradingAs = ((IMasqueradeAs)o).MasqueradingAs();
 
-                var menu = GetMenuIfExists(o);
+                var menu = GetMenuWithCompatibleConstructorIfExists(o);
 
                 //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
-                if (menu == null && masquerade != null)
-                    menu = GetMenuIfExists(masquerade);
-                
+                if (menu == null && masqueradingAs != null)
+                    menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, o);
+
                 //found a menu with compatible constructor arguments
                 if (menu != null)
                 {
                     if (!AllowPinning)
                     {
                         var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
-                        
-                        if(miPin != null)
+
+                        if (miPin != null)
                         {
                             miPin.Enabled = false;
                             miPin.ToolTipText = "Pinning is disabled in this collection";
                         }
                     }
 
-                    e.MenuStrip = menu;
+                    return menu;
                 }
             }
             else
@@ -285,45 +297,46 @@ namespace CatalogueManager.Collections
                 AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
 
                 if (WhitespaceRightClickMenuCommands != null)
-                    e.MenuStrip = factory.CreateMenu(WhitespaceRightClickMenuCommands);
-            }
-        }
-
-        private ContextMenuStrip GetMenuIfExists(object o)
-        {
-            var objectConstructor = new ObjectConstructor();
-
-            //now find the first RDMPContextMenuStrip with a compatible constructor
-            foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
-            {
-                if (menuType.IsAbstract || menuType.IsInterface)
-                    continue;
-
-                //try constructing menu with:
-                var menu = objectConstructor.ConstructIfPossible(menuType,
-                    _activator,//parameter 1 must be activator
-                    o); //parameter 2 must be object compatible Type
-
-
-                if (menu != null)
-                {
-                    AddExpandCollapseMenuItems((ContextMenuStrip)menu, o);
-                    return (ContextMenuStrip)menu;
-                }
+                    return factory.CreateMenu(WhitespaceRightClickMenuCommands);
             }
 
             return null;
         }
 
-        private void AddExpandCollapseMenuItems(ContextMenuStrip menuStrip, object model)
+        private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, object oMasquerader = null)
         {
-            if (menuStrip != null)
+            RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
+            args.CurrentlyPinnedObject = _currentlyPinned;
+            args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
+
+            var objectConstructor = new ObjectConstructor();
+
+            //now find the first RDMPContextMenuStrip with a compatible constructor
+            foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
             {
-                menuStrip.Items.Add(new ToolStripSeparator());
-                menuStrip.Items.Add(new ExpandAllTreeNodesMenuItem(Tree, model));
-                menuStrip.Items.Add(new CollapseAllTreeNodesMenuItem(Tree, model));
+                if (menuType.IsAbstract || menuType.IsInterface || menuType == typeof(RDMPContextMenuStrip))
+                    continue;
+
+                //try constructing menu with:
+                var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(menuType,
+                    args,//parameter 1 must be args
+                    o //parameter 2 must be object compatible Type
+                    );
+
+                //find first menu that's compatible
+                if (menu != null)
+                {
+                    menu.AddCommonMenuItems();
+                    return menu;
+                }
             }
+
+            //there are no derrived classes with compatible constructors so just use the basic one
+            var defaultMenu = new RDMPContextMenuStrip(args,o);
+            defaultMenu.AddCommonMenuItems();
+            return defaultMenu;
         }
+
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {
@@ -345,6 +358,9 @@ namespace CatalogueManager.Collections
             var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
             if (knownDescendancy != null)
                 parent = knownDescendancy.Last();
+
+            if (_pinFilter != null && knownDescendancy != null)
+                _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e.Object, knownDescendancy);
 
             //if it is a root object maintained by this tree and it exists
             if (MaintainRootObjects != null && MaintainRootObjects.Contains(e.Object.GetType()) && e.Object.Exists())
