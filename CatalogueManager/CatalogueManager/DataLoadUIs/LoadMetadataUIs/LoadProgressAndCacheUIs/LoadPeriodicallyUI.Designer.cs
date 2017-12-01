@@ -40,6 +40,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnNone = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
             // 
             // btnCreate
@@ -165,10 +166,19 @@
     "e e.g. MyLoadPart2)";
             this.label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(6, 153);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 5;
+            // 
             // LoadPeriodicallyUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.ddOnsuccessfulLoadLaunch);
             this.Controls.Add(this.label4);
@@ -202,5 +212,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnNone;
         private System.Windows.Forms.Label label5;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

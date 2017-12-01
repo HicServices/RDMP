@@ -369,6 +369,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadPeriodcally.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
@@ -756,6 +757,7 @@
     <Compile Include="Menus\FilterMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCollapseChildNodes.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExpandAllNodes.cs" />
+    <Compile Include="Menus\LoadPeriodicallyMenu.cs" />
     <Compile Include="Menus\ParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
