@@ -154,6 +154,7 @@ Now when you right click a Catalogue you should see your command offered to the 
 
 <a name="basicAnoPlugin"></a>
 #A (very) basic Anonymisation Plugin
+##Version 1
 Most of the processes in RDMP use the `Pipeline` system.  This involves a series of components performing operations on a flow of objects of type T (often a `DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a Catalogue from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
 
 ![What it should look like](Images/ImportCatalogue.png)
@@ -212,12 +213,81 @@ public class BasicDataTableAnonymiser1: IPluginDataFlowComponent<DataTable>
 
 Select 'demography.csv' for import (See UserManual.docx for generating test data).  Choose a database as the destination and select 'Advanced'.  Select the `BULK INSERT:CSV Import File` pipeline and click Edit.
 
-![Editting a pipeline](Images/EditPipelineAdvanced.png)
-
 Drag and drop BasicDataTableAnonymiser1 into the middle of the pipeline.
+
+![Editting a pipeline - Version 1](Images/EditPipelineComponentVersion1.png)
 
 Execute the import and do a select out of the final table to confirm that it has worked:
 
 ```sql
 select * from test..demography where forename like '%REDACTED%'
 ```
+##Version 2 - Adding arguments
+You can add user configured properties by declaring public auto properties decorated with [DemandsInitialization].  This attribute is supported on a wide range of common Types (see Argument.PermissableTypes for a complete list) and some RDMP object Types (e.g. Catalogue).  Let's add a file list of common names and a regular expression that lets you skip columns you know won't have any names in.
+
+Add a new component BasicDataTableAnonymiser2 (or adjust your previous component).  Add two public properties as shown below.
+
+```csharp
+public class BasicDataTableAnonymiser2: IPluginDataFlowComponent<DataTable>
+    {
+        [DemandsInitialization("List of names to redact from columns", mandatory:true)]
+        public FileInfo NameList { get; set; }
+
+        [DemandsInitialization("Columns matching this regex pattern will be skipped")]
+        public Regex ColumnsNotToEvaluate { get; set; }
+
+        private string[] _commonNames;
+        
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+        {
+            if (_commonNames == null)
+                _commonNames = File.ReadAllLines(NameList.FullName);
+
+            //Go through each row in the table
+            foreach (DataRow row in toProcess.Rows)
+            {
+                //for each cell in current row
+                foreach (DataColumn col in toProcess.Columns)
+                {
+                    //if it's not a column we are skipping
+                    if(ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
+                        continue;
+                    
+                    //if it is a string
+                    var stringValue = row[col] as string;
+
+                    if(stringValue != null)
+                    {
+                        //replace any common names with REDACTED
+                        foreach (var name in _commonNames)
+                            stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
+
+                        row[col] = stringValue;
+                    }
+                }
+            }
+
+            return toProcess;
+        }
+
+        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        {
+            
+        }
+
+        public void Abort(IDataLoadEventListener listener)
+        {
+            
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            
+        }
+	}
+```
+
+Drop the demography table from your database (and delete any associated Catalogues / TableInfos in RDMP).  Import demography.csv again but edit the pipeline to include the new component BasicDataTableAnonymiser2.  Now when you select it you should be able to type in some values.
+
+![Editting a pipeline - Version 2](Images/EditPipelineComponentVersion2.png)
+
