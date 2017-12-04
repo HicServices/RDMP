@@ -10,7 +10,7 @@
   4. [Checks](#anoPluginChecks)
 
  <a name="helloWorldPlugin"></a>
- #Hello World Plugin
+ # Hello World Plugin
  Create a new Visual Studio Class Library Project targetting .Net Framework 4.5
 
  Add a reference to the HIC nuget server `https://hic.dundee.ac.uk/NuGet/nuget/` and add a reference to `HIC.RDMP.Plugin`
@@ -45,14 +45,14 @@
  ![What it should look like](Images/HelloWorldSuccess.png)
 
  <a name="debugging"></a>
- #Attaching the Debugger
+ # Attaching the Debugger
  Sometimes you want to debug your plugin as it is running hosted by RDMP.  To do this simply launch `ResearchDataManagementPlatform.exe` manually (if you need to see where the exe is you can select Diagnostics=>Open exe directory at any time).  Next go into visual studio and select Debug=>Attach to Process
 
  <a name="betterBuilding"></a>
  #Streamlining Build
  There are a couple of things you can do to streamline your plugin development process.  Firstly You can remove the requirement to launch 'Manage Plugins' every time you make a code change by setting up a post build step which runs PluginPackager.exe.  This will commit the plugin into the RMDP database.  Secondly you can add the ResearchDataManagementPlatform.exe as a startup project in your plugin solution.
 
-##Adding a post build script to commit the plugin 
+## Adding a post build script to commit the plugin 
  The executable responsible for commiting plugins is PluginPackager.exe, it should appear in your bin directory when you build your plugin.  
 
  Right click your Project and select Properties
@@ -78,7 +78,7 @@ Now when you build your project (you may need to Clean and Rebuild) you should s
 
 (Do not worry about dependent dll messages)
 
-##Adding a debug target
+## Adding a debug target
 Right click your Solution and select 'Add Existing Project...' and navigate to the ResearchDataManagementPlatform.exe file.
 
 This should add a new root level item in your Solution called 'ResearchDataManagementPlatform'
@@ -88,7 +88,7 @@ Right click it and set it as the startup project
 Now when you start your plugin project the RDMP application will launch with the debugger attached.
 
 <a name="commandExecution"></a>
-#Hello World UI Command Execution
+# Hello World UI Command Execution
 Rather than throwing around `ToolStripMenuItem` you can make use of the `CommandExecution` system.
 
 Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base class `BasicUICommandExecution` and implement IAtomicCommand.
@@ -157,10 +157,10 @@ Now when you right click a Catalogue you should see your command offered to the 
 ![What it should look like](Images/RightClickBunnyMenuItem.png)
 
 <a name="basicAnoPlugin"></a>
-#A (very) basic Anonymisation Plugin
+# A (very) basic Anonymisation Plugin
 
 <a name="anoPluginVersion1"></a>
-##Version 1
+## Version 1
 Most of the processes in RDMP use the `Pipeline` system.  This involves a series of components performing operations on a flow of objects of type T (often a `DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a Catalogue from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
 
 ![What it should look like](Images/ImportCatalogue.png)
@@ -230,7 +230,7 @@ select * from test..demography where forename like '%REDACTED%'
 ```
 
 <a name="anoPluginVersion2"></a>
-##Version 2 - Adding arguments
+## Version 2 - Adding arguments
 You can add user configured properties by declaring public auto properties decorated with [DemandsInitialization].  This attribute is supported on a wide range of common Types (see Argument.PermissableTypes for a complete list) and some RDMP object Types (e.g. Catalogue).  Let's add a file list of common names and a regular expression that lets you skip columns you know won't have any names in.
 
 Add a new component BasicDataTableAnonymiser2 (or adjust your previous component).  Add two public properties as shown below.
@@ -300,7 +300,7 @@ Drop the demography table from your database (and delete any associated Catalogu
 ![Editting a pipeline - Version 2](Images/EditPipelineComponentVersion2.png)
 
 <a name="anoPluginVersion3"></a>
-##Version 3 - Referencing a database table
+## Version 3 - Referencing a database table
 Having a text file isn't that great, it would be much better to power it with a database table.  
 
 Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing one).  Get rid of the property NameList and add a TableInfo one instead:
@@ -412,5 +412,5 @@ And import it into RDMP as a TableInfo (you don't need to create a Catalogue if 
 Test the plugin by importing demography.csv again through the pipeline with the new component implmentation
 
 <a name="anoPluginChecks"></a>
-##Checks
+## Checks
 This is getting complex and could do with having some events, and a way for the user to check that it is working before running it.
