@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -17,8 +16,6 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
 using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Tutorials;
 using CohortManager.CommandExecution.AtomicCommands;
@@ -112,6 +109,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             FixSizingOfTableLayoutPanel(tlpCohortCreation);
             FixSizingOfTableLayoutPanel(tlpDataExport);
             FixSizingOfTableLayoutPanel(tlpDataLoad);
+
+
+            //////////////////////////////////Advanced////////////////////////////////////
+            AddCommand(new ExecuteCommandManagePlugins(windowManager.ContentManager),tlpAdvanced);
         }
 
         private void AddCommand<T>(IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector, TableLayoutPanel tableLayoutPanel)
@@ -157,6 +158,4 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             BuildCommandLists();
         }
     }
-
-    
 }

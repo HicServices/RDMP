@@ -23,6 +23,7 @@ using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.ObjectSharing;
 using Newtonsoft.Json;
+using PluginPackager;
 using RDMPStartup;
 using RDMPStartup.PluginManagement;
 using ReusableLibraryCode.Checks;
@@ -173,14 +174,26 @@ namespace CatalogueManager.PluginManagement
 
         private void AddPlugin(string file)
         {
-            var f =new FileInfo(file);
-            var pluginProcessor = new PluginProcessor(checksUI1, RepositoryLocator.CatalogueRepository);
-            
-            if (pluginProcessor.ProcessFileReturningTrueIfIsUpgrade(f))
+            var f = new FileInfo(file);
+            if (f.Extension == ".sln")
             {
+                var zip = Path.Combine(f.Directory.FullName, Path.GetFileNameWithoutExtension(f.Name) +".zip");
+                Packager packager = new Packager(f,zip);
+                packager.PackageUpFile(checksUI1);
+                
+                f = new FileInfo(zip);
+            }
+             
+            if(f.Exists)
+            {
+                var pluginProcessor = new PluginProcessor(checksUI1, RepositoryLocator.CatalogueRepository);
+            
+                if (pluginProcessor.ProcessFileReturningTrueIfIsUpgrade(f))
+                {
 
-                MessageBox.Show("Replaced old version of Plugin '" + f.Name + "'");
-                RefreshObjects();
+                    MessageBox.Show("Replaced old version of Plugin '" + f.Name + "'");
+                    RefreshObjects();
+                }
             }
         }
 
@@ -319,7 +332,7 @@ namespace CatalogueManager.PluginManagement
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog fd = new OpenFileDialog();
-            fd.Filter = "Plugins|*.zip";
+            fd.Filter = "Plugins|*.zip|Solution Files|*.sln";
             fd.CheckFileExists = true;
 
             if (fd.ShowDialog() == DialogResult.OK)

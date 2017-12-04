@@ -364,6 +364,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
@@ -1961,6 +1962,10 @@
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Developer\PluginPackager\PluginPackager.csproj">
+      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
+      <Name>PluginPackager</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
