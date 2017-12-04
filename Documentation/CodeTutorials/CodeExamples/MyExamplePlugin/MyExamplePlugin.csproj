@@ -331,6 +331,7 @@
   <ItemGroup>
     <Compile Include="ExecuteCommandRenameCatalogueToBunnies.cs" />
     <Compile Include="MyPluginUserInterface.cs" />
+    <Compile Include="PipelineComponents\BasicDataTableAnonymiser3.cs" />
     <Compile Include="PipelineComponents\BasicDataTableAnonymiser2.cs" />
     <Compile Include="PipelineComponents\BasicDataTableAnonymiser1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
