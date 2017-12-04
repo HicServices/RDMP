@@ -292,7 +292,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             var factory = new DataFlowPipelineEngineFactory<ReleaseData>(RepositoryLocator.CatalogueRepository.MEF, (DataFlowPipelineContext<ReleaseData>) context);
             var destInstance = factory.CreateDestinationIfExists(pipe);
 
-            Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomExtractionDirectory.Name);
+            Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomReleaseFolder.Name);
             
         }
     }
