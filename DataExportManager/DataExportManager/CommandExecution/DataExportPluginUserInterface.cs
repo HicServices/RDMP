@@ -25,15 +25,10 @@ namespace DataExportManager.CommandExecution
         {
             
         }
-
-        public override object[] GetChildren(object model)
+        
+        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
-            return null;
-        }
-
-        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity)
-        {
-            var cata = databaseEntity as Catalogue;
+            var cata = o as Catalogue;
             
 
             if (cata != null)
@@ -41,11 +36,6 @@ namespace DataExportManager.CommandExecution
                     new ExecuteCommandChangeExtractability(ItemActivator, cata)
                     );
 
-            return null;
-        }
-
-        public override Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
-        {
             return null;
         }
     }
