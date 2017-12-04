@@ -6,9 +6,9 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsLoadPeriodcally : RDMPCommandExecutionProposal<LoadPeriodically>
+    public class ProposeExecutionWhenTargetIsLoadPeriodically : RDMPCommandExecutionProposal<LoadPeriodically>
     {
-        public ProposeExecutionWhenTargetIsLoadPeriodcally(IActivateItems itemActivator)
+        public ProposeExecutionWhenTargetIsLoadPeriodically(IActivateItems itemActivator)
             : base(itemActivator)
         {
         }
