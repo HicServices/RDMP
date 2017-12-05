@@ -37,7 +37,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
                 return null;
 
             RDMPCollection collection;
-            RDMPCollection.TryParse(tokens[1], true, out collection);
+            Enum.TryParse(tokens[1], true, out collection);
             return collection;
             
         }
@@ -101,7 +101,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
                                                    " could not be properly created/populated");
             }
             
-            var extraText = persistString.Substring(persistString.IndexOf(PersistableObjectCollectionDockContent.ExtraText) + PersistableObjectCollectionDockContent.ExtraText.Length);
+            var extraText = persistString.Substring(persistString.IndexOf(PersistableObjectCollectionDockContent.ExtraText, System.StringComparison.Ordinal) + PersistableObjectCollectionDockContent.ExtraText.Length);
             collectionInstance.LoadExtraText(extraText);
 
             return new DeserializeInstruction(uiType,collectionInstance);

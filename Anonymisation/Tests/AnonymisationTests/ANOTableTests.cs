@@ -106,7 +106,7 @@ namespace AnonymisationTests
         [ExpectedException(ExpectedMessage = "NumberOfIntegersToUseInAnonymousRepresentation cannot be negative")]
         public void CreateAnANOTable_IntCountNegative()
         {
-            ANOTable anoTable = GetANOTable(); ;
+            ANOTable anoTable = GetANOTable();
 
             try
             {
@@ -229,7 +229,7 @@ namespace AnonymisationTests
         [Test]
         public void SubstituteANOIdentifiers_BulkTest()
         {
-            int batchSize = 10000;
+            const int batchSize = 10000;
 
             var anoTable = GetANOTable();
             anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;

@@ -23,7 +23,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.WindowManagement
 {
     /// <summary>
-    /// Handles creating and tracking the main collection UIs available for user interaction
+    /// Handles creating and tracking the main RDMPCollectionUIs tree views
     /// </summary>
     public class ToolboxWindowManager
     {
@@ -31,12 +31,18 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         private readonly DockPanel _mainDockPanel;
 
+        /// <summary>
+        /// The location finder for the Catalogue and optionally Data Export databases
+        /// </summary>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
         
         public ContentWindowManager ContentManager;
-        private WindowFactory _windowFactory;
+        private readonly WindowFactory _windowFactory;
         
         public event RDMPCollectionCreatedEventHandler CollectionCreated;
+
+        HomeUI _home;
+        DockContent _homeContent;
 
         public ToolboxWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
@@ -50,7 +56,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RepositoryLocator = repositoryLocator;
         }
 
-
+        /// <summary>
+        /// Creates a new instance of the given RDMPCollectionUI specified by the Enum collectionToCreate at the specified dock position
+        /// </summary>
+        /// <param name="collectionToCreate"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
         public PersistableToolboxDockContent Create(RDMPCollection collectionToCreate, DockState position = DockState.DockLeft)
         {
             PersistableToolboxDockContent toReturn;
@@ -129,12 +140,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _visibleToolboxes.Remove(collection);
         }
 
-        
+        /// <summary>
+        /// Closes the specified RDMPCollectionUI (must be open - use IsVisible to check this)
+        /// </summary>
+        /// <param name="collection"></param>
         public void Destroy(RDMPCollection collection)
         {
             _visibleToolboxes[collection].Close();
         }
 
+        /// <summary>
+        /// Brings the specified collection to the front
+        /// </summary>
+        /// <param name="collection"></param>
         public void Pop(RDMPCollection collection)
         {
             if(!IsVisible(collection))
@@ -146,11 +164,22 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
         }
 
+        /// <summary>
+        /// Returns true if the corresponding RDMPCollectionUI is open (even if it is burried under other windows).
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <returns></returns>
         public bool IsVisible(RDMPCollection collection)
         {
             return _visibleToolboxes.ContainsKey(collection);
         }
 
+        /// <summary>
+        /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of 
+        /// an RDMPCollectionUI.  For example Project is the a root object of DataExportCollectionUI.  If a matching collection is already visible or no collection
+        /// supports the supplied object as a root object then nothing will happen.  Otherwise the coresponding collection will be shown
+        /// </summary>
+        /// <param name="root"></param>
         public void ShowCollectionWhichSupportsRootObjectType(object root)
         {
             RDMPCollection collection = GetCollectionForRootObject(root);
@@ -190,25 +219,28 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return RDMPCollection.None;
         }
         
-        HomeUI home;
-        DockContent homeContent;
-
+        /// <summary>
+        /// Displays the HomeUI tab or brings it to the front if it is already open
+        /// </summary>
         public void PopHome()
         {
-            if(home == null)
+            if(_home == null)
             {
-                home = new HomeUI(this);
+                _home = new HomeUI(this);
                 
-                homeContent = _windowFactory.Create(ContentManager, home, "Home", FamFamFamIcons.application_home);
-                homeContent.Closed += (s, e) => home = null;
-                homeContent.Show(_mainDockPanel, DockState.Document);
+                _homeContent = _windowFactory.Create(ContentManager, _home, "Home", FamFamFamIcons.application_home);
+                _homeContent.Closed += (s, e) => _home = null;
+                _homeContent.Show(_mainDockPanel, DockState.Document);
             }
             else
             {
-                homeContent.Activate();
+                _homeContent.Activate();
             }
         }
 
+        /// <summary>
+        /// Closes all currently open RDMPCollectionUI tabs
+        /// </summary>
         public void CloseAllToolboxes()
         {
             foreach (RDMPCollection collection in Enum.GetValues(typeof (RDMPCollection)))
@@ -216,6 +248,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     Destroy(collection);
         }
 
+        /// <summary>
+        /// Closes all content window tabs (i.e. anything that isn't an RDMPCollectionUI tab - see CloseAllToolboxes)
+        /// </summary>
         public void CloseAllWindows()
         {
             ContentManager.WindowFactory.WindowTracker.CloseAllWindows();
