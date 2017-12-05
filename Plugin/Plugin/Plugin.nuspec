@@ -26,6 +26,7 @@
 
         <file src="Plugin\Plugin\bin\$Configuration$\*.dll" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\Plugin.dll" />
         <file src="Plugin\Plugin\bin\$Configuration$\*.pdb" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\Plugin.pdb" />
+        <file src="Plugin\Plugin\bin\$Configuration$\*.xml" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\Plugin.xml" />
         <file src="Plugin\Plugin\bin\$Configuration$\*.exe" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\PluginPackager.exe" />
 
         <!-- Tool for packaging plugins -->
