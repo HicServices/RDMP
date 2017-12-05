@@ -158,8 +158,6 @@
     <Compile Include="PipelineExecution\IMultiPipelineEngineExecutionStrategy.cs" />
     <Compile Include="DataRetrievers\PermissionWindowCacheDownloader.cs" />
     <Compile Include="DataRetrievers\RetrievalResult.cs" />
-    <Compile Include="ILockProvider.cs" />
-    <Compile Include="LockProvider.cs" />
     <Compile Include="Locking\LoadCacheEngineLockProvider.cs" />
     <Compile Include="PipelineExecution\RoundRobinPipelineExecution.cs" />
     <Compile Include="PipelineExecution\SerialPipelineExecution.cs" />

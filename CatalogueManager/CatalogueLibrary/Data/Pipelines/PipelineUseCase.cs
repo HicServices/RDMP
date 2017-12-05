@@ -7,6 +7,11 @@ using ReusableLibraryCode.Progress;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
+    /// <summary>
+    /// Abstract base IPipelineUseCase. Provides basic implementations for filtering compatible pipelines and translating
+    /// a selected IPipeline into an actual executable engine instance via DataFlowPipelineEngineFactory.  Set ExplicitSource / 
+    /// ExplicitDestination / PreInitialize objects etc as needed for your use case.
+    /// </summary>
     public abstract class PipelineUseCase : IPipelineUseCase
     {
         public abstract object[] GetInitializationObjects(ICatalogueRepository repository);

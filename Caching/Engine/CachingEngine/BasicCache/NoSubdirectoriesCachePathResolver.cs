@@ -6,7 +6,7 @@ using CatalogueLibrary.Data.Cache;
 namespace CachingEngine.BasicCache
 {
     /// <summary>
-    /// Translates a root cache directory (usually .\Data\Cache e.g. C:\temp\DemographyLoading\Data\Cache)
+    /// Basic case of ILoadCachePathResolver in which the path .\Data\Cache is what is returned unchanged i.e. no subdirectories
     /// </summary>
     public class NoSubdirectoriesCachePathResolver : ILoadCachePathResolver
     {

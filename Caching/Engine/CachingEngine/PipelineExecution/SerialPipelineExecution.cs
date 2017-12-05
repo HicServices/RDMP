@@ -6,6 +6,10 @@ using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.PipelineExecution
 {
+    /// <summary>
+    /// Strategy for executing several IDataFlowPipelineEngines one after the other in serial.  This will fully exhaust each IDataFlowPipelineEngine one 
+    /// after the other.
+    /// </summary>
     public class SerialPipelineExecution : IMultiPipelineEngineExecutionStrategy
     {
         public IEngineLockProvider EngineLockProvider { get; set; }
