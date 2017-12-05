@@ -283,7 +283,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             //and get all arguments / create arguments for class should have handled that 
             Assert.That(pc.GetAllArguments().Count(), Is.GreaterThan(1));
 
-            var match = args.Single(a => a.Name == "ReleaseSettings.CustomExtractionDirectory");
+            var match = args.Single(a => a.Name == "ReleaseSettings.CustomReleaseFolder");
             match.Value = "coconuts";
             match.SaveToDatabase();
 
