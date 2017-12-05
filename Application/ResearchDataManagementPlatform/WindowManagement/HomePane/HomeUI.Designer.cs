@@ -46,12 +46,16 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.panel5 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.tlpDataLoad = new System.Windows.Forms.TableLayoutPanel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tlpAdvanced = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel5.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // label2
@@ -133,6 +137,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.flowLayoutPanel1.Controls.Add(this.panel4);
             this.flowLayoutPanel1.Controls.Add(this.panel2);
             this.flowLayoutPanel1.Controls.Add(this.panel5);
+            this.flowLayoutPanel1.Controls.Add(this.panel3);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(18, 94);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1269, 603);
@@ -222,6 +227,39 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpDataLoad.Size = new System.Drawing.Size(236, 114);
             this.tlpDataLoad.TabIndex = 16;
             // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.label4);
+            this.panel3.Controls.Add(this.tlpAdvanced);
+            this.panel3.Location = new System.Drawing.Point(3, 159);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(244, 150);
+            this.panel3.TabIndex = 20;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.label4.Location = new System.Drawing.Point(0, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(144, 33);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Advanced";
+            // 
+            // tlpAdvanced
+            // 
+            this.tlpAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tlpAdvanced.ColumnCount = 1;
+            this.tlpAdvanced.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tlpAdvanced.Location = new System.Drawing.Point(0, 36);
+            this.tlpAdvanced.Name = "tlpAdvanced";
+            this.tlpAdvanced.RowCount = 1;
+            this.tlpAdvanced.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpAdvanced.Size = new System.Drawing.Size(236, 114);
+            this.tlpAdvanced.TabIndex = 16;
+            // 
             // HomeUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -243,6 +281,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.panel2.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -265,5 +305,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TableLayoutPanel tlpDataLoad;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TableLayoutPanel tlpAdvanced;
     }
 }

@@ -57,7 +57,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         [DemandsInitialization("Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
         public bool AllowEmptyExtractions { get; set; }
 
-        [DemandsInitialization("Batch size, number of records to read from source before releasing it into the extraction pipeline",DemandType.Unspecified,10000)]
+        [DemandsInitialization("Batch size, number of records to read from source before releasing it into the extraction pipeline", DefaultValue = 10000, Mandatory = true)]
         public int BatchSize { get; set; }
         
         /// <summary>

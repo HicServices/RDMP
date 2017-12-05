@@ -8,11 +8,8 @@ namespace DataExportLibrary.DataRelease
 {
     public class ReleaseEngineSettings : ICheckable
     {
-        [DemandsInitialization("Check to release to the project extraction folder insted of specifying a custom one", DefaultValue = true)]
-        public bool UseProjectExtractionFolder { get; set; }
-
-        [DemandsInitialization("Specify a custom Release folder, ignored if 'Use Project Extraction Folder' is checked")]
-        public DirectoryInfo CustomExtractionDirectory { get; set; }
+        [DemandsInitialization("Specify a custom Release folder, will use the Project Extraction Folder if left empty")]
+        public DirectoryInfo CustomReleaseFolder { get; set; }
 
         [DemandsInitialization("If unchecked, it will report an error if the destination folder does not exists", DefaultValue = true)]
         public bool CreateReleaseDirectoryIfNotFound { get; set; }
@@ -22,7 +19,6 @@ namespace DataExportLibrary.DataRelease
 
         public ReleaseEngineSettings()
         {
-            UseProjectExtractionFolder = true;
             CreateReleaseDirectoryIfNotFound = true;
             DeleteFilesOnSuccess = true;
         }

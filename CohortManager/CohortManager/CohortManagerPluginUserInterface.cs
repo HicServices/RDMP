@@ -24,19 +24,15 @@ namespace CohortManager
     {
         public CohortManagerPluginUserInterface(IActivateItems itemActivator) : base(itemActivator)
         {
+        
         }
 
-        public override object[] GetChildren(object model)
-        {
-            return null;
-        }
-
-        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity)
+        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
             #region Aggregate Graphs (Generate graphs in which we combine a cohort aggregate (or container) with an aggregate graph)
 
-            var aggregate = databaseEntity as AggregateConfiguration;
-            var aggregateContainer = databaseEntity as CohortAggregateContainer;
+            var aggregate = o as AggregateConfiguration;
+            var aggregateContainer = o as CohortAggregateContainer;
 
             //if it is a cohort aggregate
             if (aggregate != null && aggregate.IsCohortIdentificationAggregate)
@@ -120,16 +116,6 @@ namespace CohortManager
             }
             #endregion
 
-            return null;
-        }
-
-        public override Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
-        {
-            return null;
-        }
-
-        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
-        {
             var cicAssocNode = o as ProjectCohortIdentificationConfigurationAssociationsNode;
 
             if (cicAssocNode != null)
@@ -138,7 +124,8 @@ namespace CohortManager
                         new ExecuteCommandCreateNewCohortIdentificationConfiguration(ItemActivator).SetTarget(cicAssocNode.Project)
                         );
 
-            return base.GetAdditionalRightClickMenuItems(o);
+            return null;
         }
+
     }
 }

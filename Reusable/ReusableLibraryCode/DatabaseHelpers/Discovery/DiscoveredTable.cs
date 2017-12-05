@@ -75,7 +75,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return Helper.GetTopXSqlForTable(this, topX);
         }
 
-        public virtual DataTable GetDataTable(int topX = 0,bool enforceTypesAndNullness = true, IManagedTransaction transaction = null)
+        public virtual DataTable GetDataTable(int topX = int.MaxValue,bool enforceTypesAndNullness = true, IManagedTransaction transaction = null)
         {
             var dt = new DataTable();
             var svr = Database.Server;

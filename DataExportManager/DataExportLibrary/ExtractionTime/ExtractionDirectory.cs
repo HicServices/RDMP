@@ -62,7 +62,7 @@ namespace DataExportLibrary.ExtractionTime
             return extractionDirectory.CreateSubdirectory(GlobalsDataFolderName);
         }
 
-        public static bool IsOwnerOf(ExtractionConfiguration configuration, DirectoryInfo directory)
+        public static bool IsOwnerOf(IExtractionConfiguration configuration, DirectoryInfo directory)
         {
             //they passed a root directory like c:\bob?
             if (directory.Parent == null)

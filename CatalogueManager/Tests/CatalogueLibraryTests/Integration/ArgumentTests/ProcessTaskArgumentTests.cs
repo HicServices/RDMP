@@ -281,9 +281,9 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
             
             //and get all arguments / create arguments for class should have handled that 
-            Assert.That(pc.GetAllArguments().Count(), Is.GreaterThanOrEqualTo(4));
+            Assert.That(pc.GetAllArguments().Count(), Is.GreaterThan(1));
 
-            var match = args.Single(a => a.Name == "ReleaseSettings.CustomExtractionDirectory");
+            var match = args.Single(a => a.Name == "ReleaseSettings.CustomReleaseFolder");
             match.Value = "coconuts";
             match.SaveToDatabase();
 
@@ -292,7 +292,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             var factory = new DataFlowPipelineEngineFactory<ReleaseData>(RepositoryLocator.CatalogueRepository.MEF, (DataFlowPipelineContext<ReleaseData>) context);
             var destInstance = factory.CreateDestinationIfExists(pipe);
 
-            Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomExtractionDirectory.Name);
+            Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomReleaseFolder.Name);
             
         }
     }
