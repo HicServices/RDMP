@@ -338,6 +338,7 @@
     <Compile Include="PipelineComponents\BasicDataTableAnonymiser3.cs" />
     <Compile Include="PipelineComponents\BasicDataTableAnonymiser2.cs" />
     <Compile Include="PipelineComponents\BasicDataTableAnonymiser1.cs" />
+    <Compile Include="PipelineComponents\BasicDataTableAnonymiser4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
