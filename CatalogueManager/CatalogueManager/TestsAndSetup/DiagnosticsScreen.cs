@@ -108,7 +108,6 @@ namespace CatalogueManager.TestsAndSetup
         }
         private void btnListBadAssemblies_Click(object sender, EventArgs e)
         {
-
             StartChecking(new BadAssembliesChecker(RepositoryLocator.CatalogueRepository.MEF));
         }
 

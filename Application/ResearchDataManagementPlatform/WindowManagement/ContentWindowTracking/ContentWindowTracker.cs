@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using WeifenLuo.WinFormsUI.Docking;
@@ -62,7 +63,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
         /// <returns></returns>
         public bool AlreadyActive(Type windowType, IMapsDirectlyToDatabaseTable databaseObject)
         {
-            if (!typeof(RDMPSingleControlTab).IsAssignableFrom(windowType))
+            if (!typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(windowType))
                 throw new ArgumentException("windowType must be a Type derrived from RDMPSingleControlTab");
 
 

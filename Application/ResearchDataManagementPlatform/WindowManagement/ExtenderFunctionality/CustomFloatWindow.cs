@@ -42,21 +42,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality
             if (singleObjectControlTab == null)
             {
                 saveToolStripMenuItem.Saveable = null;
-                saveToolStripMenuItem.Enabled = false;
                 return;
             }
 
             var saveable = singleObjectControlTab.GetControl() as ISaveableUI;
-            if (saveable != null)
-            {
-                saveToolStripMenuItem.Enabled = true;
-                saveToolStripMenuItem.Saveable = saveable;
-            }
-            else
-                saveToolStripMenuItem.Enabled = false;
-
-     //       ContextMenuStrip = new ContextMenuStrip();
-       //     ContextMenuStrip.Items.Add(saveToolStripMenuItem);
+            saveToolStripMenuItem.Saveable = saveable;
         }
     }
 }
