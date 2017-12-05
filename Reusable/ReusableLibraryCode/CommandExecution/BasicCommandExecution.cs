@@ -2,6 +2,14 @@
 
 namespace ReusableLibraryCode.CommandExecution
 {
+    /// <summary>
+    /// Basic implementation of ICommandExecution ensures that if a command is marked IsImpossible then it cannot be run.  Call SetImpossible to render your command 
+    /// un runnable with the given arguments.  You cannot make an IsImpossible command Possible again (therefore you should probably make this discision in your 
+    /// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure 
+    /// IsImpossible is respected in the unlikely event that some code or user attempts to execute an impossible command.
+    /// 
+    /// Override GetCommandHelp and GetCommandName to change the persentation layer of the command (if applicable).
+    /// </summary>
     public abstract class BasicCommandExecution : ICommandExecution
     {
         public bool IsImpossible { get; private set; }
