@@ -6,6 +6,9 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 
 namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
 {
+    /// <summary>
+    /// Right click menu for the top tab section of a docked tab in RDMP main application.
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class RDMPSingleControlTabMenu : ContextMenuStrip
     {

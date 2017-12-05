@@ -9,6 +9,9 @@ using ReusableUIComponents;
 
 namespace ResearchDataManagementPlatform.WindowManagement.UserSettings
 {
+    /// <summary>
+    /// Class for maintaining the users settings file which records user configurable variables e.g. whether to show HomeUI on startup each time
+    /// </summary>
     public class UserSettingsFile
     {
         private readonly Dictionary<string, string> _dictionary;

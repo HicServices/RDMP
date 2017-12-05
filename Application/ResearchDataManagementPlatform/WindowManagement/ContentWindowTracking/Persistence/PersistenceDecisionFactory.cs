@@ -12,6 +12,9 @@ using RDMPStartup;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
 {
+    /// <summary>
+    /// Translates persistence strings into DeserializeInstructions for restoring the RDMP main application window layout after application close/restart.
+    /// </summary>
     public class PersistenceDecisionFactory
     {
         public const char Separator = ':';

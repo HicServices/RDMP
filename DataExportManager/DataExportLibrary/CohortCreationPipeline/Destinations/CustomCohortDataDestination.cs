@@ -18,9 +18,14 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations
 {
+    /// <summary>
+    /// Pipeline component for commiting a DataTable as 'Custom Data' for an ExtractableCohort in data export.  A 'Custom Data' table is an adhoc table which must
+    /// contain a patient identifier but can contain any other columns you like after that.  CustomCohortDataDestination will check that the supplied DataTable
+    /// contains a suitable patient idetnifier column (or release id column) and bulk insert the table into the cohort database.  This table will then be linked 
+    /// and extracted with the cohort at data extraction time.
+    /// </summary>
     public class CustomCohortDataDestination: IDataFlowDestination<DataTable>, IPipelineRequirement<ExtractableCohort>
     {
-      
         private IExtractableCohort _cohort;
         IExternalCohortTable _externalCohortTable;
         private DiscoveredDatabase _database;
