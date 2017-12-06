@@ -21,24 +21,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     /// </summary>
     public partial class LoadPeriodicallyUI : LoadPeriodicallyUI_Design, ISaveableUI
     {
-        private LoadMetadata _loadMetadata;
         private LoadPeriodically _loadPeriodically;
-
-        public LoadMetadata LoadMetadata
-        {
-            get { return _loadMetadata; }
-            set
-            {
-                _loadMetadata = value;
-
-                
-                if (value != null)
-                    LoadPeriodically = value.LoadPeriodically;
-                else
-                    LoadPeriodically = null;
-            }
-        }
-
+        
         private LoadPeriodically LoadPeriodically
         {
             get { return _loadPeriodically; }
@@ -194,7 +178,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
             LoadPeriodically = databaseObject;
-            LoadMetadata = LoadPeriodically.LoadMetadata;
             objectSaverButton1.SetupFor(LoadPeriodically, activator.RefreshBus);
         }
 
