@@ -46,7 +46,7 @@ namespace PluginPackager
             try
             {
                 // Pull all the dlls and pdbs from all related project directories into one place for processing
-                SetupWorkingDirectory(notifier);
+                SetupWorkingDictionaries(notifier);
 
                 GenerateExclusionList();
 
@@ -94,26 +94,23 @@ namespace PluginPackager
             }
         }
 
-        private void SetupWorkingDirectory(ICheckNotifier notifier)
+        private void SetupWorkingDictionaries(ICheckNotifier notifier)
         {
-            CreateWorkingDirectory();
-
             _pluginAssemblies = new List<FileInfo>();
             
-            VisualStudioSolutionFile sln = new VisualStudioSolutionFile(_solutionToPackage);
+            var sln = new VisualStudioSolutionFile(_solutionToPackage);
             
-            List<string> pathsToProcess = new List<string>();
+            var pathsToProcess = new List<string>();
             foreach (VisualStudioProjectReference project in sln.Projects.Where(p => !p.Name.Contains("Tests")))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Found .csproj file reference at path: " + project.Path,CheckResult.Success));
 
-                string expectedPath = Path.Combine(_solutionToPackage.Directory.FullName,Path.GetDirectoryName(project.Path));
-
-
+                string expectedPath = Path.Combine(_solutionToPackage.Directory.FullName, Path.GetDirectoryName(project.Path));
+                
                 if(Directory.Exists(expectedPath))
-                    notifier.OnCheckPerformed(new CheckEventArgs("SUCCESS: Found it at:" + expectedPath,CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs("SUCCESS: Found it at: " + expectedPath, CheckResult.Success));
                 else
-                    notifier.OnCheckPerformed(new CheckEventArgs("FAIL: Did not find it at:" + expectedPath,CheckResult.Fail));
+                    notifier.OnCheckPerformed(new CheckEventArgs("FAIL: Did not find it at: " + expectedPath, CheckResult.Fail));
 
                 pathsToProcess.Add(expectedPath);
             }
@@ -177,18 +174,6 @@ namespace PluginPackager
                 //if (File.Exists(destFilename)) continue;
                 //File.Copy(srcFilename, destFilename);
             }
-        }
-
-        private void CreateWorkingDirectory()
-        {
-            //_workingDirectory = _solutionToPackage.Directory.CreateSubdirectory(Path.GetRandomFileName());
-            var outputPath = Path.Combine(_solutionToPackage.DirectoryName, "output");
-            if (Directory.Exists(outputPath))
-                Directory.Delete(outputPath, true);
-            
-            _outputDirectory = Directory.CreateDirectory(outputPath);
-            
-            //_srcDirectory = _outputDirectory.CreateSubdirectory("src");
         }
 
         readonly List<string> _blacklist = new List<string>();
