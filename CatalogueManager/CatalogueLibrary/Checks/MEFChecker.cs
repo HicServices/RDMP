@@ -9,24 +9,20 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Checks
 {
+    /// <summary>
+    /// This class checks for the existence of a given MEF export e.g. [Export(typeof(IDataFlowSource))].  The class to find should be a fully expressed path to the class
+    /// e.g. "DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource" The class will not only check at runtime that the class
+    /// exists but it will (via the ICheckNotifier) interface look for namespace changes that is classes with the same name as the missing MEF but in a different namespace
+    /// 
+    /// If the Check method finds a namespace change and the ICheckNotifier accepts the substitution then the Action userAcceptedSubstitution is called with the new class name
+    /// 
+    /// </summary>
     public class MEFChecker : ICheckable
     {
-        
-
         private string _classToFind;
         private readonly Action<string> _userAcceptedSubstitution;
         private MEF _mefPlugins;
 
-        /// <summary>
-        /// This class checks for the existence of a given MEF export e.g. [Export(typeof(IDataFlowSource))].  The class to find should be a fully expressed path to the class
-        /// e.g. "DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource" The class will not only check at runtime that the class
-        /// exists but it will (via the ICheckNotifier) interface look for namespace changes that is classes with the same name as the missing MEF but in a different namespace
-        /// 
-        /// If the Check method finds a namespace change and the ICheckNotifier accepts the substitution then the Action userAcceptedSubstitution is called with the new class name
-        /// 
-        /// </summary>
-        /// <param name="classToFind"></param>
-        /// <param name="userAcceptedSubstitution"></param>
         public MEFChecker(MEF mefPlugins,string classToFind, Action<string> userAcceptedSubstitution)
         {
             _mefPlugins = mefPlugins;
