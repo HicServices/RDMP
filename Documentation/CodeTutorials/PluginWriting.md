@@ -4,19 +4,19 @@
 3. [Streamlining Build](#betterBuilding)
 4. [Hello World UI Command Execution](#commandExecution)
 5. [A basic anonymisation plugin](#basicAnoPlugin)
-  1. [Version 1](#anoPluginVersion1)
-  2. [Version 2](#anoPluginVersion2)
-  3. [Version 3](#anoPluginVersion3)
+  * [Version 1](#anoPluginVersion1)
+  * [Version 2](#anoPluginVersion2)
+  * [Version 3](#anoPluginVersion3)
 6. [Tests](#tests)
-  1. [Unit Tests](#unitTests)
-  2. [Setting up Database Tests](#databaseTestsSetup)
-  3. [Writting a Database Test](#databaseTestsWritting)
+  * [Unit Tests](#unitTests)
+  * [Setting up Database Tests](#databaseTestsSetup)
+  * [Writting a Database Test](#databaseTestsWritting)
 7. [Checks](#checks)
-  1. [Version 4](#anoPluginVersion4)
+  * [Version 4](#anoPluginVersion4)
 7. [Progress Logging](#progress)
-  1. [Version 5](#anoPluginVersion5)
-  1. [What is wrong with Common.Logging.ILog](#ILog)
-  1. [What other funky things can I do with IDataLoadEventListener?] (#funkyIDataLoadEventListener)
+  * [Version 5](#anoPluginVersion5)
+  * [What is wrong with Common.Logging.ILog](#ILog)
+  * [What other funky things can I do with IDataLoadEventListener?](#funkyIDataLoadEventListener)
 
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin
@@ -796,7 +796,7 @@ Now that we are familiar with `ReusableLibraryCode.Checks.ICheckNotifier` it is 
 
 <a name="anoPluginVersion5"></a>
 ##Version 5
-Create a copy of `BasicDataTableAnonymiser4` called `BasicDataTableAnonymiser5`.  Add an Information message into `ProcessPipelineData` recording the fact that you are processing a new batch (`System.Data.DataTable`)
+Create a copy of `BasicDataTableAnonymiser4` called `BasicDataTableAnonymiser5`.  Add an Information message into `ProcessPipelineData` recording the fact that you are processing a new batch:
 
 ```csharp
 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to process batch with row count " + toProcess.Rows.Count));
@@ -980,14 +980,23 @@ The first test case `LoggerTestCase.ToConsole` creates a `ReusableLibraryCode.Pr
 
 The second test case `LoggerTestCase.ToMemory` creates a `ReusableLibraryCode.Progress.ToMemoryDataLoadEventListener`.  `ToMemoryDataLoadEventListener` records `OnProgress` and `OnNotify` messages in Dictionaries indexed by component (that sent the message).  We need a Dictionary because in practice there will usually be multiple components executing and all logging to the same `IDataLoadEventListener`.  This class is particularly useful for testing where you want to confirm that a certain message was sent or that a certain number of records was processed.  `ToMemoryDataLoadEventListener` can also be used when you want to run an entire Pipeline and make descisions based on the logging messages generated (`ProgressEventType GetWorst()` method can be helpful here).
 
+We use the `ToMemoryDataLoadEventListener` to confirm that the final progress count of redactions as logged by the component are 4.
+
+```csharp
+Assert.AreEqual(4,
+ ((ToMemoryDataLoadEventListener)listener).LastProgressRecieivedByTaskName["REDACTING Names"].Progress.Value);
+```
+
 Finally we have the test case `LoggerTestCase.ToDatabase` which creates a `HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`.  This is a translational class that allows access to the `HIC.Logging` hierarchical database logging system which RDMP uses to record all the ongoing activities executed by users.  A test instance of this database is automatically setup by `DatabaseCreation.exe` and is therefore available any class inheriting from `DatabaseTests`.  If you look at your test server in Sql Management Studio you should see a database called `TEST_Logging`.  This database has a hierarchy 
 
-`DataLoadTask` - The overarching task which occurs regularly e.g. DataExtraction
-`DataLoadRun` - An instance of the overarching task being attempted/executed e.g. `Extracting 'Cases' for 'Project 32'
-`ProgressLog` - All the messages generated during a given `DataLoadRun`
-`FatalError` - All Error messages generated during a given `DataLoadRun` with a flag for whether they have been resolved or not
-`TableLoadRun` - A count of the number of records that ended up at a given destination (this might be a database table but could equally be a flat file etc)
-`DataSource` - A description of all the contributors of data to the `TableLoadRun` (this could be flat files or a block of SQL run on a server or even just a class name!)
+TableName|Purpose
+--------|---------
+DataLoadTask | The overarching task which occurs regularly e.g. DataExtraction
+DataLoadRun | An instance of the overarching task being attempted/executed e.g. `Extracting 'Cases' for 'Project 32'
+ProgressLog | All the messages generated during a given `DataLoadRun`
+FatalError | All Error messages generated during a given `DataLoadRun` with a flag for whether they have been resolved or not
+TableLoadRun | A count of the number of records that ended up at a given destination (this might be a database table but could equally be a flat file etc)
+DataSource | A description of all the contributors of data to the `TableLoadRun` (this could be flat files or a block of SQL run on a server or even just a class name!)
  
 Finally there is the table `RowError`, this is an obsolete table for recording problems with specific rows... in practice this table just grew unmanageable and there are better ways to handle row errors than through the central logging database.
 
@@ -1020,6 +1029,8 @@ listener = new ToLoggingDatabaseDataLoadEventListener(this,logManager ,"Anonymis
 Run the ToDatabase test case and then open the TEST_Logging database in Sql Management Studio.  Unlike TEST_Catalogue, The TEST_Logging database is not automatically cleared cleared after each test so you might have some additional runs (if you ran the test multiple times or had some bugs implementing it) but it should look something like:
 
 ![Logging database should look like this](Images/Version5LoggingDatabase.png)
+
+One final thing to note is the call to `FinalizeTableLoadInfos`.  Since we might pass the `ToLoggingDatabaseDataLoadEventListener` to multiple components and even possibly multiple pipeline executions (or pipelines within pipelines!) it is not easy to automatically define an end point after which the `DataLoadRun` / `TableLoadRun` should be closed off and marked complete.  Therefore `ToLoggingDatabaseDataLoadEventListener` requires you to call this at some point once you are sure all the things you wanted to log in the run are complete and all relevant components have Disposed etc.
 
 <a name="ILog"></a>
 ##What is wrong with Common.Logging.ILog
