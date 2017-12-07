@@ -15,7 +15,7 @@ namespace CachingEngine.PipelineExecution.Sources
 {
     /// <summary>
     /// Abstract base class for a pipeline component which makes time based fetch requests to produce time specific packets of data which will be packaged into files
-    /// and stored further down the caching pipeline.  Use the Request property to determine which dates/times you are supposed to handle within GetChunk
+    /// and stored further down the caching pipeline.  Use the Request property to determine which dates/times you are supposed to handle within DoGetChunk.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [InheritedExport(typeof(IDataFlowSource<ICacheChunk>))]

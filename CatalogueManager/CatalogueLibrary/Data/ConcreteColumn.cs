@@ -7,6 +7,13 @@ using ReusableUIComponents.Annotations;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Common abstract base class for ExtractionInformation (how to extract a given ColumnInfo) and ExtractableColumn (clone into data export database of an 
+    /// ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an ExtractionInformation defined in the Catalogue 
+    /// database and copied out for use in the data extraction configuration).
+    /// 
+    /// Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)
+    /// </summary>
     public abstract class ConcreteColumn : VersionedDatabaseEntity, IColumn
     {
         #region Database Properties

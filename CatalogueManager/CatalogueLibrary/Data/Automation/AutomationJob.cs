@@ -210,6 +210,9 @@ namespace CatalogueLibrary.Data.Automation
         }
     }
 
+    /// <summary>
+    /// The category of Pipeline responsible for creating this AutomationJob.  Either one of the 3 core automation RDMP activities or a custom plugin pipleine.
+    /// </summary>
     public enum AutomationJobType
     {
         DQE,
@@ -218,6 +221,10 @@ namespace CatalogueLibrary.Data.Automation
         UserCustomPipeline
     }
 
+
+    /// <summary>
+    /// The state of an AutomationJob on an AutomationServerSlot.
+    /// </summary>
     public enum AutomationJobStatus
     {
         NotYetStarted,
@@ -225,6 +232,5 @@ namespace CatalogueLibrary.Data.Automation
         Cancelled,
         Crashed,
         Finished
-        
     }
 }
