@@ -310,7 +310,6 @@
     <Compile Include="Data\CredentialsInUseException.cs" />
     <Compile Include="Data\DataAccessCredentialsFactory.cs" />
     <Compile Include="Data\DataLoad\ArgumentFactory.cs" />
-    <Compile Include="Data\DataLoad\Exceptions\NoDemandsException.cs" />
     <Compile Include="Data\DataLoad\IArgumentHost.cs" />
     <Compile Include="Data\DataLoad\ILoadProgressHost.cs" />
     <Compile Include="Data\DataLoad\ITableInfoCollectionHost.cs" />
@@ -576,7 +575,9 @@
       <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Data\DataLoad\Exceptions\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

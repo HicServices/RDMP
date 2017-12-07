@@ -3,6 +3,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Helper Factory for creating DataAccessCredentials.  This class exists solely to prevent duplication in DataAccessCredentials being created for newly imported
+    /// TableInfos where the username/password/server are the same as an existing DataAccessCredentials.
+    /// </summary>
     public class DataAccessCredentialsFactory
     {
         private readonly CatalogueRepository _cataRepository;
