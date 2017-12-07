@@ -2,6 +2,9 @@
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// See AggregateTopX
+    /// </summary>
     public interface IAggregateTopX
     {
         int TopX { get; }

@@ -5,16 +5,15 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Normally to open a connection to an IDataAccessPoint (location of server/database) you also need an optional IDataAccessCredentials (username and encrypted password).  These
+    /// These are usually two separate objects e.g. TableInfo and DataAccessCredentials (optional - if ommmited connections use integrated/windows security).  
+    /// 
+    /// Instead of doing that however, you can use this class to store all the bits in one object that implements both interfaces.  It can then be used with a 
+    /// DataAccessPortal.
+    /// </summary>
     public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessCredentials, IDataAccessPoint
     {
-        /// <summary>
-        /// Normally to open a connection to an IDataAccessPoint (location of server/database) you also need an optional IDataAccessCredentials (username and encrypted password).  These
-        /// are usually two separate objects e.g. TableInfo and DataAccessCredentials (optional - if ommmited connections use integrated/windows security).  
-        /// 
-        /// Instead of doing that however, you can use this class to store all the bits in one object that implements both interfaces.  It can then be used with a DataAccessPortal.
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="databaseType"></param>
         public SelfCertifyingDataAccessPoint(CatalogueRepository repository, DatabaseType databaseType) : base(repository)
         {
             DatabaseType = databaseType;
