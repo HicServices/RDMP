@@ -17,6 +17,10 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 {
+    /// <summary>
+    /// Facilitates opening/closing lots of windows at once to achieve a specific goal (e.g. running a data load).  Basically sets up the tabs for a user friendly
+    /// consistent experience for the called user task.
+    /// </summary>
     public class WindowArranger : IArrangeWindows
     {
         private readonly IActivateItems _activator;

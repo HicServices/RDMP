@@ -76,6 +76,10 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
+    /// <summary>
+    /// Central class for RDMP main application, this class provides acceess to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
+    /// provision etc.  See IActivateItems for full details
+    /// </summary>
     public class ContentWindowManager : IActivateItems
     {
         public event EmphasiseItemHandler Emphasise;

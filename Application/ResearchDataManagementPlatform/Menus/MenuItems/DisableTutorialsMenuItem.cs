@@ -4,6 +4,9 @@ using CatalogueManager.Tutorials;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
+    /// <summary>
+    /// Disables displaying Tutorials in RDMP
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class DisableTutorialsMenuItem : ToolStripMenuItem
     {

@@ -305,15 +305,35 @@ namespace CatalogueLibrary.Data.Automation
         }
     }
 
+    /// <summary>
+    /// What to do when an AutomationJob completes with Crashed state
+    /// </summary>
     public enum AutomationFailureStrategy
     {
+        /// <summary>
+        /// Attempt to do the next novel Job - e.g. if DQE run on Prescribing crashed carry on and try to DQE Biochemistry
+        /// </summary>
         TryNext,
+
+        /// <summary>
+        /// Once a job of a given the category has crashed do not start any new ones - e.g. if DQE run on Prescribing crashed do not start any more DQE runs on other datasets
+        /// </summary>
         Stop
     }
 
+    /// <summary>
+    /// How to Prioritise which dataset to run the data quality engine on next.
+    /// </summary>
     public enum AutomationDQEJobSelectionStrategy
     {
+        /// <summary>
+        /// Run the DQE prioritising datasets which have recently been loaded by the DLE
+        /// </summary>
         MostRecentlyLoadedDataset,
+
+        /// <summary>
+        /// Run the DQE prioritising datasets which have not been DQEd for a long time.
+        /// </summary>
         DatasetWithMostOutOfDateDQEResults
     }
 }

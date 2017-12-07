@@ -16,6 +16,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\SMI\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -309,7 +310,6 @@
     <Compile Include="Data\CredentialsInUseException.cs" />
     <Compile Include="Data\DataAccessCredentialsFactory.cs" />
     <Compile Include="Data\DataLoad\ArgumentFactory.cs" />
-    <Compile Include="Data\DataLoad\Exceptions\NoDemandsException.cs" />
     <Compile Include="Data\DataLoad\IArgumentHost.cs" />
     <Compile Include="Data\DataLoad\ILoadProgressHost.cs" />
     <Compile Include="Data\DataLoad\ITableInfoCollectionHost.cs" />
@@ -575,7 +575,9 @@
       <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Data\DataLoad\Exceptions\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

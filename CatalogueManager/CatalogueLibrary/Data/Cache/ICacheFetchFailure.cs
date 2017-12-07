@@ -3,6 +3,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.Cache
 {
+    /// <summary>
+    /// See CacheFetchFailure
+    /// </summary>
     public interface ICacheFetchFailure : ISaveable, IDeleteable
     {
         int CacheProgress_ID { get; set; }

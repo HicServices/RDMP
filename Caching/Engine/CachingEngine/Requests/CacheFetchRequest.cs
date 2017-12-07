@@ -6,6 +6,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CachingEngine.Requests
 {
+    /// <summary>
+    /// Describes a normal caching request for a period of days/hours for an ICacheSource to request.  This includes start / end date which will be the next logical period
+    /// of time to fetch to advance the head of an ICacheProgress (fetch the next date range and update the progress pointer).
+    /// </summary>
     public class CacheFetchRequest : ICacheFetchRequest
     {
         [NoMappingToDatabase]

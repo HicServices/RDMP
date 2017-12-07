@@ -5,10 +5,24 @@ using CatalogueManager.SimpleControls;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
+    /// <summary>
+    /// Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly update the Saveable property to match
+    /// the currently selected saveable tab
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class SaveMenuItem : ToolStripMenuItem
     {
-        public ISaveableUI Saveable { get; set; }
+        private ISaveableUI _saveable;
+
+        public ISaveableUI Saveable
+        {
+            get { return _saveable; }
+            set
+            {
+                _saveable = value;
+                Enabled = value != null;
+            }
+        }
 
         public SaveMenuItem() : base("Save")
         {

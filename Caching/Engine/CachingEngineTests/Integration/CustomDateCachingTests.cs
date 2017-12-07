@@ -29,8 +29,9 @@ namespace CachingEngineTests.Integration
     [Category("Integration")]
     public class CustomDateCachingTests : DatabaseTests
     {
-        [Test]
-        public void FetchMultipleDays_Success()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void FetchMultipleDays_Success(bool singleDay)
         {
             var mef = RepositoryLocator.CatalogueRepository.MEF;
             mef.AddTypeToCatalogForTesting(typeof(TestCacheSource));
@@ -69,11 +70,11 @@ namespace CachingEngineTests.Integration
             cacheProgress.LoadProgress_ID = -1;
             cacheProgress.Repository = CatalogueRepository;
             cacheProgress.Expect(m => m.GetLoadProgress()).Return(loadProgress);
-
+            cacheProgress.CacheFillProgress = new DateTime(2020, 1, 1);
 
             var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);
             var startDate = new DateTime(2016, 1, 1);
-            var endDate = new DateTime(2016, 1, 3);
+            var endDate = singleDay? new DateTime(2016, 1, 1): new DateTime(2016, 1, 3);
 
             var listener = new LoggingListener();
             var task = caching.Fetch(startDate, endDate, new GracefulCancellationToken(), listener);
@@ -82,6 +83,9 @@ namespace CachingEngineTests.Integration
             var dateNotifications = listener.Notifications.Where(n => n.Message.StartsWith("!!"))
                 .Select(n => n.Message.TrimStart('!'))
                 .ToArray();
+
+            //should not have been updated because this is a backfill request
+            Assert.AreEqual(new DateTime(2020,1,1),cacheProgress.CacheFillProgress);
 
             Assert.IsTrue(task.IsCompleted);
             Assert.IsTrue(dateNotifications.Contains(startDate.ToString("g")));

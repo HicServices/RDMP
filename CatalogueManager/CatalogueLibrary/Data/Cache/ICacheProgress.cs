@@ -6,6 +6,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.Cache
 {
+    /// <summary>
+    /// See CacheProgress
+    /// </summary>
     public interface ICacheProgress : ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable
     {
         int LoadProgress_ID { get; set; }

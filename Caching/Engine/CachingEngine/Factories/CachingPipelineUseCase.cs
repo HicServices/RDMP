@@ -18,6 +18,13 @@ using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Factories
 {
+    /// <summary>
+    /// Describes the use case under which a caching is attempted for a given ICacheProgress.  This involves working out the ICacheFetchRequestProvider, 
+    /// PermissionWindow etc.  Since the use case is used both for creating an engine for execution and for determining which IPipelines are compatible
+    /// with the use case the class can be used at execution and design time.  Therefore it is legal to define the use case even when the ICacheProgress does
+    /// not have a configured caching pipeline e.g. to facilitate the user selecting/creating an appropriate pipeline in the first place (set throwIfNoPipeline 
+    /// to false under such circumstances).
+    /// </summary>
     public class CachingPipelineUseCase:PipelineUseCase
     {
         private readonly ICacheProgress _cacheProgress;

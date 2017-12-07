@@ -21,24 +21,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     /// </summary>
     public partial class LoadPeriodicallyUI : LoadPeriodicallyUI_Design, ISaveableUI
     {
-        private LoadMetadata _loadMetadata;
         private LoadPeriodically _loadPeriodically;
-
-        public LoadMetadata LoadMetadata
-        {
-            get { return _loadMetadata; }
-            set
-            {
-                _loadMetadata = value;
-
-                
-                if (value != null)
-                    LoadPeriodically = value.LoadPeriodically;
-                else
-                    LoadPeriodically = null;
-            }
-        }
-
+        
         private LoadPeriodically LoadPeriodically
         {
             get { return _loadPeriodically; }
@@ -48,9 +32,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
                 if (value != null)
                 {
-                    btnCreate.Enabled = false;
-                    btnDelete.Enabled = true;
-
                     tbDaysToWaitBetweenLoads.Text = value.DaysToWaitBetweenLoads.ToString();
                     tbDaysToWaitBetweenLoads.Enabled = true;
                     
@@ -75,9 +56,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 }
                 else
                 {
-                    btnCreate.Enabled = true;
-                    btnDelete.Enabled = false;
-                    
                     tbDaysToWaitBetweenLoads.Enabled = false;
                     tbDaysToWaitBetweenLoads.Text = "";
                     tbLastLoaded.Text = "";
@@ -115,18 +93,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             ddOnsuccessfulLoadLaunch.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>().ToArray());
 
         }
-
-        private void btnCreate_Click(object sender, EventArgs e)
-        {
-            LoadPeriodically = new LoadPeriodically(RepositoryLocator.CatalogueRepository, LoadMetadata, 100);
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            LoadPeriodically.DeleteInDatabase();
-            LoadPeriodically = null;
-        }
-
+        
         private void tbLastLoaded_TextChanged(object sender, EventArgs e)
         {
             if (LoadPeriodically != null)
@@ -137,12 +104,10 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                     if (string.IsNullOrWhiteSpace(tbLastLoaded.Text))
                     {
                         LoadPeriodically.LastLoaded = null;
-                        //LoadPeriodically.SaveToDatabase();
                     }
                     else
                     {
                         LoadPeriodically.LastLoaded = DateTime.Parse(tbLastLoaded.Text);
-                        //LoadPeriodically.SaveToDatabase();
                     }
 
                     tbLastLoaded.ForeColor = Color.Black;
@@ -165,7 +130,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 {
                     LoadPeriodically.DaysToWaitBetweenLoads = int.Parse(tbDaysToWaitBetweenLoads.Text);
                     tbDaysToWaitBetweenLoads.Text = LoadPeriodically.DaysToWaitBetweenLoads.ToString();//lets us deal with 1 thresholding
-                    //LoadPeriodically.SaveToDatabase();
 
                     tbDaysToWaitBetweenLoads.ForeColor = Color.Black;
                     
@@ -192,8 +156,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
                     LoadPeriodically.OnSuccessLaunchLoadMetadata_ID = lmd.ID;
                     LoadPeriodically.CheckForCircularReferences();
-
-                    //LoadPeriodically.SaveToDatabase();
                 }
                 catch (Exception exception)
                 {
@@ -208,7 +170,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             if (LoadPeriodically != null)
             {
                 LoadPeriodically.OnSuccessLaunchLoadMetadata_ID = null;
-                //LoadPeriodically.SaveToDatabase();
                 ddOnsuccessfulLoadLaunch.SelectedItem = null;
             }
         }
@@ -217,7 +178,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
             LoadPeriodically = databaseObject;
-            LoadMetadata = LoadPeriodically.LoadMetadata;
             objectSaverButton1.SetupFor(LoadPeriodically, activator.RefreshBus);
         }
 

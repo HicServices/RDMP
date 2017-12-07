@@ -17,7 +17,7 @@ namespace AnonymisationTests
 {
     public class ANOMigrationTests : TestsRequiringANOStore
     {
-        string tableName = "ANOMigration";
+        private const string TableName = "ANOMigration";
 
         private TableInfo _tableInfo;
         private ColumnInfo[] _columnInfos;
@@ -40,11 +40,10 @@ namespace AnonymisationTests
                 remnantANO.DeleteInDatabase();
 
             //cleanup
-            foreach (var remnant in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(tableName)))
+            foreach (var remnant in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(TableName)))
                 remnant.DeleteInDatabase();
 
-            var sql =
-            @"
+            const string sql = @"
 CREATE TABLE [ANOMigration](
 	[AdmissionDate] [datetime] NOT NULL,
 	[DischargeDate] [datetime] NOT NULL,
@@ -81,7 +80,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
                 server.GetCommand(sql,con).ExecuteNonQuery();
             }
 
-            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(tableName);
+            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(TableName);
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, table);
             importer.DoImport(out _tableInfo,out _columnInfos);
 
@@ -162,7 +161,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             using (var con = server.GetConnection())
             {
                 con.Open();
-                DbCommand cmd = server.GetCommand("Select * from " + tableName, con);
+                DbCommand cmd = server.GetCommand("Select * from " + TableName, con);
                 var r = cmd.ExecuteReader();
 
                 for (int row = 0; row < 10000 && r.Read(); row++)
@@ -197,7 +196,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             {
                 con.Open();
 
-                DbCommand cmd = server.GetCommand("Select * from " + tableName, con);
+                DbCommand cmd = server.GetCommand("Select * from " + TableName, con);
                 var r = cmd.ExecuteReader();
                 
                 List<object> objectsFound = new List<object>();

@@ -22,7 +22,7 @@ namespace ResearchDataManagementPlatform
     /// </summary>
     public partial class RDMPMainForm : RDMPForm
     {
-        private PersistenceDecisionFactory _persistenceFactory = new PersistenceDecisionFactory();
+        private readonly PersistenceDecisionFactory _persistenceFactory = new PersistenceDecisionFactory();
 
         public RDMPMainForm()
         {
@@ -36,7 +36,7 @@ namespace ResearchDataManagementPlatform
         }
 
         ToolboxWindowManager _windowManager;
-        RefreshBus _refreshBus = new RefreshBus();
+        readonly RefreshBus _refreshBus = new RefreshBus();
         private FileInfo _persistenceFile;
         private ICheckNotifier _globalErrorCheckNotifier;
 

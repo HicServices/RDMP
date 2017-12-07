@@ -6,7 +6,9 @@ using CatalogueLibrary.Data.DataLoad;
 
 namespace CachingEngine.BasicCache
 {
-    [Export(typeof(ICacheLayout))]
+    /// <summary>
+    /// Alternative cache layout to BasicCacheLayout in which files are expected to be in a zip file instead of a directory (e.g. in .\Data\Cache\2001-01-01.zip, .\Data\Cache\2001-01-02.zip etc)
+    /// </summary>
     public class ZipCacheLayoutOnePerDay : CacheLayout
     {
         public ZipCacheLayoutOnePerDay(DirectoryInfo rootCacheDirectory,ILoadCachePathResolver resolver)

@@ -6,6 +6,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
+    /// <summary>
+    /// See LoadMetadata
+    /// </summary>
     public interface ILoadMetadata : IMapsDirectlyToDatabaseTable,ILoadProgressHost
     {
         string LocationOfFlatFiles { get; set; }

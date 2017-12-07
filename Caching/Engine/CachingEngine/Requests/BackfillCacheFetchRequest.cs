@@ -5,6 +5,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CachingEngine.Requests
 {
+    /// <summary>
+    /// ICacheFetchRequest representing an 'out of order' fetch for a specific time/date range.  This will not affect the head of an ICacheProgress (how far we think we
+    /// have loaded) and is intended to back fill gaps in a cache that is already populated.
+    /// </summary>
     public class BackfillCacheFetchRequest : ICacheFetchRequest
     {
         [NoMappingToDatabase]
