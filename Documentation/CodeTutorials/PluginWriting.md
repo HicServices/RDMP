@@ -1,4 +1,5 @@
 # Table of contents
+1. [RDMP Binary and Documentation](#binary)
 1. [Hello World Plugin](#helloWorldPlugin)
 2. [Attaching the Debugger](#debugging)
 3. [Streamlining Build](#betterBuilding)
@@ -17,6 +18,28 @@
   * [Version 5](#anoPluginVersion5)
   * [What is wrong with Common.Logging.ILog](#ILog)
   * [What other funky things can I do with IDataLoadEventListener?](#funkyIDataLoadEventListener)
+
+<a name="binary"></a>
+# RDMP Binary and Documentation
+The Research Data Management Platform Binaries are available via Click Once installer at https://hic.dundee.ac.uk/Installers/RDMP/ .  In order to use RDMP you will also need access to a Microsoft Sql Server (Sql Express is fine for testing/development).  After completing the setup process the main UI will launch.
+
+From here you can access several resources that help understand RDMP classes / patterns etc.  
+
+![Main application Help](Images/Help.png)
+
+Firstly there is the 'Help=>Show User Manual' (also available at https://github.com/HicServices/RDMP/blob/master/Documentation/UserManual.docx).
+
+Secondly there is the 'Help=>Generate Class/Table Summary' which describes the DatabaseEntity objects that appear in RDMPCollectionUIs and are core concepts for RDMP.
+
+![Class Documentation](Images/ClassDocumentation.png)
+
+Thirdly 'Help=>Show Help' will show a dialog telling you what User Interface control you are in (class name) and any comments the class has (works for content tabs only - not collection trees).
+
+Fourthly there is the Tutorial system 'Help=>Tutorials' which cover the basics for setting up RDMP test data, importing files etc.
+
+Finally for the ambitious the 'Help=>Generate User Interface Documentation' will screencap and summarise all user interfaces in RDMP (takes a while).
+
+![Class Documentation](Images/UIDocumentation.png)
 
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin
