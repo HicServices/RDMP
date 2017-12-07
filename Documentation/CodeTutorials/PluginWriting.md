@@ -12,7 +12,11 @@
   2. [Setting up Database Tests](#databaseTestsSetup)
   3. [Writting a Database Test](#databaseTestsWritting)
 7. [Checks](#checks)
+  1. [Version 4](#anoPluginVersion4)
 7. [Progress Logging](#progress)
+  1. [Version 5](#anoPluginVersion5)
+  1. [What is wrong with Common.Logging.ILog](#ILog)
+  1. [What other funky things can I do with IDataLoadEventListener?] (#funkyIDataLoadEventListener)
 
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin
@@ -543,7 +547,11 @@ Once we have a `DiscoveredTable` we can create a persistent reference to it in t
 
 <a name="checks"></a>
 # Checks
-This is getting complex and could do with having some events, and a way for the user to check that it is working before running it.  Create an exact copy of `BasicDataTableAnonymiser3` called `BasicDataTableAnonymiser4`.  Move the initialization code for `_commonNames` into a method GetCommonNamesTable.
+This is getting complex and could do with having some events, and a way for the user to check that it is working before running it.  Fortunately RDMP supports this with the `ReusableLibraryCode.Checks.ICheckNotifier` system.
+
+<a name="anoPluginVersion4"></a>
+##Version 4
+Create an exact copy of `BasicDataTableAnonymiser3` called `BasicDataTableAnonymiser4`.  Move the initialization code for `_commonNames` into a method GetCommonNamesTable.
 
 Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`) and call the new method `GetCommonNamesTable`
 
@@ -782,4 +790,271 @@ Just to confirm you have done it right you can copy and paste `TestBasicDataTabl
 
 <a name="progress"></a>
 # Progress Logging
-Now it is time to add some logging.  
+Now that we are familiar with `ReusableLibraryCode.Checks.ICheckNotifier` it is time to get to grips with the other event system in RDMP `ReusableLibraryCode.Progress.IDataLoadEventListener`.  While `ICheckNotifier` is intended to run primarily at Design time (when the user is configuring his pipelines) and can propose fixes, `IDataLoadEventListener` is the opposite.  
+
+`IDataLoadEventListener` is intended for use at execution time and supports both `ReusableLibraryCode.Progress.ProgressEventArgs` (incremental messages about how many records have been processed in what time period) as well as one off messages (`ReusableLibraryCode.Progress.NotifyEventArgs`).
+
+<a name="anoPluginVersion5"></a>
+##Version 5
+Create a copy of `BasicDataTableAnonymiser4` called `BasicDataTableAnonymiser5`.  Add an Information message into `ProcessPipelineData` recording the fact that you are processing a new batch (`System.Data.DataTable`)
+
+```csharp
+listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to process batch with row count " + toProcess.Rows.Count));
+```
+
+Declare a StopWatch and a counter variable at class level
+```csharp
+private int _redactionsMade = 0;
+private Stopwatch _timeProcessing = new Stopwatch();
+```
+
+This will let us record how long is specifically spent on the anonymisation of the DataTable (bearing in mind we are only one component in a long pipeline which might be slow).  Start the StopWatch before the `foreach` statement and stop it afterwards.  Send a Progress message at the end of the `foreach` statement too.  The new code for `ProcessPipelineData` should look like:
+
+```csharp
+public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+{
+	GetCommonNamesTable(new ThrowImmediatelyCheckNotifier());
+
+	listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to process batch with row count " + toProcess.Rows.Count));
+
+	_timeProcessing.Start();
+
+	//Go through each row in the table
+	foreach (DataRow row in toProcess.Rows)
+	{
+		//for each cell in current row
+		foreach (DataColumn col in toProcess.Columns)
+		{
+			//if it's not a column we are skipping
+			if (ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
+				continue;
+
+			//if it is a string
+			var stringValue = row[col] as string;
+
+			if (stringValue != null)
+			{
+				//replace any common names with REDACTED
+				foreach (var name in _commonNames)
+					stringValue = Regex.Replace(stringValue, name, "REDACTED", RegexOptions.IgnoreCase);
+
+				//if string value changed
+				if (!row[col].Equals(stringValue))
+				{
+					//increment the counter of redactions made
+					_redactionsMade++;
+
+					//update the cell to the new value
+					row[col] = stringValue;
+				}
+			}
+		}
+	}
+
+	_timeProcessing.Stop();
+	listener.OnProgress(this, new ProgressEventArgs("REDACTING Names",new ProgressMeasurement(_redactionsMade,ProgressType.Records),_timeProcessing.Elapsed));
+
+	return toProcess;
+}
+```
+
+Notice that we are only counting the number of redactions since that is the most interesting bit.  Now it is time to test it and see the power of the `IDataLoadEventListener` system.  We are going to write a test which explores three different `IDataLoadEventListener` implementations.
+
+Add the following to `TestAnonymisationPlugins`
+
+```csharp
+public enum LoggerTestCase
+{
+	ToConsole,
+	ToMemory,
+	ToDatabase
+}
+
+[Test]
+[TestCase(LoggerTestCase.ToConsole)]
+[TestCase(LoggerTestCase.ToMemory)]
+[TestCase(LoggerTestCase.ToDatabase)]
+public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
+{
+	//Create a names table that will go into the database
+	var dt = new DataTable();
+	dt.Columns.Add("Name");
+	dt.Rows.Add(new[] { "Thomas" });
+	dt.Rows.Add(new[] { "Wallace" });
+	dt.Rows.Add(new[] { "Frank" });
+
+	//upload the DataTable from memory into the database
+	var discoveredTable = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("ForbiddenNames", dt);
+	try
+	{
+		//import the persistent TableInfo reference
+		var importer = new TableInfoImporter(CatalogueRepository, discoveredTable);
+
+		TableInfo tableInfo;
+		ColumnInfo[] columnInfos;
+		importer.DoImport(out tableInfo, out columnInfos);
+
+		//Create the test dataset chunks that will be anonymised
+		var dtStories1 = new DataTable();
+		dtStories1.Columns.Add("Story");
+		dtStories1.Rows.Add(new[] { "Thomas went to school regularly" }); //1st redact
+		dtStories1.Rows.Add(new[] { "It seems like Wallace went less regularly" }); //2nd redact
+		dtStories1.Rows.Add(new[] { "Mr Smitty was the teacher" });
+
+		var dtStories2 = new DataTable();
+		dtStories2.Columns.Add("Story");
+		dtStories2.Rows.Add(new[] { "Things were going so well" });
+		dtStories2.Rows.Add(new[] { "And then it all turned bad for Wallace" }); //3rd redact
+	
+		var dtStories3 = new DataTable();
+		dtStories3.Columns.Add("Story");
+		dtStories3.Rows.Add(new[] { "There were things creeping in the dark" });
+		dtStories3.Rows.Add(new[] { "Surely Frank would know what to do.  Frank was a genius" }); //4th redact
+		dtStories3.Rows.Add(new[] { "Mr Smitty was the teacher" });
+	
+		//Create the anonymiser
+		var a = new BasicDataTableAnonymiser5();
+
+		//Tell it about the database table
+		a.NamesTable = tableInfo;
+
+		//Create a listener according to the test case
+		IDataLoadEventListener listener = null;
+
+		switch (testCase)
+		{
+			case LoggerTestCase.ToConsole:
+				listener = new ThrowImmediatelyDataLoadEventListener();
+				break;
+			case LoggerTestCase.ToMemory:
+				listener = new ToMemoryDataLoadEventListener(true);
+				break;
+			case LoggerTestCase.ToDatabase:
+			
+				//get the default logging server
+				var loggingServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+
+				//create a log manager for the server
+				var logManager = new LogManager(loggingServer);
+
+				//create a new super task Anonymising Data Tables
+				logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
+
+				//setup a listener that goes to this logging database 
+				listener = new ToLoggingDatabaseDataLoadEventListener(this,logManager ,"Anonymising Data Tables","Run on " + DateTime.Now);
+				break;
+			default:
+				throw new ArgumentOutOfRangeException("testCase");
+		}
+
+		//run the anonymisation
+		//process all 3 batches
+		a.ProcessPipelineData(dtStories1, listener, new GracefulCancellationToken());
+		a.ProcessPipelineData(dtStories2, listener, new GracefulCancellationToken());
+		a.ProcessPipelineData(dtStories3, listener, new GracefulCancellationToken());
+
+		//check the results
+		switch (testCase)
+		{
+			case LoggerTestCase.ToMemory:
+				Assert.AreEqual(4, ((ToMemoryDataLoadEventListener)listener).LastProgressRecieivedByTaskName["REDACTING Names"].Progress.Value);
+				break;
+			case LoggerTestCase.ToDatabase:
+				((ToLoggingDatabaseDataLoadEventListener)listener).FinalizeTableLoadInfos();
+				break;
+		}
+	}
+	finally
+	{
+		//finally drop the database table
+		discoveredTable.Drop();
+	}
+}
+```
+
+This test has the same setup of the ForbiddenNames table, this time we create 3 batches which will go through our pipeline component in sequence (as would happen in normal execution where you could be processing millions of records in sub batches).  It then creates one of three `IDataLoadEventListener` and passes the 3 batches in.
+
+The first test case `LoggerTestCase.ToConsole` creates a `ReusableLibraryCode.Progress.ThrowImmediatelyDataLoadEventListener`.  `ThrowImmediatelyCheckNotifier` ignores `OnProgress` messages, writes out `OnNotify` to the console and throws an Exception if there are any Error messages received.
+
+![To Console Output](Images/Version5ToConsoleOutput.png)
+
+The second test case `LoggerTestCase.ToMemory` creates a `ReusableLibraryCode.Progress.ToMemoryDataLoadEventListener`.  `ToMemoryDataLoadEventListener` records `OnProgress` and `OnNotify` messages in Dictionaries indexed by component (that sent the message).  We need a Dictionary because in practice there will usually be multiple components executing and all logging to the same `IDataLoadEventListener`.  This class is particularly useful for testing where you want to confirm that a certain message was sent or that a certain number of records was processed.  `ToMemoryDataLoadEventListener` can also be used when you want to run an entire Pipeline and make descisions based on the logging messages generated (`ProgressEventType GetWorst()` method can be helpful here).
+
+Finally we have the test case `LoggerTestCase.ToDatabase` which creates a `HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`.  This is a translational class that allows access to the `HIC.Logging` hierarchical database logging system which RDMP uses to record all the ongoing activities executed by users.  A test instance of this database is automatically setup by `DatabaseCreation.exe` and is therefore available any class inheriting from `DatabaseTests`.  If you look at your test server in Sql Management Studio you should see a database called `TEST_Logging`.  This database has a hierarchy 
+
+`DataLoadTask` - The overarching task which occurs regularly e.g. DataExtraction
+`DataLoadRun` - An instance of the overarching task being attempted/executed e.g. `Extracting 'Cases' for 'Project 32'
+`ProgressLog` - All the messages generated during a given `DataLoadRun`
+`FatalError` - All Error messages generated during a given `DataLoadRun` with a flag for whether they have been resolved or not
+`TableLoadRun` - A count of the number of records that ended up at a given destination (this might be a database table but could equally be a flat file etc)
+`DataSource` - A description of all the contributors of data to the `TableLoadRun` (this could be flat files or a block of SQL run on a server or even just a class name!)
+ 
+Finally there is the table `RowError`, this is an obsolete table for recording problems with specific rows... in practice this table just grew unmanageable and there are better ways to handle row errors than through the central logging database.
+
+This isn't a perfect fit to the `IDataLoadEventListener` interface but it is close enough that we are able to provide an implementation (`HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`).  
+
+First we needed to get the default logging server declared in the test Catalogue database:
+
+```csharp
+//get the default logging server
+var loggingServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+```
+
+Secondly we needed to setup the overarching task ("Anonymising Data Tables"):
+
+```csharp
+//create a log manager for the server
+var logManager = new LogManager(loggingServer);
+
+//create a new super task Anonymising Data Tables
+logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
+```
+
+Thirdly we needed to create the `HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener` with a specific run name (remember `DataLoadRun` describes a single execution of the overarching task).  In this case we have provided the string `"Run on " + DateTime.Now`.
+
+```csharp
+//setup a listener that goes to this logging database 
+listener = new ToLoggingDatabaseDataLoadEventListener(this,logManager ,"Anonymising Data Tables","Run on " + DateTime.Now);
+```
+
+Run the ToDatabase test case and then open the TEST_Logging database in Sql Management Studio.  Unlike TEST_Catalogue, The TEST_Logging database is not automatically cleared cleared after each test so you might have some additional runs (if you ran the test multiple times or had some bugs implementing it) but it should look something like:
+
+![Logging database should look like this](Images/Version5LoggingDatabase.png)
+
+<a name="ILog"></a>
+##What is wrong with Common.Logging.ILog
+Nothing, `Common.Logging.ILog` is a standard API interface for logging messages ( http://netcommon.sourceforge.net/docs/2.0.0/api/html/Common.Logging~Common.Logging.ILog.html )
+and many libraries are designed to log through Common.Logging.  We want to support using third party libraries and writing classes to standard API specifications while seamlessly logging thier messages into our events system.  Therefore you can change an `IDataLoadEventListener` into an `ILog` in the following way:
+
+```csharp
+ILog log = new FromDataLoadEventListenerToILog(this, listener);
+```
+
+Once you have a `Common.Logging.ILog` you should be able to pass it to any dependant assemblies and all messages will be passed back to `listener`.
+
+<a name="funkyIDataLoadEventListener"></a>
+##What other funky things can I do with IDataLoadEventListener?
+Well you can route messages to two different locations at once:
+
+```csharp
+IDataLoadEventListener toUserInterface = new ProgressUI();
+IDataLoadEventListener toDatabase = new ToLoggingDatabaseDataLoadEventListener(this, logManager, "Anonymising Data Tables", "Run on " + DateTime.Now);
+IDataLoadEventListener forkListener = new ForkDataLoadEventListener(toUserInterface, toDatabase);
+```
+
+You can also convert between an `IDataLoadEventListener` and an `ICheckNotifier` 
+```csharp
+IDataLoadEventListener listener = new ThrowImmediatelyDataLoadEventListener();
+ICheckNotifier checker = new FromDataLoadEventListenerToCheckNotifier(listener);
+```		
+
+And even back again
+```csharp
+IDataLoadEventListener listener = new ThrowImmediatelyDataLoadEventListener();
+ICheckNotifier checker = new FromDataLoadEventListenerToCheckNotifier(listener);
+IDataLoadEventListener listener2 = new FromCheckNotifierToDataLoadEventListener(checker);	
+```
+
+Keep in mind the differences though: 
+Going from `IDataLoadEventListener` to `ICheckNotifier` will result in rejecting any ProposedFix automatically
+Going from `ICheckNotifier` to `IDataLoadEventListener` will result in a listener which basically ignores OnProgress counts
