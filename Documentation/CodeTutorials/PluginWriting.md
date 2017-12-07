@@ -550,7 +550,7 @@ Once we have a `DiscoveredTable` we can create a persistent reference to it in t
 This is getting complex and could do with having some events, and a way for the user to check that it is working before running it.  Fortunately RDMP supports this with the `ReusableLibraryCode.Checks.ICheckNotifier` system.
 
 <a name="anoPluginVersion4"></a>
-##Version 4
+## Version 4
 Create an exact copy of `BasicDataTableAnonymiser3` called `BasicDataTableAnonymiser4`.  Move the initialization code for `_commonNames` into a method GetCommonNamesTable.
 
 Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`) and call the new method `GetCommonNamesTable`
@@ -795,7 +795,7 @@ Now that we are familiar with `ReusableLibraryCode.Checks.ICheckNotifier` it is 
 `IDataLoadEventListener` is intended for use at execution time and supports both `ReusableLibraryCode.Progress.ProgressEventArgs` (incremental messages about how many records have been processed in what time period) as well as one off messages (`ReusableLibraryCode.Progress.NotifyEventArgs`).
 
 <a name="anoPluginVersion5"></a>
-##Version 5
+## Version 5
 Create a copy of `BasicDataTableAnonymiser4` called `BasicDataTableAnonymiser5`.  Add an Information message into `ProcessPipelineData` recording the fact that you are processing a new batch:
 
 ```csharp
@@ -1033,7 +1033,7 @@ Run the ToDatabase test case and then open the TEST_Logging database in Sql Mana
 One final thing to note is the call to `FinalizeTableLoadInfos`.  Since we might pass the `ToLoggingDatabaseDataLoadEventListener` to multiple components and even possibly multiple pipeline executions (or pipelines within pipelines!) it is not easy to automatically define an end point after which the `DataLoadRun` / `TableLoadRun` should be closed off and marked complete.  Therefore `ToLoggingDatabaseDataLoadEventListener` requires you to call this at some point once you are sure all the things you wanted to log in the run are complete and all relevant components have Disposed etc.
 
 <a name="ILog"></a>
-##What is wrong with Common.Logging.ILog
+## What is wrong with Common.Logging.ILog
 Nothing, `Common.Logging.ILog` is a standard API interface for logging messages ( http://netcommon.sourceforge.net/docs/2.0.0/api/html/Common.Logging~Common.Logging.ILog.html )
 and many libraries are designed to log through Common.Logging.  We want to support using third party libraries and writing classes to standard API specifications while seamlessly logging thier messages into our events system.  Therefore you can change an `IDataLoadEventListener` into an `ILog` in the following way:
 
@@ -1044,7 +1044,7 @@ ILog log = new FromDataLoadEventListenerToILog(this, listener);
 Once you have a `Common.Logging.ILog` you should be able to pass it to any dependant assemblies and all messages will be passed back to `listener`.
 
 <a name="funkyIDataLoadEventListener"></a>
-##What other funky things can I do with IDataLoadEventListener?
+## What other funky things can I do with IDataLoadEventListener?
 Well you can route messages to two different locations at once:
 
 ```csharp
