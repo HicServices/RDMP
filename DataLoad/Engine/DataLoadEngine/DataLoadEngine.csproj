@@ -382,14 +382,11 @@
     <None Include="app.config" />
     <None Include="Checks\Checking.cd" />
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
-    <None Include="DataLoadEngine_Attachers.cd" />
     <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />
     <None Include="LoadExecution\LoadPipeline.cd" />
-    <None Include="LoadProcess\LoadProcess.cd" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Migration\MigrationAndInsertion.cd" />
     <None Include="packages.config" />
     <None Include="Job\SchedulesAndJobCreation.cd" />
   </ItemGroup>

@@ -309,10 +309,8 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ClassDiagram1.cd" />
     <None Include="DataRelease\DataRelease.cd" />
     <None Include="ExecuteDatasetExtraction.cd" />
-    <None Include="ExecuteDatasetExtractionToDatabase.cd" />
     <None Include="ExtractionTimeColumns.cd" />
     <None Include="ExtractionTime\UserPicks\Bundles.cd" />
     <None Include="ImportingCustomData.cd" />

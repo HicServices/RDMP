@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Comment CommentText="These are general strategies for executing multiple pipeline engines. Potentially these could be moved into the general pipeline code within CatalogueLibrary.">
-    <Position X="10.458" Y="0.5" Height="0.844" Width="2.877" />
+    <Position X="9.708" Y="0.5" Height="0.844" Width="2.877" />
   </Comment>
-  <Comment CommentText="CachingHost creates a set of PermissionWindowCacheDownloader objects based on which CacheProgress objects are to be cached. PermissionWindows effectively group together CacheProgress objects.">
-    <Position X="0.5" Y="4.25" Height="1.011" Width="3.252" />
+  <Comment CommentText="CachingHost creates a set of PermissionWindowCacheDownloader objects based on which CacheProgress objects are to be cached. PermissionWindows effectively group together CacheProgress objects while also specifying what time of day/night they can be run during.">
+    <Position X="0.5" Y="4.75" Height="1.199" Width="3.252" />
   </Comment>
   <Class Name="CachingEngine.CachingHost">
-    <Position X="0.5" Y="1" Width="2" />
+    <Position X="0.5" Y="1" Width="2.75" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -17,7 +17,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="CachingEngine.PipelineExecution.RoundRobinPipelineExecution" Collapsed="true">
-    <Position X="10.5" Y="3.75" Width="2.5" />
+    <Position X="9.75" Y="3.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
       <FileName>PipelineExecution\RoundRobinPipelineExecution.cs</FileName>
@@ -25,7 +25,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="CachingEngine.PipelineExecution.SerialPipelineExecution" Collapsed="true">
-    <Position X="10.5" Y="3" Width="2" />
+    <Position X="9.75" Y="3" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
       <FileName>PipelineExecution\SerialPipelineExecution.cs</FileName>
@@ -46,7 +46,7 @@
     </ShowAsAssociation>
   </Class>
   <Interface Name="CachingEngine.PipelineExecution.IMultiPipelineEngineExecutionStrategy" Collapsed="true">
-    <Position X="10.5" Y="1.5" Width="3" />
+    <Position X="9.75" Y="1.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
       <FileName>PipelineExecution\IMultiPipelineEngineExecutionStrategy.cs</FileName>

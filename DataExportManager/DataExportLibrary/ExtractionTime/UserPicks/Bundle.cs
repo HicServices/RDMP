@@ -6,7 +6,9 @@ using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 namespace DataExportLibrary.ExtractionTime.UserPicks
 {
     /// <summary>
-    /// Tracks the states of a number of objects that reflect an extractable set of objects
+    /// Ostensibly data extraction is simple: 1 Extraction Configuration, x datasets + 1 cohort.  In practice there are bundled Lookup tables, SupportingDocuments
+    /// for each dataset, Global SupportingDocuments and even Custom Cohort Data.  The user doesn't nessesarily want to extract everything all the time.  
+    /// Bundles are the collection classes for recording what subset of an ExtractionConfiguration should be run.
     /// </summary>
     public abstract class Bundle
     {

@@ -1894,7 +1894,6 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="CatalogueManager_TemporaryKey.pfx" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="verisign_key.pfx" />

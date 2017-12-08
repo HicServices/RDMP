@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="CohortManagerLibrary.Execution.CohortCompiler">
-    <Position X="7.5" Y="4" Width="5.25" />
+    <Position X="6.25" Y="3.25" Width="5.25" />
     <TypeIdentifier>
-      <HashCode>AAAAQGAAAAAIAAAAAAAAAAAAAIAAAAAAgAAIAAAMABA=</HashCode>
+      <HashCode>AAAAQCAAAAAIAAAIgEAAAAAAAIAAAAAEgEEIBCAEABA=</HashCode>
       <FileName>Execution\CohortCompiler.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -11,67 +11,75 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="CohortManagerLibrary.Execution.AggregationTask">
-    <Position X="0.75" Y="6.75" Width="2.25" />
+    <Position X="1" Y="7.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEEAAAAAIAAAAAQAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAGEAAAAgKAEAAAQAAAAAAgAAIAAAAAAAAAAAAA=</HashCode>
       <FileName>Execution\AggregationTask.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CohortManagerLibrary.QueryBuilding.CohortQueryBuilder">
-    <Position X="11" Y="5" Width="2.25" />
+    <Position X="12" Y="4.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>BAAAAAAgQBAAAAAAgAIAAAAAAIDAAAAAQAQAAAAAIAA=</HashCode>
+      <HashCode>BAAAAAgASFIAAAAAgAIBAAAAAIDAAAAAQCQAAAQBLAg=</HashCode>
       <FileName>QueryBuilding\CohortQueryBuilder.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CatalogueLibrary.Data.Aggregation.AggregateConfiguration" Collapsed="true">
-    <Position X="0.5" Y="1" Width="2.25" />
+    <Position X="0.5" Y="2" Width="2.25" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CohortManagerLibrary.Execution.AggregationContainerTask">
-    <Position X="3.25" Y="6.75" Width="2.5" />
+    <Position X="3.5" Y="7.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAQAAAAAAIAAAAAQAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAQAAAQAAABAAIAgAAAQAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
       <FileName>Execution\AggregationContainerTask.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="CohortManagerLibrary.Execution.CohortIdentificationTaskExecution">
-    <Position X="8" Y="7.5" Width="2.5" />
+    <Position X="8" Y="9" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAIAAAAEAAQAAACAAAAAAAAAQAAAIAAAA=</HashCode>
+      <HashCode>EAAAAAAAAAEAoAAAAAAAQAAAiAAAIBAAAAABAAIAAAA=</HashCode>
       <FileName>Execution\CohortIdentificationTaskExecution.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CatalogueLibrary.Data.Cohort.CohortAggregateContainer" Collapsed="true">
-    <Position X="3.25" Y="0.75" Width="2.25" />
+    <Position X="3.25" Y="1.5" Width="2.25" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CohortManagerLibrary.Compileable">
-    <Position X="2.75" Y="2.75" Width="2" />
+    <Position X="3" Y="2.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAIAEAAAQCAEAAAAAAIAAAEAABAACACA=</HashCode>
+      <HashCode>AAEBAAAAAAAAAIAEAAE0CAEAAAQAAIIEAEAAFAAGACQ=</HashCode>
       <FileName>Compileable.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Interface Name="CohortManagerLibrary.ICompileable">
-    <Position X="0.75" Y="1.75" Width="1.5" />
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAIAAAAAQAAEAAAAAAAAAAAAABAACACA=</HashCode>
+      <HashCode>AAABAAAAAAAAAIAAAAE0AAEAAAAAAAIEAAAABAAGACA=</HashCode>
       <FileName>ICompileable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="CohortManagerLibrary.Execution.CompilationState">
-    <Position X="8" Y="9.5" Width="2" />
+    <Position X="5.75" Y="11" Width="2" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAAAEAAAAAAAQAAAAAAEAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Execution\ExecutingAggregateState.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="CatalogueLibrary.Data.Cohort.SetOperation">
-    <Position X="3.25" Y="1" Width="1.5" />
+    <Position X="5.75" Y="1.25" Width="1.5" />
     <TypeIdentifier />
   </Enum>
   <Font Name="Segoe UI" Size="9" />

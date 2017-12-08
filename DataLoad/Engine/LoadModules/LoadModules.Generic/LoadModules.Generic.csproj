@@ -315,7 +315,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Attachers\GenericAttachers.cd" />
-    <None Include="LoadModules.Generic.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

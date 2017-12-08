@@ -11,6 +11,13 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
+    /// <summary>
+    /// The SELECT portion of QueryBuilder is built up via AddColumn which takes an IColumn.  Each IColumn is a single line of SELECT Sql which might be as
+    /// simple as the name of a column but might be a method with an alias or even a count e.g. 'sum(distinct mycol) as Total'.  These IColumns are wrapped by
+    /// QueryTimeColumn which is a wrapper for IColumn which is gradually populated with facts discovered during QueryBuilding such as whether it is from a Lookup 
+    /// Table, whether it maps to an underlying ColumnInfo etc.  These facts are used later on by QueryBuilder to decide which tables/joins are needed in the FROM 
+    /// section of the query etc
+    /// </summary>
     public class QueryTimeColumn: IComparable
     {
         public bool IsIsolatedLookupDescription { get; set; }
