@@ -10,6 +10,16 @@ using ReusableLibraryCode.Progress;
 
 namespace CatalogueLibrary.DataFlowPipeline
 {
+    /// <summary>
+    /// Creates DataFlowPipelineEngines from IPipelines.  An IPipeline is the persistent user configured reusable list of components (and arguments for those components) which
+    /// will achieve a given task for the user (e.g. import a csv file).  The DataFlowPipelineContext defines both the Generic flow object of the engine (T) and which IPipelines
+    /// will be judged compatible (based on PreInitialize requirements etc).  Some contexts require a specific source/destination component that is available only at runtime
+    /// and cannot be changed/configured by the user (FixedDestination/FixedSource).  If the context requires a FixedSource or FixedDestination then you must pass the ExplicitSource
+    /// object / ExplicitDestination object into the constructor.
+    /// 
+    /// In general rather than trying to use this class directly you should package up your requirements/initialization objects into a PipelineUseCase and call GetEngine. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class DataFlowPipelineEngineFactory<T> : IDataFlowPipelineEngineFactory
     {
         private readonly MEF _mefPlugins;
@@ -286,6 +296,10 @@ namespace CatalogueLibrary.DataFlowPipeline
         }
     }
 
+    /// <summary>
+    /// Non generic version of DataFlowPipelineEngineFactory T which relies on having an IPipelineUseCase which handles the context / initialization objects etc.
+    /// See the generic version for the full description of a the purpose of a DataFlowPipelineEngineFactory
+    /// </summary>
     public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         private readonly IPipelineUseCase _useCase;
