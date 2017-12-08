@@ -11,6 +11,8 @@ namespace CatalogueLibrary.Data.Pipelines
     /// <summary>
     /// Each PipelineComponent can have 0 or more PipelineComponentArguments, these function exactly like the relationship between ProcessTask and ProcessTaskArgument and
     /// reflect a [DemandsInitialization] property on a class of type IDataFlowComponent which is built and populated by reflection from the PipelineComponent (serialization)
+    /// 
+    /// See Pipeline and PipelineComponent for more information about this
     /// </summary>
     public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     {
