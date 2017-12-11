@@ -335,7 +335,6 @@ namespace ResearchDataManagementPlatform.Menus
             if (singleObjectControlTab == null)
             {
                 _saveToolStripMenuItem.Saveable = null;
-                _saveToolStripMenuItem.Enabled = false;
                 return;
             }
 
@@ -346,15 +345,7 @@ namespace ResearchDataManagementPlatform.Menus
             if (singleObject != null && UserSettingsFile.GetInstance().EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
 
-            if (saveable != null)
-            {
-                _saveToolStripMenuItem.Enabled = true;
-                _saveToolStripMenuItem.Saveable = saveable;
-            }
-            else
-                _saveToolStripMenuItem.Enabled = false;
-
-
+            _saveToolStripMenuItem.Saveable = saveable;
         }
         
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)

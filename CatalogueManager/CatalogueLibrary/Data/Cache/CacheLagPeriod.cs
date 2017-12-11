@@ -9,6 +9,9 @@ namespace CatalogueLibrary.Data.Cache
     /// </summary>
     public class CacheLagPeriod
     {
+        /// <summary>
+        /// Is the lag period measured in moths or days
+        /// </summary>
         public enum PeriodType
         {
             Month,

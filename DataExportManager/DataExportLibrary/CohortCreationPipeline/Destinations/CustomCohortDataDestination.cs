@@ -18,9 +18,14 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations
 {
+    /// <summary>
+    /// Pipeline component for commiting a DataTable as 'Custom Data' for an ExtractableCohort in data export.  A 'Custom Data' table is an adhoc table which must
+    /// contain a patient identifier but can contain any other columns you like after that.  CustomCohortDataDestination will check that the supplied DataTable
+    /// contains a suitable patient idetnifier column (or release id column) and bulk insert the table into the cohort database.  This table will then be linked 
+    /// and extracted with the cohort at data extraction time.
+    /// </summary>
     public class CustomCohortDataDestination: IDataFlowDestination<DataTable>, IPipelineRequirement<ExtractableCohort>
     {
-      
         private IExtractableCohort _cohort;
         IExternalCohortTable _externalCohortTable;
         private DiscoveredDatabase _database;
@@ -113,8 +118,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                 if (_releaseIdentifier == null)
                     _releaseIdentifier = syntaxHelper.GetRuntimeName(_cohort.GetReleaseIdentifier());
 
-                bool filecontainsReleaseIdentifier = toProcess.Columns.Contains(_releaseIdentifier);
-                bool fileContainsPrivateIdentifier = toProcess.Columns.Contains(_privateIdentifier);
+                bool filecontainsReleaseIdentifier = toProcess.Columns.Cast<DataColumn>().Any(dc => dc.ColumnName.Equals(_releaseIdentifier, StringComparison.InvariantCulture));
+                bool fileContainsPrivateIdentifier = toProcess.Columns.Cast<DataColumn>().Any(dc => dc.ColumnName.Equals(_privateIdentifier, StringComparison.InvariantCulture));
 
                 //special case, we have release identifier but not private identifier!- let's reverse the anonymisation so that we can add it and still link on private id like all the other datasets do
                 if (filecontainsReleaseIdentifier && !fileContainsPrivateIdentifier)

@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="These classes directly mirror the database tables.  In order to get a copy in memory you will have to issue the database CreateNew command (static).&#xD;&#xA;&#xD;&#xA;CreateNew will return an int which is the ID of the newly created database record.  You can then create the instance in memory by calling GetXByID&#xD;&#xA;&#xD;&#xA;This is done to ensure that the memory structures and database do not get out of sync">
-    <Position X="2.5" Y="8.198" Height="1.927" Width="4.106" />
+  <Comment CommentText="These classes directly mirror the database tables.  As soon as you invoke the Constructor an instance will be created in the database.  Each object also has a constructor that takes a DbReader, this is to retrieve instances of the class back out of the database again.  You should use the CatalogueRepository methods to get these objects rather than trying to use that constructor e.g. CatalogueRepository.GetAllObjects&lt;Catalogue&gt;()">
+    <Position X="2.5" Y="8.198" Height="1.333" Width="4.106" />
+  </Comment>
+  <Comment CommentText="All these classes (DatabaseEntity) are stored in the 'Catalogue Repository' (Database).  These classes cannot exist unless there is a matching record in the database">
+    <Position X="6.167" Y="15.781" Height="0.615" Width="3.565" />
   </Comment>
   <Class Name="CatalogueLibrary.Data.Catalogue" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CCaAUEEIwAIhhKwUzQRJAVRQKSCLwrgmaR0IADAgEGM=</HashCode>
+      <HashCode>Pf6DeIk4hEclEewW7hRLS0xYLQTLwpn26Y1cYHzYNGE=</HashCode>
       <FileName>Data\Catalogue.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -14,7 +17,7 @@
   <Class Name="CatalogueLibrary.Data.CatalogueItem" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IEYIAkAABAAgkASEiQRCIAQIBCAsCJAEEAAYACAAIAA=</HashCode>
+      <HashCode>JEYAAoIAAAAgEASECABCKAwIBAAsAAAEEAAaQCAAIAA=</HashCode>
       <FileName>Data\CatalogueItem.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -22,22 +25,15 @@
   <Class Name="CatalogueLibrary.Data.ColumnInfo" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="10.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BgIEAEAEJgwggAQEgQQBAARAARkAAIOCAABIAAAAEAA=</HashCode>
+      <HashCode>BUIAIIgEAkykAAQUgAABBFQIIRgAAIOCIABIQQAYEEg=</HashCode>
       <FileName>Data\ColumnInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.Linker">
-    <Position X="2.5" Y="0.5" Width="4.25" />
-    <TypeIdentifier>
-      <HashCode>ACAAAAAARgAAAgAAAAAAAGAQAAEAAAAAAAAAAIACIAA=</HashCode>
-      <FileName>Data\Linker.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="CatalogueLibrary.Data.TableInfo" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="10.25" Y="7.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAJAAEAIAIEAiAQEgQQAAQQCgAAAFJCAAAEIxAAAkAA=</HashCode>
+      <HashCode>AAcBoAgABEEAAIQEQAKBCQQYhAAAVIWQAKAAxggAEIA=</HashCode>
       <FileName>Data\TableInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -45,7 +41,7 @@
   <Class Name="CatalogueLibrary.Data.JoinInfo" Collapsed="true">
     <Position X="14" Y="8.25" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAEgAQEgACAAAIAAIAAAAAAIAACgAQ=</HashCode>
+      <HashCode>AAAEAAIAAAAAAAAEgAQAgAAIACIQAIAAAAAE4QICgAQ=</HashCode>
       <FileName>Data\JoinInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -53,7 +49,7 @@
   <Class Name="CatalogueLibrary.Data.Lookup" Collapsed="true">
     <Position X="14" Y="9.5" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>EAABAEAAABAggAAEoQQAhAAABAIAAIAAAAAIIQACgAQ=</HashCode>
+      <HashCode>ABABAAgAAAggEAAEQQAAggAIBCKQAAAAAAAMYYICgAQ=</HashCode>
       <FileName>Data\Lookup.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -61,7 +57,7 @@
   <Class Name="CatalogueLibrary.Data.ExtractionInformation" Collapsed="true">
     <Position X="6.25" Y="4.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>BAEAAECEAAJAgAQUgQUAAAACABAgQICAAAAoQAAAAAA=</HashCode>
+      <HashCode>BAAAAICACABAAAQUAAEAAAAoAAAgAIAAAAAAQAAABAI=</HashCode>
       <FileName>Data\ExtractionInformation.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -69,7 +65,7 @@
   <Class Name="CatalogueLibrary.Data.ExtractionFilterParameter" Collapsed="true">
     <Position X="10.25" Y="4.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAEAAAAgAAEgQQAAAAIAAAAkJAAAAAoEgAAAAA=</HashCode>
+      <HashCode>ABgAAAAEEAAAAAAEgAQGAAAIAAAAABAAAAAgUgABAAA=</HashCode>
       <FileName>Data\ExtractionFilterParameter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -77,29 +73,15 @@
   <Class Name="CatalogueLibrary.Data.ExtractionFilter" Collapsed="true">
     <Position X="8.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CIIAAEBYAAAggAAEgQQAIAQABAKAAIAAAABIASAAAAA=</HashCode>
+      <HashCode>AKIAAAAAAAAAACAMAAEACAAIBIGAAAAAAAAIQQAAAAA=</HashCode>
       <FileName>Data\ExtractionFilter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.DataHelper.MapsDirectlyToDatabaseTableRepository">
-    <Position X="6.5" Y="12.25" Width="3.5" />
-    <TypeIdentifier>
-      <HashCode>IASQAAAAgAAAAAAIQAgIAABAEAAAAIAAIAAIAIAAACA=</HashCode>
-      <FileName>DataHelper\DatabaseSettings.CatalogueDatabaseHelper.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CatalogueLibrary.ANOTable">
-    <Position X="13.25" Y="5.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ANOTable.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="CatalogueLibrary.Data.DataLoad.LoadMetadata" Collapsed="true">
     <Position X="0.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AiAQCEAAAAMBggAAgQQCgABAKAQpAJABAABYgApBBEA=</HashCode>
+      <HashCode>BKAQKAgAAFAhEAAEBAQgAAQIIAAAAAQACAAAQAICgAI=</HashCode>
       <FileName>Data\DataLoad\LoadMetadata.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -107,7 +89,7 @@
   <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTask" BaseTypeListCollapsed="true">
     <Position X="0.75" Y="8.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQEAAEEAAAAAgAIEAAQAAAQAAAAAQgBAAAAIAAAAAAA=</HashCode>
+      <HashCode>AUGCYAhCACICAAIEADgAgCQAAAAAQAFAQAAAEAAKCAA=</HashCode>
       <FileName>Data\DataLoad\ProcessTask.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -115,10 +97,25 @@
   <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTaskArgument" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="2.75" Y="10.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABAAEAAAgAAgAAEgBQAAAQAAAAAIIAQAQAoAAQAAAA=</HashCode>
+      <HashCode>AAAAAAAAACAAIAAEABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\DataLoad\ProcessTaskArgument.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.DataLoad.ANOTable" Collapsed="true">
+    <Position X="14" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BABAAggAAEAABICMAAQAAAAJAAAAHAACACAoQwAAAIg=</HashCode>
+      <FileName>Data\DataLoad\ANOTable.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Repositories.CatalogueRepository" Collapsed="true">
+    <Position X="6.5" Y="15" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AABEAAAEgggABSAAAAAAJAQCECEQgACBAIJAACAAABI=</HashCode>
+      <FileName>Repositories\CatalogueRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="CatalogueLibrary.Data.IColumn" Collapsed="true">
     <Position X="9.75" Y="0.75" Width="1.5" />
@@ -130,29 +127,48 @@
   <Interface Name="CatalogueLibrary.Data.IFilter" Collapsed="true">
     <Position X="11.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAYAAAgAAAAAAAAIAQABAIAAAAAAAAAASAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAAgACAIACEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
       <FileName>Data\IFilter.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="CatalogueLibrary.Data.IContainer" Collapsed="true">
     <Position X="9.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAACEAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.DataHelper.IMapsDirectlyToDatabaseTable">
-    <Position X="6.5" Y="10.75" Width="2.5" />
+  <Interface Name="MapsDirectlyToDatabaseTable.IMapsDirectlyToDatabaseTable" Collapsed="true">
+    <Position X="6.5" Y="11" Width="3" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.ITableRepository" Collapsed="true">
+    <Position X="5.5" Y="12.75" Width="4" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="CatalogueLibrary.Repositories.ICatalogueRepository" Collapsed="true">
+    <Position X="5.5" Y="13.75" Width="4" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataHelper\IMapsDirectlyToDatabaseTable.cs</FileName>
+      <HashCode>AADEAgCEgAAABSAAAAAAAAQCACAAgAAAAIJAACAAACI=</HashCode>
+      <FileName>Repositories\ICatalogueRepository.cs</FileName>
     </TypeIdentifier>
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.IRepository" Collapsed="true">
+    <Position X="6.75" Y="12" Width="1.5" />
+    <TypeIdentifier />
   </Interface>
   <Enum Name="CatalogueLibrary.Data.ExtractionCategory" Collapsed="true">
     <Position X="6.25" Y="5" Width="2" />
     <TypeIdentifier>
-      <HashCode>IAAAAAAAAAAAAgAAAIAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAAgAAAAAAAAAgAAAIAgAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
       <FileName>Data\ExtractionInformation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CatalogueLibrary.Repositories.Tier2DatabaseType" Collapsed="true">
+    <Position X="8.5" Y="11" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAIgAAAAAAQAAAAAgAAAAAAA=</HashCode>
+      <FileName>Repositories\CatalogueRepository.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

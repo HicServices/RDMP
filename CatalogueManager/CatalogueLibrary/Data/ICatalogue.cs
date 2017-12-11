@@ -10,6 +10,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// See Catalogue
+    /// </summary>
     public interface ICatalogue : IMapsDirectlyToDatabaseTable, IHasDependencies
     {
         int? LoadMetadata_ID { get; }

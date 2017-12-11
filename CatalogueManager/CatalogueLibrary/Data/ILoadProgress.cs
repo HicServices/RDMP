@@ -6,6 +6,9 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// See LoadProgress
+    /// </summary>
     public interface ILoadProgress :ISaveable, ILockable
     {
         int ID { get; }

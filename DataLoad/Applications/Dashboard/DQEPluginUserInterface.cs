@@ -35,38 +35,27 @@ namespace Dashboard
 
         }
 
-        public override object[] GetChildren(object model)
+        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
-            return null;
-        }
-
-        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity)
-        {
-            var c = databaseEntity as Catalogue;
+            var c = o as Catalogue;
 
             if (c != null)
                 return new[] {new DQEMenuItem(ItemActivator, c)};
 
-            var lmd = databaseEntity as LoadMetadata;
+            var lmd = o as LoadMetadata;
 
             if (lmd != null)
                 return GetMenuArray(
                     new ExecuteCommandViewLoadMetadataLogs(ItemActivator).SetTarget(lmd)
                     );
 
-            var slot = databaseEntity as AutomationServiceSlot;
+            var slot = o as AutomationServiceSlot;
 
             if (slot != null)
                 return GetMenuArray(
                     new ExecuteCommandStartAutomationServerMonitorUI(ItemActivator).SetTarget(slot)
                     );
 
-            return null;
-        }
-
-
-        public override Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
-        {
             return null;
         }
     }

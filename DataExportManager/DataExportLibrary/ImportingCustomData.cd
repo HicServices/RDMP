@@ -1,49 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="Sources">
-    <Position X="4.385" Y="1.094" Height="0.75" Width="1.7" />
+  <Comment CommentText="Sources.  Could be anything but most common are DelimitedFlatFileDataFlowSource (e.g. for csv files) and PatientIndexTableSource (which is for converting a Cohort Identification Query Joinable table which was used to identify the cohort initially into an extractable resource for the researchers).">
+    <Position X="3.74" Y="1.593" Height="1.312" Width="3.387" />
   </Comment>
-  <Comment CommentText="Destinations">
-    <Position X="12.635" Y="1.49" Height="0.75" Width="1.7" />
+  <Comment CommentText="Destination Must be of this Type">
+    <Position X="11.26" Y="1.719" Height="0.75" Width="2.21" />
   </Comment>
-  <Comment CommentText="Things that execute in the middle">
-    <Position X="9.375" Y="3.365" Height="0.75" Width="1.7" />
+  <Comment CommentText="Middle Components: Anything that operates on System.Data.DataTable">
+    <Position X="7.573" Y="1.656" Height="0.75" Width="2.46" />
   </Comment>
-  <Comment CommentText="Handles moving/retyping  the data loaded into memory as a DataTable">
-    <Position X="2.729" Y="2.396" Height="0.75" Width="1.7" />
+  <Comment CommentText="Creating a Pipeline for Importing Custom Cohort Data">
+    <Position X="2.385" Y="0.5" Height="0.313" Width="3.304" />
   </Comment>
-  <Comment CommentText="Handles loading it into memory">
-    <Position X="0.5" Y="7.354" Height="0.291" Width="2.096" />
-  </Comment>
-  <Class Name="DataExportLibrary.CsvDataTableHelper">
-    <Position X="2.5" Y="7.25" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAIAAAwAAiAABAQAAAAIAAAAEAAAACAIAAEAAAAAQAA=</HashCode>
-      <FileName>CsvDataTableHelper.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="DataExportLibrary.CustomCohortDataDestination">
-    <Position X="12.25" Y="4" Width="3.25" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAYggCAAAACIAAAAAAAAAAAAAAIAAgAAAgAEAAg=</HashCode>
-      <FileName>CustomCohortDataDestination.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="CatalogueLibrary.Data.Pipelines.Pipeline" Collapsed="true">
-    <Position X="8.75" Y="0.75" Width="3" />
-    <TypeIdentifier />
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="CatalogueLibrary.Data.Pipelines.PipelineComponent" Collapsed="true">
-    <Position X="9" Y="2.25" Width="2.25" />
+    <Position X="7.75" Y="4" Width="2.25" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ReusableLibraryCode.DataTableExtension.DataTableHelper">
-    <Position X="4.5" Y="1.75" Width="2.75" />
+  <Class Name="DataExportLibrary.CohortCreationPipeline.Destinations.CustomCohortDataDestination" Collapsed="true">
+    <Position X="11" Y="4" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAARggCAAACCIAAAAAAAAAAABAAYAAgAAAgAEgIA=</HashCode>
+      <FileName>CohortCreationPipeline\Destinations\CustomCohortDataDestination.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.CohortCreationPipeline.Sources.PatientIndexTableSource" Collapsed="true">
+    <Position X="4" Y="5.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEyAACAABCAABAAAAAAAEABAAAIAAAEAAAAAAAA=</HashCode>
+      <FileName>CohortCreationPipeline\Sources\PatientIndexTableSource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LoadModules.Generic.DataFlowSources.DelimitedFlatFileDataFlowSource" Collapsed="true">
+    <Position X="4" Y="4" Width="2.5" />
     <TypeIdentifier />
+    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

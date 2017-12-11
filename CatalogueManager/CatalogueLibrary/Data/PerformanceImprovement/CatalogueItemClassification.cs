@@ -3,6 +3,10 @@ using System.Data.Common;
 
 namespace CatalogueLibrary.Data.PerformanceImprovement
 {
+    /// <summary>
+    /// Optimisation class that stores flags about CatalogueItems to help indicate to the user the role of a CatalogueItem (whether it is extractable etc) without
+    /// having to go back to the database every time and lookup objects.
+    /// </summary>
     public class CatalogueItemClassification
     {
         public int CatalogueItem_ID;

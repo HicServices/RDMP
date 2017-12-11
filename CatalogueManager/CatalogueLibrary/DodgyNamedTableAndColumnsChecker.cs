@@ -10,6 +10,11 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary
 {
+    /// <summary>
+    /// Identifies Tables and Columns referenced by RDMP which have potentially problematic names.  For example columns with spaces in them or that have reserved keywords in
+    /// thier names.  RDMP is pretty robust when it comes to such columns (e.g. always fully qualifying references etc) so it's not a dealbreaker but this class at least lets
+    /// you find them so you can think about fixing it as a public service.
+    /// </summary>
     public class DodgyNamedTableAndColumnsChecker:ICheckable
     {
         private readonly CatalogueRepository _repository;

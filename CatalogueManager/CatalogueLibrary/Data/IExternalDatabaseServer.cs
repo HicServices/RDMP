@@ -3,6 +3,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// See ExternalDatabaseServer
+    /// </summary>
     public interface IExternalDatabaseServer : IDataAccessPoint
     {
         int ID { get; }

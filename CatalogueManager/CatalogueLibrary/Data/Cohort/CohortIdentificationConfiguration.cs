@@ -379,6 +379,14 @@ namespace CatalogueLibrary.Data.Cohort
             return newConfiguration;
         }
 
+        /// <summary>
+        /// Delegate for handling the situation in which the user wants to create a cohort based on a given Catalogue but there are multiple IsExtractionIdentifier columns.
+        /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the descision on which column to use is resolved by this
+        /// class. 
+        /// </summary>
+        /// <param name="catalogue"></param>
+        /// <param name="candidates"></param>
+        /// <returns></returns>
         public delegate ExtractionInformation ChooseWhichExtractionIdentifierToUseFromManyHandler(Catalogue catalogue, ExtractionInformation[] candidates);
 
         public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(Catalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers, bool importMandatoryFilters = true)

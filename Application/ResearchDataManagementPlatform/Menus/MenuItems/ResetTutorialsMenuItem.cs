@@ -4,6 +4,9 @@ using CatalogueManager.Tutorials;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
+    /// <summary>
+    /// Clears all user progress on Tutorials
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ResetTutorialsMenuItem : ToolStripMenuItem
     {

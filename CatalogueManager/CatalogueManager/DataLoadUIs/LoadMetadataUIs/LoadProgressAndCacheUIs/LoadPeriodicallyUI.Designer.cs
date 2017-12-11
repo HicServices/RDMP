@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnCreate = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.tbLastLoaded = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -40,29 +38,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnNone = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
-            // 
-            // btnCreate
-            // 
-            this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.Location = new System.Drawing.Point(431, 8);
-            this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(75, 23);
-            this.btnCreate.TabIndex = 0;
-            this.btnCreate.Text = "Create";
-            this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.Location = new System.Drawing.Point(431, 36);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(75, 23);
-            this.btnDelete.TabIndex = 0;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // tbLastLoaded
             // 
@@ -70,7 +47,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbLastLoaded.Location = new System.Drawing.Point(75, 10);
             this.tbLastLoaded.Name = "tbLastLoaded";
-            this.tbLastLoaded.Size = new System.Drawing.Size(350, 20);
+            this.tbLastLoaded.Size = new System.Drawing.Size(377, 20);
             this.tbLastLoaded.TabIndex = 1;
             this.tbLastLoaded.TextChanged += new System.EventHandler(this.tbLastLoaded_TextChanged);
             // 
@@ -98,7 +75,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDaysToWaitBetweenLoads.Location = new System.Drawing.Point(146, 33);
             this.tbDaysToWaitBetweenLoads.Name = "tbDaysToWaitBetweenLoads";
-            this.tbDaysToWaitBetweenLoads.Size = new System.Drawing.Size(279, 20);
+            this.tbDaysToWaitBetweenLoads.Size = new System.Drawing.Size(306, 20);
             this.tbDaysToWaitBetweenLoads.TabIndex = 1;
             this.tbDaysToWaitBetweenLoads.TextChanged += new System.EventHandler(this.tbDaysToWaitBetweenLoads_TextChanged);
             // 
@@ -109,7 +86,7 @@
             this.tbNextLoadWillBe.Location = new System.Drawing.Point(104, 59);
             this.tbNextLoadWillBe.Name = "tbNextLoadWillBe";
             this.tbNextLoadWillBe.ReadOnly = true;
-            this.tbNextLoadWillBe.Size = new System.Drawing.Size(321, 20);
+            this.tbNextLoadWillBe.Size = new System.Drawing.Size(348, 20);
             this.tbNextLoadWillBe.TabIndex = 1;
             // 
             // label3
@@ -165,10 +142,19 @@
     "e e.g. MyLoadPart2)";
             this.label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(6, 153);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 5;
+            // 
             // LoadPeriodicallyUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.ddOnsuccessfulLoadLaunch);
             this.Controls.Add(this.label4);
@@ -179,8 +165,6 @@
             this.Controls.Add(this.tbDaysToWaitBetweenLoads);
             this.Controls.Add(this.tbLastLoaded);
             this.Controls.Add(this.btnNone);
-            this.Controls.Add(this.btnDelete);
-            this.Controls.Add(this.btnCreate);
             this.Name = "LoadPeriodicallyUI";
             this.Size = new System.Drawing.Size(510, 180);
             this.ResumeLayout(false);
@@ -190,8 +174,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnCreate;
-        private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.TextBox tbLastLoaded;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -202,5 +184,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnNone;
         private System.Windows.Forms.Label label5;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

@@ -7,6 +7,12 @@ using ReusableLibraryCode.Reflection;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
+    /// <summary>
+    /// Helper for standardising access to properties on a class which reference a Pipeline.  Because many classes reference Pipelines and some reference multiple Pipelines 
+    /// we use this class to abstract that away.  For example the CacheProgress constructor says to use "Pipeline_ID" int property.
+    /// 
+    /// Currently used primarily by PipelineSelectionUIFactory 
+    /// </summary>
     public class PipelineUser:IPipelineUser
     {
         private readonly PropertyInfo _property;

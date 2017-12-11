@@ -38,19 +38,8 @@ namespace PluginPackager
             }
 
             Packager p = new Packager(f, options.Items[1],options.SkipSourceCodeCollection);
-            var tempDir = p.PackageUpFile();
-            
-            //Triggers the deleting of the temp file
-            if (tempDir != null)
-            {
-                ProcessStartInfo Info = new ProcessStartInfo();
-                Info.Arguments = "/C choice /C Y /N /D Y /T 3 & rmdir /s /q \"" + tempDir.FullName + "\"";
-                Info.WindowStyle = ProcessWindowStyle.Hidden;
-                Info.CreateNoWindow = true;
-                Info.FileName = "cmd.exe";
-                Process.Start(Info); 
-            }
-
+            p.PackageUpFile(new ThrowImmediatelyCheckNotifier());
+           
             if(!string.IsNullOrWhiteSpace(options.Server))
             {
                 var builder = new SqlConnectionStringBuilder() {DataSource = options.Server, InitialCatalog = options.Database,IntegratedSecurity = true};

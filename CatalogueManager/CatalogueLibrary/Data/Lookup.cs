@@ -258,7 +258,7 @@ namespace CatalogueLibrary.Data
 
         public ExtractionJoinType GetInvertedJoinType()
         {
-            throw new NotImplementedException("Lookup joins should never be inverted... can't see why you would want to do that... they are always LEFT joined ");
+            throw new NotSupportedException("Lookup joins should never be inverted... can't see why you would want to do that... they are always LEFT joined ");
         }
 
         public IHasDependencies[] GetObjectsThisDependsOn()

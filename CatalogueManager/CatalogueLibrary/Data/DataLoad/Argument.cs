@@ -13,6 +13,14 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
+    /// <summary>
+    /// Abstract base for all concrete IArgument objects.  An Argument is a stored value for a Property defined on a PipelineComponent or DLE component which has
+    /// been decorated with [DemandsInitialization] and for which the user has picked a value.  The class includes both the Type of the argument (extracted from
+    /// the class Property PropertyInfo via reflection) and the Value (stored in the database as a string).
+    /// 
+    /// This allows simple UI driven population and persistence of configuration settings for plugin and system core components as they are used in all pipeline and
+    /// dle activities.  See ArgumentCollection for UI logic.
+    /// </summary>
     public abstract class Argument : VersionedDatabaseEntity, IArgument
     {
         public static readonly Type[] PermissableTypes =

@@ -22,9 +22,18 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
+    /// <summary>
+    /// Translates Controls into docked tabs (DockContent).  Provides overloads for the two main control Types IRDMPSingleDatabaseObjectControl and 
+    /// IObjectCollectionControl (for RDMPCollectionUI see ToolboxWindowManager).  Also tracks tab activation (focus) and ensures that when a tab is closed
+    /// a suitable tab is activated (brought to focus) in it's place.
+    /// </summary>
     public class WindowFactory
     {
+        /// <summary>
+        /// Location of the Catalogue / Data export repository databases (and allows access to repository objects)
+        /// </summary>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
+
         private readonly IconFactory _iconFactory = new IconFactory();
 
         public ContentWindowTracker WindowTracker { get; private set; }
@@ -122,10 +131,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (tab != null)
                 content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, WindowTracker);
         }
-
-
         
-
         private void ActiveDocumentChanged(object sender, EventArgs e)
         {
             var docContent = (DockContent)((DockPanel) sender).ActiveDocument;

@@ -3,78 +3,45 @@
   <Class Name="LoadModules.Generic.Attachers.FixedWidthAttacher" Collapsed="true">
     <Position X="0.75" Y="5.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAGAAAAAAAAAAAAAAAAAAQAAQAACAEAAABA=</HashCode>
+      <HashCode>AAAAAAgAAAGAAAAAAAAAAAAAAAAAAUAAQAACAEAAABA=</HashCode>
       <FileName>Attachers\FixedWidthAttacher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LoadModules.Generic.Attachers.ExcelAttacher" Collapsed="true">
     <Position X="4" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAACAEAAAAA=</HashCode>
+      <HashCode>AAAAAAgAAAAAAAEAAAAAAAABAIAAEFABQAAAQEAAIJA=</HashCode>
       <FileName>Attachers\ExcelAttacher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LoadModules.Generic.Attachers.FixedWidthFormatFile" Collapsed="true">
-    <Position X="0.75" Y="6.25" Width="2.25" />
+    <Position X="0.75" Y="6.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIAAAAAIAAAAAAAAQAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <HashCode>AAAAAQAAIAAAAAIAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Attachers\FixedWidthFormatFile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LoadModules.Generic.Attachers.FlatFileAttacher" Collapsed="true">
-    <Position X="10.25" Y="2.25" Width="1.5" />
+    <Position X="10" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgEAAAIAAAAAAFAQQAACIAAAwAAQAAAAUAABBA=</HashCode>
+      <HashCode>AAAAAAgEAAAAAAAAAAEAQAAACIAAAUAAQAAIAUAABBA=</HashCode>
       <FileName>Attachers\FlatFileAttacher.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="LoadModules.Generic.Attachers.FlatFileLoadException" Collapsed="true">
-    <Position X="7.75" Y="1.75" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Attachers\FlatFileAttacher.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LoadModules.Generic.Attachers.KVPTableCreator" Collapsed="true">
-    <Position X="11.25" Y="5.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAIAAAQAAAAAAAQAAAAA=</HashCode>
-      <FileName>Attachers\KVPTableCreator.cs</FileName>
-    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="LoadModules.Generic.Attachers.MDFAttacher" Collapsed="true">
-    <Position X="11.25" Y="4.25" Width="1.5" />
+    <Position X="11.25" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAAFAAAAAAAAgAAIAAAYAIAAAAAAQOAAA=</HashCode>
+      <HashCode>AAAABAgAAAADABAAAAAAAEAAAIAAAYAAgIAAAAAEAAA=</HashCode>
       <FileName>Attachers\MDFAttacher.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="LoadModules.Generic.Attachers.RemoteSqlServerTableAttacher" Collapsed="true">
-    <Position X="13" Y="4.25" Width="2.75" />
+    <Position X="14.25" Y="4.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAoAQAAAAAAAAACAAAAABIgAAQIAAEAAAAAAAQA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAQAAAAAAABAAAAA=</HashCode>
       <FileName>Attachers\RemoteSqlServerTableAttacher.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LoadModules.Generic.Attachers.TSVAttacher" Collapsed="true">
-    <Position X="7.25" Y="6.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
-      <FileName>Attachers\TSVAttacher.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LoadModules.Generic.Attachers.PipeSeparatedFileAttacher" Collapsed="true">
-    <Position X="9" Y="6.75" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
-      <FileName>Attachers\TSVAttacher.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LoadModules.Generic.Attachers.TSVAttacher_HackersEdition" Collapsed="true">
-    <Position X="6.75" Y="8.25" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Attachers\TSVAttacher_HackersEdition.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.Attachers.Attacher" Collapsed="true">
@@ -85,22 +52,51 @@
   <Class Name="LoadModules.Generic.Attachers.DelimitedFlatFileAttacher" Collapsed="true">
     <Position X="6.5" Y="4.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAGBCAAAAAAAAAABAAAAAAAAQAAAAEAQEhA=</HashCode>
+      <HashCode>AAIAAAAAAEACAAIAAAAAAAAAAAAAQEAAQAAAAEAAFBA=</HashCode>
       <FileName>Attachers\DelimitedFlatFileAttacher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LoadModules.Generic.Attachers.AnySeparatorFileAttacher" Collapsed="true">
-    <Position X="5.5" Y="6.75" Width="1.5" />
+    <Position X="6.25" Y="6.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Attachers\FlatFileAttacher.cs</FileName>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Attachers\AnySeparatorFileAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Exceptions.FlatFileLoadException" Collapsed="true">
+    <Position X="7.25" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\FlatFileLoadException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.RemoteTableAttacher" Collapsed="true">
+    <Position X="12.75" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgQAAoAQAAACQABAACCAAgABIgAgAIAAkAAEBCAASE=</HashCode>
+      <FileName>Attachers\RemoteTableAttacher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.RemoteMySqlTableAttacher" Collapsed="true">
+    <Position X="14.25" Y="5.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAQAAAAAAABAAAAA=</HashCode>
+      <FileName>Attachers\RemoteMySqlTableAttacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoadModules.Generic.Attachers.RemoteOracleTableAttacher" Collapsed="true">
+    <Position X="14.25" Y="6.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAQAAAAAAABAAAAA=</HashCode>
+      <FileName>Attachers\RemoteOracleTableAttacher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="LoadModules.Generic.Attachers.FixedWidthColumn" Collapsed="true">
     <Position X="0.75" Y="6" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AgAAAAAAAAAAgAAAAAAAAAAAAAAIIAAAAAAAAAAAgAA=</HashCode>
-      <FileName>Attachers\FixedWidthFormatFile.cs</FileName>
+      <FileName>Attachers\FixedWidthColumn.cs</FileName>
     </TypeIdentifier>
   </Struct>
   <Font Name="Segoe UI" Size="9" />

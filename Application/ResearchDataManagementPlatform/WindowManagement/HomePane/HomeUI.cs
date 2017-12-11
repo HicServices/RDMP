@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -17,8 +16,6 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
 using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Tutorials;
 using CohortManager.CommandExecution.AtomicCommands;
@@ -40,12 +37,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
     /// </summary>
     public partial class HomeUI : UserControl,ILifetimeSubscriber
     {
-        private readonly ToolboxWindowManager windowManager;
-        private AtomicCommandUIFactory _uiFactory;
+        private readonly ToolboxWindowManager _windowManager;
+        private readonly AtomicCommandUIFactory _uiFactory;
 
         public HomeUI(ToolboxWindowManager windowManager)
         {
-            this.windowManager = windowManager;
+            this._windowManager = windowManager;
             _uiFactory = new AtomicCommandUIFactory(windowManager.ContentManager.CoreIconProvider);
             InitializeComponent();
         }
@@ -58,53 +55,53 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpDataLoad.Controls.Clear();
             
             /////////////////////////////////////Data Management/////////////////////////////////
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(windowManager.ContentManager),tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(_windowManager.ContentManager),tlpDataManagement);
             
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(windowManager.ContentManager, true),tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_windowManager.ContentManager, true),tlpDataManagement);
 
-            AddCommand(new ExecuteCommandEditExistingCatalogue(windowManager.ContentManager),
-                windowManager.ContentManager.CoreChildProvider.AllCatalogues,
+            AddCommand(new ExecuteCommandEditExistingCatalogue(_windowManager.ContentManager),
+                _windowManager.ContentManager.CoreChildProvider.AllCatalogues,
                 cata => cata.Name,
                 tlpDataManagement);
 
             /////////////////////////////////////Cohort Creation/////////////////////////////////
 
-            AddCommand(new ExecuteCommandImportFileAsNewCohort(windowManager.ContentManager),
+            AddCommand(new ExecuteCommandImportFileAsNewCohort(_windowManager.ContentManager),
                 tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(windowManager.ContentManager),tlpCohortCreation);
+            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_windowManager.ContentManager),tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(windowManager.ContentManager),
-                    windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
+            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(_windowManager.ContentManager),
+                    _windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
             
-            AddCommand(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(windowManager.ContentManager), 
-                    windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
+            AddCommand(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_windowManager.ContentManager), 
+                    _windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
             
             /////////////////////////////////////Data Export/////////////////////////////////
             
-            var dataExportChildProvider = windowManager.ContentManager.CoreChildProvider as DataExportChildProvider;
+            var dataExportChildProvider = _windowManager.ContentManager.CoreChildProvider as DataExportChildProvider;
             if (dataExportChildProvider != null)
             {
-                AddCommand(new ExecuteCommandCreateNewDataExtractionProject(windowManager.ContentManager), tlpDataExport);
-                AddCommand(new ExecuteCommandEditAndRunExistingDataExtractionProject(windowManager.ContentManager),
+                AddCommand(new ExecuteCommandCreateNewDataExtractionProject(_windowManager.ContentManager), tlpDataExport);
+                AddCommand(new ExecuteCommandEditAndRunExistingDataExtractionProject(_windowManager.ContentManager),
                         dataExportChildProvider.Projects,
                         cic => cic.Name,
                         tlpDataExport);
 
-                AddCommand(new ExecuteCommandImportFileAsCustomDataForCohort(windowManager.ContentManager), 
+                AddCommand(new ExecuteCommandImportFileAsCustomDataForCohort(_windowManager.ContentManager), 
                         dataExportChildProvider.Cohorts,
                         c => c.ToString(),
                         tlpDataExport);
             }
 
             //////////////////////////////////Data Loading////////////////////////////////////
-            AddCommand(new ExecuteCommandCreateNewLoadMetadata(windowManager.ContentManager),tlpDataLoad);
-            AddCommand(new ExecuteCommandEditExistingLoadMetadata(windowManager.ContentManager), 
-                windowManager.ContentManager.CoreChildProvider.AllLoadMetadatas,
+            AddCommand(new ExecuteCommandCreateNewLoadMetadata(_windowManager.ContentManager),tlpDataLoad);
+            AddCommand(new ExecuteCommandEditExistingLoadMetadata(_windowManager.ContentManager), 
+                _windowManager.ContentManager.CoreChildProvider.AllLoadMetadatas,
                 lmd=>lmd.Name,
                 tlpDataLoad);
             
@@ -112,6 +109,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             FixSizingOfTableLayoutPanel(tlpCohortCreation);
             FixSizingOfTableLayoutPanel(tlpDataExport);
             FixSizingOfTableLayoutPanel(tlpDataLoad);
+
+
+            //////////////////////////////////Advanced////////////////////////////////////
+            AddCommand(new ExecuteCommandManagePlugins(_windowManager.ContentManager),tlpAdvanced);
         }
 
         private void AddCommand<T>(IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector, TableLayoutPanel tableLayoutPanel)
@@ -144,12 +145,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         {
             base.OnLoad(e);
 
-            if (windowManager == null)
+            if (_windowManager == null)
                 return;
 
             BuildCommandLists();
 
-            windowManager.ContentManager.RefreshBus.EstablishLifetimeSubscription(this);
+            _windowManager.ContentManager.RefreshBus.EstablishLifetimeSubscription(this);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -157,6 +158,4 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             BuildCommandLists();
         }
     }
-
-    
 }

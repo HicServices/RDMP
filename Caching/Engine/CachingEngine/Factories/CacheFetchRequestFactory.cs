@@ -5,6 +5,10 @@ using CatalogueLibrary.Data.Cache;
 
 namespace CachingEngine.Factories
 {
+    /// <summary>
+    /// Gets the next reasonable date range to fetch from an ICacheProgress.  This is usually CacheFillProgress + ChunkPeriod.  Does not take into account
+    /// LagPeriod / Permission Window Locking etc.
+    /// </summary>
     public class CacheFetchRequestFactory
     {
         public ICacheFetchRequest Create(ICacheProgress cacheProgress, ILoadProgress loadProgress, IPermissionWindow permissionWindow)

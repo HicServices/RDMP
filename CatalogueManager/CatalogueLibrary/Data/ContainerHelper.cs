@@ -2,6 +2,9 @@
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Helper for finding all the IFilter (lines of WHERE Sql) within a given IContainer (AND / OR),recursively finding all the subcontainers of an IContainer etc.
+    /// </summary>
     public class ContainerHelper
     {
         public List<IContainer> GetAllSubContainersRecursively(IContainer current)

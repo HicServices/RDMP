@@ -5,6 +5,9 @@ using CatalogueManager.Tutorials;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
+    /// <summary>
+    /// Launches the given Tutorial, Tutorials which the user has already been exposed to will be marked (Seen)
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class LaunchTutorialMenuItem : ToolStripMenuItem
     {

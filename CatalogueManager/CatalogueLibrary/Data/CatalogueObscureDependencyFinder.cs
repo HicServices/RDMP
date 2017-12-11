@@ -8,6 +8,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Handles rules for cascading/preventing deleting database objects which cannot be directly implemented by database constraints (e.g. foreign keys).  This includes
+    /// things such as preventing deleting Catalogues which have been used in data extraction projects.  Use property OtherDependencyFinders to add new rules / logic for
+    /// tailoring deleting.
+    /// </summary>
     public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     {
         private readonly CatalogueRepository _repository;

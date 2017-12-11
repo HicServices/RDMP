@@ -8,6 +8,11 @@ using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.PipelineExecution
 {
+    /// <summary>
+    /// Strategy for executing several IDataFlowPipelineEngines one chunk at a time in serial.  The difference between this and SerialPipelineExecution
+    /// is that only one ChunkPeriod is read at once from each engine.  If there is more data available to fetch in any engine they are all run again until
+    /// all caches are up to date or the cancellation token is set
+    /// </summary>
     public class RoundRobinPipelineExecution : IMultiPipelineEngineExecutionStrategy
     {
         public IEngineLockProvider EngineLockProvider { get; set; }

@@ -5,6 +5,10 @@ using CatalogueLibrary.Data.Pipelines;
 
 namespace CachingEngine.Locking
 {
+    /// <summary>
+    /// Manages an 'engineMap' collection of ILoadProgress and provides functionality to lock/unlock the ILoadProgress throughout the lifetime of the
+    /// executing IDataFlowPipelineEngine
+    /// </summary>
     public class LoadCacheEngineLockProvider : IEngineLockProvider
     {
         private readonly Dictionary<IDataFlowPipelineEngine, ILoadProgress> _engineMap;

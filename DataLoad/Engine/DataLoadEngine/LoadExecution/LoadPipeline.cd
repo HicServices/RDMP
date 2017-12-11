@@ -1,91 +1,71 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Comment CommentText="Creates the canonical HIC load pipeline implementation">
-    <Position X="13.25" Y="1.526" Height="0.456" Width="1.964" />
+    <Position X="8.5" Y="1.5" Height="0.456" Width="1.964" />
   </Comment>
   <Comment CommentText="The elements which make up the pipeline">
-    <Position X="16.742" Y="4.75" Height="0.456" Width="1.675" />
+    <Position X="11.992" Y="4.724" Height="0.456" Width="1.675" />
   </Comment>
   <Comment CommentText="Components that are made up of user chosen steps (plugins, executables etc).  These user steps are stored in the ProcessTask table in the Catalogue.  At runtime they get stamped out into a collection of RuntimeTask">
-    <Position X="15.824" Y="1.099" Height="1.289" Width="2.648" />
+    <Position X="11.074" Y="1.073" Height="1.289" Width="2.648" />
   </Comment>
   <Comment CommentText="Arbitrary components which do specific hard coded things.">
-    <Position X="12.235" Y="10.783" Height="0.341" Width="3.512" />
+    <Position X="7.485" Y="10.757" Height="0.341" Width="3.512" />
   </Comment>
   <Comment CommentText="Data Object (in Catalogue database).  Gets instantiated out into the appropriate RuntimeTask type during data load (based on ProcessTaskType)">
-    <Position X="18.802" Y="1.354" Height="0.886" Width="2.575" />
+    <Position X="14.052" Y="1.328" Height="0.886" Width="2.575" />
   </Comment>
   <Comment CommentText="In order to do a data load you need both of these (IDataLoadPipeline and DataLoadProcess).  You also might need some other stuff depending on which object you use">
-    <Position X="4.645" Y="4.111" Height="0.734" Width="4.029" />
+    <Position X="2.395" Y="4.111" Height="0.734" Width="4.029" />
   </Comment>
-  <Comment CommentText="Most of the execution logic happens in this base class">
-    <Position X="6.907" Y="5.497" Height="0.75" Width="1.7" />
+  <Comment CommentText="Most of the execution logic happens in this base class.">
+    <Position X="4.657" Y="5.497" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="For when a LoadMetadata has a LoadProgress (or multiple &gt;&lt;) and it is valid to run the DLE multiple times in a row (doing the next x days each time)">
+    <Position X="7.166" Y="6.688" Height="0.806" Width="2.867" />
+  </Comment>
+  <Comment CommentText="For when a LoadMetadata does not have a LoadProgress and each execution is one off.">
+    <Position X="1.072" Y="6.215" Height="0.708" Width="2.075" />
   </Comment>
   <Class Name="DataLoadEngine.LoadExecution.SingleJobExecution" Collapsed="true">
-    <Position X="3.75" Y="3" Width="2.25" />
+    <Position X="2.75" Y="3" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAACAQAAAAAAAAAIAAAAAAQCQAAAFCAAEAABAM=</HashCode>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAACAAAAAAAAAAAAAI=</HashCode>
       <FileName>LoadExecution\SingleJobExecution.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="DataLoadEngine.LoadExecution.Threaded.ThreadedLoadExecution" Collapsed="true">
-    <Position X="5.5" Y="1.75" Width="1.75" />
-    <AssociationLine Name="Components" Type="DataLoadEngine.LoadExecution.Components.DataLoadComponent" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="7.25" Y="2.249" />
-        <Point X="10.602" Y="2.249" />
-        <Point X="10.602" Y="6.092" />
-        <Point X="15" Y="6.092" />
-        <Point X="15" Y="6.25" />
-      </Path>
-    </AssociationLine>
-    <TypeIdentifier>
-      <HashCode>AAgAEAAAAAQAApAEBAAgQAIAAAAAAQIAABBAAAAAQAI=</HashCode>
-      <FileName>LoadExecution\Threaded\ThreadedLoadExecution.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="Components" />
-    </ShowAsCollectionAssociation>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="DataLoadEngine.LoadExecution.Threaded.MultiJobExecution" Collapsed="true">
-    <Position X="6.25" Y="3" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAQAAAAAAAAAAACBAAAQ4RAAABAAAAAABAI=</HashCode>
-      <FileName>LoadExecution\Threaded\MultiJobExecution.cs</FileName>
-    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.DataLoadComponent">
-    <Position X="15" Y="5.5" Width="2" />
+    <Position X="10.25" Y="5.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAAAAAAAAAAICAAAAAQAAAAAAAAACEAI=</HashCode>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAQAAAAAAAAACEAI=</HashCode>
       <FileName>LoadExecution\Components\DataLoadComponent.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.CompositeDataLoadComponent">
-    <Position X="16.5" Y="9" Width="3" />
+    <Position X="11.75" Y="9" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAIAAAAAAAAAACAAAAAQAAAAAAAAAAAAI=</HashCode>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
       <FileName>LoadExecution\Components\CompositeDataLoadComponent.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.LoadFiles" Collapsed="true">
-    <Position X="21.75" Y="10.75" Width="2" />
+    <Position X="15.75" Y="10.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAQAAAAQAAAAAAIABAAAAAAQAAAAAAAAAQAAI=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAI=</HashCode>
       <FileName>LoadExecution\Components\LoadFiles.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.PopulateRAW" Collapsed="true">
-    <Position X="21.75" Y="9.75" Width="1.75" />
+    <Position X="15.75" Y="9.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAAAAAAABAAAAACAAAAAQAAAAgAQAAAAAI=</HashCode>
       <FileName>LoadExecution\Components\PopulateRAW.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.RuntimeTaskPackager">
-    <Position X="16.25" Y="2.5" Width="3.25" />
+    <Position X="11.5" Y="2.5" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -95,165 +75,168 @@
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.RuntimeTask" Collapsed="true">
-    <Position X="25" Y="9" Width="1.5" />
+    <Position X="19" Y="9" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQEAAAgAAAAAACIAAAACAEQAQAAAAABAAAAIEAGASAA=</HashCode>
+      <HashCode>AQEAAAgAAAAAACIAAAACAEQAQAAAAABAAAAAEAEACAA=</HashCode>
       <FileName>LoadExecution\Components\Runtime\RuntimeTask.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="1.134" />
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.RuntimeTaskFactory">
-    <Position X="19.75" Y="2.5" Width="2.25" />
+    <Position X="15" Y="2.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>LoadExecution\Components\Runtime\RuntimeTaskFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.DataProviderRuntimeTask" Collapsed="true">
-    <Position X="30" Y="10.5" Width="2" />
+    <Position X="24" Y="10.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAEACAAAAAAAAAAAAAAAQAAAAAIAAEAQAI=</HashCode>
+      <HashCode>AAAAAAgAAAAEACAAAAEAAAAAAAAAAQAAAAAAAAEAAAI=</HashCode>
       <FileName>LoadExecution\Components\Runtime\DataProviderRuntimeTask.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.ExecutableRuntimeTask" Collapsed="true">
-    <Position X="26" Y="10.5" Width="2" />
+    <Position X="20" Y="10.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAACAggAAAAACAEAAAAACAAAAhAAQAAAAAIAAkgQAI=</HashCode>
+      <HashCode>AAAACAggAAAAACAEAAAAACAIAAhAAQAAAAAAAAkgAAI=</HashCode>
       <FileName>LoadExecution\Components\Runtime\ExecutableRuntimeTask.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.ExecuteSqlFileRuntimeTask" Collapsed="true">
-    <Position X="24.75" Y="11.5" Width="2.25" />
+    <Position X="18.75" Y="11.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAACAAAAAAAAAAAAgAAQAAAAQIAAEAQAI=</HashCode>
+      <HashCode>AAgAAAgAAAAAACAAAAAAAAAAAAAAAQAAAAQAAAEAAAI=</HashCode>
       <FileName>LoadExecution\Components\Runtime\ExecuteSqlFileRuntimeTask.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.MutilateDataTablesRuntimeTask" Collapsed="true">
-    <Position X="28.25" Y="10.5" Width="1.5" />
+    <Position X="22.25" Y="10.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIgAAAAAACAAAAAAAAAAAAAAAQAAAAAIAAEAQAI=</HashCode>
+      <HashCode>AAAAAIgAAAAAACAAAAEAAAAAAAAAAQAAAAAAAAEAAAI=</HashCode>
       <FileName>LoadExecution\Components\Runtime\MutilateDataTablesRuntimeTask.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.StoredProcedureRuntimeTask" Collapsed="true">
-    <Position X="28.75" Y="11.5" Width="2.25" />
+    <Position X="22.75" Y="11.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAABAACAAAAAAAAAAAAAAAQAAACAIAAEAQII=</HashCode>
+      <HashCode>AAAAAAgAAABAACAAAAAAAAAAAAAAAQAAACAAAAEAAII=</HashCode>
       <FileName>LoadExecution\Components\Runtime\StoredProcedureRuntimeTask.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Runtime.AttacherRuntimeTask" Collapsed="true">
-    <Position X="24" Y="10.5" Width="1.75" />
+    <Position X="18" Y="10.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAIkAAAAAACAAAAAAAAAAAAAAAQAAAAAIAAEAQAI=</HashCode>
+      <HashCode>AAAAAAkAAAAAACAAAAEAAAAAAAAAAQAAAAAAAAEAAAI=</HashCode>
       <FileName>LoadExecution\Components\Runtime\AttacherRuntimeTask.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Standard.ArchiveFiles" Collapsed="true">
-    <Position X="17.75" Y="11.5" Width="1.5" />
+    <Position X="13" Y="11.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAAAAAAAgAAAAAAAAAAAAUAACAAAAAAAIAo=</HashCode>
       <FileName>LoadExecution\Components\Standard\ArchiveFiles.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Standard.MigrateRAWTableToStaging" Collapsed="true">
-    <Position X="10.75" Y="11.5" Width="2.25" />
+    <Position X="6" Y="11.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAABAAAAAAAAAAAAAAAAIAAQIAAQAAAAgIAAgAAAI=</HashCode>
       <FileName>LoadExecution\Components\Standard\MigrateRAWTableToStaging.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Standard.MigrateRAWToStaging">
-    <Position X="13.25" Y="11.5" Width="2" />
+    <Position X="8.5" Y="11.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAAAAQAAAAAgAAQAAAQACAAgIQAAAAAI=</HashCode>
       <FileName>LoadExecution\Components\Standard\MigrateRAWToStaging.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.Components.Standard.MigrateStagingToLive" Collapsed="true">
-    <Position X="15.5" Y="11.5" Width="1.75" />
+    <Position X="10.75" Y="11.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAQAAgQAAAAgAAAAAAAI=</HashCode>
       <FileName>LoadExecution\Components\Standard\MigrateStagingToLive.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLoadEngine.LoadProcess.OnDemandDataLoadProcess" Collapsed="true">
-    <Position X="3.25" Y="7" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>LoadProcess\OnDemandDataLoadProcess.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="18.75" Y="0.5" Width="2.5" />
+    <Position X="14" Y="0.5" Width="2.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="DataLoadEngine.LoadProcess.Scheduling.IterativeScheduledDataLoadProcess" Collapsed="true">
-    <Position X="6.5" Y="7.75" Width="2.75" />
+    <Position X="4.25" Y="7.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
       <FileName>LoadProcess\Scheduling\IterativeScheduledDataLoadProcess.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadProcess.Scheduling.ScheduledDataLoadProcess" Collapsed="true">
-    <Position X="6.5" Y="6.75" Width="2.75" />
+    <Position X="4.25" Y="6.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAIACAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>LoadProcess\Scheduling\ScheduledDataLoadProcess.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.LoadProcess.DataLoadProcess" Collapsed="true">
-    <Position X="4.75" Y="5.5" Width="2" />
+    <Position X="2.5" Y="5.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>QEiAAAhAAQRgggAEAAIAIAQAAAAAgAAAAgBVAAAhAAI=</HashCode>
+      <HashCode>AEgAAAAAAAAgAAAAAAIAAAQAAAAAAAAAAABAAAAhAAI=</HashCode>
       <FileName>LoadProcess\DataLoadProcess.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.LoadExecution.HICDataLoadFactory" Collapsed="true">
-    <Position X="13.25" Y="2" Width="2" />
+    <Position X="8.5" Y="2" Width="2" />
     <TypeIdentifier>
       <HashCode>AEAAAAACAABAAAAAAAAAAAAAAQAAgEAAAAgAAAAAAAA=</HashCode>
       <FileName>LoadExecution\HICDataLoadFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="DataLoadEngine.LoadProcess.Scheduling.SingleJobScheduledDataLoadProcess" Collapsed="true">
+    <Position X="1.25" Y="7.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>LoadProcess\Scheduling\SingleJobScheduledDataLoadProcess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Interface Name="DataLoadEngine.LoadExecution.Components.ILoadComponent&lt;T&gt;" Collapsed="true">
-    <Position X="15" Y="4.75" Width="1.75" />
+    <Position X="10.25" Y="4.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAACAAI=</HashCode>
       <FileName>LoadExecution\Components\ILoadComponent.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="DataLoadEngine.LoadExecution.Components.Runtime.IRuntimeTask" Collapsed="true">
-    <Position X="27.25" Y="9" Width="1.75" />
+    <Position X="21.25" Y="9" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAACAAAAAAAEAAAAAAAAAAAAAIAAGAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAEAAAAAAAAAAAAAAAAEAAAA=</HashCode>
       <FileName>LoadExecution\Components\Runtime\IRuntimeTask.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="DataLoadEngine.LoadProcess.IDataLoadProcess" Collapsed="true">
-    <Position X="1.25" Y="3.75" Width="1.5" />
+    <Position X="0.5" Y="5.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAgAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAEAAAAAAI=</HashCode>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
       <FileName>LoadProcess\IDataLoadProcess.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="DataLoadEngine.LoadExecution.IDataLoadExecution" Collapsed="true">
-    <Position X="5.25" Y="0.5" Width="2.25" />
+    <Position X="3" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAEAAAAAQAAoAAAAAAQAAAAAAAAAIAABBAAAAAQAI=</HashCode>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
       <FileName>LoadExecution\IDataLoadExecution.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="CatalogueLibrary.Data.DataLoad.ProcessTaskType">
-    <Position X="21.5" Y="0.5" Width="1.5" />
+    <Position X="16.75" Y="0.5" Width="1.5" />
     <TypeIdentifier />
   </Enum>
   <Enum Name="CatalogueLibrary.Data.DataLoad.LoadStage">
-    <Position X="10" Y="0.5" Width="1.5" />
+    <Position X="6.5" Y="1" Width="1.5" />
     <TypeIdentifier />
   </Enum>
   <Font Name="Segoe UI" Size="9" />

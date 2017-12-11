@@ -8,6 +8,10 @@ using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands
 {
+    /// <summary>
+    /// MEF discoverable BasicCommandExecution.  Implement this if you want your command to be discoverable/advertised directly by RDMP.  Generally it is better
+    /// to use a more specific subclass of this e.g. PluginDatabaseAtomicCommand 
+    /// </summary>
     [InheritedExport(typeof(IAtomicCommand))]
     public abstract class PluginAtomicCommand : BasicCommandExecution, IAtomicCommand
     {

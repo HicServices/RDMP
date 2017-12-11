@@ -12,6 +12,13 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials 
+    /// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called 
+    /// 'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
+    /// 
+    /// 
+    /// </summary>
     public class TableInfoToCredentialsLinker
     {
         private readonly ICatalogueRepository _repository;

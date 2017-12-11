@@ -8,6 +8,10 @@ using CatalogueLibrary.Data.Cache;
 
 namespace CatalogueLibrary.Spontaneous
 {
+    /// <summary>
+    /// Spontaneous (non database persisted) version of PermissionWindow.  Use this class when you want to define a runtime only (in memory) window of execution for
+    /// caching / loading etc.  SpontaneouslyInventedPermissionWindow are never locked.
+    /// </summary>
     public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermissionWindow
     {
         private readonly ICacheProgress _cp;

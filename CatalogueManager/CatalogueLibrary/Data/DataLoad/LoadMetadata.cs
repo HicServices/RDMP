@@ -14,19 +14,24 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
-    public enum SchedulePeriod
-    {
-        Continuous = 0,
-        Day = 1,
-        Week = 2,
-        Month = 3,
-        Hour = 4
-    }
-
+    /// <summary>
+    /// How are files cached within the cache (e.g. within a zip? tar? just uncompressed in a directory).
+    /// </summary>
     public enum CacheArchiveType
     {
+        /// <summary>
+        /// Cached files are in a directory uncompressed
+        /// </summary>
         None = 0,
+        
+        /// <summary>
+        /// Cached files are contained in a zip file
+        /// </summary>
         Zip = 1,
+
+        /// <summary>
+        /// Cached files are contained in a tar file
+        /// </summary>
         Tar = 2
     }
 

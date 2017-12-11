@@ -16,6 +16,9 @@ using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Layouts
 {
+    /// <summary>
+    /// Abstract base ICacheLayout, see ICacheLayout for description or BasicCacheLayout for example of how to use this class.
+    /// </summary>
     public abstract class CacheLayout : ICacheLayout
     {
         public string DateFormat { get; private set; }

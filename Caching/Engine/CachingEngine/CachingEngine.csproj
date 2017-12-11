@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -147,7 +148,6 @@
     <Compile Include="CustomDateCaching.cs" />
     <Compile Include="Factories\CacheFetchRequestFactory.cs" />
     <Compile Include="Factories\CachingPipelineUseCase.cs" />
-    <Compile Include="DataRetrievers\DownloadStatus.cs" />
     <Compile Include="BasicCache\BasicCacheLayout.cs" />
     <Compile Include="Layouts\ICacheLayout.cs" />
     <Compile Include="Layouts\ILoadCachePathResolver.cs" />
@@ -159,8 +159,6 @@
     <Compile Include="PipelineExecution\IMultiPipelineEngineExecutionStrategy.cs" />
     <Compile Include="DataRetrievers\PermissionWindowCacheDownloader.cs" />
     <Compile Include="DataRetrievers\RetrievalResult.cs" />
-    <Compile Include="ILockProvider.cs" />
-    <Compile Include="LockProvider.cs" />
     <Compile Include="Locking\LoadCacheEngineLockProvider.cs" />
     <Compile Include="PipelineExecution\RoundRobinPipelineExecution.cs" />
     <Compile Include="PipelineExecution\SerialPipelineExecution.cs" />
@@ -168,7 +166,6 @@
     <Compile Include="Requests\BackfillCacheFetchRequest.cs" />
     <Compile Include="Requests\CacheFetchRequest.cs" />
     <Compile Include="Layouts\CacheLayout.cs" />
-    <Compile Include="Factories\CacheRebuilderFactory.cs" />
     <Compile Include="Requests\FetchRequestProvider\CacheFetchRequestProvider.cs" />
     <Compile Include="Requests\FetchRequestProvider\FailedCacheFetchRequestProvider.cs" />
     <Compile Include="Requests\FetchRequestProvider\ICacheFetchRequestProvider.cs" />

@@ -14,6 +14,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\SMI\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -313,7 +314,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Attachers\GenericAttachers.cd" />
-    <None Include="LoadModules.Generic.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

@@ -95,7 +95,7 @@ namespace LoadModules.Generic.Attachers
         {
             using (var con = dbInfo.Server.GetConnection())
             {
-                DataTable dt = tableToLoad.GetDataTable();
+                DataTable dt = tableToLoad.GetDataTable(0);
 
                 // setup bulk insert it into destination
                 SqlBulkCopy insert = new SqlBulkCopy((SqlConnection) con);

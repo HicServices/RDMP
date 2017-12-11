@@ -22,8 +22,10 @@ namespace CatalogueManager.PluginChildProvision
             ItemActivator = itemActivator;
         }
 
-        public abstract object[] GetChildren(object model);
-        public abstract ToolStripMenuItem[] GetAdditionalRightClickMenuItems(DatabaseEntity databaseEntity);
+        public virtual object[] GetChildren(object model)
+        {
+            return null;
+        }
 
         public virtual ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
@@ -49,6 +51,9 @@ namespace CatalogueManager.PluginChildProvision
             return items.ToArray();
         }
 
-        public abstract Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None);
+        public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
+        {
+            return null;
+        }
     }
 }

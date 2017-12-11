@@ -10,6 +10,13 @@ using CatalogueLibrary.Repositories;
 
 namespace CatalogueLibrary.Data.PerformanceImprovement
 {
+    /// <summary>
+    /// Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes containers (CohortAggregateContainer) and subcontainers
+    /// and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant relationship records with two queries and then
+    /// sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
+    /// 
+    /// This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).
+    /// </summary>
     public class CohortHierarchy
     {
         private readonly CatalogueChildProvider _childProvider;

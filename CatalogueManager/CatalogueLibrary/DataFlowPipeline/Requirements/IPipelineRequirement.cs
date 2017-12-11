@@ -3,7 +3,10 @@ using ReusableLibraryCode.Progress;
 namespace CatalogueLibrary.DataFlowPipeline.Requirements
 {
     /// <summary>
-    /// Specifies that an IDataFlowComponent or IDataFlowSource requires a particular object at execution time to function properly e.g.  a source which extractes linked data
+    /// Used to model Runtime initialization.  IDataFlowComponents which implement this interface (you can implement for multiple T) will be Initialized with a compatible InitializationObject
+    /// available in the IPipelineUseCase.
+    /// 
+    /// It specifies that an IDataFlowComponent or IDataFlowSource requires a particular object at execution time to function properly e.g.  a source which extractes linked data
     /// for a cohort might require an ExtractionRequest object (which must be provided by the hosting environment).  You can only currently have 1 object of each type.  
     /// 
     /// IMPORTANT: If you can store the value you require Immutably instead e.g. Extraction Format CSV/TSV then you should instead use a [DemandsInitialization].  The difference

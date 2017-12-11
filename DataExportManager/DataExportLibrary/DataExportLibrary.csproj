@@ -16,6 +16,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\SMI\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -308,10 +309,8 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ClassDiagram1.cd" />
     <None Include="DataRelease\DataRelease.cd" />
     <None Include="ExecuteDatasetExtraction.cd" />
-    <None Include="ExecuteDatasetExtractionToDatabase.cd" />
     <None Include="ExtractionTimeColumns.cd" />
     <None Include="ExtractionTime\UserPicks\Bundles.cd" />
     <None Include="ImportingCustomData.cd" />

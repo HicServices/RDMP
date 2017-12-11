@@ -10,8 +10,18 @@ using ReusableUIComponents;
 
 namespace ResearchDataManagementPlatform
 {
+    /// <summary>
+    /// Cache of all the summary xml help comments text in RDMP.  This is class basically provides automated on startup version of 
+    /// DocumentationReportFormsAndControls (and DocumentationReportFormsAndControlsUI) in which summary comments are extracted from 
+    /// SourceCodeForSelfAwareness.zip
+    /// 
+    /// Also populates the static KeywordHelpTextListbox.HelpKeywordsDictionary via AddToHelpDictionaryIfNotExists
+    /// </summary>
     public class RDMPDocumentationStore
     {
+        /// <summary>
+        /// Source code for each class 
+        /// </summary>
         public Dictionary<Type, string> TypeDocumentation { get; set; }
 
         public RDMPDocumentationStore(IRDMPPlatformRepositoryServiceLocator repositoryLocator)

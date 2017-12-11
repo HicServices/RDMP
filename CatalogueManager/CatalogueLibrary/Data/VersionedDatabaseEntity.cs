@@ -4,6 +4,9 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// See DatabaseEntity
+    /// </summary>
     public abstract class VersionedDatabaseEntity : DatabaseEntity
     {
         #region Database Properties

@@ -4,6 +4,9 @@ using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Requests.FetchRequestProvider
 {
+    /// <summary>
+    /// Generates ICacheFetchRequest incrementally until the given end date.  You must provide an initial request. 
+    /// </summary>
     public class MultiDayCacheFetchRequestProvider : ICacheFetchRequestProvider
     {
         private readonly ICacheFetchRequest _initialRequest;

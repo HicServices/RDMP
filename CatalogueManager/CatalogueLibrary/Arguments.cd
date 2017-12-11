@@ -9,7 +9,7 @@
   <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="7.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQECAEEgAAIAgAIEABQgAAQAAAAAQgFAAAAIEAAACAA=</HashCode>
+      <HashCode>AUGCYAhCACICAAIEADgAgCQAAAAAQAFAQAAAEAAKCAA=</HashCode>
       <FileName>Data\DataLoad\ProcessTask.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -17,15 +17,14 @@
   <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTaskArgument" Collapsed="true">
     <Position X="9.5" Y="5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAAAiAAAAAEgBQgAAAAAAAAIIAAAAAIAgAAAAA=</HashCode>
+      <HashCode>AAAAAAAAACAAIAAEABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\DataLoad\ProcessTaskArgument.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueLibrary.Data.Pipelines.PipelineComponent" Collapsed="true">
     <Position X="7.75" Y="8.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAEAEEAAAAAAkgAEABYgAAQEABAAAAAgAAAIEAAAAAA=</HashCode>
+      <HashCode>AAEAIAACACAAAAAEABpAAAQYABAAAAAAAAAQUAAAABA=</HashCode>
       <FileName>Data\Pipelines\PipelineComponent.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -33,7 +32,7 @@
   <Class Name="CatalogueLibrary.Data.Pipelines.PipelineComponentArgument" Collapsed="true">
     <Position X="10" Y="8.5" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAQAAEAAACAAAAAEAAQgAAAAAAAAAAAAgBAMAACAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAABAAAEAAAAAAAIQAAAAAAAgAAAQAAAAAA=</HashCode>
       <FileName>Data\Pipelines\PipelineComponentArgument.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -41,7 +40,7 @@
   <Class Name="CatalogueLibrary.Data.DataLoad.Argument" Collapsed="true">
     <Position X="10.25" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAgggAAAAQAAAQAAAAAAAAQASIoAAQAAAA=</HashCode>
+      <HashCode>ABQAIAAAAAAgAgQEAAAAAAQAAAAAAAAQASAgAAQEAAA=</HashCode>
       <FileName>Data\DataLoad\Argument.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -53,48 +52,47 @@
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AFAAAEgABAAggAAAIgTgEQQAhAAABAACRwAMIAAAwQA=</HashCode>
+      <HashCode>AAAAJAgAAABgAFAEAgBECQRAgACAAAIEAAAEEAAAAAA=</HashCode>
       <FileName>Data\LoadModuleAssembly.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.DemandsInitialization" Collapsed="true">
-    <Position X="12.75" Y="1" Width="2" />
+  <Class Name="CatalogueLibrary.Data.DemandsInitializationAttribute" Collapsed="true">
+    <Position X="12.5" Y="0.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DemandsInitialization.cs</FileName>
+      <HashCode>AAAAEAAAAAAgAAAAAAQAAAAAAABAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Data\DemandsInitializationAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="CatalogueLibrary.Data.DataLoad.IArgument" Collapsed="true">
     <Position X="10" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAAAAAAAAAQAAAAAAAAAACAgAAAAAAA=</HashCode>
+      <HashCode>AAQAAAIAAAAgAgAAAAAAAAQAAAAAAAAQASAgAAAAAAA=</HashCode>
       <FileName>Data\DataLoad\IArgument.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="CatalogueLibrary.Data.DataLoad.IArgumentHost" Collapsed="true">
     <Position X="7.75" Y="1" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\IArgument.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Data\DataLoad\IArgumentHost.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="CatalogueLibrary.Data.DataLoad.ITableInfoCollectionHost">
     <Position X="7.75" Y="2.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\IArgument.cs</FileName>
+      <FileName>Data\DataLoad\ITableInfoCollectionHost.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="CatalogueLibrary.Data.DataLoad.ILoadProgressHost">
     <Position X="7.75" Y="1.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\IArgument.cs</FileName>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataLoad\ILoadProgressHost.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="CatalogueLibrary.Data.DataLoad.ICustomUI&lt;T&gt;">
-    <Position X="15" Y="1.25" Width="2.5" />
+    <Position X="15.25" Y="1.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\DataLoad\ICustomUI.cs</FileName>
@@ -104,14 +102,14 @@
     <Position X="18.25" Y="1.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAEAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\ICustomUIDrivenObject.cs</FileName>
+      <FileName>Data\DataLoad\ICustomUIDrivenClass.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="CatalogueLibrary.Data.DemandType">
     <Position X="12.75" Y="1.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAABAAAAAAAAAAAAgAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
-      <FileName>Data\DemandsInitialization.cs</FileName>
+      <HashCode>AAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Data\DemandType.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

@@ -104,6 +104,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             foreach (FileInfo projFile in projFiles)
             {
+                if(projFile.Directory.FullName.Contains("CodeTutorials"))
+                    continue;
+
                 var key = projects.Keys.SingleOrDefault(p => (p.Name + ".csproj").Equals(projFile.Name));
                 if (key == null)
                     Error("FAIL:Unreferenced csproj file spotted :" + projFile.FullName);
