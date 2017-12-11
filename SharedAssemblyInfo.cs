@@ -10,4 +10,4 @@ using System.Reflection;
 // These should be replaced with correct values by the release process
 [assembly: AssemblyVersion("2.6.0.1")]
 [assembly: AssemblyFileVersion("2.6.0.1")]
-[assembly: AssemblyInformationalVersion("2.6.0.1")]
+[assembly: AssemblyInformationalVersion("2.6.0.1-alpha")]
