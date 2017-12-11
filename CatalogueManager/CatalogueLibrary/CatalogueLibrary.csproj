@@ -330,7 +330,7 @@
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\PluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
-    <Compile Include="FatalDeSyncException.cs" />
+    <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
