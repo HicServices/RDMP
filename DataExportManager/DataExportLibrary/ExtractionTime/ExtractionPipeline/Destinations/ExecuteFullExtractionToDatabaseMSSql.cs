@@ -27,6 +27,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization("External server to create the extraction into, a new table will be created for each dataset extracted with datatypes and column names appropriate to the anonymised extracted datasets",Mandatory = true)]
         public ExternalDatabaseServer TargetDatabaseServer { get; set; }
+
+
+        [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
+         $p - Project Name ('e.g. My Project'
+         $n - Project Number (e.g. 234)
+         $c - Configuration Name (e.g. 'Cases')
+         $d - Dataset name (e.g. 'Prescribing') - REQUIRED
+         ",Mandatory=true,DefaultValue="$c_$d")]
+        public string TableNamingPattern { get; set; }
+
         private DiscoveredDatabase _server;
         private DataTableUploadDestination _destination;
         
@@ -94,16 +104,21 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private string _cachedGetTableNameAnswer;
         
-
-
         public string GetTableName()
         {
             //if there is a cached answer return it
             if (_cachedGetTableNameAnswer != null) return _cachedGetTableNameAnswer;
+            
+            string tblName = TableNamingPattern;
+            var project = _request.Configuration.Project;
+
+            tblName = tblName.Replace("$p", project.Name);
+            tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
+            tblName = tblName.Replace("$c", _request.Configuration.Name);
+            tblName = tblName.Replace("$d", _request.ToString());
 
             //otherwise, fetch and cache answer
-            var project = _request.Configuration.Project;
-            _cachedGetTableNameAnswer =  SqlSyntaxHelper.GetSensibleTableNameFromString(project.Name + "_" + project.ProjectNumber + "_" + _request.Configuration + "_" + _request);
+            _cachedGetTableNameAnswer = SqlSyntaxHelper.GetSensibleTableNameFromString(tblName);
 
             return _cachedGetTableNameAnswer;
         }
@@ -232,6 +247,15 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabaseServer does not have a .Database specified", CheckResult.Fail));
                 return;
             }
+
+            if(string.IsNullOrWhiteSpace(TableNamingPattern))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("You must specify TableNamingPattern, this will tell the component how to name tables it generates in the remote destination",CheckResult.Fail));
+                return;
+            }
+
+            if(!TableNamingPattern.Contains("$d"))
+                notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain $d, the name of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once",CheckResult.Warning));
 
             try
             {

@@ -693,21 +693,27 @@ c.name = @column_name", con);
                 if (serverForLineByLineInvestigation == null)
                     throw;
 
+                int line = 1;
                 string baseException = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
                 baseException = baseException.Replace(Environment.NewLine, Environment.NewLine + "\t");
-                baseException = Environment.NewLine +"First Pass Exception:" + Environment.NewLine + baseException;
+                baseException = Environment.NewLine + "First Pass Exception:" + Environment.NewLine + baseException;
                 baseException += Environment.NewLine + "Second Pass Exception:";
 
-                int line = 1;
+                DiscoveredColumn[] destinationColumnsContainedInMapping;
 
-                var dest = serverForLineByLineInvestigation.GetCurrentDatabase().ExpectTable(insert.DestinationTableName);
-                var destinationColumnsContainedInMapping = 
-                    dest.DiscoverColumns().Where(c => insert.ColumnMappings.Cast<SqlBulkCopyColumnMapping>().Any(m=>m.DestinationColumn==c.GetRuntimeName())).ToArray();
+                try
+                {
+                    var dest = serverForLineByLineInvestigation.GetCurrentDatabase().ExpectTable(insert.DestinationTableName);
+                    destinationColumnsContainedInMapping = dest.DiscoverColumns().Where(c => insert.ColumnMappings.Cast<SqlBulkCopyColumnMapping>().Any(m=>m.DestinationColumn==c.GetRuntimeName())).ToArray();
+                }
+                catch (Exception )
+                {
+                    throw e; //couldn't even enumerate the destination columns, whatever the original Exception was it must be serious, just rethrow it
+                }
 
                 //have to use a new object because current one could have a broken transaction associated with it
                 using( var con = (SqlConnection)serverForLineByLineInvestigation.GetConnection())
                 {
-                    
                     con.Open();
                     SqlTransaction investigationTransaction = con.BeginTransaction("Investigate BulkCopyFailure");
                     SqlBulkCopy investigationOneLineAtATime = new SqlBulkCopy(con, SqlBulkCopyOptions.KeepIdentity, investigationTransaction);

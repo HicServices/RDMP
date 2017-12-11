@@ -93,6 +93,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             {
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
                 destination.TargetDatabaseServer = server;
+                destination.TableNamingPattern = "$d";
 
                 var tomemory = new ToMemoryCheckNotifier();
                 destination.Check(tomemory);
@@ -117,6 +118,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
             server.Database = "FictionalDatabase";
             
+
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase("FictionalDatabase");
             Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase").Exists());
 
@@ -124,6 +126,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             {
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
                 destination.TargetDatabaseServer = server;
+                destination.TableNamingPattern = "$d";
 
                 var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
                 destination.Check(tomemory);
@@ -159,6 +162,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             {
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
                 destination.TargetDatabaseServer = server;
+                destination.TableNamingPattern = "$d";
 
                 var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
                 destination.Check(tomemory);
