@@ -32,9 +32,10 @@ namespace CatalogueManager.AutoComplete
         List<AutocompleteItem> items = new List<AutocompleteItem>();
         private ImageList _imageList;
 
-        public AutoCompleteProvider(ICoreIconProvider coreIconProvider)
+        public AutoCompleteProvider(IActivateItems activator)
         {
-            _imageList = coreIconProvider.GetImageList(true);
+            _activator = activator;
+            _imageList = _activator.CoreIconProvider.GetImageList(true);
             _autocomplete.ImageList = _imageList;
         }
 
@@ -43,7 +44,7 @@ namespace CatalogueManager.AutoComplete
         {
             _autocomplete.TargetControlWrapper = new ScintillaWrapper(queryEditor);
         }
-
+        
         public void Add(TableInfo tableInfo)
         {
             Add(tableInfo,LoadStage.PostLoad);
@@ -160,12 +161,7 @@ namespace CatalogueManager.AutoComplete
 
             AddUnlessDuplicate(snip);
         }
-
-        public void SetActivator(IActivateItems activator)
-        {
-            _activator = activator;
-        }
-
+        
         public void Add(TableInfo tableInfo, LoadStage loadStage)
         {
             //we already have it
@@ -204,6 +200,37 @@ namespace CatalogueManager.AutoComplete
         {
             items.Clear();
             _autocomplete.SetAutocompleteItems(items);
+        }
+
+        public void Add(Type type)
+        {
+            //we already have it
+            if (items.Any(i => i.Tag.Equals(type)))
+                return;
+
+            var snip = new SubstringAutocompleteItem(type.Name);
+            snip.MenuText = type.Name; //name of table
+            snip.Text = type.Name;//full text
+            snip.Tag = type; //record object for future reference
+
+
+            snip.ImageIndex = GetIndexFor(type, type.Name);
+            items.Add(snip);
+
+            _autocomplete.SetAutocompleteItems(items);
+        }
+
+        public bool IsShowing()
+        {
+            if (_autocomplete == null)
+                return false;
+
+            return _autocomplete.Visible;
+        }
+
+        public void UnRegister()
+        {
+            _autocomplete.TargetControlWrapper = null;
         }
     }
 }

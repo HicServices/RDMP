@@ -14,24 +14,24 @@ namespace CatalogueManager.Collections.Providers.Filtering
     public class SearchablesMatchScorer
     {
         private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
+        public string[] TypeNames { get; set; }
 
+        public SearchablesMatchScorer()
+        {
+            TypeNames = new string[0];
+        }
 
         public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken)
         {
             var tokens = searchText.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            List<int> integerTokens = new List<int>();
-
-            foreach (string token in tokens)
-            {
-                int i;
-                if (int.TryParse(token, out i))
-                    integerTokens.Add(i);
-            }
-
+            
             var regexes = new List<Regex>();
+            
+            //any token that 100% matches a type name is an explicitly typed token
+            var explicitTypesRequested = TypeNames.Intersect(tokens);
 
-            foreach (string token in tokens)
+            //else it's a regex
+            foreach (string token in tokens.Except(TypeNames))
                 regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
 
             if (cancellationToken.IsCancellationRequested)
@@ -39,17 +39,28 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
             return searchables.ToDictionary(
            s => s,
-           score => ScoreMatches(score, regexes, cancellationToken)
+           score => ScoreMatches(score, regexes,explicitTypesRequested.ToArray(), cancellationToken)
            );
         }
 
-        private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, CancellationToken cancellationToken)
+        private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
         {
             int score = 0;
 
             if (cancellationToken.IsCancellationRequested)
                 return 0;
 
+            if (explicitTypeNames.Any())
+                if (!explicitTypeNames.Contains(kvp.Key.GetType().Name))
+                    return 0;
+
+            //if there are no tokens
+            if (!regexes.Any())
+                if (explicitTypeNames.Any()) //if they have so far just typed a TypeName
+                    return 1;
+                else
+                    return 0;//no regexes AND no TypeName what did they type!
+            
             //don't suggest AND/OR containers it's not helpful to navigate to these
             if (kvp.Key is CatalogueLibrary.Data.IContainer)
                 return 0;
