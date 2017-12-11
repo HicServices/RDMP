@@ -307,7 +307,6 @@
     <Compile Include="Unit\CacheFetchRequestProviderTests.cs" />
     <Compile Include="Unit\CacheLagPeriodUnitTests.cs" />
     <Compile Include="Unit\CatalogueNamingTests.cs" />
-    <Compile Include="Unit\DatabasePatchingTests.cs" />
     <Compile Include="Unit\DataFlowPipelineEngineTests.cs" />
     <Compile Include="Unit\DocumentationReportMapsDirectlyToDatabaseTest.cs" />
     <Compile Include="Unit\ExerciseData\TestBiochemistryCreation.cs" />
@@ -333,7 +332,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Integration\SupportingDocumentTests.cs" />
-    <Compile Include="Unit\PluginBootstrapperTests.cs" />
     <Compile Include="Unit\PreInitializeTests.cs" />
     <Compile Include="Unit\SimpleColumnInfoTests.cs" />
     <Compile Include="Unit\SqlSyntaxHelperTests.cs" />
