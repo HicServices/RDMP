@@ -9,6 +9,12 @@ using CatalogueLibrary.FilterImporting.Construction;
 
 namespace CatalogueLibrary.FilterImporting
 {
+    /// <summary>
+    /// Facilitates the import of one IFilter type into the scope of another IFilter collection.  IFilters are lines of WHERE Sql.  This class is what allows you to import
+    /// a Catalogue level filter (ExtractionFilter) into specific deployment containers e.g. during cohort creation task you can import a copy of 'prescribed @drugX' into
+    /// your AggregateFilterContainer (this will actually create an AggregateFilter) and then import 2 more copies of that IFilter.  This class ensures that parameter names
+    /// are unique so you can change the value of @drugX for each new IFilter imported. 
+    /// </summary>
     public class FilterImporter
     {
         private readonly IFilterFactory _factory;
@@ -132,46 +138,5 @@ namespace CatalogueLibrary.FilterImporting
 
             return reason == null;
         }
-
-
-        /*
-          public ExtractionFilter CreateNewExtractionFilterAsPublishOf(IFilter toPublish, ExtractionInformation toAddTo)
-        {
-            string reason;
-            if (!IsProperlyDocumented(toPublish,out reason))
-                throw new Exception("Cannot clone filter called '"+toPublish.Name+"' because:"+reason);
-
-            var clone = new ExtractionFilter(toAddTo.Repository, toPublish.Name, toAddTo);
-
-            clone.WhereSQL = toPublish.WhereSQL;
-            clone.IsMandatory = toPublish.IsMandatory;
-            clone.Description = toPublish.Description + Environment.NewLine + " Published by " + Environment.UserName + " on " + DateTime.Now + " from object " + toPublish.GetType().Name + " with ID " + toPublish.ID;
-            clone.SaveToDatabase();
-
-
-            new ParameterCreator(new ExtractionFilterFactory(ExtractionInformation), )
-
-            clone.CreateOrDeleteParametersBasedOnSQL(null,null);
-            var clonedParams = clone.GetAllParameters(); 
-
-            foreach (ISqlParameter p in toPublish.GetAllParameters())
-            {
-                var pclone = clonedParams.Single(c => c.ParameterName.Equals(p.ParameterName));
-
-                pclone.Comment = p.Comment;
-                pclone.ParameterSQL = p.ParameterSQL;
-                pclone.Value = p.Value;
-                pclone.SaveToDatabase();
-            }
-
-
-            //we have published it so make the link real to preserve modifications relationship that is normally set up when you import from catalogue (the other way around of doing things)
-            toPublish.ClonedFromExtractionFilter_ID = clone.ID;
-            return clone;
-        }
-         
-         
-        
-         */
     }
 }
