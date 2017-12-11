@@ -4,6 +4,9 @@ using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.DataHelper
 {
+    /// <summary>
+    /// Generates ANSI Sql for joining tables together in the FROM line of an SQL query
+    /// </summary>
     public class JoinHelper
     {
         

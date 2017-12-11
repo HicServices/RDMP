@@ -11,12 +11,16 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.DataHelper
 {
+    /// <summary>
+    /// Legacy helper functions for manipulating Sql.  Many methods are Microsoft Sql Server specific.  If possible you should use IQuerySyntaxHelper instead since that is
+    /// DatabaseType specific.
+    /// </summary>
+    [Obsolete("Use IQuerySyntaxHelper instead")]
     public class RDMPQuerySyntaxHelper
     {
         public static readonly string ParameterSQLRegex_Pattern = "(@[A-Za-z0-9_]*)\\s?";
         public static Regex ParameterSQLRegex = new Regex(ParameterSQLRegex_Pattern);
-
-
+        
         /// <summary>
         /// Looks for @something within the line of SQL and returns @something (including the @ symbol)
         /// </summary>
@@ -74,8 +78,6 @@ namespace CatalogueLibrary.DataHelper
                         throw new SyntaxErrorException("Whitespace found in unwrapped Alias \"" + col.Alias + "\"");
 
             ParityCheckCharacterPairs(openingCharacters, closingCharacters,col.SelectSQL);
-       
-
         }
 
         /// <summary>
@@ -151,34 +153,6 @@ namespace CatalogueLibrary.DataHelper
                 throw new SyntaxErrorException("Failed to validate the bracket parity of parameter " + parameter, exception);
             }
         }
-
-
-        /*//this is very dodgy idea, what if the user inception joins, we don't want to suddenly link our main query to that!
-        public static IEnumerable<TableInfo> GetRequiredTablesForFilterSql(string whereSql)
-        {
-            //this is very dodgy idea, what if the user inception joins, we don't want to suddenly link our main query to that!
-            var regularExpressionsToTry = new[]
-            {
-                new Regex(@"\[[^\[\]]*\]\.\.\[[^\[\]]*\]\.\[[^\[\]]*\]"), //matches [Bob]..[Jeff].[Field1]
-                new Regex(@"\[[^\[\]]*\]\.dbo\.\[[^\[\]]*\]\.\[[^\[\]]*\]"),//matches [Bob].dbo.[Jeff].[Field2]
-                new Regex(@"[A-Za-z_][A-Za-z_0-9]*\.\.[A-Za-z_][A-Za-z_0-9]*\.[A-Za-z_][A-Za-z_0-9]*"),//matches Bob..Jeff.FieldX
-                new Regex(@"[A-Za-z_][A-Za-z_0-9]*\.dbo\.[A-Za-z_][A-Za-z_0-9]*\.[A-Za-z_][A-Za-z_0-9]*"), //matches Bob.dbo.Jeff.FieldY
-                new Regex(@"`[^`]+`\.`[^`]+`")//matches `bob`.`Jeff`
-
-            };
-
-            foreach(Regex r in regularExpressionsToTry)
-                foreach (Match m in r.Matches(whereSql))
-                {
-                    var col = ColumnInfo.GetColumnInfoWithNameExactly(m.Value);
-                    if (col != null)
-                        yield return TableInfo.GetTableInfoWithID(col.TableInfo_ID);
-                }
-
-
-        }*/
-
- 
 
         public static string EnsureValueIsWrapped(string s, DatabaseType type= DatabaseType.MicrosoftSQLServer)
         {

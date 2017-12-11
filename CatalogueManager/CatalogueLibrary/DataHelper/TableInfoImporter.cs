@@ -14,6 +14,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.DataHelper
 {
+    /// <summary>
+    /// Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.  Can also be used to import new ColumnInfos into existing
+    /// TableInfos (See TableInfoSynchronizer).
+    /// </summary>
     public class TableInfoImporter:ITableInfoImporter
     {
         private readonly ICatalogueRepository _repository;
