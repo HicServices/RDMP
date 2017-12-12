@@ -88,6 +88,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private bool _isClosed;
         private bool _skipEnter;
+        private bool _skipEscape;
 
         public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
         {
@@ -137,10 +138,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         void _scintilla_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter && _autoCompleteProvider.IsShowing())
-                _skipEnter = true;
-            else
-                _skipEnter = false;
+            var autoCompleteShowing = _autoCompleteProvider.IsShowing();
+            
+            _skipEnter = e.KeyCode == Keys.Enter && autoCompleteShowing;
+            _skipEscape = e.KeyCode == Keys.Escape && autoCompleteShowing;
         }
         
         void ApplySyntaxHighlighting()
@@ -199,6 +200,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             
             if (e.KeyCode == Keys.Escape)
             {
+                if(_skipEscape)
+                    return;
+
                 e.Handled = true;
                 Close();
             }
