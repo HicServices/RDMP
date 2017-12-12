@@ -6,6 +6,9 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary
 {
+    /// <summary>
+    /// Copies SupportingDocuments associated with a project extraction request to the output directory.
+    /// </summary>
     public class SupportingDocumentsFetcher
     {
         private readonly Catalogue _catalogue;
