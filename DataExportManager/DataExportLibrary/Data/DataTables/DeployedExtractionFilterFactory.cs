@@ -8,6 +8,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
 {
+    /// <summary>
+    ///  Constructs IFilters etc for data extraction via SelectedDataSets (See IFilterFactory).  Each SelectedDataSets in an ExtractionConfiguration has (optionally)
+    ///  it's own root container IFilters, subcontainers etc.
+    /// </summary>
     public class DeployedExtractionFilterFactory : IFilterFactory
     {
         private readonly IDataExportRepository _repository;
@@ -16,7 +20,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             _repository = repository;
         }
-
+    
         public IFilter CreateNewFilter(string name)
         {
             return new DeployedExtractionFilter(_repository,name,null);

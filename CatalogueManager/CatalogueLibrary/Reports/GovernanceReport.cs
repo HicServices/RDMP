@@ -11,6 +11,10 @@ using Microsoft.SqlServer.Management.Smo.Agent;
 
 namespace CatalogueLibrary.Reports
 {
+    /// <summary>
+    /// Processes all GovernancePeriod and Catalogues into a CSV report about which datasets are covered by which governance periods, which periods have expired (and there
+    /// is no corresponding follow on GovernancePeriod) and which Catalogues are not covered by any governance.
+    /// </summary>
     public class GovernanceReport:RequiresMicrosoftOffice
     {
         private readonly IDetermineDatasetTimespan _timespanCalculator;
@@ -30,8 +34,7 @@ namespace CatalogueLibrary.Reports
             sb.AppendLine( "Extractable Datasets,Folder,Catalogue,Current Governance,Dataset Period,Description");
             
             Dictionary<GovernancePeriod, Catalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
-
-
+            
             foreach (Catalogue catalogue in _repository.GetAllCataloguesWithAtLeastOneExtractableItem())
             {
                 if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)

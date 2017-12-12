@@ -12,6 +12,18 @@ using ReusableLibraryCode.DataAccess;
 
 namespace DataQualityEngine.Data
 {
+    /// <summary>
+    /// Pointer to the Data Qualilty Engine Repository database in which all DatabaseEntities declared in DataQualityEngine.dll are stored.  Ever DatabaseEntity class must exist in a
+    /// Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository (i.e. the database that contains the
+    /// table matching their name).  CatalogueLibrary.dll objects in CatalogueRepository, DataExportLibrary.dll objects in DataExportRepository, DataQualityEngine.dll objects
+    /// in DQERepository etc.
+    /// 
+    /// This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Quality database.
+    /// 
+    /// Data Qualilty Engine databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. 
+    /// there are IDs in the dqe database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
+    /// in the paired Catalogue database.
+    /// </summary>
     public class DQERepository : TableRepository
     {
         public CatalogueRepository CatalogueRepository { get; private set; }
