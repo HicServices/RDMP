@@ -14,6 +14,22 @@ using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.QueryBuilding.Parameters
 {
+    /// <summary>
+    /// Handles the accumulation of Parameters in SQL queries ('DECLARE @bob as varchar(10); SET @bob = 'bob').  Because ISqlParameters can exist at many levels
+    /// (e.g. IFilter vs AggregateConfiguration) ParameterManager has to consider what ParameterLevel it finds ISqlParameters at and whether ISqlParameters are 
+    /// functionality identical or not.  For example if a CohortIdentificationConfiguration has two AggregateConfigurations each with an IFilter for healthboard 
+    /// containing an ISqlParameter @hb.  If the declaration and value are the same then the ParameterManager can ignore one.  If the values are different then
+    /// the ParameterManager needs to create renamed versions in memory (SpontaneouslyInventedSqlParameter) and update the IFilter.  However if there is an ISqlParameter
+    /// @hb declared at the root (the CohortIdentificationConfiguration) then it will override both and be used instead.
+    /// 
+    /// See ParameterLevel for a description of the various levels ISqlParameters can be found at.
+    /// 
+    /// ParameterManager has a ParameterManagerLifecycleState (State) which indicates whether it is still collecting new ISqlParameters or whether it has resolved them
+    /// into a final representation.  
+    /// 
+    /// You can merge multiple ParameterManagers together (like CohortQueryBuilder does) by calling ImportAndElevateResolvedParametersFromSubquery which will create the
+    /// final CompositeQueryLevel. 
+    /// </summary>
     public class ParameterManager
     {
         public ParameterManagerLifecycleState State { get; private set; }
