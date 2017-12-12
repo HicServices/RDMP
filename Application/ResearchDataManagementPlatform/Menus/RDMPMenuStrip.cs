@@ -148,15 +148,7 @@ namespace ResearchDataManagementPlatform.Menus
             if (form != null)
                 form.Show();
         }
-
-        private void automationManagementToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new AutomationServiceSlotManagement();
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.Show();
-        }
-
-
+        
         private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConfigureAccessRightsReport dialog = new ConfigureAccessRightsReport();

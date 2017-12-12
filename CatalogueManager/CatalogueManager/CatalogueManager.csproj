@@ -952,12 +952,6 @@
     <Compile Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.Designer.cs">
       <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotManagement.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotManagement.Designer.cs">
-      <DependentUpon>AutomationServiceSlotManagement.cs</DependentUpon>
-    </Compile>
     <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1720,9 +1714,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.resx">
       <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Automation\AutomationServiceSlotManagement.resx">
-      <DependentUpon>AutomationServiceSlotManagement.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Automation\AutomationServiceSlotUI.resx">
       <DependentUpon>AutomationServiceSlotUI.cs</DependentUpon>
