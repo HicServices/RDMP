@@ -15,6 +15,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
+    /// <summary>
+    /// Helps generate SELECT and GROUP By queries for ISqlQueryBuilders.  This includes all the shared functionality such as finding all IFilters, Lookups,
+    /// which tables to JOIN on etc.  Also handles CustomLine injection which is where you inject arbitrary lines into the query at specific points (See CustomLine).
+    /// </summary>
     public class SqlQueryBuilderHelper
     {
         /// <summary>

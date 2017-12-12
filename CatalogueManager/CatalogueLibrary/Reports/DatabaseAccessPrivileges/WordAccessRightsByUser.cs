@@ -10,6 +10,10 @@ using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 {
+    /// <summary>
+    /// Generates a historic report of which user accounts have access to which databases by user (requires AccessRightsReportPrerequisites to have been run on 
+    /// your database server an for the snapshotting stored proceedure to have been called at least once)
+    /// </summary>
     public class WordAccessRightsByUser:RequiresMicrosoftOffice
     {
         public string Server { get; set; }
