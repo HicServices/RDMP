@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AutocompleteMenuNS;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Providers;
@@ -49,7 +50,12 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private List<IMapsDirectlyToDatabaseTable> _matches;
 
         //drawing
-        private int selectedIndex = 0;
+        private int keyboardSelectedIndex = 0;
+        private int mouseSelectedIndex = 0;
+
+        Color keyboardSelectionColor = Color.FromArgb(210,230,255);
+        Color mouseSelectionColor = Color.FromArgb(230, 245, 251);
+
         private const float DrawMatchesStartingAtY = 25;
         private const float RowHeight = 20;
         
@@ -188,7 +194,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if (e.KeyCode == Keys.Enter && !_skipEnter)
             {
                 e.Handled = true;
-                EmphasiseAndClose();
+                EmphasiseAndClose(keyboardSelectedIndex);
             }
             
             if (e.KeyCode == Keys.Escape)
@@ -200,32 +206,31 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         protected override void OnMouseClick(MouseEventArgs e)
         {
-            base.OnMouseClick(e);
+           base.OnMouseClick(e);
 
             if(e.Y<= DrawMatchesStartingAtY || e.Y > (RowHeight * MaxMatches )+ DrawMatchesStartingAtY)
                 return;
 
-            selectedIndex = RowIndexFromPoint(e.X, e.Y);
-            EmphasiseAndClose();
+            EmphasiseAndClose(RowIndexFromPoint(e.X, e.Y));
         }
         
-        private void EmphasiseAndClose()
+        private void EmphasiseAndClose(int indexToSelect)
         {
-            if (selectedIndex >= _matches.Count)
+            if (indexToSelect >= _matches.Count)
                 return;
 
             Close();
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[selectedIndex],int.MaxValue){Pin = true});
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], int.MaxValue) { Pin = true });
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
-            var before = selectedIndex;
-            selectedIndex = RowIndexFromPoint(e.X, e.Y);
+            var before = mouseSelectedIndex;
+            mouseSelectedIndex = RowIndexFromPoint(e.X, e.Y);
             
-            if(before != selectedIndex)
+            if(before != mouseSelectedIndex)
             {
                 AdjustHeight();
                 Invalidate();
@@ -248,24 +253,27 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void MoveSelectionDown()
         {
-            selectedIndex = Math.Min(_matches.Count-1, //don't go above the number matches returned
+            keyboardSelectedIndex = Math.Min(_matches.Count-1, //don't go above the number matches returned
                 Math.Min(MaxMatches - 1, //don't go above the max number of matches 
-                selectedIndex + 1));
+                keyboardSelectedIndex + 1));
             Invalidate();
         }
 
         private void MoveSelectionUp()
         {
-            selectedIndex = Math.Min(_matches.Count-1,  //if text has been typed then selectedIndex could be higher than the number of matches so set that as a roof
+            keyboardSelectedIndex = Math.Min(_matches.Count-1,  //if text has been typed then selectedIndex could be higher than the number of matches so set that as a roof
                 Math.Max(0, //also don't go below 0
-                    selectedIndex - 1)); 
+                    keyboardSelectedIndex - 1)); 
             Invalidate();
         }
 
 
         protected override void OnDeactivate(EventArgs e)
         {
-            //this.Close();
+            if(_autoCompleteProvider.IsShowing())
+                return;
+
+            this.Close();
         }
 
 
@@ -365,7 +373,16 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
                     var img = _coreIconProvider.GetImage(_matches[i],isFavourite?OverlayKind.FavouredItem:OverlayKind.None);
 
-                    e.Graphics.FillRectangle(i == selectedIndex ? new SolidBrush(SystemColors.Highlight) : Brushes.White, 1, currentRowStartY, renderWidth, RowHeight);
+                    SolidBrush fillColor;
+
+                    if (i == keyboardSelectedIndex)
+                        fillColor = new SolidBrush(keyboardSelectionColor);
+                    else if( i== mouseSelectedIndex)
+                        fillColor = new SolidBrush(mouseSelectionColor);
+                    else
+                        fillColor = new SolidBrush(Color.White);
+
+                    e.Graphics.FillRectangle(fillColor, 1, currentRowStartY, renderWidth, RowHeight);
 
                     string text = _matches[i].ToString();
 
@@ -395,7 +412,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                             );
 
                         //if it is the selected node draw the parents diagram too
-                        if (i == selectedIndex)
+                        if (i == keyboardSelectedIndex)
                             DrawDescendancyDiagram(e, _matches[i], descendancy, diagramStartX, diagramStartY,diagramWidth);
                     }
 

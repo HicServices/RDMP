@@ -213,6 +213,12 @@ namespace CatalogueManager.AutoComplete
             snip.Text = type.Name;//full text
             snip.Tag = type; //record object for future reference
 
+            if (!_imageList.Images.ContainsKey(type.Name))
+            {
+                var img = _activator.CoreIconProvider.GetImage(type);
+                if (img != null)
+                    _imageList.Images.Add(type.Name, img);
+            }
 
             snip.ImageIndex = GetIndexFor(type, type.Name);
             items.Add(snip);
