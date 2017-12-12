@@ -43,6 +43,15 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                     //skip tests
                     if (nameSpace.Contains("Tests"))
                         continue;
+
+                    if (nameSpace.Contains("TestData.Relational"))//this has never been tested / used
+                        continue;
+
+                    if (nameSpace.Contains("CohortManagerLibrary.FreeText"))//this has never been tested / used
+                        continue;
+
+                    if (nameSpace.Contains("CatalogueWebService"))//this has never been tested / used
+                        continue;
                     
                     //are there comments?
                     if (!beforeDeclaration.Contains("<summary>"))
@@ -56,7 +65,14 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                                 continue;
                             if (nameSpace.Contains("DataExportManager"))
                                 continue;
-                            
+                            if (nameSpace.Contains("ReusableUIComponents"))
+                                continue;
+
+                            if (nameSpace.Contains("Copying.Commands"))
+                                continue;
+
+                            if (nameSpace.Contains("Diagnostics"))
+                                continue;
                         }
 
                         problems.Add("FAIL UNDOCUMENTED CLASS:" + f);
