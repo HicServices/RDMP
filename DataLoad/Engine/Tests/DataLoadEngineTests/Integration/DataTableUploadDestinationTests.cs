@@ -725,5 +725,45 @@ CREATE TABLE [dbo].[TestResizing](
             
             db.ForceDrop();
         }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TestDestinationAlreadyExistingIsOk(bool targetTableIsEmpty)
+        {
+            //create a table in the scratch database with a single column Name
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestDestinationAlreadyExistingIsOk",new[]{new DatabaseColumnRequest("Name","varchar(10)",false)});
+
+            if(!targetTableIsEmpty)
+            {
+                //upload a single row
+                var dtAlreadyThereData = new DataTable();
+                dtAlreadyThereData.Columns.Add("Name");
+                dtAlreadyThereData.Rows.Add(new[] {"Bob"});
+
+                using(var bulk = tbl.BeginBulkInsert())
+                    bulk.Upload(dtAlreadyThereData);
+            }
+            
+            //create the destination component (what we want to test)
+            var destinationComponent = new DataTableUploadDestination();
+            destinationComponent.AllowResizingColumnsAtUploadTime = true;
+            
+            //create the simulated chunk that will be dispatched
+            var dt = new DataTable("TestDestinationAlreadyExistingIsOk");
+            dt.Columns.Add("Name");
+            dt.Rows.Add(new[] {"Bob"});
+            dt.Rows.Add(new[] { "Frank" });
+            dt.Rows.Add(new[] { "I've got a lovely bunch of coconuts" });
+
+            //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
+            destinationComponent.PreInitialize(DiscoveredDatabaseICanCreateRandomTablesIn,new ThrowImmediatelyDataLoadEventListener());
+
+            //tell the destination component to process the data
+            destinationComponent.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+            
+            Assert.AreEqual(4,tbl.GetRowCount());
+
+            tbl.Drop();
+        }
     }
 }
