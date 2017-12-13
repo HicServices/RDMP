@@ -7,22 +7,14 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
     public class QueryCachingDatabasePatcher:IPatcher
     {
-        private CatalogueRepository _catalogueRepository;
-
-        public QueryCachingDatabasePatcher(CatalogueRepository catalogueRepository)
+        public Assembly GetHostAssembly()
         {
-            _catalogueRepository = catalogueRepository;
+            return Assembly.Load("QueryCaching");
         }
 
-        public IExternalDatabaseServer[] FindDatabases(out Assembly hostAssembly, out Assembly dbAssembly)
+        public Assembly GetDbAssembly()
         {
-            var queryCachingDatabases = _catalogueRepository.GetAllObjects<ExternalDatabaseServer>()
-                .Where(s => s.CreatedByAssembly == "QueryCaching.Database").ToArray();
-
-            hostAssembly = Assembly.Load("QueryCaching");
-            dbAssembly = Assembly.Load("QueryCaching.Database");
-            
-            return queryCachingDatabases;
+            return Assembly.Load("QueryCaching.Database");
         }
     }
 }
