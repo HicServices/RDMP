@@ -58,7 +58,7 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
 
         public override object[] GetInitializationObjects(ICatalogueRepository repository)
         {
-            return _inputObjects.ToArray();
+            return _inputObjects == null ? new Object[0] : _inputObjects.ToArray(); 
         }
         
         public override IDataFlowPipelineContext GetContext()
