@@ -52,6 +52,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                     if (nameSpace.Contains("CatalogueWebService"))//this has never been tested / used
                         continue;
+
+                    if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
+                        continue;
                     
                     //are there comments?
                     if (!beforeDeclaration.Contains("<summary>"))

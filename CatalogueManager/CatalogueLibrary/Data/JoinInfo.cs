@@ -80,6 +80,11 @@ namespace CatalogueLibrary.Data
         public string Collation { get; set; }
         public ExtractionJoinType ExtractionJoinType { get; set; }
 
+        /// <summary>
+        /// Constructor to be used to create already existing JoinInfos out of the database only.  If you want to create new JoinInfos use JoinInfoFinder in CatalogueRepository.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
         public JoinInfo(IRepository repository,DbDataReader r)
         {
             Repository = repository;

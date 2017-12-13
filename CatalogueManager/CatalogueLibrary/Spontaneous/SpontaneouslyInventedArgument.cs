@@ -3,6 +3,9 @@ using CatalogueLibrary.Data.DataLoad;
 
 namespace CatalogueLibrary.Spontaneous
 {
+    /// <summary>
+    /// Spontaneous (memory only) implementation of IArgument.
+    /// </summary>
     public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
     {
         private readonly object _value;
