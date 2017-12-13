@@ -74,7 +74,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             };
         }
 
-        public override object[] GetInitializationObjects(ICatalogueRepository repository)
+        public override object[] GetInitializationObjects()
         {
             if(FileToLoad != null && CohortIdentificationConfiguration != null)
                 throw new Exception("CohortCreationRequest should either have a FileToLoad or a CohortIdentificationConfiguration not both");

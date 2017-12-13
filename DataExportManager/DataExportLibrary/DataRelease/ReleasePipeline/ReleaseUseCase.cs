@@ -37,7 +37,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             _initObjects = new object[] {_project,_catalogueRepository};
         }
 
-        public override object[] GetInitializationObjects(ICatalogueRepository repository)
+        public override object[] GetInitializationObjects()
         {
             return _initObjects;
         }

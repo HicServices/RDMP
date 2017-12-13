@@ -16,12 +16,12 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
     public class PluginPipelineUser : PipelineUseCase,IPipelineUser
     {
         private object _context;
-        private List<object> _inputObjects;
+        private object[] _inputObjects;
 
         public PipelineGetter Getter { get; private set; }
         public PipelineSetter Setter { get; private set; }
 
-        public PluginPipelineUser(RequiredPropertyInfo demand,IArgument argument, object demanderInstance)
+        public PluginPipelineUser( RequiredPropertyInfo demand,IArgument argument, object demanderInstance)
         {
             Getter = () =>
             {
@@ -36,29 +36,22 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
                 argument.SaveToDatabase();
             };
 
-            var demanderType = demanderInstance.GetType();
-            var interfaces = demanderType.GetInterfaces().Where(i =>
-                i.IsGenericType &&
-                i.GetGenericTypeDefinition()
-                == typeof(IDemandToUseAPipeline<>)).ToArray();
+            var pipeDemander = demanderInstance as IDemandToUseAPipeline;
 
-            if (interfaces.Length == 0)
-                throw new NotSupportedException("Class " + demanderType + " does not implement interface IDemandToUseAPipeline<> despite having a property which is a Pipeline");
+            if (pipeDemander == null)
+                throw new NotSupportedException("Class " + pipeDemander.GetType().Name + " does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
 
-            if (interfaces.Length > 1)
-                throw new MultipleMatchingImplmentationException("Class " + demanderType + " has multiple interfaces matching IDemandToUseAPipeline<>, a given class can only demand a single Pipeline of a single flow type <T>");
-
-            var nfDemander = new LamdaMemberFinder<IDemandToUseAPipeline<object>>();
+            var useCase = pipeDemander.GetDesignTimePipelineUseCase(demand);
             
-            _context = interfaces[0].GetMethod(nfDemander.GetMethod(x => x.GetContext())).Invoke(demanderInstance, null);
-            ExplicitSource = interfaces[0].GetMethod(nfDemander.GetMethod(x => x.GetFixedSourceIfAny())).Invoke(demanderInstance, null);
-            ExplicitDestination = interfaces[0].GetMethod(nfDemander.GetMethod(x => x.GetFixedDestinationIfAny())).Invoke(demanderInstance, null);
-            _inputObjects = (List<object>)interfaces[0].GetMethod(nfDemander.GetMethod(x => x.GetInputObjectsForPreviewPipeline())).Invoke(demanderInstance, null);
+            _context = useCase.GetContext();
+            ExplicitSource = useCase.ExplicitSource;
+            ExplicitDestination = useCase.ExplicitDestination;
+            _inputObjects = useCase.GetInitializationObjects();
         }
 
-        public override object[] GetInitializationObjects(ICatalogueRepository repository)
+        public override object[] GetInitializationObjects()
         {
-            return _inputObjects == null ? new Object[0] : _inputObjects.ToArray(); 
+            return _inputObjects ??new Object[0];
         }
         
         public override IDataFlowPipelineContext GetContext()

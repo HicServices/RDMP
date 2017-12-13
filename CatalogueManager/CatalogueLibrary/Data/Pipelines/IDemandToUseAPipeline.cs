@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 
@@ -12,13 +13,8 @@ namespace CatalogueLibrary.Data.Pipelines
     /// 
     /// The user will only be able to select IPipelines which are compatible with the Context you provide (so it won't for example override source/destination etc).
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IDemandToUseAPipeline<T>
+    public interface IDemandToUseAPipeline
     {
-        DataFlowPipelineContext<T> GetContext();
-        IDataFlowSource<T> GetFixedSourceIfAny();
-        IDataFlowDestination<T> GetFixedDestinationIfAny();
-
-        List<object> GetInputObjectsForPreviewPipeline();
+        IPipelineUseCase GetDesignTimePipelineUseCase(RequiredPropertyInfo property);
     }
 }
