@@ -8,6 +8,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
+    /// <summary>
+    /// Records that the host assembly ANOStore stores types for the database assembly 
+    /// </summary>
     public class ANOStoreDatabasePatcher:IPatcher
     {
         public Assembly GetHostAssembly()

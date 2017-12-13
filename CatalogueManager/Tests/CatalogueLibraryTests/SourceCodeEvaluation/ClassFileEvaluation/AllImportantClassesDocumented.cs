@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -78,7 +79,15 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                                 continue;
                         }
 
-                        problems.Add("FAIL UNDOCUMENTED CLASS:" + f);
+                        int idxLastSlash = f.LastIndexOf("\\");
+
+                        if(idxLastSlash != -1)
+                            problems.Add(String.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
+                                f.Substring(f.LastIndexOf("\\") + 1),
+                                f.Substring(0, idxLastSlash))
+                                );
+                        else
+                            problems.Add("FAIL UNDOCUMENTED CLASS:" + f);
                     }
                     else
                         commentedCount++;
