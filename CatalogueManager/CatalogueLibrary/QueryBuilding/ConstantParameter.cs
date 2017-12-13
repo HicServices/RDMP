@@ -5,11 +5,14 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.QueryBuilding
 {
+    /// <summary>
+    ///  Use this class to create standard parameters which you will always manually add in code to a QueryBuilder.  These are not editable
+    ///  by users and are not stored in a database.  They should be used for things such as cohortDefinitionID, projectID etc.
+    /// </summary>
     public class ConstantParameter : ISqlParameter
     {
         /// <summary>
-        /// Use this class to create standard parameters which you will always manually add in code to a QueryBuilder.  These are not editable
-        /// by users and are not stored in a database.  They should be used for things such as cohortDefinitionID, projectID etc.
+        /// Creates a new unchangeable always available parameter in a query being built.
         /// </summary>
         /// <param name="parameterSQL">The declaration sql e.g. DECLARE @bob as int</param>
         /// <param name="value">The value to set the paramater e.g. 1</param>

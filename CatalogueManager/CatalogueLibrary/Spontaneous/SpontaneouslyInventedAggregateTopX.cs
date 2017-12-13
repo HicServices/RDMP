@@ -2,6 +2,9 @@
 
 namespace CatalogueLibrary.Spontaneous
 {
+    /// <summary>
+    /// Spontaneous (memory only) version of AggregateTopX (a DatabaseEntity class).  See AggregateTopX for description.
+    /// </summary>
     public class SpontaneouslyInventedAggregateTopX : IAggregateTopX
     {
         public int TopX { get; private set; }

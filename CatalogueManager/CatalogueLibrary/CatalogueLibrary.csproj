@@ -328,7 +328,6 @@
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IExternalDatabaseServerProvider.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
-    <Compile Include="ExternalDatabaseServerPatching\PluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />

@@ -75,6 +75,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Assert.AreEqual(0,errors.Count);
 
+            AllImportantClassesDocumented documented = new AllImportantClassesDocumented();
+            documented.FindProblems(csFilesFound);
+            
             var uiStandardisationTest = new UserInterfaceStandardisationChecker();
             uiStandardisationTest.FindProblems(csFilesFound,RepositoryLocator.CatalogueRepository.MEF);
 

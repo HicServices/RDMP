@@ -9,6 +9,14 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories.Construction
 {
+    /// <summary>
+    /// Simplifies identifying and invoking ConstructorInfos on Types (reflection).  This includes identifying a suitable Constructor on a class Type based on the
+    /// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'heres a TableInfo, construct class X with the TableInfo paramter or if 
+    /// it has a blank constructor that's fine too or if it takes ITableInfo that's fine too... just use whatever works'.  If there are multiple matching constructors
+    /// it will attempt to find the 'best' (See InvokeBestConstructor for implementation).
+    /// 
+    /// If there are no compatible constructors you will get an ObjectLacksCompatibleConstructorException.
+    /// </summary>
     public class ObjectConstructor
     {
         public object Construct(Type t)

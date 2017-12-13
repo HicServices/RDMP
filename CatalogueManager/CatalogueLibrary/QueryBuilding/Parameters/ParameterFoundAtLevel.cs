@@ -7,6 +7,10 @@ using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.QueryBuilding.Parameters
 {
+    /// <summary>
+    /// Stores the fact that a ParameterManager found a particular ISqlParameter while evaluating all objects involved in a query being built (See ParameterManager for more
+    ///  information).
+    /// </summary>
     public class ParameterFoundAtLevel
     {
         public ISqlParameter Parameter { get; set; }
