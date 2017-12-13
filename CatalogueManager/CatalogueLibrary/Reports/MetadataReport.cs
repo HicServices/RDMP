@@ -26,6 +26,11 @@ namespace CatalogueLibrary.Reports
 {
     public delegate Bitmap[] RequestCatalogueImagesHandler(Catalogue catalogue);
 
+    /// <summary>
+    /// Generates a high level summary Microsoft Word DocX file of one or more Catalogues.  This includes the rowcount, distinct patient count, description and descriptions
+    /// of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration graphs will be run and screen captured and added to 
+    /// the report (including heatmap if a dynamic pivot is included in the graph).
+    /// </summary>
     public class MetadataReport:RequiresMicrosoftOffice
     {
         public IDetermineDatasetTimespan TimespanCalculator { get; set; }

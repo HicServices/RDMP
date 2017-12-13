@@ -7,6 +7,10 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Reports
 {
+    /// <summary>
+    /// Extracts comments from SourceCodeForSelfAwareness.zip for the requested Types which are made available in the public property Summaries.  This ensures that you always
+    /// have the latest documentation available at runtime and that descriptions match the codebase 100%.
+    /// </summary>
     public class DocumentationReportFormsAndControls: ICheckable
     {
         private readonly Type[] _formsAndControls;

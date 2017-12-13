@@ -16,6 +16,26 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueLibrary.QueryBuilding
 {
+    /// <summary>
+    /// Assembles GROUP BY queries based on the specified IColumns, IContainers, IFilters etc.  There are three main types of query AggregateBuilder can create
+    /// 
+    /// 1. Basic GROUP BY e.g. Select chi,count(chi) from prescribing where LEN(chi) = 10 group by chi HAVING count(chi)> 10
+    /// 
+    /// 2. Calendar Table GROUP BY.  This supports all of the features of 1. but also starts by using dynamic SQL to create a date range table to which the query is
+    /// automatically Joined.  This means that you will not get gaps in days where there is no data.  To create one of these you must set AggregateContinuousDateAxis
+    /// 
+    /// 3. Dynamic PIVOT GROUP BY.  This supports all of the features of 2. (it must have an axis) but also generates a dynamic PIVOT column for each unique value found
+    /// in the AggregateConfiguration.PivotDimension.  This is (normally) done by running a pre query which includes all the IFilters and IContainers etc so to return the
+    /// unique values that will appear in the final query only.  Then the final query is run with a PIVOT command over the column values found.  Since data can be a mile 
+    /// wide and full of punctuation etc there is an adjustment operation on the values to qualify them as valid column names.
+    /// 
+    /// AggregateBuilder is cross database compatible.  This is achieved by assembling all the lines it thinks it needs for it's query and then passing off the exact 
+    /// implementation into IAggregateHelper.BuildAggregate.  The implementation of the calendars/dynamic pivots vary wildly by database engine (See MySqlAggregateHelper vs
+    /// MicrosoftSQLAggregateHelper).  
+    /// 
+    /// All IAggregateHelper.BuildAggregate implementations must produce the same result tables for the same column/axis/pivot settings.  This is rigidly enforced by 
+    /// AggregateDataBasedTests 
+    /// </summary>
     public class AggregateBuilder : ISqlQueryBuilder
     {
         private readonly TableInfo[] _forceJoinsToTheseTables;

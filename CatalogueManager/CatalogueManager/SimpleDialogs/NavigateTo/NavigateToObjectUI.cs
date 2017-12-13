@@ -5,15 +5,18 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AutocompleteMenuNS;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Providers;
 using CatalogueManager.AggregationUIs;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.Icons.IconOverlays;
@@ -25,6 +28,8 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Icons.IconProvision;
+using ReusableUIComponents.ScintillaHelper;
+using ScintillaNET;
 using IContainer = CatalogueLibrary.Data.IContainer;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
@@ -39,11 +44,18 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private ICoreIconProvider _coreIconProvider;
         private FavouritesProvider _favouriteProvider;
 
+        private Scintilla _scintilla;
+
         private const int MaxMatches = 30;
         private List<IMapsDirectlyToDatabaseTable> _matches;
 
         //drawing
-        private int selectedIndex = 0;
+        private int keyboardSelectedIndex = 0;
+        private int mouseSelectedIndex = 0;
+
+        Color keyboardSelectionColor = Color.FromArgb(210,230,255);
+        Color mouseSelectionColor = Color.FromArgb(230, 245, 251);
+
         private const float DrawMatchesStartingAtY = 25;
         private const float RowHeight = 20;
         
@@ -51,6 +63,14 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private Bitmap _magnifier;
         private int _diagramBottom;
+
+
+        Task _lastFetchTask = null;
+        private CancellationTokenSource _lastCancellationToken;
+        private AutoCompleteProvider _autoCompleteProvider;
+        private Type[] _types;
+        private string[] _typeNames;
+
 
         private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
             new []
@@ -66,6 +86,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             typeof(PreLoadDiscardedColumnsNode)
         });
 
+        private bool _isClosed;
+        private bool _skipEnter;
+        private bool _skipEscape;
+
         public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
         {
             if(!TypesThatAreNotUsefulParents.Contains(t))
@@ -80,80 +104,137 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             InitializeComponent();
 
             _searchables = _activator.CoreChildProvider.GetAllSearchables();
+            
+            ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+            _scintilla = factory.Create();
+            panel1.Controls.Add(_scintilla);
+            
+            _scintilla.Focus();
+            _scintilla.Text = initialSearchQuery;
+            
+            _scintilla.TextChanged += tbFind_TextChanged;
+            _scintilla.PreviewKeyDown += _scintilla_PreviewKeyDown;
+            _scintilla.KeyUp += _scintilla_KeyUp;
 
-            tbFind.Focus();
-            FetchMatches(CancellationToken.None);
+            _scintilla.Margins[0].Width = 0;//dont show line number
+
+            _scintilla.ClearCmdKey(Keys.Enter);
+            _scintilla.ClearCmdKey(Keys.Up);
+            _scintilla.ClearCmdKey(Keys.Down);
+
+            FetchMatches(initialSearchQuery,CancellationToken.None);
             StartPosition = FormStartPosition.CenterScreen;
             DoubleBuffered = true;
-            tbFind.Text = initialSearchQuery;
+            
+            _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
+            _typeNames = _types.Select(t => t.Name).ToArray();
+
+            _autoCompleteProvider = new AutoCompleteProvider(_activator);
+            foreach (Type t in _types)
+                _autoCompleteProvider.Add(t);
+
+            _autoCompleteProvider.RegisterForEvents(_scintilla);
+        }
+
+        void _scintilla_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            var autoCompleteShowing = _autoCompleteProvider.IsShowing();
+            
+            _skipEnter = e.KeyCode == Keys.Enter && autoCompleteShowing;
+            _skipEscape = e.KeyCode == Keys.Escape && autoCompleteShowing;
+        }
+        
+        void ApplySyntaxHighlighting()
+        {
+            if(_isClosed)
+                return;
+            
+            var startPos = 0;
+            var endPos = _scintilla.TextLength;
+
+            _scintilla.Styles[1].ForeColor = Color.Blue;
+
+            _scintilla.StartStyling(startPos);
+            var text = _scintilla.GetTextRange(startPos, endPos);
+
+            int charPos = 0;
+            foreach (string s in text.Split(' '))
+            {
+                if (_typeNames.Contains(s))
+                    _scintilla.SetStyling(s.Length, 1);
+                else
+                    _scintilla.SetStyling(s.Length, 0);
+
+                charPos += s.Length + 1; //for the space
+
+                //deal with no trailing whitespace
+                if(charPos + startPos <= endPos)
+                    _scintilla.SetStyling(1, 0); //for the space
+            }
+        }
+
+        void _scintilla_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (_autoCompleteProvider.IsShowing())
+                return;
+
+            ApplySyntaxHighlighting();
+            
+            if (e.KeyCode == Keys.Up)
+            {
+                e.Handled = true;
+                MoveSelectionUp();
+            }
+
+            if (e.KeyCode == Keys.Down)
+            {
+                e.Handled = true;
+                MoveSelectionDown();
+            }
+
+            if (e.KeyCode == Keys.Enter && !_skipEnter)
+            {
+                e.Handled = true;
+                EmphasiseAndClose(keyboardSelectedIndex);
+            }
+            
+            if (e.KeyCode == Keys.Escape)
+            {
+                if(_skipEscape)
+                    return;
+
+                e.Handled = true;
+                Close();
+            }
         }
 
         protected override void OnMouseClick(MouseEventArgs e)
         {
-            base.OnMouseClick(e);
+           base.OnMouseClick(e);
 
             if(e.Y<= DrawMatchesStartingAtY || e.Y > (RowHeight * MaxMatches )+ DrawMatchesStartingAtY)
                 return;
 
-            selectedIndex = RowIndexFromPoint(e.X, e.Y);
-            EmphasiseAndClose();
+            EmphasiseAndClose(RowIndexFromPoint(e.X, e.Y));
         }
-
-        protected override bool ProcessKeyPreview(ref Message m)
+        
+        private void EmphasiseAndClose(int indexToSelect)
         {
-            PreviewKey p = new PreviewKey(ref m, ModifierKeys);
-
-            if (p.e != null)
-            {
-
-                if (p.e.KeyCode == Keys.Up)
-                {
-                    p.Trap(this);
-
-                    if (p.IsKeyDownMessage)
-                        MoveSelectionUp();
-                }
-
-                if (p.e.KeyCode == Keys.Down)
-                {
-                    p.Trap(this);
-
-                    if (p.IsKeyDownMessage)
-                        MoveSelectionDown();
-                }
-
-                if (p.e.KeyCode == Keys.Enter)
-                {
-                    EmphasiseAndClose();
-                }
-
-                if (p.e.KeyCode == Keys.Escape)
-                {
-                    Close();
-                }
-                
-            }
-
-            return base.ProcessKeyPreview(ref m);
-        }
-
-        private void EmphasiseAndClose()
-        {
-            if (selectedIndex >= _matches.Count)
+            if (indexToSelect >= _matches.Count)
                 return;
 
             Close();
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[selectedIndex],int.MaxValue){Pin = true});
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], int.MaxValue) { Pin = true });
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
-            var before = selectedIndex;
-            selectedIndex = RowIndexFromPoint(e.X, e.Y);
+            var before = mouseSelectedIndex;
+            mouseSelectedIndex = RowIndexFromPoint(e.X, e.Y);
             
-            if(before != selectedIndex)
+            if(before != mouseSelectedIndex)
             {
                 AdjustHeight();
                 Invalidate();
@@ -176,28 +257,29 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void MoveSelectionDown()
         {
-            selectedIndex = Math.Min(_matches.Count-1, //don't go above the number matches returned
+            keyboardSelectedIndex = Math.Min(_matches.Count-1, //don't go above the number matches returned
                 Math.Min(MaxMatches - 1, //don't go above the max number of matches 
-                selectedIndex + 1));
+                keyboardSelectedIndex + 1));
             Invalidate();
         }
 
         private void MoveSelectionUp()
         {
-            selectedIndex = Math.Min(_matches.Count-1,  //if text has been typed then selectedIndex could be higher than the number of matches so set that as a roof
+            keyboardSelectedIndex = Math.Min(_matches.Count-1,  //if text has been typed then selectedIndex could be higher than the number of matches so set that as a roof
                 Math.Max(0, //also don't go below 0
-                    selectedIndex - 1)); 
+                    keyboardSelectedIndex - 1)); 
             Invalidate();
         }
 
 
         protected override void OnDeactivate(EventArgs e)
         {
+            if(_autoCompleteProvider.IsShowing())
+                return;
+
             this.Close();
         }
 
-        Task _lastFetchTask = null;
-        private CancellationTokenSource _lastCancellationToken;
 
         private void tbFind_TextChanged(object sender, EventArgs e)
         {
@@ -207,29 +289,53 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             _lastCancellationToken = new CancellationTokenSource();
 
-            _lastFetchTask = Task.Run(() => FetchMatches(_lastCancellationToken.Token))
+            var toFind = _scintilla.Text;
+
+            _lastFetchTask = Task.Run(() => FetchMatches(toFind, _lastCancellationToken.Token))
                 .ContinueWith(
                     (s) =>
                     {
-                        AdjustHeight();
-                        Invalidate();
-                    },
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                        if (_isClosed)
+                            return;
+                        
+                        Invoke(new MethodInvoker(() =>
+                        {
+                            try
+                            {
+                                if(_isClosed)
+                                    return;
+
+                                AdjustHeight();
+
+                                if (_isClosed)
+                                    return;
+
+                                Invalidate();
+                            }
+                            catch (ObjectDisposedException)
+                            {
+                                
+                            }
+                        }));
+                        
+                    });
         }
 
-        private void FetchMatches(CancellationToken cancellationToken)
+        private void FetchMatches(string text, CancellationToken cancellationToken)
         {
 
-            if (string.IsNullOrWhiteSpace(tbFind.Text))
+            if (string.IsNullOrWhiteSpace(text))
             {
                 _matches = _searchables.Take(MaxMatches).Select(t => t.Key).ToList();
                 return;
             }
 
             var scorer = new SearchablesMatchScorer();
+            scorer.TypeNames = _typeNames;
+            var scores = scorer.ScoreMatches(_searchables, text, cancellationToken);
 
-            var scores = scorer.ScoreMatches(_searchables, tbFind.Text, cancellationToken);
-
+            if (scores == null)
+                return;
 
             _matches =
                scores
@@ -238,8 +344,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 .Take(MaxMatches)
                 .Select(score => score.Key.Key)
                 .ToList();
-
-            
         }
 
         
@@ -247,16 +351,14 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-
-
+            
             float maxWidthUsedDuringRender = 0;
-            int renderWidth = tbFind.Right;
+            int renderWidth = panel1.Right;
 
             //the descendancy diagram
             int diagramStartX = renderWidth + 10;
-            int diagramStartY = tbFind.Bottom;
+            int diagramStartY = panel1.Bottom;
             int diagramWidth = Right - diagramStartX;
-
 
             //draw Form background
             e.Graphics.FillRectangle(new SolidBrush(SystemColors.Control), 0, 0, renderWidth, (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY));
@@ -275,7 +377,16 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
                     var img = _coreIconProvider.GetImage(_matches[i],isFavourite?OverlayKind.FavouredItem:OverlayKind.None);
 
-                    e.Graphics.FillRectangle(i == selectedIndex ? new SolidBrush(SystemColors.Highlight) : Brushes.White, 1, currentRowStartY, renderWidth, RowHeight);
+                    SolidBrush fillColor;
+
+                    if (i == keyboardSelectedIndex)
+                        fillColor = new SolidBrush(keyboardSelectionColor);
+                    else if( i== mouseSelectedIndex)
+                        fillColor = new SolidBrush(mouseSelectionColor);
+                    else
+                        fillColor = new SolidBrush(Color.White);
+
+                    e.Graphics.FillRectangle(fillColor, 1, currentRowStartY, renderWidth, RowHeight);
 
                     string text = _matches[i].ToString();
 
@@ -305,7 +416,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                             );
 
                         //if it is the selected node draw the parents diagram too
-                        if (i == selectedIndex)
+                        if (i == keyboardSelectedIndex)
                             DrawDescendancyDiagram(e, _matches[i], descendancy, diagramStartX, diagramStartY,diagramWidth);
                     }
 
@@ -400,6 +511,12 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 originalText = originalText.Substring(0, originalText.Length - 1);
 
             return originalText + "...";
+        }
+
+        private void NavigateToObjectUI_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _isClosed = true;
+            _autoCompleteProvider.UnRegister();
         }
     }
 }

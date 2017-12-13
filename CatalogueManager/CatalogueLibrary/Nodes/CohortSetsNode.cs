@@ -8,6 +8,9 @@ using CatalogueLibrary.Data.Aggregation;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Container tree node for all the AggregateConfigurations in a Catalogue that are involved in CohortCreation.
+    /// </summary>
     public class CohortSetsNode
     {
         public Catalogue Catalogue { get; set; }

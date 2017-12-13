@@ -7,6 +7,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.FilterImporting.Construction
 {
+    /// <summary>
+    /// Constructs IFilters etc for main Catalogue database filter (ExtractionFilter).  These are the master filters which are copied out as needed for cohort identification,
+    /// extraction etc and therefore do not have any IContainer type (AND/OR).
+    /// </summary>
     public class ExtractionFilterFactory : IFilterFactory
     {
         private readonly ICatalogueRepository _repository;

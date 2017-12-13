@@ -22,7 +22,7 @@ namespace DataExportLibrary.Tests.DataExtraction
     {
         private ExternalDatabaseServer _extractionServer;
         
-        private readonly string _expectedTableName = TestDatabaseNames.GetConsistentName("ExtractionConfiguration") + "_1_ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
+        private readonly string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
 
         //The database that the extracted records will appear in
         DiscoveredDatabase dbToExtractTo;
@@ -98,11 +98,11 @@ namespace DataExportLibrary.Tests.DataExtraction
             
             //set the destination pipeline
             var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
-            PipelineComponentArgument argument = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().Single();
+            PipelineComponentArgument argumentServer = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().Single(a => a.Name == "TargetDatabaseServer");
 
-            Assert.AreEqual("TargetDatabaseServer", argument.Name);
-            argument.SetValue(_extractionServer);
-            argument.SaveToDatabase();
+            Assert.AreEqual("TargetDatabaseServer", argumentServer.Name);
+            argumentServer.SetValue(_extractionServer);
+            argumentServer.SaveToDatabase();
             
             var component2 = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
             var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();

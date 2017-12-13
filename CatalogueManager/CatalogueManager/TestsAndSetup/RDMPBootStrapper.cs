@@ -18,6 +18,7 @@ using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
+using ScintillaNET;
 
 
 namespace CatalogueManager.TestsAndSetup

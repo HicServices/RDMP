@@ -5,6 +5,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.QueryBuilding
 {
+    /// <summary>
+    /// Thrown when there is a problem with QueryBuilding e.g. being unable to find a compatible IJoin (JoinInfo) between two TableInfos required by a query (based on the columns
+    /// chosen for SELECT).
+    /// </summary>
     public class QueryBuildingException : Exception
     {
         public List<IMapsDirectlyToDatabaseTable> ProblemObjects {get;private set;}

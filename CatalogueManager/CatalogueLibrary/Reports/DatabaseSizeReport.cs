@@ -14,6 +14,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Reports
 {
+    /// <summary>
+    /// Calculates the size of all the databases on an server, the rowcounts of all talbes as well as summarising key value pair descriptors of the server (version etc).
+    /// </summary>
     public class DatabaseSizeReport : RequiresMicrosoftOffice, ICheckable
     {
         private readonly TableInfo[] _tableInfos;
