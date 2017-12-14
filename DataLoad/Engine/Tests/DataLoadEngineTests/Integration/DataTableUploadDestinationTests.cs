@@ -748,6 +748,7 @@ CREATE TABLE [dbo].[TestResizing](
                 //create the destination component (what we want to test)
                 var destinationComponent = new DataTableUploadDestination();
                 destinationComponent.AllowResizingColumnsAtUploadTime = true;
+                destinationComponent.AllowLoadingPopulatedTables = true;
             
                 //create the simulated chunk that will be dispatched
                 var dt = new DataTable("TestDestinationAlreadyExistingIsOk");

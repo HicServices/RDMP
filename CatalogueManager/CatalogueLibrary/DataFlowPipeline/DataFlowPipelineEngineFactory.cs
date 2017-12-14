@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
@@ -136,32 +138,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             //get all possible properties that we could set on the underlying class
             foreach (var propertyInfo in toReturn.GetType().GetProperties())
             {
-                //see if any demand initialization
-                Attribute initialization =
-                    System.Attribute.GetCustomAttributes(propertyInfo)
-                        .FirstOrDefault(a => a is DemandsInitializationAttribute);
-
-                //this one does
-                if (initialization != null)
-                {
-                    try
-                    {
-                        //get the appropriate value from arguments
-                        var value = allArguments.SingleOrDefault(n => n.Name.Equals(propertyInfo.Name));
-
-                        if (value == null)
-                            throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
-                          " marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called " + toBuild.Name);
-
-                        //use reflection to set the value
-                        propertyInfo.SetValue(toReturn, value.GetValueAsSystemType(), null);
-                    }
-                    catch (NotSupportedException e)
-                    {
-                        throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
-                                            " but is of unexpected/unsupported type " + propertyInfo.GetType(), e);
-                    }
-                }
+                SetPropertyIfDemanded(toBuild,toReturn,propertyInfo,allArguments);
 
                 //see if any demand nested initialization
                 Attribute nestedInit =
@@ -175,38 +152,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                     var container = Activator.CreateInstance(propertyInfo.PropertyType);
 
                     foreach (var nestedProp in propertyInfo.PropertyType.GetProperties())
-                    {
-                        //see if any demand initialization
-                        initialization = System.Attribute.GetCustomAttributes(nestedProp)
-                                            .FirstOrDefault(a => a is DemandsInitializationAttribute);
-
-                        //this one does
-                        if (initialization != null)
-                        {
-                            var dottedName = propertyInfo.Name + "." + nestedProp.Name;
-
-                            try
-                            {
-                                //get the appropriate value from arguments
-                                var value = allArguments.SingleOrDefault(n => n.Name.Equals(dottedName));
-
-                                if (value == null)
-                                    throw new Exception("Class " + toReturn.GetType().Name + " has a property " +
-                                                        dottedName +
-                                                        " marked with DemandsNestedInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called " +
-                                                        toBuild.Name);
-
-                                //use reflection to set the value
-                                nestedProp.SetValue(container, value.GetValueAsSystemType(), null);
-                            }
-                            catch (NotSupportedException e)
-                            {
-                                throw new Exception(
-                                    "Class " + toReturn.GetType().Name + " has a nested property " + dottedName +
-                                    " but is of unexpected/unsupported type " + nestedProp.GetType(), e);
-                            }
-                        }
-                    }
+                        SetPropertyIfDemanded(toBuild, container, nestedProp, allArguments, propertyInfo);
 
                     //use reflection to set the container
                     propertyInfo.SetValue(toReturn, container, null);
@@ -214,6 +160,62 @@ namespace CatalogueLibrary.DataFlowPipeline
             }
 
             return toReturn;
+        }
+
+        /// <summary>
+        /// Sets the value of a property on instance toReturn. 
+        /// </summary>
+        /// <param name="toBuild">IPipelineComponent which is the persistence record - the template of what to build</param>
+        /// <param name="toReturn">An instance of the Class referenced by IPipelineComponent.Class (or in the case of [NestedDemandsInitialization] a reference to the nested property)</param>
+        /// <param name="propertyInfo">The specific property you are trying to populate on toBuild</param>
+        /// <param name="arguments">IArguments of toBuild (the values to populate toReturn with)</param>
+        /// <param name="nestedProperty">If you are populating a sub property of the class then pass the instance of the sub property as toBuild and pass the nesting property as nestedProperty</param>
+        private void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
+        {
+            //see if any demand initialization
+            var initialization =
+                (DemandsInitializationAttribute)
+                    System.Attribute.GetCustomAttributes(propertyInfo)
+                        .FirstOrDefault(a => a is DemandsInitializationAttribute);
+
+            //this one does
+            if (initialization != null)
+            {
+                try
+                {
+                    //look for 'DeleteUsers' if not nested
+                    //look for 'Settings.DeleteUsers' if nested in a property called Settings on class
+                    string expectedArgumentName = nestedProperty != null ?nestedProperty.Name + "." + propertyInfo.Name : propertyInfo.Name;
+
+                    //get the appropriate value from arguments
+                    var argument = arguments.SingleOrDefault(n => n.Name.Equals(expectedArgumentName));
+
+                    //if there is no matching argument and no default value
+                    if (argument == null)
+                        if (initialization.DefaultValue == null)
+                        {
+                            throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
+                                                " marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called " + toBuild.Name);
+                        }
+                        else
+                        {
+                            //use reflection to set the value
+                            propertyInfo.SetValue(toReturn, initialization.DefaultValue, null);
+                        }
+                    else
+                    {
+                        //use reflection to set the value
+                        propertyInfo.SetValue(toReturn, argument.GetValueAsSystemType(), null);
+                    }
+
+
+                }
+                catch (NotSupportedException e)
+                {
+                    throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
+                                        " but is of unexpected/unsupported type " + propertyInfo.GetType(), e);
+                }
+            }
         }
 
 
