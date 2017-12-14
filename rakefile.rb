@@ -58,6 +58,7 @@ assemblyinfo :assemblyinfo do |asm|
     asm.informational_version = "#{version}#{suffix}"
 end
 
+desc "Pushes the plugin packages into the specified folder"    
 task :deployplugins, [:folder] do |t, args|
     Dir.chdir('Plugin/Plugin') do
         sh "./build-and-deploy-local.bat #{args.folder}"

@@ -13,7 +13,7 @@
     </metadata>
     <files>
 
-        <!-- Source code for all dependencies, except CatalogueLibrary.Database -->
+        <!-- Source code for all dependencies, except *.Database -->
         <file src="DataLoad\Engine\LoadModules\LoadModules.Generic\**\*.cs" target="src\DataLoad\Engine\LoadModules\LoadModules.Generic" />
         <file src="DataLoad\Engine\DataLoadEngine\**\*.cs" target="src\DataLoad\Engine\DataLoadEngine" />
         <file src="CatalogueManager\CatalogueLibrary\**\*.cs" target="src\CatalogueManager\CatalogueLibrary" />
@@ -22,18 +22,10 @@
         <file src="Reusable\ReusableLibraryCode\**\*.cs" target="src\Reusable\ReusableLibraryCode" />
         <file src="Validation\HIC.Common.Validation\**\*.cs" target="src\Validation\HIC.Common.Validation" />
 
-        <file src="Plugin\Plugin\bin\$Configuration$\*.dll" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\Plugin.dll" />
-        <file src="Plugin\Plugin\bin\$Configuration$\*.pdb" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\Plugin.pdb" />
-        <file src="Plugin\Plugin\bin\$Configuration$\*.xml" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\Plugin.xml" />
-        <file src="Plugin\Plugin\bin\$Configuration$\*.exe" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\PluginPackager.exe" />
-
-        <!-- Tool for packaging plugins -->
-        <file src="Developer\PluginPackager\bin\$Configuration$\PluginPackager.exe" target="tools\PluginPackager" />
-        <file src="Developer\PluginPackager\bin\$Configuration$\CatalogueLibrary.dll" target="tools\PluginPackager" />
-        <file src="Developer\PluginPackager\bin\$Configuration$\MapsDirectlyToDatabaseTable.dll" target="tools\PluginPackager" />
-        <file src="Developer\PluginPackager\bin\$Configuration$\ReusableLibraryCode.dll" target="tools\PluginPackager" />
-        <file src="Developer\PluginPackager\bin\$Configuration$\CommandLine.dll" target="tools\PluginPackager" />
-        <file src="Developer\PluginPackager\bin\$Configuration$\RDMPStartup.dll" target="tools\PluginPackager" />
+        <file src="Plugin\Plugin\bin\$Configuration$\*.dll" target="lib\net45" />
+        <file src="Plugin\Plugin\bin\$Configuration$\*.pdb" target="lib\net45" />
+        <file src="Plugin\Plugin\bin\$Configuration$\*.xml" target="lib\net45" />
+        <file src="Plugin\Plugin\bin\$Configuration$\*.exe" target="lib\net45" />
 
     </files>
 </package>

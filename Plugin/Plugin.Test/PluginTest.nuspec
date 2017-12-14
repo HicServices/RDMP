@@ -27,8 +27,8 @@
         <file src="Tests.Common\**\*.cs" target="src\Tests.Common" />
         <file src="DataExportManager\DataExportLibrary\**\*.cs" target="src\DataExportManager\DataExportLibrary" />
 
-        <file src="Plugin\Plugin.Test\bin\$Configuration$\*.exe" target="lib\net45"/>
-        <file src="Plugin\Plugin.Test\bin\$Configuration$\*.xml" target="lib\net45"/>
+        <file src="Plugin\Plugin.Test\bin\$Configuration$\*.exe" target="lib\net45" />
+        <file src="Plugin\Plugin.Test\bin\$Configuration$\*.xml" target="lib\net45" />
         <file src="Plugin\Plugin.Test\bin\$Configuration$\*.dll" target="lib\net45" exclude="Plugin\Plugin.Test\bin\$Configuration$\Rhino.Mocks.dll" />
         <file src="Plugin\Plugin.Test\bin\$Configuration$\*.pdb" target="lib\net45" />
 
