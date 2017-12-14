@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Microsoft.SqlServer.Management.Smo;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
 {

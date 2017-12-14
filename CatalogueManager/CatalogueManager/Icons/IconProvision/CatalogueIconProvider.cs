@@ -17,7 +17,6 @@ using CatalogueManager.Icons.IconProvision.Exceptions;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.PluginChildProvision;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.Icons.IconProvision;

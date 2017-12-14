@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Reports;
 using CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation;
 using CatalogueManager.SimpleDialogs.Reports;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
