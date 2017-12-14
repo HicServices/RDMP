@@ -58,8 +58,6 @@
     <Compile Include="AutomationLoopTests\FictionalAutomationPlugin\TestSkullWriter.cs" />
     <Compile Include="AutomationLoopTests\FictionalAutomationPlugin\TestAutomationPluginSource.cs" />
     <Compile Include="AutomationLoopTests\FictionalCache\Reading\TestDataCacheReader.cs" />
-    <Compile Include="AutomationLoopTests\FictionalCache\TestDataInventor.cs" />
-    <Compile Include="AutomationLoopTests\FictionalCache\TestDataWritterChunk.cs" />
     <Compile Include="AutomationLoopTests\MockAutomationServiceOptions.cs" />
     <Compile Include="CacheRunFinderTests.cs" />
     <Compile Include="DLECacheRunFinderTests.cs" />
@@ -120,6 +118,10 @@
     <ProjectReference Include="..\..\..\..\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
       <Name>DataLoadEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Engine\Tests\DataLoadEngineTests\DataLoadEngineTests.csproj">
+      <Project>{066C4228-210D-4F22-A7FD-CA6304D5FFB5}</Project>
+      <Name>DataLoadEngineTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\RDMPAutomationService\RDMPAutomationService.csproj">
       <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>

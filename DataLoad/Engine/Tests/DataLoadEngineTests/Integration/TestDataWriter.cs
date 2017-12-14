@@ -4,7 +4,7 @@ using CachingEngine.Layouts;
 using CachingEngine.PipelineExecution.Destinations;
 using CachingEngine.Requests;
 using CatalogueLibrary.DataFlowPipeline;
-using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
+using DataLoadEngineTests.Integration.Cache;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -12,7 +12,7 @@ namespace DataLoadEngineTests.Integration
 {
     public class TestDataWriter : CacheFilesystemDestination
     {
-        public TestDataWritterChunk ProcessPipelineData(TestDataWritterChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        public TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             var layout = CreateCacheLayout();
 
@@ -33,7 +33,7 @@ namespace DataLoadEngineTests.Integration
 
         public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            return ProcessPipelineData((TestDataWritterChunk)toProcess, listener, cancellationToken);
+            return ProcessPipelineData((TestDataWriterChunk)toProcess, listener, cancellationToken);
         }
 
         public override ICacheLayout CreateCacheLayout()

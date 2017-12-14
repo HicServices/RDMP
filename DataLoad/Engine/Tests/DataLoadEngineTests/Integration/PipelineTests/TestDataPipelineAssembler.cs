@@ -2,7 +2,7 @@
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
-using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
+using DataLoadEngineTests.Integration.Cache;
 
 namespace DataLoadEngineTests.Integration.PipelineTests
 {
