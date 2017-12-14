@@ -299,6 +299,7 @@
     <Compile Include="SourceCodeEvaluation\EvaluateNamespacesAndSolutionFoldersTests.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\RDMPFormInitializationTests.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousEmptyChecksMethodsOrNotICheckablePlugins.cs" />
+    <Compile Include="SourceCodeEvaluation\InterfaceDeclarationsCorrect.cs" />
     <Compile Include="SourceCodeEvaluation\SinglePropertyUISourceCodeEvaluator.cs" />
     <Compile Include="TestResources.Designer.cs">
       <AutoGen>True</AutoGen>

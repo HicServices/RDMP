@@ -4,7 +4,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
-    public interface IProject
+    public interface IProject:IMapsDirectlyToDatabaseTable
     {
         string Name { get; set; }
         string MasterTicket { get; set; }

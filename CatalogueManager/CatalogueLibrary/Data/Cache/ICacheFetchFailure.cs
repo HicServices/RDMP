@@ -6,7 +6,7 @@ namespace CatalogueLibrary.Data.Cache
     /// <summary>
     /// See CacheFetchFailure
     /// </summary>
-    public interface ICacheFetchFailure : ISaveable, IDeleteable
+    public interface ICacheFetchFailure : ISaveable, IDeleteable,IMapsDirectlyToDatabaseTable
     {
         int CacheProgress_ID { get; set; }
         DateTime FetchRequestStart { get; set; }

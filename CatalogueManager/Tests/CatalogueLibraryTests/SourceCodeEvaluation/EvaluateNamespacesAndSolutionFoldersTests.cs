@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Reports;
 using CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation;
 using CatalogueManager.SimpleDialogs.Reports;
+using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
@@ -74,6 +75,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             }
 
             Assert.AreEqual(0,errors.Count);
+
+            InterfaceDeclarationsCorrect interfaces = new InterfaceDeclarationsCorrect();
+            interfaces.FindProblems(CatalogueRepository.MEF);
 
             AllImportantClassesDocumented documented = new AllImportantClassesDocumented();
             documented.FindProblems(csFilesFound);
