@@ -77,6 +77,10 @@ echo Now building the assembly to create plugin tests
 cd ..\Plugin.Test
 msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
 
+echo Now building the assembly to create plugin UI
+cd ..\Plugin.UI
+msbuild PluginUI.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+
 goto finish
 
 :usage

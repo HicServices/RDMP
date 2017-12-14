@@ -19,9 +19,7 @@
         <file src="CatalogueManager\CatalogueLibrary\**\*.cs" target="src\CatalogueManager\CatalogueLibrary" />
         <file src="Logging\HIC.Logging\**\*.cs" target="src\Logging\HIC.Logging" />
         <file src="Reusable\MapsDirectlyToDatabaseTable\**\*.cs" target="src\Reusable\MapsDirectlyToDatabaseTable" />
-        <file src="Reusable\MapsDirectlyToDatabaseTableUI\**\*.cs" target="src\Reusable\MapsDirectlyToDatabaseTableUI" />
         <file src="Reusable\ReusableLibraryCode\**\*.cs" target="src\Reusable\ReusableLibraryCode" />
-        <file src="Reusable\ReusableUIComponents\**\*.cs" target="src\Reusable\ReusableUIComponents" />
         <file src="Validation\HIC.Common.Validation\**\*.cs" target="src\Validation\HIC.Common.Validation" />
 
         <file src="Plugin\Plugin\bin\$Configuration$\*.dll" target="lib\net45" exclude="Plugin\Plugin\bin\$Configuration$\Plugin.dll" />
