@@ -1,4 +1,5 @@
 ﻿using System;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
@@ -6,7 +7,7 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// See ExternalDatabaseServer
     /// </summary>
-    public interface IExternalDatabaseServer : IDataAccessPoint
+    public interface IExternalDatabaseServer : IDataAccessPoint, IMapsDirectlyToDatabaseTable
     {
         int ID { get; }
         string Name { get; }
