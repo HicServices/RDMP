@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CachingEngine.BasicCache;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
+using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache
+namespace DataLoadEngineTests.Integration.PipelineTests
 {
     public class TestDataPipelineAssembler
     {
@@ -21,9 +16,9 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache
         {
             Pipeline = new Pipeline(catalogueRepository, pipeName);
             Source = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataInventor), 1, "DataInventorSource");
-            Destination = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataWritter), 2, "DataInventorDestination");
+            Destination = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataWriter), 2, "DataInventorDestination");
 
-            Destination.CreateArgumentsForClassIfNotExists<TestDataWritter>();
+            Destination.CreateArgumentsForClassIfNotExists<TestDataWriter>();
             
             Pipeline.SourcePipelineComponent_ID = Source.ID;
             Pipeline.DestinationPipelineComponent_ID = Destination.ID;

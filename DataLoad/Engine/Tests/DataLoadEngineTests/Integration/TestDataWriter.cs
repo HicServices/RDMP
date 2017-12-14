@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using CachingEngine.BasicCache;
 using CachingEngine.Layouts;
 using CachingEngine.PipelineExecution.Destinations;
 using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
+using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache
+namespace DataLoadEngineTests.Integration
 {
-    public class TestDataWritter : CacheFilesystemDestination
+    public class TestDataWriter : CacheFilesystemDestination
     {
         public TestDataWritterChunk ProcessPipelineData(TestDataWritterChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {

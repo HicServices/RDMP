@@ -19,6 +19,7 @@ using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Job.Scheduling;
 using DataLoadEngine.Job.Scheduling.Exceptions;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
+using DataLoadEngineTests.Integration.PipelineTests;
 using log4net.Layout;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
@@ -41,7 +42,7 @@ namespace DataLoadEngineTests.Integration
         [SetUp]
         public void up()
         {
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWritter));
+            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
             _lmd = new LoadMetadata(CatalogueRepository, "JobDateGenerationStrategyFactoryTestsIntegration");

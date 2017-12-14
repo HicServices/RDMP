@@ -59,8 +59,6 @@
     <Compile Include="AutomationLoopTests\FictionalAutomationPlugin\TestAutomationPluginSource.cs" />
     <Compile Include="AutomationLoopTests\FictionalCache\Reading\TestDataCacheReader.cs" />
     <Compile Include="AutomationLoopTests\FictionalCache\TestDataInventor.cs" />
-    <Compile Include="AutomationLoopTests\FictionalCache\TestDataPipelineAssembler.cs" />
-    <Compile Include="AutomationLoopTests\FictionalCache\TestDataWritter.cs" />
     <Compile Include="AutomationLoopTests\FictionalCache\TestDataWritterChunk.cs" />
     <Compile Include="AutomationLoopTests\MockAutomationServiceOptions.cs" />
     <Compile Include="CacheRunFinderTests.cs" />

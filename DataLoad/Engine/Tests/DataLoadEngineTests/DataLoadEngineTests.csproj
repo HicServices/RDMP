@@ -269,6 +269,7 @@
     <Compile Include="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\TransposerTests.cs" />
     <Compile Include="Integration\PipelineTests\PipelineArgumentTests.cs" />
+    <Compile Include="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
     <Compile Include="Integration\RuntimeTaskFactoryTests.cs" />
     <Compile Include="Integration\SingleJobPipelineTests.cs" />
@@ -280,6 +281,7 @@
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestDataSetup.cs" />
     <Compile Include="Integration\SetupDatasetTest.cs" />
     <Compile Include="Integration\TableInfoJoiningQueryBuilderTests.cs" />
+    <Compile Include="Integration\TestDataWriter.cs" />
     <Compile Include="Integration\ToMemoryDataLoadJob.cs" />
     <Compile Include="Integration\WebFileDownloaderTests.cs" />
     <Compile Include="Integration\WebServiceConfigurationTests.cs" />
@@ -400,10 +402,6 @@
     <ProjectReference Include="..\..\..\..\Tests.Common\Tests.Common.csproj">
       <Project>{ca13a431-7fb6-4bce-8521-42d130934311}</Project>
       <Name>Tests.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Applications\RDMPAutomationService\Tests\RDMPAutomationServiceTests\RDMPAutomationServiceTests.csproj">
-      <Project>{33CDFC10-6E3A-44C1-B29C-CAF77D846421}</Project>
-      <Name>RDMPAutomationServiceTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
