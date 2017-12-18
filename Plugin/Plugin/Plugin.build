@@ -19,7 +19,7 @@
         </PropertyGroup>
     -->
 	
-  	<Exec Command="nuget pack Plugin.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName)" />    
+  	<Exec Command="nuget pack Plugin.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName) -Symbols" />    
     <Exec Command="nuget push HIC.RDMP.Plugin.*.nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />    
   </Target>
   

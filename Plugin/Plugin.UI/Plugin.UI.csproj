@@ -51,6 +51,10 @@
       <Project>{550988fd-f1fa-41d8-be0f-00b4de47d320}</Project>
       <Name>ResearchDataManagementPlatform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
+      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
+      <Name>LoadModules.GenericUIs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
       <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
       <Name>ReusableUIComponents</Name>
