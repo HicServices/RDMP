@@ -19,8 +19,8 @@
         </PropertyGroup>
     -->
 	
-  	<Exec Command="nuget pack Plugin.UI.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName)" />
-    <Exec Command="nuget push HIC.RDMP.Plugin.UI.*.nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />
+  	<Exec Command="nuget pack HIC.RDMP.Plugin.UI.nuspec -Base ..\.. -Properties Configuration=$(ConfigurationName) -Symbols -Version $(Version)" />    
+    <Exec Command="nuget push HIC.RDMP.Plugin.UI.$(Version).nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />
   </Target>
   
   <Target Name="Build">
