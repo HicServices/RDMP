@@ -10,7 +10,7 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
-using ReusableUIComponents.Annotations;
+using ReusableLibraryCode.Annotations;
 
 namespace RDMPObjectVisualisation.Pipelines
 {

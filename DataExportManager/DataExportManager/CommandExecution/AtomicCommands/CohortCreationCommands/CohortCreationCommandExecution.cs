@@ -20,7 +20,7 @@ using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Pipelines;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
 {

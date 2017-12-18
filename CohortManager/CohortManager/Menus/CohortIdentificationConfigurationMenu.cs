@@ -12,7 +12,6 @@ using DataExportLibrary.Data;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CohortManager.Menus
 {

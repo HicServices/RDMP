@@ -3,7 +3,6 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
-using ReusableUIComponents.Annotations;
 
 namespace CatalogueLibrary.Data
 {

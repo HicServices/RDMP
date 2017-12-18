@@ -71,15 +71,15 @@ if %ERRORLEVEL% NEQ 0 goto errors
 echo Building the Plugin project in Release mode, if successful will pack the Plugin NuGet package
 
 echo Now build the plugin project
-msbuild Plugin.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+msbuild Plugin.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release /p:Version=%3
 
 echo Now building the assembly to create plugin tests
 cd ..\Plugin.Test
-msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+msbuild PluginTest.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release /p:Version=%3
 
 echo Now building the assembly to create plugin UI
 cd ..\Plugin.UI
-msbuild PluginUI.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release
+msbuild PluginUI.build /t:Deploy /p:ReleaseNugetPackageSource=%NUGET_SOURCE% /p:ReleaseNugetPushParams=%NUGET_PUSH_PARAMS% /p:ConfigurationName=Release /p:Version=%3
 
 goto finish
 

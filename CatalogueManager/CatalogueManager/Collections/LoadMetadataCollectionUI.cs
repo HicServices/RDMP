@@ -23,7 +23,6 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
-using ReusableUIComponents.Annotations;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 
 namespace CatalogueManager.Collections

@@ -18,7 +18,7 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 {

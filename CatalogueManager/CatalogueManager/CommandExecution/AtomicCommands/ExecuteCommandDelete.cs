@@ -3,9 +3,10 @@ using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

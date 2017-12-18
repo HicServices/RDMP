@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ReusableUIComponents.Icons {
+namespace ReusableLibraryCode.Icons {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ReusableUIComponents.Icons {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ReusableUIComponents.Icons.DatabaseProviderIcons", typeof(DatabaseProviderIcons).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ReusableLibraryCode.Icons.DatabaseProviderIcons", typeof(DatabaseProviderIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -52,7 +52,8 @@ assemblyinfo :assemblyinfo do |asm|
 
     version = "#{major}.#{minor}.#{patch}.#{build}"
     puts "version: #{version}"
-    
+    f = File.new('version', 'w')
+    f.write version
     asm.version = version
     asm.file_version = version
     asm.informational_version = "#{version}#{suffix}"

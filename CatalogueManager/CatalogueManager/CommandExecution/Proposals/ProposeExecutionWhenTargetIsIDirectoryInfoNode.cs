@@ -9,7 +9,6 @@ using CatalogueManager.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {

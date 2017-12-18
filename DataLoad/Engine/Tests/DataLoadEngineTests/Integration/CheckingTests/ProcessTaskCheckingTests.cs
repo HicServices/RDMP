@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -13,7 +9,6 @@ using DataLoadEngine.Checks.Checkers;
 using LoadModules.Generic.Attachers;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

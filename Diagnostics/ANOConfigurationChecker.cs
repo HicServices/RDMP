@@ -6,7 +6,6 @@ using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.Annotations;
 
 namespace Diagnostics
 {

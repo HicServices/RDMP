@@ -12,10 +12,11 @@ using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Remoting;
 using CatalogueManager.ItemActivation;
 using Newtonsoft.Json;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Serialization;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
 

@@ -1999,7 +1999,7 @@
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
-      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
+      <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
       <Name>ReusableUIComponents</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">

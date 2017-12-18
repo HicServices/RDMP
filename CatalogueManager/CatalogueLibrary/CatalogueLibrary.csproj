@@ -560,10 +560,6 @@
       <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
-      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
-      <Name>ReusableUIComponents</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
       <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
       <Name>CatalogueLibrary.Database</Name>
