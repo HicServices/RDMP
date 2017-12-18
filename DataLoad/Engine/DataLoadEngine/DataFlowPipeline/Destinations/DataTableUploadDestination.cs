@@ -188,8 +188,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
             //work out the max sizes - expensive bit
             foreach (DataRow row in toProcess.Rows)
+                //for each destination column
                 foreach (string col in thisBatch.Keys.ToArray())
-                    thisBatch[col].AdjustToCompensateForValue(row[col]);//run the datatype computer over it
+                    //if it appears in the toProcess DataTable
+                    if (toProcess.Columns.Contains(col))
+                        //run the datatype computer over it to compute max lengths
+                        thisBatch[col].AdjustToCompensateForValue(row[col]);
 
             //cheap bit
             foreach (KeyValuePair<string, DataTypeComputer> kvp in thisBatch)
@@ -265,12 +269,30 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
             try
             {
-                _managedConnection.ManagedTransaction.CommitAndCloseConnection();
-                
-                if (_bulkcopy != null)
-                    _bulkcopy.Dispose();
+                if (_managedConnection != null)
+                {
+                    //if there was an error
+                    if (pipelineFailureExceptionIfAny != null)
+                    {
+                        _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
+                        
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back sucessfully"));
 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
+                        if (_bulkcopy != null)
+                            _bulkcopy.Dispose();
+                    }
+                    else
+                    {
+                        _managedConnection.ManagedTransaction.CommitAndCloseConnection();
+
+                        if (_bulkcopy != null)
+                            _bulkcopy.Dispose();
+
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
+                    }
+
+                    
+                }
             }
             catch (Exception e)
             {

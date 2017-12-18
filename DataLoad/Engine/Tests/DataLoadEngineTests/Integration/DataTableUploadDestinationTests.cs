@@ -773,7 +773,59 @@ CREATE TABLE [dbo].[TestResizing](
             {
                 tbl.Drop();
             }
-            
+        }
+
+        [Test]
+        public void TestDestinationAlreadyExisting_ColumnSubset()
+        {
+            //create a table in the scratch database with a single column Name
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestDestinationAlreadyExisting_ColumnSubset", new[]
+            {
+                new DatabaseColumnRequest("Name", "varchar(10)", false),
+                new DatabaseColumnRequest("Age","int"),
+                new DatabaseColumnRequest("Address","varchar(1000)")
+
+            });
+
+            try
+            {
+                
+                //upload a single row of already existing data
+                var dtAlreadyThereData = new DataTable();
+                dtAlreadyThereData.Columns.Add("Name");
+                dtAlreadyThereData.Columns.Add("Age");
+                dtAlreadyThereData.Rows.Add(new object[] { "Bob",5});
+
+                using (var bulk = tbl.BeginBulkInsert())
+                    bulk.Upload(dtAlreadyThereData);
+                
+                //create the destination component (what we want to test)
+                var destinationComponent = new DataTableUploadDestination();
+                destinationComponent.AllowResizingColumnsAtUploadTime = true;
+                destinationComponent.AllowLoadingPopulatedTables = true;
+
+                //create the simulated chunk that will be dispatched
+                var dt = new DataTable("TestDestinationAlreadyExisting_ColumnSubset");
+                dt.Columns.Add("Name");
+                dt.Rows.Add(new[] { "Bob" });
+                dt.Rows.Add(new[] { "Frank" });
+                dt.Rows.Add(new[] { "I've got a lovely bunch of coconuts" });
+
+                var listener = new ThrowImmediatelyDataLoadEventListener();
+
+                //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
+                destinationComponent.PreInitialize(DiscoveredDatabaseICanCreateRandomTablesIn, listener);
+
+                //tell the destination component to process the data
+                destinationComponent.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
+
+                destinationComponent.Dispose(listener, null);
+                Assert.AreEqual(4, tbl.GetRowCount());
+            }
+            finally
+            {
+                tbl.Drop();
+            }
         }
     }
 }
