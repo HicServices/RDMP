@@ -5,6 +5,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// Static class for logging progress messages during a logged activity (See DataLoadRun / Logging.cd).
+    /// </summary>
     public class ProgressLogging : IProgressLogging
     {
         private static ProgressLogging _instance;

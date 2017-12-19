@@ -9,6 +9,10 @@ using ReusableLibraryCode.Progress;
 
 namespace HIC.Logging.Listeners
 {
+    /// <summary>
+    /// Handles transparently all the logging complexity by using the IDataLoadEventListener interface.  Use this interface if you want to log to the
+    /// logging database events that might otherwise go elsewhere or the component/system you are dealing with already uses IDataLoadEventListeners
+    /// </summary>
     public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     {
 
