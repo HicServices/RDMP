@@ -1,7 +1,5 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Annotations;
 
 namespace ReusableUIComponents.CommandExecution.Proposals
 {

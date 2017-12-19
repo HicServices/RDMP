@@ -1,9 +1,6 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading;
-using System.Windows.Media;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Xceed.Words.NET;
 

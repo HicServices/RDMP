@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary;
+﻿using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using Tests.Common;
 
-namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
+namespace Tests.Common
 {
     public class TestableTableValuedFunction
     {

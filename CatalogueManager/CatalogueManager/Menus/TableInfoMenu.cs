@@ -36,10 +36,10 @@ using RDMPObjectVisualisation.Copying.Commands;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dependencies;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {

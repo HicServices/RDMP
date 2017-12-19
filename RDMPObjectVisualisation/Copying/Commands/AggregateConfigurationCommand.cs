@@ -3,6 +3,7 @@ using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
 namespace RDMPObjectVisualisation.Copying.Commands

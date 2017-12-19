@@ -1,15 +1,14 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using CachingEngine.Requests;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache
+namespace DataLoadEngineTests.Integration.Cache
 {
-    public class TestDataWritterChunk : ICacheChunk
+    public class TestDataWriterChunk : ICacheChunk
     {
         public FileInfo[] Files { get; set; }
         public ICacheFetchRequest Request { get; private set; }
 
-        public TestDataWritterChunk(ICacheFetchRequest request, FileInfo[] files)
+        public TestDataWriterChunk(ICacheFetchRequest request, FileInfo[] files)
         {
             Request = request;
             Files = files;

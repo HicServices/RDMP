@@ -283,7 +283,6 @@
     <Compile Include="Integration\TableNamingConventionTests.cs" />
     <Compile Include="Integration\TableValuedFunctionTests\AggregationTests.cs" />
     <Compile Include="Integration\TableValuedFunctionTests\ImportAndTestTests.cs" />
-    <Compile Include="Integration\TableValuedFunctionTests\TestableTableValuedFunction.cs" />
     <Compile Include="Integration\ObscureDependencyTests\ValidationXMLObscureDependencyFinderTests.cs" />
     <Compile Include="Integration\TriggerTests.cs" />
     <Compile Include="Integration\Validation\ReferentialIntegrityConstraintTests.cs" />
@@ -338,7 +337,6 @@
     <Compile Include="Unit\SqlSyntaxHelperTests.cs" />
     <Compile Include="Integration\TableInfoTests.cs" />
     <Compile Include="Unit\TestAcronymnGeneration.cs" />
-    <Compile Include="UserAcceptanceTestEnvironmentHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj">

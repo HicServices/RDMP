@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,10 +8,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataFlowPipeline.Destinations;
-using MySql.Data.MySqlClient;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;

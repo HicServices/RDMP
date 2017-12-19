@@ -19,8 +19,8 @@ using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.Menus
 {

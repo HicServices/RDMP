@@ -13,8 +13,8 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 {

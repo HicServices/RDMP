@@ -13,7 +13,6 @@ using CatalogueManager.SimpleDialogs.Remoting;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {

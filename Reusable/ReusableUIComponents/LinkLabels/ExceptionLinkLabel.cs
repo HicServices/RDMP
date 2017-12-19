@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using ReusableUIComponents.Annotations;
+using ReusableLibraryCode.Annotations;
 
 namespace ReusableUIComponents.LinkLabels
 {

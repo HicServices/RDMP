@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CachingEngine.PipelineExecution.Sources;
 using CachingEngine.Requests;
-using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache
+namespace DataLoadEngineTests.Integration.Cache
 {
-    public class TestDataInventor : CacheSource<TestDataWritterChunk>
+    public class TestDataInventor : CacheSource<TestDataWriterChunk>
     {
         Random r = new Random();
 
@@ -38,7 +33,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache
                 currentDay = currentDay.AddDays(1);
             }
 
-            Chunk = new TestDataWritterChunk(Request,toReturn.ToArray());
+            Chunk = new TestDataWriterChunk(Request,toReturn.ToArray());
         }
 
         private FileInfo GetFileForDay(DateTime currentDay)
@@ -63,11 +58,11 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache
             
         }
 
-        public override TestDataWritterChunk TryGetPreview()
+        public override TestDataWriterChunk TryGetPreview()
         {
             var dt = DateTime.Now.AddYears(-200);
 
-            return new TestDataWritterChunk(new CacheFetchRequest(null, dt){ChunkPeriod = new TimeSpan(1,0,0)}, new []{GetFileForDay(dt)});
+            return new TestDataWriterChunk(new CacheFetchRequest(null, dt){ChunkPeriod = new TimeSpan(1,0,0)}, new []{GetFileForDay(dt)});
         }
 
         public override void Check(ICheckNotifier notifier)

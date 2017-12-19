@@ -10,6 +10,9 @@ using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
+using DataLoadEngineTests.Integration;
+using DataLoadEngineTests.Integration.Cache;
+using DataLoadEngineTests.Integration.PipelineTests;
 using NUnit.Framework;
 using RDMPAutomationService.Logic.Cache;
 using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
@@ -36,7 +39,7 @@ namespace RDMPAutomationServiceTests
         [SetUp]
         public void SetupDatabaseObjects()
         {
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWritter));
+            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
             _slot = new AutomationServiceSlot(CatalogueRepository);

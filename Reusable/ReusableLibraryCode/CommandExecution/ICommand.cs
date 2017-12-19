@@ -1,4 +1,4 @@
-﻿namespace ReusableUIComponents.CommandExecution
+﻿namespace ReusableLibraryCode.CommandExecution
 {
     public interface ICommand
     {
