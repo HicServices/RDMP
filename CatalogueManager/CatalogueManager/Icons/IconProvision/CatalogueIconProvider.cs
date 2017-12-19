@@ -19,7 +19,7 @@ using CatalogueManager.PluginChildProvision;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 using ScintillaNET;
 
 namespace CatalogueManager.Icons.IconProvision

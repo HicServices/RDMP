@@ -13,6 +13,9 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
+using DataLoadEngineTests.Integration;
+using DataLoadEngineTests.Integration.Cache;
+using DataLoadEngineTests.Integration.PipelineTests;
 using NUnit.Framework;
 using RDMPAutomationService;
 using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
@@ -38,7 +41,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         [SetUp]
         public void SetupDatabaseObjects()
         {
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWritter));
+            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
             var testDir = new DirectoryInfo(@".\EndToEndCacheTest");
@@ -75,7 +78,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         [Test]
         public void FireItUpManually()
         {
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWritter));
+            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
             var cachingHost = new CachingHost(CatalogueRepository);

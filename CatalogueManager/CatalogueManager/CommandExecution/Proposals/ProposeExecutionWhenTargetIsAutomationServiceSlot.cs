@@ -11,7 +11,6 @@ using CatalogueManager.SimpleDialogs.Automation;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {

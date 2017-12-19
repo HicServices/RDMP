@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Web.UI;
-using System.Windows.Media;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
 

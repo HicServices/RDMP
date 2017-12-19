@@ -143,10 +143,6 @@
       <Project>{3fd82ca1-5f5a-4142-957a-13b29d729ec8}</Project>
       <Name>QueryCaching.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj">
-      <Project>{94797307-05f3-4e72-b60b-dcb51b41cf9c}</Project>
-      <Name>MapsDirectlyToDatabaseTableUI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
       <Name>MapsDirectlyToDatabaseTable</Name>
@@ -154,10 +150,6 @@
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
-      <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
-      <Name>ReusableUIComponents</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>

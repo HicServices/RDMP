@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace ReusableUIComponents.Icons.IconProvision
+namespace ReusableLibraryCode.Icons.IconProvision
 {
     public interface IIconProvider
     {

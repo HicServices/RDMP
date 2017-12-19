@@ -1,6 +1,5 @@
 ﻿using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
-using ReusableUIComponents.Annotations;
 
 namespace CatalogueLibrary.Data
 {

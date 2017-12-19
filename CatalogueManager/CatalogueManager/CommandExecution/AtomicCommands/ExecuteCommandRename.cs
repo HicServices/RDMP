@@ -6,10 +6,11 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

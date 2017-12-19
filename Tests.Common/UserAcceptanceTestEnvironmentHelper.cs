@@ -2,13 +2,9 @@ using System;
 using System.Data.SqlClient;
 using CatalogueLibrary.Repositories;
 using Diagnostics;
-using RDMPStartup;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using Tests.Common;
 
-namespace CatalogueLibraryTests
+namespace Tests.Common
 {
     /// <summary>
     /// Prepares a test dataset environment configured according to test config settings. Intended for use at test fixture level, i.e. shared by multiple tests

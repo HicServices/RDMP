@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconOverlays
 {

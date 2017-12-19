@@ -346,8 +346,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
@@ -366,7 +364,6 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Words.NET, Version=1.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DocX.1.1.0\lib\Xceed.Words.NET.dll</HintPath>
       <Private>True</Private>
@@ -678,10 +675,6 @@
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
       <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
-      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
-      <Name>ReusableUIComponents</Name>
     </ProjectReference>
     <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
       <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>

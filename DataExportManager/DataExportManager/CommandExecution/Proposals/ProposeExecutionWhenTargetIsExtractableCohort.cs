@@ -12,7 +12,6 @@ using DataExportManager.CommandExecution.AtomicCommands;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace DataExportManager.CommandExecution.Proposals
 {

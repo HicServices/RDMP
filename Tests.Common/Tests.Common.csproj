@@ -148,9 +148,11 @@
     </Compile>
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestableTableValuedFunction.cs" />
     <Compile Include="TestDatabaseHelper.cs" />
     <Compile Include="TestHICProjectDirectory.cs" />
     <Compile Include="TestDirectoryHelper.cs" />
+    <Compile Include="UserAcceptanceTestEnvironmentHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -204,6 +206,10 @@
     <ProjectReference Include="..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141d0499-2b1f-4997-8bf3-19c895484093}</Project>
       <Name>DataQualityEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Diagnostics\Diagnostics.csproj">
+      <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
+      <Name>Diagnostics</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
       <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>

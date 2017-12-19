@@ -1,4 +1,4 @@
-﻿namespace ReusableUIComponents.Icons.IconProvision
+﻿namespace ReusableLibraryCode.Icons.IconProvision
 {
     public enum OverlayKind
     {

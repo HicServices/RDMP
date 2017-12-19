@@ -13,9 +13,9 @@ using CohortManager.Wizard;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CohortManager.CommandExecution.AtomicCommands
 {
