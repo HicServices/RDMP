@@ -23,7 +23,6 @@ using DataQualityEngine.Data;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace Dashboard
 {

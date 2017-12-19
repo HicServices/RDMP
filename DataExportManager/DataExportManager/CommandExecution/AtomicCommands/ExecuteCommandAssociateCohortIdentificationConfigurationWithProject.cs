@@ -14,8 +14,8 @@ using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {

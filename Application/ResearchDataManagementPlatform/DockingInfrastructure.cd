@@ -15,7 +15,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ToolboxWindowManager">
     <Position X="0.5" Y="0.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAABEAkAAIAAABAAACIQBUAEBEAAAAAAgEAAA=</HashCode>
+      <HashCode>AIAAAAAAABEAkAAIAAABAAICAQD0AEBAAAAAAAgEAAA=</HashCode>
       <FileName>WindowManagement\ToolboxWindowManager.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -36,7 +36,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowManager" Collapsed="true">
     <Position X="5" Y="2.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>CAQAASEIMgGCkwJAAkAAqQCl4SAhggwrtVMLQIFAqQA=</HashCode>
+      <HashCode>AAQAACEIEAGCghDAAAAAoACkYSAhggBhBFMIQIFAAQA=</HashCode>
       <FileName>WindowManagement\ContentWindowManager.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -44,7 +44,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.ContentWindowTracker" Collapsed="true">
     <Position X="8" Y="1.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAACAAAABIAAgAAAAAgBAQAAAAAAAACAAAAAEAAAAA=</HashCode>
+      <HashCode>AAAAAAAAABIAAgAAAAAgBAgAAAAABAACAAAAAEAAAAA=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\ContentWindowTracker.cs</FileName>
     </TypeIdentifier>
   </Class>

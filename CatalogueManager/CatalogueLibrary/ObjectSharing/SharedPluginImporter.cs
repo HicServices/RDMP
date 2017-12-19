@@ -13,6 +13,10 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.ObjectSharing
 {
+    /// <summary>
+    /// Facilitiates importing plugins from a remote contributor (as a MapsDirectlyToDatabaseTableStatelessDefinition) and creating the local copies of the Plugin dlls
+    /// in the local CatalogueRepository database.
+    /// </summary>
     public class SharedPluginImporter
     {
         private MapsDirectlyToDatabaseTableStatelessDefinition<Plugin> _plugin;

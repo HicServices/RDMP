@@ -13,6 +13,14 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
+    /// <summary>
+    /// Abstract base for all concrete IArgument objects.  An Argument is a stored value for a Property defined on a PipelineComponent or DLE component which has
+    /// been decorated with [DemandsInitialization] and for which the user has picked a value.  The class includes both the Type of the argument (extracted from
+    /// the class Property PropertyInfo via reflection) and the Value (stored in the database as a string).
+    /// 
+    /// This allows simple UI driven population and persistence of configuration settings for plugin and system core components as they are used in all pipeline and
+    /// dle activities.  See ArgumentCollection for UI logic.
+    /// </summary>
     public abstract class Argument : VersionedDatabaseEntity, IArgument
     {
         public static readonly Type[] PermissableTypes =
@@ -169,7 +177,13 @@ namespace CatalogueLibrary.Data.DataLoad
             Type type = GetSystemType();
 
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-                return Repository.GetObjectByID(GetSystemType(), Convert.ToInt32(Value));
+            {
+                //if it is interface e.g. ITableInfo fetch instead the TableInfo object
+                if (type.IsInterface && type.Name.StartsWith("I"))
+                    type = ((CatalogueRepository) Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1));
+
+                return Repository.GetObjectByID(type, Convert.ToInt32(Value));
+            }
 
             if (Type.Equals(typeof (EncryptedString).ToString()))
                 return new EncryptedString((CatalogueRepository) Repository) {Value = Value};
@@ -313,7 +327,7 @@ namespace CatalogueLibrary.Data.DataLoad
                         throw new NotSupportedException("Type " + o.GetType() + " is not one of the permissable types for ProcessTaskArgument, argument must be one of:" + PermissableTypes.Aggregate("", (s, n) => s + n + ",").TrimEnd(','));
 
                     //if we are passed something o of differing type to the known requested type then someone is lying to someone!
-                    if (o.GetType() != type)
+                    if (type != null && !type.IsInstanceOfType(o))
                         throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");                        
                 }
             }

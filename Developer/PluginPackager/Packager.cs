@@ -87,11 +87,6 @@ namespace PluginPackager
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Could not package plugin", CheckResult.Fail, e));
             }
-            finally
-            {
-                if (_workingDirectory != null)
-                    _workingDirectory.Delete(true);
-            }
         }
 
         private void SetupWorkingDictionaries(ICheckNotifier notifier)

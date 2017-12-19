@@ -13,6 +13,18 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
 {
     public delegate void ContextInitialzedObjectEventHandler(object componentBeingInitialized, object valueBeingConsumed);
 
+    /// <summary>
+    /// Low level description of what an IPipeline must look like to be compatible with a given use case for a IDataFlowPipelineEngine.  This includes whether there must be
+    /// a specific base type / interface for source / destination components as well as what the flow T object is (e.g. System.Data.DataTable).  
+    /// 
+    /// This class also handles distributing initialization object instances to subscribers (components implementing IPipelineRequirement X).  You can create one of these
+    /// with DataFlowPipelineContextFactory but really you should only be doing this if you are building a new IPipelineUseCase.  If you are trying to run an IPipeline that
+    /// is used elsewhere in RDMP then you need to find the IPipelineUseCase that matches the job you are trying to achieve.
+    /// 
+    /// DataFlowPipelineContext is symantically similar to IPipelineUseCase, the difference is that the context only contains low level rules about what is compatible while
+    /// the IPipelineUseCase also has the specific objects that will be used for initialization, fixed source instances etc (as well the context).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     {
         public Type MustHaveSource { get; set; }

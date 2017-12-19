@@ -1,6 +1,7 @@
 ﻿using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
 namespace RDMPObjectVisualisation.Copying.Commands

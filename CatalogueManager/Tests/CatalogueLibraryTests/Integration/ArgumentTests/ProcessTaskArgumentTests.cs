@@ -293,7 +293,40 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             var destInstance = factory.CreateDestinationIfExists(pipe);
 
             Assert.AreEqual("coconuts", ((BasicDataReleaseDestination)destInstance).ReleaseSettings.CustomReleaseFolder.Name);
-            
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestArgumentWithTypeThatIsInterface(bool useInterfaceDeclaration)
+        {
+            var pipe = new Pipeline(CatalogueRepository, "p");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
+                "c");
+
+            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
+
+            var server = new ExternalDatabaseServer(CatalogueRepository, "fish");
+
+            try
+            {
+                arg.SetType(useInterfaceDeclaration ? typeof (IExternalDatabaseServer) : typeof (ExternalDatabaseServer));
+
+                arg.SetValue(server);
+
+                //should have set Value string to the ID of the object
+                Assert.AreEqual(arg.Value,server.ID.ToString());
+
+                arg.SaveToDatabase();
+
+                //but as system Type should return the server
+                Assert.AreEqual(arg.GetValueAsSystemType(),server);
+            }
+            finally
+            {
+                pipe.DeleteInDatabase();
+                server.DeleteInDatabase();
+            }
         }
     }
 }

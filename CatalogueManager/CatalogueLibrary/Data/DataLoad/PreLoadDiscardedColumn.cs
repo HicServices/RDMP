@@ -7,10 +7,24 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
+    /// <summary>
+    /// Describes where a PreLoadDiscardedColumn will ultimately end up.
+    /// </summary>
     public enum DiscardedColumnDestination
     {
+        /// <summary>
+        /// Column appears in RAW and might be used in AdjustRaw but is droped completely prior to migration to Staging
+        /// </summary>
         Oblivion=1,
+
+        /// <summary>
+        /// Column appears in RAW but is seperated off and stored in an IdentifierDump (See IdentifierDumper) and not passed through to Staging
+        /// </summary>
         StoreInIdentifiersDump=2,
+
+        /// <summary>
+        /// Column appears in RAW but is Diluted during AdjustStaging prior to joining the live dataset e.g. by rounding dates to the nearest quarter.  The undilted value may be stored in the IdentifierDump (See IdentifierDumper).
+        /// </summary>
         Dilute=3
 
     }

@@ -6,6 +6,12 @@ using System.Linq;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// The virtual 'folder' in which to describe the Catalogue as residing in to the user.  This is implemented in the UI as a tree of folders but is calculated from all the
+    /// visible Catalogues at any given time (you can't create an empty CatalogueFolder you just have to declare a Catalogue as being in a new folder name).
+    /// 
+    /// CatalogueFolder is basically a string but has method to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues (See GetImmediateSubFoldersUsing)
+    /// </summary>
     public class CatalogueFolder : IConvertible
     {
         private readonly Catalogue _parent;

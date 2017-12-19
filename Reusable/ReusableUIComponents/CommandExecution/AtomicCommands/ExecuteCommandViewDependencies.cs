@@ -5,9 +5,10 @@ using System.Linq;
 using System.Windows.Forms;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.Dependencies;
 using ReusableUIComponents.Dependencies.Models;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace ReusableUIComponents.CommandExecution.AtomicCommands
 {
@@ -56,7 +57,7 @@ namespace ReusableUIComponents.CommandExecution.AtomicCommands
 
             g.GraphDependenciesOf(_root);
         }
-        
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return Images.ViewDependencies;

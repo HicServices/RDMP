@@ -27,8 +27,7 @@ namespace CatalogueManager.AutoComplete
 
         public AutoCompleteProvider Create(IHasDependencies forObject)
         {
-            var provider = new AutoCompleteProvider(new CatalogueIconProvider(null));
-            provider.SetActivator(_activator);
+            var provider = new AutoCompleteProvider(_activator);
 
             if(forObject != null)
                 RecursiveAdd(provider, forObject, 0);

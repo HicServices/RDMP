@@ -9,6 +9,12 @@ using CatalogueLibrary.Repositories;
 
 namespace CatalogueLibrary
 {
+    /// <summary>
+    /// Core RDMP implementation of RSA puublic/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
+    /// no private key is configured then the default Key will be used (this is not secure and anyone with access to the RDMP source code could decrypt your strings - which
+    ///  is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption technique you will get a different output (encrypted) string
+    /// value for repeated calls to Encrypt even with the same input string.
+    /// </summary>
     public class SimpleStringValueEncryption : IEncryptStrings
     {
 

@@ -12,6 +12,10 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Reports
 {
+    /// <summary>
+    /// Extracts comments from SourceCodeForSelfAwareness.zip for all IMapsDirectlyToDatabaseTable object Types (all things that the user can store in the Catalogue/Data Export
+    /// repository - e.g. Catalogues, TableInfos etc).  This ensures that the help is always up-to-date and matches the source code 100%.
+    /// </summary>
     public class DocumentationReportMapsDirectlyToDatabase: ICheckable
     {
         private readonly Assembly _assembly;

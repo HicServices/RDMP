@@ -163,10 +163,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             }
         }
 
-        public override object[] GetInitializationObjects(ICatalogueRepository repository)
+        public override object[] GetInitializationObjects()
         {
             //initialize it with the extraction configuration request object and the audit object (this will initialize all objects in pipeline which implement IPipelineRequirement<ExtractionRequest> and IPipelineRequirement<TableLoadInfo>
-            return new object[]{ExtractCommand, _dataLoadInfo,repository};
+            if (_pipeline != null)
+                return new object[] { ExtractCommand, _dataLoadInfo, _pipeline.Repository};
+
+            return new object[] { ExtractCommand, _dataLoadInfo};
         }
 
         public override IDataFlowPipelineContext GetContext()

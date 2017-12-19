@@ -17,7 +17,6 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;

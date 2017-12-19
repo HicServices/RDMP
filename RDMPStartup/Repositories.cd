@@ -4,16 +4,16 @@
     <Position X="5.001" Y="8.934" Height="1.273" Width="4.111" />
   </Comment>
   <Class Name="RDMPStartup.Startup">
-    <Position X="2.5" Y="1" Width="2.75" />
+    <Position X="2.5" Y="0.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAEAEAAEABAAAAAAAQAICgQAAAAABAAAAAA=</HashCode>
       <FileName>Startup.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RDMPStartup.RegistryRepositoryFinder">
-    <Position X="13" Y="1" Width="2.5" />
+    <Position X="10" Y="1.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AIAADAAMAAAAEAAAEICAAAAAAEAAAAAAAAAAAAgAAAA=</HashCode>
+      <HashCode>AAAADAAMAAAAEAAAEICAAAAAAEAAAAAAAAAAAAABAAA=</HashCode>
       <FileName>RegistryRepositoryFinder.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -22,32 +22,20 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="RDMPStartup.LinkedRepositoryProvider">
-    <Position X="17.5" Y="1" Width="2.25" />
+    <Position X="14.5" Y="1.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAACAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <HashCode>EAACCAAAAABAAAAAEAAAAAAAAAgAAAAAAAAAAAABAgA=</HashCode>
       <FileName>LinkedRepositoryProvider.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="DataExportLibrary.DataExportManagerObscureDependencyFinder" Collapsed="true">
-    <Position X="1.5" Y="11" Width="3.25" />
-    <TypeIdentifier />
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="RDMPStartup.ConfigFileRepositoryFinder">
-    <Position X="13" Y="5.25" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAACAAAAAABAAAAEIAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ConfigFileRepositoryFinder.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueLibrary.Repositories.CatalogueRepository" Collapsed="true">
     <Position X="0.5" Y="6.5" Width="2.25" />
     <TypeIdentifier />
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="MapsDirectlyToDatabaseTable.TableRepository" Collapsed="true">
-    <Position X="2.25" Y="5" Width="3" />
+    <Position X="2" Y="5.25" Width="3" />
     <TypeIdentifier />
     <ShowAsAssociation>
       <Property Name="ObscureDependencyFinder" />
@@ -55,7 +43,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataExportLibrary.Repositories.DataExportRepository">
-    <Position X="4.75" Y="6" Width="1.75" />
+    <Position X="5" Y="6.25" Width="1.75" />
     <TypeIdentifier />
     <ShowAsAssociation>
       <Property Name="CatalogueRepository" />
@@ -75,19 +63,21 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="RDMPStartup.IRDMPPlatformRepositoryServiceLocator" Collapsed="true">
-    <Position X="7.25" Y="1" Width="3" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>IRDMPPlatformRepositoryServiceLocator.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
+  <Class Name="DataExportLibrary.BetweenCatalogueAndDataExportObscureDependencyFinder" Collapsed="true">
+    <Position X="2.5" Y="11" Width="4.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="MapsDirectlyToDatabaseTable.IObscureDependencyFinder" Collapsed="true">
     <Position X="7.5" Y="5" Width="2.25" />
     <TypeIdentifier />
   </Interface>
+  <Interface Name="CatalogueLibrary.Repositories.IRDMPPlatformRepositoryServiceLocator" Collapsed="true">
+    <Position X="6.25" Y="0.75" Width="3.25" />
+    <TypeIdentifier />
+  </Interface>
   <Enum Name="RDMPStartup.RegistrySetting">
-    <Position X="10.75" Y="1.25" Width="1.5" />
+    <Position X="7.75" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>RegistryRepositoryFinder.cs</FileName>

@@ -14,8 +14,12 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary
 {
-
     public delegate void CatalogueProgressHandler(int progress, int target,Catalogue currentCatalogue);
+
+    /// <summary>
+    /// Generates an extract of all the Catalogues and CatalogueItems in your Catalogue database in .dita format.  Dita is apparently all the rage when it comes to metadata
+    /// sharing.
+    /// </summary>
     public class DitaCatalogueExtractor : ICheckable
     {
 

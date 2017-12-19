@@ -12,7 +12,6 @@ using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

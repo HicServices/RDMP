@@ -12,8 +12,8 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {

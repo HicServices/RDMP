@@ -15,6 +15,19 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Repositories
 {
+    /// <summary>
+    /// Pointer to the Data Export Repository database in which all DatabaseEntities declared in DataExportLibrary.dll are stored.  Ever DatabaseEntity class must exist in a
+    /// Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository (i.e. the database that contains the
+    /// table matching their name).  CatalogueLibrary.dll objects in CatalogueRepository, DataExportLibrary.dll objects in DataExportRepository, DataQualityEngine.dll objects
+    /// in DQERepository etc.
+    /// 
+    /// This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Export database.  This includes extraction
+    /// Projects, ExtractionConfigurations, ExtractableCohorts etc.
+    /// 
+    /// Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. there are
+    /// IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
+    /// in the paired Catalogue database.
+    /// </summary>
     public class DataExportRepository : TableRepository, IDataExportRepository
     {
         public CatalogueRepository CatalogueRepository { get; private set; }

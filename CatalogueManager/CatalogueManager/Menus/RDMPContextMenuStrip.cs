@@ -25,10 +25,11 @@ using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Dependencies;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
@@ -106,6 +107,11 @@ namespace CatalogueManager.Menus
 
             if (databaseEntity != null)
             {
+                if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
+                    Add(new ExecuteCommandUnpin(_activator, databaseEntity));
+                else
+                    Add(new ExecuteCommandPin(_activator, databaseEntity));
+
                 Add(new ExecuteCommandShowKeywordHelp(_activator, databaseEntity));
                 Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
             }

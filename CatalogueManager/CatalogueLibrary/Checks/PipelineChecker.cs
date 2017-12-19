@@ -4,6 +4,9 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Checks
 {
+    /// <summary>
+    /// Checks an IPipeline (persisted data flow pipeline configuration) to see if all it's components are constructable (using MEFChecker)
+    /// </summary>
     public class PipelineChecker : ICheckable
     {
         private readonly IPipeline _pipeline;

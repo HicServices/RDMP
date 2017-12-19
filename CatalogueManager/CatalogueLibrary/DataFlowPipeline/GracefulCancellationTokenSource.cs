@@ -3,6 +3,9 @@ using System.Threading;
 
 namespace CatalogueLibrary.DataFlowPipeline
 {
+    /// <summary>
+    /// Source for creating a GracefulCancellationToken.  See GracefulCancellationToken for description of this two level Cancellation strategy.
+    /// </summary>
     public class GracefulCancellationTokenSource
     {
         private readonly CancellationTokenSource _stopTokenSource;

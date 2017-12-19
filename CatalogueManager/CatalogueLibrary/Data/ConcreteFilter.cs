@@ -9,6 +9,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Abstract base class for all IFilters which are database entities (Stored in the Catalogue/Data Export database as objects). 
+    /// 
+    /// ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / VersionedDatabaseEntity logic to IFilter (which would break 
+    /// SpontaneouslyInventedFilters)
+    /// </summary>
     public abstract class ConcreteFilter :  VersionedDatabaseEntity,IFilter
     {
         protected ConcreteFilter(IRepository repository,DbDataReader r) : base(repository, r)

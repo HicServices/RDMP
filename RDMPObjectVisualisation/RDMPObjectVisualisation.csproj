@@ -436,6 +436,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\ExtractableCohort.png" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Pipelines\Pipelines.cd" />
     <None Include="Resources\DragFrom.png" />

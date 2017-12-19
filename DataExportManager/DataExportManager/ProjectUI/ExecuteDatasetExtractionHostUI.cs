@@ -161,11 +161,11 @@ namespace DataExportManager.ProjectUI
         private void WriteMetadata(ExtractDatasetCommand request)
         {
             request.State = ExtractCommandState.WritingMetadata;
-            WordDataWritter wordDataWritter;
+            WordDataWriter wordDataWriter;
 
             try
             {
-                wordDataWritter = new WordDataWritter(_pipelineHost);
+                wordDataWriter = new WordDataWriter(_pipelineHost);
             }
             catch (NotSupportedException e)
             {
@@ -177,15 +177,15 @@ namespace DataExportManager.ProjectUI
                 return;
             }
 
-            wordDataWritter.GenerateWordFile();//run the report
+            wordDataWriter.GenerateWordFile();//run the report
 
             //if there were any exceptions
-            if (wordDataWritter.ExceptionsGeneratingWordFile.Any())
+            if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
             {
                 request.State = ExtractCommandState.Warning;
                     
-                foreach (Exception e in wordDataWritter.ExceptionsGeneratingWordFile)
-                    progressUI1.OnNotify(wordDataWritter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
+                foreach (Exception e in wordDataWriter.ExceptionsGeneratingWordFile)
+                    progressUI1.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
             }
             else
             {

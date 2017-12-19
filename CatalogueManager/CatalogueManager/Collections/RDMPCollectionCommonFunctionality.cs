@@ -33,6 +33,7 @@ using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
@@ -165,8 +166,8 @@ namespace CatalogueManager.Collections
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
         {
-            // unpin first if the request does not want to pin
-            if (!args.Request.Pin && _pinFilter != null)
+            // unpin first if there is somthing pinned, so we find our object!
+            if (_pinFilter != null)
                 _pinFilter.UnApplyToTree();
 
             //get the parental hierarchy

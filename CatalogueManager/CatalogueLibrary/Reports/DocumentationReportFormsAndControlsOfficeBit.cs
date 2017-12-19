@@ -17,6 +17,11 @@ namespace CatalogueLibrary.Reports
 {
     public delegate Bitmap RequestTypeImagesHandler(Type t);
 
+    /// <summary>
+    /// Turns the comment summaries extracted from SourceCodeForSelfAwareness.zip by DocumentationReportFormsAndControls into a user readable Microsoft Word file.  This
+    /// includes writing out the headers and images of the controls.  Note RequestTypeImagesHandler delegate is used to generate the actual interface images.  This is done
+    /// normally by launching the UI control and programatically screencapturing it (See DocumentationReportFormsAndControlsUI)
+    /// </summary>
     public class DocumentationReportFormsAndControlsOfficeBit:RequiresMicrosoftOffice
     {
         private Dictionary<string, Bitmap> _wordImageDictionary;

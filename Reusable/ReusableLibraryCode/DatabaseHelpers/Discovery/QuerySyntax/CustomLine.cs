@@ -2,6 +2,16 @@
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
 {
+    /// <summary>
+    /// An arbitrary string to be injected into an SQL query being built by an ISqlQueryBuilder.  This is needed to handle differences in Database Query Engine Implementations
+    /// e.g. Top X is done as part of SELECT in Microsoft Sql Server (e.g. select top x * from bob) while in Oracle it is done as part of WHERE (e.g. select * from bob where ROWNUM
+    ///  less than x) (See IQuerySyntaxHelper.HowDoWeAchieveTopX).
+    /// 
+    /// Each CustomLine must have an QueryComponent of the Query that it relates to (LocationToInsert) and may have a CustomLineRole. 
+    /// 
+    /// AggregateBuilder relies heavily on CustomLine because of the complexity of cross database platform GROUP BY (e.g. dynamic pivot with calendar table).  Basically converting
+    /// the entire query into CustomLines and passing off implementation to the specific database engine (See IAggregateHelper.BuildAggregate).
+    /// </summary>
     public class CustomLine
     {
         public string Text { get; set; }

@@ -2,12 +2,16 @@ using System;
 
 namespace HIC.Logging.PastEvents
 {
+    /// <summary>
+    /// Readonly audit of a historical 'data source' (See HIC.Logging.DataSource) that contributed records to a table that was loaded in the last (See 
+    /// ArchivalTableLoadInfo).
+    /// </summary>
     public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
     {
-        
-        public string MD5 { get; set; }
-        public string Source { get; set; }
-        public string Archive { get; set; }
+
+        public string MD5 { get; internal set; }
+        public string Source { get; internal set; }
+        public string Archive { get; internal set; }
         public DateTime? OriginDate { get; internal set; }
         public int ID { get; set; }
 

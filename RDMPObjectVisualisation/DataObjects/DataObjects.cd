@@ -1,49 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Comment CommentText="100 x 100-200 pixel size components that visually represent to the user an artifact they are working with (e.g. a cohort / a file they are trying to  load as custom data).  There should be a double click handler and optionally it could be able to check itself.  Double clicking on the check symbol should launch checking again with PopupChecksUI.  Name should be XVisualisation.cs where it is a visualisation of a type X.cs">
-    <Position X="8.5" Y="3.5" Height="1.771" Width="3.2" />
+    <Position X="0.75" Y="1.25" Height="1.771" Width="3.2" />
   </Comment>
   <Class Name="RDMPObjectVisualisation.DataObjects.DataFlowComponentVisualisation" Collapsed="true">
-    <Position X="11.75" Y="3.25" Width="2.75" />
+    <Position X="4" Y="1" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AQAgCAAAIiAIAAAABACAAAAGAAAQAAgkIgAAgCARQCA=</HashCode>
+      <HashCode>AQAACA0AAiAIABAEBACAABACAAAwAAgkIgAhgAEBACA=</HashCode>
       <FileName>DataObjects\DataFlowComponentVisualisation.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="RDMPObjectVisualisation.DataObjects.DataObjectVisualisationFactory" Collapsed="true">
-    <Position X="9" Y="1.5" Width="2.5" />
+    <Position X="1.25" Y="0.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DataObjects\DataObjectVisualisationFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RDMPObjectVisualisation.DataObjects.ExtractableCohortVisualisation" Collapsed="true">
-    <Position X="11.75" Y="5.5" Width="2.75" />
+    <Position X="4" Y="3.25" Width="2.75" />
     <TypeIdentifier>
       <HashCode>ARAACACAACAAAAAAAACAAAACAAAAAAAABQAAAABAAAA=</HashCode>
       <FileName>DataObjects\ExtractableCohortVisualisation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RDMPObjectVisualisation.DataObjects.FlatFileToLoadVisualisation" Collapsed="true">
-    <Position X="11.75" Y="4" Width="2.75" />
+    <Position X="4" Y="1.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>ABAAAAAAACEAAAAAAICAAAACAAAAAAAAAQAAAABAAAA=</HashCode>
       <FileName>DataObjects\FlatFileToLoadVisualisation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RDMPObjectVisualisation.DataObjects.DiscoveredDatabaseVisualisation" Collapsed="true">
-    <Position X="11.75" Y="4.75" Width="2.75" />
+    <Position X="4" Y="2.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>ABAAAAAAACAAAAAAAACAAAACAAAAAAAAAAIAAAAAAAA=</HashCode>
       <FileName>DataObjects\DiscoveredDatabaseVisualisation.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="RDMPObjectVisualisation.DataObjects.ExternalCohortTableVisualisation" Collapsed="true">
-    <Position X="11.75" Y="6.25" Width="2.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAAAAAACAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataObjects\ExternalCohortTableVisualisation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

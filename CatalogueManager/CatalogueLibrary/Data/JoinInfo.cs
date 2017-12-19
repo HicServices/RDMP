@@ -10,13 +10,32 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Lookup relationships in RDMP are defined using 3 columns, a PrimaryKey from one table and a ForeignKey which appears in the lookup and the Description column
+    /// which must also appear in the ForeignKey table.  This Enum is used to identify which ColumnInfo you are addressing in this relationship.
+    /// </summary>
     public enum LookupType
     {
+        /// <summary>
+        /// The column in the Lookup table which contains the description of what a code means
+        /// </summary>
         Description,
+
+        /// <summary>
+        /// Used for Fetching only, this value reflects either the PrimaryKey or the ForeignKey (but not the Description).  Used for example to find out 
+        /// all the Lookup involvements of a given ColumnInfo.
+        /// </summary>
         AnyKey,
+
+        /// <summary>
+        /// The column in the lookup table which contains the code
+        /// </summary>
         ForeignKey
     }
 
+    /// <summary>
+    /// The type of ANSI Sql Join to direction e.g. Left/Right
+    /// </summary>
     public enum ExtractionJoinType
     {
         Left,
@@ -24,6 +43,18 @@ namespace CatalogueLibrary.Data
         Inner
     }
     
+    /// <summary>
+    /// Persistent reference in the Catalogue database that records how to join two TableInfos.  You can create instances of this class via JoinHelper (which is available as
+    /// a property on ICatalogueRepository).  JoinInfos are processed by during query building in the following way:
+    /// 
+    /// 1. Query builder identifies all the TablesUsedInQuery (from the columns selected, forced table inclusions etc)
+    /// 2. Query builder identifies all available JoinInfos between the TablesUsedInQuery (See SqlQueryBuilderHelper.FindRequiredJoins)
+    /// 3. Query builder merges JoinInfos that reference the same tables together into Combo Joins (See AddQueryBuildingTimeComboJoinDiscovery)
+    /// 4. Query builder creates final Join Sql 
+    /// 
+    /// 'Combo Joins' (or ISupplementalJoin) are when you need to use multiple columns to do the join e.g. A Left Join B on A.x = B.x AND A.y = B.y.  You can define
+    /// these by simply declaring additional JoinInfos for the other column pairings with the same ExtractionJoinType.
+    /// </summary>
     public class JoinInfo : IDeleteable, IJoin,IHasDependencies
     {
         public IRepository Repository { get; set; }
@@ -49,6 +80,11 @@ namespace CatalogueLibrary.Data
         public string Collation { get; set; }
         public ExtractionJoinType ExtractionJoinType { get; set; }
 
+        /// <summary>
+        /// Constructor to be used to create already existing JoinInfos out of the database only.  If you want to create new JoinInfos use JoinInfoFinder in CatalogueRepository.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
         public JoinInfo(IRepository repository,DbDataReader r)
         {
             Repository = repository;

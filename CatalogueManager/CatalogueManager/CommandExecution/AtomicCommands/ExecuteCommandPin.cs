@@ -3,8 +3,9 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

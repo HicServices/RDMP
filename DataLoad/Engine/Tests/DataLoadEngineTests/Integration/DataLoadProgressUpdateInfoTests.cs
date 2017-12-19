@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Job;
@@ -14,7 +9,6 @@ using HIC.Logging;
 using LoadModules.Generic.LoadProgressUpdating;
 using NUnit.Framework;
 using Rhino.Mocks;
-using Rhino.Mocks.Constraints;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration

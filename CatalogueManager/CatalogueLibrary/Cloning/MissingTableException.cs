@@ -2,6 +2,9 @@ using System;
 
 namespace CatalogueLibrary.Cloning
 {
+    /// <summary>
+    /// Thrown when an expected Sql Table is missing from a Database Server
+    /// </summary>
     public class MissingTableException : Exception
     {
         private readonly string _expectedTable;

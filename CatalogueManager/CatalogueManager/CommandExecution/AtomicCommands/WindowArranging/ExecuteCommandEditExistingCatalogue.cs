@@ -5,7 +5,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 {

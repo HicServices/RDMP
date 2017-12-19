@@ -145,7 +145,6 @@
     <Compile Include="Events\RDMPPlatformDatabaseStatus.cs" />
     <Compile Include="IPluginRepositoryFinder.cs" />
     <Compile Include="LinkedRepositoryProvider.cs" />
-    <Compile Include="PluginBootstrapper.cs" />
     <Compile Include="PluginManagement\PluginAnalyser.cs" />
     <Compile Include="PluginManagement\PluginAnalyserProgressEventArgs.cs" />
     <Compile Include="PluginManagement\PluginAnalyserProgressEventHandler.cs" />
@@ -234,6 +233,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Repositories.cd" />
   </ItemGroup>

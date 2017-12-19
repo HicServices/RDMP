@@ -1,8 +1,12 @@
 ﻿using System;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data
 {
-    public interface IAggregateTopX
+    /// <summary>
+    /// See AggregateTopX
+    /// </summary>
+    public interface IAggregateTopX:IMapsDirectlyToDatabaseTable
     {
         int TopX { get; }
         IColumn OrderByColumn { get; }

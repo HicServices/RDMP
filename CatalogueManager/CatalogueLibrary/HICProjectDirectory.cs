@@ -6,6 +6,9 @@ using System.Xml;
 
 namespace CatalogueLibrary
 {
+    /// <summary>
+    /// Basic implementation of IHICProjectDirectory including support for creating new templates on the file system.
+    /// </summary>
     public class HICProjectDirectory : IHICProjectDirectory
     {
         const string ConfigurationFilename = "ConfigurationDetails.xml";

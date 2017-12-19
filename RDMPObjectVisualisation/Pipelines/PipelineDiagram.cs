@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.DataLoad.Exceptions;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -457,13 +456,9 @@ namespace RDMPObjectVisualisation.Pipelines
                 Order = GetOrderMakingSpaceIfNessesary(null, divider)
             };
 
-            try
-            {
-                newcomp.CreateArgumentsForClassIfNotExists(underlyingComponentType);
-            }
-            catch (NoDemandsException)
-            {
-            }
+           
+            newcomp.CreateArgumentsForClassIfNotExists(underlyingComponentType);
+          
             newcomp.SaveToDatabase();
             
             ArgumentCollection.ShowDialogIfAnyArgs((CatalogueRepository)repository, newcomp, underlyingComponentType, Preview);

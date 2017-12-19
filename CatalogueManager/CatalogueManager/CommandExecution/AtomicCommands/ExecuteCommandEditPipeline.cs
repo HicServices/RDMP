@@ -15,9 +15,10 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -60,7 +61,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var context = _useCase.GetContext();
 
-            var initObjects = _useCase.GetInitializationObjects(Activator.RepositoryLocator.CatalogueRepository);
+            var initObjects = _useCase.GetInitializationObjects();
 
             
             var uiFactory = new ConfigurePipelineUIFactory(mef, cataRepo);

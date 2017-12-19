@@ -3,6 +3,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
+    /// <summary>
+    /// See Pipeline
+    /// </summary>
     public interface IPipeline : IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable
     {
         string Name { get; set; }

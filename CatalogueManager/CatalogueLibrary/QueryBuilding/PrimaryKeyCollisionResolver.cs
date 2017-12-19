@@ -11,6 +11,14 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary.QueryBuilding
 {
+    /// <summary>
+    /// The RDMP data load engine is designed to prevent duplicate data entering your live database.  This is achieved by requiring a primary key defined by the source
+    /// data (i.e. not an autonum).  However it is expected that semantically correct primary keys will not be perfectly supplied in all cases by data providers, for example
+    /// if 'TestLabCode' is the primary key on biochemistry but duplicates appear with unique values in 'DataAge' it would be reasonable to assume that newer 'DataAge' records
+    /// replace older ones.  Therefore we might decide to keep the primary key as 'TestLabCode' and then discard duplicate records based on preserving the latest 'DataAge'.
+    /// 
+    /// This class handles creating the query that deletes duplicates based on the column preference order supplied (See ConfigurePrimaryKeyCollisionResolution). 
+    /// </summary>
     public class PrimaryKeyCollisionResolver
     {
         private readonly TableInfo _tableInfo;

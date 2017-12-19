@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using Tests.Common;
 

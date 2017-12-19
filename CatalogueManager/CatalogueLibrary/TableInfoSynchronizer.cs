@@ -17,6 +17,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary
 {
+    /// <summary>
+    /// Synchronizes a TableInfo against the live table on your database server.  This involves confirming it still exists, identifying new ColumnInfos and ones that have
+    /// disapeared as well as checking column types and primary keys etc still match the current RDMP records.
+    /// </summary>
     public class TableInfoSynchronizer
     {
         private readonly TableInfo _tableToSync;
@@ -38,7 +42,7 @@ namespace CatalogueLibrary
         /// <summary>
         /// 
         /// </summary>
-        /// <exception cref="FatalDeSyncException">Could not figure out how to resolve a synchronization problem between the TableInfo and the underlying table structure</exception>
+        /// <exception cref="SynchronizationFailedException">Could not figure out how to resolve a synchronization problem between the TableInfo and the underlying table structure</exception>
         /// <param name="notifier">Called every time a fixable problem is detected, method must return true or false.  True = apply fix, False = don't - but carry on checking</param>
         public bool Synchronize(ICheckNotifier notifier)
         {
@@ -51,13 +55,13 @@ namespace CatalogueLibrary
             }
             catch (Exception e)
             {
-                throw new FatalDeSyncException("Could not connect to " + _toSyncTo, e);
+                throw new SynchronizationFailedException("Could not connect to " + _toSyncTo, e);
             }
 
             //database exists?
             var expectedDatabase = _toSyncTo.ExpectDatabase(_tableToSync.GetDatabaseRuntimeName());
             if(!expectedDatabase.Exists())
-                throw new FatalDeSyncException("Server did not contain a database called " + _tableToSync.GetDatabaseRuntimeName());
+                throw new SynchronizationFailedException("Server did not contain a database called " + _tableToSync.GetDatabaseRuntimeName());
 
             //identify new columns
             DiscoveredColumn[] liveColumns;
@@ -67,14 +71,14 @@ namespace CatalogueLibrary
             {
                 expectedTable = expectedDatabase.ExpectTableValuedFunction(_tableToSync.GetRuntimeName());
                 if(!expectedTable.Exists())
-                    throw new FatalDeSyncException("Database " + expectedDatabase + " did not contain a TABLE VALUED FUNCTION called " + _tableToSync.GetRuntimeName());
+                    throw new SynchronizationFailedException("Database " + expectedDatabase + " did not contain a TABLE VALUED FUNCTION called " + _tableToSync.GetRuntimeName());
             }
             else
             {
                 //table exists?
                 expectedTable = expectedDatabase.ExpectTable(_tableToSync.GetRuntimeName());
                 if(!expectedTable.Exists())
-                    throw new FatalDeSyncException("Database " + expectedDatabase + " did not contain a table called " + _tableToSync.GetRuntimeName());
+                    throw new SynchronizationFailedException("Database " + expectedDatabase + " did not contain a table called " + _tableToSync.GetRuntimeName());
             }
 
             try

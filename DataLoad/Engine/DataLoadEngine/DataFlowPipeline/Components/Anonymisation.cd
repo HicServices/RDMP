@@ -3,7 +3,7 @@
   <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.IdentifierDumper">
     <Position X="6.75" Y="1.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>ESASAAgAAABAAAAgAACAAAIAAAAACRKAIEBAAIgAAAA=</HashCode>
+      <HashCode>ASASAAgABAAAAAAAAAAAAQAAAAAACRKAIEBACIgAAAA=</HashCode>
       <FileName>DataFlowPipeline\Components\Anonymisation\IdentifierDumper.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -18,7 +18,7 @@
   <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.BasicAnonymisationEngine">
     <Position X="2" Y="3.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>BAAAAAwAAGIABAACAAAABAAAAAAAAAIAAggAAAEAAAA=</HashCode>
+      <HashCode>BAAAAAwAACIABCACAAAABAAAAAAAAAIAAggAAAEAAAA=</HashCode>
       <FileName>DataFlowPipeline\Components\Anonymisation\BasicAnonymisationEngine.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -29,24 +29,17 @@
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.Dicom.DicomAnonymisationEngine" Collapsed="true">
-    <Position X="2.25" Y="8" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>EAAAAAAAAUACAAAAACAAAABABEgAAAAAAgAQAAYAAAA=</HashCode>
-      <FileName>DataFlowPipeline\Components\Anonymisation\Dicom\DicomAnonymisationEngine.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.ANOTransformer">
     <Position X="6.5" Y="7.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AQACAAAAAAAiAQAAAAAAIARAAAAAEEAAAAAIAAAACBA=</HashCode>
+      <HashCode>AQACAAAAAAAiAQIAQAAAIARAAAAAAEAAAAAIAAAAABA=</HashCode>
       <FileName>DataFlowPipeline\Components\Anonymisation\ANOTransformer.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.DataFlowPipeline.Components.Anonymisation.ANOTableInfoSynchronizer">
     <Position X="6.5" Y="11.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAIAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAIAAAAAAAEAA=</HashCode>
       <FileName>DataFlowPipeline\Components\Anonymisation\ANOTableInfoSynchronizer.cs</FileName>
     </TypeIdentifier>
   </Class>

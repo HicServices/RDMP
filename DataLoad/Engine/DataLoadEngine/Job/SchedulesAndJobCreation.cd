@@ -9,21 +9,21 @@
   <Class Name="DataLoadEngine.Job.Scheduling.MultipleScheduleJobFactory" Collapsed="true">
     <Position X="3" Y="4.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAhAABAAIAAAAAAAAAAAAAAAEAAAgAAAAgAAAA=</HashCode>
+      <HashCode>AAAAAAAhAABAAAAAAAAAAAAAAAAAAEAAAAgAAAgAAAA=</HashCode>
       <FileName>Job\Scheduling\MultipleScheduleJobFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.Job.Scheduling.ScheduledDataLoadJob" Collapsed="true">
     <Position X="4.25" Y="5.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Job\Scheduling\ScheduledDataLoadJob.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.Job.Scheduling.ScheduledJobFactory" Collapsed="true">
     <Position X="4" Y="3" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAgAAAAAAAAAABAAAAAAEAAAAAAAAAgAAA=</HashCode>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAECAAAAAAEAAAAgAAAAgAAA=</HashCode>
       <FileName>Job\Scheduling\ScheduledJobFactory.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -31,45 +31,37 @@
   <Class Name="DataLoadEngine.Job.Scheduling.SingleScheduledJobFactory" Collapsed="true">
     <Position X="5.5" Y="4.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAEAAAACAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAEAAAAAAAEAAAAgAAAAAAAA=</HashCode>
       <FileName>Job\Scheduling\SingleScheduledJobFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.Job.Scheduling.JobDateGenerationStrategyFactory" Collapsed="true">
     <Position X="9" Y="1.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAgAAAAAEAAAAAAAAAAIAI=</HashCode>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAgAAAAAEAAAAAAEBAAAAA=</HashCode>
       <FileName>Job\Scheduling\JobDateGenerationStrategyFactory.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="DataLoadEngine.Job.Scheduling.ListOfScheduleDatesFromCacheDirectory" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="12.25" Y="3.5" Width="3.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAABAAAAAAAAIAAAAAAAAAAAAAAAAAAAogM=</HashCode>
-      <FileName>Job\Scheduling\ListOfScheduleDatesFromCacheDirectory.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.Job.Scheduling.SingleScheduleConsecutiveDateStrategy" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="9" Y="3.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>IAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Job\Scheduling\SingleScheduleConsecutiveDateStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataLoadEngine.JobFactory" Collapsed="true">
+  <Class Name="DataLoadEngine.Job.JobFactory" Collapsed="true">
     <Position X="6" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAACAAAEAAAAAAAAAAAAAAAAAEAAAAAIAAAAAAA=</HashCode>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAEAAAAAIAAAAAAA=</HashCode>
       <FileName>Job\JobFactory.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataLoadEngine.Job.DataLoadJob" Collapsed="true">
-    <Position X="1.25" Y="2.75" Width="1.5" />
+    <Position X="1.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>KkAAAEACAYggEAAAAABAIAIQIkAAARCAAABAgAAIgkA=</HashCode>
+      <HashCode>CkAAAEACAIgiEAAAAABAQAAYIkAAARAAAABAgAAAgkA=</HashCode>
       <FileName>Job\DataLoadJob.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -77,11 +69,11 @@
   <Interface Name="DataLoadEngine.Job.Scheduling.IJobDateGenerationStrategy" Collapsed="true">
     <Position X="9" Y="2.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Job\Scheduling\IJobDateGenerationStrategy.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="DataLoadEngine.IJobFactory" Collapsed="true">
+  <Interface Name="DataLoadEngine.Job.IJobFactory" Collapsed="true">
     <Position X="4" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
@@ -91,7 +83,7 @@
   <Interface Name="DataLoadEngine.Job.IDataLoadJob" Collapsed="true">
     <Position X="1.25" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>KkAAAAAAAIggEAAAAABAAAIAIgAAARAAAABAAAAAAkA=</HashCode>
+      <HashCode>AEAAAAAAAIggEAAAAABAQAAAAgAAABAAAAAAAAAAAkA=</HashCode>
       <FileName>Job\IDataLoadJob.cs</FileName>
     </TypeIdentifier>
   </Interface>

@@ -1,31 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using CachingEngine.Factories;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibraryTests.Integration;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DataProvider;
 using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Job.Scheduling;
 using DataLoadEngine.Job.Scheduling.Exceptions;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
-using log4net.Layout;
-using MapsDirectlyToDatabaseTable;
+using DataLoadEngineTests.Integration.Cache;
+using DataLoadEngineTests.Integration.PipelineTests;
 using NUnit.Framework;
-using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -41,7 +30,7 @@ namespace DataLoadEngineTests.Integration
         [SetUp]
         public void up()
         {
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWritter));
+            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
             _lmd = new LoadMetadata(CatalogueRepository, "JobDateGenerationStrategyFactoryTestsIntegration");

@@ -192,5 +192,13 @@ namespace CatalogueLibrary.Data
             if(save)
                 SaveToDatabase();
         }
+
+        public bool WasCreatedByDatabaseAssembly(Assembly databaseAssembly)
+        {
+            if (string.IsNullOrWhiteSpace(CreatedByAssembly))
+                return false;
+
+            return databaseAssembly.GetName().Name == CreatedByAssembly;
+        }
     }
 }

@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.FilterImporting.Construction;
 using DataExportLibrary.Data.DataTables;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.TreeHelper;
 

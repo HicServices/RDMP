@@ -15,6 +15,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Cloning
 {
+    /// <summary>
+    /// Creates a new copy of an existing Catalogue in a remote repository (or within the same repository).  Allows several CloneDepths e.g. CatalogueItems only or full tree.
+    /// </summary>
     public class CatalogueCloner
     {
         private readonly CatalogueRepository _sourceRepository;
@@ -99,10 +102,24 @@ namespace CatalogueLibrary.Cloning
         }
         #endregion
 
+        /// <summary>
+        /// Defines the depth of objects to make clone copies of.  CatalogueOnly . 
+        /// </summary>
         public enum CloneDepth 
         {
+            /// <summary>
+            /// will only create a copy of the root object (Catalogue)
+            /// </summary>
             CatalogueOnly,
+            
+            /// <summary>
+            ///  will create the root Catalogue and clones of all the CatalogueItems
+            /// </summary>
             CatalogueItem,
+            
+            /// <summary>
+            /// will create the root Catalogue and clones of all the CatalogueItems and all the ColumnInfos / TableInfos under them
+            /// </summary>
             FullTree
 
         }
