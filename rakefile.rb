@@ -39,7 +39,7 @@ assemblyinfo :assemblyinfo do |asm|
 	asm.input_file = "SharedAssemblyInfo.cs"
     asm.output_file = "SharedAssemblyInfo.cs"
     asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
-    
+        
     major, minor, patch, build = asminfoversion.split(/\./)
    
     if PRERELEASE == "true"
@@ -62,7 +62,7 @@ end
 desc "Pushes the plugin packages into the specified folder"    
 task :deployplugins, [:folder] do |t, args|
     Dir.chdir('Plugin/Plugin') do
-        sh "./build-and-deploy-local.bat #{args.folder}"
+        sh "./build-and-deploy-local.bat #{args.folder} '' 2.5.2.0"
     end
 end
 
