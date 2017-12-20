@@ -24,16 +24,16 @@ namespace PluginPackager
 
         private DirectoryInfo _packageSourceDirectory;
         private Version _pluginVersionOfCatalogueLibrary;
-        private string _pluginBaseName;
 
         private List<FileInfo> _dllPackage = new List<FileInfo>();
         private List<FileInfo> _srcFilesFound = new List<FileInfo>();
         private List<FileInfo> _pluginAssemblies = new List<FileInfo>();
 
+        readonly List<string> _blacklist = new List<string>();
+
         public Packager(FileInfo solutionToPackage, string outputZipFilePath, bool skipSourceCollection = false)
         {
             _solutionToPackage = solutionToPackage;
-            _pluginBaseName = Path.GetFileNameWithoutExtension(_solutionToPackage.Name);
             _outputZipFilePath = outputZipFilePath;
             _skipSourceCollection = skipSourceCollection;
 
@@ -60,7 +60,7 @@ namespace PluginPackager
                 notifier.OnCheckPerformed(new CheckEventArgs("Your plugin targets CatalogueLibrary version " + _pluginVersionOfCatalogueLibrary, CheckResult.Success));
                 
                 var memStream = new MemoryStream();
-                var archive = new ZipArchive(memStream, ZipArchiveMode.Create, true);
+                var archive = new ZipArchive(memStream, ZipArchiveMode.Update, true);
 
                 var manifest = archive.CreateEntry("PluginManifest.txt");
 
@@ -71,25 +71,20 @@ namespace PluginPackager
                     streamWriter.Write("CatalogueLibraryVersion:" + _pluginVersionOfCatalogueLibrary);
                 }
 
-                //var manifest = new List<string>();
-                //manifest.Add("CatalogueLibraryVersion:" + _pluginVersionOfCatalogueLibrary);
-                //File.WriteAllText(Path.Combine(_outputDirectory.FullName, "PluginManifest.txt"),
-                //                  "CatalogueLibraryVersion:" + _pluginVersionOfCatalogueLibrary);
-
                 foreach (var assembly in _pluginAssemblies)
                     AddWithDependencies(notifier, assembly, archive);
 
                 //create a src.zip file within the archive
                 if (!_skipSourceCollection)
                 {
-                    var srcZip = ZipFile.Open(Path.Combine(_outputDirectory.FullName, "src.zip"), ZipArchiveMode.Create);
+                    var srcZip = ZipFile.Open(Path.Combine(_solutionToPackage.Directory.FullName, "src.zip"), ZipArchiveMode.Create);
                     foreach (var file in _srcFilesFound)
                     {
                         srcZip.CreateEntryFromFile(file.FullName, file.Name);
                     }
                     srcZip.Dispose();
 
-                    archive.CreateEntryFromFile(Path.Combine(_outputDirectory.FullName, "src.zip"), "src.zip");
+                    archive.CreateEntryFromFile(Path.Combine(_solutionToPackage.Directory.FullName, "src.zip"), "src.zip");
                 }
 
                 archive.Dispose(); // this writes the archive to the memorystream!
@@ -101,6 +96,9 @@ namespace PluginPackager
                 }
 
                 memStream.Dispose();
+
+                // now delete the temp source file:
+                File.Delete(Path.Combine(_solutionToPackage.Directory.FullName, "src.zip"));
             }
             catch (Exception e)
             {
@@ -135,8 +133,6 @@ namespace PluginPackager
             if(!_skipSourceCollection && _solutionToPackage.Directory != null)
             {
                 CollateSourceRecursively(_solutionToPackage.Directory);
-
-                //TODO: now zip the source
             }
         }
         
@@ -181,12 +177,7 @@ namespace PluginPackager
                 _dllPackage.Add(new FileInfo(srcFilename));
             }
         }
-
-        readonly List<string> _blacklist = new List<string>();
-        private DirectoryInfo _workingDirectory;
-        private DirectoryInfo _outputDirectory;
-        //private DirectoryInfo _srcDirectory;
-
+        
         private void GenerateExclusionList()
         {
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
