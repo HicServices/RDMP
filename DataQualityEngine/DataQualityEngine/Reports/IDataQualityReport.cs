@@ -6,6 +6,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataQualityEngine.Reports
 {
+    /// <summary>
+    /// Shared interface for any DQE run implementation (currently only CatalogueConstraintReport).  Supports confirming that the report can be run on a given
+    /// Catalogue and running it.
+    /// </summary>
     public interface IDataQualityReport: ICheckable
     {
         bool CatalogueSupportsReport(Catalogue c);

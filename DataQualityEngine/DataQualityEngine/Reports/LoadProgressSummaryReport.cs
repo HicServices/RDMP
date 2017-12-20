@@ -17,6 +17,12 @@ using ReusableLibraryCode.Progress;
 
 namespace DataQualityEngine.Reports
 {
+    /// <summary>
+    /// Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.  The second containing all CacheFetch
+    /// counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed into the contructor.  These tables are
+    /// intended to assist the user in rapidly determining how much of a given dataset collection based on a cache fetch/load DLE job has currently been loaded 
+    /// (according to the DQE).  See LoadProgressDiagram
+    /// </summary>
     public class LoadProgressSummaryReport:ICheckable
     {
         private readonly LoadProgress _loadProgress;
