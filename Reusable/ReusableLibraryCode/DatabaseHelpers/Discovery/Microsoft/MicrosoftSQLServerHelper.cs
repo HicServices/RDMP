@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
@@ -180,9 +181,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
                 {
                     if(property.Name.Equals("Properties"))
                         continue;
-
-                    var value = property.GetValue(s.Information);
-                    toReturn.Add(property.Name,value == null ? "" : value.ToString());
+                    try
+                    {
+                        var value = property.GetValue(s.Information);
+                        toReturn.Add(property.Name, value == null ? "" : value.ToString());
+                    }
+                    catch (TargetInvocationException)
+                    {
+                        //couldn't get property... nevermind SMO is wierd about this it tells you about properties it doesn't have available! yay
+                    }
+                    
                 }
 
                 try

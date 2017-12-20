@@ -22,8 +22,8 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {

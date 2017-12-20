@@ -6,6 +6,9 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
+    /// <summary>
+    /// See PipelineComponent
+    /// </summary>
     public interface IPipelineComponent : IArgumentHost, ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable,IHasDependencies
     {
         string Name { get; set; }

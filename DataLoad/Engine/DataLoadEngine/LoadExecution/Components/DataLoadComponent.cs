@@ -1,4 +1,5 @@
 using CatalogueLibrary;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;

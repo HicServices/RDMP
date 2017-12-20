@@ -19,60 +19,27 @@ using ScintillaNET;
 namespace CatalogueManager.SimpleDialogs.Automation
 {
     /// <summary>
-    /// Part of AutomationServiceSlotManagement which lets you change the settings for the currently selected AutomationServiceSlot (See AutomationServiceSlotManagement for full description of
-    /// the effects of changes in this control).
+    /// This dialog lets you configure how often and how many jobs run on your automation server (if you have one) at once.  The first step is to create a new 'Automation Service Slot', this 
+    /// is a 'permission to run' object for the automation executable (RDMPAutomationService.exe - supports running as a Windows Service) which can now be started on your Automation server.  
+    /// 
+    /// When running the RDMPAutomationService executable will lock it's slot so that any other copies can run at the same time.  It will then process DQE, DLE and caching activities as configured
+    /// on this dialog with a maximum number of each running at the same time as configured in the 'Maximum Concurrent Jobs' options.
+    /// 
+    /// If you do not want automation to perform a given task (e.g. DQE) then set the 'Maximum Concurrent Jobs' to 0.  Changing the Maximum Jobs will not cancel any ongoing jobs but it will 
+    /// prevent new jobs starting.
+    /// 
+    /// Changing the 'Failure Strategy' controls how the automation service reacts to one of the async jobs crashing, if it is TryNext then it will leave the job in a crashed state and start the
+    /// next job (if less than the 'Maximum Concurrent Jobs' for that category).  Crashed jobs have to be manually resolved and deleted via AutomationJobUI in the Dashboard, until this time they
+    /// still count towards the number of 'currently executing jobs'.  
+    /// 
+    /// If the strategy is 'Stop' then no new jobs will be started while there is at least 1 outstanding crashed job in a category (e.g. DQE).
     /// </summary>
     public partial class AutomationServiceSlotUI : AutomationServiceSlotUI_Design, ISaveableUI
     {
-        private AutomationServiceSlot _automationServiceSlot;
+        private bool _loadingUI;
 
-        public AutomationServiceSlot AutomationServiceSlot
-        {
-            get { return _automationServiceSlot; }
-            set
-            {
-                _automationServiceSlot = value;
-                
-                lockableUI1.Lockable = value;
-                
-
-                if (value != null)
-                {
-                    automateablePipelineCollectionUI1.AutomationServiceSlot = AutomationServiceSlot;
-                    automateablePipelineCollectionUI1.Enabled = true;
-
-                    groupBox1.Enabled = true;
-                    groupBox2.Enabled = true;
-                    groupBox3.Enabled = true;
-
-                    tbID.Text = value.ID.ToString();
-                    dqeMaxJobs.Value = value.DQEMaxConcurrentJobs;
-                    dqeDaysBetween.Value = value.DQEDaysBetweenEvaluations;
-                    ddDQESelectionStrategy.SelectedItem = value.DQESelectionStrategy;
-                    ddDQEFailureStrategy.SelectedItem = value.DQEFailureStrategy;
-
-                    dleMaxJobs.Value = value.DLEMaxConcurrentJobs;
-                    ddDLEFailureStrategy.SelectedItem = value.DLEFailureStrategy;
-
-                    cacheMaxJobs.Value = value.CacheMaxConcurrentJobs;
-                    ddCacheFailureStrategy.SelectedItem = value.CacheFailureStrategy;
-
-                    overrideCommandTimeout.Value = value.GlobalTimeoutPeriod.HasValue
-                        ? value.GlobalTimeoutPeriod.Value
-                        : 0;
-                }
-                else
-                {
-                    tbID.Text = "";
-                    groupBox1.Enabled = false;
-                    groupBox2.Enabled = false;
-                    groupBox3.Enabled = false;
-                    overrideCommandTimeout.Value = 0;
-                    automateablePipelineCollectionUI1.Enabled = false;
-                }
-            }
-        }
-
+        public AutomationServiceSlot AutomationServiceSlot { get; private set; }
+        
         public AutomationServiceSlotUI()
         {
             InitializeComponent();
@@ -85,29 +52,90 @@ namespace CatalogueManager.SimpleDialogs.Automation
             AutomationServiceSlot = databaseObject;
             objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
             
-            ddDQESelectionStrategy.DataSource = Enum.GetValues(typeof(AutomationDQEJobSelectionStrategy));
-            ddDQEFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
-            ddDLEFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
-            ddCacheFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
+            RefreshUIFromDatabase();
+        }
+
+        private void RefreshUIFromDatabase()
+        {
+            lockableUI1.Lockable = AutomationServiceSlot;
+
+            _loadingUI = true;
+
+            if (AutomationServiceSlot != null)
+            {
+                automateablePipelineCollectionUI1.AutomationServiceSlot = AutomationServiceSlot;
+                automateablePipelineCollectionUI1.Enabled = true;
+
+                groupBox1.Enabled = true;
+                groupBox2.Enabled = true;
+                groupBox3.Enabled = true;
+
+                tbID.Text = AutomationServiceSlot.ID.ToString();
+                dqeMaxJobs.Value = AutomationServiceSlot.DQEMaxConcurrentJobs;
+                dqeDaysBetween.Value = AutomationServiceSlot.DQEDaysBetweenEvaluations;
+
+                ddDQESelectionStrategy.DataSource = Enum.GetValues(typeof(AutomationDQEJobSelectionStrategy));
+                ddDQESelectionStrategy.SelectedItem = AutomationServiceSlot.DQESelectionStrategy;
+
+                ddDQEFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
+                ddDQEFailureStrategy.SelectedItem = AutomationServiceSlot.DQEFailureStrategy;
+
+                dleMaxJobs.Value = AutomationServiceSlot.DLEMaxConcurrentJobs;
+
+                ddDLEFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
+                ddDLEFailureStrategy.SelectedItem = AutomationServiceSlot.DLEFailureStrategy;
+
+                cacheMaxJobs.Value = AutomationServiceSlot.CacheMaxConcurrentJobs;
+
+                ddCacheFailureStrategy.DataSource = Enum.GetValues(typeof(AutomationFailureStrategy));
+                ddCacheFailureStrategy.SelectedItem = AutomationServiceSlot.CacheFailureStrategy;
+
+                overrideCommandTimeout.Value = AutomationServiceSlot.GlobalTimeoutPeriod.HasValue
+                    ? AutomationServiceSlot.GlobalTimeoutPeriod.Value
+                    : 0;
+            }
+            else
+            {
+                tbID.Text = "";
+                groupBox1.Enabled = false;
+                groupBox2.Enabled = false;
+                groupBox3.Enabled = false;
+                overrideCommandTimeout.Value = 0;
+                automateablePipelineCollectionUI1.Enabled = false;
+            }
+
+            _loadingUI = false;
         }
 
         private void ddDQESelectionStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingUI)
+                return;
+
             AutomationServiceSlot.DQESelectionStrategy = (AutomationDQEJobSelectionStrategy) ddDQESelectionStrategy.SelectedItem;
         }
 
         private void ddDQEFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingUI)
+                return;
+
             AutomationServiceSlot.DQEFailureStrategy = (AutomationFailureStrategy)ddDQEFailureStrategy.SelectedItem;
         }
 
         private void ddDLEFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingUI)
+                return;
+
             AutomationServiceSlot.DLEFailureStrategy = (AutomationFailureStrategy)ddDLEFailureStrategy.SelectedItem;
         }
 
         private void ddCacheFailureStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingUI)
+                return;
+
             AutomationServiceSlot.CacheFailureStrategy = (AutomationFailureStrategy)ddCacheFailureStrategy.SelectedItem;
         }
 

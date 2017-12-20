@@ -200,7 +200,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
       <Private>True</Private>
@@ -284,13 +283,13 @@
     <Compile Include="Integration\TableNamingConventionTests.cs" />
     <Compile Include="Integration\TableValuedFunctionTests\AggregationTests.cs" />
     <Compile Include="Integration\TableValuedFunctionTests\ImportAndTestTests.cs" />
-    <Compile Include="Integration\TableValuedFunctionTests\TestableTableValuedFunction.cs" />
     <Compile Include="Integration\ObscureDependencyTests\ValidationXMLObscureDependencyFinderTests.cs" />
     <Compile Include="Integration\TriggerTests.cs" />
     <Compile Include="Integration\Validation\ReferentialIntegrityConstraintTests.cs" />
     <Compile Include="Integration\Validation\StandardRegexTests.cs" />
     <Compile Include="Integration\VersioningTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
+    <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\ExplicitDatabaseNameChecker.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousRelationshipPropertyUse.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\UserInterfaceStandardisationChecker.cs" />
@@ -298,6 +297,7 @@
     <Compile Include="SourceCodeEvaluation\EvaluateNamespacesAndSolutionFoldersTests.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\RDMPFormInitializationTests.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousEmptyChecksMethodsOrNotICheckablePlugins.cs" />
+    <Compile Include="SourceCodeEvaluation\InterfaceDeclarationsCorrect.cs" />
     <Compile Include="SourceCodeEvaluation\SinglePropertyUISourceCodeEvaluator.cs" />
     <Compile Include="TestResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -307,7 +307,6 @@
     <Compile Include="Unit\CacheFetchRequestProviderTests.cs" />
     <Compile Include="Unit\CacheLagPeriodUnitTests.cs" />
     <Compile Include="Unit\CatalogueNamingTests.cs" />
-    <Compile Include="Unit\DatabasePatchingTests.cs" />
     <Compile Include="Unit\DataFlowPipelineEngineTests.cs" />
     <Compile Include="Unit\DocumentationReportMapsDirectlyToDatabaseTest.cs" />
     <Compile Include="Unit\ExerciseData\TestBiochemistryCreation.cs" />
@@ -333,13 +332,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Integration\SupportingDocumentTests.cs" />
-    <Compile Include="Unit\PluginBootstrapperTests.cs" />
     <Compile Include="Unit\PreInitializeTests.cs" />
     <Compile Include="Unit\SimpleColumnInfoTests.cs" />
     <Compile Include="Unit\SqlSyntaxHelperTests.cs" />
     <Compile Include="Integration\TableInfoTests.cs" />
     <Compile Include="Unit\TestAcronymnGeneration.cs" />
-    <Compile Include="UserAcceptanceTestEnvironmentHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj">

@@ -61,22 +61,6 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
             Assert.IsTrue(kaizerSoze);
         }
 
-        public Startup CreateStartup()
-        {
-            // Ignore the test patcher classes that are in the test assembly (two of them are intentionally invalid and will cause setup to fail)
-            var pluginBootstrapper = new PluginBootstrapper(CatalogueRepository)
-            {
-                PatcherTypesToIgnore =
-                    new[]
-                    {
-                        "TestPluginPatcher", 
-                        "TestPluginPatcherWithNoConstructor",
-                        "TestPluginPatcherWithNoValidConstructor"
-                    }
-            };
-
-            return new Startup(RepositoryLocator);
-        }
 
         [Test]
         public void DeleteAReferencedValidationXML()

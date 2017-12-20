@@ -1,11 +1,14 @@
 ﻿using System;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
 {
-    public interface IExternalDatabaseServer : IDataAccessPoint
+    /// <summary>
+    /// See ExternalDatabaseServer
+    /// </summary>
+    public interface IExternalDatabaseServer : IDataAccessPoint, IMapsDirectlyToDatabaseTable
     {
-        int ID { get; }
         string Name { get; }
 
         bool IsSameDatabase(string server, string database);

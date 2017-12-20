@@ -15,8 +15,8 @@ using CatalogueManager.Menus.MenuItems;
 using Dashboard.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace Dashboard.Menus.MenuItems
 {

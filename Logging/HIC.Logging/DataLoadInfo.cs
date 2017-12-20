@@ -7,6 +7,14 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class name that is primarily responsible
+    /// for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed (whether it has failed or suceeded).
+    /// 
+    /// You should maintain a reference to DataLoadInfo in order to create logs of Progress (ProgressLogging) / Errors (FatalErrorLogging) / and table load audits
+    /// (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this audit record e.g. when loading a live table
+    /// you can store the ID of the load batch it appeared in. 
+    /// </summary>
     public class DataLoadInfo : IDataLoadInfo
     {
         
@@ -119,7 +127,7 @@ namespace HIC.Logging
   
         /// <summary>
         /// Marks the start of a new data load in the database.  Automatically populates StartTime and UserAccount from
-        /// Environment variables.  Also creates a new Guid for this object (ID in the database).
+        /// Environment.  Also creates a new ID in the database.
         /// </summary>
         /// <param name="packageName">The SSIS package or executable that started the data load</param>
         /// <param name="description">A description of what the data load is trying to achieve</param>

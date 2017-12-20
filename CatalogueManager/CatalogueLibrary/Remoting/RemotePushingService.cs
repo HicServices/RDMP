@@ -19,6 +19,9 @@ using ReusableLibraryCode.Serialization;
 
 namespace CatalogueLibrary.Remoting
 {
+    /// <summary>
+    /// Serializes collections of RDMP objects into BINARY Json and streams to a RemoteRDMP endpoint.
+    /// </summary>
     public class RemotePushingService
     {
         private readonly ICatalogueRepository _repository;

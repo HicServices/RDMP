@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace HIC.Logging.PastEvents
 {
+    /// <summary>
+    /// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
+    /// </summary>
     public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
     {
         public ArchivalDataLoadInfo Parent { get; private set; }
@@ -38,16 +41,16 @@ namespace HIC.Logging.PastEvents
 
         }
 
-        public int ID { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime? End { get; set; }
-        public string TargetTable { get; set; }
-        public int? Inserts { get; set; }
-        public int? Deletes { get; set; }
-        public int? Updates { get; set; }
-        public string Notes { get; set; }
+        public int ID { get; internal set; }
+        public DateTime Start { get; internal set; }
+        public DateTime? End { get; internal set; }
+        public string TargetTable { get; internal set; }
+        public int? Inserts { get; internal set; }
+        public int? Deletes { get; internal set; }
+        public int? Updates { get; internal set; }
+        public string Notes { get; internal set; }
 
-        public List<ArchivalDataSource> DataSources { get; set; }
+        public List<ArchivalDataSource> DataSources { get; internal set; }
         
         public string ToShortString()
         {

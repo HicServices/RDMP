@@ -6,9 +6,11 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
-    public interface ILoadProgress :ISaveable, ILockable
+    /// <summary>
+    /// See LoadProgress
+    /// </summary>
+    public interface ILoadProgress :ISaveable, ILockable,IMapsDirectlyToDatabaseTable
     {
-        int ID { get; }
         string Name { get; set; }
         DateTime? OriginDate { get; set; }
         DateTime? DataLoadProgress { get; set; }
@@ -23,8 +25,7 @@ namespace CatalogueLibrary.Data
         //Dictionary<DateTime, FileInfo> GetDataLoadWorkload(IHICProjectDirectory root, int batchSize);
 
         bool IsDisabled { get; set; }
-        IRepository Repository { get; }
-
+        
         int DefaultNumberOfDaysToLoadEachTime { get; }
     }
 }

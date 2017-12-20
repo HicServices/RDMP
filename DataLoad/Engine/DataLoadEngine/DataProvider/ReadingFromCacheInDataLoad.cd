@@ -13,7 +13,7 @@
     <Position X="1.885" Y="4.438" Height="0.333" Width="13.679" />
   </Comment>
   <Comment CommentText="Communicate your ICacheDataProvider's requirements by decorating public properties with this Attribute.">
-    <Position X="8.896" Y="5.302" Height="0.562" Width="3.294" />
+    <Position X="9.219" Y="5.292" Height="0.562" Width="3.294" />
   </Comment>
   <Comment CommentText="Create one of these for interacting with your cache">
     <Position X="0.5" Y="8.823" Height="0.375" Width="3.294" />
@@ -22,16 +22,12 @@
     <Position X="0.604" Y="10.448" Height="0.375" Width="3.294" />
   </Comment>
   <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="4.75" Y="1.75" Width="2" />
+    <Position X="4.75" Y="2.25" Width="2" />
     <TypeIdentifier />
     <ShowAsCollectionAssociation>
       <Property Name="ProcessTaskArguments" />
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="CatalogueLibrary.Data.DemandsInitialization" Collapsed="true">
-    <Position X="6.5" Y="5.25" Width="2.25" />
-    <TypeIdentifier />
   </Class>
   <Class Name="CatalogueLibrary.Data.DataLoad.LoadMetadata" Collapsed="true">
     <Position X="0.5" Y="1.75" Width="2.75" />
@@ -50,39 +46,38 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CachingEngine.BasicCache.OneZipFilePerDayCacheLayout" Collapsed="true">
-    <Position X="5.75" Y="11.75" Width="2.5" />
+  <Class Name="CatalogueLibrary.Data.DemandsInitializationAttribute" Collapsed="true">
+    <Position X="6.5" Y="5.25" Width="2.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="DataLoadEngine.DataProvider.OneZipFilePerDayCachedDataProvider" Collapsed="true">
-    <Position X="1" Y="9.75" Width="2.75" />
+  <Class Name="CachingEngine.BasicCache.BasicCacheLayout" Collapsed="true">
+    <Position X="5.75" Y="11.75" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataLoadEngine.DataProvider.FromCache.BasicCacheDataProvider" Collapsed="true">
+    <Position X="1" Y="9.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAACAgAAAAAAAIAAAMAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataProvider\OneZipFilePerDayCachedDataProvider.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataProvider\FromCache\BasicCacheDataProvider.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="CachingEngine.Layouts.ICacheLayout">
     <Position X="5.75" Y="8" Width="1.5" />
     <TypeIdentifier />
     <ShowAsAssociation>
-      <Property Name="Resolver" />
       <Property Name="ArchiveType" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="CachingEngine.Requests.ILoadCachePathResolver">
-    <Position X="8.75" Y="8.75" Width="2.75" />
-    <TypeIdentifier />
-  </Interface>
-  <Interface Name="DataLoadEngine.DataProvider.ICachedDataProvider">
-    <Position X="1.5" Y="6.75" Width="2.25" />
+  <Interface Name="DataLoadEngine.DataProvider.FromCache.ICachedDataProvider" Collapsed="true">
+    <Position X="2.75" Y="7" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAACAAAAAAAAAIAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataProvider\ICachedDataProvider.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataProvider\FromCache\ICachedDataProvider.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="CacheArchiveType" />
-    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="CachingEngine.Layouts.ILoadCachePathResolver" Collapsed="true">
+    <Position X="8.75" Y="9" Width="2.25" />
+    <TypeIdentifier />
   </Interface>
   <Enum Name="CatalogueLibrary.Data.DataLoad.CacheArchiveType">
     <Position X="9.75" Y="7" Width="1.75" />

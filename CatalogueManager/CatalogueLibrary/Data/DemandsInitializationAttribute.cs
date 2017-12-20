@@ -4,7 +4,8 @@ namespace CatalogueLibrary.Data
 {
 
     /// <summary>
-    /// Used by classes to indicate that a property should be initialized from a ProcessTaskArgument
+    /// Used to model Design Time initialization of IDataFlowComponents.  Decorate public properties of IDataFlowComponents with this attribute to allow the user 
+    /// to define values for the Pipeline when they build it.  Each Demand will be serialised as a PipelineComponentArgument.
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Property)]
     public class DemandsInitializationAttribute : System.Attribute

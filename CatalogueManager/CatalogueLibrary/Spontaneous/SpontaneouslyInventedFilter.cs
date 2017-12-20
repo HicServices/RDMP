@@ -8,6 +8,13 @@ using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.Spontaneous
 {
+    /// <summary>
+    /// Spontaneous (memory only) implementation of IFilter.  This is the prefered method of injecting lines of WHERE Sql into an ISqlQueryBuilder dynamically in code
+    /// (as opposed to ones the user has created).  This can be used to for example enforce additional constraints on the query e.g. 'generate this Aggregate Graph but
+    /// restrict the results to patients appearing in my cohort list X' (in this case the SpontaneouslyInventedFilter would be the 'patients appearing in my cohort list X'
+    /// 
+    /// The other way to inject sql code into an ISqlQueryBuilder is via CustomLine but that's less precise.
+    /// </summary>
     public class SpontaneouslyInventedFilter:SpontaneousObject,IFilter
     {
         private readonly IContainer _notionalParent;

@@ -9,6 +9,10 @@ using Xceed.Words.NET;
 
 namespace CatalogueLibrary
 {
+    /// <summary>
+    /// Generates tables in a Microsoft Word document describing a Catalogue, it's CatalogueItems and any Issues associated with it.  This is used in data extraction 
+    /// to generate metadata documents for the researchers to read (See WordDataWriter)
+    /// </summary>
     public class WordCatalogueExtractor: RequiresMicrosoftOffice
     {
         private ICatalogue Catalogue { get; set; }

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ChecksUI;
 

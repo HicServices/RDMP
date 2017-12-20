@@ -177,7 +177,13 @@ namespace CatalogueLibrary.Data.DataLoad
             Type type = GetSystemType();
 
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-                return Repository.GetObjectByID(GetSystemType(), Convert.ToInt32(Value));
+            {
+                //if it is interface e.g. ITableInfo fetch instead the TableInfo object
+                if (type.IsInterface && type.Name.StartsWith("I"))
+                    type = ((CatalogueRepository) Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1));
+
+                return Repository.GetObjectByID(type, Convert.ToInt32(Value));
+            }
 
             if (Type.Equals(typeof (EncryptedString).ToString()))
                 return new EncryptedString((CatalogueRepository) Repository) {Value = Value};
@@ -321,7 +327,7 @@ namespace CatalogueLibrary.Data.DataLoad
                         throw new NotSupportedException("Type " + o.GetType() + " is not one of the permissable types for ProcessTaskArgument, argument must be one of:" + PermissableTypes.Aggregate("", (s, n) => s + n + ",").TrimEnd(','));
 
                     //if we are passed something o of differing type to the known requested type then someone is lying to someone!
-                    if (o.GetType() != type)
+                    if (type != null && !type.IsInstanceOfType(o))
                         throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");                        
                 }
             }

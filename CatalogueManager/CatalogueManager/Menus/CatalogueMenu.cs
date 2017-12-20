@@ -47,7 +47,6 @@ using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dependencies;
 using CatalogueLibrary.Data;
-using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.Progress;
 
 namespace CatalogueManager.Menus

@@ -9,6 +9,12 @@ using ReusableLibraryCode.Progress;
 
 namespace CatalogueLibrary.DataFlowPipeline
 {
+    /// <summary>
+    /// Generic implementation of IDataFlowPipelineEngine (See IDataFlowPipelineEngine).  You can create a DataFlowPipelineEngine by manually constructing the context,
+    /// source, destination etc but more often you will want to use an IPipeline configured by the user and an IPipelineUseCase to stamp out the pipeline into an instance
+    /// of the engine (See IDataFlowPipelineEngineFactory).  IPipeline is the user configured set of components they think will achieve a given task.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     {
         private readonly DataFlowPipelineContext<T> _context;
@@ -24,7 +30,6 @@ namespace CatalogueLibrary.DataFlowPipeline
         }
         public object DestinationObject { get { return Destination; } }
         public object SourceObject { get { return Source; } }
-        public object ContextObject { get { return _context; } }
 
         public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, IDataFlowDestination<T> destination, IDataLoadEventListener listener)
         {

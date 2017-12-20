@@ -8,7 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableUIComponents.Annotations;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {

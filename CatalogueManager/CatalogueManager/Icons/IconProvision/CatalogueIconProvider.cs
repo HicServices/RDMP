@@ -17,10 +17,9 @@ using CatalogueManager.Icons.IconProvision.Exceptions;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.PluginChildProvision;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 using ScintillaNET;
 
 namespace CatalogueManager.Icons.IconProvision
@@ -106,14 +105,14 @@ namespace CatalogueManager.Icons.IconProvision
 
             if (concept is DataAccessCredentialUsageNode)
                 return GetImage(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
-            
-            if (concept is IFilter)
+
+            if (ConceptIs(typeof(IFilter),concept))
                 return GetImage(RDMPConcept.Filter, kind);
 
-            if (concept is ISqlParameter)
+            if (ConceptIs(typeof(ISqlParameter), concept))
                 return GetImage(RDMPConcept.ParametersNode,kind);
 
-            if (concept is IContainer)
+            if (ConceptIs(typeof(IContainer), concept))
                 return GetImage(RDMPConcept.FilterContainer, kind);
             
             if (concept is PermissionWindowUsedByCacheProgressNode)
@@ -135,6 +134,19 @@ namespace CatalogueManager.Icons.IconProvision
 
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
+        }
+
+        private bool ConceptIs(Type t, object concept)
+        {
+            if (t.IsInstanceOfType(concept))
+                return true;
+
+            var type = concept as Type;
+
+            if (type != null && t.IsAssignableFrom(type))
+                return true;
+
+            return false;
         }
 
         private bool IsLockedLockable(object concept)

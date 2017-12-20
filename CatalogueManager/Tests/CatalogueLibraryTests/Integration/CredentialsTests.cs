@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;

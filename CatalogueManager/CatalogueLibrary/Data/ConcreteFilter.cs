@@ -10,9 +10,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 namespace CatalogueLibrary.Data
 {
     /// <summary>
-    /// Abstract base class for all IFilters which are database entities (Stored in the Catalogue/Data Export database as objects).  IFilters are lines of WHERE sql which 
-    /// are combined in IContainers.  IFilters can be either ConcreteFilter (there is persisted user defined database object that makes up the IFilter) or
-    /// SpontaneouslyInventedFilter.  
+    /// Abstract base class for all IFilters which are database entities (Stored in the Catalogue/Data Export database as objects). 
     /// 
     /// ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / VersionedDatabaseEntity logic to IFilter (which would break 
     /// SpontaneouslyInventedFilters)

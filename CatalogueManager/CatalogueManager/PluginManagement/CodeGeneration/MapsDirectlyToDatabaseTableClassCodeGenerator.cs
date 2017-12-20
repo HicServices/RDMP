@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ScintillaNET;
 

@@ -170,6 +170,7 @@
     <Compile Include="RowErrorLogging.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="HICSSISLibraryKey.snk" />
     <None Include="Logging.cd" />
   </ItemGroup>

@@ -17,7 +17,7 @@ namespace DataExportLibrary.ExtractionTime.FileOutputFormats
 
 
         public int SeparatorsStrippedOut { get; private set; }
-        private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t" };
+        private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t","\""};
         private StreamWriter _sw;
         private StringBuilder _sbWriteOutLinesBuffer;
         private const string _illegalCharactersReplacement = " ";

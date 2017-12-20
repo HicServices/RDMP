@@ -1,6 +1,5 @@
 ﻿using CatalogueLibrary.Data;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace CatalogueLibrary.CommandExecution.AtomicCommands
 {

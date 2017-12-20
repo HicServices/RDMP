@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -15,12 +13,24 @@ using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
 
 namespace CatalogueLibrary.Providers
 {
+    /// <summary>
+    /// Performance optimisation class and general super class in charge of recording and discovering all objects in the Catalogue database so they can be displayed in 
+    /// RDMPCollectionUIs etc.  This includes issuing a single database query per Type fetching all objects (e.g. AllProcessTasks, AllLoadMetadatas etc) and then in evaluating
+    /// and documenting the hierarchy in _childDictionary.  Every object that is not a root level object also has a DescendancyList which records the path of parents to that
+    /// exact object.  Therefore you can easily identify 1. what the immediate children of any object are, 2. what the full path to any given object is.
+    /// 
+    /// The pattern is:
+    /// 1. Identify a root level object 
+    /// 2. Create a method overload AddChildren that takes the object
+    /// 3. Create a new HashSet containing all the child objects (regardless of mixed Type)
+    /// 4. Call AddToDictionaries with a new DescendancyList containing the parent object
+    /// 5. For each of the objects added that has children of it's own repeat the above (Except call DescendancyList.Add instead of creating a new one)
+    ///  
+    /// </summary>
     public class CatalogueChildProvider :ICoreChildProvider
     {
         public LoadMetadata[] AllLoadMetadatas { get; set; }

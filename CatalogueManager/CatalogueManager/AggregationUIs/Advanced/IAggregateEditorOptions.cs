@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using MapsDirectlyToDatabaseTable;
-using ReusableUIComponents.Annotations;
 
 namespace CatalogueManager.AggregationUIs.Advanced
 {

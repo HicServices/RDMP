@@ -3,13 +3,17 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Web.UI;
-using System.Windows.Media;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Reports
 {
+    /// <summary>
+    /// Base class for all reports which generate Microsoft DocX files.  Note that the DocX library is used to create the .docx file so it doesn't actually require Microsoft
+    /// Office to be installed on the machine using the class but in order to open the resulting files the user will need something compatible with .docx.
+    /// 
+    /// Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.
+    /// </summary>
     public class RequiresMicrosoftOffice
     {
         protected void InsertParagraph(DocX document, string ptext, int textFontSize = -1)

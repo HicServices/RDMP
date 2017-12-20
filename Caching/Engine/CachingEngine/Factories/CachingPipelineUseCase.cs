@@ -99,7 +99,7 @@ namespace CachingEngine.Factories
             return GetEngine(_pipeline, listener);
         }
         
-        public override object[] GetInitializationObjects(ICatalogueRepository repository)
+        public override object[] GetInitializationObjects()
         {
             return new object[]
             {

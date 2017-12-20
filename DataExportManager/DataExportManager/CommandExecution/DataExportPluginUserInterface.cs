@@ -14,7 +14,6 @@ using DataExportLibrary.Data;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using ReusableLibraryCode;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution
 {

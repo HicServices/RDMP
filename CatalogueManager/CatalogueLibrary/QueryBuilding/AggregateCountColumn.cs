@@ -6,6 +6,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
+    /// <summary>
+    /// The count(*) column in an AggregateConfiguration, this is used by AggregateBuilder.  This can be any aggregate function such as 'sum', 'avg' etc.
+    /// </summary>
     public class AggregateCountColumn:IColumn
     {
         private IQuerySyntaxHelper _syntaxHelper;

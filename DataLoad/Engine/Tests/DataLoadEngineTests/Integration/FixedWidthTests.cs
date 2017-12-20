@@ -3,7 +3,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using CatalogueLibrary;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;

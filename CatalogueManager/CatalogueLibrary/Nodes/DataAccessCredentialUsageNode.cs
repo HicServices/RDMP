@@ -10,6 +10,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Tree Node for documenting the allowed usage of a specific DataAccessCredentials (username / password) under a given DataAccessContext (loading, extracting etc).
+    /// </summary>
     public class DataAccessCredentialUsageNode
     {
         public DataAccessCredentials Credentials { get; private set; }

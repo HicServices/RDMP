@@ -1,15 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Comment CommentText="Call Publish to push an updated database object into the Event Bus">
-    <Position X="0.583" Y="4.198" Height="0.521" Width="2.377" />
+    <Position X="0.583" Y="5.198" Height="0.521" Width="2.377" />
   </Comment>
-  <Comment CommentText="3 ways to subscribe:&#xD;&#xA;1. manually sub/unsub&#xD;&#xA;2. sub for lifetime of control&#xD;&#xA;3. sub for lifetime of object">
-    <Position X="3.667" Y="3.969" Height="0.917" Width="2.377" />
+  <Comment CommentText="There are 3 ways to subscribe to the RefreshBus:">
+    <Position X="3.146" Y="0.5" Height="0.302" Width="2.929" />
+  </Comment>
+  <Comment CommentText="System for ensuring all the tabs in RDMP are updated with changes that take place to objects by other tabs / sections of the application.">
+    <Position X="0.5" Y="0.5" Height="0.823" Width="2.346" />
+  </Comment>
+  <Comment CommentText="1. If you are a RDMPSingleDatabaseObjectControl you are automatically subscribed for controls lifetime via SelfDestructProtocol">
+    <Position X="5.938" Y="1.302" Height="0.5" Width="4.179" />
+  </Comment>
+  <Comment CommentText="2. If you are a Windows Forms Control you can subscribe for the lifetime of your parent Form (once you are Loaded) by implementing ILifetimeSubscriber and calling EstablishLifetimeSubscription">
+    <Position X="5.938" Y="2.062" Height="0.656" Width="4.21" />
+  </Comment>
+  <Comment CommentText="3. You can implement IRefreshBusSubscriber and manually call Subscribe and Unsubscribe yourself (make sure not to double subscribe and do try to cleanup unsubscriptions to enable Garbage Collection to happen properly).">
+    <Position X="5.948" Y="3.26" Height="0.792" Width="4.21" />
   </Comment>
   <Class Name="CatalogueManager.Collections.TableInfoCollectionUI" Collapsed="true">
     <Position X="3.5" Y="7.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>MgIABAAIACSgABAYAQCAQQQCAABAAAFAEAIIAIhAWAA=</HashCode>
+      <HashCode>AgAAAAAIACQAAQAYAgCAAAACAAAAEAEAAAAAAAgAUAA=</HashCode>
       <FileName>Collections\TableInfoCollectionUI.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -17,7 +29,7 @@
   <Class Name="CatalogueManager.Collections.LoadMetadataCollectionUI" Collapsed="true">
     <Position X="6" Y="7.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AgAABAVAACQABtBAIAKAAAQDAAAgAAFCABoEAAgAAAA=</HashCode>
+      <HashCode>AgAAAAQAACQABgAAAgKAACADAAAAAAEAAAgAAAgAAAA=</HashCode>
       <FileName>Collections\LoadMetadataCollectionUI.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -33,13 +45,13 @@
   <Class Name="CatalogueManager.Collections.CatalogueCollectionUI" Collapsed="true">
     <Position X="1.25" Y="7.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>QAICFHFYACUAEAA4IECIRAYXKJQAL6EIBLYgAAgQFBA=</HashCode>
+      <HashCode>AAADEHAQAGQAAAAwAkCARAASIIAgDoEIBAAgAAgAABA=</HashCode>
       <FileName>Collections\CatalogueCollectionUI.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueManager.Refreshing.RefreshBus">
-    <Position X="0.5" Y="0.5" Width="2.5" />
+    <Position X="0.5" Y="1.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAgEEAEAAQAAAACAAUBQAAAAAAAAEA=</HashCode>
       <FileName>Refreshing\RefreshBus.cs</FileName>
@@ -48,12 +60,13 @@
   <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
     <Position X="8.75" Y="6" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <HashCode>AAAgAAAAACQAAAAAAEAAAAgAAAAAAAAAAAAAAIAAAAA=</HashCode>
       <FileName>TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueManager.Refreshing.SelfDestructProtocol&lt;T&gt;" Collapsed="true">
-    <Position X="3.75" Y="3.25" Width="2.25" />
+    <Position X="3.25" Y="1.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAABAAAAAAQAAAAAAAAAAAAAAAAAAgEAAAAAAAAAAAA=</HashCode>
       <FileName>Refreshing\SelfDestructProtocol.cs</FileName>
@@ -67,32 +80,11 @@
       <FileName>AggregationUIs\Advanced\AggregateEditor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ExecuteAggregateConfigurationAndViewDataTableUI_Design" Collapsed="true">
-    <Position X="2.75" Y="8.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AggregationUIs\Advanced\ExecuteAggregateConfigurationAndViewDataTableUI.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CatalogueManager.AggregationUIs.Advanced.ViewAggregateSQLUI_Design" Collapsed="true">
-    <Position X="5" Y="8.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AggregationUIs\Advanced\ViewAggregateSQLUI.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="CatalogueManager.AggregationUIs.AggregateGraph_Design" Collapsed="true">
     <Position X="7.25" Y="8.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>AggregationUIs\AggregateGraph.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CatalogueManager.AggregationUIs.AggregateGraphLoadAndSave_Design" Collapsed="true">
-    <Position X="9.5" Y="8.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AggregationUIs\AggregateGraphLoadAndSave.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CatalogueManager.CredentialsUIs.DataAccessCredentialsUI_Design" Collapsed="true">
@@ -180,14 +172,14 @@
     </TypeIdentifier>
   </Class>
   <Interface Name="CatalogueManager.Refreshing.ILifetimeSubscriber" Collapsed="true">
-    <Position X="3.75" Y="2" Width="3.25" />
+    <Position X="3.25" Y="2" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Refreshing\ILifetimeSubscriber.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueManager.Refreshing.IRefreshBusSubscriber">
-    <Position X="3.75" Y="0.5" Width="2" />
+  <Interface Name="CatalogueManager.Refreshing.IRefreshBusSubscriber" Collapsed="true">
+    <Position X="3.25" Y="3.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
       <FileName>Refreshing\IRefreshBusSubscriber.cs</FileName>

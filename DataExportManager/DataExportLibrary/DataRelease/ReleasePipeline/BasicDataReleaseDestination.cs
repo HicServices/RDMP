@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using MapsDirectlyToDatabaseTable.Revertable;
-
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

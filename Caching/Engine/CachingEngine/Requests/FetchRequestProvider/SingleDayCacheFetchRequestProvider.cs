@@ -3,6 +3,10 @@ using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Requests.FetchRequestProvider
 {
+    /// <summary>
+    /// Generates ICacheFetchRequests until the end of the day.  Day is based on the initial request.  This can be still be multiple requests if the ICacheProgress
+    /// ChunkPeriod is, for example, 1 hour at a time.
+    /// </summary>
     public class SingleDayCacheFetchRequestProvider : ICacheFetchRequestProvider
     {
         private readonly ICacheFetchRequest _initialRequest;

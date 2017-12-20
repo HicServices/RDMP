@@ -328,6 +328,8 @@ namespace LoadModules.Generic.DataFlowSources
         protected void OpenFile(FileInfo fileToLoad)
         {
             _dataAvailable = true;
+            _lineNumberTotal = 0;
+            _lineNumberBatch = 0;
 
             //if it is blank or null (although tab is allowed)
             if(string.IsNullOrWhiteSpace(Separator)  && Separator != "\t")
@@ -355,8 +357,8 @@ namespace LoadModules.Generic.DataFlowSources
 
             if (_headers == null)
                 throw new Exception("headers was null, how did that happen?");
-
-            int readThisBatch = 0;
+            
+            _lineNumberBatch = 0;
 
             while (
                 _performedOverReadByAccident //gets evaluated first - if we performed an overread when we were looking up the headers then dont do the reader.Read() -- works because C# will stop after it has evaluated the first half of the OR
@@ -397,9 +399,9 @@ namespace LoadModules.Generic.DataFlowSources
                         _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Skipped first line of file because there are forced replacement headers, we discarded" + string.Join(",", aboutToDiscardRow)));
 
                 }
-
                 
-                readThisBatch++;
+                _lineNumberBatch++;
+                _lineNumberTotal++;
 
                 DataRow currentRow = dt.Rows.Add();
                 string[] fields = GetFields(_reader);
@@ -415,7 +417,7 @@ namespace LoadModules.Generic.DataFlowSources
                     //complain to user
                     if (!_haveComplainedAboutUnderReadYet)
                     {
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There were " + _headers.Length + " headers but the current line number " + readThisBatch + " of the file has " + fields.Length + " cells in it, possibly there is a freetext field in the middle of the row.  Current under read handling behaviour is :" + UnderReadBehaviour));
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There were " + _headers.Length + " headers but the current line number " + _lineNumberTotal + " of the file has " + fields.Length + " cells in it, possibly there is a freetext field in the middle of the row.  Current under read handling behaviour is :" + UnderReadBehaviour));
                         _haveComplainedAboutUnderReadYet = true;
                     }
 
@@ -443,9 +445,9 @@ namespace LoadModules.Generic.DataFlowSources
 
                         if (fields.Length != _headers.Length)
                             if (!_dataAvailable)
-                                throw new Exception("We were attempting to resolve a read underrun that originated on line number " + problemLine + " (line number " + readThisBatch + " of batch) but the file ended while we were still reading lines out of the file (we read " + subsequentLinesRead + " subsequent line reads before Read() returned false)");
+                                throw new Exception("We were attempting to resolve a read underrun that originated on line number " + problemLine + " (line number " + _lineNumberTotal + " of batch) but the file ended while we were still reading lines out of the file (we read " + subsequentLinesRead + " subsequent line reads before Read() returned false)");
                             else
-                                throw new Exception("We were attempting to resolve the mismatch in the number of cells read and the number of headers demanded by using BehaviourOnUnderReadType.AppendNextLineToCurrentRow but after appending " + subsequentLinesRead + " subsequent rows we ended up with " + fields.Length + " cells which exceedes the number of headers " + _headers.Length + " original problem line started on line number " + problemLine + "(line number " + readThisBatch + " of batch)");
+                                throw new Exception("We were attempting to resolve the mismatch in the number of cells read and the number of headers demanded by using BehaviourOnUnderReadType.AppendNextLineToCurrentRow but after appending " + subsequentLinesRead + " subsequent rows we ended up with " + fields.Length + " cells which exceedes the number of headers " + _headers.Length + " original problem line started on line number " + problemLine + "(line number " + _lineNumberTotal + ")");
                         else
                             if (!_havesuccessfullyResolvedUnderReadAtLeastOnce)
                             {
@@ -461,11 +463,11 @@ namespace LoadModules.Generic.DataFlowSources
                     break;
 
                 //if we have enough required rows for this batch, break out of reading loop
-                if (readThisBatch >= batchSize)
+                if (_lineNumberBatch >= batchSize)
                     break;
             }
 
-            return readThisBatch;
+            return _lineNumberBatch;
 
         }
 
@@ -581,6 +583,9 @@ namespace LoadModules.Generic.DataFlowSources
         private string[] _commonSeparators = new []{"|",",","    ","#"};
         private string _separator;
         
+        private int _lineNumberTotal = 0;
+        private int _lineNumberBatch;
+
 
         private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, int lineNumber, DataRow currentRow, string[] headers)
         {

@@ -9,7 +9,6 @@ using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
-using ReusableUIComponents.Annotations;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {

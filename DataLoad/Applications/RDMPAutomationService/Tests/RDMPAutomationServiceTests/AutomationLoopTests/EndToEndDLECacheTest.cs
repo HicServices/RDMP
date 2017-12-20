@@ -10,6 +10,9 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.DataProvider.FromCache;
+using DataLoadEngineTests.Integration;
+using DataLoadEngineTests.Integration.Cache;
+using DataLoadEngineTests.Integration.PipelineTests;
 using Diagnostics;
 using NUnit.Framework;
 using RDMPAutomationService.Logic.Cache;
@@ -25,7 +28,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         [Test]
         public void RunEndToEndDLECacheTest()
         {
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWritter));
+            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
             int timeoutInMilliseconds = 120000;

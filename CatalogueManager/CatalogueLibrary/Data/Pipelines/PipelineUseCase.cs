@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Data.Pipelines
     /// </summary>
     public abstract class PipelineUseCase : IPipelineUseCase
     {
-        public abstract object[] GetInitializationObjects(ICatalogueRepository repository);
+        public abstract object[] GetInitializationObjects();
         public abstract IDataFlowPipelineContext GetContext();
 
         public object ExplicitSource { get; protected set; }
@@ -29,7 +29,7 @@ namespace CatalogueLibrary.Data.Pipelines
         public virtual IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
         {
             var engine = new DataFlowPipelineEngineFactory(this).Create(pipeline, listener);
-            engine.Initialize(GetInitializationObjects((ICatalogueRepository) pipeline.Repository).ToArray());
+            engine.Initialize(GetInitializationObjects().ToArray());
 
             return engine;
         }

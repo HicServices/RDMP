@@ -20,6 +20,7 @@ using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Collections
