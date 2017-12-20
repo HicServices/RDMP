@@ -7,6 +7,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Ticketing
 {
+    /// <summary>
+    /// RDMP can have a single ITicketingSystem configured (optional).  This factory creates the ITicketingSystem instance based on the 
+    /// TicketingSystemConfiguration the uer has set up
+    /// </summary>
     public class TicketingSystemFactory
     {
         private readonly CatalogueRepository _repository;

@@ -12,6 +12,10 @@ using Microsoft.SqlServer.Management.Smo;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
+    /// <summary>
+    /// Documents the relationship between the patching and database assemblies of the logging database.  This is a relational database in which events are logged
+    /// in a hierarchical way (See HIC.Logging.LogManager)
+    /// </summary>
     public class LoggingDatabasePatcher: IPatcher
     {
         public Assembly GetHostAssembly()

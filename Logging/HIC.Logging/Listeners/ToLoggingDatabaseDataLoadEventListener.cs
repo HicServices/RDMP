@@ -22,6 +22,10 @@ namespace HIC.Logging.Listeners
         private readonly LogManager _logManager;
         private readonly string _loggingTask;
         private readonly string _runDescription;
+
+        /// <summary>
+        /// The root logging object under which all events will be stored, will be null if logging has not started yet (first call to OnNotify/StartLogging).
+        /// </summary>
         public IDataLoadInfo DataLoadInfo { get; private set; }
 
         public ToLoggingDatabaseDataLoadEventListener(object hostingApplication, LogManager logManager, string loggingTask, string runDescription)
