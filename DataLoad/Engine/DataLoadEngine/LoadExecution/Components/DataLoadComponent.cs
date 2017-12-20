@@ -7,7 +7,7 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components
 {
-    public abstract class DataLoadComponent : DatabaseEntity,IDataLoadComponent
+    public abstract class DataLoadComponent : IDataLoadComponent
     {
         public bool SkipComponent { get; set; }
         public string Description { get; set; }
