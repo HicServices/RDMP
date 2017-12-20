@@ -77,6 +77,10 @@
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
       <Name>DataLoadEngine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+      <Project>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</Project>
+      <Name>LoadModules.Generic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
       <Name>Diagnostics</Name>

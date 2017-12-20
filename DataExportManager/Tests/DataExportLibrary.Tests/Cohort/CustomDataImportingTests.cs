@@ -8,6 +8,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Tests.DataExtraction;
 using DataExportLibrary;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
+using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -154,8 +155,15 @@ namespace DataExportLibrary.Tests.Cohort
         #region Helper methods
         private DataFlowPipelineEngine<DataTable> GetEnginePointedAtFile(string filename)
         {
-            CsvDataTableHelper source = new CsvDataTableHelper(filename);
-            source.Check(new ThrowImmediatelyCheckNotifier());
+            var source = new DelimitedFlatFileDataFlowSource
+            {
+                Separator = ",",
+                IgnoreBlankLines = true,
+                UnderReadBehaviour = BehaviourOnUnderReadType.AppendNextLineToCurrentRow,
+                MakeHeaderNamesSane = true,
+                StronglyTypeInputBatchSize = -1,
+                StronglyTypeInput = true
+            };
 
             CustomCohortDataDestination destination = new CustomCohortDataDestination();
 
@@ -167,7 +175,8 @@ namespace DataExportLibrary.Tests.Cohort
 
             DataFlowPipelineEngine<DataTable> engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, new ThrowImmediatelyDataLoadEventListener());
 
-            engine.Initialize(_extractableCohort);
+            engine.Initialize(_extractableCohort,new FlatFileToLoad(new FileInfo(filename)));
+            source.Check(new ThrowImmediatelyCheckNotifier());
 
             return engine;
         }
