@@ -22,6 +22,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataQualityEngine.Reports
 {
+    /// <summary>
+    /// Runs the DQE and populates Evaluation and sub tables with the results.  This includes counts of the number of rows / columns passing / failing validation
+    /// nullness etc both overall and subdivided by month / pivot.
+    /// </summary>
     public class CatalogueConstraintReport : DataQualityReport
     {
         private readonly string _dataLoadRunFieldName;
@@ -31,8 +35,8 @@ namespace DataQualityEngine.Reports
         private Validator _validator;
         private bool _containsDataLoadID;
 
-        private Dictionary<string,DQEStateTesseract> byPivotTesseracts = new Dictionary<string, DQEStateTesseract>();
-        private Dictionary<string,PeriodicityHyperCube> byPivotCategoryHyperCubes = new Dictionary<string, PeriodicityHyperCube>();
+        private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new Dictionary<string, DQEStateOverDataLoadRunId>();
+        private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new Dictionary<string, PeriodicityCubesOverTime>();
 
         private IExternalDatabaseServer _loggingServer;
         string _loggingTask;
@@ -87,8 +91,8 @@ namespace DataQualityEngine.Reports
                 _catalogue = c;
                 var dqeRepository = new DQERepository((CatalogueRepository) c.Repository);
 
-                byPivotCategoryHyperCubes.Add("ALL",new PeriodicityHyperCube("ALL"));
-                byPivotTesseracts.Add("ALL", new DQEStateTesseract("ALL"));
+                byPivotCategoryCubesOverTime.Add("ALL",new PeriodicityCubesOverTime("ALL"));
+                byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
 
                 Check(new FromDataLoadEventListenerToCheckNotifier(forker));
 
@@ -147,26 +151,26 @@ namespace DataQualityEngine.Reports
                         }
                         
                         //always increase the "ALL" category
-                        ProcessRecord(dqeRepository,dataLoadRunIDOfCurrentRecord, r, byPivotCategoryHyperCubes["ALL"], byPivotTesseracts["ALL"]);
+                        ProcessRecord(dqeRepository,dataLoadRunIDOfCurrentRecord, r, byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"]);
                         
                         //if there is a value in the current record for the pivot column
                         if(pivotValue != null)
                         {
                             //if it is a novel 
-                            if (!byPivotCategoryHyperCubes.ContainsKey(pivotValue))
+                            if (!byPivotCategoryCubesOverTime.ContainsKey(pivotValue))
                             {
                                 //we will need to expand the dictionaries 
-                                if(byPivotCategoryHyperCubes.Keys.Count>30)//IMPORTANT: this value of 30 is in the documentation, dont change it without also changing UserManual.docx
+                                if(byPivotCategoryCubesOverTime.Keys.Count>30)//IMPORTANT: this value of 30 is in the documentation, dont change it without also changing UserManual.docx
                                     throw new OverflowException("Encountered more than 30 values for the pivot column " + _pivotCategory + " this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
                                 
                                 //expand both the time periodicity and the state results
-                                byPivotTesseracts.Add(pivotValue, new DQEStateTesseract(pivotValue));
-                                byPivotCategoryHyperCubes.Add(pivotValue, new PeriodicityHyperCube(pivotValue));
+                                byPivotRowStatesOverDataLoadRunId.Add(pivotValue, new DQEStateOverDataLoadRunId(pivotValue));
+                                byPivotCategoryCubesOverTime.Add(pivotValue, new PeriodicityCubesOverTime(pivotValue));
                                 
                             }
 
                             //now we are sure that the dictionaries have the category field we can increment it
-                            ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord,r, byPivotCategoryHyperCubes[pivotValue], byPivotTesseracts[pivotValue]);
+                            ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord,r, byPivotCategoryCubesOverTime[pivotValue], byPivotRowStatesOverDataLoadRunId[pivotValue]);
                         }
 
                         if (progress % 5000 == 0)
@@ -186,8 +190,8 @@ namespace DataQualityEngine.Reports
                 }
                 sw.Stop();
 
-                foreach (var state in byPivotTesseracts.Values)
-                    state.AdjustDandyValuesDown();
+                foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
+                    state.CalculateFinalValues();
                 
                 //now commit results
                 using (var con = dqeRepository.BeginNewTransactedConnection())
@@ -197,11 +201,11 @@ namespace DataQualityEngine.Reports
                         //mark down that we are beginning an evaluation on this the day of our lord etc...
                         Evaluation evaluation = new Evaluation(dqeRepository, _catalogue);
                         
-                        foreach (var state in byPivotTesseracts.Values)
+                        foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
                             state.CommitToDatabase(evaluation,_catalogue,con.Connection,con.Transaction);
                         
                         if (_timePeriodicityField != null)
-                            foreach (PeriodicityHyperCube periodicity in byPivotCategoryHyperCubes.Values)
+                            foreach (PeriodicityCubesOverTime periodicity in byPivotCategoryCubesOverTime.Values)
                                 periodicity.CommitToDatabase(evaluation);
 
                         con.ManagedTransaction.CommitAndCloseConnection();
@@ -507,7 +511,7 @@ namespace DataQualityEngine.Reports
             }
         }
 
-        private void ProcessRecord(DQERepository dqeRepository, int dataLoadRunIDOfCurrentRecord, DbDataReader r, PeriodicityHyperCube periodicity, DQEStateTesseract states)
+        private void ProcessRecord(DQERepository dqeRepository, int dataLoadRunIDOfCurrentRecord, DbDataReader r, PeriodicityCubesOverTime periodicity, DQEStateOverDataLoadRunId states)
         {
             //make sure all the results dictionaries
             states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);

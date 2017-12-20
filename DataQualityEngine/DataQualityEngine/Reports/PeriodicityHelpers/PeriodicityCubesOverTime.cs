@@ -10,20 +10,23 @@ using HIC.Common.Validation.Constraints;
 namespace DataQualityEngine.Reports.PeriodicityHelpers
 {
     /// <summary>
-    ///  Hypercube dimensions:
-    ///     Year (PeriodicityHyperCube)
-    ///     Month (PeriodicityHyperCube)
-    ///         ConsequenceX/NoConsequence (PeriodicityCube)
-    ///             RecordCount (PeriodicityState)
+    /// Accumulates counts for populating into the PeriodicityState table of the DQE.  This table contains row evaluation counts (passing / failing validation) and
+    /// 4 dimensions:
+    ///  Evaluation_ID - when in realtime the DQE was run (e.g. Evaluation run on Feb 2017)
+    ///  Year/Month - what in dataset time the result is for (e.g. biochemistry records relating to tests conducted during January 2013)
+    ///  Pivot Category - optional column value subdivision (e.g. Healthboard column is T or F)
+    ///  Row Evaluation - final dimension is one record per Consquence of failed validation (Wrong / Missing / Correct etc).
+    /// 
+    /// This class manages the time aspect as a Dictionary of year/month.  Other dimensions are managed by PeriodicityCube
     /// </summary>
-    public class PeriodicityHyperCube
+    public class PeriodicityCubesOverTime
     {
         private readonly string _pivotCategory;
         private List<PeriodicityCube> allCubes = new List<PeriodicityCube>();
         
         Dictionary<int,Dictionary<int,PeriodicityCube>>  hyperCube = new Dictionary<int, Dictionary<int, PeriodicityCube>>();
 
-        public PeriodicityHyperCube(string pivotCategory)
+        public PeriodicityCubesOverTime(string pivotCategory)
         {
             _pivotCategory = pivotCategory;
         }

@@ -11,7 +11,11 @@ using HIC.Common.Validation.Constraints;
 
 namespace DataQualityEngine.Reports
 {
-    public class DQEStateTesseract
+    /// <summary>
+    /// Records the total number of validation failures that occur for each column.  Results are calculated for each novel DataLoadRunId found.  The counts
+    /// for a column will always add up to the row count even if there are multiple validation rules broken (The worst consequence only is counted).
+    /// </summary>
+    public class DQEStateOverDataLoadRunId
     {
         private readonly string _pivotCategory;
 
@@ -24,7 +28,7 @@ namespace DataQualityEngine.Reports
         public Dictionary<int, Dictionary<Consequence, int>> WorstConsequencesByDataLoadRunID { get; set; }
         public Dictionary<int, int> RowsPassingValidationByDataLoadRunID { get; set; }
 
-        public DQEStateTesseract(string pivotCategory)
+        public DQEStateOverDataLoadRunId(string pivotCategory)
         {
             _pivotCategory = pivotCategory;
             InitializeDictionaries();
@@ -32,7 +36,6 @@ namespace DataQualityEngine.Reports
 
         public void InitializeDictionaries()
         {
-
             //column level
             ColumnValidationFailuresByDataLoadRunID = new Dictionary<int, VerboseValidationResults>();
             AllColumnStates = new Dictionary<int, ColumnState[]>();
@@ -95,15 +98,21 @@ namespace DataQualityEngine.Reports
                 RowsPassingValidationByDataLoadRunID.Add(dataLoadRunID, 0);
         }
 
-        private bool _dandyValuesAdjusted = false;
-        public void AdjustDandyValuesDown()
+        private bool _correctValuesCalculated = false;
+        
+        /// <summary>
+        /// Calculates the final counts for each Column based on the validation failures documented to date.  You can only call this method once and it
+        /// must be called before committing to database.
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        public void CalculateFinalValues()
         {
-            if(_dandyValuesAdjusted)
-                throw new Exception("Dandy values have already been adjusted down");
+            if (_correctValuesCalculated)
+                throw new Exception("Correct values have already been calculated");
 
-            _dandyValuesAdjusted = true;
+            _correctValuesCalculated = true;
 
-            //adjust the dandy state downwards according to the dictionary of validation failures
+            //adjust the counts for each data load run id \ column according to the dictionary of validation failures
             //per run id
             foreach (var dataLoadRunID in AllColumnStates.Keys)
             {
@@ -115,7 +124,7 @@ namespace DataQualityEngine.Reports
                         .DictionaryOfFailure.ContainsKey( //with entries in the dictionary of failure
                             column.TargetProperty))
                     {
-                        //adjust our dandy value downwards according to the results of the dictionary of failure
+                        //adjust our correct value downwards according to the results of the dictionary of failure
                         var kvp = ColumnValidationFailuresByDataLoadRunID[dataLoadRunID].DictionaryOfFailure[column.TargetProperty];
 
                         column.CountMissing = kvp[Consequence.Missing];
@@ -132,9 +141,8 @@ namespace DataQualityEngine.Reports
 
         public void CommitToDatabase(Evaluation evaluation, Catalogue catalogue, DbConnection con, DbTransaction transaction)
         {
-
-            if(!_dandyValuesAdjusted)
-                throw new Exception("You must call AdjustDandyValuesDown before committing to the database");
+            if(!_correctValuesCalculated)
+                throw new Exception("You must call CalculateFinalValues before committing to the database");
 
             IEnumerable<int> novelDataLoadRunIDs = RowsPassingValidationByDataLoadRunID.Keys;
 
