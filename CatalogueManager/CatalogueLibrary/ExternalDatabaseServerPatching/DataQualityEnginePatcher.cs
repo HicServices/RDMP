@@ -5,6 +5,9 @@ using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
+    /// <summary>
+    /// Documents the relationship between the patching and database assemblies of the DQE
+    /// </summary>
     public class DataQualityEnginePatcher : IPatcher
     {
         public Assembly GetHostAssembly()

@@ -439,7 +439,6 @@
     <Compile Include="Data\VersionedDatabaseEntity.cs" />
     <Compile Include="ExternalDatabaseServerPatching\ANOStoreDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
-    <Compile Include="ExternalDatabaseServerPatching\IExternalDatabaseServerProvider.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
     <Compile Include="SynchronizationFailedException.cs" />

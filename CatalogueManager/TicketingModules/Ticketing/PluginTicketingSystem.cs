@@ -25,7 +25,6 @@ namespace Ticketing
         public abstract void NavigateToTicket(string ticketName);
 
         public abstract TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket, string releaseTicket, out string reason, out Exception exception);
-        
         public abstract string GetProjectFolderName(string masterTicket);
     }
 }

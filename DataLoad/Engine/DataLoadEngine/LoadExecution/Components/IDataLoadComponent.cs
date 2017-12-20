@@ -3,7 +3,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataLoadEngine.LoadExecution.Components
 {
-    public interface IDataLoadComponent : ILoadComponent<IDataLoadJob>, IDisposeAfterDataLoad,IMapsDirectlyToDatabaseTable
+    public interface IDataLoadComponent : ILoadComponent<IDataLoadJob>, IDisposeAfterDataLoad
     {
         
     }

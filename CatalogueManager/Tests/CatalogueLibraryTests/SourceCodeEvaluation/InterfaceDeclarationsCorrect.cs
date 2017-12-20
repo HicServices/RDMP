@@ -15,7 +15,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             List<string> excusables = new List<string>()
             {
                 "IPlugin",
-                "IDataAccessCredentials"
+                "IDataAccessCredentials",
+                "IProcessTask" //this is inherited by IRuntimeTask too which isn't an IMapsDirectlyToDatabaseTable
             };
             List<string> problems = new List<string>();
 

@@ -9,7 +9,6 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public interface IExternalDatabaseServer : IDataAccessPoint, IMapsDirectlyToDatabaseTable
     {
-        int ID { get; }
         string Name { get; }
 
         bool IsSameDatabase(string server, string database);
