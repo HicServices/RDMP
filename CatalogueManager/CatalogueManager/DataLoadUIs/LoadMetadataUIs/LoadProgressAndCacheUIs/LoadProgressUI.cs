@@ -54,7 +54,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             if (_loadProgress != null)
             {
-                loadProgressDiagram1.LoadProgress = _loadProgress;
+                loadProgressDiagram1.SetLoadProgress(_loadProgress,_activator);
                 loadProgressDiagram1.Visible = true;
             }
             else

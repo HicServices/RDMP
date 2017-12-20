@@ -193,7 +193,6 @@
     <Compile Include="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.Designer.cs">
       <DependentUpon>ViewInsertsAndUpdatesDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
     <Compile Include="DQEPluginUserInterface.cs" />
