@@ -22,7 +22,7 @@ namespace HIC.Logging.Listeners
         private readonly LogManager _logManager;
         private readonly string _loggingTask;
         private readonly string _runDescription;
-        private IDataLoadInfo _dataLoadInfo;
+        public IDataLoadInfo DataLoadInfo { get; private set; }
 
         public ToLoggingDatabaseDataLoadEventListener(object hostingApplication, LogManager logManager, string loggingTask, string runDescription)
         {
@@ -34,32 +34,34 @@ namespace HIC.Logging.Listeners
 
         public ToLoggingDatabaseDataLoadEventListener(LogManager logManager, IDataLoadInfo dataLoadInfo)
         {
-            _dataLoadInfo = dataLoadInfo;
+            DataLoadInfo = dataLoadInfo;
             _logManager = logManager;
         }
 
-        private void StartLogging()
+        public void StartLogging()
         {
-            _dataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
+            _logManager.CreateNewLoggingTaskIfNotExists(_loggingTask);
+
+            DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
         }
 
         public void OnNotify(object sender, NotifyEventArgs e)
         {
-            if (_dataLoadInfo == null)
+            if (DataLoadInfo == null)
                 StartLogging();
 
             switch (e.ProgressEventType)
             {
                 case ProgressEventType.Information:
-                    _logManager.LogProgress(_dataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, sender.ToString(),e.Message);
+                    _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, sender.ToString(),e.Message);
                     break;
                 case ProgressEventType.Warning:
                     string msg = e.Message + (e.Exception == null?"": Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true));
-                    _logManager.LogProgress(_dataLoadInfo, ProgressLogging.ProgressEventType.OnWarning, sender.ToString(),msg);
+                    _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnWarning, sender.ToString(),msg);
                     break;
                 case ProgressEventType.Error:
                     string err = e.Message + (e.Exception == null ? "" : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                    _logManager.LogFatalError(_dataLoadInfo,sender.ToString(),err);
+                    _logManager.LogFatalError(DataLoadInfo,sender.ToString(),err);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -69,17 +71,17 @@ namespace HIC.Logging.Listeners
 
         public void OnProgress(object sender, ProgressEventArgs e)
         {
-            if (_dataLoadInfo == null)
+            if (DataLoadInfo == null)
                 StartLogging();
             
-            Debug.Assert(_dataLoadInfo != null, "_dataLoadInfo != null");
+            Debug.Assert(DataLoadInfo != null, "DataLoadInfo != null");
 
             if (e.Progress.UnitOfMeasurement == ProgressType.Records)
             {
                 //if(!tableLoads.Any(tbl=>tbl.))
                 if(!TableLoads.ContainsKey(e.TaskDescription))
                 {
-                    var t = _dataLoadInfo.CreateTableLoadInfo("", e.TaskDescription, new[] {new DataSource(sender.ToString())},e.Progress.KnownTargetValue);
+                    var t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription, new[] {new DataSource(sender.ToString())},e.Progress.KnownTargetValue);
                     TableLoads.Add(e.TaskDescription,t);
                 }
 
@@ -95,7 +97,7 @@ namespace HIC.Logging.Listeners
             foreach (var tableLoadInfo in TableLoads.Values)
                 tableLoadInfo.CloseAndArchive();
 
-            _dataLoadInfo.CloseAndMarkComplete();
+            DataLoadInfo.CloseAndMarkComplete();
         }
     }
 }
