@@ -3,8 +3,8 @@
     <metadata>
         <id>HIC.RDMP.Plugin.UI</id>
         <version>$version$</version>
-        <authors>gimcallister</authors>
-        <owners>gimcallister</owners>
+        <authors>HICServices</authors>
+        <owners>HICServices</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Package for creating RDMP plugin for ui</description>
         <releaseNotes/>
