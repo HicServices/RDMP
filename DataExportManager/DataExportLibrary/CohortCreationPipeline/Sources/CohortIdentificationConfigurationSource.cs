@@ -12,6 +12,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Sources
 {
+    /// <summary>
+    /// Executes a Cohort Identification Configuration query and releases the identifiers read into the pipeline as a single column DataTable.
+    /// </summary>
     public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<CohortIdentificationConfiguration>
     {
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
