@@ -24,6 +24,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
             foreach (var f in _csFilesList)
             {
+                if(Path.GetFileName(f) == "Class1.cs")
+                    continue;
+
                 var text = File.ReadAllText(f);
 
                 int startAt = text.IndexOf("public class");
