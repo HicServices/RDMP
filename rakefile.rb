@@ -60,9 +60,9 @@ assemblyinfo :assemblyinfo do |asm|
 end
 
 desc "Pushes the plugin packages into the specified folder"    
-task :deployplugins, [:folder] do |t, args|
+task :deployplugins, [:folder,:version] do |t, args|
     Dir.chdir('Plugin/Plugin') do
-        sh "./build-and-deploy-local.bat #{args.folder} '' 2.5.2.0"
+        sh "./build-and-deploy-local.bat #{args.folder} '' #{args.version}"
     end
 end
 
