@@ -3,8 +3,8 @@
     <metadata>
         <id>HIC.RDMP.Plugin.Test</id>
         <version>$version$</version>
-        <authors>gimcallister</authors>
-        <owners>gimcallister</owners>
+        <authors>HICServices</authors>
+        <owners>HICServices</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Package for creating RDMP plugin tests</description>
         <releaseNotes/>
@@ -23,6 +23,7 @@
         <file src="DataExportManager\Tests\DataExportLibrary.Tests\**\*.cs" target="src\DataExportManager\Tests\DataExportLibrary.Tests" />
         <file src="DataLoad\Engine\DataLoadEngine\**\*.cs" target="src\DataLoad\Engine\DataLoadEngine" />
         <file src="DataLoad\Engine\Tests\DataLoadEngineTests\**\*.cs" target="src\DataLoad\Engine\Tests\DataLoadEngineTests" />
+        <file src="DataLoad\Applications\RDMPAutomationService\**\*.cs" target="src\DataLoad\Applications\RDMPAutomationService" />
         <file src="DataQualityEngine\DataQualityEngine\**\*.cs" target="src\DataQualityEngine\DataQualityEngine" />
         <file src="Diagnostics\**\*.cs" target="src\Diagnostics" />
         <file src="Validation\HIC.Common.Validation\**\*.cs" target="src\Validation\HIC.Common.Validation" />
