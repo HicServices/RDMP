@@ -8,6 +8,9 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Data.DataTables.DataSetPackages
 {
+    /// <summary>
+    /// Helper class for listing, adding and dropping ExtractableDataSets from ExtractableDataSetPackages (See ExtractableDataSetPackage)
+    /// </summary>
     public class ExtractableDataSetPackageContents
     {
         private readonly IDataExportRepository _repository;
