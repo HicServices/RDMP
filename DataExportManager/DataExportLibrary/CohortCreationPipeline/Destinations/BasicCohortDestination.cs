@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -15,6 +16,10 @@ using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations
 {
+    /// <summary>
+    /// Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the cohort database specified in the
+    /// ICohortCreationRequest.  This 
+    /// </summary>
     public class BasicCohortDestination : IPluginCohortDestination
     {
         private string _privateIdentifier;
@@ -80,21 +85,17 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to calculate distinct identifiers.... Please Wait"));
 
                 //get DISTINCT values
-                DataTable dtToUpload;
-                if (_hasReleaseIdentifierColumn)
-                    dtToUpload = new DataView(toProcess).ToTable(true, _privateIdentifier, _releaseIdentifier, _fk);
-                else
-                    if (AllowNullReleaseIdentifiers)
-                        dtToUpload = new DataView(toProcess).ToTable(true, _privateIdentifier,  _fk);//the chunk has no release identifier column, maybe it has a default or is an identity or something?
-                    else
+                DataTable dtDistinct = GetDistinctNotNullTable(toProcess);
+
+                if (!_hasReleaseIdentifierColumn && !AllowNullReleaseIdentifiers)
                         throw new MissingFieldException("There is no release identifier in the pipeline and AllowNullReleaseIdentifiers is false, does your database logic support inserting null release identifiers? if so then set AllowNullReleaseIdentifiers=true in the configuration of this pipeline component.");
 
                 //warn user if the distinct count isn't the same as the non distinct
-                if(dtToUpload.Rows.Count != toProcess.Rows.Count)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There were " + toProcess.Rows.Count +" identifiers in the current batch but only " + dtToUpload.Rows.Count + " DISTINCT pairs of private/release identifier"));
+                if (dtDistinct.Rows.Count != toProcess.Rows.Count)
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There were " + toProcess.Rows.Count + " identifiers in the current batch but only " + dtDistinct.Rows.Count + " DISTINCT pairs of private/release identifier"));
 
-                UsefulStuff.BulkInsertWithBetterErrorMessages(bulkCopy, dtToUpload, null);
-                rowsSubmitted += dtToUpload.Rows.Count;
+                UsefulStuff.BulkInsertWithBetterErrorMessages(bulkCopy, dtDistinct, null);
+                rowsSubmitted += dtDistinct.Rows.Count;
 
                 listener.OnProgress(this, new ProgressEventArgs("Uploading cohort " + Request.NewCohortDefinition, new ProgressMeasurement(rowsSubmitted,ProgressType.Records), sw.Elapsed));
 
@@ -107,6 +108,40 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                 _transaction.Dispose();
                 throw;
             }
+        }
+
+        public DataTable GetDistinctNotNullTable(DataTable toProcess)
+        {
+            var dtDistinct = new DataTable(toProcess.TableName);
+            
+            foreach (DataColumn column in toProcess.Columns)
+                dtDistinct.Columns.Add(column.ColumnName, column.DataType);
+
+            //make pk from all columns
+            dtDistinct.PrimaryKey = dtDistinct.Columns.Cast<DataColumn>().ToArray();
+
+            foreach (DataRow dr in toProcess.Rows)
+            {
+                //ignore fully blank rows
+                if(dr.ItemArray.All(IsNull))
+                    continue;
+
+                //ignore fully blank rows
+                if (dr.ItemArray.Any(IsNull))
+                    throw new Exception("Cohort DataTable contained null row:" + string.Join(",", dr.ItemArray.Select(e => IsNull(e) ? "<null>":e)));
+                
+                if (!dtDistinct.Rows.Contains(dr.ItemArray))
+                    dtDistinct.Rows.Add(dr.ItemArray);
+            }
+
+            return dtDistinct;
+        }
+        private bool IsNull(object o)
+        {
+            if (o == null || o == DBNull.Value)
+                return true;
+
+            return string.IsNullOrWhiteSpace(o.ToString());
         }
 
         public virtual void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
