@@ -16,6 +16,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.DataRelease
 {
+    /// <summary>
+    /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.  This includes making sure that the current configuration
+    /// in the database matches the extracted flat files that are destined for release.  It also checks that the user hasn't snuck some additional files into
+    /// the extract directory etc.
+    /// </summary>
     public class ReleasePotential
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;

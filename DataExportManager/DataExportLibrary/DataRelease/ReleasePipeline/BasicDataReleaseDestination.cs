@@ -12,6 +12,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
+    /// <summary>
+    /// Default release pipeline destination implementation wraps Release Engine for the supplied ReleaseData.
+    /// </summary>
     public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseData>, IDataFlowDestination<ReleaseData>, IPipelineRequirement<Project>
     {
         [DemandsNestedInitialization()]
