@@ -4,6 +4,10 @@ using System.Globalization;
 
 namespace HIC.Common.Validation.Constraints.Secondary
 {
+    /// <summary>
+    /// Values (if present) in a column must be within a certain range of dates.  This can include referencing another column.  For example you could specify that
+    ///  Date of Birth must have an Inclusive Upper bound of Date of Death.
+    /// </summary>
     public class BoundDate : Bound
     {
         [Description("Optional, Requires the value being validated to be AFTER this date")]

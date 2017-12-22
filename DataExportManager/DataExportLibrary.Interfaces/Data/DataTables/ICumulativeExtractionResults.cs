@@ -4,6 +4,9 @@ using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See CumulativeExtractionResults
+    /// </summary>
     public interface ICumulativeExtractionResults : IDeleteable, IRevertable
     {
         int ExtractionConfiguration_ID { get; set; }

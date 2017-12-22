@@ -5,6 +5,9 @@ using HIC.Common.Validation.UIAttributes;
 
 namespace HIC.Common.Validation.Constraints.Secondary
 {
+    /// <summary>
+    /// Values being validated are expected to pass the Regex pattern
+    /// </summary>
     public class RegularExpression : SecondaryConstraint
     {
         private string _pattern;

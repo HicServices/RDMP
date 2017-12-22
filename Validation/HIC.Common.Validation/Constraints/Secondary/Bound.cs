@@ -4,6 +4,10 @@ using HIC.Common.Validation.UIAttributes;
 
 namespace HIC.Common.Validation.Constraints.Secondary
 {
+    /// <summary>
+    /// Values (if present) in a column must be within a certain range.  This can include referencing another column.  For example you could specify that
+    /// Date of Birth must have an Inclusive Upper bound of Date of Death.
+    /// </summary>
     public abstract class Bound : SecondaryConstraint
     {
         [Description("Optional, requires that the value being validated is HIGHER than the value stored in the referenced column (where values are present in both columns)")]
