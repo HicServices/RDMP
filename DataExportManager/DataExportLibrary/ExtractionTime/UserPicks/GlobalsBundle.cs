@@ -7,6 +7,10 @@ using CatalogueLibrary.Data;
 
 namespace DataExportLibrary.ExtractionTime.UserPicks
 {
+    /// <summary>
+    /// Bundle containing references to all the globally extractable (supplied with every project extraction regardless of dataset) documents and tables that need
+    /// to be extracted/copied to the output ExtractionDirectory.
+    /// </summary>
     public class GlobalsBundle:Bundle
     {
         public List<SupportingDocument> Documents { get; private set; }

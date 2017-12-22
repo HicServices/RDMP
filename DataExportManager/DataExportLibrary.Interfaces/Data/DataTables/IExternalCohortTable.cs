@@ -6,6 +6,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See ExternalCohortTable
+    /// </summary>
     public interface IExternalCohortTable : ICheckable, IDataAccessPoint,IMapsDirectlyToDatabaseTable
     {
         string Name { get; set; }

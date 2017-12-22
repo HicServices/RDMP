@@ -20,6 +20,9 @@ using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 {
+    /// <summary>
+    /// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an Sql Server database
+    /// </summary>
     [Description("The Extraction target for DataExportManager into a Microsoft SQL Database, this should only be used by ExtractionPipelineHost as it is the only class that knows how to correctly call PreInitialize ")]
     public class ExecuteFullExtractionToDatabaseMSSql : IExecuteDatasetExtractionDestination
     {

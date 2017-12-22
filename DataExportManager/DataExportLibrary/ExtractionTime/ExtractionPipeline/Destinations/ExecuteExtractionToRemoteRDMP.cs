@@ -22,6 +22,10 @@ using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 {
+    /// <summary>
+    /// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is sent via JSON to a remote web address instead of
+    /// being saved to disk.  Does not currently support globals / bundled content (Lookups etc).
+    /// </summary>
     public class ExecuteExtractionToRemoteRDMP : IExecuteDatasetExtractionDestination
     {
         private IExtractCommand extractCommand;

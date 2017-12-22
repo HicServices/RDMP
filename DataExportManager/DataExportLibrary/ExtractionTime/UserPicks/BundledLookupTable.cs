@@ -4,6 +4,10 @@ using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 
 namespace DataExportLibrary.ExtractionTime.UserPicks
 {
+    /// <summary>
+    /// Identifies a TableInfo that acts as a Lookup for a given dataset which is being extracted.  Lookup tables can be extracted along with the extracted data
+    /// set (See ExtractableDatasetBundle).
+    /// </summary>
     public class BundledLookupTable : IBundledLookupTable
     {
         public TableInfo TableInfo { get; set; }

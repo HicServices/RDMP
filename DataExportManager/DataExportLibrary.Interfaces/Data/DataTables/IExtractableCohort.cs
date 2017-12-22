@@ -9,6 +9,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See ExtractableCohort
+    /// </summary>
     public interface IExtractableCohort : IMapsDirectlyToDatabaseTable, ISaveable
     {
         int CountDistinct { get; }
