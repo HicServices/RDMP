@@ -208,10 +208,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     break;
                 case ExecuteExtractionToFlatFileType.CSV:
                     OutputFile = Path.Combine(DirectoryPopulated.FullName, request + ".csv");
-
-                    bool includeValidation = request is ExtractDatasetCommand && ((ExtractDatasetCommand)request).IncludeValidation;
-
-                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat, includeValidation);
+                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

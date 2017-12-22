@@ -12,7 +12,8 @@ using Ticketing;
 namespace DataExportLibrary.DataRelease
 {
     /// <summary>
-    /// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available / tickets in wrong status / safehaven down for maintencence etc
+    /// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available
+    ///  / tickets in wrong status / safehaven down for maintencence etc.
     /// </summary>
     public class ReleaseEnvironmentPotential
     {

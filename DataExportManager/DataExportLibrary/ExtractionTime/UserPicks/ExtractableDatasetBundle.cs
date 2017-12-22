@@ -9,6 +9,11 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.ExtractionTime.UserPicks
 {
+    /// <summary>
+    /// The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to be extracted.  This includes
+    /// SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not want to extract given parts (e.g. skip
+    /// the lookups).
+    /// </summary>
     public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
     {
         //The main dataset being extracted

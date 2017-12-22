@@ -13,14 +13,14 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void RefreshCohort()
         {
-            ExtractionPipelineHost host;
+            ExtractionPipelineUseCase useCase;
             IExecuteDatasetExtractionDestination results;
 
             var pipe = SetupPipeline();
             pipe.Name = "RefreshPipe";
             pipe.SaveToDatabase();
 
-            Execute(out host,out results);
+            Execute(out useCase,out results);
 
             var oldcohort = _configuration.Cohort;
 

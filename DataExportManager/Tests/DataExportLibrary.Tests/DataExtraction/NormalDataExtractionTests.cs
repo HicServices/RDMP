@@ -15,7 +15,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void ExtractNormally()
         {
-            ExtractionPipelineHost execute;
+            ExtractionPipelineUseCase execute;
             IExecuteDatasetExtractionDestination result;
 
             _catalogue.Name = "TestTable";

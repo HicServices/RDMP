@@ -7,6 +7,9 @@ using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 
 namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
 {
+    /// <summary>
+    /// See ExtractDatasetCommand
+    /// </summary>
     public interface IExtractDatasetCommand:IExtractCommand
     {
         IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get;}

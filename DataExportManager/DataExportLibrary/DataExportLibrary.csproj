@@ -277,7 +277,7 @@
     <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteDatasetExtractionFlatFileDestination.cs" />
     <Compile Include="ExtractionTime\ExtractionDirectory.cs" />
-    <Compile Include="ExtractionTime\ExtractionPipeline\ExtractionPipelineHost.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\ExtractionPipelineUseCase.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractDatasetCommand.cs" />
     <Compile Include="ExtractionTime\ExtractionTimeTimeCoverageAggregator.cs" />
     <Compile Include="ExtractionTime\ExtractionTimeTimeCoverageAggregatorBucket.cs" />
@@ -290,7 +290,7 @@
     <Compile Include="ExtractionTime\FileOutputFormats\MicrosoftAccessDatabaseFormat.cs" />
     <Compile Include="ExtractionTime\UserPicks\GlobalsBundle.cs" />
     <Compile Include="ExtractionTime\WordDataReleaseFileGenerator.cs" />
-    <Compile Include="ExtractionTime\QueryBuilderHost.cs" />
+    <Compile Include="ExtractionTime\ExtractionQueryBuilder.cs" />
     <Compile Include="ExtractionTime\ReleaseIdentifierSubstitution.cs" />
     <Compile Include="ExtractionTime\WordDataWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

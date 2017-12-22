@@ -17,7 +17,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void CrossServerExtraction()
         {
-            ExtractionPipelineHost execute;
+            ExtractionPipelineUseCase execute;
             IExecuteDatasetExtractionDestination result;
 
             base.Execute(out execute, out result);

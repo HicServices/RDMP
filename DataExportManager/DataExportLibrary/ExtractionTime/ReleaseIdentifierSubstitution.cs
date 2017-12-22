@@ -7,6 +7,13 @@ using ReusableLibraryCode;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// Records how (via SQL) replace the private patient identifier column (e.g. CHI) with the release identifier (e.g. swap [biochemistry]..[chi] for 
+    /// [cohort]..[ReleaseId]).  Also includes the Join SQL string for linking the cohort table (which contains the ReleaseId e.g. [cohort]) with the dataset
+    /// table (e.g. [biochemistry]). 
+    /// 
+    /// This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See ExtractionQueryBuilder)
+    /// </summary>
     public class ReleaseIdentifierSubstitution : IColumn
     {
         public string JoinSQL { get; private set; }
