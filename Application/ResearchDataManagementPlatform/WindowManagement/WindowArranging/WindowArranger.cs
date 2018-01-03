@@ -98,6 +98,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
             var diagram = (Control)_activator.ActivateViewLoadMetadataDiagram(this, loadMetadata);
             ((DockContent)diagram.Parent).DockTo(_mainDockPanel,DockStyle.Right);
+
+
+            var pin = new ExecuteCommandPin(_activator, loadMetadata);
+            if(!pin.IsImpossible)
+                pin.Execute();
         }
     }
 }
