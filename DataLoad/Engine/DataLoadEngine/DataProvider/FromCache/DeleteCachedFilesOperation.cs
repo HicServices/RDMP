@@ -7,6 +7,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataProvider.FromCache
 {
+    /// <summary>
+    /// Deletes files in the ForLoading directory that were generated during the load e.g. by a CachedFileRetriever.  Files are only deleted if the 
+    /// ExitCodeType.Success otherwise they are left in ForLoading for debugging / inspection. 
+    /// </summary>
     public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
     {
         private readonly Dictionary<DateTime, FileInfo> _cacheFileMappings;
