@@ -10,13 +10,16 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Components
 {
+    /// <summary>
+    /// PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
+    /// </summary>
     public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     {
         Stopwatch sw = new Stopwatch();
         private int totalRecordsProcessed = 0;
         private int totalDuplicatesFound = 0;
 
-        HashSet<int> unqiueHashesSeen = new HashSet<int>();
+        Dictionary<int, List<DataRow>> unqiueHashesSeen = new Dictionary<int, List<DataRow>>();
 
         public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -30,14 +33,23 @@ namespace DataLoadEngine.DataFlowPipeline.Components
                 totalRecordsProcessed++;
                 int hashOfItems = GetHashCode(row.ItemArray);
 
-                if (unqiueHashesSeen.Contains(hashOfItems))
+                if (unqiueHashesSeen.ContainsKey(hashOfItems))
                 {
-                    totalDuplicatesFound++;
-                    continue;//it's a duplicate
+                    //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just incase.
+                    if (unqiueHashesSeen[hashOfItems].Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
+                    {
+                        totalDuplicatesFound++;
+                        continue; //it's a duplicate
+                    }
+
+                    unqiueHashesSeen[hashOfItems].Add(row);
+                }
+                else
+                {
+                    //its not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
+                    unqiueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
                 }
 
-                //its not a duplicate so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
-                unqiueHashesSeen.Add(hashOfItems);
                 toReturn.Rows.Add(row.ItemArray);
             }
             
@@ -48,8 +60,7 @@ namespace DataLoadEngine.DataFlowPipeline.Components
             
             return toReturn;
         }
-
-
+        
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
         }
