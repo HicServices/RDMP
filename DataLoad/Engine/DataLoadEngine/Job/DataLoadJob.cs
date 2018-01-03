@@ -16,6 +16,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
 {
+    /// <summary>
+    /// Documents an ongoing load that is executing in the Data Load Engine.  This includes the load configuration (LoadMetadata), Logging object (DataLoadInfo),
+    /// file system (HICProjectDirectory) etc.
+    /// </summary>
     public class DataLoadJob : IDataLoadJob
     {
         public string Description { get; private set; }

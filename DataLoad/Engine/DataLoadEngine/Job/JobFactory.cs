@@ -6,6 +6,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
 {
+    /// <summary>
+    /// Basic IJobFactory for creating an 'OnDemand', one off, self contained (not date based) IDataLoadJob.
+    /// </summary>
     public class JobFactory : IJobFactory
     {
         private readonly ILoadMetadata _loadMetadata;
