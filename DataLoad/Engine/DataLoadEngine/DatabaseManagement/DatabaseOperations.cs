@@ -18,6 +18,12 @@ using Column = Microsoft.SqlServer.Management.Smo.Column;
 
 namespace DataLoadEngine.DatabaseManagement
 {
+    
+    /// <summary>
+    /// SMO (Microsoft.SqlServer.Management.Smo) powered class for scripting tables, checking specific facts about tables databases (AreEmpty etc).  This is
+    /// Microsoft only stuff (as opposed to the ReusableLibraryCode.DatabaseHelpers.Discovery namespace).  The class powers the data load engine.
+    /// </summary>
+    [Obsolete("This functionality should be ported to ReusableLibraryCode.DatabaseHelpers.Discovery namespace and made non Microsoft / SMO specific")]
     public class DatabaseOperations
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (DatabaseOperations));

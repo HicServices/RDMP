@@ -14,6 +14,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.DatabaseManagement
 {
+    /// <summary>
+    /// Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).
+    /// </summary>
     public class StandardDatabaseHelper
     {
         private readonly string _rootDatabaseName;

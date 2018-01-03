@@ -358,7 +358,6 @@
     <Compile Include="Attachers\IPluginAttacher.cs" />
     <Compile Include="Checks\Checkers\CommandLineParser.cs" />
     <Compile Include="Checks\Checkers\ProcessTaskChecks.cs" />
-    <Compile Include="DatabaseManagement\Operations\IDatabaseOperation.cs" />
     <Compile Include="DatabaseManagement\Operations\SMOTypeLookup.cs" />
     <Compile Include="DataFlowPipeline\Components\Anonymisation\ANOConfigurationException.cs" />
     <Compile Include="DataFlowPipeline\Components\Anonymisation\ColumnInfoToANOTableConverter.cs" />
