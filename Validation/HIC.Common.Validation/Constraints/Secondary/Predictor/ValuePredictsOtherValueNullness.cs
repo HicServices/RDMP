@@ -1,5 +1,8 @@
 namespace HIC.Common.Validation.Constraints.Secondary.Predictor
 {
+    /// <summary>
+    /// Validation rule for use with a Prediction Constraint.  Indicates that the 'nullness' of the columns must match (i.e. if one is null the other must be too)
+    /// </summary>
     public class ValuePredictsOtherValueNullness : PredictionRule
     {
         public override ValidationFailure Predict(IConstraint parent, object value, object targetValue)

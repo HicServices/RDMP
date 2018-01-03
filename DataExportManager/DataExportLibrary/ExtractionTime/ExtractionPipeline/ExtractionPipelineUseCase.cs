@@ -24,6 +24,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
 {
+    /// <summary>
+    /// Use case for linking and extracting Project Extraction Configuration datasets and custom data (See IExtractCommand).
+    /// </summary>
     public class ExtractionPipelineUseCase:PipelineUseCase
     {
         private readonly IPipeline _pipeline;

@@ -8,6 +8,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Attachers
 {
+    /// <summary>
+    /// See Attacher
+    /// </summary>
     public interface IAttacher: IDisposeAfterDataLoad, ICheckable
     {
         ExitCodeType Attach(IDataLoadJob job);

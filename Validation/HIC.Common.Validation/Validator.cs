@@ -18,7 +18,8 @@ namespace HIC.Common.Validation
 {
     /// <summary>
     /// The Validator is the main entry point into this API. A client would typically create a Validator instance and then
-    /// add a number of ItemValidators to it.
+    /// add a number of ItemValidators to it.  Alternatively you can use the static method LoadFromXml.  Ensure you set 
+    /// LocatorForXMLDeserialization.
     /// 
     /// Generally, there are two phases of interaction with a Validator:
     /// 
@@ -38,6 +39,11 @@ namespace HIC.Common.Validation
     {
         private object _domainObject;
         private Dictionary<string, object> _domainObjectDictionary;
+
+        /// <summary>
+        /// Validation rules can reference objects e.g. StandardRegex.  This static property indicates where to get the available instances available 
+        /// for selection (the Catalogue database).
+        /// </summary>
         public static ICatalogueRepositoryServiceLocator LocatorForXMLDeserialization;
         public List<ItemValidator> ItemValidators { get; set; }
 

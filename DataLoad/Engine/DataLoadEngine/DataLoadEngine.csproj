@@ -411,7 +411,6 @@
     <Compile Include="Checks\Checkers\AnonymisationChecks.cs" />
     <Compile Include="Checks\Checkers\CatalogueLoadChecks.cs" />
     <Compile Include="Checks\Checkers\TriggerChecks.cs" />
-    <Compile Include="Checks\CheckGroup.cs" />
     <Compile Include="Checks\Checkers\MetadataLoggingConfigurationChecks.cs" />
     <Compile Include="LoadExecution\Components\CompositeDataLoadComponent.cs" />
     <Compile Include="DatabaseManagement\Operations\DatabaseCloner.cs" />

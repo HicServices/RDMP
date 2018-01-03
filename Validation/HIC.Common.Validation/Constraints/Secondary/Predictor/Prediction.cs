@@ -6,6 +6,10 @@ using HIC.Common.Validation.UIAttributes;
 
 namespace HIC.Common.Validation.Constraints.Secondary.Predictor
 {
+    /// <summary>
+    /// Validation rule in which two columns are dependent on one another for validation according to a given PredictionRule.  For example the CHI number contains
+    /// a gender digit, validation passes if the digit matches the selected gender column (See ChiSexPredictor).
+    /// </summary>
     public class Prediction : SecondaryConstraint
     {
         [Description("The current value enforces a prediction about the value of this other field")]

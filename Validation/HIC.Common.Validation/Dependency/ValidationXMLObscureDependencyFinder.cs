@@ -13,6 +13,10 @@ using ReusableLibraryCode;
 
 namespace HIC.Common.Validation.Dependency
 {
+    /// <summary>
+    /// Prevents deleting objects which are referenced in the ValidatorXML of Catalogues.  This is done by processing the ValidatorXML as a string for speed
+    /// rather than deserializing every ValidationXml.
+    /// </summary>
     public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
     {
         /// <summary>
