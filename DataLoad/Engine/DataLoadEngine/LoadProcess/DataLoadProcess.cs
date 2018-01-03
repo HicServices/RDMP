@@ -50,7 +50,7 @@ namespace DataLoadEngine.LoadProcess
             LogManager = logManager;
             ExitCode = ExitCodeType.Success;
 
-            JobProvider = new SingleJobProvider(new JobFactory(loadMetadata,logManager));
+            JobProvider = new JobFactory(loadMetadata,logManager);
         }
 
         public virtual ExitCodeType Run(GracefulCancellationToken loadCancellationToken)

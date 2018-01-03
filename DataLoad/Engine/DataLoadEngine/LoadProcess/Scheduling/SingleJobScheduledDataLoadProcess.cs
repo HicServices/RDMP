@@ -48,7 +48,7 @@ namespace DataLoadEngine.LoadProcess.Scheduling
                     return ExitCodeType.OperationNotRequired;
 
                 // Run the data load
-                JobProvider = new SingleJobProvider(_scheduledJobFactory);
+                JobProvider = _scheduledJobFactory;
 
              return base.Run(loadCancellationToken);
             }

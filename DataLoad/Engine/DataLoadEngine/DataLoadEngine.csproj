@@ -400,7 +400,6 @@
     <Compile Include="LoadProcess\Scheduling\Strategy\AnyAvailableLoadProgressSelectionStrategy.cs" />
     <Compile Include="LoadProcess\Scheduling\Strategy\ILoadProgressSelectionStrategy.cs" />
     <Compile Include="LoadProcess\Scheduling\Strategy\SingleLoadProgressSelectionStrategy.cs" />
-    <Compile Include="LoadProcess\SingleJobProvider.cs" />
     <Compile Include="LoadExecution\Components\Runtime\ExecutableRuntimeTask.cs" />
     <Compile Include="LoadExecution\Components\Arguments\IStageArgs.cs" />
     <Compile Include="LoadExecution\Components\Standard\ArchiveFiles.cs" />
