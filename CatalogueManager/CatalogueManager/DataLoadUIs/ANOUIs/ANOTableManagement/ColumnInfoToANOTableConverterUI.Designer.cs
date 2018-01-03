@@ -1,6 +1,6 @@
 ﻿namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
 {
-    partial class ConvertColumnInfoIntoANOColumnInfo
+    partial class ColumnInfoToANOTableConverterUI
     {
         /// <summary>
         /// Required designer variable.

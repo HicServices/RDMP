@@ -267,7 +267,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo)
         {
-            Activate<ConvertColumnInfoIntoANOColumnInfo, ColumnInfo>(columnInfo);
+            Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(columnInfo);
         }
 
         public void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument)

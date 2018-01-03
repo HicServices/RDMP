@@ -716,11 +716,11 @@
     <Compile Include="CredentialsUIs\DataAccessCredentialsUI.Designer.cs">
       <DependentUpon>DataAccessCredentialsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\ConvertColumnInfoIntoANOColumnInfo.cs">
+    <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\ConvertColumnInfoIntoANOColumnInfo.Designer.cs">
-      <DependentUpon>ConvertColumnInfoIntoANOColumnInfo.cs</DependentUpon>
+    <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.Designer.cs">
+      <DependentUpon>ColumnInfoToANOTableConverterUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\PatternPredictor.cs" />
     <Compile Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\ConfigurePreLoadDiscardedColumns.cs">
@@ -1703,8 +1703,8 @@
     <EmbeddedResource Include="CredentialsUIs\DataAccessCredentialsUI.resx">
       <DependentUpon>DataAccessCredentialsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\ANOUIs\ANOTableManagement\ConvertColumnInfoIntoANOColumnInfo.resx">
-      <DependentUpon>ConvertColumnInfoIntoANOColumnInfo.cs</DependentUpon>
+    <EmbeddedResource Include="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.resx">
+      <DependentUpon>ColumnInfoToANOTableConverterUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\ConfigurePreLoadDiscardedColumns.resx">
