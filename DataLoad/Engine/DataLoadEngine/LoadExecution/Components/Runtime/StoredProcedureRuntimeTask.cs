@@ -33,7 +33,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
 
         override public ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + Name + "'"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
 
             using (var con = _repository.GetConnection())
             {

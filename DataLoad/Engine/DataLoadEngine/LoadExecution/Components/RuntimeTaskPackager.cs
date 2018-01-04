@@ -51,7 +51,7 @@ namespace DataLoadEngine.LoadExecution.Components
                 runtimeTasks.Add(runtimeTask);
             }
 
-            runtimeTasks = runtimeTasks.OrderBy(task => task.Order).ToList();
+            runtimeTasks = runtimeTasks.OrderBy(task => task.ProcessTask.Order).ToList();
             return runtimeTasks;
         }
 
@@ -72,7 +72,7 @@ namespace DataLoadEngine.LoadExecution.Components
             var tasks = new List<IDataLoadComponent>();
 
             foreach (var task in GetRuntimeTasksForStage(loadStage))
-                tasks.Add(factory.Create(task, _loadArgsDictionary[loadStage]));
+                tasks.Add(factory.Create(task.ProcessTask, _loadArgsDictionary[loadStage]));
 
             return new CompositeDataLoadComponent(tasks) { Description = descriptionForComponent };
         }

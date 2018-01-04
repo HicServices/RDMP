@@ -36,16 +36,16 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             if(string.IsNullOrWhiteSpace(task.Path))
                 throw new ArgumentException("Path is blank for ProcessTask '"+task+"' - it should be a class name of type " + typeof(IMutilateDataTables).Name);
 
-            MutilateDataTables = mef.FactoryCreateA<IMutilateDataTables>(Path);
+            MutilateDataTables = mef.FactoryCreateA<IMutilateDataTables>(ProcessTask.Path);
             SetPropertiesForClass(RuntimeArguments, MutilateDataTables);
-            MutilateDataTables.Initialize(stageArgs.DbInfo, LoadStage);
+            MutilateDataTables.Initialize(stageArgs.DbInfo, ProcessTask.LoadStage);
         }
 
 
 
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + Name + "'"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mutilate class is" + MutilateDataTables.GetType().FullName));
 
             try
