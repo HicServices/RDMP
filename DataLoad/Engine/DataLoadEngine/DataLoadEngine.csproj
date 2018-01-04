@@ -425,7 +425,6 @@
     <Compile Include="LoadProcess\HICLoadConfigurationFlags.cs" />
     <Compile Include="Job\Scheduling\IJobDateGenerationStrategy.cs" />
     <Compile Include="Job\IJobFactory.cs" />
-    <Compile Include="LoadExecution\Components\ILoadComponent.cs" />
     <Compile Include="LoadExecution\Components\Arguments\LoadArgsDictionary.cs" />
     <Compile Include="LoadExecution\Components\DataLoadComponent.cs" />
     <Compile Include="LoadExecution\Components\LoadFiles.cs" />
@@ -495,14 +494,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Checks\Notifiers\" />
-    <Folder Include="LoadExecution\Threaded\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Checks\Checking.cd" />
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
     <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />
-    <None Include="LoadExecution\LoadPipeline.cd" />
+    <None Include="LoadExecution\DataLoadEngine.cd" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
