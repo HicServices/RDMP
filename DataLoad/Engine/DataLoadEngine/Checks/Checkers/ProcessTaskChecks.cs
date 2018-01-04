@@ -28,7 +28,7 @@ namespace DataLoadEngine.Checks.Checkers
             {
                 try
                 {
-                    dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo, false);
+                    dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
                 }
                 catch (Exception e)
                 {

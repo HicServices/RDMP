@@ -44,7 +44,7 @@ namespace DataLoadEngine.LoadExecution
 
         public IDataLoadExecution Create(IDataLoadEventListener postLoadEventListener)
         {
-            var loadArgsDictionary = new LoadArgsDictionary(LoadMetadata, _databaseConfiguration.DeployInfo, false);
+            var loadArgsDictionary = new LoadArgsDictionary(LoadMetadata, _databaseConfiguration.DeployInfo);
 
             //warn user about disabled tasks
             var processTasks = LoadMetadata.ProcessTasks.ToList();

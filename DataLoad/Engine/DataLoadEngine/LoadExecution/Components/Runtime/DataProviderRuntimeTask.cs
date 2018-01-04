@@ -35,7 +35,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
                 throw new Exception("Error when trying to set the properties for '" + task.Name + "'", e);
             }
 
-            Provider.Initialize(new HICProjectDirectory(args.StageSpecificArguments.RootDir, false), RuntimeArguments.StageSpecificArguments.DbInfo);
+            Provider.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
         }
 
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)

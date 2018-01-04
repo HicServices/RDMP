@@ -34,7 +34,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
 
             Attacher = mef.FactoryCreateA<IAttacher>(Path);
             SetPropertiesForClass(RuntimeArguments, Attacher);
-            Attacher.Initialize(new HICProjectDirectory(args.StageSpecificArguments.RootDir, false), RuntimeArguments.StageSpecificArguments.DbInfo);
+            Attacher.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
         }
 
 
