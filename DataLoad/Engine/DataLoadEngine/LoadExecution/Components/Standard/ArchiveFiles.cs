@@ -13,6 +13,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Standard
 {
+    /// <summary>
+    /// Copies all files in ForLoading directory of a DLE load into the ForArchiving folder zipped up in a file named x.zip where x is the ID of the data load run
+    /// (unique logging number for the data load execution).
+    /// </summary>
     public class ArchiveFiles : DataLoadComponent
     {
         public static string TempArchiveDirName = "__temp_for_archiving__";
