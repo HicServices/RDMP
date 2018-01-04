@@ -78,7 +78,7 @@ namespace RDMPAutomationService.Logic.DLE
                     //Then the load is designed to run X days of source data at a time
                     //Load Progress
                     var whichLoadProgress = new AnyAvailableLoadProgressSelectionStrategy(currentMetadata);
-                    var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress, databaseConfiguration);
+                    var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
                     dataLoadProcess = new SingleJobScheduledDataLoadProcess(currentMetadata, p, execution, jobDateFactory,
                         whichLoadProgress, null, logManager, listener);
                 }

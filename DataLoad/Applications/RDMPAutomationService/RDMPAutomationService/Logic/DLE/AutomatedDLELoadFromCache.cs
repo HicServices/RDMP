@@ -61,7 +61,7 @@ namespace RDMPAutomationService.Logic.DLE
                 var loadFlags = new HICLoadConfigurationFlags();
 
                 var loadStrategy = new SingleLoadProgressSelectionStrategy(_cacheBasedLoadWeCanRun);
-                var dayStrategy = new JobDateGenerationStrategyFactory(loadStrategy, databaseConfiguration);
+                var dayStrategy = new JobDateGenerationStrategyFactory(loadStrategy);
                 var logManager = new LogManager(lmd.GetDistinctLoggingDatabaseSettings());
             
                 var preExecutionChecker = new PreExecutionChecker(lmd, databaseConfiguration);

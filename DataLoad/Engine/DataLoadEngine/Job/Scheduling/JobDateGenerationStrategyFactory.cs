@@ -21,32 +21,25 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job.Scheduling
 {
+    /// <summary>
+    /// Decides the date generation strategy (e.g. pick next X days from the head of the LoadProgress or base dates loaded on next files available in cache)
+    /// </summary>
     public class JobDateGenerationStrategyFactory
     {
         private readonly Type _typeToCreate;
-        private readonly HICDatabaseConfiguration _dbConfiguration;
-
-        public JobDateGenerationStrategyFactory(Type typeToCreate, HICDatabaseConfiguration dbConfiguration)
-        {
-            _typeToCreate = typeToCreate;
-            _dbConfiguration = dbConfiguration;
-        }
-
+        
         /// <summary>
         /// Always respects the LoadProgress dates and crashes if there arent any load progresses associated with the given load metadata
         /// Uses SingleScheduleCacheDateTrackingStrategy if there is a cache associated with any of the load progresses otherwise uses SingleScheduleConsecutiveDateStrategy (meaning for example each day for the next 5 days)
         /// </summary>
         /// <param name="strategy"></param>
-        /// <param name="databaseLoadConfiguration"></param>
-        public JobDateGenerationStrategyFactory(ILoadProgressSelectionStrategy strategy, HICDatabaseConfiguration databaseLoadConfiguration)
-            :
-            this(
-            strategy.GetAllLoadProgresses(false).Any(p => p.GetCacheProgress() != null)//if any of the strategies you plan to use (without locking btw) have a cache progress
-            ?typeof(SingleScheduleCacheDateTrackingStrategy)//then we should use a cache progress based strategy
-            :typeof(SingleScheduleConsecutiveDateStrategy),databaseLoadConfiguration)//otherwise we should probably use consecutive days strategy
+        public JobDateGenerationStrategyFactory(ILoadProgressSelectionStrategy strategy)
+
         {
-            // Left for reference: this contract is not valid because GetAllLoadProgresses is not a Pure function
-            // Contract.Requires<ArgumentException>(strategy.GetAllLoadProgresses(false).Any(),"There were no LoadProgress objects associated with the given strategy (see your LoadMetadata for more information) so why are you asking for job date creation/allocation logic");
+            _typeToCreate =
+                strategy.GetAllLoadProgresses(false).Any(p => p.GetCacheProgress() != null)//if any of the strategies you plan to use (without locking btw) have a cache progress
+                ? typeof (SingleScheduleCacheDateTrackingStrategy) //then we should use a cache progress based strategy
+                : typeof (SingleScheduleConsecutiveDateStrategy);//otherwise we should probably use consecutive days strategy;
         }
 
         public IJobDateGenerationStrategy Create(ILoadProgress loadProgress, IDataLoadEventListener listener)
