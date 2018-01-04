@@ -12,6 +12,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// RuntimeTask that hosts an IMutilateDataTables.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+    /// RuntimeArgumentCollection
+    /// </summary>
     public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         //the class (built by reflection) that will do all the heavy lifting

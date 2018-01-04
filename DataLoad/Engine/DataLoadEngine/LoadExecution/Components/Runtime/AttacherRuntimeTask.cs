@@ -16,6 +16,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// RuntimeTask that hosts an IAttacher.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+    /// RuntimeArgumentCollection
+    /// </summary>
     public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         public IAttacher Attacher { get; private set; }

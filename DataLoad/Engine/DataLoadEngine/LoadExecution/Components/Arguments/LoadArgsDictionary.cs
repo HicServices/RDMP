@@ -9,6 +9,10 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 
 namespace DataLoadEngine.LoadExecution.Components.Arguments
 {
+    /// <summary>
+    /// Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE where each database is etc in the 
+    /// RAW => STAGING => LIVE model rdmp uses for data loading.
+    /// </summary>
     public class LoadArgsDictionary
     {
         private readonly ILoadMetadata _loadMetadata;

@@ -8,8 +8,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 namespace DataLoadEngine.LoadExecution.Components.Arguments
 {
     /// <summary>
-    /// Identifies the database target of a given DLE LoadStage (e.g. AdjustRaw would contain a DiscoveredDatabase pointed at the RAW database). Also includes
-    /// the location of the load directory
+    /// See StageArgs
     /// </summary>
     public interface IStageArgs
     {
