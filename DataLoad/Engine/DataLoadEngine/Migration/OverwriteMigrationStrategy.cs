@@ -12,6 +12,10 @@ using LogManager = log4net.LogManager;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and 
+    /// UPDATE.  Both tables must be on the same server.  A MERGE sql statement will be created using LiveMigrationQueryHelper and executed within a transaction.
+    /// </summary>
     public class OverwriteMigrationStrategy : DatabaseMigrationStrategy
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(OverwriteMigrationStrategy));
