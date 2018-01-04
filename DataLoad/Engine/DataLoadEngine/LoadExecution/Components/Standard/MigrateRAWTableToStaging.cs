@@ -24,21 +24,23 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Standard
 {
+    /// <summary>
+    /// Streams records from a single table in the RAW database and writes it to the corresponding table in the STAGING database during data load.  RAW is an 
+    /// unconstrained identifiable version of the LIVE table created at the start of an RMDP data load (the RAW=>STAGING=>LIVE model).  STAGING is a constrained
+    /// (has primary keys / not nulls etc) version of the LIVE table.  This class uses a DataFlowPipelineEngine to stream the records and this includes (optionally)
+    /// any anonymisation operations (dropping columns, substituting identifiers etc) configured on the TableInfo (See BasicAnonymisationEngine).
+    /// </summary>
     public class MigrateRAWTableToStaging : DataLoadComponent
     {
         private readonly TableInfo _tableInfo;
         private readonly bool _isLookupTable;
         private readonly HICDatabaseConfiguration _databaseConfiguration;
-        private readonly ILoadMetadata _loadMetadata;
-        private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
 
-        public MigrateRAWTableToStaging(TableInfo tableInfo, bool isLookupTable, HICDatabaseConfiguration databaseConfiguration, ILoadMetadata loadMetadata, HICLoadConfigurationFlags loadConfigurationFlags)
+        public MigrateRAWTableToStaging(TableInfo tableInfo, bool isLookupTable, HICDatabaseConfiguration databaseConfiguration)
         {
             _tableInfo = tableInfo;
             _isLookupTable = isLookupTable;
             _databaseConfiguration = databaseConfiguration;
-            _loadMetadata = loadMetadata;
-            _loadConfigurationFlags = loadConfigurationFlags;
         }
 
 

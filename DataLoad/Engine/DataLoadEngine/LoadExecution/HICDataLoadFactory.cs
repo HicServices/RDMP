@@ -62,7 +62,7 @@ namespace DataLoadEngine.LoadExecution
             
             var adjustRaw = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustRaw, "Adjust RAW");
 
-            var migrateToStaging = new MigrateRAWToStaging(_databaseConfiguration, LoadMetadata, _loadConfigurationFlags);
+            var migrateToStaging = new MigrateRAWToStaging(_databaseConfiguration, _loadConfigurationFlags);
             
             var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
 
