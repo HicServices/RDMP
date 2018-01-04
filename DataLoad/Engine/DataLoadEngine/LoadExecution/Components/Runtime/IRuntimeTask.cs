@@ -6,6 +6,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// See RuntimeTask
+    /// </summary>
     public interface IRuntimeTask : IDataLoadComponent
     {
         bool Exists();
