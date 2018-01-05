@@ -18,6 +18,9 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
 {
+    /// <summary>
+    /// RemoteTableAttacher implementation for MySql databases
+    /// </summary>
     [Description(
  "Populates a data table by reading data out of a remote MySQL Server.  The details (username/password) of the account used must be stored in ConfigurationDetails.xml in the Data directory of the HICProjectDirectory.  The Server, Database and Table arguments are specified as regular arguments within the LoadMetadataArguments as normal"
  )]

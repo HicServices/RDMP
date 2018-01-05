@@ -23,6 +23,10 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
 {
+    /// <summary>
+    /// Data load component for loading RAW tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)
+    /// and inserts the results of the query into RAW. 
+    /// </summary>
     public abstract class RemoteTableAttacher: Attacher, IPluginAttacher
     {
         private const string FutureLoadMessage = "Cannot load data from the future";
