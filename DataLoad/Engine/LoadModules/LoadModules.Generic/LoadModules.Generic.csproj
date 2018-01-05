@@ -252,11 +252,8 @@
     <Compile Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cs" />
     <Compile Include="DataFlowSources\ExcelDataFlowSource.cs" />
     <Compile Include="DataFlowSources\ExplicitTypingCollection.cs" />
-    <Compile Include="DataProvider\ArchiveFileProvider.cs" />
     <Compile Include="DataProvider\DoNothingDataProvider.cs" />
-    <Compile Include="DataProvider\FileProvider.cs" />
     <Compile Include="DataProvider\WebServiceConfiguration.cs" />
-    <Compile Include="FileOperations\ExcelToCsvConverter.cs" />
     <Compile Include="LoadProgressUpdating\DataLoadProgressUpdateStrategy.cs" />
     <Compile Include="LoadProgressUpdating\UpdateProgressToResultOfDelegate.cs" />
     <Compile Include="LoadProgressUpdating\UpdateProgressToSpecificValueIfLoadsuccessful.cs" />
