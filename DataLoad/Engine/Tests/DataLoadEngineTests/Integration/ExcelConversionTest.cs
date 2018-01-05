@@ -10,21 +10,24 @@ using LoadModules.Generic.DataProvider.FlatFileManipulation;
 using LoadModules.Generic.FileOperations;
 using DataLoadEngineTests.Resources;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 
 namespace DataLoadEngineTests.Integration
 {
     [Category("Integration")]
-    [Ignore("These require Microsoft Office to be installed on the test machine (the provided interop assemblies only wrap the COM functionality)")]
     public class ExcelConversionTest
     {
         private readonly Stack<DirectoryInfo> _dirsToCleanUp = new Stack<DirectoryInfo>();
         private DirectoryInfo _parentDir;
-      
+        bool officeInstalled = false;
+
         [TestFixtureSetUp]
         public void SetUp()
         {
+            officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
+
             var testDir = new DirectoryInfo(".");
             _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
             _dirsToCleanUp.Push(_parentDir);
@@ -47,6 +50,9 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void TestExcelFunctionality_OnSimpleXlsx()
         {
+            if (!officeInstalled)
+                Assert.Inconclusive();
+
             var hicProjectDirectory = CreateHICProjectDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
 
             //clean up anything in the test project folders forloading directory
@@ -62,6 +68,9 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void TestExcelFunctionality_DodgyFileExtension()
         {
+            if (!officeInstalled)
+                Assert.Inconclusive();
+
             var hicProjectDirectory = CreateHICProjectDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
 
             //clean up anything in the test project folders forloading directory
@@ -80,6 +89,9 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void TestExcelFunctionality_OnExcelXml()
         {
+            if (!officeInstalled)
+                Assert.Inconclusive();
+
             var hicProjectDirectory = CreateHICProjectDirectoryForTest("TestExcelFunctionality_OnExcelXml");
 
             //clean up anything in the test project folders forloading directory
