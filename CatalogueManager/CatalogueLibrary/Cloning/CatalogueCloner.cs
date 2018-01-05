@@ -16,7 +16,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 namespace CatalogueLibrary.Cloning
 {
     /// <summary>
-    /// Creates a new copy of an existing Catalogue in a remote repository (or within the same repository).  Allows several CloneDepths e.g. CatalogueItems only or full tree.
+    /// Creates a new copy of an existing Catalogue in a remote repository (or within the same repository).  Allows several CloneDepths (See CloneDepth) e.g. CatalogueItems only or full tree.
     /// </summary>
     public class CatalogueCloner
     {

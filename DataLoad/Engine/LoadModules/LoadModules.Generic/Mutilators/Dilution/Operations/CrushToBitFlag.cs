@@ -3,6 +3,10 @@ using CatalogueLibrary.Data.DataLoad;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
+    /// <summary>
+    ///  Dilutes data in the ColumnToDilute by replacing all non null values with 1 and all null values with 0 then alters the column type to bit
+    /// </summary>
+    /// <returns></returns>
     public class CrushToBitFlag : DilutionOperation
     {
         public override string GetMutilationSql()

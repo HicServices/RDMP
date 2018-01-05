@@ -9,7 +9,10 @@ using ReusableLibraryCode.Checks;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
-
+    /// <summary>
+    ///  Dilutes data in the ColumnToDilute by rounding all dates to the middle of the quarter they appear in (column type must be date and is not changed by
+    /// this DilutionOperation). Data type of column must be date and will not be changed by this DilutionOperation.
+    /// </summary>
     public class RoundDateToMiddleOfQuarter : DilutionOperation
     {
         public override void Check(ICheckNotifier notifier)
