@@ -16,6 +16,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         private List<string> _csFilesList;
         private List<string> problems = new List<string>();
         private int commentedCount = 0;
+        private int commentLineCount = 0;
         private bool strict = false;
 
         public void FindProblems(List<string> csFilesList)
@@ -59,9 +60,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                     if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
                         continue;
-                    
+
+                    var match = Regex.Match(beforeDeclaration, "<summary>(.*)</summary>", RegexOptions.Singleline);
+
                     //are there comments?
-                    if (!beforeDeclaration.Contains("<summary>"))
+                    if (!match.Success)
                     {
                         //no!
                         if (!strict) //are we being strict?
@@ -93,7 +96,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             problems.Add("FAIL UNDOCUMENTED CLASS:" + f);
                     }
                     else
+                    {
+                        var lines = match.Groups[1].Value.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Count();
+                        commentLineCount += lines;
                         commentedCount++;
+                    }
                 }
             }
             
@@ -101,8 +108,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 Console.WriteLine(fail);
 
             Console.WriteLine("Total Documented Classes:" + commentedCount);
+            Console.WriteLine("Total Lines of Classes Documentation:" + commentLineCount);
             
-
             Assert.AreEqual(0, problems.Count);
         }
     }

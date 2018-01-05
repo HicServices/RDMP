@@ -5,6 +5,9 @@ using CatalogueLibrary.Triggers;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// See MigrationQueryHelper
+    /// </summary>
     public class LiveMigrationQueryHelper : MigrationQueryHelper
     {
         private readonly int _dataLoadRunID;

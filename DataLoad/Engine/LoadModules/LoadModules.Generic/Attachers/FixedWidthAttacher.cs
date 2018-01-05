@@ -15,6 +15,14 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
 {
+    /// <summary>
+    /// Data load component for loading 'fixed width' files into RAW tables.  Fixed width files are those where there are no separators in the file and columns
+    /// are instead denoted by the character position in the line e.g. 'first 10 characters of a line are patient identifier, next 8 are date of birth etc'. In 
+    /// such a file all lines should be equal length and whitespace should be included in field values to ensure this.  Fixed width files are common in ancient
+    /// lab systems and places where large volumes of data are outputted.
+    /// 
+    /// To use this attacher you will need a FormatFile which describes the length/type of each field (See FixedWidthFormatFile).
+    /// </summary>
     [Description(
         "Populates a data table using the given flat file.  The flat file will have columns of fixed width.  The width of the file MUST match exactly the width of the data table being loaded - although the table may contain varchar columns in which case the max width specified on the varchar will be assumed as the width of the flat file column e.g. varchar(5) will be mapped to column width of 5"
         )]

@@ -9,6 +9,9 @@ namespace DataLoadEngine.Migration
 {
     public delegate void TableMigrationComplete(string tableName, int numInserts, int numUpdates);
 
+    /// <summary>
+    /// See OverwriteMigrationStrategy
+    /// </summary>
     abstract public class DatabaseMigrationStrategy
     {
         protected string _sourceDatabaseName;

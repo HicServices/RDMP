@@ -5,7 +5,10 @@ using LoadModules.Generic.Exceptions;
 
 namespace LoadModules.Generic.Attachers
 {
-    public class MdfFileAttachLocations
+    /// <summary>
+    /// Container class for recording the various directories involved in attaching a microsoft database file (MDF) to an Sql Server Instance.
+    /// </summary>
+    internal class MdfFileAttachLocations
     {
         public MdfFileAttachLocations(DirectoryInfo originDirectory, string databaseDirectoryFromPerspectiveOfDatabaseServer, string copyToDirectoryOrNullIfDatabaseIsLocalhost)
         {
@@ -13,8 +16,7 @@ namespace LoadModules.Generic.Attachers
                 throw new ArgumentNullException("databaseDirectoryFromPerspectiveOfDatabaseServer");
 
             var copyToDirectory = copyToDirectoryOrNullIfDatabaseIsLocalhost ?? databaseDirectoryFromPerspectiveOfDatabaseServer;
-
-          
+            
             var filesThatWeCouldLoad = originDirectory.GetFiles("*.mdf").ToArray();
 
             if(filesThatWeCouldLoad.Length == 0)

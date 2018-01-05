@@ -21,6 +21,9 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
 {
+    /// <summary>
+    /// See AnySeparatorFileAttacher
+    /// </summary>
     public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     {
         protected DelimitedFlatFileDataFlowSource _source;
