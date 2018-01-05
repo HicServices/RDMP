@@ -16,9 +16,6 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class MigrationColumnSet
     {
-        public const string DataLoadRunField = SpecialFieldNames.DataLoadRunID;
-        public const string ValidFromField = SpecialFieldNames.ValidFrom;
-
         public string SourceTableName { get; set; }
         public string DestinationTableName { get; set; }
 
@@ -26,7 +23,7 @@ namespace DataLoadEngine.Migration
 
         public static List<string> GetStandardColumnNames()
         {
-            return new List<string> { DataLoadRunField, ValidFromField };
+            return new List<string> { SpecialFieldNames.DataLoadRunID, SpecialFieldNames.ValidFrom};
         }
 
         /// <summary>
@@ -58,7 +55,7 @@ namespace DataLoadEngine.Migration
             //figure out things to migrate and whether they matter to diffing
             foreach (string field in sourceFields)
             {
-                if (field.Equals(DataLoadRunField) || field.Equals(ValidFromField))
+                if (field.Equals(SpecialFieldNames.DataLoadRunID) || field.Equals(SpecialFieldNames.ValidFrom))
                     continue;
 
                 if (!destinationFields.Contains(field))

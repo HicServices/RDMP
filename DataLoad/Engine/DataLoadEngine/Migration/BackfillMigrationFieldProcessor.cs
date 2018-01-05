@@ -7,16 +7,13 @@ namespace DataLoadEngine.Migration
 {
     public class BackfillMigrationFieldProcessor : IMigrationFieldProcessor
     {
-        public const string DataLoadRunField = SpecialFieldNames.DataLoadRunID;
-        public const string ValidFromField = SpecialFieldNames.ValidFrom;
-
         public void ValidateFields(string[] sourceFields, string[] destinationFields)
         {
-            if (!sourceFields.Contains(DataLoadRunField))
-                throw new MissingFieldException(DataLoadRunField);
+            if (!sourceFields.Contains(SpecialFieldNames.DataLoadRunID))
+                throw new MissingFieldException(SpecialFieldNames.DataLoadRunID);
 
-            if (!sourceFields.Contains(ValidFromField))
-                throw new MissingFieldException(ValidFromField);
+            if (!sourceFields.Contains(SpecialFieldNames.ValidFrom))
+                throw new MissingFieldException(SpecialFieldNames.ValidFrom);
         }
 
         public void AssignFieldsForProcessing(string field, List<string> fieldsToDiff, List<string> fieldsToUpdate)

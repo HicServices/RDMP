@@ -436,9 +436,7 @@
     <Compile Include="Migration\MigrationColumnSetQueryHelper.cs" />
     <Compile Include="Migration\MigrationConfiguration.cs" />
     <Compile Include="Migration\DatabaseMigrationStrategy.cs" />
-    <Compile Include="Migration\IMigrationStrategy.cs" />
     <Compile Include="Migration\StagingToLiveMigrationFieldProcessor.cs" />
-    <Compile Include="Migration\MigrationHelper.cs" />
     <Compile Include="Migration\MigrationHost.cs" />
     <Compile Include="Migration\LiveMigrationQueryHelper.cs" />
     <Compile Include="Migration\MigrationQueryHelper.cs" />
@@ -504,6 +502,7 @@
     <None Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Migration\StagingToLiveMigration.cd" />
     <None Include="packages.config" />
     <None Include="Job\SchedulesAndJobCreation.cd" />
   </ItemGroup>

@@ -5,6 +5,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Data;
 using DataQualityEngine.Reports;
@@ -127,7 +128,7 @@ namespace RDMPAutomationService.Logic.DQE
         private bool CanBeDQEd(Catalogue catalogue)
         {
             //see if it can be checked
-            CatalogueConstraintReport report = new CatalogueConstraintReport(catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
 
             var checker = new ToMemoryCheckNotifier();
             report.Check(checker);

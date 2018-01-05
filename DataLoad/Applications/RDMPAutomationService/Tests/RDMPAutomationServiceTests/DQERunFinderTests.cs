@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Data;
 using DataQualityEngine.Reports;
@@ -75,7 +76,7 @@ namespace RDMPAutomationServiceTests
                 firstTable.SaveToDatabase();
 
                 //manually run a DQE run on the dataset!
-                CatalogueConstraintReport report = new CatalogueConstraintReport(cata, MigrationColumnSet.DataLoadRunField);
+                CatalogueConstraintReport report = new CatalogueConstraintReport(cata, SpecialFieldNames.DataLoadRunID);
                 report.GenerateReport(cata, new ThrowImmediatelyDataLoadEventListener(), new CancellationTokenSource().Token);
 
                 //finder shouldn't suggest this catalogue anymore because DQE has been run recently (within 100 days!)

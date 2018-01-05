@@ -2,6 +2,7 @@
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Reports;
 using RDMPAutomationService.Interfaces;
@@ -34,7 +35,7 @@ namespace RDMPAutomationService.Logic.DQE
         {
             try
             {
-                new CatalogueConstraintReport(_catalogueToRun, MigrationColumnSet.DataLoadRunField).GenerateReport(_catalogueToRun, new ToMemoryDataLoadEventListener(true), task.CancellationTokenSource.Token,task.Job);
+                new CatalogueConstraintReport(_catalogueToRun, SpecialFieldNames.DataLoadRunID).GenerateReport(_catalogueToRun, new ToMemoryDataLoadEventListener(true), task.CancellationTokenSource.Token,task.Job);
 
                 //if it suceeded
                 if (task.Job.LastKnownStatus == AutomationJobStatus.Finished)
