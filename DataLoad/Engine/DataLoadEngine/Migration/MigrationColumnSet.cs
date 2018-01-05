@@ -27,12 +27,14 @@ namespace DataLoadEngine.Migration
         }
 
         /// <summary>
-        /// Fields that will have their values compared for change, to decide whether to overwrite destination data with source data. (some fields might not matter if they are different e.g. dataLoadRunID)
+        /// Fields that will have their values compared for change, to decide whether to overwrite destination data with source data. (some fields might not matter
+        /// if they are different e.g. dataLoadRunID)
         /// </summary>
         public List<string> FieldsToDiff { get; set; }
 
         /// <summary>
-        /// Fields that will have their values copied across to the new table (this is a superset of fields to diff, and also includes all primary keys).  Note that the non-standard columns (data load run and valid from do not appear in this list, you are intended to handle their update yourself)
+        /// Fields that will have their values copied across to the new table (this is a superset of fields to diff, and also includes all primary keys).  Note
+        /// that the non-standard columns (data load run and valid from do not appear in this list, you are intended to handle their update yourself)
         /// </summary>
         public List<string> FieldsToUpdate { get; set; }
 

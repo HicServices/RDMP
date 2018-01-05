@@ -18,6 +18,16 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators
 {
+    /// <summary>
+    /// Deletes records in STAGING which are 'older' versions of records that currently exist in LIVE.  Normally RMDP supports a 'newer is better' policy in which
+    /// all records loaded in a DLE run automatically replace/add to the LIVE table based on primary key (i.e. a newly loaded record with pk X will result in an 
+    /// UPDATE of the values for that record to the newly loaded record values).
+    /// 
+    /// This component is designed to support loading periods of old data into a LIVE data table that has moved on (i.e. to backfill a dataset) without 
+    /// overwritting newer versions of a record (with primary key x) with old.  This is done by selecting a 'TimePeriodicity' field that identifies the 'dataset
+    /// time' of the record (as opposed to the load time) e.g. 'date blood sample taken'.  STAGING records will be deleted where there are records in LIVE wich
+    /// have the same primary key but a newer TimePeriodicity date.
+    /// </summary>
     public class StagingBackfillMutilator : IPluginMutilateDataTables
     {
         private DiscoveredDatabase _dbInfo;

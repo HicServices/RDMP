@@ -5,6 +5,9 @@ using CatalogueLibrary.Triggers;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// IMigrationFieldProcessor for StagingBackfillMutilator (See StagingBackfillMutilator).
+    /// </summary>
     public class BackfillMigrationFieldProcessor : IMigrationFieldProcessor
     {
         public void ValidateFields(string[] sourceFields, string[] destinationFields)

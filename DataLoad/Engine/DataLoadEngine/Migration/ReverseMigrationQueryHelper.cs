@@ -4,7 +4,7 @@ using System.Linq;
 namespace DataLoadEngine.Migration
 {
     /// <summary>
-    /// Build 'migration' query when determining what fields to copy from live to staging during load backfill process.
+    /// Build 'migration' query when determining what fields to copy from live to staging during load backfill process (See StagingBackfillMutilator).
     /// </summary>
     public class ReverseMigrationQueryHelper : MigrationQueryHelper
     {
