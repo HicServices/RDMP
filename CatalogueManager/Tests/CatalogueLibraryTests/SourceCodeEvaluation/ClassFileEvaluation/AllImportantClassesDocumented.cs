@@ -78,6 +78,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             if (nameSpace.Contains("ReusableUIComponents"))
                                 continue;
 
+                            if (nameSpace.Contains("CohortManager") && !nameSpace.Contains("CohortManagerLibrary"))
+                                continue;
+                            
                             if (nameSpace.Contains("Copying.Commands"))
                                 continue;
 

@@ -10,6 +10,9 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.DQE
 {
+    /// <summary>
+    /// Automation task that runs a the Data Quality Engine on a single Catalogue.
+    /// </summary>
     public class AutomatedDQERun : IAutomateable
     {
         private readonly AutomationServiceSlot _slottedService;

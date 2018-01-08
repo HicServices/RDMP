@@ -19,6 +19,10 @@ using RDMPAutomationService.Interfaces;
 
 namespace RDMPAutomationService.Logic.DLE
 {
+    /// <summary>
+    /// Automation task that runs a single data load (LoadMetadata) that is is based on a LoadProgress which has a cache and the cache has available data to load
+    /// (and is not locked etc).
+    /// </summary>
     class AutomatedDLELoadFromCache:IAutomateable
     {
         private AutomationServiceSlot _slottedService;

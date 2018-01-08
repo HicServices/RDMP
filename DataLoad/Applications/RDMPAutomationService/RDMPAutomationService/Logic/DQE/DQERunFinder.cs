@@ -16,6 +16,12 @@ using ReusableLibraryCode.DataAccess;
 
 namespace RDMPAutomationService.Logic.DQE
 {
+    /// <summary>
+    /// Identifies Catalogues which have validation rules on them but have yet to have the Data Quality Engine run on them (or it has been a long time since
+    /// the last DQE run happened).  
+    /// 
+    ///  Used by DQEAutomationSource to decide when a new AutomatedDQERun can be started. 
+    /// </summary>
     public class DQERunFinder
     {
         private readonly CatalogueRepository _catalogueRepository;

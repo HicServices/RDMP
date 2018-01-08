@@ -22,6 +22,12 @@ namespace CohortManagerLibrary.Execution
 {
     public delegate void TaskCompletedHandler(object sender, ICompileable completedTask) ;
 
+    /// <summary>
+    /// Multi threading management class for CohortQueryBuilder.  Supports starting, executing and cancelling multiple cohort builder objects (ICompileable)
+    /// at once.  Every input object (e.g. CohortAggregateContainer) will be assigned a corresponding ICompileable (e.g. AggregationContainerTask) and a
+    /// CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of the query is cached, whether it 
+    /// has been cancelled / crashed etc.  The CohortIdentificationTaskExecution handles the actual execution of the query on the data set database.
+    /// </summary>
     public class CohortCompiler
     {
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }

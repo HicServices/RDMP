@@ -5,9 +5,13 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// Static class for logging individual row errors that occur during data load to the logging database (this is a bad idea since you will end up with a logging
+    /// database that is bigger than your main datasets depending on how many errors / runs you have).
+    /// </summary>
+    [Obsolete("Logging every row error in the logging database is a bad idea and since it will bloat your logging database size massively")]
     public class RowErrorLogging
     {
-
         private static RowErrorLogging _instance;
         private static readonly object instanceLock = new object();
 
