@@ -4,6 +4,9 @@ using System.IO;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// Checks whether two DirectoryInfo objects are the same based on FullName
+    /// </summary>
     public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
     {
         public bool Equals(DirectoryInfo x, DirectoryInfo y)

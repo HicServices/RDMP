@@ -1,3 +1,4 @@
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
@@ -5,7 +6,7 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// See ColumnInfo
     /// </summary>
-    public interface IColumnInfo : IHasRuntimeName
+    public interface IColumnInfo : IMapsDirectlyToDatabaseTable,IHasRuntimeName
     {
         bool IsPrimaryKey { get; }
     }

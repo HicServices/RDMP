@@ -18,7 +18,8 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 namespace CohortManagerLibrary.Execution
 {
     /// <summary>
-    /// A single AggregationConfiguration being executed by a CohortCompiler
+    /// A single AggregationConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from 
+    /// TableX where ...'.  The  query result table can/will be commited as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
     /// </summary>
     public class AggregationTask:CacheableTask
     {

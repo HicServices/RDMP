@@ -14,10 +14,13 @@ using ReusableLibraryCode.Performance;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// Provides Cross Database Platform Type translation e.g. GetCommand returns SqlCommand when passed an SqlConnection and a MySqlCommand when passed a
+    /// MySqlConnection (etc).  Also provides central debugging/performance evaluation of the queries RDMP is using to access Catalogue databases etc via
+    /// installing a ComprehensiveQueryPerformanceCounter.  
+    /// </summary>
     public class DatabaseCommandHelper
     {
-        public const string DatabaseFieldNamesRegex = "[A-Za-z0-9_]*";
-        
         public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
 
         /// <summary>
