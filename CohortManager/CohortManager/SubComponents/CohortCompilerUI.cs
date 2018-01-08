@@ -346,7 +346,7 @@ namespace CohortManager.SubComponents
             Compiler.LaunchSingleTask(task, _timeout);
         }
         
-        private void SaveToCache(ICachableTask cachable)
+        private void SaveToCache(ICacheableTask cacheable)
         {
             try
             {
@@ -354,7 +354,7 @@ namespace CohortManager.SubComponents
 
                 var explicitTypes = new List<DatabaseColumnRequest>();
 
-                AggregateConfiguration configuration = cachable.GetAggregateConfiguration();
+                AggregateConfiguration configuration = cacheable.GetAggregateConfiguration();
                 try
                 {
                     ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
@@ -365,7 +365,7 @@ namespace CohortManager.SubComponents
                     throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
                 }
 
-                CacheCommitArguments args = cachable.GetCacheArguments(Compiler.Tasks[cachable].CountSQL, Compiler.Tasks[cachable].Identifiers, explicitTypes.ToArray());
+                CacheCommitArguments args = cacheable.GetCacheArguments(Compiler.Tasks[cacheable].CountSQL, Compiler.Tasks[cacheable].Identifiers, explicitTypes.ToArray());
 
                 manager.CommitResults(args);
             }
@@ -461,7 +461,7 @@ namespace CohortManager.SubComponents
                 Thread.Sleep(1000);
         }
 
-        private void CacheAsync(IEnumerable<ICachableTask> toCache)
+        private void CacheAsync(IEnumerable<ICacheableTask> toCache)
         {
             if(_queryCachingServer == null)
                 return;
@@ -514,12 +514,12 @@ namespace CohortManager.SubComponents
             return task.State;
         }
 
-        private void ClearCacheFor(ICachableTask[] tasks)
+        private void ClearCacheFor(ICacheableTask[] tasks)
         {
             var manager = new CachedAggregateConfigurationResultsManager(_queryCachingServer);
 
             int successes = 0;
-            foreach (ICachableTask t in tasks)
+            foreach (ICacheableTask t in tasks)
                 try
                 {
                     t.ClearYourselfFromCache(manager);
@@ -560,21 +560,21 @@ namespace CohortManager.SubComponents
             if(task == null)
                 return;
 
-            var c = task as CachableTask;
+            var c = task as CacheableTask;
             if(c != null)
-                ClearCacheFor(new ICachableTask[] { c });
+                ClearCacheFor(new ICacheableTask[] { c });
 
             Compiler.CancelTask(task,true);
         }
 
         public bool AnyCachedTasks()
         {
-            return Compiler.Tasks.Keys.OfType<ICachableTask>().Any(t => !t.IsCacheableWhenFinished());
+            return Compiler.Tasks.Keys.OfType<ICacheableTask>().Any(t => !t.IsCacheableWhenFinished());
         }
 
         public void ClearAllCaches()
         {
-            ClearCacheFor(Compiler.Tasks.Keys.OfType<ICachableTask>().Where(t => !t.IsCacheableWhenFinished()).ToArray());
+            ClearCacheFor(Compiler.Tasks.Keys.OfType<ICacheableTask>().Where(t => !t.IsCacheableWhenFinished()).ToArray());
         }
 
         private void tlvConfiguration_ItemActivate(object sender, EventArgs e)
