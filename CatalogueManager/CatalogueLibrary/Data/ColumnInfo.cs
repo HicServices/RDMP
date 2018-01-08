@@ -24,7 +24,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IDeleteable, IComparable, IColumnMetadata,IResolveDuplication, IHasDependencies,ICheckable
+    public class ColumnInfo : VersionedDatabaseEntity, IDeleteable, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable
     {
         public static int Name_MaxLength;
         public static int Data_type_MaxLength;

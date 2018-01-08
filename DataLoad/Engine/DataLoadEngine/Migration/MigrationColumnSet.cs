@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -40,7 +41,7 @@ namespace DataLoadEngine.Migration
 
         public string DestinationDatabase { get; set; }
 
-        public MigrationColumnSet(string destinationDatabase, string sourceTableName, string destinationTableName, string[] sourceFields, string[] destinationFields, IEnumerable<IColumnMetadata> columns, IMigrationFieldProcessor migrationFieldProcessor)
+        public MigrationColumnSet(string destinationDatabase, string sourceTableName, string destinationTableName, string[] sourceFields, string[] destinationFields, IEnumerable<IColumnInfo> columns, IMigrationFieldProcessor migrationFieldProcessor)
         {
             migrationFieldProcessor.ValidateFields(sourceFields, destinationFields);
 
@@ -67,10 +68,10 @@ namespace DataLoadEngine.Migration
             }
         }
 
-        private void ExtractPrimaryKeys(string[] sourceFields, string[] destinationFields, IEnumerable<IColumnMetadata> columns)
+        private void ExtractPrimaryKeys(string[] sourceFields, string[] destinationFields, IEnumerable<IColumnInfo> columns)
         {
             // figure out all the primary keys
-            foreach (IColumnMetadata col in columns)
+            foreach (IColumnInfo col in columns)
             {
                 string colName = col.GetRuntimeName();
                 //found something

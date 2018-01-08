@@ -4,7 +4,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
-    public class DiscoveredColumn:IColumnMetadata,IHasFullyQualifiedNameToo
+    public class DiscoveredColumn:IHasFullyQualifiedNameToo
     {
         public IDiscoveredColumnHelper Helper;
         internal readonly DiscoveredTable Table;

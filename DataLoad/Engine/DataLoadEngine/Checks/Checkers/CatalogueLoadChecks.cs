@@ -264,7 +264,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckStagingToLiveMigrationForTable(DiscoveredDatabase staging, string[] stagingCols, DiscoveredDatabase live, string[] liveCols, TableInfo tableInfo, IEnumerable<IColumnMetadata> columnInfos, LoadBubble source, LoadBubble destination, ICheckNotifier notifier)
+        private void CheckStagingToLiveMigrationForTable(DiscoveredDatabase staging, string[] stagingCols, DiscoveredDatabase live, string[] liveCols, TableInfo tableInfo, IEnumerable<IColumnInfo> columnInfos, LoadBubble source, LoadBubble destination, ICheckNotifier notifier)
         {
             if (destination != LoadBubble.Live)
                 throw new Exception("Expected destination to be a live table");

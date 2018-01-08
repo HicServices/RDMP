@@ -442,7 +442,6 @@
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredServer.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredTable.cs" />
     <Compile Include="ExceptionHelper.cs" />
-    <Compile Include="IColumnMetadata.cs" />
     <Compile Include="IHasDependencies.cs" />
     <Compile Include="IHasRuntimeName.cs" />
     <Compile Include="OfficeVersionFinder.cs" />
