@@ -10,6 +10,10 @@ using ReusableLibraryCode.Checks;
 
 namespace RDMPAutomationService.Logic.Cache
 {
+    /// <summary>
+    /// Identifies CacheProgresses which are not already executing/crashed/locked and are available to run (current time is within the CacheProgress PermissionWindow
+    /// if any).  Used by CacheAutomationSource to identify when a new AutomatedCacheRun can be started.
+    /// </summary>
     public class CacheRunFinder
     {
         private readonly ICatalogueRepository _catalogueRepository;

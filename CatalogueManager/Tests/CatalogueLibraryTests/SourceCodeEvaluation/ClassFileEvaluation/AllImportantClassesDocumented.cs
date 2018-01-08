@@ -83,6 +83,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                             if (nameSpace.Contains("Diagnostics"))
                                 continue;
+
+                            if (nameSpace.Contains("Dashboard"))
+                                continue;
                         }
 
                         int idxLastSlash = f.LastIndexOf("\\");

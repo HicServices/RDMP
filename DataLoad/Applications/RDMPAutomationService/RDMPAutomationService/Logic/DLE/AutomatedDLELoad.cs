@@ -19,6 +19,9 @@ using RDMPAutomationService.Interfaces;
 
 namespace RDMPAutomationService.Logic.DLE
 {
+    /// <summary>
+    /// Automation task that runs a single data load (LoadMetadata) that is due according to it's routine execution schedule (LoadPeriodically).
+    /// </summary>
     public class AutomatedDLELoad : IAutomateable
     {
         private readonly AutomationServiceSlot _slottedService;

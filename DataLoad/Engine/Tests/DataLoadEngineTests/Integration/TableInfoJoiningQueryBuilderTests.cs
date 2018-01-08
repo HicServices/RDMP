@@ -17,50 +17,6 @@ namespace DataLoadEngineTests.Integration
     public class TableInfoJoiningQueryBuilderTests:DatabaseTests
     {
         [Test]
-        public void GetMultiTableJoinSQL()
-        {
-            TableInfo tableP = new TableInfo(CatalogueRepository, "PrimaryTable");
-            ColumnInfo tablePColPk = new ColumnInfo(CatalogueRepository, "tablePColPk", "int", tableP);
-            tableP.IsPrimaryExtractionTable = true;
-            tableP.SaveToDatabase();
-            
-            TableInfo tableM = new TableInfo(CatalogueRepository, "MiddleTable");
-            ColumnInfo tableMColFk = new ColumnInfo(CatalogueRepository, "tableMColFk", "int", tableM);
-            ColumnInfo tableMColPk1 = new ColumnInfo(CatalogueRepository, "tableMColPk1", "int", tableM);
-            ColumnInfo tableMColPk2 = new ColumnInfo(CatalogueRepository, "tableMColPk2", "int", tableM);
-
-
-            TableInfo tableL = new TableInfo(CatalogueRepository, "LowestTable");
-            ColumnInfo tableLColFk1 = new ColumnInfo(CatalogueRepository, "tableLColFk1", "int", tableL);
-            ColumnInfo tableLColFk2 = new ColumnInfo(CatalogueRepository, "tableLColFk2", "int", tableL);
-
-
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(tableMColFk,tablePColPk, ExtractionJoinType.Right,"");
-
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(tableLColFk1, tableMColPk1, ExtractionJoinType.Right, "");
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(tableLColFk2, tableMColPk2, ExtractionJoinType.Right, "");
-            
-            try
-            {
-                TableInfoJoiningQueryBuilder qb = new TableInfoJoiningQueryBuilder();
-                string answer = qb.GetJoinSQL(tableP, tableM, tableL);
-
-                Assert.AreEqual("PrimaryTable Left JOIN MiddleTable ON tableMColFk = tablePColPk Left JOIN LowestTable ON tableLColFk1 = tableMColPk1 AND tableLColFk2 = tableMColPk2",answer);
-
-            }
-            finally
-            {
-                CatalogueRepository.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(tableLColFk2).Single().DeleteInDatabase();
-                CatalogueRepository.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(tableLColFk1).Single().DeleteInDatabase();
-                CatalogueRepository.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(tableMColFk).Single().DeleteInDatabase();
-
-                tableL.DeleteInDatabase();
-                tableM.DeleteInDatabase();
-                tableP.DeleteInDatabase();
-            }
-        }
-
-        [Test]
         public void OpportunisticJoinRequired()
         {
             //tables and columns

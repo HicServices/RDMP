@@ -8,6 +8,10 @@ using Timer = System.Timers.Timer;
 
 namespace RDMPAutomationService
 {
+    /// <summary>
+    /// Host container for an RDMPAutomationLoop which handles ressurecting it if it crashes and recording starting/stopping events to the console / windows
+    /// logs (when running as a windows service).
+    /// </summary>
     public class AutoRDMP
     {
         public event EventHandler<ServiceEventArgs> LogEvent;

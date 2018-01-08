@@ -8,6 +8,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Dashboard.Automation
 {
+    /// <summary>
+    /// Records the last known state of an AutomationServiceSlot (including all the jobs / exceptions).  Allows you to keep an up-to-date knowledge of the state
+    /// of Automation database objects even though they are remotely updated by the automation service (which could be running on another computer).
+    /// </summary>
     public class AutomationServerMonitorUIObjectCache
     {
         private readonly AutomationServiceSlot _slot;

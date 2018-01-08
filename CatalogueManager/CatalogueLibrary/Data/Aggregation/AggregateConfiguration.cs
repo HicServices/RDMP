@@ -21,7 +21,7 @@ namespace CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
     /// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a 
-    /// dataset by region over time since 2001 to present.  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of the
+    /// dataset by region over time since 2001 to present).  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of the
     /// configuration (e.g. AggregateDimension / AggregateFilter)
     /// </summary>
     public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters,INamed,IHasDependencies
