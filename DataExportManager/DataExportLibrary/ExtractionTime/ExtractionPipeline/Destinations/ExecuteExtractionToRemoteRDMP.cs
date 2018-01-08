@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.Progress;
 using DataTable = System.Data.DataTable;
 
@@ -167,7 +168,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if (destinationDescription == null)
             {
                 var project = extractCommand.Configuration.Project;
-                destinationDescription = SqlSyntaxHelper.GetSensibleTableNameFromString(project.Name + "_" + project.ProjectNumber + "_" + extractCommand.Configuration + "_" + extractCommand);
+                destinationDescription = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(project.Name + "_" + project.ProjectNumber + "_" + extractCommand.Configuration + "_" + extractCommand);
             }
 
             return destinationDescription;

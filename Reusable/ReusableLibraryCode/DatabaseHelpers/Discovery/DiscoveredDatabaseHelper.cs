@@ -68,9 +68,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             foreach (var col in columns)
             {
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
-
+                
                 //add the column name and accompanying datatype
-                bodySql += SqlSyntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey? " NULL":" NOT NULL") +  "," + Environment.NewLine;
+                bodySql += syntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
             }
 
             var pks = columns.Where(c => c.IsPrimaryKey).ToArray();

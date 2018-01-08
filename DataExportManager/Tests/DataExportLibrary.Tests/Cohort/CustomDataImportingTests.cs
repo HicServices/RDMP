@@ -38,7 +38,9 @@ namespace DataExportLibrary.Tests.Cohort
             foreach (string tableName in customTableNames)
                 Console.WriteLine(tableName);
 
-            Assert.IsTrue(_extractableCohort.GetCustomTableNames().Count(t=> SqlSyntaxHelper.GetRuntimeName(t).Equals(Path.GetFileNameWithoutExtension(filename)))==1);
+            var syntax = _extractableCohort.GetQuerySyntaxHelper();
+
+            Assert.IsTrue(_extractableCohort.GetCustomTableNames().Count(t => syntax.GetRuntimeName(t).Equals(Path.GetFileNameWithoutExtension(filename))) == 1);
             _extractableCohort.DeleteCustomData(Path.GetFileNameWithoutExtension(filename));
 
             File.Delete(filename);
@@ -89,7 +91,9 @@ namespace DataExportLibrary.Tests.Cohort
             foreach (string tableName in customTableNames)
                 Console.WriteLine(tableName);
 
-            Assert.IsTrue(_extractableCohort.GetCustomTableNames().Count(t => SqlSyntaxHelper.GetRuntimeName(t).Equals("fish")) == 1);
+            var syntax = _extractableCohort.GetQuerySyntaxHelper();
+
+            Assert.IsTrue(_extractableCohort.GetCustomTableNames().Count(t => syntax.GetRuntimeName(t).Equals("fish")) == 1);
             _extractableCohort.DeleteCustomData("fish");
 
             File.Delete("fish.txt");

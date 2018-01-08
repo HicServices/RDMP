@@ -18,6 +18,7 @@ using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataProvider.FlatFileManipulation
@@ -102,7 +103,7 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
                         : w.Name;
 
                     //make it sensible
-                    newName = SqlSyntaxHelper.GetSensibleTableNameFromString(newName) + ".csv";
+                    newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
 
                     string savePath = Path.Combine(job.HICProjectDirectory.ForLoading.FullName, newName);
 

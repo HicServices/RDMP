@@ -4,6 +4,7 @@ using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibraryTests.Unit
 {
@@ -31,13 +32,15 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void GetRuntimeName_Strings_Pass()
         {
-            Assert.AreEqual(SqlSyntaxHelper.GetRuntimeName("[test]"), "test");
-            Assert.AreEqual(SqlSyntaxHelper.GetRuntimeName("`test`"), "test");
-            Assert.AreEqual(SqlSyntaxHelper.GetRuntimeName("`[test]`"), "test");
-            Assert.AreEqual(SqlSyntaxHelper.GetRuntimeName("[mydb].[test]"), "test");
-            Assert.AreEqual(SqlSyntaxHelper.GetRuntimeName("`mymysqldb`.`test`"), "test");
-            Assert.AreEqual(SqlSyntaxHelper.GetRuntimeName("[mydb]..[test]"), "test");
-            Assert.AreEqual(SqlSyntaxHelper.GetRuntimeName("[SERVER].[mydb]..[test]"), "test");
+            var syntax = new MicrosoftQuerySyntaxHelper();
+
+            Assert.AreEqual(syntax.GetRuntimeName("[test]"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("`test`"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("`[test]`"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("[mydb].[test]"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("`mymysqldb`.`test`"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("[mydb]..[test]"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), "test");
         }
 
         [Test]

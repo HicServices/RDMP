@@ -14,7 +14,7 @@ namespace DataLoadEngineTests.Integration
     {
         [Test]
         [TestCase("LoadModules.Generic.Web.WebFileDownloader")]
-        [TestCase("LoadModules.Generic.FileOperations.ExcelToCsvConverter")]
+        [TestCase("LoadModules.Generic.DataProvider.FlatFileManipulation.ExcelToCSVFilesConverter")]
         public void RuntimeTaskFactoryTest(string className)
         {
 

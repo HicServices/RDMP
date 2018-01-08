@@ -43,13 +43,15 @@ namespace DataExportLibrary.ExtractionTime
 
             OriginalDatasetColumn = extractionIdentifierToSubFor;
 
+            var syntaxHelper = extractableCohort.GetQuerySyntaxHelper();
+
             //the externally referenced Cohort table
             var externalCohortTable = extractableCohort.ExternalCohortTable;
 
             if (!isPartOfMultiCHISubstitution)
             {
                 SelectSQL = extractableCohort.GetReleaseIdentifier();
-                Alias = SqlSyntaxHelper.GetRuntimeName(SelectSQL);
+                Alias = syntaxHelper.GetRuntimeName(SelectSQL);
             }
             else
             {
@@ -60,9 +62,8 @@ namespace DataExportLibrary.ExtractionTime
                 
                 if(!string.IsNullOrWhiteSpace(OriginalDatasetColumn.Alias))
                 {
-
-                    string toReplace = SqlSyntaxHelper.GetRuntimeName(externalCohortTable.PrivateIdentifierField);
-                    string toReplaceWith = SqlSyntaxHelper.GetRuntimeName(extractableCohort.GetReleaseIdentifier());
+                    string toReplace = extractableCohort.GetPrivateIdentifier(true);
+                    string toReplaceWith = extractableCohort.GetReleaseIdentifier(true);
 
                     //take the same name as the underlying column
                     Alias = OriginalDatasetColumn.Alias;

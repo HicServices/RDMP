@@ -175,8 +175,11 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                 return;
 
             var target = Request.NewCohortDefinition.LocationOfCohort;
-            _privateIdentifier = SqlSyntaxHelper.GetRuntimeName(target.PrivateIdentifierField);
-            _releaseIdentifier = SqlSyntaxHelper.GetRuntimeName(target.ReleaseIdentifierField);
+
+            var syntax = target.GetQuerySyntaxHelper();
+            _privateIdentifier = syntax.GetRuntimeName(target.PrivateIdentifierField);
+            _releaseIdentifier = syntax.GetRuntimeName(target.ReleaseIdentifierField);
+
             _fk = Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField;
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "CohortCreationRequest spotted, we will look for columns " + _privateIdentifier + " and " + _releaseIdentifier + " (both of which must be in the pipeline before we will allow the cohort to be submitted)"));

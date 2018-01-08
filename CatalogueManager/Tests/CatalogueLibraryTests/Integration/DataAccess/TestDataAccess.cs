@@ -12,6 +12,8 @@ using CatalogueLibrary.Repositories;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.DataAccess
@@ -238,6 +240,11 @@ namespace CatalogueLibraryTests.Integration.DataAccess
             public override string ToString()
             {
                 return Server + Database;
+            }
+
+            public IQuerySyntaxHelper GetQuerySyntaxHelper()
+            {
+                return new MicrosoftQuerySyntaxHelper();
             }
         }
 

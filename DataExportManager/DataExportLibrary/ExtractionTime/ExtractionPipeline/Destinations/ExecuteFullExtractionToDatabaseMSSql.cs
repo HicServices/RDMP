@@ -48,9 +48,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            //give the data table the correct name
-            toProcess.TableName = GetTableName();
-
             if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
             {
                 var bundle = ((ExtractDatasetCommand) _request).DatasetBundle;
@@ -75,12 +72,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 {
                     if (!_server.Exists())
                         throw new Exception("Could not connect to server " + TargetDatabaseServer.Server);
+                    
+                    var tblName = GetTableName();
 
                     //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
-                    if (_server.ExpectTable(GetTableName()).Exists())
+                    if (_server.ExpectTable(tblName).Exists())
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Warning,
-                                "A table called " + GetTableName() + " already exists on server " + TargetDatabaseServer +
+                                "A table called " + tblName + " already exists on server " + TargetDatabaseServer +
                                 ", rows will be appended to this table - or data load might crash if it has an incompatible schema"));
                 }
                 catch (Exception e)
@@ -89,7 +88,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Failed to inspect destination for already existing datatables",e));
                 }
 
-
                 _destination = new DataTableUploadDestination();
                 _destination.AllowResizingColumnsAtUploadTime = true;
                 _destination.PreInitialize(_server, listener);
@@ -97,6 +95,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it
                 TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + toProcess.TableName, toProcess.TableName, new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
             }
+
+            //give the data table the correct name
+            toProcess.TableName = GetTableName();
 
             _destination.ProcessPipelineData(toProcess, listener, cancellationToken);
             TableLoadInfo.Inserts += toProcess.Rows.Count;
@@ -120,8 +121,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             tblName = tblName.Replace("$c", _request.Configuration.Name);
             tblName = tblName.Replace("$d", _request.ToString());
 
+            if (_server == null)
+                throw new Exception("Cannot pick a TableName until we know what type of server it is going to, _server is null");
+
             //otherwise, fetch and cache answer
-            _cachedGetTableNameAnswer = SqlSyntaxHelper.GetSensibleTableNameFromString(tblName);
+            _cachedGetTableNameAnswer = _server.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
 
             return _cachedGetTableNameAnswer;
         }
@@ -188,7 +192,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     sw.Start();
                     DataTable dt = new DataTable();
                     da.Fill(dt);
-                    dt.TableName = SqlSyntaxHelper.GetSensibleTableNameFromString(sql.Name);
+                    
+                    dt.TableName = _server.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sql.Name);
 
                     listener.OnProgress(this, new ProgressEventArgs("Reading from SupportingSQL " + sql.Name, new ProgressMeasurement(dt.Rows.Count, ProgressType.Records), sw.Elapsed));
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Decided on the following destination table name for SupportingSQL:" + dt.TableName));

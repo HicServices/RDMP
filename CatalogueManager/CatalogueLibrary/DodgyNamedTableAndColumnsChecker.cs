@@ -25,16 +25,23 @@ namespace CatalogueLibrary
 
         public void Check(ICheckNotifier notifier)
         {
-            foreach (TableInfo t in _repository.GetAllObjects<TableInfo>())
-                if (!TableInfoImporter.IsValidEntityName(t.GetRuntimeName()))
+            var allTables = _repository.GetAllObjects<TableInfo>().ToDictionary(k=>k.ID);
+            var allColumns = _repository.GetAllObjects<ColumnInfo>();
+
+            foreach (TableInfo t in allTables.Values)
+                if (!TableInfoImporter.IsValidEntityName(t.GetRuntimeName(),t.GetQuerySyntaxHelper()))
                     notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + t.GetRuntimeName() + "(ID=" + t.ID + ")) has an invalid name",
                         CheckResult.Fail, null));
 
 
-            foreach (ColumnInfo column in _repository.GetAllObjects<ColumnInfo>())
-                if (!TableInfoImporter.IsValidEntityName(column.GetRuntimeName()))
+            foreach (ColumnInfo column in allColumns)
+            {
+                var syntax = allTables[column.TableInfo_ID].GetQuerySyntaxHelper();
+                
+                if (!TableInfoImporter.IsValidEntityName(column.GetRuntimeName(),syntax))
                     notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo " + column.GetRuntimeName() + "(ID=" + column.ID+ ")) has an invalid name",
                         CheckResult.Fail, null));
+            }
 
             foreach (Catalogue c in _repository.GetAllCatalogues(true))
             {

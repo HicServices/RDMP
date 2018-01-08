@@ -347,7 +347,7 @@ namespace MapsDirectlyToDatabaseTable
 
                     //we are transitioning from a Microsoft SQL Server Catalogue database to a MySql one so mess around with the syntax and make the command type a MySqlCommand
                     if (destination.Connection is MySqlConnection)
-                        cloneCommand = SqlSyntaxHelper.ConvertMsSqlCommandToMySql((SqlCommand)cloneCommand);
+                        throw new Exception("you cannot clone into a different database type");
 
                     cloneCommand.Connection = destination.Connection;
 

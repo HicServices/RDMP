@@ -121,7 +121,7 @@ namespace DataExportLibrary.CohortDescribing
             
             try
             {
-                ReleaseIdentifier = SqlSyntaxHelper.GetRuntimeName(fetch.Source.GetReleaseIdentifier(cohort));
+                ReleaseIdentifier = cohort.GetReleaseIdentifier(true);
             }
             catch (Exception e)
             {
@@ -132,7 +132,7 @@ namespace DataExportLibrary.CohortDescribing
             
             try
             {
-                PrivateIdentifier = SqlSyntaxHelper.GetRuntimeName(fetch.Source.PrivateIdentifierField);
+                PrivateIdentifier = cohort.GetPrivateIdentifier(true);
             }
             catch (Exception e)
             {

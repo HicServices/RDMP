@@ -37,7 +37,7 @@ namespace ReusableLibraryCode.DataAccess
         }
         public DiscoveredDatabase ExpectDatabase(IDataAccessPoint dataAccessPoint, DataAccessContext context)
         {
-            return ExpectServer(dataAccessPoint, context).ExpectDatabase(SqlSyntaxHelper.GetRuntimeName(dataAccessPoint.Database));
+            return ExpectServer(dataAccessPoint, context).ExpectDatabase(dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database));
         }
         public DiscoveredServer ExpectDistinctServer(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
         {
@@ -51,7 +51,7 @@ namespace ReusableLibraryCode.DataAccess
 
             return new DatabaseHelperFactory(dataAccessPoint.DatabaseType).CreateInstance().GetConnectionStringBuilder(
                 dataAccessPoint.Server,
-                setInitialDatabase?SqlSyntaxHelper.GetRuntimeName(dataAccessPoint.Database):"",
+                setInitialDatabase ? dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database) : "",
                 credentials != null?credentials.Username:null,
                 credentials != null ? credentials.GetDecryptedPassword() : null);
         }
@@ -75,8 +75,10 @@ namespace ReusableLibraryCode.DataAccess
                     if(string.IsNullOrWhiteSpace(first.Database))
                         throw new Exception("DataAccessPoint '" + first +"' does not have a Database specified on it");
 
-                    var firstDbName = SqlSyntaxHelper.GetRuntimeName(first.Database);
-                    var currentDbName = SqlSyntaxHelper.GetRuntimeName(accessPoint.Database);
+                    var querySyntaxHelper = accessPoint.GetQuerySyntaxHelper();
+
+                    var firstDbName = querySyntaxHelper.GetRuntimeName(first.Database);
+                    var currentDbName = querySyntaxHelper.GetRuntimeName(accessPoint.Database);
 
                     if (!firstDbName.Equals(currentDbName))
                         throw new ExpectedIdenticalStringsException("All data access points must be into the same database, access points '" + first + "' and '" + accessPoint + "' are into different databases", firstDbName, currentDbName);    

@@ -79,6 +79,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             var server = _configuration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
             
+            
             using (var con = server.GetConnection())
             {
                 con.Open();
@@ -94,7 +95,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
                 var dt = new DataTable();
                 server.GetDataAdapter(cmd).Fill(dt);
 
-                dt.TableName = SqlSyntaxHelper.GetSensibleTableNameFromString(_configuration.Name + "_ID" + _configuration.ID);
+                dt.TableName = server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(_configuration.Name + "_ID" + _configuration.ID);
+
                 if (listener != null)
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "successfully read " +dt.Rows + " rows from source"));
 

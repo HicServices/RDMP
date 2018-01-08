@@ -48,7 +48,7 @@ namespace DataExportLibrary.ExtractionTime
                 throw new Exception("Could not resolve TimeCoverage_ExtractionInformation for Catalogue '"+ catalogue +"',time coverage ExtractionInformationID was:" +catalogue.TimeCoverage_ExtractionInformation_ID,e);
             }
 
-            _expectedExtractionIdentifierInOutputBuffer = SqlSyntaxHelper.GetRuntimeName(cohort.GetReleaseIdentifier());
+            _expectedExtractionIdentifierInOutputBuffer = cohort.GetQuerySyntaxHelper().GetRuntimeName(cohort.GetReleaseIdentifier());
         }
 
         private bool firstRow = true; 

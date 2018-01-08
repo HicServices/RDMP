@@ -4,6 +4,7 @@ using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
@@ -12,7 +13,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
     /// <summary>
     /// See ExtractableCohort
     /// </summary>
-    public interface IExtractableCohort : IMapsDirectlyToDatabaseTable, ISaveable
+    public interface IExtractableCohort : IMapsDirectlyToDatabaseTable, ISaveable, IHasQuerySyntaxHelper
     {
         int CountDistinct { get; }
         int ExternalCohortTable_ID { get; }
@@ -23,8 +24,8 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         DataTable FetchEntireCohort();
         IEnumerable<string> GetCustomTableJoinSQLIfExists(QueryBuilder queryBuilder);
-        string GetPrivateIdentifier();
-        string GetReleaseIdentifier();
+        string GetPrivateIdentifier(bool runtimeName = false);
+        string GetReleaseIdentifier(bool runtimeName = false);
         DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener);
         string WhereSQL();
         int CreateCustomColumnsIfCustomTableExists();

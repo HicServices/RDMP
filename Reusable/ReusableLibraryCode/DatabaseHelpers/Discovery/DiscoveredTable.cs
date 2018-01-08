@@ -2,12 +2,13 @@
 using System.Data;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
-    public class DiscoveredTable :IHasFullyQualifiedNameToo, IMightNotExist
+    public class DiscoveredTable :IHasFullyQualifiedNameToo, IMightNotExist, IHasQuerySyntaxHelper
     {
         private string _table;
         protected IQuerySyntaxHelper _querySyntaxHelper;
@@ -57,12 +58,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return _table;
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return _querySyntaxHelper;
+        }
+
 
         public DiscoveredColumn DiscoverColumn(string specificColumnName)
         {
             try
             {
-                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(SqlSyntaxHelper.GetRuntimeName(specificColumnName)));
+                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName)));
             }
             catch (Exception e)
             {

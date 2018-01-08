@@ -15,6 +15,7 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.Progress;
 using DataTable = System.Data.DataTable;
 
@@ -201,6 +202,15 @@ namespace DataExportLibrary.Data.DataTables
             return _cacheData.ExternalProjectNumber + "_" + _cacheData.ExternalDescription + "_V" + _cacheData.ExternalVersion;
         }
 
+        private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            if (_cachedQuerySyntaxHelper == null)
+                ExternalCohortTable.GetQuerySyntaxHelper();
+
+            return _cachedQuerySyntaxHelper;
+        }
+
         public void SetKnownExternalData(IExternalCohortDefinitionData externalData)
         {
             _cacheData = externalData;
@@ -210,19 +220,21 @@ namespace DataExportLibrary.Data.DataTables
         
         public DataTable FetchEntireCohort()
         {
-            SqlConnection con = (SqlConnection) ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
+            var ect = ExternalCohortTable;
+
+            SqlConnection con = (SqlConnection) ect.GetExpectDatabase().Server.GetConnection();
 
             con.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM " + ExternalCohortTable.TableName + " WHERE " + this.WhereSQL(), con); // this method looks incredibly complicated when we could just do top 10 but it is legacy from when you could define a cohort by query so it can stay in incase we want that functionality again
+                SqlCommand cmd = new SqlCommand("SELECT * FROM " + ect.TableName + " WHERE " + this.WhereSQL(), con); // this method looks incredibly complicated when we could just do top 10 but it is legacy from when you could define a cohort by query so it can stay in incase we want that functionality again
 
                 DataTable dtReturn = new DataTable();
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dtReturn);
 
-                dtReturn.TableName = SqlSyntaxHelper.GetRuntimeName(ExternalCohortTable.TableName);
+                dtReturn.TableName = ect.GetQuerySyntaxHelper().GetRuntimeName(ect.TableName);
                 
                 return dtReturn;
             }
@@ -238,17 +250,22 @@ namespace DataExportLibrary.Data.DataTables
         /// <returns></returns>
         public string WhereSQL()
         {
-            return SqlSyntaxHelper.EnsureFullyQualified(ExternalCohortTable.Database,ExternalCohortTable.TableName,ExternalCohortTable.DefinitionTableForeignKeyField) + "=" + OriginID;
+            var ect = ExternalCohortTable;
+            var querySyntaxHelper = ect.GetQuerySyntaxHelper();
+
+            return querySyntaxHelper.EnsureFullyQualified(ect.Database, null, ect.TableName, ect.DefinitionTableForeignKeyField) + "=" + OriginID;
         }
 
         private int CountCohortInDatabase()
         {
-            SqlConnection con = (SqlConnection) ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
+            var ect = ExternalCohortTable;
+
+            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
 
             con.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT count(*) FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL(), con); 
+                SqlCommand cmd = new SqlCommand("SELECT count(*) FROM " + ect.TableName + " WHERE " + WhereSQL(), con); 
 
                 return int.Parse(cmd.ExecuteScalar().ToString());
             }
@@ -260,12 +277,13 @@ namespace DataExportLibrary.Data.DataTables
 
         private int CountDISTINCTCohortInDatabase()
         {
-            SqlConnection con = (SqlConnection)ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
+            var ect = ExternalCohortTable;
+            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
 
             con.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT  count(DISTINCT " + GetReleaseIdentifier() + ") FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL(), con);
+                SqlCommand cmd = new SqlCommand("SELECT  count(DISTINCT " + GetReleaseIdentifier() + ") FROM " + ect.TableName + " WHERE " + WhereSQL(), con);
 
                 return int.Parse(cmd.ExecuteScalar().ToString());
             }
@@ -277,13 +295,14 @@ namespace DataExportLibrary.Data.DataTables
 
         public string GetFirstProCHIPrefix()
         {
+            var ect = ExternalCohortTable;
 
-            SqlConnection con = (SqlConnection)ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
+            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
 
             con.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT  TOP 1 LEFT(" + GetReleaseIdentifier() + ",3) FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL(), con);
+                SqlCommand cmd = new SqlCommand("SELECT  TOP 1 LEFT(" + GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " + WhereSQL(), con);
 
                 return cmd.ExecuteScalar().ToString();
             }
@@ -333,11 +352,14 @@ namespace DataExportLibrary.Data.DataTables
             //foreach custom table 
             var customTableNames = GetCustomTableNames();
             
+            var ect = ExternalCohortTable;
+            var syntax = ect.GetQuerySyntaxHelper();
+
             foreach (var customTable in customTableNames)
             {
-                string customTableNameLastBitOnly = SqlSyntaxHelper.GetRuntimeName(customTable);
+                string customTableNameLastBitOnly = syntax.GetRuntimeName(customTable);
 
-                var table = ExternalCohortTable.GetExpectDatabase().ExpectTable(customTableNameLastBitOnly);
+                var table = ect.GetExpectDatabase().ExpectTable(customTableNameLastBitOnly);
 
                 if(!table.Exists())
                     throw new Exception("Table " + table + " does not exist");
@@ -369,11 +391,14 @@ namespace DataExportLibrary.Data.DataTables
 
             int created = 0;
 
+            var ect = ExternalCohortTable;
+            var syntax = ect.GetQuerySyntaxHelper();
+
             foreach(var customTable in customTableNames)
             {
-                string customTableNameLastBitOnly = SqlSyntaxHelper.GetRuntimeName(customTable);
+                string customTableNameLastBitOnly = syntax.GetRuntimeName(customTable);
 
-                var table = ExternalCohortTable.GetExpectDatabase().ExpectTable(customTableNameLastBitOnly);
+                var table = ect.GetExpectDatabase().ExpectTable(customTableNameLastBitOnly);
 
                 if(!table.Exists())
                     throw new Exception("Custom Table " + table + " does not exist");
@@ -443,6 +468,9 @@ namespace DataExportLibrary.Data.DataTables
             if (queryBuilder != null && queryBuilder.SQLOutOfDate)
                 queryBuilder.RegenerateSQL();
 
+            var ect = ExternalCohortTable;
+            var syntax = ect.GetQuerySyntaxHelper(); 
+
             foreach (string t in customTables)
             {
 
@@ -460,30 +488,31 @@ namespace DataExportLibrary.Data.DataTables
                     )
 
                     yield return " LEFT JOIN " + t + 
-                        " ON " + ExternalCohortTable.PrivateIdentifierField+ "=" + t + "." +
-                        SqlSyntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField) + " collate Latin1_General_BIN";
+                        " ON " + ect.PrivateIdentifierField+ "=" + t + "." +
+                        syntax.GetRuntimeName(ect.PrivateIdentifierField) + " collate Latin1_General_BIN";
             }
         }
 
         public IEnumerable<string> GetCustomTableNames()
         {
+            var ect = ExternalCohortTable;
 
-            if(string.IsNullOrWhiteSpace(ExternalCohortTable.CustomTablesTableName))
-                throw new ArgumentNullException("No custom table has been configured for the external cohort table " + ExternalCohortTable.Name);
+            if (string.IsNullOrWhiteSpace(ect.CustomTablesTableName))
+                throw new ArgumentNullException("No custom table has been configured for the external cohort table " + ect.Name);
 
-            SqlConnection con = (SqlConnection) ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
+            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
             con.Open();
             try
             {
                 SqlCommand cmdGetCustomTable =
-                    new SqlCommand("SELECT customTableName FROM " + ExternalCohortTable.CustomTablesTableName + " WHERE "+ExternalCohortTable.DefinitionTableForeignKeyField+"=" + OriginID + " AND active=1",
+                    new SqlCommand("SELECT customTableName FROM " + ect.CustomTablesTableName + " WHERE " + ect.DefinitionTableForeignKeyField + "=" + OriginID + " AND active=1",
                         con);
 
                 SqlDataReader r= cmdGetCustomTable.ExecuteReader();
 
                 while(r.Read())
                 {
-                    yield return SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(ExternalCohortTable.Database, (string)r["customTableName"]);
+                    yield return ect.GetQuerySyntaxHelper().EnsureFullyQualified(ect.Database,null, (string)r["customTableName"]);
                 }
             }
             finally
@@ -513,12 +542,15 @@ namespace DataExportLibrary.Data.DataTables
 
             DiscoveredColumn chiColumn = null;
 
-            foreach (var column in ExternalCohortTable.GetExpectDatabase().ExpectTable(SqlSyntaxHelper.GetRuntimeName(customTable)).DiscoverColumns())
+            var ect = ExternalCohortTable;
+            var syntax = ect.GetQuerySyntaxHelper();
+
+            foreach (var column in ect.GetExpectDatabase().ExpectTable(syntax.GetRuntimeName(customTable)).DiscoverColumns())
             {
                 //if it is a CHI column - substitute it for PROCHI
                 if (
                     column.GetRuntimeName().Equals(
-                        SqlSyntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+                        syntax.GetRuntimeName(ect.PrivateIdentifierField)))
                 {
                     sql += GetReleaseIdentifier() + "," + Environment.NewLine;
                     chiColumn = column;
@@ -531,23 +563,28 @@ namespace DataExportLibrary.Data.DataTables
             sql = sql.TrimEnd(new[] { ',', '\r', '\n' }) + Environment.NewLine;
 
             if (chiColumn == null)
-                throw new Exception("Did not find PrivateIdentifierField (" + SqlSyntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField) + ") column in custom table " + customTable);
+                throw new Exception("Did not find PrivateIdentifierField (" + syntax.GetRuntimeName(ect.PrivateIdentifierField) + ") column in custom table " + customTable);
 
-            sql += " FROM " + customTable + " as custom LEFT JOIN " + ExternalCohortTable.TableName + " ON custom." + chiColumn + "=" + ExternalCohortTable.PrivateIdentifierField + " collate Latin1_General_BIN" + Environment.NewLine +
+            sql += " FROM " + customTable + " as custom LEFT JOIN " + ect.TableName + " ON custom." + chiColumn + "=" + ect.PrivateIdentifierField + " collate Latin1_General_BIN" + Environment.NewLine +
                  " WHERE " + WhereSQL();
 
             return sql;
         }
 
-        public string GetReleaseIdentifier()
+        public string GetReleaseIdentifier(bool runtimeName = false)
         {
-            return ExternalCohortTable.GetReleaseIdentifier(this);
+            var fullName = ExternalCohortTable.GetReleaseIdentifier(this);
+
+            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(fullName) : fullName;
         }
 
-        public string GetPrivateIdentifier()
+        public string GetPrivateIdentifier(bool runtimeName = false)
         {
             //cannot be overwritten by ExtractableCohort but for ease we can return the value from the cached (during constructor) version of this entity
-            return ExternalCohortTable.PrivateIdentifierField;
+            var fullName = ExternalCohortTable.PrivateIdentifierField;
+
+            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(fullName) : fullName;
+
         }
 
         public void RecordNewCustomTable(DiscoveredServer server, string tableName, DbConnection con, DbTransaction transaction)
@@ -593,24 +630,29 @@ namespace DataExportLibrary.Data.DataTables
         {
             DiscoveredTable table = ExternalCohortTable.GetExpectDatabase().ExpectTable(ExternalCohortTable.TableName);
 
+            var syntax = ExternalCohortTable.GetQuerySyntaxHelper();
+
             //discover the column
-            return table.DiscoverColumn(SqlSyntaxHelper.GetRuntimeName(GetPrivateIdentifier()))
+            return table.DiscoverColumn(syntax.GetRuntimeName(GetPrivateIdentifier()))
                 .DataType.SQLType; //and return it's datatype
             
         }
 
         public void DeleteCustomData(string tableName)
         {
-            using(var con = (SqlConnection)ExternalCohortTable.GetExpectDatabase().Server.GetConnection())
+            var ect = ExternalCohortTable;
+            var syntax = ect.GetQuerySyntaxHelper();
+
+            using(var con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection())
             {
 
                 con.Open();
                 SqlTransaction transaction = con.BeginTransaction();
 
-                var runtimeNameOfTable = SqlSyntaxHelper.GetRuntimeName(tableName);
+                var runtimeNameOfTable = syntax.GetRuntimeName(tableName);
 
-                SqlCommand cmdDeleteFromCustomTable = new SqlCommand("DELETE FROM " + ExternalCohortTable.CustomTablesTableName + " WHERE " 
-                                                                     + ExternalCohortTable.DefinitionTableForeignKeyField + "=" + OriginID + 
+                SqlCommand cmdDeleteFromCustomTable = new SqlCommand("DELETE FROM " + ect.CustomTablesTableName + " WHERE " 
+                                                                     + ect.DefinitionTableForeignKeyField + "=" + OriginID + 
                                                                      " AND customTableName='" + tableName + "' " +
                                                                      " OR customTableName = '"+ runtimeNameOfTable +"'", con);
                 cmdDeleteFromCustomTable.Transaction = transaction;
@@ -633,15 +675,18 @@ namespace DataExportLibrary.Data.DataTables
 
         public void SetActiveFlagOnCustomData(string tableName, bool flag)
         {
-            using (var con = (SqlConnection) ExternalCohortTable.GetExpectDatabase().Server.GetConnection())
+            var ect = ExternalCohortTable;
+            var syntax = ect.GetQuerySyntaxHelper();
+
+            using (var con = (SqlConnection) ect.GetExpectDatabase().Server.GetConnection())
             {
                 con.Open();
                 SqlTransaction transaction = con.BeginTransaction();
 
-                var runtimeNameOfTable = SqlSyntaxHelper.GetRuntimeName(tableName);
+                var runtimeNameOfTable = syntax.GetRuntimeName(tableName);
 
-                SqlCommand cmdUpdateCustomTable = new SqlCommand("UPDATE " + ExternalCohortTable.CustomTablesTableName + " SET active=" + (flag ? "1" : "0") + " WHERE "
-                    + ExternalCohortTable.DefinitionTableForeignKeyField + "=" + OriginID +
+                SqlCommand cmdUpdateCustomTable = new SqlCommand("UPDATE " + ect.CustomTablesTableName + " SET active=" + (flag ? "1" : "0") + " WHERE "
+                    + ect.DefinitionTableForeignKeyField + "=" + OriginID +
                     " AND customTableName='" + tableName + "' " +
                     " OR customTableName = '" + runtimeNameOfTable + "'"
                     , con);
@@ -667,12 +712,12 @@ namespace DataExportLibrary.Data.DataTables
 
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
-
             int haveWarnedAboutTop1AlreadyCount = 10;
 
-
-            string privateIdentifier = SqlSyntaxHelper.GetRuntimeName(GetPrivateIdentifier());
-            string releaseIdentifier = SqlSyntaxHelper.GetRuntimeName(GetReleaseIdentifier());
+            var syntax = ExternalCohortTable.GetQuerySyntaxHelper();
+            
+            string privateIdentifier = syntax.GetRuntimeName(GetPrivateIdentifier());
+            string releaseIdentifier = syntax.GetRuntimeName(GetReleaseIdentifier());
 
             //if we don't want to support caching or there is no cached value yet
             if (!allowCaching || _releaseToPrivateKeyDictionary == null)

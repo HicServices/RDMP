@@ -23,7 +23,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         bool SplitLineIntoSelectSQLAndAlias(string lineToSplit, out string selectSQL, out string alias);
 
         string GetScalarFunctionSql(MandatoryScalarFunctions function);
-        
+        string GetSensibleTableNameFromString(string potentiallyDodgyName);
     }
 
     public enum MandatoryScalarFunctions

@@ -1,6 +1,6 @@
 ﻿namespace ReusableLibraryCode.DataAccess
 {
-    public interface IDataAccessPoint
+    public interface IDataAccessPoint:IHasQuerySyntaxHelper
     {
         string Server { get; }
         string Database { get; }

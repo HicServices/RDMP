@@ -205,11 +205,13 @@ namespace DataExportManager.CohortUI
         {
             if (ExtractableCohort != null)
             {
+                var syntax = ExtractableCohort.GetQuerySyntaxHelper();
+
                 if (
                     !string.IsNullOrWhiteSpace(tbOverrideReleaseIdentifierSQL.Text)//if it has an override
                     &&
-                    SqlSyntaxHelper.GetRuntimeName(tbOverrideReleaseIdentifierSQL.Text)
-                        .Equals(SqlSyntaxHelper.GetRuntimeName(ExtractableCohort.GetPrivateIdentifier())))//and that ovoerride is the same as the private identifier they are trying to release identifiable data on the sly!
+                    syntax.GetRuntimeName(tbOverrideReleaseIdentifierSQL.Text)
+                        .Equals(syntax.GetRuntimeName(ExtractableCohort.GetPrivateIdentifier())))//and that ovoerride is the same as the private identifier they are trying to release identifiable data on the sly!
                 {
                     //release identifier cannot be the same as private identififer (I AM THE LAW!)
                     tbOverrideReleaseIdentifierSQL.ForeColor = Color.Red;

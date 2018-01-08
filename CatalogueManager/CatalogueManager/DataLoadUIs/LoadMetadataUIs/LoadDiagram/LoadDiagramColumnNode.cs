@@ -72,7 +72,10 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         
         public ICommand GetCommand()
         {
-            return new SqlTextOnlyCommand(SqlSyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName, _tableNode.TableName, ColumnName));
+
+            var querySyntaxHelper = _tableNode.TableInfo.GetQuerySyntaxHelper();
+
+            return new SqlTextOnlyCommand(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName,null, _tableNode.TableName, ColumnName));
         }
 
         public object GetImage(ICoreIconProvider coreIconProvider)

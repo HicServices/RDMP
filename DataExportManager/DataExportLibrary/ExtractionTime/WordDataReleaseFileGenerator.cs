@@ -97,7 +97,7 @@ namespace DataExportLibrary.ExtractionTime
 
             SetTableCell(table,0, 0, "Project:"+Environment.NewLine + Project.Name);
             SetTableCell(table,0, 1, "Master Issue:" +  Project.MasterTicket);
-            SetTableCell(table,0, 2, "ReleaseIdentifier:" + SqlSyntaxHelper.GetRuntimeName(Cohort.GetReleaseIdentifier()));
+            SetTableCell(table,0, 2, "ReleaseIdentifier:" + Cohort.GetReleaseIdentifier(true));
             SetTableCell(table,0, 3, "Configuration ID:" + Configuration.ID + Environment.NewLine + "Name:" + Configuration.Name);
 
             if (!Cohort.GetReleaseIdentifier().ToLower().Contains("prochi"))

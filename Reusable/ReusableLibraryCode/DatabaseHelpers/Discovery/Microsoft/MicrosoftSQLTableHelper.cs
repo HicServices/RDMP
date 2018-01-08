@@ -12,11 +12,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
     {
         public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
         {
-            tableName = SqlSyntaxHelper.GetRuntimeName(tableName);
-
             List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
 
-      
             DbCommand cmd = DatabaseCommandHelper.GetCommand("use [" + database + @"];  exec sp_columns @table_name", connection.Connection);
             cmd.Transaction = connection.Transaction;
 
