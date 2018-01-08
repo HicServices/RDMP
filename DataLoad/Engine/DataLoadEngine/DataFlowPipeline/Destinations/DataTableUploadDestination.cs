@@ -159,7 +159,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
 
             Dictionary<string, int> currentDatabaseStringSizes = new Dictionary<string, int>();
-            Dictionary<string, Pair<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Pair<int, int>>();
+            Dictionary<string, Tuple<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Tuple<int, int>>();
 
             Dictionary<string, DataTypeComputer> thisBatch = new Dictionary<string, DataTypeComputer>();
 
@@ -242,12 +242,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 if (currentDatabaseDecimalSizes.ContainsKey(kvp.Key))
                 {
                     //if we need more space on either side of the decimal point
-                    if (currentDatabaseDecimalSizes[kvp.Key].First < kvp.Value.numbersBeforeDecimalPlace
+                    if (currentDatabaseDecimalSizes[kvp.Key].Item1 < kvp.Value.numbersBeforeDecimalPlace
                         ||
-                        currentDatabaseDecimalSizes[kvp.Key].Second < kvp.Value.numbersAfterDecimalPlace)
+                        currentDatabaseDecimalSizes[kvp.Key].Item2 < kvp.Value.numbersAfterDecimalPlace)
                     {
-                        int newBeforeDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].First, kvp.Value.numbersBeforeDecimalPlace);
-                        int newAfterDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Second, kvp.Value.numbersAfterDecimalPlace);
+                        int newBeforeDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item1, kvp.Value.numbersBeforeDecimalPlace);
+                        int newAfterDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item2, kvp.Value.numbersAfterDecimalPlace);
 
                         var col = columns.Single(c => c.GetRuntimeName().Equals(kvp.Key));
 

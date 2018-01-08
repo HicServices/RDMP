@@ -445,7 +445,6 @@
     <Compile Include="IHasDependencies.cs" />
     <Compile Include="IHasRuntimeName.cs" />
     <Compile Include="OfficeVersionFinder.cs" />
-    <Compile Include="Pair.cs" />
     <Compile Include="Performance\ComprehensiveQueryPerformanceCounter.cs" />
     <Compile Include="Performance\QueryPerformed.cs" />
     <Compile Include="Progress\ForkDataLoadEventListener.cs" />
@@ -467,7 +466,6 @@
     <Compile Include="SMOIndexRebuilder.cs" />
     <Compile Include="SqlSyntaxHelper.cs" />
     <Compile Include="StringLiteralSqlInContext.cs" />
-    <Compile Include="Triple.cs" />
     <Compile Include="UsefulStuff.cs" />
     <Compile Include="VisualStudioSolutionFileProcessing\VisualStudioProjectReference.cs" />
     <Compile Include="VisualStudioSolutionFileProcessing\VisualStudioSolutionFile.cs" />
