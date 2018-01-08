@@ -16,7 +16,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution.Joinables
 {
-    public class JoinableTaskExecution:CachableTask
+    public class JoinableTaskExecution:CacheableTask
     {
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
         private AggregateConfiguration _aggregate;

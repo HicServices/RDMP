@@ -11,6 +11,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
+    /// <summary>
+    /// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the 
+    /// identifiers themselves (once complete), cancellation token etc.
+    /// </summary>
     public class CohortIdentificationTaskExecution
     {
         private readonly IDataAccessPoint _cacheServerIfAny;

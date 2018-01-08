@@ -11,7 +11,11 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
-    public interface ICachableTask:ICompileable
+    /// <summary>
+    /// Any ICompileable which can be cached once finished.  Typically any ICompileable in a CohortCompiler can be cached unless it is composed of multiple discrete
+    /// sub queries (i.e. an AggregationContainerTask.) 
+    /// </summary>
+    public interface ICacheableTask:ICompileable
     {
         AggregateConfiguration GetAggregateConfiguration();
         CacheCommitArguments GetCacheArguments(string sql, DataTable results,DatabaseColumnRequest[] explicitTypes);

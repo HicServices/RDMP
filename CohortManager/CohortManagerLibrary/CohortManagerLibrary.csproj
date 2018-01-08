@@ -103,7 +103,7 @@
     <Compile Include="Execution\AggregationTask.cs" />
     <Compile Include="Execution\ExecutingAggregateState.cs" />
     <Compile Include="Execution\CohortIdentificationTaskExecution.cs" />
-    <Compile Include="Execution\ICachableTask.cs" />
+    <Compile Include="Execution\ICacheableTask.cs" />
     <Compile Include="Execution\Joinables\JoinableTaskExecution.cs" />
     <Compile Include="FreeText\FreeTextCompiler.cs" />
     <Compile Include="FreeText\Paragraphing\ParagraphSection.cs" />
@@ -143,7 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Execution\CohortAggregateExecution.cd" />
+    <None Include="Execution\CohortCompiler.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

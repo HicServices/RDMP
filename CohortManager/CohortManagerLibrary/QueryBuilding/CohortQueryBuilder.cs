@@ -19,7 +19,7 @@ namespace CohortManagerLibrary.QueryBuilding
     /// sub queries fundamentally take the form of 'Select distinct patientId from TableX'.  All the complexity comes in the form of IFilters (WHERE Sql), 
     /// parameters, using cached query results, patient index tables etc.
     /// 
-    /// User cohort identification queries are all creates under a CohortIdentificationConfiguration which will have a single root CohortAggregateContainer.  A
+    /// User cohort identification queries are all create under a CohortIdentificationConfiguration which will have a single root CohortAggregateContainer.  A
     /// final count for the number of patients in the cohort can be determined by running the root CohortAggregateContainer.  The user will often want to run each
     /// sub query independently however to get counts for each dataset involved.  Sub queries are defined in AggregateConfigurations.
     /// 

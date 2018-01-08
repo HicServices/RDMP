@@ -20,7 +20,7 @@ namespace CohortManagerLibrary.Execution
     /// <summary>
     /// A single AggregationConfiguration being executed by a CohortCompiler
     /// </summary>
-    public class AggregationTask:CachableTask
+    public class AggregationTask:CacheableTask
     {
         public AggregateConfiguration Aggregate { get; private set; }
 
