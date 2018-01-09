@@ -11,6 +11,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// RuntimeTask that hosts an IDataProvider.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+    /// RuntimeArgumentCollection
+    /// </summary>
     public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         public IDataProvider Provider { get; private set; }
@@ -35,12 +39,12 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
                 throw new Exception("Error when trying to set the properties for '" + task.Name + "'", e);
             }
 
-            Provider.Initialize(new HICProjectDirectory(args.StageSpecificArguments.RootDir, false), RuntimeArguments.StageSpecificArguments.DbInfo);
+            Provider.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
         }
 
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + Name + "'"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch data using class " + Provider.GetType().FullName));
 

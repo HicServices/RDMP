@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 namespace ReusableLibraryCode
 {
     //adapted from http://stackoverflow.com/questions/255341/getting-key-of-value-of-a-generic-dictionary#255630
+
+    /// <summary>
+    /// Bi directional Key Value pair class in which all Ks and Vs must be unique and which can be indexed either by K or V.
+    /// </summary>
+    /// <typeparam name="TFirst"></typeparam>
+    /// <typeparam name="TSecond"></typeparam>
     public class BiDictionary<TFirst, TSecond>
     {
         IDictionary<TFirst, TSecond> firstToSecond = new Dictionary<TFirst, TSecond>();

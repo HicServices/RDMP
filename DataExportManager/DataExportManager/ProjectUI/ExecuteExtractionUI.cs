@@ -155,7 +155,7 @@ namespace DataExportManager.ProjectUI
                     progressUI.Dock = DockStyle.Fill;
                     globalsTab.Controls.Add(progressUI);
 
-                    var globalExtractor = new ExtractionPipelineHost(ExtractDatasetCommand.EmptyCommand,_pipelineSelectionUI1.Pipeline,_dataLoadInfo);
+                    var globalExtractor = new ExtractionPipelineUseCase(ExtractDatasetCommand.EmptyCommand,_pipelineSelectionUI1.Pipeline,_dataLoadInfo);
 
                     Thread t = new Thread(() =>
                         globalExtractor.ExtractGlobalsForDestination(Project, 
@@ -375,7 +375,7 @@ namespace DataExportManager.ProjectUI
             if (_pipelineSelectionUI1 == null)
             {
                 //create a new selection UI (pick an extraction pipeliene UI)
-                var useCase = new ExtractionPipelineHost();
+                var useCase = new ExtractionPipelineUseCase();
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
                 _pipelineSelectionUI1 = factory.Create("Extraction Pipeline",DockStyle.Fill,panel1);

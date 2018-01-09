@@ -10,7 +10,12 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowOperations
 {
-    [Description("Transposes a DataTable such that column 1 values replacing existing headers, only use this if you have been given a file in which proper headers are vertical down the first column and records are subsequent columns (i.e. adding new records results in the DataTable growing horizontally - some users of Excel think this is ideal way to create DataTables).  IMPORTANT: Only works with a single load batch if you have a chunked pipeline you cannot use this component unless you set the chunk size large enough to read the entire file in one go")]
+    /// <summary>
+    /// Pipeline component which rotates DataTables flowing through it by 90 degrees such that the first column becomes the new headers.  Only use this if you have
+    /// been given a file in which proper headers are vertical down the first column and records are subsequent columns (i.e. adding new records results in the 
+    /// DataTable growing horizontally).
+    /// </summary>
+    [Description("Transposes a DataTable such that column 1 values replacing existing headers, only use this if you have been given a file in which proper headers are vertical down the first column and records are subsequent columns (i.e. adding new records results in the DataTable growing horizontally).  IMPORTANT: Only works with a single load batch if you have a chunked pipeline you cannot use this component unless you set the chunk size large enough to read the entire file in one go")]
     public class Transposer : IPluginDataFlowComponent<DataTable>
     {
         private bool _haveServedResult = false;

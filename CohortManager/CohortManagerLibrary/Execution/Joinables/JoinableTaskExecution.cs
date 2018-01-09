@@ -16,7 +16,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution.Joinables
 {
-    public class JoinableTaskExecution:CachableTask
+    /// <summary>
+    /// A single AggregationConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The 
+    /// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
+    /// result table can/will be commited as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
+    /// </summary>
+    public class JoinableTaskExecution:CacheableTask
     {
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
         private AggregateConfiguration _aggregate;

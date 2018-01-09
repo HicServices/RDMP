@@ -366,7 +366,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private SingleJobScheduledDataLoadProcess CreateSingleScheduledJobLoadProcess()
         {
             var toAttempt = CreateLoadProgressSelectionStrategy();
-            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt, _databaseLoadConfiguration);
+            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
 
             var logManager = CreateLogManager(_loadMetadata);
             var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
@@ -385,7 +385,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private IterativeScheduledDataLoadProcess CreateIterativeScheduledDataLoadProcess()
         {
             var toAttempt = CreateLoadProgressSelectionStrategy();
-            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt, _databaseLoadConfiguration);
+            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
             var logManager = CreateLogManager(_loadMetadata);
             var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
             var pipeline = CreateLoadPipeline(logManager);

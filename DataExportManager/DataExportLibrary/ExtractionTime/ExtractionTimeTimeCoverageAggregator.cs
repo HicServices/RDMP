@@ -12,6 +12,10 @@ using ReusableLibraryCode;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset (linked to the project cohort).  The input
+    /// to this is a DataRow rather than an SQL query because the class is used at extraction time as we are writing records out to the ExtractionDirectory.
+    /// </summary>
     public class ExtractionTimeTimeCoverageAggregator
     {
         public int countOfBrokenDates { get; private set; }
@@ -44,7 +48,7 @@ namespace DataExportLibrary.ExtractionTime
                 throw new Exception("Could not resolve TimeCoverage_ExtractionInformation for Catalogue '"+ catalogue +"',time coverage ExtractionInformationID was:" +catalogue.TimeCoverage_ExtractionInformation_ID,e);
             }
 
-            _expectedExtractionIdentifierInOutputBuffer = SqlSyntaxHelper.GetRuntimeName(cohort.GetReleaseIdentifier());
+            _expectedExtractionIdentifierInOutputBuffer = cohort.GetQuerySyntaxHelper().GetRuntimeName(cohort.GetReleaseIdentifier());
         }
 
         private bool firstRow = true; 

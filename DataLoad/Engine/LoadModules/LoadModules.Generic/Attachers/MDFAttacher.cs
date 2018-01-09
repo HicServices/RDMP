@@ -16,14 +16,21 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
 {
+    /// <summary>
+    /// Data load component for loading a detatched database file into RAW.  This attacher does not load RAW tables normally (like AnySeparatorFileAttacher etc)
+    /// instead it specifies that it is itself going to act as RAW.  Using this component requires that the computer running the data load has file system access
+    /// to the RAW Sql Server data directory (and that the path is the same).
+    /// 
+    /// The mdf file will be copied to the Sql Server data directory of the RAW server and attached with the expected name of RAW.  From this point on the load
+    /// will function normally.  It is up to the user to ensure that the table names/columns in the attached MDF match expected LIVE tables on your server (or 
+    /// write AdjustRAW scripts to harmonise).
+    /// </summary>
     [Description(
         @"Loads an MDF file to the RAW server.  The MDF file will be copied to the data directory (discovered by querying sys.master_files) and then attached to the server."
         )]
     public class MDFAttacher : Attacher,IPluginAttacher
     {
-        
-
-       private const string GetDefaultSQLServerDatabaseDirectory = @"SELECT LEFT(physical_name,LEN(physical_name)-CHARINDEX('\',REVERSE(physical_name))+1) 
+        private const string GetDefaultSQLServerDatabaseDirectory = @"SELECT LEFT(physical_name,LEN(physical_name)-CHARINDEX('\',REVERSE(physical_name))+1) 
             FROM sys.master_files mf   
             INNER JOIN sys.[databases] d   
             ON mf.[database_id] = d.[database_id]   

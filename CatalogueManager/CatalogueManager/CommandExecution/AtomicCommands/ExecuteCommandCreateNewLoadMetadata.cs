@@ -81,7 +81,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
                     Publish(lmd);
 
-                    var arrangeEditting = new ExecuteCommandEditExistingLoadMetadata(Activator);
+                    var arrangeEditting = new ExecuteCommandExecuteLoadMetadata(Activator);
                     arrangeEditting.LoadMetadata = lmd;
                     arrangeEditting.Execute();
                 }

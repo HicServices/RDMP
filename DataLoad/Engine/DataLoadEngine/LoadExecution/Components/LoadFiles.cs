@@ -10,6 +10,11 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components
 {
+    /// <summary>
+    /// DLE component responsible for the LoadStage.GetFiles.  This includes running any user configured ProcessTask (which will be RuntimeTasks in _components).
+    /// Also pushes DeleteForLoadingFilesOperation onto the disposal stack so that any files accumulated in ForLoading are cleared at the end of the DLE run (After
+    /// archiving).
+    /// </summary>
     public class LoadFiles : CompositeDataLoadComponent
     {
         public LoadFiles(List<IRuntimeTask> collection):base(collection.Cast<IDataLoadComponent>().ToList())

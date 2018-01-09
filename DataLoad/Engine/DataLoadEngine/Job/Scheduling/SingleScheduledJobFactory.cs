@@ -7,6 +7,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job.Scheduling
 {
+    /// <summary>
+    /// Return a ScheduledDataLoadJob hydrated with appropriate dates for the LoadProgress supplied (e.g. load the next 5 days of Load Progress 'Tayside Biochem
+    /// Loading').
+    /// </summary>
     public class SingleScheduledJobFactory : ScheduledJobFactory
     {
         private readonly ILoadProgress _loadProgress;

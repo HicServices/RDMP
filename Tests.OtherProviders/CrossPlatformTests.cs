@@ -16,81 +16,7 @@ namespace Tests.OtherProviders
 
         DiscoveredServer server;
         DiscoveredDatabase database;
-
-        [Test]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
-        public void DropIfNotExists(DatabaseType type)
-        {
-            GetCleanedServer(type, out server, out database);
-            
-            //we are about to write some bespoke SQL, get the helper            
-            IQuerySyntaxHelper syntaxHelper = server.GetQuerySyntaxHelper();
-            string tblName = syntaxHelper.EnsureFullyQualified(_dbName,null, "DropIfNotExistsTable");//will handle case problems with ORACLE
-            
-            //the table that will be created/recreated below
-            DiscoveredTable table = database.ExpectTable(tblName);
-            Assert.IsFalse(table.Exists());//shouldn't exist yet
-            
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-
-                string createStatement = "CREATE TABLE " + tblName + "( MyNumber varchar(5) DEFAULT 'Sand')";
-
-                //test basic query
-                server.GetCommand(createStatement, con).ExecuteNonQuery();
-                Assert.IsTrue(table.Exists());
-                
-                //wrap it with if not exists
-                string wrappedCreate = table.Helper.WrapStatementWithIfTableExistanceMatches(false,new StringLiteralSqlInContext(createStatement,false), tblName);
-                
-                //now we can execute it multiple times no problem
-                server.GetCommand(wrappedCreate, con).ExecuteNonQuery();
-                server.GetCommand(wrappedCreate, con).ExecuteNonQuery();
-                Assert.IsTrue(table.Exists());
-
-                //try adding a column
-                Assert.AreEqual(table.DiscoverColumns().Count(),1);
-                table.AddColumn("Dave",new DatabaseTypeRequest(typeof(int)),true);
-
-                table.AddColumn("Frank", "int", true);
-                Assert.AreEqual(table.DiscoverColumns().Count(),3);
-
-                //now we can drop it and recreate it using the wrapped query
-                table.Drop();
-                server.GetCommand(wrappedCreate, con).ExecuteNonQuery();
-                Assert.IsTrue(table.Exists());
-
-                string dropCode = "DROP TABLE " + tblName;
-                string wrappedDropCode = table.Helper.WrapStatementWithIfTableExistanceMatches(true,new StringLiteralSqlInContext(dropCode,false), tblName);
-                
-                //drop it with the wrapping
-                server.GetCommand(wrappedDropCode, con).ExecuteNonQuery();
-                Assert.IsFalse(table.Exists());//now it shouldnt exist
-
-                //and we can repeat the command without crashing it
-                server.GetCommand(wrappedDropCode, con).ExecuteNonQuery();
-                server.GetCommand(wrappedDropCode, con).ExecuteNonQuery();
-                
-                Assert.IsFalse(database.ExpectTable(tblName).Exists());
-
-                //but without the wrapping it blows up
-                try
-                {
-                    server.GetCommand(dropCode, con).ExecuteNonQuery();
-                    Assert.Fail("Expected it to crash before here");
-                }
-                catch (Exception)
-                {
-                    Assert.Pass();
-                }
-                
-            }
-        }
-
-
+        
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -148,8 +74,8 @@ namespace Tests.OtherProviders
 
             var score = colsDictionary["score"];
             Assert.AreEqual(true, score.AllowNulls);
-            Assert.AreEqual(5,score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().First);
-            Assert.AreEqual(3, score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Second);
+            Assert.AreEqual(5,score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item1);
+            Assert.AreEqual(3, score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item2);
 
             Assert.AreEqual(typeof(decimal), syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(score.DataType.SQLType));
 

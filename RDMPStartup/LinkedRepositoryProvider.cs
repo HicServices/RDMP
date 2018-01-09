@@ -13,6 +13,12 @@ using MapsDirectlyToDatabaseTable;
 
 namespace RDMPStartup
 {
+    /// <summary>
+    /// Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information (what datasets there are, what extraction
+    /// projects there are, what IFilters are available etc - literally everything, just look at who inherits from IMapsDirectlyToDatabaseTable!).
+    /// 
+    /// See also RegistryRepositoryFinder
+    /// </summary>
     public class LinkedRepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {
         public CatalogueRepository CatalogueRepository { get; private set; }

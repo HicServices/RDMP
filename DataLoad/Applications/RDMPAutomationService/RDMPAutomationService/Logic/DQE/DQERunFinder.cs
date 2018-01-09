@@ -5,6 +5,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Data;
 using DataQualityEngine.Reports;
@@ -15,6 +16,12 @@ using ReusableLibraryCode.DataAccess;
 
 namespace RDMPAutomationService.Logic.DQE
 {
+    /// <summary>
+    /// Identifies Catalogues which have validation rules on them but have yet to have the Data Quality Engine run on them (or it has been a long time since
+    /// the last DQE run happened).  
+    /// 
+    ///  Used by DQEAutomationSource to decide when a new AutomatedDQERun can be started. 
+    /// </summary>
     public class DQERunFinder
     {
         private readonly CatalogueRepository _catalogueRepository;
@@ -41,14 +48,14 @@ namespace RDMPAutomationService.Logic.DQE
             var dqeRepository = new DQERepository(_catalogueRepository);
 
 
-            List<Pair<Catalogue, DateTime>> datasetsByDate;
-            Pair<Catalogue, DateTime> pairToReturn;
+            List<Tuple<Catalogue, DateTime>> datasetsByDate;
+            Tuple<Catalogue, DateTime> pairToReturn;
 
             switch (_strategy)
             {
                 case AutomationDQEJobSelectionStrategy.MostRecentlyLoadedDataset:
-                    
-                    datasetsByDate = new List<Pair<Catalogue,DateTime>>();
+
+                    datasetsByDate = new List<Tuple<Catalogue, DateTime>>();
 
                     //First find whether theres a valid candidate based on dataset load date
                     foreach (var c in availableCatalogues)
@@ -82,21 +89,21 @@ namespace RDMPAutomationService.Logic.DQE
                                 continue;
                         }
 
-                        datasetsByDate.Add(new Pair<Catalogue, DateTime>(c, dateOfLastLoad.Value));
+                        datasetsByDate.Add(new Tuple<Catalogue, DateTime>(c, dateOfLastLoad.Value));
                     }
 
-                    var ordered = datasetsByDate.OrderBy(p => p.Second);
-                    pairToReturn = ordered.FirstOrDefault(p => CanBeDQEd(p.First));
+                    var ordered = datasetsByDate.OrderBy(p => p.Item2);
+                    pairToReturn = ordered.FirstOrDefault(p => CanBeDQEd(p.Item1));
 
                     //if we found a recently loaded catalogue
                     if (pairToReturn != null)
-                        return pairToReturn.First;
+                        return pairToReturn.Item1;
                     else
                         goto case AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults;//No dasets are loaded or they have all been recently evaluated by DQE or something else.  Lets fallback on the other Strategy instead
                     
                 case AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults:
 
-                    datasetsByDate = new List<Pair<Catalogue, DateTime>>();
+                    datasetsByDate = new List<Tuple<Catalogue, DateTime>>();
 
                     foreach (var c in availableCatalogues)
                     {
@@ -104,7 +111,7 @@ namespace RDMPAutomationService.Logic.DQE
 
                         //if it has never ben evaluated 
                         if (candidate == null)
-                            datasetsByDate.Add(new Pair<Catalogue, DateTime>(c, DateTime.MinValue));
+                            datasetsByDate.Add(new Tuple<Catalogue, DateTime>(c, DateTime.MinValue));
                         else
                         {
                             //it was recently evaluated
@@ -112,12 +119,12 @@ namespace RDMPAutomationService.Logic.DQE
                                 continue;//so do not add it
                             
                             //it was evaluated ages ago
-                            datasetsByDate.Add(new Pair<Catalogue, DateTime>(c, candidate.DateOfEvaluation));
+                            datasetsByDate.Add(new Tuple<Catalogue, DateTime>(c, candidate.DateOfEvaluation));
                         }
                     }
 
-                    pairToReturn = datasetsByDate.OrderBy(p => p.Second).FirstOrDefault(p => CanBeDQEd(p.First));
-                    return pairToReturn == null? null : pairToReturn.First;
+                    pairToReturn = datasetsByDate.OrderBy(p => p.Item2).FirstOrDefault(p => CanBeDQEd(p.Item1));
+                    return pairToReturn == null? null : pairToReturn.Item1;
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -127,7 +134,7 @@ namespace RDMPAutomationService.Logic.DQE
         private bool CanBeDQEd(Catalogue catalogue)
         {
             //see if it can be checked
-            CatalogueConstraintReport report = new CatalogueConstraintReport(catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
 
             var checker = new ToMemoryCheckNotifier();
             report.Check(checker);

@@ -56,7 +56,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
     /// 
     /// 
     /// </summary>
-    public partial class ConvertColumnInfoIntoANOColumnInfo : ConvertColumnInfoIntoANOColumnInfo_Design
+    public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConverterUI_Design
     {
         private ColumnInfo _columnInfo;
         private TableInfo _tableInfo;
@@ -117,7 +117,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
         }
 
         //constructor
-        public ConvertColumnInfoIntoANOColumnInfo()
+        public ColumnInfoToANOTableConverterUI()
         {
             InitializeComponent();
         }
@@ -440,9 +440,8 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
         }
     }
 
-
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConvertColumnInfoIntoANOColumnInfo_Design, UserControl>))]
-    public abstract class ConvertColumnInfoIntoANOColumnInfo_Design:RDMPSingleDatabaseObjectControl<ColumnInfo>
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ColumnInfoToANOTableConverterUI_Design, UserControl>))]
+    public abstract class ColumnInfoToANOTableConverterUI_Design : RDMPSingleDatabaseObjectControl<ColumnInfo>
     {
     }
 }

@@ -5,6 +5,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See ExtractionConfiguration
+    /// </summary>
     public interface IExtractionConfiguration:INamed
     {
         DateTime? dtCreated { get; set; }

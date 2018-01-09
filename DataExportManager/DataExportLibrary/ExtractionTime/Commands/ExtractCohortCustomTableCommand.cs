@@ -5,6 +5,11 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 {
+    /// <summary>
+    /// Command representing a desire to extract a given Custom Data table along with the main datasets that make up a researchers ExtractionConfiguration.
+    /// This is an input object for the extraction pipeline (See IExtractCommand) and different sources/destinations could/will handle this request differently
+    /// but typically the table is linked with the cohort and extracted (with release identifier substitution) to the ExtractionDirectory.
+    /// </summary>
     public class ExtractCohortCustomTableCommand : IExtractCohortCustomTableCommand
     {
         private ExtractionDirectory _extractionDirectory;

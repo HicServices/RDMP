@@ -11,6 +11,10 @@ using ReusableLibraryCode.Checks;
 
 namespace LoadModules.Generic.DataProvider
 {
+    /// <summary>
+    /// Describes a website / webservice endpoint which can be accessed with an optional username / password.  Use this Type when you need a [DemandsInitialization]
+    /// property on a component (e.g. IAttacher) which is a remote website/webservice.
+    /// </summary>
     [Export(typeof(ICustomUIDrivenClass))]
     public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenClass
     {

@@ -25,11 +25,11 @@ namespace DataExportLibrary.ExtractionTime
     /// </summary>
     public class WordDataWriter : RequiresMicrosoftOffice
     {
-        public ExtractionPipelineHost Executer { get; set; }
+        public ExtractionPipelineUseCase Executer { get; set; }
 
         public List<Exception> ExceptionsGeneratingWordFile = new List<Exception>();
 
-        public WordDataWriter(ExtractionPipelineHost executer)
+        public WordDataWriter(ExtractionPipelineUseCase executer)
         {
             if(executer == null)
                 throw new NullReferenceException("Cannot write meta data without the accompanying ExtractionPipelineHost");

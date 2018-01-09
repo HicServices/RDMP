@@ -23,6 +23,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.Checks
 {
+    /// <summary>
+    /// Runs checks on a Project to make sure it has an extraction folder, project number etc.  Also checks ExtractionConfigurations that are part of the project
+    /// to see if valid queries can be built and rows read.
+    /// </summary>
     public class ProjectChecker:ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;

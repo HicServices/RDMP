@@ -8,6 +8,8 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 
 namespace CatalogueLibrary.Data
@@ -24,7 +26,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IDeleteable, IComparable, IColumnMetadata,IResolveDuplication, IHasDependencies,ICheckable
+    public class ColumnInfo : VersionedDatabaseEntity, IDeleteable, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable,IHasQuerySyntaxHelper
     {
         public static int Name_MaxLength;
         public static int Data_type_MaxLength;
@@ -240,11 +242,20 @@ namespace CatalogueLibrary.Data
             if (Name == null)
                 return null;
 
-            return SqlSyntaxHelper.GetRuntimeName(Name);
+            return GetQuerySyntaxHelper().GetRuntimeName(Name);
         }
         public override int GetHashCode()
         {
             return Repository.GetHashCode(this);
+        }
+
+        private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            if (_cachedQuerySyntaxHelper == null)
+                _cachedQuerySyntaxHelper = TableInfo.GetQuerySyntaxHelper();
+
+            return _cachedQuerySyntaxHelper;
         }
 
 

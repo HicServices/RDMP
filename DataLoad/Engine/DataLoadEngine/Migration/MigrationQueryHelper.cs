@@ -2,6 +2,9 @@ using System;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// Generates the MERGE and UPDATE SQL queries responsible for migrating records from STAGING to LIVE as part of a data load.
+    /// </summary>
     public abstract class MigrationQueryHelper
     {
         protected readonly MigrationColumnSet ColumnsToMigrate;

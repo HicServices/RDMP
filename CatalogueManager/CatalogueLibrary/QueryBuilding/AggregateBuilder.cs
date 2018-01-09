@@ -35,6 +35,9 @@ namespace CatalogueLibrary.QueryBuilding
     /// 
     /// All IAggregateHelper.BuildAggregate implementations must produce the same result tables for the same column/axis/pivot settings.  This is rigidly enforced by 
     /// AggregateDataBasedTests 
+    /// 
+    /// IMPORTANT: AggregateBuilder also powers the cohort identification system (See CohortQueryBuilderHelper) in which case the AggregateConfiguration will have
+    /// only a single AggregateDimension (which must be the patient identifier column).
     /// </summary>
     public class AggregateBuilder : ISqlQueryBuilder
     {

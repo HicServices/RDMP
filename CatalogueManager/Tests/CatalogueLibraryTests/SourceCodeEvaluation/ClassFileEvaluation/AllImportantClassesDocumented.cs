@@ -16,7 +16,28 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         private List<string> _csFilesList;
         private List<string> problems = new List<string>();
         private int commentedCount = 0;
+        private int commentLineCount = 0;
         private bool strict = false;
+
+        private string[] excusedClassFileNames =
+        {
+            "Class1.cs",
+            "Program.cs",
+            "PluginNugetClass.cs",
+            "PluginTest.cs",
+            "PluginUI.cs",
+
+            //todo resolve the following:
+            "ReleasePipeline.cs", //needs refactoring
+            "ReleaseUseCase.cs",//needs refactoring
+            "FixedDataReleaseSource.cs",//needs refactoring
+            "CacheFetchRequestProvider.cs", //why do we need this class?
+            
+            "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
+            "Relationship.cs",//deprecated by the anonymisation object sharing framework?
+            "RelationshipMap.cs"//deprecated by the anonymisation object sharing framework?
+
+        };
 
         public void FindProblems(List<string> csFilesList)
         {
@@ -24,6 +45,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
             foreach (var f in _csFilesList)
             {
+                if(excusedClassFileNames.Contains(Path.GetFileName(f)))
+                    continue;
+                
                 var text = File.ReadAllText(f);
 
                 int startAt = text.IndexOf("public class");
@@ -56,13 +80,17 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                     if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
                         continue;
-                    
+
+                    var match = Regex.Match(beforeDeclaration, "<summary>(.*)</summary>", RegexOptions.Singleline);
+
                     //are there comments?
-                    if (!beforeDeclaration.Contains("<summary>"))
+                    if (!match.Success)
                     {
                         //no!
                         if (!strict) //are we being strict?
                         {
+                            //User interface namespaces/related classes
+
                             if(nameSpace.Contains("CatalogueManager"))
                                 continue;
                             if (nameSpace.Contains("Nodes"))
@@ -72,10 +100,26 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             if (nameSpace.Contains("ReusableUIComponents"))
                                 continue;
 
+                            if (nameSpace.Contains("CohortManager") && !nameSpace.Contains("CohortManagerLibrary"))
+                                continue;
+                            
                             if (nameSpace.Contains("Copying.Commands"))
                                 continue;
 
                             if (nameSpace.Contains("Diagnostics"))
+                                continue;
+
+                            if (nameSpace.Contains("Dashboard"))
+                                continue;
+
+                            if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
+                                continue;
+
+                            if (nameSpace.Contains("RDMPObjectVisualisation"))
+                                continue;
+                            
+                            //Provider specific implementations of stuff that is documented at interface level
+                            if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))
                                 continue;
                         }
 
@@ -90,7 +134,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             problems.Add("FAIL UNDOCUMENTED CLASS:" + f);
                     }
                     else
+                    {
+                        var lines = match.Groups[1].Value.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Count();
+                        commentLineCount += lines;
                         commentedCount++;
+                    }
                 }
             }
             
@@ -98,8 +146,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 Console.WriteLine(fail);
 
             Console.WriteLine("Total Documented Classes:" + commentedCount);
+            Console.WriteLine("Total Lines of Classes Documentation:" + commentLineCount);
             
-
             Assert.AreEqual(0, problems.Count);
         }
     }

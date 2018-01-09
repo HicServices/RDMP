@@ -325,6 +325,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _loggingDataTask, value); }
         }
 
+        /// <summary>
+        /// Currently configured validation on a Catalogue, this can be deserialized into a HIC.Common.Validation.Validator
+        /// </summary>
         [DoNotExtractProperty]
         public string ValidatorXML
         {

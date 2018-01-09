@@ -13,6 +13,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// Checks that a logging database is accessible and that the default system statuses and dataset names are present.
+    /// </summary>
     public class LoggingDatabaseChecker : ICheckable
     {
         private DiscoveredServer _server;

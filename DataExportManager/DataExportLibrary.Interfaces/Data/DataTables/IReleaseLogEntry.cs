@@ -3,6 +3,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See ReleaseLogEntry
+    /// </summary>
     public interface IReleaseLogEntry : IDeleteable
     {
         int CumulativeExtractionResults_ID { get; }

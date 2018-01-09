@@ -23,7 +23,8 @@ using IContainer = CatalogueLibrary.Data.IContainer;
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 {
     /// <summary>
-    /// Executes a single Dataset extraction into a flat file and orchestrates the creation of meta data word file
+    /// Executes a single Dataset extraction by linking a cohort with a dataset (either core or custom data - See IExtractCommand).  Also calculates the number
+    /// of unique identifiers seen, records row validation failures etc.
     /// </summary>
     [Description("The default source for data extraction, performs a join between a dataset and a cohort on the same server and substitutes private identifier for release identifier in datasets entering the pipeline")]
     public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<IExtractCommand>

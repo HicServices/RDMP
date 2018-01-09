@@ -10,6 +10,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// Helper class for fetching entire tables from a database and writing them to CSV.  It uses CSVOutputFormat.CleanString to strip out problem characters.
+    /// Records are read one at a time rather than downloading as a DataTable to allow any size of table to be processed without running out of memory.
+    /// </summary>
     public class ExtractTableVerbatim
     {
         private readonly string[] _tableNames;

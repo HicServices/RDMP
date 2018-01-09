@@ -15,11 +15,15 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace DataExportLibrary.ExtractionTime
 {
-    public class QueryBuilderHost
+    /// <summary>
+    /// Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal QueryBuilder and then adding adjustment 
+    /// components to it to link against the cohort, drop the private identifier column, add the release identifier column etc.
+    /// </summary>
+    public class ExtractionQueryBuilder
     {
         private readonly IDataExportRepository _repository;
 
-        public QueryBuilderHost(IDataExportRepository repository)
+        public ExtractionQueryBuilder(IDataExportRepository repository)
         {
             _repository = repository;
         }
@@ -65,9 +69,7 @@ namespace DataExportLibrary.ExtractionTime
             string hashingAlgorithm = configurationProperties.TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern);
             if (string.IsNullOrWhiteSpace(hashingAlgorithm))
                 hashingAlgorithm = null;
-
             
-
             QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql,hashingAlgorithm);
          
             queryBuilder.SetSalt(request.Salt.GetSalt());

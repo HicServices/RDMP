@@ -95,43 +95,7 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
             cmd.Transaction = dbTransaction as OracleTransaction;
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
-
-        public override string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName)
-        {
-            //make it dynamic if it isn't already
-            bodySql.Escape(new OracleQuerySyntaxHelper());
-
-            //ensure name sanitisation incase user passes in a fully expressed name
-            tableName = new OracleQuerySyntaxHelper().GetRuntimeName(tableName);
-
-            return string.Format(@"
-declare
-nCount NUMBER;
-v_sql LONG;
-
-begin
-SELECT count(*) into nCount FROM all_tables where table_name = '{0}';
-IF(nCount {1} 0)
-THEN
-v_sql:='{2}';
-execute immediate v_sql;
-
-END IF;
-end;
-", 
-       tableName,
-       existanceDesiredForExecution?">":"=",
-       bodySql.Sql
-       );
-
-
-            
-
-
-        }
-
-
-
+        
         private string SensibleTypeFromOracleType(DbDataReader r)
         {
             int? precision = null;

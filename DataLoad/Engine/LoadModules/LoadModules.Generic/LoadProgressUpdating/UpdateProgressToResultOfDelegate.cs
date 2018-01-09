@@ -6,6 +6,10 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.LoadProgressUpdating
 {
+    /// <summary>
+    /// UpdateProgressIfLoadsuccessful which executes an arbitrary Func in order to determine what date to update the LoadProgress.DataLoadProgress to 
+    /// (See UpdateProgressIfLoadsuccessful).
+    /// </summary>
     public class UpdateProgressToResultOfDelegate : UpdateProgressIfLoadsuccessful
     {
         private readonly Func<DateTime> _delegateToRun;

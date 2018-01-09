@@ -22,6 +22,14 @@ using ReusableLibraryCode.DataAccess;
 
 namespace RDMPStartup
 {
+    /// <summary>
+    /// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2 
+    /// databases) and plugin databases (Called Tier3).
+    /// 
+    /// Identifies which databases need to be patched.
+    /// 
+    /// Loads MEF assemblies and identifies assembly incompatibilities / Type Load errors.
+    /// </summary>
     public class Startup
     {
         public SafeDirectoryCatalog MEFSafeDirectoryCatalog { get; private set; }

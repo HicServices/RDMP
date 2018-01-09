@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// Helper class for generating SQL fragments that relate to columns in a MigrationColumnSet.  This is used by MigrationQueryHelper to generate SQL
+    /// for merging STAGING into LIVE during a data load.
+    /// </summary>
     public class MigrationColumnSetQueryHelper
     {
         private readonly MigrationColumnSet _migrationColumnSet;

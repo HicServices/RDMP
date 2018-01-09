@@ -8,6 +8,13 @@ using ReusableLibraryCode;
 
 namespace DataExportLibrary.CohortDescribing
 {
+    /// <summary>
+    /// Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount (can differ if there are aliases 
+    /// for a patient - 2 private identifiers map to the same release identifier).
+    /// 
+    /// Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may start out null/0 and become populated
+    /// after the CohortDescriptionDataTableAsyncFetch completes.
+    /// </summary>
     public class ExtractableCohortDescription
     {
         public readonly ExtractableCohort Cohort;
@@ -95,10 +102,11 @@ namespace DataExportLibrary.CohortDescribing
 
 
         /// <summary>
-        /// Creates a new description based on the async fetch request for all cohorts including row counts etc (which might have already completed btw).  If you use this constructor
-        /// then the properties will start out with text like "Loading..." but it will perform much faster, when the fetch completes the values will be populated.  In general if you
-        /// want to use this feature you should probably use CohortDescriptionFactory and only use it if you are trying to get all the cohorts at once.
-        /// 
+        /// Creates a new description based on the async fetch request for all cohorts including row counts etc (which might have already completed btw).  If you
+        /// use this constructor then the properties will start out with text like "Loading..." but it will perform much faster, when the fetch completes the 
+        /// values will be populated.  In general if you want to use this feature you should probably use CohortDescriptionFactory and only use it if you are 
+        /// trying to get all the cohorts at once.
+        ///  
         /// </summary>
         /// <param name="cohort"></param>
         /// <param name="fetch"></param>
@@ -113,7 +121,7 @@ namespace DataExportLibrary.CohortDescribing
             
             try
             {
-                ReleaseIdentifier = SqlSyntaxHelper.GetRuntimeName(fetch.Source.GetReleaseIdentifier(cohort));
+                ReleaseIdentifier = cohort.GetReleaseIdentifier(true);
             }
             catch (Exception e)
             {
@@ -124,7 +132,7 @@ namespace DataExportLibrary.CohortDescribing
             
             try
             {
-                PrivateIdentifier = SqlSyntaxHelper.GetRuntimeName(fetch.Source.PrivateIdentifierField);
+                PrivateIdentifier = cohort.GetPrivateIdentifier(true);
             }
             catch (Exception e)
             {

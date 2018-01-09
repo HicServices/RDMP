@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Triggers;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.Migration;
@@ -71,7 +72,7 @@ namespace CatalogueManager.DataQualityUIs
         private void RunChecks()
         {
             btnExecute.Enabled = false;
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
             dqePreRunCheckerUI1.StartChecking(report);
         }
 
@@ -81,7 +82,7 @@ namespace CatalogueManager.DataQualityUIs
             {
                 try
                 {
-                    CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+                    CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
                     report.GenerateReport(_catalogue, executionProgressUI1, new CancellationTokenSource().Token);
                 }
                 catch (Exception exception)

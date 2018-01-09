@@ -12,6 +12,7 @@ using CatalogueLibrary.Triggers;
 using HIC.Logging.PastEvents;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.SqlDialogs;
@@ -110,8 +111,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         private TableInfo GetTableInfoFromConstructorArguments(ArchivalTableLoadInfo toAttemptToDisplay, List<TableInfo> potentialTableInfos, ICheckNotifier checkNotifier)
         {
             checkNotifier.OnCheckPerformed(new CheckEventArgs("Table user is attempting to view updates/inserts for is called " + toAttemptToDisplay.TargetTable, CheckResult.Success));
-
-            string runtimeName = SqlSyntaxHelper.GetRuntimeName(toAttemptToDisplay.TargetTable);
+            
+            string runtimeName = new MicrosoftQuerySyntaxHelper().GetRuntimeName(toAttemptToDisplay.TargetTable);
 
             checkNotifier.OnCheckPerformed(new CheckEventArgs("The runtime name of the table is " + runtimeName, CheckResult.Success));
 

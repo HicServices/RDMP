@@ -282,12 +282,7 @@ namespace ReusableUIComponents
         {
             UpdateDatabaseList();
         }
-
-        public string GetTableNameFullyQualified()
-        {
-            return SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database, Table);
-        }
-
+        
         private void UpdateTableList()
         {
             if (string.IsNullOrWhiteSpace(cbxServer.Text) || string.IsNullOrWhiteSpace(cbxDatabase.Text))

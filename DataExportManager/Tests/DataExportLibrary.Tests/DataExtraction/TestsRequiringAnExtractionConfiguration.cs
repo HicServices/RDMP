@@ -158,7 +158,7 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
             }
         }
 
-        protected void Execute(out ExtractionPipelineHost pipelineHost, out IExecuteDatasetExtractionDestination results)
+        protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results)
         {
 
             DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
@@ -168,13 +168,13 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
             try
             {
                 pipeline = SetupPipeline();
-                pipelineHost = new ExtractionPipelineHost(_request, pipeline, d);
+                pipelineUseCase = new ExtractionPipelineUseCase(_request, pipeline, d);
 
-                pipelineHost.Execute(new ThrowImmediatelyDataLoadEventListener());
+                pipelineUseCase.Execute(new ThrowImmediatelyDataLoadEventListener());
 
-                Assert.IsNotEmpty(pipelineHost.Source.Request.QueryBuilder.SQL);
+                Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
 
-                Assert.IsFalse(pipelineHost.Crashed);
+                Assert.IsFalse(pipelineUseCase.Crashed);
             }
             finally
             {
@@ -182,7 +182,7 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
                     pipeline.DeleteInDatabase();
             }
 
-            results =  pipelineHost.Destination;
+            results =  pipelineUseCase.Destination;
         }
 
         protected virtual Pipeline SetupPipeline()

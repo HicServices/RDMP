@@ -3,6 +3,9 @@ using System.Drawing;
 
 namespace ReusableLibraryCode.Icons.IconProvision
 {
+    /// <summary>
+    /// Provides overlay and basic icons for all DatabaseTypes
+    /// </summary>
     public class DatabaseTypeIconProvider
     {
         private Bitmap _msBig;

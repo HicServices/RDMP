@@ -10,18 +10,18 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 {
-    public class ExecuteCommandEditExistingLoadMetadata : BasicUICommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandExecuteLoadMetadata : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         public LoadMetadata LoadMetadata{ get; set; }
 
-        public ExecuteCommandEditExistingLoadMetadata(IActivateItems activator) : base(activator)
+        public ExecuteCommandExecuteLoadMetadata(IActivateItems activator) : base(activator)
         {
             
         }
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Edit);
+            return CatalogueIcons.ExecuteArrow;
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -39,7 +39,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 
         public override string GetCommandName()
         {
-            return "Edit/Execute Data Load Configuration";
+            return "Execute Data Load Configuration";
         }
 
         public override void Execute()

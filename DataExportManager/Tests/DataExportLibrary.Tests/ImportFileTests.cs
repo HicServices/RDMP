@@ -2,8 +2,10 @@
 using System.Data.SqlClient;
 using System.IO;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Tests.DataExtraction;
 using DataExportLibrary;
+using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -21,8 +23,7 @@ namespace DataExportLibrary.Tests
              Exception ex = null;
             string file = Path.GetTempFileName();
             string databaseName = TestDatabaseNames.GetConsistentName(GetType().Name);
-            CsvDataTableHelper csvDataTableHelper = null;
-
+            
             try
             {
                 using (var sw = new StreamWriter(file))
@@ -36,13 +37,19 @@ namespace DataExportLibrary.Tests
                     sw.Close();
                 }
 
+                var source = new DelimitedFlatFileDataFlowSource
+                {
+                    Separator = ",",
+                    IgnoreBlankLines = true,
+                    UnderReadBehaviour = BehaviourOnUnderReadType.AppendNextLineToCurrentRow,
+                    MakeHeaderNamesSane = true,
+                    StronglyTypeInputBatchSize = -1,
+                    StronglyTypeInput = true
+                };
 
-                csvDataTableHelper = new CsvDataTableHelper(file);
-
-                csvDataTableHelper.LoadDataTableFromFile();
-
-                csvDataTableHelper.Check(new ThrowImmediatelyCheckNotifier());
-
+                source.PreInitialize(new FlatFileToLoad(new FileInfo(file)), new ThrowImmediatelyDataLoadEventListener());//this is the file we want to load
+                source.Check(new ThrowImmediatelyCheckNotifier());
+                
                 var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                 var database = server.ExpectDatabase(databaseName);
 
@@ -51,12 +58,12 @@ namespace DataExportLibrary.Tests
                 
                 server.ChangeDatabase(databaseName);
 
-                var dt = csvDataTableHelper.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
                 
                 var tbl = database.CreateTable(dt.TableName, dt);
                 string tableName = tbl.GetRuntimeName();
 
-                csvDataTableHelper.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 
                 var tablesInDatabase = server.ExpectDatabase(databaseName).DiscoverTables(false);
 

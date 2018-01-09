@@ -14,6 +14,10 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Pipeline.Sources
 {
+    /// <summary>
+    /// Identifies when a new CacheProgress can be executed (according to CacheRunFinder), packages it as an AutomatedCacheRun and releases it into the 
+    /// automation pipeline for scheduling/execution.
+    /// </summary>
     public class CacheAutomationSource:IAutomationSource
     {
         private AutomationServiceSlot _slot;

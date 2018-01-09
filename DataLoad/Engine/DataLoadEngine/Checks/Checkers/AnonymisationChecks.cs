@@ -7,6 +7,9 @@ using ReusableLibraryCode.Checks;
 
 namespace DataLoadEngine.Checks.Checkers
 {
+    /// <summary>
+    /// Wrapper class for checking Anonymisation configurations (if any) of a TableInfo.  The wrapped classes are ANOTableInfoSynchronizer and IdentifierDumper.
+    /// </summary>
     public class AnonymisationChecks : ICheckable
     {
         private readonly TableInfo _tableInfo;
@@ -15,8 +18,6 @@ namespace DataLoadEngine.Checks.Checkers
         {
             _tableInfo = tableInfo;
         }
-
-        
 
         public void Check(ICheckNotifier notifier)
         {

@@ -19,7 +19,7 @@ namespace DataExportLibrary.Data.DataTables
     /// all values UPPERd or he might want the Value field of Prescribing to be passed through his adjustment Scalar Valued Function to normalise or some other wierdness.
     /// 
     /// When selecting a column for extraction in ExtractionConfigurationUI an ExtractableColumn will be created with a pointer to the original ExtractionInformation 
-    /// (CatalogueExtractionInformation_ID) in the Catalogue database.  The ExtractionInformations SelectSQL will also be copied out.  The QueryBuilderHost will use these records to
+    /// (CatalogueExtractionInformation_ID) in the Catalogue database.  The ExtractionInformations SelectSQL will also be copied out.  The ExtractionQueryBuilder will use these records to
     /// assemble the correct SQL for each Catalogue in your ExtractionConfiguration.
     /// 
     /// The ExtractableColumn 'copy' process allows not only for you to modify the SelectSQL on a 'per extraction' basis but also it means that if you ever delete an ExtractionInformation

@@ -15,6 +15,14 @@ using Ticketing;
 
 namespace DataExportLibrary.DataRelease
 {
+    /// <summary>
+    /// Facilitates the release of anonymous project extracts to researchers including the generation of the release documents / Audit.  This typically involves
+    /// collecting all the extracted files (csv data extracts, docx metadata documents, custom data files and supporting documents etc) and moving them into a single
+    /// release directory followed by deleting all redundant extraction artifacts.
+    /// 
+    /// In order to DoRelease you will need to evaluate the environment and each ExtractionConfiguration to confirm they are in a releasable state (extracted files
+    /// match current configuration, ticketing system says that the project has governance approval for release etc).  
+    /// </summary>
     public class ReleaseEngine
     {
         protected readonly IDataLoadEventListener _listener;

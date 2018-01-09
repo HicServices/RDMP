@@ -15,6 +15,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle;
 
 namespace ReusableLibraryCode.DatabaseHelpers
 {
+    /// <summary>
+    /// Creates IDiscoveredServerHelpers based on the DatabaseType provided in the constructor.
+    /// </summary>
     public class DatabaseHelperFactory
     {
         private readonly DatabaseType _type;

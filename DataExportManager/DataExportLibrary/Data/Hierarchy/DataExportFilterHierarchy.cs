@@ -20,9 +20,6 @@ namespace DataExportLibrary.Data.Hierarchy
         public DeployedExtractionFilterParameter[] _allParameters;
 
         readonly Dictionary<int, List<FilterContainer>> _subcontainers = new Dictionary<int, List<FilterContainer>>();
-
-        public List<ExtractionFilterUser>  Users = new List<ExtractionFilterUser>();
-
         
 
         public DataExportFilterHierarchy(IDataExportRepository repository)
@@ -47,22 +44,6 @@ namespace DataExportLibrary.Data.Hierarchy
                     _subcontainers[parentId].Add(AllContainers[subcontainerId]);
 
                     
-                }
-                r.Close();
-
-
-                r = server.GetCommand("select * from SelectedDataSets where RootFilterContainer_ID is not null", con).ExecuteReader();
-                while (r.Read())
-                {
-                    int containerId = Convert.ToInt32(r["RootFilterContainer_ID"]);
-                    var container = AllContainers[containerId];
-
-                    Users.Add(new ExtractionFilterUser(
-                       Convert.ToInt32(r["ExtractionConfiguration_ID"]),
-                       Convert.ToInt32(r["ExtractableDataset_ID"]),
-                       containerId,
-                       container
-                        ));
                 }
                 r.Close();
             }

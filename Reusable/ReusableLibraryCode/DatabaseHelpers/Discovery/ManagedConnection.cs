@@ -6,6 +6,9 @@ using System.Threading;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// See IManagedConnection
+    /// </summary>
     public class ManagedConnection : IManagedConnection
     {
         public DbConnection Connection { get; private set; }

@@ -16,6 +16,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// Migrates records from STAGING database tables to LIVE database tables by applying the OverwriteMigrationStrategy (MERGE statement - colloquially known
+    /// as UPSERT) using a shared database transaction for all tables (if one fails they will all rollback).
+    /// </summary>
     public class MigrationHost 
     {
         private readonly List<ICatalogue> _cataloguesToLoad;  

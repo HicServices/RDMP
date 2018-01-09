@@ -12,6 +12,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Checks.Checkers
 {
+    /// <summary>
+    /// Checks DLE databases (RAW, STAGING, LIVE) are in a correct state ahead of running a data load (See LoadMetadata).
+    /// </summary>
     public class PreExecutionChecker :  ICheckable
     {
         private readonly ILoadMetadata _loadMetadata;

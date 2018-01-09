@@ -7,6 +7,13 @@ using ReusableLibraryCode;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// Records how (via SQL) replace the private patient identifier column (e.g. CHI) with the release identifier (e.g. swap [biochemistry]..[chi] for 
+    /// [cohort]..[ReleaseId]).  Also includes the Join SQL string for linking the cohort table (which contains the ReleaseId e.g. [cohort]) with the dataset
+    /// table (e.g. [biochemistry]). 
+    /// 
+    /// This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See ExtractionQueryBuilder)
+    /// </summary>
     public class ReleaseIdentifierSubstitution : IColumn
     {
         public string JoinSQL { get; private set; }
@@ -36,13 +43,15 @@ namespace DataExportLibrary.ExtractionTime
 
             OriginalDatasetColumn = extractionIdentifierToSubFor;
 
+            var syntaxHelper = extractableCohort.GetQuerySyntaxHelper();
+
             //the externally referenced Cohort table
             var externalCohortTable = extractableCohort.ExternalCohortTable;
 
             if (!isPartOfMultiCHISubstitution)
             {
                 SelectSQL = extractableCohort.GetReleaseIdentifier();
-                Alias = SqlSyntaxHelper.GetRuntimeName(SelectSQL);
+                Alias = syntaxHelper.GetRuntimeName(SelectSQL);
             }
             else
             {
@@ -53,9 +62,8 @@ namespace DataExportLibrary.ExtractionTime
                 
                 if(!string.IsNullOrWhiteSpace(OriginalDatasetColumn.Alias))
                 {
-
-                    string toReplace = SqlSyntaxHelper.GetRuntimeName(externalCohortTable.PrivateIdentifierField);
-                    string toReplaceWith = SqlSyntaxHelper.GetRuntimeName(extractableCohort.GetReleaseIdentifier());
+                    string toReplace = extractableCohort.GetPrivateIdentifier(true);
+                    string toReplaceWith = extractableCohort.GetReleaseIdentifier(true);
 
                     //take the same name as the underlying column
                     Alias = OriginalDatasetColumn.Alias;

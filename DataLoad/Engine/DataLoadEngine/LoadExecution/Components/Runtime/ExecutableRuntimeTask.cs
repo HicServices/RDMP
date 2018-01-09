@@ -17,6 +17,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// RuntimeTask that executes a single .exe file specified by the user in a ProcessTask with ProcessTaskType Executable.  The exe will be given command line
+    /// arguments for the database connection / loading directory via RuntimeArgumentCollection
+    /// </summary>
     public class ExecutableRuntimeTask : RuntimeTask
     {
         public string ExeFilepath { get; set; }
@@ -24,17 +28,15 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
         private Process _currentProcess;
 
         private readonly ILog Log = LogManager.GetLogger(typeof(ExecutableRuntimeTask));
-        private IProcessTask _processTask;
-
+        
         public ExecutableRuntimeTask(IProcessTask processTask, RuntimeArgumentCollection args) : base(processTask, args)
         {
-            _processTask = processTask;
             ExeFilepath = processTask.Path;
         }
 
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + Name + "'"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
 
             var info = new ProcessStartInfo
             {
@@ -145,7 +147,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             if (string.IsNullOrWhiteSpace(ExeFilepath))
             {
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs("Executable ProcessTask " + _processTask + " does not have a path specified",
+                    new CheckEventArgs("Executable ProcessTask " + ProcessTask + " does not have a path specified",
                         CheckResult.Fail));
                 return;
             }
@@ -159,25 +161,25 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             if (new FileInfo(exeParsed[0]).Extension.Equals(".sql")) //yes it is 
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "ProcessTask called " + _processTask.Name +
+                        "ProcessTask called " + ProcessTask.Name +
                         " is marked as an Executable but seems to point at an SQL file.  You should set the process task type to SQLFile instead",
                         CheckResult.Fail));
 
             //we cant tell
             if (exeParsed.Length == 0)
-                throw new Exception("Could not parse process task " + _processTask.Path +
-                                    " into a valid command line instruction for process task " + _processTask);
+                throw new Exception("Could not parse process task " + ProcessTask.Path +
+                                    " into a valid command line instruction for process task " + ProcessTask);
 
             //the first argument in a parsed windows command will be bob.exe, make sure it exists
             if (File.Exists(exeParsed[0]))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Found file " + exeParsed[0] + " referenced by " + _processTask.Name,
+                        "Found file " + exeParsed[0] + " referenced by " + ProcessTask.Name,
                         CheckResult.Success));
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Process Task called " + _processTask.Name + " references a file called " + exeParsed[0] + " which does not exist at this time.", CheckResult.Warning));
+                        "Process Task called " + ProcessTask.Name + " references a file called " + exeParsed[0] + " which does not exist at this time.", CheckResult.Warning));
 
         }
 

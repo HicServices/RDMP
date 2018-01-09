@@ -33,6 +33,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         CSV
     }
 
+    /// <summary>
+    /// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments, 
+    /// lookups etc into accompanying folders in the ExtractionDirectory.
+    /// </summary>
     [Description("The Extraction target for DataExportManager into a Flat file (e.g. CSV), this should only be used by ExtractionPipelineHost as it is the only class that knows how to correctly call PreInitialize ")]
     public class ExecuteDatasetExtractionFlatFileDestination : IExecuteDatasetExtractionDestination
     {
@@ -49,7 +53,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization("The date format to output all datetime fields in e.g. dd/MM/yyyy for uk format yyyy-MM-dd for something more machine processable, see https://msdn.microsoft.com/en-us/library/8kb3ddd4(v=vs.110).aspx", DemandType.Unspecified, "yyyy-MM-dd", Mandatory = true)]
         public string DateFormat { get; set; }
-
 
         [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
         public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
@@ -208,10 +211,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     break;
                 case ExecuteExtractionToFlatFileType.CSV:
                     OutputFile = Path.Combine(DirectoryPopulated.FullName, request + ".csv");
-
-                    bool includeValidation = request is ExtractDatasetCommand && ((ExtractDatasetCommand)request).IncludeValidation;
-
-                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat, includeValidation);
+                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

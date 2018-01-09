@@ -10,6 +10,9 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataProvider
 {
+    /// <summary>
+    /// IDataProvider that announces itself to the event stream during data load Fetch but otherwise does nothing.
+    /// </summary>
     public class DoNothingDataProvider : IDataProvider
     {
         public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)

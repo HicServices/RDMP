@@ -5,7 +5,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
-using ReusableLibraryCode.Reflection;
 
 namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
 {

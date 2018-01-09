@@ -10,6 +10,8 @@ using ReusableLibraryCode;
 namespace DataExportLibrary.DataRelease.Audit
 {
     /// <summary>
+    /// Records the fact that a given dataset has been succesfully extracted (See ReleaseLogWriter)
+    /// 
     /// Cannot be updated (saved) and does not have it's own ID - there is a 1 to 1 relationship between cumulative extraction results and ReleaseLog
     /// </summary>
     public class ReleaseLogEntry : IReleaseLogEntry

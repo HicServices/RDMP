@@ -8,6 +8,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.LoadExecution.Components.Arguments
 {
+    /// <summary>
+    /// Helper class for assembling a command line parameters strings for an .exe.  This will wrap with quotes when there is whitespace etc.  Class can
+    /// be used when you have generic key value pairs you want to send to an exe as startup parameters.
+    /// </summary>
     public class CommandLineHelper
     {
         public static string CreateArgString(string name, object value)

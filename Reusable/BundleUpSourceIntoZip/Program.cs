@@ -46,9 +46,6 @@ namespace BundleUpSourceIntoZip
             foreach (FileInfo f in uniqueFileInfos)
                 f.CopyTo(Path.Combine(workingDirectory.FullName, f.Name));
 
-            Cleanser c = new Cleanser(new DirectoryInfo(workingDirectory.FullName));
-            c.Cleanse();
-
             string plannedZipFileName = Path.Combine(outputDirectory.FullName, "SourceCodeForSelfAwareness.zip");
 
             //if there is an old zip file

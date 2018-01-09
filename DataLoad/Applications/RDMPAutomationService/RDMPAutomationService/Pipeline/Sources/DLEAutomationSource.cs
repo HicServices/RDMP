@@ -9,6 +9,10 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Pipeline.Sources
 {
+    /// <summary>
+    /// Identifies when a LoadMetadata can be executed (according to DLERunFinder), packages it as an AutomatedDLELoad/AutomatedDLELoadFromCache and releases it
+    /// into the automation pipeline for scheduling/execution.
+    /// </summary>
     public class DLEAutomationSource : IAutomationSource
     {
         private AutomationServiceSlot _serviceSlot;

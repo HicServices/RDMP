@@ -5,6 +5,11 @@ using RDMPStartup;
 
 namespace DatabaseCreation
 {
+    /// <summary>
+    /// IRDMPPlatformRepositoryServiceLocator which identifies the location of Catalogue and Data Export databases during the runtime of DatabaseCreation.exe
+    /// 
+    /// Since these connection strings are part of the command line arguments to DatabaseCreation.exe it's a pretty simple class!
+    /// </summary>
     public class DatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
     {
         private readonly LinkedRepositoryProvider _linkedRepositoryProvider;

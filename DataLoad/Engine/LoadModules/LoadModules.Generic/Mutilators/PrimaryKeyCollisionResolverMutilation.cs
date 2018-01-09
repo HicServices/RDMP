@@ -16,6 +16,13 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators
 {
+    /// <summary>
+    /// Data load component which can delete records in an (unconstrained) RAW table to enforce uniqueness of the primary key field (as it is configured in LIVE).
+    /// This lets you resolve non-exact duplication based on column order (e.g. if there is a collision where one has an later 'DataAge' field then use the later
+    /// one and discard the earlier one.
+    /// 
+    /// This component requires that a collision resolution order has been configured on the TableInfo (See ConfigurePrimaryKeyCollisionResolution)
+    /// </summary>
     [Description("This is a very dangerous operation which uses the primary key collision resolution order (Accessible through CatalogueManager by right clicking a TableInfo and choosing 'Configure Primary Key Collision Resolution') to delete records in a preferred order, fully eliminating primary key collisions.  It is a very good idea to not have this task until you are absolutely certain that your primary key is correct and that the duplicate records being deleted are the correct decisions e.g. delete an older record in a given load batch and not simply erasing vast swathes of data!.  The Data Load Engine will tell you with a warning when records are deleted and how many.  If you notice a lot of deletion then try removing this component and manually inspecting the data in the RAW database after the data load fails (due to unresolved primary key conflicts)")]
     public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
     {

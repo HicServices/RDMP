@@ -95,31 +95,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
-        public override string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName)
-        {
-
-            if(bodySql.IsDynamic)
-                throw new NotSupportedException("Cannot wrap dynamic sql sorry");
-            
-            var syntaxHelper = new MySqlQuerySyntaxHelper();
-            tableName = syntaxHelper.GetRuntimeName(tableName);
-
-
-            var matchCreate = new Regex("CREATE TABLE (.*\\.?" + tableName +")",RegexOptions.IgnoreCase).Match(bodySql.Sql);//brackets indicate capture group 1 which is 'db.table' but might just be 'table'
-            var matchDrop = new Regex("DROP TABLE (.*\\.?" + tableName + ")", RegexOptions.IgnoreCase).Match(bodySql.Sql);
-
-            string existanceString = existanceDesiredForExecution ? "" : "NOT";
-
-            if (matchCreate.Success)
-                return bodySql.Sql.Replace(matchCreate.Groups[0].Value,
-                    "CREATE TABLE IF " + existanceString + " EXISTS " + matchCreate.Groups[1].Value);
-            else if (matchDrop.Success)
-                return bodySql.Sql.Replace(matchDrop.Groups[0].Value,
-                                    "DROP TABLE IF " + existanceString + " EXISTS " + matchDrop.Groups[1].Value);
-            else
-                throw new NotImplementedException("Expected bodysql to contain CREATE or DROP TABLE " + tableName);
-        }
-
         public override DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection,
             DiscoveredTableValuedFunction discoveredTableValuedFunction, DbTransaction transaction)
         {

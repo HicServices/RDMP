@@ -8,6 +8,9 @@ using CatalogueLibrary.Repositories;
 
 namespace LoadModules.Generic.Mutilators.Dilution
 {
+    /// <summary>
+    /// Creates IDilutionOperations by reflection based on Type name and hydrates with the target IPreLoadDiscardedColumn.  See Dilution.
+    /// </summary>
     public class DilutionOperationFactory
     {
         private readonly IPreLoadDiscardedColumn _targetColumn;

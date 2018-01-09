@@ -4,6 +4,9 @@ using Microsoft.SqlServer.Management.Smo;
 
 namespace DataLoadEngine.DatabaseManagement.Operations
 {
+    /// <summary>
+    /// Maps between sql types (bigint, varchar etc) and SMO types (DataType.SmallInt etc).
+    /// </summary>
     public class SMOTypeLookup
     {
         public DataType GetSMODataTypeForSqlStringDataType(string sqlDataType)

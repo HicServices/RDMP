@@ -10,6 +10,10 @@ using System.Text.RegularExpressions;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
+    /// <summary>
+    /// Represents a single file in the up directory of a .Database assembly (e.g. CatalogueLibrary.Database).  Used during patching to ensure that the live 
+    /// database that is about to be patched is in the expected state and ready for new patches to be applied.
+    /// </summary>
     public class Patch : IComparable
     {
         public const string InitialCreateScriptRegexPattern = @".*\.runAfterCreateDatabase\..*\.sql";

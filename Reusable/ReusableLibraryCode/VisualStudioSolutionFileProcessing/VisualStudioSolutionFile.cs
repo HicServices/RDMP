@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace ReusableLibraryCode.VisualStudioSolutionFileProcessing
 {
+    /// <summary>
+    /// Reference to a .sln file in which we can extract all the solution folders and project references.
+    /// </summary>
     public class VisualStudioSolutionFile
     {
         public VisualStudioSolutionFolder[] RootFolders { get; set; }

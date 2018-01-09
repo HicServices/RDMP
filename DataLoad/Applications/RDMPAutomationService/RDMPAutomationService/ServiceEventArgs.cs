@@ -3,6 +3,9 @@ using System.Diagnostics;
 
 namespace RDMPAutomationService
 {
+    /// <summary>
+    /// Event Args for communication events between AutoRDMP and RDMPAutomationLoop.
+    /// </summary>
     public class ServiceEventArgs
     {
         public string Message { get; set; }

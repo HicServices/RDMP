@@ -51,25 +51,25 @@ namespace CatalogueManager.AutoComplete
         }
 
 
-        private void Add(ColumnInfo columnInfo, string tableName, string databaseName,LoadStage stage)
+        private void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName,LoadStage stage)
         {
             var runtimeName = columnInfo.GetRuntimeName(stage);
 
             var snip = new SubstringAutocompleteItem(runtimeName);
             snip.MenuText = runtimeName;
-            snip.Text = SqlSyntaxHelper.EnsureFullyQualified(databaseName, tableName, runtimeName);
+            snip.Text = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(databaseName, null, tableInfo.GetRuntimeName(), runtimeName);
             snip.Tag = columnInfo;
             snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
             
             AddUnlessDuplicate(snip);
         }
-        private void Add(PreLoadDiscardedColumn discardedColumn, string tableName, string rawDbName)
+        private void Add(PreLoadDiscardedColumn discardedColumn, TableInfo tableInfo, string rawDbName)
         {
             var snip = new SubstringAutocompleteItem(discardedColumn.GetRuntimeName());
             var colName = discardedColumn.GetRuntimeName();
             snip.MenuText = colName;
-            
-            snip.Text = SqlSyntaxHelper.EnsureFullyQualified(rawDbName, tableName,colName);
+
+            snip.Text = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName,null, tableInfo.GetRuntimeName(), colName);
             snip.Tag = discardedColumn;
             snip.ImageIndex = GetIndexFor(discardedColumn, RDMPConcept.ColumnInfo.ToString());
 
@@ -171,7 +171,7 @@ namespace CatalogueManager.AutoComplete
             var runtimeName = tableInfo.GetRuntimeName(loadStage);
             var dbName = tableInfo.GetDatabaseRuntimeName(loadStage);
 
-            var fullSql = SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(dbName, runtimeName);
+            var fullSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(dbName,null, runtimeName);
 
             var snip = new SubstringAutocompleteItem(tableInfo.GetRuntimeName());
             snip.MenuText = runtimeName; //name of table
@@ -186,10 +186,10 @@ namespace CatalogueManager.AutoComplete
                 var columnInfo = o as ColumnInfo;
 
                 if(preDiscarded != null)
-                    Add(preDiscarded, runtimeName, dbName);
+                    Add(preDiscarded, tableInfo, dbName);
                 else
                 if(columnInfo != null)
-                    Add(columnInfo, runtimeName, dbName, loadStage);
+                    Add(columnInfo, tableInfo, dbName, loadStage);
                 else throw new Exception("Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '" + o.GetType().Name +"'");
             }
 

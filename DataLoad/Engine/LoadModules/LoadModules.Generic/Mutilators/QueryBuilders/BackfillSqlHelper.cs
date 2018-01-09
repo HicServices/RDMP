@@ -7,6 +7,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace LoadModules.Generic.Mutilators.QueryBuilders
 {
+    /// <summary>
+    /// Helps generate sql queries for reverting/deleting STAGING based on records in LIVE during a backfill data load (See StagingBackfillMutilator).
+    /// </summary>
     public class BackfillSqlHelper
     {
         private readonly ColumnInfo _timePeriodicityField;

@@ -24,7 +24,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
 {
-    public class ExtractionPipelineHost:PipelineUseCase
+    /// <summary>
+    /// Use case for linking and extracting Project Extraction Configuration datasets and custom data (See IExtractCommand).
+    /// </summary>
+    public class ExtractionPipelineUseCase:PipelineUseCase
     {
         private readonly IPipeline _pipeline;
         public IExtractCommand ExtractCommand { get; set; }
@@ -40,12 +43,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         
         DataLoadInfo _dataLoadInfo;
 
-        public ExtractionPipelineHost() : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
+        public ExtractionPipelineUseCase() : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
         {
             
         }
 
-        public ExtractionPipelineHost(IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
+        public ExtractionPipelineUseCase(IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
         {
             _dataLoadInfo = dataLoadInfo;
             ExtractCommand = extractCommand;

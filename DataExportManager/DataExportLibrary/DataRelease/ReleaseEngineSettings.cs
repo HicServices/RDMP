@@ -6,7 +6,10 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease
 {
-    public class ReleaseEngineSettings : ICheckable
+    /// <summary>
+    /// Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
+    /// </summary>
+    public class ReleaseEngineSettings:ICheckable
     {
         [DemandsInitialization("Specify a custom Release folder, will use the Project Extraction Folder if left empty")]
         public DirectoryInfo CustomReleaseFolder { get; set; }
@@ -25,8 +28,8 @@ namespace DataExportLibrary.DataRelease
 
         public void Check(ICheckNotifier notifier)
         {
-            // test if release is a valid folder;
-            //                                  ^- IMPORTANT semicolon or test will fail!  
+            if (CustomReleaseFolder != null)
+                notifier.OnCheckPerformed(new CheckEventArgs("Custom Release Folder is:" + CustomReleaseFolder,CheckResult.Success));
         }
     }
 }

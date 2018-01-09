@@ -2,6 +2,9 @@
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// See TableLoadInfo
+    /// </summary>
     public interface ITableLoadInfo
     {
         int ID { get; }

@@ -3,9 +3,13 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See ExternalCohortTable
+    /// </summary>
     public interface IExternalCohortTable : ICheckable, IDataAccessPoint,IMapsDirectlyToDatabaseTable
     {
         string Name { get; set; }

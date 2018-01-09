@@ -16,6 +16,11 @@ using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 namespace PluginPackager
 {
+    /// <summary>
+    /// Creates a .zip file containing all binary files and (optionally) source code for an RDMP plugin.  The resulting zip file can be committed as a Plugin 
+    /// to the Catalogue database.  Takes as input the .sln file path.  Binaries that are already part of the core RDMP will not be included in the zip (e.g.
+    /// CatalogueLibrary.dll etc). 
+    /// </summary>
     public class Packager
     {
         private readonly FileInfo _solutionToPackage;

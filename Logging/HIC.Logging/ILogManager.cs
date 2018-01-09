@@ -3,6 +3,9 @@ using HIC.Logging.PastEvents;
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// See LogManager
+    /// </summary>
     public interface ILogManager
     {
         string[] ListDataTasks(bool hideTests=false);

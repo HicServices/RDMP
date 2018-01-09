@@ -10,6 +10,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary
 {
+    /// <summary>
+    /// Prevents deleting objects in Catalogue database which are referenced by objects in Data Export database (between databases referential integrity).  Also
+    /// handles cascading deletes between databases e.g. Deleting Project Associations when a Cohort Identification Configuration is deleted (despite records being
+    /// in different databases).
+    /// </summary>
     public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDependencyFinder
     {
         private readonly IDataExportRepositoryServiceLocator _serviceLocator;

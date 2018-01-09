@@ -2,6 +2,9 @@ using System;
 
 namespace DataExportLibrary.Interfaces.Data
 {
+    /// <summary>
+    /// See ExternalCohortDefinitionData
+    /// </summary>
     public interface IExternalCohortDefinitionData
     {
         int ExternalProjectNumber { get; set; }

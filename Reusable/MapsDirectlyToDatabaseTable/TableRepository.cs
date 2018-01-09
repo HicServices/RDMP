@@ -19,6 +19,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace MapsDirectlyToDatabaseTable
 {
+    /// <summary>
+    /// See ITableRepository
+    /// </summary>
     abstract public class TableRepository : ITableRepository
     {
         //fields
@@ -43,6 +46,7 @@ namespace MapsDirectlyToDatabaseTable
         /// </summary>
         /// <param name="types">Optional: a list of types of objects from which you want to load all objects in the database (warming up the cache rather than building it dribs and drabs at a time for your favourite data types)</param>
         /// <returns></returns>
+        [Obsolete("Turns out caching objects is very dangerous... really just better to fetch them every time and optomise your code yourself")]
         public IDisposable SuperCachingMode(Type[] types = null)
         {
             var stopToken =  _superCacheManager.StartCachingOnThreadForDurationOfDisposable();
@@ -347,7 +351,7 @@ namespace MapsDirectlyToDatabaseTable
 
                     //we are transitioning from a Microsoft SQL Server Catalogue database to a MySql one so mess around with the syntax and make the command type a MySqlCommand
                     if (destination.Connection is MySqlConnection)
-                        cloneCommand = SqlSyntaxHelper.ConvertMsSqlCommandToMySql((SqlCommand)cloneCommand);
+                        throw new Exception("you cannot clone into a different database type");
 
                     cloneCommand.Connection = destination.Connection;
 

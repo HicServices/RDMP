@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary.DataHelper
 {
@@ -18,6 +19,8 @@ namespace CatalogueLibrary.DataHelper
     [Obsolete("Use IQuerySyntaxHelper instead")]
     public class RDMPQuerySyntaxHelper
     {
+        static MicrosoftQuerySyntaxHelper _syntaxHelper = new MicrosoftQuerySyntaxHelper();
+
         public static readonly string ParameterSQLRegex_Pattern = "(@[A-Za-z0-9_]*)\\s?";
         public static Regex ParameterSQLRegex = new Regex(ParameterSQLRegex_Pattern);
         
@@ -45,13 +48,13 @@ namespace CatalogueLibrary.DataHelper
         public static string GetRuntimeName(IColumn column)
         {
             if (!String.IsNullOrWhiteSpace(column.Alias))
-                return SqlSyntaxHelper.GetRuntimeName(column.Alias);
+                return _syntaxHelper.GetRuntimeName(column.Alias);
             
             if (!String.IsNullOrWhiteSpace(column.SelectSQL))
                 if (Regex.IsMatch(column.SelectSQL, IsScalarValuedFunctionRegex))
                     throw new SyntaxErrorException("The IExtractableColumn.SelectSQL value \"" + column.SelectSQL + "\" looks like a ScalarValuedFunction but it is missing an Alias.  Add an Alias so that it has a runtime name.");
                 else
-                    return SqlSyntaxHelper.GetRuntimeName(column.SelectSQL);
+                    return _syntaxHelper.GetRuntimeName(column.SelectSQL);
 
             if (column.ColumnInfo != null)
                 return column.ColumnInfo.GetRuntimeName();

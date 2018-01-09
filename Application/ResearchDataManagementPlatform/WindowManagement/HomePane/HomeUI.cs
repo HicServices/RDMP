@@ -101,7 +101,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             //////////////////////////////////Data Loading////////////////////////////////////
             AddCommand(new ExecuteCommandCreateNewLoadMetadata(_windowManager.ContentManager),tlpDataLoad);
-            AddCommand(new ExecuteCommandEditExistingLoadMetadata(_windowManager.ContentManager), 
+            AddCommand(new ExecuteCommandExecuteLoadMetadata(_windowManager.ContentManager), 
                 _windowManager.ContentManager.CoreChildProvider.AllLoadMetadatas,
                 lmd=>lmd.Name,
                 tlpDataLoad);

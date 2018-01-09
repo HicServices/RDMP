@@ -4,11 +4,15 @@ using ReusableLibraryCode.Checks;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// Checks that all Properties on the supplied classInstanceToCheck that are decorated with a [DemandsInitialization] where the Mandatory flag is true have 
+    /// a value.
+    /// </summary>
     public class MandatoryPropertyChecker:ICheckable
     {
-        private readonly ICheckable _classInstanceToCheck;
+        private readonly object _classInstanceToCheck;
 
-        public MandatoryPropertyChecker(ICheckable classInstanceToCheck)
+        public MandatoryPropertyChecker(object classInstanceToCheck)
         {
             _classInstanceToCheck = classInstanceToCheck;
         }

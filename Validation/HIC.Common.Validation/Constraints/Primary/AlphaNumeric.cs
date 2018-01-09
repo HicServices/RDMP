@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace HIC.Common.Validation.Constraints.Primary
 {
+    /// <summary>
+    /// Field can contain only letters and numbers (but no spaces or symbols)
+    /// </summary>
     public class AlphaNumeric : PrimaryConstraint
     {
         public const string RegExp = @"^[A-Za-z0-9]([A-Za-z0-9]*)$";

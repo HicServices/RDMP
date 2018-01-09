@@ -6,6 +6,9 @@ using ReusableLibraryCode.Checks;
 
 namespace LoadModules.Generic.Checks
 {
+    /// <summary>
+    /// Checker for ensuring that the current PC has Microsoft Excel installed.  This is needed for some file reading operations which rely on Interop for reading.
+    /// </summary>
     public class ExcelInstalledChecker:ICheckable
     {
         public void Check(ICheckNotifier notifier)

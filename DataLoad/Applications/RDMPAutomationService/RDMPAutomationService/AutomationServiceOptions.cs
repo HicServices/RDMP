@@ -12,6 +12,9 @@ using RDMPStartup;
 
 namespace RDMPAutomationService
 {
+    /// <summary>
+    /// Handles parsing command line arguments to the AutomationService executable
+    /// </summary>
     public class AutomationServiceOptions
     {
         [Option('s', @"localhost\sqlexpress", Required = true, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]

@@ -19,6 +19,21 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Sources
 {
+    /// <summary>
+    /// Pipeline source component which executes an Aggregate Configuration query in a CohortIdentification Configuration which has the role of 
+    /// 'Patient Index Table' (JoinableCohortAggregateConfiguration).  A 'Patient Index Table' is what researchers call any table with information
+    /// about patients (e.g. a table containing every prescription date for a given drug) in which the data (not patient identifiers) is directly 
+    /// used to identify their cohort (e.g. cohort query is 'everyone who has been hospitalised with code X within 6 months of having a prescription
+    /// of drug Y - in this case the patient index table is 'the prescribed dates of drug Y').  
+    /// 
+    /// Since 'Patient Index Tables' always contain a superset of the final identifiers this component will add an additional filter to the query
+    /// to restrict rows returned only to those patients in your final cohort list (you must already have a committed final cohort list to use this
+    /// component).  This prevents you saving a snapshot of 1,000,000 prescription dates when your final cohort of patients only own 500 of those 
+    /// records (because the cohort identification configuration includes further set operations that reduce the patient count beyond the prescribed drug Y).
+    /// 
+    /// The purpose of all this is usually to ship a table ('Patient Index Table') which was used to build the researchers cohort into the saved cohorts 
+    /// database so it can be linked and extracted (as custom data) along with all the normal datasets that make up the researchers extract.
+    /// </summary>
     public class PatientIndexTableSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<AggregateConfiguration>, IPipelineRequirement<ExtractableCohort>
     {
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
@@ -64,6 +79,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             var server = _configuration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
             
+            
             using (var con = server.GetConnection())
             {
                 con.Open();
@@ -79,7 +95,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
                 var dt = new DataTable();
                 server.GetDataAdapter(cmd).Fill(dt);
 
-                dt.TableName = SqlSyntaxHelper.GetSensibleTableNameFromString(_configuration.Name + "_ID" + _configuration.ID);
+                dt.TableName = server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(_configuration.Name + "_ID" + _configuration.ID);
+
                 if (listener != null)
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "successfully read " +dt.Rows + " rows from source"));
 
@@ -109,6 +126,9 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             var sql = builder.SQL;
 
             var extractionIdentifier = _configuration.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
+
+            //IMPORTANT: We are using impromptu SQL instead of a Spontaneous container / CustomLine because we want the CohortQueryBuilder to decide to use
+            //the cached table data (if any).  If it senses we are monkeying with the query it will run it verbatim which will be very slow.
 
             string whereString = _configuration.RootFilterContainer_ID != null ? "AND " : "WHERE ";
 

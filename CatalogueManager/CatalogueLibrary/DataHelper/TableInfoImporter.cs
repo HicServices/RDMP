@@ -11,6 +11,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.DataHelper
 {
@@ -122,12 +123,14 @@ namespace CatalogueLibrary.DataHelper
 
         private void ThrowIfDodgyEntityNames(string tableName, DiscoveredColumn[] columns)
         {
+            var syntax = _server.GetQuerySyntaxHelper();
+
             string rejectionReason;
-            if (!IsValidEntityName(tableName,out rejectionReason))
-                throw new Exception("Table name '" + SqlSyntaxHelper.GetRuntimeName(tableName) +
+            if (!IsValidEntityName(tableName,syntax,out rejectionReason))
+                throw new Exception("Table name '" + _server.GetQuerySyntaxHelper().GetRuntimeName(tableName) +
                                     "' was rejected because of it's name.  Reason given was:" + Environment.NewLine + rejectionReason);
 
-            var rejectedColumnNames = columns.Where(c => !IsValidEntityName(c.GetRuntimeName())).Select(c => c.GetRuntimeName()).ToArray();
+            var rejectedColumnNames = columns.Where(c => !IsValidEntityName(c.GetRuntimeName(),syntax)).Select(c => c.GetRuntimeName()).ToArray();
 
             if (rejectedColumnNames.Any())
                 throw new Exception(
@@ -135,13 +138,13 @@ namespace CatalogueLibrary.DataHelper
                      Environment.NewLine + string.Join(Environment.NewLine, rejectedColumnNames)));
         }
 
-        public static bool IsValidEntityName(string name)
+        public static bool IsValidEntityName(string name, IQuerySyntaxHelper syntax)
         {
             string whoCares;
-            return IsValidEntityName(name, out whoCares);
+            return IsValidEntityName(name, syntax,out whoCares);
         }
 
-        public static bool IsValidEntityName(string name, out string reason)
+        public static bool IsValidEntityName(string name, IQuerySyntaxHelper syntax, out string reason)
         {
             //if it is a table valued function it's ok too
             if (name != null && name.Count(c => c == '(') == 1 && name.Count(c => c ==')') == 1 && name.Contains("@"))
@@ -159,7 +162,7 @@ namespace CatalogueLibrary.DataHelper
 
             if (
                 UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.IsMatch(
-                    SqlSyntaxHelper.GetRuntimeName(name)))
+                    syntax.GetRuntimeName(name)))
             {
                 reason = "Column or Table name " + name + " was REJECTED because it matches the regex " +
                          UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores +

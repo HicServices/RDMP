@@ -89,9 +89,9 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             _database.Server.EnableAsync();
 
             _destination = new DataTableUploadDestination();
-
+            
             //make sure to use explicit datatypes that match the cohort tables e.g. if client treates 01999 as varchar(50) then we should do the same in the custom table being created
-            _destination.AddExplicitWriteType(SqlSyntaxHelper.GetRuntimeName(_cohort.GetPrivateIdentifier()),_cohort.GetPrivateIdentifierDataType());
+            _destination.AddExplicitWriteType(_cohort.GetQuerySyntaxHelper().GetRuntimeName(_cohort.GetPrivateIdentifier()), _cohort.GetPrivateIdentifierDataType());
 
             _destination.AllowResizingColumnsAtUploadTime = true;
             _destination.PreInitialize(_database,listener);
@@ -213,7 +213,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
         private string[] listPrivateIdentifierMismatches(DiscoveredDatabase db, string tableName,DbConnection con)
         {
-            string privateIdentifier = SqlSyntaxHelper.GetRuntimeName(_cohort.GetPrivateIdentifier());
+            string privateIdentifier =_cohort.GetPrivateIdentifier(true);
 
             DbCommand cmd = db.Server.GetCommand(
                 string.Format("Select {0} from " + tableName + " WHERE {0} not in (SELECT {0} from {1} WHERE {2}) AND {0} is not null", privateIdentifier

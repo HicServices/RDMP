@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
+    /// <summary>
+    /// See ITypeTranslater
+    /// </summary>
     public class TypeTranslater:ITypeTranslater
     {
         public string GetSQLDBTypeForCSharpType(DatabaseTypeRequest request)

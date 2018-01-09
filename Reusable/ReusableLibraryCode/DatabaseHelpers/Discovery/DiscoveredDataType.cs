@@ -7,6 +7,9 @@ using Microsoft.SqlServer.Management.Smo;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Cross database type reference to a Data Type string (e.g. varchar(30), varbinary(100) etc) of a Column in a Table
+    /// </summary>
     public class DiscoveredDataType
     {
         private readonly DiscoveredColumn Column; 
@@ -34,7 +37,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return -1;
         }
 
-        public Pair<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal()
+        public Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal()
         {
             if (string.IsNullOrWhiteSpace(SQLType))
                 return null;
@@ -46,7 +49,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 int precision = int.Parse(match.Groups[1].Value);
                 int scale = int.Parse(match.Groups[2].Value);
 
-                return new Pair<int, int>(precision - scale,scale);
+                return new Tuple<int, int>(precision - scale, scale);
 
             }
 
@@ -101,22 +104,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="managedTransaction"></param>
         public void Resize(int numberOfDigitsBeforeDecimalPoint, int numberOfDigitsAfterDecimalPoint, IManagedTransaction managedTransaction = null)
         {
-            Pair<int, int> toReplace = GetDigitsBeforeAndAfterDecimalPointIfDecimal();
+            Tuple<int, int> toReplace = GetDigitsBeforeAndAfterDecimalPointIfDecimal();
 
             if (toReplace == null)
                 throw new Exception("DataType cannot be resized to decimal because it is of data type " + SQLType);
 
-            if (toReplace.First > numberOfDigitsBeforeDecimalPoint)
-                throw new Exception("Cannot shrink column, number of digits before the decimal point is currently " + toReplace.First + " and you asked to set it to " + numberOfDigitsBeforeDecimalPoint + " (Current SQLType is " + SQLType + ")");
+            if (toReplace.Item1 > numberOfDigitsBeforeDecimalPoint)
+                throw new Exception("Cannot shrink column, number of digits before the decimal point is currently " + toReplace.Item1 + " and you asked to set it to " + numberOfDigitsBeforeDecimalPoint + " (Current SQLType is " + SQLType + ")");
 
-            if (toReplace.Second > numberOfDigitsAfterDecimalPoint)
-                throw new Exception("Cannot shrink column, number of digits after the decimal point is currently " + toReplace.Second + " and you asked to set it to " + numberOfDigitsAfterDecimalPoint + " (Current SQLType is " + SQLType + ")");
+            if (toReplace.Item2> numberOfDigitsAfterDecimalPoint)
+                throw new Exception("Cannot shrink column, number of digits after the decimal point is currently " + toReplace.Item2 + " and you asked to set it to " + numberOfDigitsAfterDecimalPoint + " (Current SQLType is " + SQLType + ")");
 
             int newPrecision = numberOfDigitsAfterDecimalPoint + numberOfDigitsBeforeDecimalPoint;
             int newScale = numberOfDigitsAfterDecimalPoint;
 
-            int oldPrecision = toReplace.First + toReplace.Second;
-            int oldScale = toReplace.Second;
+            int oldPrecision = toReplace.Item1 + toReplace.Item2;
+            int oldScale = toReplace.Item2;
 
             string newType = SQLType.Replace(oldPrecision + "," + oldScale, newPrecision + "," + newScale);
 

@@ -4,6 +4,9 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Interfaces.Pipeline
 {
+    /// <summary>
+    /// See CohortCreationRequest
+    ///  </summary>
     public interface ICohortCreationRequest:ICheckable
     {
         IProject Project { get; }

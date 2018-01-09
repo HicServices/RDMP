@@ -5,6 +5,9 @@ using CommandLine.Text;
 
 namespace DatabaseCreation
 {
+    /// <summary>
+    /// Command line arguments for DatabaseCreation.exe
+    /// </summary>
     public class DatabaseCreationProgramOptions
     {
         [ValueList(typeof(List<string>), MaximumElements = 2)]
