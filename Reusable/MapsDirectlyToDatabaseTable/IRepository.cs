@@ -4,6 +4,14 @@ using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace MapsDirectlyToDatabaseTable
 {
+    /// <summary>
+    /// Persistence location (usually database) for IMapsDirectlyToDatabaseTable objects.  IMapsDirectlyToDatabaseTable objects cannot exist in memory without
+    /// also simultaneously having a database record existing in an IRepository (e.g. TableRepository).  This is how RDMP handles persistence, referential 
+    /// integrity etc in a multi user environment.
+    /// 
+    /// IRepository supports saving objects, loading objects by ID, Type etc 
+    /// 
+    /// </summary>
     public interface IRepository
     {
         /// <summary>

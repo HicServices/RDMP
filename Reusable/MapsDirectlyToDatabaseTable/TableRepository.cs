@@ -19,6 +19,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace MapsDirectlyToDatabaseTable
 {
+    /// <summary>
+    /// See ITableRepository
+    /// </summary>
     abstract public class TableRepository : ITableRepository
     {
         //fields
