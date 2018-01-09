@@ -7,6 +7,10 @@ using ReusableLibraryCode;
 
 namespace MapsDirectlyToDatabaseTable.RepositoryResultCaching
 {
+    /// <summary>
+    /// Handles the creation of SuperCaches in a Threadsafe way (Caching is done on a per thread basis, caching is on for Thread X and off for Thread Y).
+    /// </summary>
+    [Obsolete("Turns out caching objects is very dangerous... really just better to fetch them every time and optomise your code yourself")]
     public class SuperCacheManager
     {
         object oSuperCacheLock = new object();

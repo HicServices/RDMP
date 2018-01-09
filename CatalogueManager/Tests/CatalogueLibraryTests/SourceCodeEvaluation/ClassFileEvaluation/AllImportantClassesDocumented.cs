@@ -28,6 +28,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 if(Path.GetFileName(f) == "Class1.cs")
                     continue;
 
+                if (Path.GetFileName(f) == "Program.cs")
+                    continue;
+                
                 var text = File.ReadAllText(f);
 
                 int startAt = text.IndexOf("public class");
@@ -88,6 +91,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                                 continue;
 
                             if (nameSpace.Contains("Dashboard"))
+                                continue;
+
+                            if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
                                 continue;
 
                             if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))

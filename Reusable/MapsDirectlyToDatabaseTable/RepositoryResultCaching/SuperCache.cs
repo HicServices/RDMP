@@ -4,6 +4,11 @@ using System.Linq;
 
 namespace MapsDirectlyToDatabaseTable.RepositoryResultCaching
 {
+    /// <summary>
+    /// Stores the results of GetObjectByID, GetAllObjects etc calls on an TableRepository so that you can avoid duplicate database calls when you are
+    /// discovering lots of objects to e.g. build a query.  Objects fetched during SuperCaching mode is enabled should not be modified.
+    /// </summary>
+    [Obsolete("Turns out caching objects is very dangerous... really just better to fetch them every time and optomise your code yourself")]
     public class SuperCache
     {
         private Dictionary<Type, SuperResultCache> _resultsDictionary = new Dictionary<Type, SuperResultCache>();
