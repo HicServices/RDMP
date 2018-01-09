@@ -206,7 +206,7 @@ namespace DataExportLibrary.Data.DataTables
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             if (_cachedQuerySyntaxHelper == null)
-                ExternalCohortTable.GetQuerySyntaxHelper();
+                _cachedQuerySyntaxHelper = ExternalCohortTable.GetQuerySyntaxHelper();
 
             return _cachedQuerySyntaxHelper;
         }

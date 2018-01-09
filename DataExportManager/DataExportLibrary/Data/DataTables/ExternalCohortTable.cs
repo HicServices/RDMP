@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
@@ -160,8 +161,7 @@ namespace DataExportLibrary.Data.DataTables
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            var factory = new DatabaseHelperFactory(SelfCertifyingDataAccessPoint.DatabaseType);
-            return factory.CreateInstance().GetQuerySyntaxHelper();
+            return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
         }
 
         public string GetReleaseIdentifier(IExtractableCohort cohort)

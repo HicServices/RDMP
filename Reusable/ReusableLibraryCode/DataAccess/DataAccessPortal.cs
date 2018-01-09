@@ -10,6 +10,12 @@ using ReusableLibraryCode.Exceptions;
 
 namespace ReusableLibraryCode.DataAccess
 {
+    /// <summary>
+    /// Translation class for converting IDataAccessPoints into DiscoveredServer / DiscoveredDatabase / ConnectionStrings etc.  IDataAccessPoints are named 
+    /// servers/databases which might have usernames/passwords associated with them (or might use Integrated Security).  Each IDataAccessPoint can have multiple 
+    /// credentials that can be used with it depending on the DataAccessContext.  Therefore when using the DataAccessPortal you always have to specify the 
+    /// Context of the activity you are doing e.g. DataAccessContext.DataLoad.
+    /// </summary>
     public class DataAccessPortal
     {
         private static readonly object oLockInstance = new object();

@@ -1084,12 +1084,6 @@
     <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotUI.Designer.cs">
       <DependentUpon>AutomationServiceSlotUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Automation\LockableOverviewUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\LockableOverviewUI.Designer.cs">
-      <DependentUpon>LockableOverviewUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1843,9 +1837,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Automation\AutomationServiceSlotUI.resx">
       <DependentUpon>AutomationServiceSlotUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Automation\LockableOverviewUI.resx">
-      <DependentUpon>LockableOverviewUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItems.resx">
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>

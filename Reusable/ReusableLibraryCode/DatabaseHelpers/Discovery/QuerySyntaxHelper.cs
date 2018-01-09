@@ -46,6 +46,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public virtual string GetRuntimeName(string s)
         {
+            if (string.IsNullOrWhiteSpace(s))
+                return s;
+
             var match = GetAliasRegex().Match(s.Trim());//if it is an aliased entity e.g. AS fish then we should return fish (this is the case for table valued functions and not much else)
             if (match.Success)
                 return match.Groups[1].Value;

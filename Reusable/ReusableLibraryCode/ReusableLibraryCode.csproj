@@ -348,7 +348,6 @@
     <Compile Include="BiDictionary.cs" />
     <Compile Include="Checks\AcceptAllCheckNotifier.cs" />
     <Compile Include="Checks\CheckEventArgs.cs" />
-    <Compile Include="Checks\DoesNotThrowCheckable.cs" />
     <Compile Include="Checks\IgnoreAllErrorsCheckNotifier.cs" />
     <Compile Include="Checks\ReplayCheckable.cs" />
     <Compile Include="Checks\ThrowImmediatelyCheckNotifier.cs" />
@@ -465,7 +464,6 @@
     <Compile Include="Rfc4180Writer.cs" />
     <Compile Include="Serialization\IgnorableSerializerContractResolver.cs" />
     <Compile Include="SMOIndexRebuilder.cs" />
-    <Compile Include="StringLiteralSqlInContext.cs" />
     <Compile Include="UsefulStuff.cs" />
     <Compile Include="VisualStudioSolutionFileProcessing\VisualStudioProjectReference.cs" />
     <Compile Include="VisualStudioSolutionFileProcessing\VisualStudioSolutionFile.cs" />
