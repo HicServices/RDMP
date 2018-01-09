@@ -5,6 +5,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace RDMPStartup
 {
+    /// <summary>
+    /// MEF discoverable version of IPluginRepositoryFinder
+    /// </summary>
     [InheritedExport(typeof(IPluginRepositoryFinder))]
     public abstract class PluginRepositoryFinder :IPluginRepositoryFinder
     {

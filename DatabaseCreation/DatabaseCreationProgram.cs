@@ -13,6 +13,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace DatabaseCreation
 {
+    /// <summary>
+    /// Creates the minimum set of databases required to get RDMP working (Catalogue and Data Export databases) with an optional prefix.  Also creates satellite
+    /// Tier 2 databases (logging / dqe)
+    /// </summary>
     public class DatabaseCreationProgram
     {
         public const string DefaultCatalogueDatabaseName = "Catalogue";

@@ -19,16 +19,33 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         private int commentLineCount = 0;
         private bool strict = false;
 
+        private string[] excusedClassFileNames =
+        {
+            "Class1.cs",
+            "Program.cs",
+            "PluginNugetClass.cs",
+            "PluginTest.cs",
+            "PluginUI.cs",
+
+            //todo resolve the following:
+            "ReleasePipeline.cs", //needs refactoring
+            "ReleaseUseCase.cs",//needs refactoring
+            "FixedDataReleaseSource.cs",//needs refactoring
+            "CacheFetchRequestProvider.cs", //why do we need this class?
+            
+            "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
+            "Relationship.cs",//deprecated by the anonymisation object sharing framework?
+            "RelationshipMap.cs"//deprecated by the anonymisation object sharing framework?
+
+        };
+
         public void FindProblems(List<string> csFilesList)
         {
             _csFilesList = csFilesList;
 
             foreach (var f in _csFilesList)
             {
-                if(Path.GetFileName(f) == "Class1.cs")
-                    continue;
-
-                if (Path.GetFileName(f) == "Program.cs")
+                if(excusedClassFileNames.Contains(Path.GetFileName(f)))
                     continue;
                 
                 var text = File.ReadAllText(f);
@@ -72,6 +89,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                         //no!
                         if (!strict) //are we being strict?
                         {
+                            //User interface namespaces/related classes
+
                             if(nameSpace.Contains("CatalogueManager"))
                                 continue;
                             if (nameSpace.Contains("Nodes"))
@@ -96,6 +115,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
                                 continue;
 
+                            if (nameSpace.Contains("RDMPObjectVisualisation"))
+                                continue;
+                            
+                            //Provider specific implementations of stuff that is documented at interface level
                             if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))
                                 continue;
                         }
