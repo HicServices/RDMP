@@ -8,6 +8,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Contains all the DatabaseType specific implementation logic required by DiscoveredTable.
+    /// </summary>
     public interface IDiscoveredTableHelper
     {
         string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX);

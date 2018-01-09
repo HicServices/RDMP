@@ -7,6 +7,9 @@ using Microsoft.SqlServer.Management.Smo;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Cross database type reference to a Data Type string (e.g. varchar(30), varbinary(100) etc) of a Column in a Table
+    /// </summary>
     public class DiscoveredDataType
     {
         private readonly DiscoveredColumn Column; 

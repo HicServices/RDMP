@@ -8,6 +8,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Cross database type reference to a database server.  Allows you to get connections, create commands, list databases etc.
+    /// </summary>
     public class DiscoveredServer : IMightNotExist
     {
         public DbConnectionStringBuilder Builder { get; set; }

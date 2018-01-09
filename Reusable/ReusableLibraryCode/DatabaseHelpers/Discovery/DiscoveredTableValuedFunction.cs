@@ -7,6 +7,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Cross database type reference to a Table valued function in a Database (actually currently only supported by Microsoft Sql Server).  For views see
+    /// DiscoveredTable
+    /// </summary>
     public class DiscoveredTableValuedFunction : DiscoveredTable
     {
         private string _functionName;

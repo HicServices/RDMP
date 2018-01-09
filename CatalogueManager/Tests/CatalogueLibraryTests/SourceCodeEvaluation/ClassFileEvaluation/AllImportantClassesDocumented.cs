@@ -89,6 +89,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                             if (nameSpace.Contains("Dashboard"))
                                 continue;
+
+                            if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))
+                                continue;
                         }
 
                         int idxLastSlash = f.LastIndexOf("\\");

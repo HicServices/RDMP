@@ -7,6 +7,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Cross database type reference to a specific database on a database server.  Allows you to create tables, drop check existance etc.
+    /// </summary>
     public class DiscoveredDatabase :IHasRuntimeName,IMightNotExist
     {
         private readonly string _database;
