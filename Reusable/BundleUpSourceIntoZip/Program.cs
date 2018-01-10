@@ -27,16 +27,14 @@ namespace BundleUpSourceIntoZip
                 
                 return 1;
             }
-
-            string doNotBundle = "SimpleStringValueEncryption.cs";
-
             
             DirectoryInfo d = new DirectoryInfo(args[0]);
-            var files = d.EnumerateFiles("*.cs", SearchOption.AllDirectories).Where(f => !f.Name.Contains("TemporaryGeneratedFile")).ToArray();
+            var files = d.EnumerateFiles("*.cs", SearchOption.AllDirectories).Where(f => !f.FullName.Contains("CodeTutorials")).ToArray();
 
             var uniqueFileInfos = files.Where(
-                f => files.Count(f2 => f2.Name.Equals(f.Name)) == 1 && //where it is a unique file - not 2 files with the same name
-                        !f.Name.Equals(doNotBundle)).ToArray();//and its not a thrown out one
+                f => 
+                    files.Count(f2 => f2.Name.Equals(f.Name)) == 1  //where it is a unique file - not 2 files with the same name
+                        ).ToArray();
 
             DirectoryInfo outputDirectory = new DirectoryInfo(args[1]);
 

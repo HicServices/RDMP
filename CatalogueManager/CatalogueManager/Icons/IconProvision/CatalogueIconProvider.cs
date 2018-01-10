@@ -8,6 +8,8 @@ using CachingEngine;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
@@ -84,7 +86,7 @@ namespace CatalogueManager.Icons.IconProvision
                 else 
                     return null; //it's a string but an unhandled one so give them null back
             }
-
+            
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
             if (_pluginIconProviders != null)
                 foreach (IIconProvider plugin in _pluginIconProviders)
@@ -114,9 +116,18 @@ namespace CatalogueManager.Icons.IconProvision
 
             if (ConceptIs(typeof(IContainer), concept))
                 return GetImage(RDMPConcept.FilterContainer, kind);
-            
+
+            if (ConceptIs(typeof (JoinableCohortAggregateConfiguration), concept))
+                return GetImage(RDMPConcept.PatientIndexTable);
+
+            if (ConceptIs(typeof(JoinableCohortAggregateConfigurationUse), concept))
+                return GetImage(RDMPConcept.PatientIndexTable,OverlayKind.Link);
+
             if (concept is PermissionWindowUsedByCacheProgressNode)
                 return GetImage(((PermissionWindowUsedByCacheProgressNode)concept).PermissionWindow, OverlayKind.Link);
+
+            if (ConceptIs(typeof (DashboardObjectUse),concept))
+                return GetImage(RDMPConcept.DashboardControl, OverlayKind.Link);
 
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
@@ -124,11 +135,17 @@ namespace CatalogueManager.Icons.IconProvision
                 if (bmp != null)
                     return GetImage(bmp,kind);
             }
-
+            
             string conceptTypeName = concept.GetType().Name;
             
             RDMPConcept t;
 
+            //It is a System.Type, get the name and see if theres a corresponding image
+            if (concept is Type)
+                if (Enum.TryParse(((Type)concept).Name, out t))
+                    return GetImage(ImagesCollection[t], kind);
+
+            //It is an instance of something, get the System.Type and see if theres a corresponding image
             if(Enum.TryParse(conceptTypeName,out t))
                 return GetImage(ImagesCollection[t],kind);
 

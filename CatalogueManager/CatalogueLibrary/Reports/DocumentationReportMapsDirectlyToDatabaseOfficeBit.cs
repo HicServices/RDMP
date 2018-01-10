@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Icons.IconProvision;
 using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Reports
@@ -22,35 +23,33 @@ namespace CatalogueLibrary.Reports
     {
         private DocumentationReportMapsDirectlyToDatabase _report;
 
-        public void GenerateReport(ICheckNotifier notifier, Dictionary<string, Bitmap> imagesDictionary)
+        public void GenerateReport(ICheckNotifier notifier, IIconProvider iconProvider,params Assembly[] assemblies)
         {
             try
             {
-                _report = new DocumentationReportMapsDirectlyToDatabase(typeof (Catalogue).Assembly);
+                _report = new DocumentationReportMapsDirectlyToDatabase(assemblies);
                 _report.Check(notifier);
 
                 var f = GetUniqueFilenameInWorkArea("RDMPDocumentation");
                 using (DocX document = DocX.Create(f.FullName))
                 {
-                    var t = InsertTable(document,_report.Summaries.Count + 1, 2);
+                    var t = InsertTable(document,(_report.Summaries.Count *2) +1, 1);
                     
                     //Listing Cell header
-                    SetTableCell(t, 0, 0, "Table");
-                    SetTableCell(t, 1, 1, "Definition");
+                    SetTableCell(t, 0, 0, "Tables");
 
                     Type[] keys = _report.Summaries.Keys.ToArray();
 
                     for (int i = 0; i < _report.Summaries.Count; i++)
                     {
-                        SetTableCell(t, i + 1, 0, keys[i].Name);
-
-
-                        var bmp = GetImage(keys[i],imagesDictionary);
+                        SetTableCell(t, (i*2) + 1, 0, keys[i].Name);
+                        
+                        var bmp = iconProvider.GetImage(keys[i]);
 
                         if (bmp != null)
-                            t.Rows[i + 1].Cells[0].Paragraphs.First().InsertPicture(GetPicture(document, bmp));
+                            t.Rows[(i*2) + 1].Cells[0].Paragraphs.First().InsertPicture(GetPicture(document, bmp));
 
-                        SetTableCell(t,i + 1, 1, _report.Summaries[keys[i]]);
+                        SetTableCell(t,(i*2) + 2, 0, _report.Summaries[keys[i]]);
                     }
 
                     document.Save();

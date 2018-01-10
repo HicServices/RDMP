@@ -22,6 +22,9 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
         {
             var pt = o as ProcessTask;
 
+            if(o is Type && o.Equals(typeof(ProcessTask)))
+                return _plugin;
+
             if (pt == null)
                 return null;
 

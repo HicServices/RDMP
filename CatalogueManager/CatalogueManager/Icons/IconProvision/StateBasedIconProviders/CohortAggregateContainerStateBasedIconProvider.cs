@@ -18,6 +18,9 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
         }
         public Bitmap GetImageIfSupportedObject(object o)
         {
+            if (o is Type && o.Equals(typeof (CohortAggregateContainer)))
+                return _intersect;
+
             if (o is SetOperation)
                 return GetImage((SetOperation) o);
 

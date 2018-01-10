@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Reports;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
+using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.Dependencies.Models;
 
@@ -22,7 +23,7 @@ namespace CatalogueManager.ObjectVisualisation
         {
             _coreIconProvider = coreIconProvider;
 
-            var documentation = new DocumentationReportMapsDirectlyToDatabase(typeof(Catalogue).Assembly);
+            var documentation = new DocumentationReportMapsDirectlyToDatabase(typeof(Catalogue).Assembly,typeof(ExtractionConfiguration).Assembly);
             documentation.Check(new IgnoreAllErrorsCheckNotifier());
             _summaries = documentation.Summaries;
         }

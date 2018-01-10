@@ -1530,6 +1530,9 @@
     <None Include="Icons\AllAutomationServerSlotsNode.png" />
     <None Include="Icons\AllRDMPRemotesNode.png" />
     <None Include="Icons\AutomateablePipeline.png" />
+    <None Include="Icons\AggregateTopX.png" />
+    <None Include="Icons\AggregateContinuousDateAxis.png" />
+    <None Include="Icons\AutomationServiceException.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
