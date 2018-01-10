@@ -57,6 +57,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
         public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
 
+        [DemandsInitialization("Naming of flat files is usually based on Catalogue.Name, if this is true then the Catalogue.Acronym will be used instead",defaultValue:false)]
+        public bool UseAcronymForFileNaming { get; set; }
+
         public ExtractionTimeValidator ExtractionTimeValidator { get; set; }
         
         private bool haveOpened = false;
@@ -203,14 +206,15 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
             DirectoryPopulated = request.GetExtractionDirectory();
 
+            
             switch (FlatFileType)
             {
                 case ExecuteExtractionToFlatFileType.Access:
-                    OutputFile = Path.Combine(DirectoryPopulated.FullName, request + ".accdb");
+                    OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".accdb");
                       _output = new MicrosoftAccessDatabaseFormat(OutputFile);
                     break;
                 case ExecuteExtractionToFlatFileType.CSV:
-                    OutputFile = Path.Combine(DirectoryPopulated.FullName, request + ".csv");
+                    OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".csv");
                     _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
                     break;
                 default:
@@ -218,6 +222,21 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Setup data extraction destination as " + OutputFile + " (will not exist yet)"));
+        }
+
+        public string GetFilename()
+        {
+            string filename = _request.Name;
+
+            var datasetCommand = _request as IExtractDatasetCommand;
+            if (datasetCommand != null && UseAcronymForFileNaming)
+            {
+                filename = datasetCommand.Catalogue.Acronym;
+                if (string.IsNullOrWhiteSpace(filename))
+                    throw new Exception("Catalogue '" + datasetCommand.Catalogue + "' does not have an Acronym but UseAcronymForFileNaming is true");
+            }
+
+            return filename;
         }
 
         public void PreInitialize(DataLoadInfo value, IDataLoadEventListener listener)

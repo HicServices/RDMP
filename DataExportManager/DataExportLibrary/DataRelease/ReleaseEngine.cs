@@ -323,7 +323,7 @@ namespace DataExportLibrary.DataRelease
         {
             ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
 
-            var expectedFilename = rp.DataSet + ".csv";
+            var expectedFilename = rp.ExtractFile.Name;
             var datasetFile = rpDirectory.EnumerateFiles().SingleOrDefault(f => f.Name.Equals(expectedFilename));
             if (datasetFile == null)
             {

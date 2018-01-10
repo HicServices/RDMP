@@ -126,9 +126,6 @@ namespace DataExportManager.ProjectUI
 
             DisableControls(true);
             
-            if (!NukeExcelAndWinword())
-                return;
-
             _dataLoadInfo = StartAudit();
 
             //could not generate audit object so abandon extraction (and renenable the controls)
@@ -217,38 +214,6 @@ namespace DataExportManager.ProjectUI
             btnStart.Enabled = !disable;
             cbIsTest.Enabled = !disable;
             cbIsTest.Enabled = !disable;
-        }
-
-        /// <summary>
-        /// prompts user to terminate any Excel and Winword executables
-        /// </summary>
-        /// <returns>True if there weren't any or they were nuked, False if there were some and the user decided not to carry through on nukage</returns>
-        private bool NukeExcelAndWinword()
-        {
-            Process[] processes = Process.GetProcesses();
-
-            List<Process> toNuke = processes.Where(process => process.ProcessName.Equals("EXCEL") || process.ProcessName.Equals("WINWORD")).ToList();
-
-            if (toNuke.Count > 0)
-            {
-                if (
-                    MessageBox.Show(
-                        "Found " + toNuke.Count +
-                        " processes called EXCEL or WINWORD running on your computer.  Before extraction can take place these must be closed.  Would you like to Terminate them? (Without saving any changes you might have made)",
-                        "TERMINATE All Excel and Word processes (Without saving changes)?",
-                        MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
-                {
-
-                    //user might have closed some whilst the YesNo dialog is onscreen.
-                    toNuke.ForEach(p => { if (!p.HasExited) p.Kill(); }); 
-                    Thread.Sleep(1000);
-                    return true;
-                }
-                else
-                    return false;
-            }
-            else
-                return true;
         }
 
         private int datasetsCurrentlyExecuting = 0;

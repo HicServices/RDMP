@@ -57,7 +57,7 @@ namespace DataExportLibrary.ExtractionTime
         {
             lock (oLockOnWordUsage)
             {
-                string outputFilename = Path.Combine(_destination.DirectoryPopulated.FullName, Executer.Source.Request.DatasetBundle.DataSet + ".docx");
+                string outputFilename = Path.Combine(_destination.DirectoryPopulated.FullName, _destination.GetFilename() + ".docx");
 
                 using (DocX document = DocX.Create(outputFilename))
                 {
