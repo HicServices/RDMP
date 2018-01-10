@@ -183,6 +183,7 @@ namespace RDMPObjectVisualisation.Pipelines
                 {
                     try
                     {
+                        progressUI1.ShowRunning(true);
                         //execute the pipeline using the cancellation token
                         pipeline.ExecutePipeline(new GracefulCancellationToken(_cancel.Token, _cancel.Token));
 
@@ -198,13 +199,17 @@ namespace RDMPObjectVisualisation.Pipelines
                         //notify the progress UI
                         fork.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", exception));
-                        
+
                         if (IsHandleCreated && !IsDisposed)
                             //Switch to UI thread 
                             Invoke(new MethodInvoker(() =>
                             {
-                                btnExecute.Text = "Execute";//make it so user can execute again
+                                btnExecute.Text = "Execute"; //make it so user can execute again
                             }));
+                    }
+                    finally
+                    {
+                        progressUI1.ShowRunning(false);
                     }
                 });
 

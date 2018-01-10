@@ -96,6 +96,8 @@ namespace DataExportManager.ProjectUI
                 //Waits on Semaphore
                 WaitForExecutionOpportunity(ExtractCommand);
 
+                progressUI1.ShowRunning(true);
+
                 var extractionRequest = ExtractCommand as ExtractDatasetCommand;
 
                 if (extractionRequest != null)
@@ -112,6 +114,8 @@ namespace DataExportManager.ProjectUI
             {
                 //Always release the Semaphore
                 NumberBuildingQueries.Release();
+
+                progressUI1.ShowRunning(false);
                 Finished();
             }
         }

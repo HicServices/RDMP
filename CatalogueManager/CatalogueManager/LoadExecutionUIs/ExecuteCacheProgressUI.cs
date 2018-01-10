@@ -125,6 +125,7 @@ namespace CatalogueManager.LoadExecutionUIs
             Task.Run(() => {
                                               try
                                               {
+                                                  progressUI.ShowRunning(true);
                                                   action(cancellationToken);
                                               }
                                               catch (Exception e)
@@ -137,6 +138,7 @@ namespace CatalogueManager.LoadExecutionUIs
                                               finally
                                               {
                                                   _dataLoadRunning = false;
+                                                  progressUI.ShowRunning(false);
                                               }
             }).ContinueWith(s => SetButtonStates(), TaskScheduler.FromCurrentSynchronizationContext());
 

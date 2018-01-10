@@ -59,8 +59,16 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             Task.Run(
 
                 //run the pipeline in a Thread
-                () => engine.Execute()).ContinueWith(s =>
+                () =>
+                {
+
+                    progressUi.ShowRunning(true);
+                    engine.Execute();
+                }
+                ).ContinueWith(s =>
             {
+                progressUi.ShowRunning(false);
+
                 //then on the UI thread 
                 if(s.IsFaulted)
                     return;

@@ -260,6 +260,7 @@ namespace CatalogueManager.LoadExecutionUIs
                 {
                     //reset the system state because the execution has completed
                     _checksPassed = false;
+                    
                     //adjust the buttons accordingly
                     SetButtonStates();
                 }
@@ -396,6 +397,9 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private void RunDataLoadProcess()
         {
+
+            loadProgressUI1.ShowRunning(true);
+
             try
             {
                 var exitCode = _dataLoadProcess.Run(_cancellationTokenSource.Token);
@@ -422,6 +426,7 @@ namespace CatalogueManager.LoadExecutionUIs
             finally
             {
                 _cancellationTokenSource = null;
+                loadProgressUI1.ShowRunning(false);
             }
         }
 

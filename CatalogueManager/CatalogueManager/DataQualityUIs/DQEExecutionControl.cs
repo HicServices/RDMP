@@ -80,14 +80,22 @@ namespace CatalogueManager.DataQualityUIs
         {
             Thread t = new Thread(() =>
             {
+                executionProgressUI1.ShowRunning(true);
+
                 try
                 {
-                    CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
+                    CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue,
+                        SpecialFieldNames.DataLoadRunID);
                     report.GenerateReport(_catalogue, executionProgressUI1, new CancellationTokenSource().Token);
                 }
                 catch (Exception exception)
                 {
-                    executionProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, exception.Message, exception));
+                    executionProgressUI1.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Error, exception.Message, exception));
+                }
+                finally
+                {
+                    executionProgressUI1.ShowRunning(false);
                 }
             });
 
