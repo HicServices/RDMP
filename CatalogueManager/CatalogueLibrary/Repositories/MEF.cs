@@ -359,7 +359,7 @@ namespace CatalogueLibrary.Repositories
                 }
                 catch (ReflectionTypeLoadException e)
                 {
-                    toReturn.AddRange(e.Types);
+                    toReturn.AddRange(e.Types.Where(t => t != null)); // because the exception contains null types!
                     ex.Add(new Exception("Error loading module " + assembly.FullName, e));
                 }
 
