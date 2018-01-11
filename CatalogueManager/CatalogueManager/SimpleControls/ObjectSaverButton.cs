@@ -103,7 +103,10 @@ namespace CatalogueManager.SimpleControls
         
         public void Save()
         {
-            if(BeforeSave!= null)
+            if(_o == null)
+                throw new Exception("Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
+            
+            if(BeforeSave != null)
                 if (!BeforeSave(_o))
                     return;
 
