@@ -19,7 +19,7 @@
         </PropertyGroup>
     -->
 	
-  	<Exec Command="nuget pack HIC.RDMP.Plugin.UI.csproj -IncludeReferencedProjects -Properties Configuration=$(ConfigurationName) -Symbols -Version $(Version)" />    
+  	<Exec Command="nuget pack Plugin.UI.csproj -IncludeReferencedProjects -Properties Configuration=$(ConfigurationName) -Symbols -Version $(Version)" />    
     <Exec Command="nuget push HIC.RDMP.Plugin.UI.$(Version).nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />
   </Target>
   
