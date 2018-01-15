@@ -112,7 +112,7 @@ namespace DataExportManager.Menus
             try
             {
                 var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                Publish(clone);
+                Publish((DatabaseEntity) clone.Project);
             }
             catch (Exception exception)
             {
