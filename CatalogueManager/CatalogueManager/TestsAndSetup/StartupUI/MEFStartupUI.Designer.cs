@@ -134,7 +134,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.ragSmiley2.Name = "ragSmiley2";
             this.ragSmiley2.Size = new System.Drawing.Size(34, 34);
             this.ragSmiley2.TabIndex = 5;
-            this.ragSmiley2.Click += new System.EventHandler(this.ragSmiley2_Click);
             // 
             // ragSmiley1
             // 

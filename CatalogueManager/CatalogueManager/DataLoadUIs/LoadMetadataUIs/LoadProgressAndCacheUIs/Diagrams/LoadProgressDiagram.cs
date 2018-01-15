@@ -139,43 +139,49 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
 
 
             };
-
-            //Catalogue periodicity chart
-            PopulateChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
-            
-            //Annotations
-            _annotations = new LoadProgressAnnotation(_loadProgress, _report.CataloguesPeriodictiyData,
-                cataloguesRowCountChart);
-            cataloguesRowCountChart.Annotations.Add(_annotations.LineAnnotationOrigin);
-            cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationOrigin);
-            cataloguesRowCountChart.Annotations.Add(_annotations.LineAnnotationFillProgress);
-            cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationFillProgress);
-            
-            //Cache annotation (still on the Catalogue periodicity chart)
-            if (_annotations.LineAnnotationCacheProgress != null)
+            try
             {
-                cataloguesRowCountChart.Annotations.Add(_annotations.LineAnnotationCacheProgress);
-                cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationCacheProgress);
+                //Catalogue periodicity chart
+                PopulateChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
+            
+                //Annotations
+                _annotations = new LoadProgressAnnotation(_loadProgress, _report.CataloguesPeriodictiyData,
+                    cataloguesRowCountChart);
+                cataloguesRowCountChart.Annotations.Add(_annotations.LineAnnotationOrigin);
+                cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationOrigin);
+                cataloguesRowCountChart.Annotations.Add(_annotations.LineAnnotationFillProgress);
+                cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationFillProgress);
+            
+                //Cache annotation (still on the Catalogue periodicity chart)
+                if (_annotations.LineAnnotationCacheProgress != null)
+                {
+                    cataloguesRowCountChart.Annotations.Add(_annotations.LineAnnotationCacheProgress);
+                    cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationCacheProgress);
+                }
+
+                //Now onto the cache diagram which shows what files are in the cache directory and the failure states of old loads
+                if (_report.CachePeriodictiyData == null)
+                    splitContainer1.Panel2Collapsed = true;
+                else
+                {
+                    pathLinkLabel1.Text = _report.ResolvedCachePath.FullName;
+
+                    cacheState.Palette = ChartColorPalette.None;
+                    cacheState.PaletteCustomColors = new[] { Color.Red,Color.Green };
+                    PopulateChart(cacheState, _report.CachePeriodictiyData,"Fetch Failure/Success");
+                    splitContainer1.Panel2Collapsed = false;
+
+                    cacheState.Series[0].ChartType = SeriesChartType.Column;
+                    cacheState.Series[0]["DrawingStyle"] = "Cylinder";
+
+                    cacheState.Series[1].ChartType = SeriesChartType.Column;
+                    cacheState.Series[1]["DrawingStyle"] = "Cylinder";
+
+                }
             }
-
-            //Now onto the cache diagram which shows what files are in the cache directory and the failure states of old loads
-            if (_report.CachePeriodictiyData == null)
-                splitContainer1.Panel2Collapsed = true;
-            else
+            catch (Exception e)
             {
-                pathLinkLabel1.Text = _report.ResolvedCachePath.FullName;
-
-                cacheState.Palette = ChartColorPalette.None;
-                cacheState.PaletteCustomColors = new[] { Color.Red,Color.Green };
-                PopulateChart(cacheState, _report.CachePeriodictiyData,"Fetch Failure/Success");
-                splitContainer1.Panel2Collapsed = false;
-
-                cacheState.Series[0].ChartType = SeriesChartType.Column;
-                cacheState.Series[0]["DrawingStyle"] = "Cylinder";
-
-                cacheState.Series[1].ChartType = SeriesChartType.Column;
-                cacheState.Series[1]["DrawingStyle"] = "Cylinder";
-
+                ragSmiley1.Fatal(e);
             }
         }
 
@@ -204,6 +210,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
 
             int rowsPerYear = 12;
             int datasetLifespanInYears = dt.Rows.Count / rowsPerYear;
+
+            if (dt.Rows.Count == 0)
+                throw new Exception("There are no rows in the DQE database (dataset is empty?)");
 
             if (datasetLifespanInYears < 10)
             {
