@@ -36,11 +36,13 @@ namespace CatalogueLibrary
 
         public SimpleStringValueEncryption(ICatalogueRepository repository)
         {
-            _location = new PasswordEncryptionKeyLocation(repository);
+            _repository = repository;
         }
 
         private bool _initialised;
         private RSAParameters _privateKey;
+        private ICatalogueRepository _repository;
+
         public RSAParameters PrivateKey
         {
             get
@@ -70,6 +72,8 @@ namespace CatalogueLibrary
         /// <returns></returns>
         public string Encrypt(string toEncrypt)
         {
+            InitializeKey();
+
             using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
             {
                 RSA.ImportParameters(PrivateKey);
@@ -77,7 +81,13 @@ namespace CatalogueLibrary
             }
         }
 
-        
+        private void InitializeKey()
+        {
+            if(_location == null)
+                _location = new PasswordEncryptionKeyLocation(_repository);
+        }
+
+
         /// <summary>
         /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
         /// </summary>
@@ -86,6 +96,8 @@ namespace CatalogueLibrary
         /// <returns></returns>
         public string Decrypt(string toDecrypt)
         {
+            InitializeKey();
+
             using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
             {
                 RSA.ImportParameters(PrivateKey);
