@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
-  <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$Description$</description>
-    <copyright>Copyright 2018</copyright>
-  </metadata>
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>$title$</title>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
+        <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+        <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>$Description$</description>
+        <copyright>Copyright 2018</copyright>
+        <dependencies>
+            <dependency id="log4net" version="2.0.*" />
+            <dependency id="Common.Logging" version="3.4.*" />
+            <dependency id="CsvHelper" version="2.11.*" />
+            <dependency id="Microsoft.SqlServer.SqlManagementObjects" version="140.17199.*" />
+            <dependency id="MySql.Data" version="6.9.*" />
+            <dependency id="Newtonsoft.Json" version="9.0.*" />
+            <dependency id="Oracle.ManagedDataAccess" version="12.1.*" />
+            <dependency id="DocX" version="1.1.*" />
+            <dependency id="JetBrains.Annotations" version="10.4.*" />
+            <dependency id="CommandLineParser" version="1.9.*" />
+            <dependency id="SharpZipLib" version="0.86.*" />
+            <dependency id="AutoCompleteMenu-ScintillaNET" version="1.5.*" />
+            <dependency id="GraphX" version="2.2.*" />
+            <dependency id="jacobslusser.ScintillaNET" version="3.6.*" />
+            <dependency id="ObjectListView.Official" version="2.9.*" />
+            <dependency id="QuickGraphPCL" version="3.6.*" />
+            <dependency id="SSH.NET" version="2013.4.*" />
+            <dependency id="RhinoMocks" version="3.6.*" />
+            <dependency id="Mono.Reflection" version="1.1.*" />
+        </dependencies>
+    </metadata>
 </package>
