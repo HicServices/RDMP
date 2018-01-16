@@ -151,25 +151,32 @@ namespace CatalogueManager.Collections
             if(whitelistFilter == null)
                 return;
 
-            //if this is an object being refreshed is to the pinned object or a child of the pinned object
-            if (oRefreshedObject.Equals(_toPin) ||  knownDescendancy.Parents.Contains(_toPin))
-                {
-                    //create a new whitelist filter that is the old one + oRefreshedObject + all children recursively
-                    var oldList = whitelistFilter.Whitelist;
-                    var newList = new HashSet<object>(oldList);
+            //if this is an object being refreshed is to the pinned object
+            if (oRefreshedObject.Equals(_toPin))
+                RefreshWhiteList(whitelistFilter, childProvider, oRefreshedObject);
 
-                    //hashset ignores duplicates
-                    newList.Add(oRefreshedObject);
-                
-                    //and all children of oRefreshedObject incase it has multiple new children under it
-                    foreach (var child in childProvider.GetAllChildrenRecursively(oRefreshedObject))
-                        newList.Add(child);
+            //if the descendancy is known and it includes the pinned object
+             if(knownDescendancy != null && knownDescendancy.Parents.Contains(_toPin))
+                 RefreshWhiteList(whitelistFilter, childProvider, oRefreshedObject);
 
-                    //if there are new objects
-                    if(oldList.Count < newList.Count)
-                        _tree.ModelFilter = new WhiteListOnlyFilter(newList);
-                }
-                 
+        }
+
+        private void RefreshWhiteList(WhiteListOnlyFilter whitelistFilter, ICoreChildProvider childProvider, DatabaseEntity oRefreshedObject)
+        {
+            //create a new whitelist filter that is the old one + oRefreshedObject + all children recursively
+            var oldList = whitelistFilter.Whitelist;
+            var newList = new HashSet<object>(oldList);
+
+            //hashset ignores duplicates
+            newList.Add(oRefreshedObject);
+
+            //and all children of oRefreshedObject incase it has multiple new children under it
+            foreach (var child in childProvider.GetAllChildrenRecursively(oRefreshedObject))
+                newList.Add(child);
+
+            //if there are new objects
+            if (oldList.Count < newList.Count)
+                _tree.ModelFilter = new WhiteListOnlyFilter(newList);
         }
     }
 }

@@ -107,6 +107,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (IsDate(sqlType))
                 return typeof (DateTime);
 
+            if (IsTime(sqlType))
+                return typeof(TimeSpan);
+
             if (IsInt(sqlType))
                 return typeof(int);
 
@@ -120,6 +123,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
         }
 
+        protected bool IsTime(string sqlType)
+        {
+            return sqlType.Trim().Equals("time",StringComparison.CurrentCultureIgnoreCase);
+        }
+
         protected virtual bool IsByteArray(string sqlType)
         {
             return sqlType.ToLower().Contains("binary");
@@ -129,7 +137,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         {
             return sqlType.Trim().Equals("bit", StringComparison.CurrentCultureIgnoreCase);
         }
-
 
         protected virtual bool IsInt(string sqlType)
         {

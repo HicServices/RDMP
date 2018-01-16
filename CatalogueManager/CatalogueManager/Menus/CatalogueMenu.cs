@@ -12,7 +12,7 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     public class CatalogueMenu:RDMPContextMenuStrip
     {
-        public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args,null)
+        public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder): base(args, folder)
         {
             AddImportOptions();
         }

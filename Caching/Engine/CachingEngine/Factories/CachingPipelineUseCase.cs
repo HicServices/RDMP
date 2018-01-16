@@ -76,6 +76,10 @@ namespace CachingEngine.Factories
 
             // Get the HICProjectDirectory for the engine initialization
             var lmd = _cacheProgress.GetLoadProgress().GetLoadMetadata();
+
+            if(string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
+                throw new Exception("LoadMetadata '" + lmd +"' does not have a Load Directory specified, cannot create ProcessingPipelineUseCase without one");
+
             _hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
             
         }

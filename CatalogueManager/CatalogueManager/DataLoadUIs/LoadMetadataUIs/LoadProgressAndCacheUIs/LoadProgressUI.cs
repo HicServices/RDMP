@@ -24,7 +24,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
     {
         private LoadProgress _loadProgress;
-        private bool bLoading;
         
         public event EventHandler Saved;
 
@@ -34,22 +33,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             loadProgressDiagram1.LoadProgressChanged += ReloadUIFromDatabase;
         }
         
-        public LoadProgress LoadProgress
-        {
-            get { return _loadProgress; }
-            set
-            {
-                bLoading = true;
-                
-                _loadProgress = value;
-
-                ReloadUIFromDatabase();
-
-                
-                bLoading = false;
-            }
-        }
-
         private void ReloadUIFromDatabase()
         {
             if (_loadProgress != null)
@@ -78,22 +61,19 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 if(_loadProgress.OriginDate != null)
                     tbOriginDate.Text = _loadProgress.OriginDate.ToString();
                 
-                tbID.Text = LoadProgress.ID.ToString();
-                tbName.Text = LoadProgress.Name;
+                tbID.Text = _loadProgress.ID.ToString();
+                tbName.Text = _loadProgress.Name;
 
-                tbDataLoadProgress.Text = LoadProgress.DataLoadProgress != null ? LoadProgress.DataLoadProgress.ToString() : "";
+                tbDataLoadProgress.Text = _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
 
-                nDefaultNumberOfDaysToLoadEachTime.Value = LoadProgress.DefaultNumberOfDaysToLoadEachTime;
+                nDefaultNumberOfDaysToLoadEachTime.Value = _loadProgress.DefaultNumberOfDaysToLoadEachTime;
                 cbEnableAutomation.Checked = _loadProgress.AllowAutomation;
             }
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)
         {
-            if(bLoading)
-                return;
-
-            LoadProgress.Name = tbName.Text;
+            _loadProgress.Name = tbName.Text;
             
         }
         
@@ -151,11 +131,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public override void SetDatabaseObject(IActivateItems activator, LoadProgress databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
+            _loadProgress = databaseObject;
 
-            LoadProgress = databaseObject;
+            objectSaverButton1.SetupFor(_loadProgress, activator.RefreshBus);
 
-            objectSaverButton1.SetupFor(LoadProgress,activator.RefreshBus);
-
+            ReloadUIFromDatabase();
         }
 
         public ObjectSaverButton GetObjectSaverButton()
