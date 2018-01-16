@@ -100,7 +100,12 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
             if (deletable != null)
+            {
+                if (_args.Masquerader is IDeleteable)
+                    deletable = (IDeleteable)_args.Masquerader;
+
                 Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
+            }
 
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
