@@ -1,4 +1,5 @@
 ﻿using System;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Migration;
 using HIC.Logging;
@@ -22,7 +23,7 @@ namespace DataLoadEngineTests.Integration
 
             var sourceFields = new[] {"Field"};
             var destinationFields = new[] { "Field" };
-            var column = MockRepository.GenerateStub<IColumnMetadata>();
+            var column = MockRepository.GenerateStub<IColumnInfo>();
             var migrationFieldProcessor = MockRepository.GenerateStub<IMigrationFieldProcessor>();
             
             var columnsToMigrate = new MigrationColumnSet(databaseName, "SourceTable", "DestinationTable", sourceFields, destinationFields, new [] {column}, migrationFieldProcessor);

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using MapsDirectlyToDatabaseTable;
@@ -14,6 +15,9 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 
 namespace CatalogueLibrary.Data
@@ -185,13 +189,13 @@ namespace CatalogueLibrary.Data
         
         public string GetRuntimeNameFor(INameDatabasesAndTablesDuringLoads namer, LoadBubble namingConvention)
         {
-            string baseName = SqlSyntaxHelper.GetRuntimeName(Name);
+            string baseName = GetQuerySyntaxHelper().GetRuntimeName(Name);
             return namer.GetName(baseName, namingConvention);
         }
 
         public string GetRuntimeName()
         {
-            return SqlSyntaxHelper.GetRuntimeName(Name);
+            return GetQuerySyntaxHelper().GetRuntimeName(Name);
         }
         
         public string GetDatabaseRuntimeName()
@@ -365,6 +369,11 @@ select 0", con.Connection, con.Transaction);
                     continue;
                 else
                     yield return c;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return new QuerySyntaxHelperFactory().Create(DatabaseType);
         }
     }
 }

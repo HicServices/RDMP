@@ -10,6 +10,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 {
+    /// <summary>
+    /// Destination for Extraction Pipelines.  Saves the extracted (anonymous) data contained in the DataTables received (which arrive in batches) to some location
+    /// (depending on implementation).  Destinations must also support one off calls (per ExtractionConfiguration) to ExtractGlobals
+    /// </summary>
     public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<DataLoadInfo>
     {
         TableLoadInfo TableLoadInfo { get; }

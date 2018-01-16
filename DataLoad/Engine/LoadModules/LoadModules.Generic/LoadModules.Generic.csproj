@@ -252,11 +252,8 @@
     <Compile Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cs" />
     <Compile Include="DataFlowSources\ExcelDataFlowSource.cs" />
     <Compile Include="DataFlowSources\ExplicitTypingCollection.cs" />
-    <Compile Include="DataProvider\ArchiveFileProvider.cs" />
     <Compile Include="DataProvider\DoNothingDataProvider.cs" />
-    <Compile Include="DataProvider\FileProvider.cs" />
     <Compile Include="DataProvider\WebServiceConfiguration.cs" />
-    <Compile Include="FileOperations\ExcelToCsvConverter.cs" />
     <Compile Include="LoadProgressUpdating\DataLoadProgressUpdateStrategy.cs" />
     <Compile Include="LoadProgressUpdating\UpdateProgressToResultOfDelegate.cs" />
     <Compile Include="LoadProgressUpdating\UpdateProgressToSpecificValueIfLoadsuccessful.cs" />
@@ -274,8 +271,6 @@
     <Compile Include="Mutilators\PrematureLoadEnder.cs" />
     <Compile Include="Mutilators\PrimaryKeyCollisionResolverMutilation.cs" />
     <Compile Include="Mutilators\QueryBuilders\BackfillSqlHelper.cs" />
-    <Compile Include="Mutilators\QueryBuilders\CascadeSqlBuilder.cs" />
-    <Compile Include="Mutilators\QueryBuilders\TableInfoJoiningQueryBuilder.cs" />
     <Compile Include="Mutilators\StagingBackfillMutilator.cs" />
     <Compile Include="Mutilators\TableVarcharMaxer.cs" />
     <Compile Include="ScheduleStrategy.cs" />

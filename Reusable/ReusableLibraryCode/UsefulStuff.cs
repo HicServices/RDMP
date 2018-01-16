@@ -24,6 +24,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// Contains lots of generically useful static methods
+    /// </summary>
     public class UsefulStuff
     {
         private static UsefulStuff _instance;

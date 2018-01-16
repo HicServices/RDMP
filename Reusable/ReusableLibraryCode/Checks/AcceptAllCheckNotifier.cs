@@ -2,6 +2,9 @@ using System;
 
 namespace ReusableLibraryCode.Checks
 {
+    /// <summary>
+    /// CheckNotifier which accepts ProposedFixes automatically and throws Exceptions on Fail messages
+    /// </summary>
     public class AcceptAllCheckNotifier : ICheckNotifier
     {
         public virtual bool OnCheckPerformed(CheckEventArgs args)

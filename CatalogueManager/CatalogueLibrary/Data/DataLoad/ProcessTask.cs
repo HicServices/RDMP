@@ -197,9 +197,9 @@ namespace CatalogueLibrary.Data.DataLoad
                         //process task belongs in that stage anyway so nothing is prohibited
                         if (stage == (LoadStage == LoadStage.Mounting? LoadStage.AdjustRaw:LoadStage))
                             continue;
-
+                        
                         //figure out what is prohibited
-                        string prohibitedSql = SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(tableInfo.GetDatabaseRuntimeName(stage),tableInfo.GetRuntimeName(stage));
+                        string prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
 
                         //if we reference it, complain
                         if (sql.Contains(prohibitedSql))

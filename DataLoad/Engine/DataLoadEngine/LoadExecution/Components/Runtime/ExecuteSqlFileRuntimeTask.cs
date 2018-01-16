@@ -16,6 +16,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// RuntimeTask that executes a single .sql file specified by the user in a ProcessTask with ProcessTaskType SQLFile.
+    /// </summary>
     public class ExecuteSqlFileRuntimeTask : RuntimeTask
     {
         public string Filepath;

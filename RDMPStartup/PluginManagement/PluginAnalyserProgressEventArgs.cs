@@ -2,6 +2,9 @@ using CatalogueLibrary.Data;
 
 namespace RDMPStartup.PluginManagement
 {
+    /// <summary>
+    /// Records the progress made in evaluating a dll in PluginAnalyser
+    /// </summary>
     public class PluginAnalyserProgressEventArgs
     {
         public PluginAnalyserProgressEventArgs(int progress, int maxProgress, LoadModuleAssembly lma)

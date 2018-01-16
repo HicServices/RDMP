@@ -5,6 +5,16 @@ using System.Globalization;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
+    /// <summary>
+    /// Calculates a DatabaseTypeRequest based on a collection of objects seen so far.  This allows you to take a DataTable column (which might be only string
+    /// formatted) and identify an appropriate database type to hold the data.  For example if you see "2001-01-01" in the first row of column then the database
+    /// type can be 'datetime' but if you subsequently see 'n\a' then it must become 'varchar(10)' (since 2001-01-01 is 10 characters long).
+    /// 
+    /// Includes support for DateTime, Timespan, String (including calculating max length), Int, Decimal (including calculating scale/precision). 
+    /// 
+    /// DataTypeComputer will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
+    /// the guessed Type, ultimately falling back to varchar(x).
+    /// </summary>
     public class DataTypeComputer
     {
         private Type[] preferenceOrder =

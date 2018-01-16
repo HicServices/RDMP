@@ -6,6 +6,15 @@ using CatalogueLibrary.Data.DataLoad;
 
 namespace DataLoadEngine.LoadExecution.Components.Arguments
 {
+    /// <summary>
+    /// Stores all the user defined arguments of a ProcessTask (See DemandsInitializationAttribute) and all the runtime arguments for the stage it is in 
+    /// within the data load (See StageArgs).  For example an IAttacher of type DelimitedFlatFileAttacher could be declared as a ProcessTask in the Mounting
+    /// stage of a DLE configuration (LoadMetadata).  At runtime a RuntimeArgumentCollection would be created with the user specified IArguments (e.g. Delimiter
+    /// is comma, file pattern is *.csv) and the IStageArgs (where RAW database to load is and what the ForLoading directory is where the flat files can be found).
+    /// 
+    /// This class is used by RuntimeTask to hydrate the hosted instance (IAttacher, IDataProvider, IMutilateDataTables etc) dictated by the user (in the 
+    /// ProcessTask).
+    /// </summary>
     public class RuntimeArgumentCollection
     {
         public IStageArgs StageSpecificArguments

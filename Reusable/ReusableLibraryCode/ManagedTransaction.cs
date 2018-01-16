@@ -5,6 +5,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// See IManagedTransaction
+    /// </summary>
     public class ManagedTransaction : IManagedTransaction
     {
         public Thread OriginThread { get; private set; }

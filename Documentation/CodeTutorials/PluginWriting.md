@@ -45,10 +45,10 @@ Finally for the ambitious the 'Help=>Generate User Interface Documentation' will
  # Hello World Plugin
  Create a new Visual Studio Class Library Project targetting .Net Framework 4.5
 
- Add a reference to the HIC nuget server `https://hic.dundee.ac.uk/NuGet/nuget/` and add a reference to `HIC.RDMP.Plugin` and `HIC.RDMP.Plugin.Test`
- (See https://docs.microsoft.com/en-us/nuget/tools/package-manager-ui#package-sources for help on how to do this)
-
- Make sure that the major and minor version number (first two numbers) of the Nuget Package match your installed version of RDMP (Visible in the task bar of the main RDMP application)
+ Add a reference to the nuget packages `HIC.RDMP.Plugin` and `HIC.RDMP.Plugin.UI`.  For the purposes of this demo we are adding all classes to the same csproj but it is good practice to separate UI from engine code (i.e. An Engine Project containing implementation logic and A UI Project containing user interfaces).
+ ![Class Documentation](Images/NugetPackages.png)
+ 
+  Make sure that the major and minor version number (first two numbers) of the Nuget Package match your installed version of RDMP (Visible in the task bar of the main RDMP application)
 
  ![Versions must match](Images/NugetVersionMustMatchLive.png)
 
@@ -452,7 +452,7 @@ Test the plugin by importing demography.csv again through the pipeline with the 
 
 <a name="unitTests"></a>
 ## Unit Tests 
-We definetly want to write some unit/integration tests for this component.  Create a new project called MyExamplePluginTests.  Add a reference to the NuGet package NUnit.
+We definetly want to write some unit/integration tests for this component.  Create a new project called MyExamplePluginTests.  Add a reference to the NuGet package NUnit and a reference to `HIC.RDMP.Plugin.Test`.
 
 Add the following test:
 

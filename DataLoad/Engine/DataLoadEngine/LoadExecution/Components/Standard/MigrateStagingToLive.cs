@@ -13,6 +13,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Standard
 {
+    /// <summary>
+    /// DLE component resonsible for merging records in the STAGING database into the LIVE database table(s) during a Data Load Engine execution.  The actual
+    /// implementation of migrating records done by MigrationHost and MigrationConfiguration.
+    /// </summary>
     public class MigrateStagingToLive : DataLoadComponent
     {
         private readonly IList<ICatalogue> _cataloguesToLoad;

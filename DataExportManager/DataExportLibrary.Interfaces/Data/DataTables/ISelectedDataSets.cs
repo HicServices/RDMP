@@ -4,6 +4,9 @@ using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See SelectedDataSets
+    /// </summary>
     public interface ISelectedDataSets:IDeleteable,IRevertable
     {
         int ExtractionConfiguration_ID { get; set; }

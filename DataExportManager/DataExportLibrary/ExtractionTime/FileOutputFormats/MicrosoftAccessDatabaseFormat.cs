@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
+using ADOX;
 
 
 namespace DataExportLibrary.ExtractionTime.FileOutputFormats
 {
+    /// <summary>
+    /// Helper class for outputting DataTables to Microsoft Access via OleDb.
+    /// </summary>
     public class MicrosoftAccessDatabaseFormat : FileOutputFormat
     {
         /// <summary>
@@ -40,30 +45,23 @@ namespace DataExportLibrary.ExtractionTime.FileOutputFormats
 
         public override void Open()
         {
-
-            //first thing that is going to happen
+            
             //create an Access database (empty) - or later on maybe see one already exists 
 
-            string path = OutputFilename;
-            
-            //Access data OLEDB provider and path
-            string cs = "Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + path + ";" + "Jet OLEDB:Engine Type=5";
+            // if Database is exists then delete the database and create new database
+            if (File.Exists(OutputFilename))
+                File.Delete(OutputFilename);
 
-            if (File.Exists(path))
+            //Access data OLEDB provider and path
+            try
             {
-                // if Database is exists then delete the database and create new database
-                
-                File.Delete(path);
-                ADOX.Catalog cat = new ADOX.Catalog();
-                cat.Create("Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + path + ";" + "Jet OLEDB:Engine Type=5");
+                Catalog cat = new Catalog();
+                cat.Create("Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + OutputFilename + ";" + "Jet OLEDB:Engine Type=5");
                 
             }
-            else
+            catch (Exception e)
             {
-                //if database doesn't exists thencreate new database
-               
-                ADOX.Catalog cat = new ADOX.Catalog();
-                cat.Create("Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + path + ";" + "Jet OLEDB:Engine Type=5");
+                throw new Exception("Could not create/open Microsoft Access OLE Database Provider to write to database, maybe it isn't installed?",e);
             }
 
         }

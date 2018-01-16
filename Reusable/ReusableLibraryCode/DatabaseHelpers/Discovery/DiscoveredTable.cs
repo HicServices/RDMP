@@ -2,12 +2,17 @@
 using System.Data;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
-    public class DiscoveredTable :IHasFullyQualifiedNameToo, IMightNotExist
+    /// <summary>
+    /// Cross database type reference to a Table (or view) in a Database.  Use TableType to determine whether it is a view or a table.  Allows you to check
+    /// existance, drop, add columns, get row counts etc.
+    /// </summary>
+    public class DiscoveredTable :IHasFullyQualifiedNameToo, IMightNotExist, IHasQuerySyntaxHelper
     {
         private string _table;
         protected IQuerySyntaxHelper _querySyntaxHelper;
@@ -57,12 +62,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return _table;
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return _querySyntaxHelper;
+        }
+
 
         public DiscoveredColumn DiscoverColumn(string specificColumnName)
         {
             try
             {
-                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(SqlSyntaxHelper.GetRuntimeName(specificColumnName)));
+                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName)));
             }
             catch (Exception e)
             {

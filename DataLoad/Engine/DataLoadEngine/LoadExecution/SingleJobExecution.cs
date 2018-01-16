@@ -13,7 +13,8 @@ using ReusableLibraryCode.Progress;
 namespace DataLoadEngine.LoadExecution
 {
     /// <summary>
-    /// Pipeline which processes a single job through all stages before accepting another.
+    /// Pipeline which processes a single job through all stages before accepting another.  Execution involves running each DataLoadComponent with the current 
+    /// IDataLoadJob and then disposing them. 
     /// </summary>
     public class SingleJobExecution : IDataLoadExecution
     {

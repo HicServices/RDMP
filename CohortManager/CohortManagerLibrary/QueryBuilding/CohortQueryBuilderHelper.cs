@@ -13,6 +13,11 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CohortManagerLibrary.QueryBuilding
 {
+    /// <summary>
+    /// Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.  Subqueries are actually built by 
+    /// AggregateBuilder but this class handles tab indentation, parameter renaming (where there are other subqueries with conflicting sql parameter names), 
+    /// injecting globals etc.
+    /// </summary>
     public class CohortQueryBuilderHelper
     {
         private readonly ISqlParameter[] _globals;

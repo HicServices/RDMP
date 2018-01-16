@@ -27,7 +27,7 @@ namespace DataExportLibrary.Tests.Cohort
             Assert.IsNull(_extractableCohort.OverrideReleaseIdentifierSQL);
 
             //should match global release identifier (from it's source because there is no override)
-            Assert.AreEqual("ReleaseID", SqlSyntaxHelper.GetRuntimeName(_extractableCohort.GetReleaseIdentifier()));
+            Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
             
             //appy override
             _extractableCohort.OverrideReleaseIdentifierSQL = "Fish";
@@ -41,7 +41,7 @@ namespace DataExportLibrary.Tests.Cohort
             _extractableCohort.SaveToDatabase();
 
             //now check that we are back to the original release identifier
-            Assert.AreEqual("ReleaseID", SqlSyntaxHelper.GetRuntimeName(_extractableCohort.GetReleaseIdentifier()));
+            Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
             
         }
 

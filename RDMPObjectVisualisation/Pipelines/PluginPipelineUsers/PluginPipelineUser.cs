@@ -6,7 +6,6 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
 using CatalogueLibrary.Repositories;
-using ReusableLibraryCode.Reflection;
 
 namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
 {

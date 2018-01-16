@@ -4,6 +4,9 @@ using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See ExtractableDataSet
+    /// </summary>
     public interface IExtractableDataSet:IMapsDirectlyToDatabaseTable,IRevertable
     {
         int Catalogue_ID { get; set; }

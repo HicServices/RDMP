@@ -358,7 +358,6 @@
     <Compile Include="Attachers\IPluginAttacher.cs" />
     <Compile Include="Checks\Checkers\CommandLineParser.cs" />
     <Compile Include="Checks\Checkers\ProcessTaskChecks.cs" />
-    <Compile Include="DatabaseManagement\Operations\IDatabaseOperation.cs" />
     <Compile Include="DatabaseManagement\Operations\SMOTypeLookup.cs" />
     <Compile Include="DataFlowPipeline\Components\Anonymisation\ANOConfigurationException.cs" />
     <Compile Include="DataFlowPipeline\Components\Anonymisation\ColumnInfoToANOTableConverter.cs" />
@@ -401,7 +400,6 @@
     <Compile Include="LoadProcess\Scheduling\Strategy\AnyAvailableLoadProgressSelectionStrategy.cs" />
     <Compile Include="LoadProcess\Scheduling\Strategy\ILoadProgressSelectionStrategy.cs" />
     <Compile Include="LoadProcess\Scheduling\Strategy\SingleLoadProgressSelectionStrategy.cs" />
-    <Compile Include="LoadProcess\SingleJobProvider.cs" />
     <Compile Include="LoadExecution\Components\Runtime\ExecutableRuntimeTask.cs" />
     <Compile Include="LoadExecution\Components\Arguments\IStageArgs.cs" />
     <Compile Include="LoadExecution\Components\Standard\ArchiveFiles.cs" />
@@ -411,7 +409,6 @@
     <Compile Include="Checks\Checkers\AnonymisationChecks.cs" />
     <Compile Include="Checks\Checkers\CatalogueLoadChecks.cs" />
     <Compile Include="Checks\Checkers\TriggerChecks.cs" />
-    <Compile Include="Checks\CheckGroup.cs" />
     <Compile Include="Checks\Checkers\MetadataLoggingConfigurationChecks.cs" />
     <Compile Include="LoadExecution\Components\CompositeDataLoadComponent.cs" />
     <Compile Include="DatabaseManagement\Operations\DatabaseCloner.cs" />
@@ -428,7 +425,6 @@
     <Compile Include="LoadProcess\HICLoadConfigurationFlags.cs" />
     <Compile Include="Job\Scheduling\IJobDateGenerationStrategy.cs" />
     <Compile Include="Job\IJobFactory.cs" />
-    <Compile Include="LoadExecution\Components\ILoadComponent.cs" />
     <Compile Include="LoadExecution\Components\Arguments\LoadArgsDictionary.cs" />
     <Compile Include="LoadExecution\Components\DataLoadComponent.cs" />
     <Compile Include="LoadExecution\Components\LoadFiles.cs" />
@@ -440,9 +436,7 @@
     <Compile Include="Migration\MigrationColumnSetQueryHelper.cs" />
     <Compile Include="Migration\MigrationConfiguration.cs" />
     <Compile Include="Migration\DatabaseMigrationStrategy.cs" />
-    <Compile Include="Migration\IMigrationStrategy.cs" />
     <Compile Include="Migration\StagingToLiveMigrationFieldProcessor.cs" />
-    <Compile Include="Migration\MigrationHelper.cs" />
     <Compile Include="Migration\MigrationHost.cs" />
     <Compile Include="Migration\LiveMigrationQueryHelper.cs" />
     <Compile Include="Migration\MigrationQueryHelper.cs" />
@@ -498,17 +492,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Checks\Notifiers\" />
-    <Folder Include="LoadExecution\Threaded\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Checks\Checking.cd" />
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
     <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />
-    <None Include="LoadExecution\LoadPipeline.cd" />
+    <None Include="LoadExecution\DataLoadEngine.cd" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Migration\StagingToLiveMigration.cd" />
     <None Include="packages.config" />
     <None Include="Job\SchedulesAndJobCreation.cd" />
   </ItemGroup>

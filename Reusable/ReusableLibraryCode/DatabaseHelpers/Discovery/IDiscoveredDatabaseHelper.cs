@@ -11,6 +11,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Contains all the DatabaseType specific implementation logic required by DiscoveredDatabase.
+    /// </summary>
     public interface IDiscoveredDatabaseHelper
     {
 

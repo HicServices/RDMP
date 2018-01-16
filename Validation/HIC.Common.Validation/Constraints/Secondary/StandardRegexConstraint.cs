@@ -8,6 +8,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace HIC.Common.Validation.Constraints.Secondary
 {
+    /// <summary>
+    /// Values being validated are expected to pass the Regex pattern.  The pattern itself is a reference to a StandardRegex which is a central curated definition
+    /// pattern in the Catalogue database.  This allows you to have multiple columns/validation rules in multiple datasets share the same regex without having to
+    /// create copies (and allows you to update the definition in one place).
+    /// </summary>
     public class StandardRegexConstraint : SecondaryConstraint
     {
         private readonly IRepository _repository;

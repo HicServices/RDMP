@@ -6,7 +6,8 @@ using DataLoadEngine.Job.Scheduling.Exceptions;
 namespace DataLoadEngine.Job.Scheduling
 {
     /// <summary>
-    /// Returns dates consecutively with reference to a LoadProgress, starting from the last successful load (DataLoadProgress) or OriginDate if no load has yet been successfully completed
+    /// Returns dates consecutively with reference to a LoadProgress, starting from the last successful load (DataLoadProgress) or OriginDate if no load has yet
+    /// been successfully completed
     /// </summary>
     public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
     {

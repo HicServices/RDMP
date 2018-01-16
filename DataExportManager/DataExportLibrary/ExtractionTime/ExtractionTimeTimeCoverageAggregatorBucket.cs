@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// The number of unique patients and record count on a given day of an ExtractionTimeTimeCoverageAggregator.
+    /// </summary>
     public class ExtractionTimeTimeCoverageAggregatorBucket
     {
         public enum BucketSize

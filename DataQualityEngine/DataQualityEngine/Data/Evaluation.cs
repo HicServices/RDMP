@@ -11,7 +11,9 @@ using ReusableLibraryCode;
 namespace DataQualityEngine.Data
 {
     /// <summary>
-    /// Do not Refactor this into another namespace or rename it
+    /// Root object for a DQE run including the time the DQE engine was run, the Catalogue being evaluated and all the results.  This class basically follows an 
+    /// IMapsDirectlyToDatabaseTable/DatabaseEntity pattern except that it doesn't allow for modification/saving since a DQE run is immutable and only created after
+    /// a succesful run.
     /// </summary>
     public class Evaluation:IDeleteable
     {

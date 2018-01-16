@@ -48,6 +48,7 @@ namespace ReusableUIComponents.Progress
             this.Sender = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Message = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ExceptionStack = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -69,7 +70,7 @@ namespace ReusableUIComponents.Progress
             this.dataGridView1.Location = new System.Drawing.Point(0, 20);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(883, 275);
+            this.dataGridView1.Size = new System.Drawing.Size(883, 250);
             this.dataGridView1.TabIndex = 2;
             // 
             // splitContainer1
@@ -81,6 +82,7 @@ namespace ReusableUIComponents.Progress
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.progressBar1);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
             // 
@@ -219,6 +221,15 @@ namespace ReusableUIComponents.Progress
             this.ExceptionStack.Text = "ExceptionStack";
             this.ExceptionStack.Width = 500;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(3, 276);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(874, 15);
+            this.progressBar1.TabIndex = 4;
+            // 
             // ProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -260,5 +271,6 @@ namespace ReusableUIComponents.Progress
         private System.Windows.Forms.ToolStripTextBox tbTextFilter;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripTextBox tbTopX;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

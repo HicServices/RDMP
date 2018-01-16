@@ -398,6 +398,7 @@
     <Compile Include="Data\ExtractionFilterParameterSetValue.cs" />
     <Compile Include="Data\Favourite.cs" />
     <Compile Include="Data\IAggregateTopX.cs" />
+    <Compile Include="Data\IColumnInfo.cs" />
     <Compile Include="Data\IMasqueradeAs.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />

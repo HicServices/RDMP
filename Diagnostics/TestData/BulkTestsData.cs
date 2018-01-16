@@ -7,6 +7,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints;
@@ -92,7 +93,7 @@ CREATE TABLE " + BulkDataTable+ @"(
        [date_into_practice] date NULL,
        [date_of_birth] date NULL,
        [patient_triage_score] float,
-       [" + MigrationColumnSet.DataLoadRunField+@"] int
+       [" + SpecialFieldNames.DataLoadRunID+@"] int
  CONSTRAINT [PK_BulkData] PRIMARY KEY CLUSTERED 
 (
 	[chi] ASC
@@ -185,7 +186,7 @@ dt.Columns.Add("previous_gp_accept_date");
 dt.Columns.Add("date_into_practice");
 dt.Columns.Add("date_of_birth");
 dt.Columns.Add("patient_triage_score",typeof(object));
-dt.Columns.Add(MigrationColumnSet.DataLoadRunField);
+dt.Columns.Add(SpecialFieldNames.DataLoadRunID);
             
         }
 

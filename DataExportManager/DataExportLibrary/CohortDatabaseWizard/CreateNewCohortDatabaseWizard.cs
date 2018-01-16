@@ -13,6 +13,17 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.CohortDatabaseWizard
 {
+    /// <summary>
+    /// Creates an ExternalCohortTable database implementation.  The implementation will be based on your live IsExtractionIdentifier columns 
+    /// (PrivateIdentifierPrototype) and a release identifier strategy (ReleaseIdentifierAssignmentStrategy) e.g. varchar(10) private patient identifier
+    /// gets mapped to a new GUID.
+    /// 
+    /// This implementation is intended to be a basic solution only and lacks advanced features such having the same release identifier for the same primary
+    /// key in subsequent versions of the same cohort (generally you want 1 - m private identifiers because you don't want people to be able to link patients
+    /// across project extracts they are working on).
+    /// 
+    /// See UserManual.docx for more information on how to tailor the resulting database to fit your needs.
+    /// </summary>
     public class CreateNewCohortDatabaseWizard
     {
         private readonly CatalogueRepository _catalogueRepository;

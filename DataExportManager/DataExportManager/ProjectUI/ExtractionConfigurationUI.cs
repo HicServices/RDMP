@@ -206,7 +206,7 @@ namespace DataExportManager.ProjectUI
                 return;
 
             //the use case is extracting a dataset
-            var useCase = new ExtractionPipelineHost();
+            var useCase = new ExtractionPipelineUseCase();
 
             //the user is DefaultPipeline_ID field of ExtractionConfiguration
             var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),ExtractionConfiguration);

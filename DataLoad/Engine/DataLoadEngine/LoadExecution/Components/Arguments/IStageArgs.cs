@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -6,12 +7,15 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.LoadExecution.Components.Arguments
 {
+    /// <summary>
+    /// See StageArgs
+    /// </summary>
     public interface IStageArgs
     {
-        DiscoveredDatabase DbInfo { get; set; }
+        DiscoveredDatabase DbInfo { get;}
         Dictionary<string, object> ToDictionary();
 
-        string RootDir { get; set; }
-        LoadStage LoadStage { get; set; }
+        IHICProjectDirectory RootDir { get; }
+        LoadStage LoadStage { get;}
     }
 }

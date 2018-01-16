@@ -20,6 +20,9 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.Cache
 {
+    /// <summary>
+    /// Automation task that runs a single CacheProgress until it is up-to-date (all available data read) or crashes.
+    /// </summary>
     public class AutomatedCacheRun:IAutomateable
     {
         private readonly AutomationServiceSlot _slot;

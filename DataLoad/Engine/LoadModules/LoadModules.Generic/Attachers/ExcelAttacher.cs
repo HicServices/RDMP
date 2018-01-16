@@ -14,15 +14,16 @@ using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Checks;
 using LoadModules.Generic.DataFlowSources;
-using MapsDirectlyToDatabaseTable;
-
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using DataTable = System.Data.DataTable;
-using Excel = Microsoft.Office.Interop.Excel; 
 
 namespace LoadModules.Generic.Attachers
 {
+    /// <summary>
+    /// Data load component for loading Microsoft Excel files into RAW tables.  This class relies on pipeline source component ExcelDataFlowSource for the actual
+    /// reading and handles only the rationalisation of columns read vs RAW columns available.
+    /// </summary>
     public class ExcelAttacher:FlatFileAttacher
     {
         private ExcelDataFlowSource _hostedSource;

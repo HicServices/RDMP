@@ -9,6 +9,9 @@ using ReusableLibraryCode.Checks;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
+    /// <summary>
+    /// See IDilutionOperation
+    /// </summary>
     public abstract class DilutionOperation : IPluginDilutionOperation
     {
         public IPreLoadDiscardedColumn ColumnToDilute { set; protected get; }

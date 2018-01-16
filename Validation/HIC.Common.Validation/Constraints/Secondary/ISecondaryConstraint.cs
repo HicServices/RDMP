@@ -4,6 +4,10 @@ using HIC.Common.Validation.UIAttributes;
 
 namespace HIC.Common.Validation.Constraints.Secondary
 {
+    /// <summary>
+    /// Each column can have as many SecondaryConstraints as you want.  Each SecondaryConstraint is a general rule about the data that the column is allowed to
+    /// contain.  This can include Regexes, NotNull requirements etc.
+    /// </summary>
     public interface ISecondaryConstraint : IConstraint
     {
         /// <summary>

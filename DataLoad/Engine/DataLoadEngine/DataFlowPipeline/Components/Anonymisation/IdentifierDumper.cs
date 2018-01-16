@@ -19,6 +19,11 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 {
+    /// <summary>
+    /// Anonymises data during a Data Load by dropping columns prior to it reaching the LIVE table.  This is done for all PreLoadDiscardedColumns configured
+    /// on the TableInfo.  Depending on the PreLoadDiscardedColumn.Destination the dropped values may be stored in an 'identifier dump' database.  This is
+    /// usually done to seperate identifiable data (patient name, dob etc) from data (prescription of drug X on date Y) or drop sensitive data entirely.
+    /// </summary>
     public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
     {
         public TableInfo TableInfo

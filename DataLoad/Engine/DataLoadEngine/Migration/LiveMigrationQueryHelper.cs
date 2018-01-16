@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CatalogueLibrary.Triggers;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// See MigrationQueryHelper
+    /// </summary>
     public class LiveMigrationQueryHelper : MigrationQueryHelper
     {
         private readonly int _dataLoadRunID;
@@ -16,7 +20,7 @@ namespace DataLoadEngine.Migration
         public override string BuildUpdateClauseForRow(string sourceAlias, string destAlias)
         {
             var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => destAlias + ".[" + name + "] = " + sourceAlias + ".[" + name + "]").ToList();
-            parts.Add(destAlias + "." + MigrationColumnSet.DataLoadRunField + " = " + _dataLoadRunID);
+            parts.Add(destAlias + "." + SpecialFieldNames.DataLoadRunID + " = " + _dataLoadRunID);
 
             return String.Join(", ", parts);
         }
@@ -37,7 +41,7 @@ namespace DataLoadEngine.Migration
             columnsToMigrate.FieldsToUpdate.ToList().ForEach(column =>
                 inserts.Add(new KeyValuePair<string, string>("[" + column + "]", "source.[" + column + "]")));
 
-            inserts.Add(new KeyValuePair<string, string>(MigrationColumnSet.DataLoadRunField, dataLoadRunID.ToString()));
+            inserts.Add(new KeyValuePair<string, string>(SpecialFieldNames.DataLoadRunID, dataLoadRunID.ToString()));
 
             return inserts;
         }

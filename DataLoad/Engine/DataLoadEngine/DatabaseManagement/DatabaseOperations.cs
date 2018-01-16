@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Migration;
 using log4net;
@@ -18,6 +19,12 @@ using Column = Microsoft.SqlServer.Management.Smo.Column;
 
 namespace DataLoadEngine.DatabaseManagement
 {
+    
+    /// <summary>
+    /// SMO (Microsoft.SqlServer.Management.Smo) powered class for scripting tables, checking specific facts about tables databases (AreEmpty etc).  This is
+    /// Microsoft only stuff (as opposed to the ReusableLibraryCode.DatabaseHelpers.Discovery namespace).  The class powers the data load engine.
+    /// </summary>
+    [Obsolete("This functionality should be ported to ReusableLibraryCode.DatabaseHelpers.Discovery namespace and made non Microsoft / SMO specific")]
     public class DatabaseOperations
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (DatabaseOperations));
@@ -262,7 +269,7 @@ namespace DataLoadEngine.DatabaseManagement
                     column.Nullable = true;
 
                 //drop the data load run ID field and validFrom fields, we don't need them in STAGING or RAW, it will be hard coded in the MERGE migration with a fixed value anyway.
-                if(column.Name.Equals(MigrationColumnSet.DataLoadRunField) || column.Name.Equals(MigrationColumnSet.ValidFromField))
+                if(column.Name.Equals(SpecialFieldNames.DataLoadRunID) || column.Name.Equals(SpecialFieldNames.ValidFrom))
                     column.MarkForDrop(true);
 
                 if (columnAlterDictionary.ContainsKey(column.Name))

@@ -147,7 +147,6 @@
     <Compile Include="ExtractionTime\Commands\IExtractCohortCustomTableCommand.cs" />
     <Compile Include="ExtractionTime\Commands\IExtractCommand.cs" />
     <Compile Include="ExtractionTime\IExtractionDirectory.cs" />
-    <Compile Include="ExtractionTime\IExecuteFullExtractionToDatabase.cs" />
     <Compile Include="ExtractionTime\UserPicks\IBundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\IExtractableDatasetBundle.cs" />
     <Compile Include="ExtractionTime\Commands\IExtractDatasetCommand.cs" />

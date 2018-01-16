@@ -14,6 +14,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.DatabaseManagement.Operations
 {
+    /// <summary>
+    /// Creates RAW / STAGING tables during a data load (See LoadMetadata).  Tables created are based on the live schema.  Depending on stage though certain
+    /// changes will be made.  For example RAW tables will not have any constraints (primary keys, not null etc) and will also contain all PreLoadDiscardedColumns.
+    /// 
+    /// This class is powered by SMO and is Microsoft Sql Server specific.
+    /// </summary>
     public class TableInfoCloneOperation
     {
         private readonly HICDatabaseConfiguration _hicDatabaseConfiguration;

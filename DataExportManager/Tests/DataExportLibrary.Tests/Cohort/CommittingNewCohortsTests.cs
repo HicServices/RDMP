@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
@@ -7,6 +8,7 @@ using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
+using DataLoadEngine.DataFlowPipeline.Destinations;
 using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
@@ -69,6 +71,39 @@ namespace DataExportLibrary.Tests.Cohort
 
             CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
             request.Check(new ThrowImmediatelyCheckNotifier());
+        }
+
+        [Test]
+        public void BasicCohortDestination_NullReleaseIdentifiersTest()
+        {
+            var dest = new BasicCohortDestination();
+
+            var dt = new DataTable();
+            dt.TableName = "beforeName";
+            dt.Columns.Add("priv");
+            dt.Columns.Add("release");
+
+            dt.Rows.Add("123", 23);
+
+            var result1 = dest.GetDistinctNotNullTable(dt);
+            Assert.AreEqual(dt.TableName,result1.TableName);
+            Assert.AreEqual(1,result1.Rows.Count);
+
+            dt.Rows.Add("123", 23);
+            dt.Rows.Add("123", 23);
+
+            Assert.AreEqual(1,dest.GetDistinctNotNullTable(dt).Rows.Count);
+
+
+            dt.Rows.Add("123", null);
+            var ex = Assert.Throws<Exception>(()=>dest.GetDistinctNotNullTable(dt));
+            Assert.AreEqual("Cohort DataTable contained null row:123,<null>",ex.Message);
+
+            dt.Rows.Clear();
+            dt.Rows.Add("123", 23);
+            dt.Rows.Add(null, DBNull.Value); //row is fully null so gets ignored
+
+            Assert.AreEqual(1, dest.GetDistinctNotNullTable(dt).Rows.Count);
         }
 
         [Test]

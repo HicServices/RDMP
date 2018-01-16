@@ -7,6 +7,7 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections.Arbitrary
 {
@@ -79,6 +80,11 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
             return null;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return _table.GetQuerySyntaxHelper();
         }
     }
 }

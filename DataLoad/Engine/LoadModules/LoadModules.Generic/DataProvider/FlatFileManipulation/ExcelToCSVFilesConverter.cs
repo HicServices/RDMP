@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,18 +18,26 @@ using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataProvider.FlatFileManipulation
 {
+    /// <summary>
+    /// DLE component which converts Microsoft Excel Workbooks into CSV files.  Workbooks can have multiple worksheets in which case 1 csv will be created for
+    /// each worksheet.  Uses Interop to SaveAs csv format so runs faster for large / complex workbooks than using an ExcelAttacher.
+    /// </summary>
+    [Description("Converts between any file format openable by Excel into comma separated format")]
     public class ExcelToCSVFilesConverter: IPluginDataProvider
     {
-
         [DemandsInitialization("Pattern to match Excel files in forLoading directory", Mandatory = true)]
         public string ExcelFilePattern { get; set; }
 
         [DemandsInitialization("Optional,if populated will only extract sheets that match the pattern e.g. '.*data$' will only extract worksheets whose names end with data")]
         public Regex WorksheetPattern { get; set; }
+
+        [DemandsInitialization("Normally a workbook called 'mywb.xlsx' with 2 worksheets 'sheet1' and 'sheet2' will produce csv files called 'sheet1.csv' and 'sheet2.csv'.  Setting this to true will add the workbook name as a prefix 'mywb_sheet1.csv' and 'mywb_sheet2.csv'",defaultValue:false)]
+        public bool PrefixWithWorkbookName { get; set; }
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
         {
@@ -60,12 +69,19 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
             excelApp.ScreenUpdating = false;
             excelApp.DisplayAlerts = false;
 
+            bool foundAtLeastOne = false;
+
             foreach (FileInfo f in job.HICProjectDirectory.ForLoading.GetFiles(ExcelFilePattern))
             {
+                foundAtLeastOne = true;
                 job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to process file " + f.Name));
                 ProcessFile(f,job,excelApp);
             }
 
+            if(!foundAtLeastOne)
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Did not find any files matching Pattern '" + ExcelFilePattern+"' in directory '" + job.HICProjectDirectory.ForLoading.FullName+"'"));
+
+            excelApp.DisplayAlerts = false;
             excelApp.Quit();
             
             return ExitCodeType.Success;
@@ -80,13 +96,18 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
                 if (IsWorksheetNameMatch(w.Name))
                 {
                     job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Started processing worksheet:" + w.Name));
-                    
-                    var newName = SqlSyntaxHelper.GetSensibleTableNameFromString(w.Name) + ".csv";
+
+
+                    string newName = PrefixWithWorkbookName
+                        ? Path.GetFileNameWithoutExtension(fileInfo.FullName) + "_" + w.Name
+                        : w.Name;
+
+                    //make it sensible
+                    newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
 
                     string savePath = Path.Combine(job.HICProjectDirectory.ForLoading.FullName, newName);
 
                     w.SaveAs(savePath, XlFileFormat.xlCSVWindows);
-
                     
                     job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Saved worksheet as "  + newName));
 
@@ -104,21 +125,6 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
                 return true;
 
             return WorksheetPattern.IsMatch(name);
-        }
-
-        public string GetDescription()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDataProvider Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Validate(IHICProjectDirectory destination)
-        {
-            return true;
         }
     }
 }

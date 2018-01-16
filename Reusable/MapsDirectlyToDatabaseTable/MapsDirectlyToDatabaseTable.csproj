@@ -181,7 +181,6 @@
     <Compile Include="UpdateCommandStore.cs" />
     <Compile Include="UsefulProperty.cs" />
     <Compile Include="Versioning\DatabaseVersionProvider.cs" />
-    <Compile Include="Versioning\IExternalDatabasePatcher.cs" />
     <Compile Include="Versioning\InvalidPatchException.cs" />
     <Compile Include="Versioning\MasterDatabaseScriptExecutor.cs" />
     <Compile Include="ISaveable.cs" />

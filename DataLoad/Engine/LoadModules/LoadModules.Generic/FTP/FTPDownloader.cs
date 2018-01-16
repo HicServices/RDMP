@@ -23,8 +23,10 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.FTP
 {
+    /// <summary>
+    /// load component which downloads files from a remote FTP server to the ForLoading directory
+    /// </summary>
     [Description(
-
         @"Checks the HICProjectDirectory for an FTP configuration file (ftp_details.xml).  It then attempts to connect to the FTP server and download all files in the landing folder of the FTP (make sure you really want everything in the root folder - if not then configure redirection on the FTP so you land in the correct directory).  Files are downloaded into the ForLoading folder")]
     public class FTPDownloader : IPluginDataProvider
     {

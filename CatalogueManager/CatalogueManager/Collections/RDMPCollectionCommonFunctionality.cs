@@ -360,7 +360,8 @@ namespace CatalogueManager.Collections
             if (knownDescendancy != null)
                 parent = knownDescendancy.Last();
 
-            if (_pinFilter != null && knownDescendancy != null)
+            //if the descendancy is known 
+            if (_pinFilter != null)
                 _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e.Object, knownDescendancy);
 
             //if it is a root object maintained by this tree and it exists

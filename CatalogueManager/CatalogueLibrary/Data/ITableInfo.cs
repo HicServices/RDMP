@@ -4,6 +4,7 @@ using CatalogueLibrary.Data.EntityNaming;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -14,5 +15,7 @@ namespace CatalogueLibrary.Data
     {
         string GetRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null);
         string GetRuntimeNameFor(INameDatabasesAndTablesDuringLoads namer, LoadBubble namingConvention);
+
+        IQuerySyntaxHelper GetQuerySyntaxHelper();
     }
 }

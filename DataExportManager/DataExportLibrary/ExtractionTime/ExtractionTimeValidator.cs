@@ -10,6 +10,15 @@ using HIC.Common.Validation.Constraints;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See ExecuteDatasetExtractionSource).  Because the columns which 
+    /// are extracted can be a subset of the columns in the Catalogue and can include transforms the validation rules have to be adjusted (some are not applied).
+    /// 
+    /// A count of the number of rows failing validation is stored in VerboseValidationResults (divided by column) and is available for writing to the word
+    /// metadata document that accompanies the extracted records (See WordDataWriter). 
+    /// 
+    /// This is similar to CatalogueConstraintReport (DQE) but is applied to a researchers extract instead of the Catalogue as a whole.
+    /// </summary>
     public class ExtractionTimeValidator
     {
         private readonly ICatalogue _catalogue;
@@ -17,8 +26,6 @@ namespace DataExportLibrary.ExtractionTime
         
         private bool _initialized = false;
   
-
-
         public Validator Validator { get; set; }
         public VerboseValidationResults Results { get; set; }
 

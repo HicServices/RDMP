@@ -184,9 +184,17 @@ namespace DataExportManager.DataRelease
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
-            
-            //and executed
-            engine.ExecutePipeline(new GracefulCancellationToken());
+
+            try
+            {
+                progressUI.ShowRunning(true);
+                //and executed
+                engine.ExecutePipeline(new GracefulCancellationToken());
+            }
+            finally
+            {
+                progressUI.ShowRunning(false);
+            }
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)

@@ -7,6 +7,11 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when 
+    /// an ExtractionConfiguration is executed.  It is also the location where the Release Engine will pick them up from when it bundles together a
+    /// release package.
+    /// </summary>
     public class ExtractionDirectory : IExtractionDirectory
     {
         private readonly DirectoryInfo root;

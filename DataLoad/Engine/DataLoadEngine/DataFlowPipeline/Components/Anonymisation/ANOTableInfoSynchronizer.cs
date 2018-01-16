@@ -7,6 +7,10 @@ using ReusableLibraryCode.Checks;
 
 namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 {
+    /// <summary>
+    /// Checker for validating the anonymisation configuration of a TableInfo.  This includes iterating all columns which have ANOTables configured (See ANOTable)
+    /// and checking that the database has the correct columns / datatypes etc).  Also checks the IdentifierDumper.
+    /// </summary>
     public class ANOTableInfoSynchronizer
     {
         private readonly TableInfo _tableToSync;
@@ -14,13 +18,10 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
         public ANOTableInfoSynchronizer(TableInfo tableToSync)
         {
             _tableToSync = tableToSync;
-            
         }
 
         public void Synchronize(ICheckNotifier notifier)
         {
-            var preLoadDiscardedColumns = _tableToSync.PreLoadDiscardedColumns;
-            
             IdentifierDumper dumper = new IdentifierDumper(_tableToSync);
             dumper.Check(notifier);
 

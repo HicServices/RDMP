@@ -20,6 +20,12 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Destinations
 {
+    /// <summary>
+    /// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform 
+    /// targets (MySql , Sql Server etc).  Normally the SQL Data Types and column names will be computed from the DataTable and a table will be created with the
+    /// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take 
+    /// place.
+    /// </summary>
     public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<DiscoveredDatabase>
     {
         [DemandsInitialization("The logging server to log the upload to (leave blank to not bother auditing)")]
@@ -153,7 +159,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
 
             Dictionary<string, int> currentDatabaseStringSizes = new Dictionary<string, int>();
-            Dictionary<string, Pair<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Pair<int, int>>();
+            Dictionary<string, Tuple<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Tuple<int, int>>();
 
             Dictionary<string, DataTypeComputer> thisBatch = new Dictionary<string, DataTypeComputer>();
 
@@ -236,12 +242,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 if (currentDatabaseDecimalSizes.ContainsKey(kvp.Key))
                 {
                     //if we need more space on either side of the decimal point
-                    if (currentDatabaseDecimalSizes[kvp.Key].First < kvp.Value.numbersBeforeDecimalPlace
+                    if (currentDatabaseDecimalSizes[kvp.Key].Item1 < kvp.Value.numbersBeforeDecimalPlace
                         ||
-                        currentDatabaseDecimalSizes[kvp.Key].Second < kvp.Value.numbersAfterDecimalPlace)
+                        currentDatabaseDecimalSizes[kvp.Key].Item2 < kvp.Value.numbersAfterDecimalPlace)
                     {
-                        int newBeforeDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].First, kvp.Value.numbersBeforeDecimalPlace);
-                        int newAfterDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Second, kvp.Value.numbersAfterDecimalPlace);
+                        int newBeforeDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item1, kvp.Value.numbersBeforeDecimalPlace);
+                        int newAfterDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item2, kvp.Value.numbersAfterDecimalPlace);
 
                         var col = columns.Single(c => c.GetRuntimeName().Equals(kvp.Key));
 

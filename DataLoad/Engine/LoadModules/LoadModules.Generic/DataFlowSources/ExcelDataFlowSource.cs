@@ -26,6 +26,10 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace LoadModules.Generic.DataFlowSources
 {
+    /// <summary>
+    /// Pipeline component for reading from Microsoft Excel files.  Reads only from a single worksheet (by default the first one in the workbook).  Data read
+    /// is returned as a DataTable all read at once in one big batch.  This component requires Microsoft Office to be installed since it uses Interop.
+    /// </summary>
     public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
     {
 

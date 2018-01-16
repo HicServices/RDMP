@@ -16,6 +16,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.DataRelease
 {
+    /// <summary>
+    /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.  This includes making sure that the current configuration
+    /// in the database matches the extracted flat files that are destined for release.  It also checks that the user hasn't snuck some additional files into
+    /// the extract directory etc.
+    /// </summary>
     public class ReleasePotential
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
@@ -27,6 +32,16 @@ namespace DataExportLibrary.DataRelease
         public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue { get; private set; }
 
         public Exception Exception { get; private set; }
+
+        /// <summary>
+        /// The file that contains the dataset data e.g. biochemistry.csv (will be null if no extract files were found)
+        /// </summary>
+        public FileInfo ExtractFile { get; set; }
+
+        /// <summary>
+        /// The file that contains metadata for the dataset e.g. biochemistry.docx (will be null if no extract files were found)
+        /// </summary>
+        public FileInfo MetadataFile { get; set; }
 
         public ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet)
         {
@@ -137,26 +152,26 @@ namespace DataExportLibrary.DataRelease
 
         private bool FilesAreMissing()
         {
-            FileInfo extractFile = new FileInfo(ExtractionResults.Filename);
-            FileInfo metadataFile = new FileInfo(ExtractionResults.Filename.Replace(".csv", ".docx"));
+            ExtractFile = new FileInfo(ExtractionResults.Filename);
+            MetadataFile = new FileInfo(ExtractionResults.Filename.Replace(".csv", ".docx"));
 
-            if (!extractFile.Exists)
+            if (!ExtractFile.Exists)
                 return true;//extract is missing
 
-            if(!extractFile.Extension.Equals(".csv"))
-                throw new Exception("Extraction file had extension '" + extractFile.Extension + "' (expected .csv)");
+            if (!ExtractFile.Extension.Equals(".csv"))
+                throw new Exception("Extraction file had extension '" + ExtractFile.Extension + "' (expected .csv)");
 
-            if (!metadataFile.Exists)
+            if (!MetadataFile.Exists)
                 return true;
             
             //see if there is any other polution in the extract directory
-            FileInfo unexpectedFile = extractFile.Directory.EnumerateFiles().FirstOrDefault(f=>
-                !(f.Name.Equals(extractFile.Name) || f.Name.Equals(metadataFile.Name)));
+            FileInfo unexpectedFile = ExtractFile.Directory.EnumerateFiles().FirstOrDefault(f=>
+                !(f.Name.Equals(ExtractFile.Name) || f.Name.Equals(MetadataFile.Name)));
 
             if(unexpectedFile != null)
                 throw new Exception("Unexpected file found in extract directory " + unexpectedFile.FullName + " (pollution of extract directory is not permitted)");
 
-            DirectoryInfo unexpectedDirectory = extractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
+            DirectoryInfo unexpectedDirectory = ExtractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
                 !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") || d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
 
             if(unexpectedDirectory != null)
@@ -164,6 +179,7 @@ namespace DataExportLibrary.DataRelease
 
             return false;
         }
+        
 
         private bool SqlOutOfSyncWithDataExportManagerConfiguration()
         {

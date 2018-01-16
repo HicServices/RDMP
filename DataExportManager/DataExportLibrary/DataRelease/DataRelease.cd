@@ -1,10 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="This is the database audit, also produced is a flat file audit (for reciept by the customers)">
-    <Position X="12.625" Y="1.323" Height="0.75" Width="1.7" />
+  <Comment CommentText="Creates ReleaseLogEntry">
+    <Position X="10.659" Y="0.986" Height="0.355" Width="1.637" />
   </Comment>
-  <Class Name="DataExportLibrary.Data.DataTables.CumulativeExtractionResults">
-    <Position X="4.75" Y="3.25" Width="3.25" />
+  <Comment CommentText="One Per ExtractionConfiguration">
+    <Position X="4.859" Y="6.911" Height="0.295" Width="2.058" />
+  </Comment>
+  <Comment CommentText="One Per ExtractableDataSet">
+    <Position X="4.763" Y="11.002" Height="0.295" Width="3.215" />
+  </Comment>
+  <Comment CommentText="Database (Persistence) Layer">
+    <Position X="0.5" Y="0.5" Height="0.406" Width="15.75" />
+  </Comment>
+  <Comment CommentText="Execution Logic Layer">
+    <Position X="0.5" Y="3.634" Height="0.406" Width="15.75" />
+  </Comment>
+  <Comment CommentText="One Per ExtractableDataSet">
+    <Position X="4.523" Y="2.821" Height="0.295" Width="3.215" />
+  </Comment>
+  <Comment CommentText="One Per CumulativeExtractionResult (once Released)">
+    <Position X="8.045" Y="2.629" Height="0.295" Width="3.215" />
+  </Comment>
+  <Comment CommentText="Pipeline/UseCase Layer - Uses above components to complete it's task">
+    <Position X="0.512" Y="11.697" Height="0.295" Width="6.09" />
+  </Comment>
+  <Class Name="DataExportLibrary.Data.DataTables.CumulativeExtractionResults" Collapsed="true">
+    <Position X="4.5" Y="2" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>BAAAggQACAAAQAUkAAAAABAAAQCEAAAqACBAAJAABAA=</HashCode>
       <FileName>Data\DataTables\CumulativeExtractionResults.cs</FileName>
@@ -12,7 +37,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataExportLibrary.Data.DataTables.ExtractionConfiguration" Collapsed="true">
-    <Position X="9.25" Y="3.75" Width="2.75" />
+    <Position X="1.25" Y="1.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>gBwGIAAKARRgIiSmgREAKIQRBBIABJEAAgJIoBAghgk=</HashCode>
       <FileName>Data\DataTables\ExtractionConfiguration.cs</FileName>
@@ -20,7 +45,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataExportLibrary.Data.DataTables.ExtractableDataSet" Collapsed="true">
-    <Position X="9.25" Y="2" Width="2.25" />
+    <Position X="1.25" Y="2.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAABEAAAEEAEAAQCAAAACAAIBAAIAAAABAAAABg=</HashCode>
       <FileName>Data\DataTables\ExtractableDataSet.cs</FileName>
@@ -28,7 +53,10 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataExportLibrary.DataRelease.ReleaseEnvironmentPotential">
-    <Position X="16.5" Y="2.25" Width="2.25" />
+    <Position X="4.75" Y="4.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>AAAAAAEAAABAAAIAAAAACAAAAAAAAAAAgABAAAAAAAg=</HashCode>
       <FileName>DataRelease\ReleaseEnvironmentPotential.cs</FileName>
@@ -38,26 +66,35 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="DataExportLibrary.DataRelease.ReleaseEngine">
-    <Position X="0.5" Y="0.75" Width="3.75" />
+    <Position X="0.5" Y="4.25" Width="3.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AIABARAACABAAgAIAAAACAAhAEAAAAAAACABAgAABAA=</HashCode>
+      <HashCode>EIABRBAAAABCAwAIAAAECAAhAEBAAgCBACEDAgACBAA=</HashCode>
       <FileName>DataRelease\ReleaseEngine.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataExportLibrary.DataRelease.ReleasePotential">
-    <Position X="8.5" Y="5" Width="3.25" />
+    <Position X="4.75" Y="7.75" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
       <HashCode>gBAAAAgAAgBBAiiEAAAgBAAAAQAIAAIAgABAAgAAAAg=</HashCode>
       <FileName>DataRelease\ReleasePotential.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Assesment" />
+    </ShowAsAssociation>
   </Class>
-  <Class Name="DataExportLibrary.DataRelease.Audit.ReleaseLogEntry">
-    <Position X="12.75" Y="3.25" Width="2.75" />
+  <Class Name="DataExportLibrary.DataRelease.Audit.ReleaseLogEntry" Collapsed="true">
+    <Position X="8" Y="2" Width="2.75" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
       <HashCode>AAACAAAAAABAAAAEIQQAAIAAAAAAAAAACAEAgAAAAgA=</HashCode>
@@ -66,22 +103,63 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataExportLibrary.DataRelease.Audit.ReleaseLogWriter" Collapsed="true">
-    <Position X="12.75" Y="2.25" Width="2" />
+    <Position X="8.5" Y="1" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAIAAAAAAAIAAAAAIAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataRelease\Audit\ReleaseLogWriter.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="DataExportLibrary.DataRelease.ReleasePipeline.ReleaseUseCase">
+    <Position X="3.5" Y="12.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAEAACAAAABAAAAAAAAAACAAAAAAAIA=</HashCode>
+      <FileName>DataRelease\ReleasePipeline\ReleaseUseCase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataExportLibrary.DataRelease.ReleasePipeline.ReleaseData">
+    <Position X="0.5" Y="12.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>DataRelease\ReleasePipeline\ReleaseData.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="EnvironmentPotential" />
+      <Property Name="ReleaseState" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DataExportLibrary.DataRelease.ReleasePipeline.FixedDataReleaseSource">
+    <Position X="6.5" Y="12.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAwAAGAAACAAAAAAAAAAEAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataRelease\ReleasePipeline\FixedDataReleaseSource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.DataRelease.ReleasePipeline.BasicDataReleaseDestination">
+    <Position X="9.75" Y="12.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAwAACAAACAAACAEAAAAAAAGAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Enum Name="DataExportLibrary.DataRelease.Releaseability">
-    <Position X="8.5" Y="10" Width="3" />
+    <Position X="9.25" Y="8" Width="3" />
     <TypeIdentifier>
       <HashCode>AAABAAAQAAAAAAAAAQAAACAAAAAAAEAIAAAEAAAAAAA=</HashCode>
       <FileName>DataRelease\ReleasePotential.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="Ticketing.TicketingReleaseabilityEvaluation">
-    <Position X="20" Y="2.25" Width="3.5" />
+    <Position X="8.25" Y="4.75" Width="3.5" />
     <TypeIdentifier />
+  </Enum>
+  <Enum Name="DataExportLibrary.DataRelease.ReleasePipeline.ReleaseState">
+    <Position X="0.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAACAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>DataRelease\ReleasePipeline\ReleaseState.cs</FileName>
+    </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

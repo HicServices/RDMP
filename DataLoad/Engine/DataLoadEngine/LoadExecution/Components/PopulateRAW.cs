@@ -16,11 +16,14 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components
 {
+    /// <summary>
+    /// DLE component responsible for creating the RAW (first database in the RAW=>STAGING=>LIVE model of DLE loading) database (if required).  Also runs
+    /// all LoadStage.Mounting and components.
+    /// </summary>
     public class PopulateRAW : CompositeDataLoadComponent
     {
         private readonly HICDatabaseConfiguration _databaseConfiguration;
-        private readonly Stack<IDisposeAfterDataLoad> _toDispose = new Stack<IDisposeAfterDataLoad>();
-
+        
         public PopulateRAW(List<IRuntimeTask> collection,HICDatabaseConfiguration databaseConfiguration):base(collection.Cast<IDataLoadComponent>().ToList())
         {
             _databaseConfiguration = databaseConfiguration;
@@ -42,14 +45,6 @@ namespace DataLoadEngine.LoadExecution.Components
                 VerifyExistenceOfRawData(job);
 
             return toReturn;
-        }
-
-        public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
-        {
-            base.LoadCompletedSoDispose(exitCode,postLoadEventListener);
-
-            while (_toDispose.Any())
-                _toDispose.Pop().LoadCompletedSoDispose(exitCode,postLoadEventListener);
         }
 
         private bool MustCreateRawDatabase()

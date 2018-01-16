@@ -12,6 +12,11 @@ using RDMPAutomationService.Interfaces;
 
 namespace RDMPAutomationService
 {
+    /// <summary>
+    /// Flow object (T) for Automation Pipelines.  Represents a discrete System.Threading.Tasks.Task created for an IAutomateable (Task will simply run the 
+    /// IAutomateable.RunTask method).  Also includes classes for monitoring/updating the job status (Running, Crashed etc) as well as what AutomationJobType it is
+    /// etc.  See Automation.cd
+    /// </summary>
     public class OnGoingAutomationTask
     {
         public Task Task { get; private set; }

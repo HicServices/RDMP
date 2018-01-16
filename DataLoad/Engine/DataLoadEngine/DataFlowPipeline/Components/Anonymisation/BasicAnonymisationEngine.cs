@@ -14,7 +14,11 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 {
-    [Description("Anonymises a DataTable in memory according to the implementational details recorded in the TableInfo, note that this does not do dillution currently")]
+    /// <summary>
+    /// Pipeline component for anonymising DataTable batches in memory according to the configuration of ANOTables / PreLoadDiscardedColumn(s) in the TableInfo.
+    /// Actual functionality is implemented in IdentifierDumper and ANOTransformer(s).
+    /// </summary>
+    [Description("Anonymises a DataTable in memory according to the configuration of ANOTables / PreLoadDiscardedColumn(s) in the TableInfo")]
     public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipelineRequirement<TableInfo>
     {
         private bool _bInitialized = false;
@@ -24,7 +28,6 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
         IdentifierDumper _dumper;
         
         public TableInfo TableToLoad { get; set; }
-
 
         public void PreInitialize(TableInfo target,IDataLoadEventListener listener)
         {

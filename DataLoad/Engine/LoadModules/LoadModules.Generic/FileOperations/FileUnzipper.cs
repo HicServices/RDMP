@@ -21,6 +21,9 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.FileOperations
 {
+    /// <summary>
+    /// load component which Unzips files in ForLoading
+    /// </summary>
     [Description(
         @"Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then it is overwritten (unless the file size is also the same in which case the entry is skipped) ")]
     public class FileUnzipper : IPluginDataProvider

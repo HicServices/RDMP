@@ -4,6 +4,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See Project
+    /// </summary>
     public interface IProject:IMapsDirectlyToDatabaseTable
     {
         string Name { get; set; }

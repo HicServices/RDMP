@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Web.Security.AntiXss;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Repositories;
-using ReusableLibraryCode.Reflection;
 
 namespace CatalogueLibrary.Data.Pipelines
 {

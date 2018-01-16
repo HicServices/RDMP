@@ -88,7 +88,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             var otherTestRunner = new RDMPFormInitializationTests();
             otherTestRunner.FindUninitializedForms(csFilesFound);
 
-            var propertyChecker = new SuspiciousRelationshipPropertyUse();
+            var propertyChecker = new SuspiciousRelationshipPropertyUse(CatalogueRepository.MEF);
             propertyChecker.FindPropertyMisuse(csFilesFound);
 
             var weakChecks = new SuspiciousEmptyChecksMethodsOrNotICheckablePlugins();

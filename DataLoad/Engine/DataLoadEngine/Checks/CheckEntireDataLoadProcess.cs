@@ -11,6 +11,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Checks
 {
+    /// <summary>
+    /// Checks a LoadMetadata it is in a fit state to be executed (does it have primary keys, backup trigger etc).
+    /// </summary>
     public class CheckEntireDataLoadProcess :  ICheckable, IDataLoadEventListener
     {
         private readonly HICDatabaseConfiguration _databaseConfiguration;

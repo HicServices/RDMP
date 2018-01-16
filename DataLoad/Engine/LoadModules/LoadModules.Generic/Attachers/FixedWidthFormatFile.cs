@@ -6,6 +6,10 @@ using LoadModules.Generic.Exceptions;
 
 namespace LoadModules.Generic.Attachers
 {
+    /// <summary>
+    /// User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character positions of each named field and date
+    /// format (where applicable).
+    /// </summary>
     public class FixedWidthFormatFile
     {
         private readonly FileInfo _pathToFormatFile;

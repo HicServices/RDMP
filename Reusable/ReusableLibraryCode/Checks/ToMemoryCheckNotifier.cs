@@ -4,6 +4,11 @@ using System.Linq;
 
 namespace ReusableLibraryCode.Checks
 {
+    /// <summary>
+    /// ICheckNotifier which records all CheckEventArgs received into a public List for later evaluation.  Primarily for use in testing to check for specific 
+    /// messages.  Can also be used with a ReplayCheckable in order to check a component (or multiple components) and then at a later time replay the events into
+    /// a UI.
+    /// </summary>
     public class ToMemoryCheckNotifier : ICheckNotifier
     {
         private readonly ICheckNotifier _childToPassEventsTo;

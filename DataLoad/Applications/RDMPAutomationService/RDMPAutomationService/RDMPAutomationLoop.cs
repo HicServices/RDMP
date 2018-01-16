@@ -16,6 +16,9 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService
 {
+    /// <summary>
+    /// The main Automation loop class.  Manages running all AutomationPipelines, picking an available AutomationServiceSlot, shutting down cleanly etc.
+    /// </summary>
     public class RDMPAutomationLoop
     {
         /// <summary>

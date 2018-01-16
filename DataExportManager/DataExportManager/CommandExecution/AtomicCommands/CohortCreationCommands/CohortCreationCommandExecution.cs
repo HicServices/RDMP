@@ -106,7 +106,15 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             {
                 var logManager = new LogManager(loggingServer);
                 logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
-                configureAndExecuteDialog.SetAdditionalProgressListener(new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description));
+
+                //create a db listener 
+                var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,ExtractableCohort.CohortLoggingTask, description);
+
+                //make all messages go to both the db and the UI
+                configureAndExecuteDialog.SetAdditionalProgressListener(toDbListener);
+
+                //after executing the pipeline finalise the db listener table info records
+                configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (s,e)=>toDbListener.FinalizeTableLoadInfos();
             }
 
             return configureAndExecuteDialog;

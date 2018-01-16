@@ -19,6 +19,10 @@ using RDMPAutomationService.Interfaces;
 
 namespace RDMPAutomationService.Logic.DLE
 {
+    /// <summary>
+    /// Automation task that runs a single data load (LoadMetadata) that is is based on a LoadProgress which has a cache and the cache has available data to load
+    /// (and is not locked etc).
+    /// </summary>
     class AutomatedDLELoadFromCache:IAutomateable
     {
         private AutomationServiceSlot _slottedService;
@@ -61,7 +65,7 @@ namespace RDMPAutomationService.Logic.DLE
                 var loadFlags = new HICLoadConfigurationFlags();
 
                 var loadStrategy = new SingleLoadProgressSelectionStrategy(_cacheBasedLoadWeCanRun);
-                var dayStrategy = new JobDateGenerationStrategyFactory(loadStrategy, databaseConfiguration);
+                var dayStrategy = new JobDateGenerationStrategyFactory(loadStrategy);
                 var logManager = new LogManager(lmd.GetDistinctLoggingDatabaseSettings());
             
                 var preExecutionChecker = new PreExecutionChecker(lmd, databaseConfiguration);

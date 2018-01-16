@@ -81,10 +81,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
             base.Execute();
 
-            new ProjectCohortIdentificationConfigurationAssociation(Activator.RepositoryLocator.DataExportRepository,_project, _cic);
+            var assoc = new ProjectCohortIdentificationConfigurationAssociation(Activator.RepositoryLocator.DataExportRepository,_project, _cic);
             
             Publish(_project);
             Publish(_cic);
+
+            Activator.WindowArranger.SetupEditAnything(this,assoc);
         }
 
         public Image GetImage(IIconProvider iconProvider)

@@ -11,6 +11,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
 {
+    /// <summary>
+    /// See DataLoadJob
+    /// </summary>
     public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     {
         string Description { get; }

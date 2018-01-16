@@ -11,47 +11,38 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// Runtime realisation of a ProcessTask.  ProcessTask is the DesignTime template configured by the user.  RuntimeTask is the 'ready to execute' version.
+    /// There are two main kinds of RuntimeTask in the RDMP data load engine (See DataLoadEngine.cd).
+    /// 
+    /// The first are those that host a class instance (IMEFRuntimeTask) e.g. IAttacher, IDataProvider.  In this case the ProcessTask is expected to be configured
+    /// with the class Type and have IArguments that specify all values for hydrating the instance created (See ProcessTaskArgument).
+    /// 
+    /// The second are those that do not have a MEF class powering them.  This includes ProcessTaskTypes like Executable and SQLFile where the ProcessTask.Path
+    /// is simply the location of the exe/sql file to run at runtime. 
+    /// </summary>
     public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask
     {
         public RuntimeArgumentCollection RuntimeArguments { get; set; }
+        public IProcessTask ProcessTask { get; set; }
         
-        public int? RelatesSolelyToCatalogue_ID { get; set; }
-
-        public IEnumerable<IArgument> GetAllArguments()
-        {
-            return RuntimeArguments.Arguments;
-        }
-
         public abstract bool Exists();
-
-        public bool RunContinuously { get; set; }
-        public string Path { get; set; }
-        public string Name { get; private set; }
-        public LoadStage LoadStage { get; private set; }
-        public ProcessTaskType ProcessTaskType { get; protected set; }
-        public int Order { get; set; }
 
         public abstract void Abort(IDataLoadEventListener postLoadEventListener);
 
         protected RuntimeTask(IProcessTask processTask, RuntimeArgumentCollection args)
         {
-            RunContinuously = false;
-            ProcessTaskType = processTask.ProcessTaskType;
-            Path = processTask.Path;
+            ProcessTask = processTask;
             RuntimeArguments = args;
-            Name = processTask.Name;
-            LoadStage = processTask.LoadStage;
-            Order = processTask.Order;
-            RelatesSolelyToCatalogue_ID = processTask.RelatesSolelyToCatalogue_ID;
         }
 
         public void SetPropertiesForClass(RuntimeArgumentCollection args, object toSetPropertiesOf)
         {
             if (toSetPropertiesOf == null)
-                throw new NullReferenceException("Attacher has not been created yet! Call SetProperties after the factory has created the attacher.");
+                throw new NullReferenceException(ProcessTask.Path + " instance has not been created yet! Call SetProperties after the factory has created the instance.");
             
             if (UsefulStuff.IsAssignableToGenericType(toSetPropertiesOf.GetType(),typeof (IPipelineRequirement<>)))
-                throw new Exception("ProcessTask '" + Name + "' was was an instance of Class '" + Path + "' which declared an IPipelineRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
+                throw new Exception("ProcessTask '" + ProcessTask.Name + "' was was an instance of Class '" + ProcessTask.Path + "' which declared an IPipelineRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
 
             //get all possible properties that we could set
             foreach (var propertyInfo in toSetPropertiesOf.GetType().GetProperties())

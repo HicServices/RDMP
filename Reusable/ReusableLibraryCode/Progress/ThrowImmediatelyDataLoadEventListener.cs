@@ -2,6 +2,10 @@
 
 namespace ReusableLibraryCode.Progress
 {
+    /// <summary>
+    /// IDataLoadEventListener that ignores all OnProgress messages but responds to OnNotify events of ProgressEventType.Error (and optionally Warning) by 
+    /// raising an Exception.  Use this if you need an IDataLoadEventListener and don't care about the messages it sends (unless they are errors).
+    /// </summary>
     public class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListener
     {
         /// <summary>

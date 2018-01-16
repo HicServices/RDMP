@@ -10,6 +10,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Contains all the DatabaseType specific implementation logic required by DiscoveredServer.
+    /// </summary>
     public interface IDiscoveredServerHelper
     {
         DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null);

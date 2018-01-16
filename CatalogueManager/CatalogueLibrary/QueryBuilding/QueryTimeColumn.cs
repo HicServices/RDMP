@@ -182,7 +182,7 @@ namespace CatalogueLibrary.QueryBuilding
                 if(hashingPattern == null)
                     throw new Exception("Hashing Pattern is null but column is marked for HashOnDataRelease");
                     
-                toReturn = SqlSyntaxHelper.WrapStringWithHashingAlgorithm(hashingPattern,toReturn, salt);
+                toReturn = String.Format(hashingPattern,toReturn, salt);
             }
 
             // the SELECT SQL may span multiple lines, so collapse it to a single line cleaning up any whitespace issues, e.g. to avoid double spaces in the collapsed version

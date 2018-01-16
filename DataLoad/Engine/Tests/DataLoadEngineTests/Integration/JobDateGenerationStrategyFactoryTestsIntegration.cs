@@ -43,7 +43,7 @@ namespace DataLoadEngineTests.Integration
 
 
             _server = new DiscoveredServer(new SqlConnectionStringBuilder("server=localhost;initial catalog=fish"));
-            _factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(_lp), new HICDatabaseConfiguration(_server));
+            _factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(_lp));
         }
 
         [Test]

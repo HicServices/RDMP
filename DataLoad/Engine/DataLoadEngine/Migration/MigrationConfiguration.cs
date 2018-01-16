@@ -8,6 +8,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Migration
 {
+    /// <summary>
+    /// Converts a list of TableInfos into MigrationColumnSets to achieve migration of records from STAGING to LIVE during a DLE execution.
+    /// </summary>
     public class MigrationConfiguration
     {
         private readonly DiscoveredDatabase _fromDatabaseInfo;

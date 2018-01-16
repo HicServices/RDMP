@@ -232,8 +232,11 @@ namespace ResearchDataManagementPlatform.Menus
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
-            var imagesDictionary = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager).ToStringDictionary();
-            report.GenerateReport(new PopupChecksUI("Generating class summaries", false), imagesDictionary);
+            report.GenerateReport(
+                new PopupChecksUI("Generating class summaries", false),
+                _activator.CoreIconProvider,
+                typeof(Catalogue).Assembly,
+                typeof(ExtractionConfiguration).Assembly);
         }
 
         private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)

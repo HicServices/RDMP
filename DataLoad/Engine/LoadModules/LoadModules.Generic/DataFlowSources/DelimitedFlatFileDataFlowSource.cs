@@ -22,6 +22,10 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowSources
 {
+    /// <summary>
+    /// Pipeline component (source) for reading from a flat file delimited by by a specific character (or string) e.g. csv.  The file is batch processed into
+    /// DataTables of size MaxBatchSize (to avoid memory problems in large files).
+    /// </summary>
     [Description("Reads a single flat file and splits the lines read into cells based on the Separator character(s).  Values read are fed into the pipeline as a DataTable with the Name of the DataTable being the name of the file being read.  Example usage would be setting the separator to , to read CSV files.")]
     public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
     {

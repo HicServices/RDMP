@@ -25,11 +25,11 @@ namespace DataExportLibrary.ExtractionTime
     /// </summary>
     public class WordDataWriter : RequiresMicrosoftOffice
     {
-        public ExtractionPipelineHost Executer { get; set; }
+        public ExtractionPipelineUseCase Executer { get; set; }
 
         public List<Exception> ExceptionsGeneratingWordFile = new List<Exception>();
 
-        public WordDataWriter(ExtractionPipelineHost executer)
+        public WordDataWriter(ExtractionPipelineUseCase executer)
         {
             if(executer == null)
                 throw new NullReferenceException("Cannot write meta data without the accompanying ExtractionPipelineHost");
@@ -57,7 +57,7 @@ namespace DataExportLibrary.ExtractionTime
         {
             lock (oLockOnWordUsage)
             {
-                string outputFilename = Path.Combine(_destination.DirectoryPopulated.FullName, Executer.Source.Request.DatasetBundle.DataSet + ".docx");
+                string outputFilename = Path.Combine(_destination.DirectoryPopulated.FullName, _destination.GetFilename() + ".docx");
 
                 using (DocX document = DocX.Create(outputFilename))
                 {

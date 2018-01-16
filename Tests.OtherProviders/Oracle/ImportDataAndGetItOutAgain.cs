@@ -1,9 +1,12 @@
 ﻿using System.IO;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using Diagnostics.TestData.Exercises;
+using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -42,7 +45,14 @@ namespace Tests.OtherProviders.Oracle
             var listener = new ThrowImmediatelyDataLoadEventListener();
             var canceller = new GracefulCancellationTokenSource();
 
-            CsvDataTableHelper source = new CsvDataTableHelper(testFile);
+            var source = new DelimitedFlatFileDataFlowSource
+            {
+                Separator = ","
+            };
+
+            source.PreInitialize(new FlatFileToLoad(new FileInfo(testFile)), new ThrowImmediatelyDataLoadEventListener());//this is the file we want to load
+            source.Check(new ThrowImmediatelyCheckNotifier());
+
             DiscoveredDatabase db = server.ExpectDatabase(dbName);
 
             //cleanup

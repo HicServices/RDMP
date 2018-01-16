@@ -35,7 +35,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                 _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
                 _configuration.SaveToDatabase();
                 
-                ExtractionPipelineHost execute;
+                ExtractionPipelineUseCase execute;
                 IExecuteDatasetExtractionDestination result;
 
                 base.Execute(out execute, out result);

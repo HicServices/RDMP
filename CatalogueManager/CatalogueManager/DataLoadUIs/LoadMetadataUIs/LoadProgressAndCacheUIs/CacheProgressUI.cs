@@ -55,10 +55,20 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
+            objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
 
             _cacheProgress = databaseObject;
-            PopulateCacheProgressPanel(_cacheProgress);
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            
+            ragSmiley1.Reset();
+
+            try
+            {
+                PopulateCacheProgressPanel(_cacheProgress);
+            }
+            catch (Exception e)
+            {
+                ragSmiley1.Fatal(e);
+            }
         }
 
         private void PopulateCacheProgressPanel(ICacheProgress cacheProgress)

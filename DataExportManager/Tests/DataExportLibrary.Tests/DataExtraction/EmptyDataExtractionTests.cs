@@ -43,7 +43,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             
             TruncateDataTable();
 
-            var host = new ExtractionPipelineHost(_request,p,DataLoadInfo.Empty);
+            var host = new ExtractionPipelineUseCase(_request,p,DataLoadInfo.Empty);
 
             var engine = host.GetEngine(p, new ThrowImmediatelyDataLoadEventListener());
             host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
@@ -75,7 +75,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             TruncateDataTable();
             AllowEmptyExtractions = true;
 
-            ExtractionPipelineHost execute;
+            ExtractionPipelineUseCase execute;
             IExecuteDatasetExtractionDestination result;
 
             Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));

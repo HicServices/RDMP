@@ -17,6 +17,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// RuntimeTask that executes a single stored procedure specified by the user in ProcessTask.Path.  The StoredProcedure must be declared in the database
+    /// appropriate to the stage the ProcessTask is executing at e.g. if it is in AdjustRAW then the proc must be declared in the RAW database.
+    /// </summary>
     public class StoredProcedureRuntimeTask : RuntimeTask
     {
         private readonly CatalogueRepository _repository;
@@ -33,7 +37,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
 
         override public ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + Name + "'"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
 
             using (var con = _repository.GetConnection())
             {

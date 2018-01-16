@@ -4,7 +4,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
-    public class DiscoveredColumn:IColumnMetadata,IHasFullyQualifiedNameToo
+    /// <summary>
+    /// Cross database type reference to a Column in a Table
+    /// </summary>
+    public class DiscoveredColumn:IHasFullyQualifiedNameToo
     {
         public IDiscoveredColumnHelper Helper;
         internal readonly DiscoveredTable Table;

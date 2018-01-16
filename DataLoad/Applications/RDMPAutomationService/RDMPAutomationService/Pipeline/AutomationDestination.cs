@@ -8,6 +8,11 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Pipeline
 {
+    /// <summary>
+    /// Starts OnGoingAutomationTasks identified by IAutomationSources.  There is a single instance of AutomationDestination regardless of how many 
+    /// IAutomationSources / Automation pipelines there are running.  Handles fatal crashes of IAutomateables, pruning completed tasks and determining
+    /// if it is safe to stop the AutomationService (all running IAutomateables have completed/crashed/cancelled).
+    /// </summary>
     public class AutomationDestination : IDataFlowDestination<OnGoingAutomationTask>
     {
         public List<OnGoingAutomationTask> OnGoingTasks = new List<OnGoingAutomationTask>();

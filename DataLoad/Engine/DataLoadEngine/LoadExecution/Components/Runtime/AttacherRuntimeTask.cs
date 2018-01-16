@@ -16,6 +16,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime
 {
+    /// <summary>
+    /// RuntimeTask that hosts an IAttacher.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+    /// RuntimeArgumentCollection
+    /// </summary>
     public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         public IAttacher Attacher { get; private set; }
@@ -32,9 +36,9 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             if (string.IsNullOrWhiteSpace(task.Path))
                 throw new ArgumentException("Path is blank for ProcessTask '" + task + "' - it should be a class name of type " + typeof(IAttacher).Name);
 
-            Attacher = mef.FactoryCreateA<IAttacher>(Path);
+            Attacher = mef.FactoryCreateA<IAttacher>(ProcessTask.Path);
             SetPropertiesForClass(RuntimeArguments, Attacher);
-            Attacher.Initialize(new HICProjectDirectory(args.StageSpecificArguments.RootDir, false), RuntimeArguments.StageSpecificArguments.DbInfo);
+            Attacher.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
         }
 
 
@@ -42,8 +46,8 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
         {
             
             var stringBefore = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Builder.ConnectionString;
-            
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + Name + "'"));
+
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Attacher class is:" + Attacher.GetType().FullName));
 
             try
@@ -73,7 +77,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
 
         public override bool Exists()
         {
-            var className = Path;
+            var className = ProcessTask.Path;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             
             foreach (var assembly in assemblies)

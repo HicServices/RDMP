@@ -2,6 +2,8 @@
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -34,6 +36,11 @@ namespace CatalogueLibrary.Data
 
             //this class is it's own credentials
             return this;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return new QuerySyntaxHelperFactory().Create(DatabaseType);
         }
     }
 }

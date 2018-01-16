@@ -26,10 +26,11 @@ namespace CatalogueLibrary.Data
 
         public string GetKeyFileLocation()
         {
-            using (var con = _repository.GetConnection())
+            using (var con = _repository.DiscoveredServer.GetConnection())
             {
+                con.Open();
                 //Table can only ever have 1 record
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con.Connection,con.Transaction);
+                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con);
                 return cmd.ExecuteScalar() as string;
             }
         }

@@ -14,6 +14,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllAutomationServerSlotsNode,
         AutomationServiceSlot,
         AutomateablePipeline,
+        AutomationServiceException,
         AllRDMPRemotesNode,
         RemoteRDMP,
         Favourite,
@@ -57,6 +58,8 @@ namespace CatalogueManager.Icons.IconProvision
         ExtractionFilterParameterSet,
         ParametersNode,
 
+        AggregateTopX,
+        AggregateContinuousDateAxis,
         AggregatesNode,
         AggregateGraph,
 

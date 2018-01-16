@@ -6,6 +6,11 @@ using RDMPAutomationService;
 
 namespace RDMPAutomationService
 {
+    /// <summary>
+    /// Wrapper for AutoRDMP when running as a Windows Service (inherits from ServiceBase).  Handles all the Windows Service based functionality (logging service 
+    /// events, starting stoping etc) passing on calls to OnStart / OnStop to AutoRDMP etc (OnStart / OnStop occur when a user tries to shutdown/start a windows
+    /// service).
+    /// </summary>
     public class RDMPAutomationService : ServiceBase
     {
         private EventLog eventLogger;

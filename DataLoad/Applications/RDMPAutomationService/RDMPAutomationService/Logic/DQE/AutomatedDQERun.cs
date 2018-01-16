@@ -2,6 +2,7 @@
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Reports;
 using RDMPAutomationService.Interfaces;
@@ -9,6 +10,9 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.DQE
 {
+    /// <summary>
+    /// Automation task that runs a the Data Quality Engine on a single Catalogue.
+    /// </summary>
     public class AutomatedDQERun : IAutomateable
     {
         private readonly AutomationServiceSlot _slottedService;
@@ -34,7 +38,7 @@ namespace RDMPAutomationService.Logic.DQE
         {
             try
             {
-                new CatalogueConstraintReport(_catalogueToRun, MigrationColumnSet.DataLoadRunField).GenerateReport(_catalogueToRun, new ToMemoryDataLoadEventListener(true), task.CancellationTokenSource.Token,task.Job);
+                new CatalogueConstraintReport(_catalogueToRun, SpecialFieldNames.DataLoadRunID).GenerateReport(_catalogueToRun, new ToMemoryDataLoadEventListener(true), task.CancellationTokenSource.Token,task.Job);
 
                 //if it suceeded
                 if (task.Job.LastKnownStatus == AutomationJobStatus.Finished)

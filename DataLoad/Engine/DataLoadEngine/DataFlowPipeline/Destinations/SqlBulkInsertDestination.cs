@@ -8,6 +8,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using HIC.Logging;
 using Microsoft.SqlServer.Management.Smo;
@@ -81,8 +82,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     problemsWithColumnSets = true;
                 }
             foreach (DiscoveredColumn columnInDestination in listColumns)
-                if (columnInDestination.GetRuntimeName().Equals(MigrationColumnSet.DataLoadRunField) ||
-                    columnInDestination.GetRuntimeName().Equals(MigrationColumnSet.ValidFromField))
+                if (columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
+                    columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
                     //its fine if validFrom/DataLoadRunID columns are missing
                     continue;//its fine
                 else

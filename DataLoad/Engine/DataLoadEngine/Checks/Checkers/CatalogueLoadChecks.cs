@@ -4,6 +4,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution;
@@ -263,7 +264,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckStagingToLiveMigrationForTable(DiscoveredDatabase staging, string[] stagingCols, DiscoveredDatabase live, string[] liveCols, TableInfo tableInfo, IEnumerable<IColumnMetadata> columnInfos, LoadBubble source, LoadBubble destination, ICheckNotifier notifier)
+        private void CheckStagingToLiveMigrationForTable(DiscoveredDatabase staging, string[] stagingCols, DiscoveredDatabase live, string[] liveCols, TableInfo tableInfo, IEnumerable<IColumnInfo> columnInfos, LoadBubble source, LoadBubble destination, ICheckNotifier notifier)
         {
             if (destination != LoadBubble.Live)
                 throw new Exception("Expected destination to be a live table");
@@ -308,13 +309,13 @@ namespace DataLoadEngine.Checks.Checkers
                         "Column " + col + " is an identity column and is in STAGING, the identity flag must be removed from the STAGING table", CheckResult.Fail, null));//complain since don't want a mismatch between IDs in staging and live or complaints about identity insert from SQL server
 
             //staging must allow null dataloadrunids and validfroms
-            ConfirmNullability(staging, nameOfTableInSourceDatabase, MigrationColumnSet.DataLoadRunField, true,notifier);
-            ConfirmNullability(staging, nameOfTableInSourceDatabase, MigrationColumnSet.ValidFromField, true,notifier);
+            ConfirmNullability(staging, nameOfTableInSourceDatabase, SpecialFieldNames.DataLoadRunID, true,notifier);
+            ConfirmNullability(staging, nameOfTableInSourceDatabase, SpecialFieldNames.ValidFrom, true,notifier);
 
             //live must allow nulls in validFrom
-            ConfirmNullability(live, nameOfTableInDestinationDatabase, MigrationColumnSet.ValidFromField, true,notifier);
+            ConfirmNullability(live, nameOfTableInDestinationDatabase, SpecialFieldNames.ValidFrom, true, notifier);
             //because it has a default of today
-            ConfirmDefaultPresent(live, nameOfTableInDestinationDatabase, MigrationColumnSet.ValidFromField, true,notifier);
+            ConfirmDefaultPresent(live, nameOfTableInDestinationDatabase, SpecialFieldNames.ValidFrom, true, notifier);
 
         }
 
