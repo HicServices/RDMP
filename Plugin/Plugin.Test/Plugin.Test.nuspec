@@ -14,6 +14,6 @@
         <copyright>Copyright 2018</copyright>
     </metadata>
     <files>
-        <file src="Tests.Common\TestDatabases.txt" target="content" />
+        <file src="..\..\Tests.Common\TestDatabases.txt" target="content" />
     </files>
 </package>
