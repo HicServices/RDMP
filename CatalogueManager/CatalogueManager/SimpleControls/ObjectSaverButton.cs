@@ -216,7 +216,10 @@ namespace CatalogueManager.SimpleControls
                 if(MessageBox.Show(_o + " is out of date with database, would you like to reload a fresh copy?","Object Changed",MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     _o.RevertToDatabaseState();
-                    _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+                    
+                    //if we are not in the middle of a publish already
+                    if (!_refreshBus.PublishInProgress)
+                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
                 }
         }
 
