@@ -32,11 +32,12 @@
             <dependency id="SSH.NET" version="2013.4.7" />
             <dependency id="Mono.Reflection" version="1.1.0" />
             <dependency id="RhinoMocks" version="3.6.1" />
-            <dependency id="NUnit" version="2.6.4" />
+            <dependency id="NUnit" version="[2.6.4]" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
         </dependencies>
     </metadata>
     <files>
         <file src="..\..\Tests.Common\TestDatabases.txt" target="content" />
+        <file src="..\..\libs\RoundhousE\*.dll" target="lib\net45" />
     </files>
 </package>
