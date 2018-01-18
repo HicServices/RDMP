@@ -49,7 +49,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             bool cancelledsuccessfully = false;
             bool taskAppeared = false;
 
-
             while ((timeout -= 10) > 0)
             {
                 Thread.Sleep(10);
@@ -87,7 +86,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                         cancelledsuccessfully = true;
                     }
                 }
-
             }
 
             if (cancelEarly)
@@ -102,7 +100,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                     Assert.IsNotNull(job.LoggingServer_ID);
                     Assert.IsNotNull(job.DataLoadRunID);
                 }
-
 
             //catalogue is now compatible with DQE and has never been run! so automation should pick it up
 
@@ -126,7 +123,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 loop.AutomationDestination.OnGoingTasks.Single().Job.DeleteInDatabase();
 
             bulkTests.DeleteCatalogue();
-
 
             Assert.AreEqual(0,slot.AutomationJobs.Length);
 
