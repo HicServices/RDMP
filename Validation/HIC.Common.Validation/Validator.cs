@@ -233,6 +233,7 @@ namespace HIC.Common.Validation
 
                             //type is
                             type =>
+                                type != null &&
                                 //of the correct Type
                                  (typeof(IConstraint).IsAssignableFrom(type) || typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
                                  &&
