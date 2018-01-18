@@ -263,6 +263,8 @@ namespace CohortManager.SubComponents
         #endregion
 
         private bool _haveSubscribed = false;
+        private CohortCompilerRunner _runner;
+
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             _cic = databaseObject;
@@ -290,9 +292,14 @@ namespace CohortManager.SubComponents
                 RecreateAllTasks();
         }
         
-        private void RecreateAllTasks()
+        /// <summary>
+        /// Rebuilds the CohortCompiler diagram which shows all the currently configured tasks
+        /// </summary>
+        /// <param name="cancelTasks"></param>
+        private void RecreateAllTasks(bool cancelTasks = true)
         {
-            Compiler.CancelAllTasks(false);
+            if (cancelTasks)
+                Compiler.CancelAllTasks(false);
 
             tlvConfiguration.ClearObjects();
             
@@ -345,101 +352,26 @@ namespace CohortManager.SubComponents
             //Task is now in state NotScheduled so we can start it
             Compiler.LaunchSingleTask(task, _timeout);
         }
+
+        public void CancelAll()
+        {
+            Compiler.CancelAllTasks(true);
+            RecreateAllTasks();
+        }
         
-        private void SaveToCache(ICacheableTask cacheable)
-        {
-            try
-            {
-                CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(_queryCachingServer);
-
-                var explicitTypes = new List<DatabaseColumnRequest>();
-
-                AggregateConfiguration configuration = cacheable.GetAggregateConfiguration();
-                try
-                {
-                    ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
-                    explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
-                }
-
-                CacheCommitArguments args = cacheable.GetCacheArguments(Compiler.Tasks[cacheable].CountSQL, Compiler.Tasks[cacheable].Identifiers, explicitTypes.ToArray());
-
-                manager.CommitResults(args);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
-
-        private enum Phase
-        {
-            None,
-            RunningJoinableTasks,
-            CachingJoinableTasks,
-            RunningAggregateTasks,
-            CachingAggregateTasks,
-            RunningFinalTotals,
-            Finished
-        }
-
-        private Phase executeAllPhase = Phase.None;
-
         public void StartAll()
         {
             //only allow starting all if we are not mid execution already
             if (IsExecutingGlobalOperations())
                 return;
-
-            CancelAll();
             
+            _runner = new CohortCompilerRunner(Compiler,_timeout);
+            _runner.PhaseChanged += RunnerOnPhaseChanged;
             new Task(() =>
             {
                 try
                 {
-                    Compiler.CancelAllTasks(true);
-                    
-                    SetPhase(Phase.RunningJoinableTasks);
-
-                    foreach (var j in _cic.GetAllJoinables())
-                        Compiler.AddTask(j,_globals);
-                    
-                    Invoke(new MethodInvoker(RecreateAllTasks));
-
-                    RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTaskExecution && c.State == CompilationState.NotScheduled));
-
-                    SetPhase(Phase.CachingJoinableTasks);
-
-                    CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTaskExecution>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
-
-                    SetPhase(Phase.RunningAggregateTasks);
-                    
-                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
-                        Compiler.AddTask(a, _globals);
-                    
-                    Invoke(new MethodInvoker(RecreateAllTasks));
-
-                    RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.State == CompilationState.NotScheduled));
-
-                    SetPhase(Phase.CachingAggregateTasks);
-
-                    CacheAsync(Compiler.Tasks.Keys.OfType<AggregationTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
-
-                    SetPhase(Phase.RunningFinalTotals);
-
-                    Compiler.AddTask(_cic.RootCohortAggregateContainer,_globals);
-
-                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
-                        Compiler.AddTask(a, _globals);
-                    
-                    Invoke(new MethodInvoker(RecreateAllTasks));
-
-                    RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled));
-
-                    SetPhase(Phase.Finished);
+                    _runner.Run();
                 }
                 catch (Exception e)
                 {
@@ -449,47 +381,21 @@ namespace CohortManager.SubComponents
             }).Start();
         }
 
-        private void RunAsync(IEnumerable<ICompileable> toRun)
+        private void RunnerOnPhaseChanged(object sender, EventArgs eventArgs)
         {
-            var tasks = toRun.ToArray();
-
-            foreach (var r in tasks)
-                Compiler.LaunchSingleTask(r, _timeout);
-
-            //while there are executing tasks
-            while (tasks.Any(t => t.State == CompilationState.Scheduled || t.State == CompilationState.Executing))
-                Thread.Sleep(1000);
-        }
-
-        private void CacheAsync(IEnumerable<ICacheableTask> toCache)
-        {
-            if(_queryCachingServer == null)
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => RunnerOnPhaseChanged(sender, eventArgs)));
                 return;
-
-            foreach (var c in toCache)
-                SaveToCache(c);
-        }
-
-        private void SetPhase(Phase p)
-        {
-           executeAllPhase = p;
-
-            if (lblExecuteAllPhase.InvokeRequired)
-                lblExecuteAllPhase.Invoke(new MethodInvoker(() => { lblExecuteAllPhase.Text = p.ToString(); }));
-            else
-                lblExecuteAllPhase.Text = p.ToString();
+            }
+            
+            lblExecuteAllPhase.Text = _runner.ExecutionPhase.ToString();
+            RecreateAllTasks(false);
         }
 
         public bool IsExecutingGlobalOperations()
         {
-            return executeAllPhase != Phase.None && executeAllPhase != Phase.Finished;
-        }
-
-
-        public void CancelAll()
-        {
-            Compiler.CancelAllTasks(true);
-            RecreateAllTasks();
+            return _runner != null && _runner.ExecutionPhase != CohortCompilerRunner.Phase.None && _runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
         }
 
         public void Cancel(IMapsDirectlyToDatabaseTable o)
