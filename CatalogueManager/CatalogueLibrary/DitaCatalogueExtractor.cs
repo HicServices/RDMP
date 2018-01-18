@@ -295,7 +295,7 @@ namespace CatalogueLibrary
             //Catalogues with no acronyms
             foreach (Catalogue c in catas.Where(c => string.IsNullOrWhiteSpace(c.Acronym)))
             {
-                string suggestion = GetAcronymnSuggestionFromCatalogueName(c.Name);
+                string suggestion = GetAcronymSuggestionFromCatalogueName(c.Name);
                 bool useSuggestion = notifier.OnCheckPerformed(new CheckEventArgs("Catalogue " + c.Name + " has no Acronym", CheckResult.Fail, null, "Assign it a suggested acronym: '"+suggestion +"'?"));
                 
                 if(useSuggestion)
@@ -325,7 +325,7 @@ namespace CatalogueLibrary
 
         }
 
-        public string GetAcronymnSuggestionFromCatalogueName(string name)
+        public string GetAcronymSuggestionFromCatalogueName(string name)
         {
             //concatenate all the capitals (and digits)
             string capsConcat = name.Where(c => char.IsUpper(c) || char.IsDigit(c)).Aggregate("", (s, n) => s + n);

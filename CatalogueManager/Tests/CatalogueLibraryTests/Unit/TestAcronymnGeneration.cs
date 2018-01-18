@@ -4,7 +4,7 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.Unit
 {
-    public class TestAcronymnGeneration : DatabaseTests
+    public class TestAcronymGeneration : DatabaseTests
     {
 
         [Test]
@@ -14,13 +14,13 @@ namespace CatalogueLibraryTests.Unit
         [TestCase("Datasheet1", "D1")]
         [TestCase("Frank Bettie Cardinality", "FBC")]
         [TestCase("Datashet DMP 32", "DDMP32")]
-        public void Predict(string name, string predictedAcronymn)
+        public void Predict(string name, string predictedAcronym)
         {
             DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, null);
 
-            string suggestion = extractor.GetAcronymnSuggestionFromCatalogueName(name);
+            string suggestion = extractor.GetAcronymSuggestionFromCatalogueName(name);
 
-            Assert.AreEqual(predictedAcronymn,suggestion);
+            Assert.AreEqual(predictedAcronym,suggestion);
         }
     }
 }

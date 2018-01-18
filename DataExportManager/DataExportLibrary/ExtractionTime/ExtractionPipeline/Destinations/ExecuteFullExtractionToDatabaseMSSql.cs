@@ -36,7 +36,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
          $p - Project Name ('e.g. My Project'
          $n - Project Number (e.g. 234)
          $c - Configuration Name (e.g. 'Cases')
-         $d - Dataset name (e.g. 'Prescribing') - REQUIRED
+         $d - Dataset name (e.g. 'Prescribing')
+         $a - Dataset acronym (e.g. 'Presc') 
+
+         You must have either $a or $d
          ",Mandatory=true,DefaultValue="$c_$d")]
         public string TableNamingPattern { get; set; }
 
@@ -116,10 +119,22 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             string tblName = TableNamingPattern;
             var project = _request.Configuration.Project;
 
+            var extractDataset = _request as ExtractDatasetCommand;
+
             tblName = tblName.Replace("$p", project.Name);
             tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
             tblName = tblName.Replace("$c", _request.Configuration.Name);
-            tblName = tblName.Replace("$d", _request.ToString());
+
+            if(extractDataset != null)
+            {
+                tblName = tblName.Replace("$d", extractDataset.DatasetBundle.DataSet.Catalogue.Name);
+                tblName = tblName.Replace("$a", extractDataset.DatasetBundle.DataSet.Catalogue.Acronym);
+            }
+            else
+            {
+                tblName = tblName.Replace("$d", _request.ToString());
+                tblName = tblName.Replace("$a", _request.ToString());
+            }
 
             if (_server == null)
                 throw new Exception("Cannot pick a TableName until we know what type of server it is going to, _server is null");
@@ -262,8 +277,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
-            if(!TableNamingPattern.Contains("$d"))
-                notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain $d, the name of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once",CheckResult.Warning));
+            if (!TableNamingPattern.Contains("$d") && !TableNamingPattern.Contains("$a"))
+                notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain either $d or $a, the name/acronym of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once",CheckResult.Warning));
 
             try
             {
