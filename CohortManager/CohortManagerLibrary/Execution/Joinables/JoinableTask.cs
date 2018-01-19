@@ -21,7 +21,7 @@ namespace CohortManagerLibrary.Execution.Joinables
     /// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
     /// result table can/will be commited as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
     /// </summary>
-    public class JoinableTaskExecution:CacheableTask
+    public class JoinableTask:CacheableTask
     {
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
         private AggregateConfiguration _aggregate;
@@ -30,7 +30,7 @@ namespace CohortManagerLibrary.Execution.Joinables
         public JoinableCohortAggregateConfiguration Joinable { get; private set; }
 
         
-        public JoinableTaskExecution(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
+        public JoinableTask(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
         {
             
             Joinable = joinable;

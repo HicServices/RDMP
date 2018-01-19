@@ -105,7 +105,7 @@
     <Compile Include="Execution\ExecutingAggregateState.cs" />
     <Compile Include="Execution\CohortIdentificationTaskExecution.cs" />
     <Compile Include="Execution\ICacheableTask.cs" />
-    <Compile Include="Execution\Joinables\JoinableTaskExecution.cs" />
+    <Compile Include="Execution\Joinables\JoinableTask.cs" />
     <Compile Include="FreeText\FreeTextCompiler.cs" />
     <Compile Include="FreeText\Paragraphing\ParagraphSection.cs" />
     <Compile Include="FreeText\SyntaxCalculator.cs" />

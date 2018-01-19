@@ -161,7 +161,7 @@ namespace CohortManager.SubComponents
             if (rowObject is AggregationContainerTask)
                 return GetImageForCompileable((Compileable)rowObject, CoreIconProvider.GetImage(((AggregationContainerTask) rowObject).Container));
 
-            var joinable = rowObject as JoinableTaskExecution;
+            var joinable = rowObject as JoinableTask;
             if (joinable != null)
                 return joinable.IsUnused ? CatalogueIcons.Warning : CatalogueIcons.CohortAggregate;
 
@@ -232,15 +232,15 @@ namespace CohortManager.SubComponents
             if (containerTask != null)
             {
                 //ensure we listen for state change on the root
-                return containerTask.Container.GetOrderedContents().Cast<IMapsDirectlyToDatabaseTable>().Select(c => Compiler.GetTask(c, _globals)).ToArray();
+                return containerTask.Container.GetOrderedContents().Cast<IMapsDirectlyToDatabaseTable>().Select(c => Compiler.AddTask(c, _globals)).ToArray();
             }
 
             var joinableColection = model as JoinableCollectionNode;
             if (joinableColection != null)
-                return _cic.GetAllJoinables().Select(j => Compiler.GetTask(j, _globals)).ToArray();
+                return _cic.GetAllJoinables().Select(j => Compiler.AddTask(j, _globals)).ToArray();
 
             if (model is CohortIdentificationHeader)
-                return new[] { Compiler.GetTask(_root, _globals) };
+                return new[] { Compiler.AddTask(_root, _globals) };
 
             return null;
         }
@@ -311,7 +311,7 @@ namespace CohortManager.SubComponents
             _globals = _cic.GetAllParameters();
 
             //Could have configured/unconfigured a joinable state
-            foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTaskExecution>())
+            foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTask>())
                 j.RefreshIsUsedState();
 
             try
@@ -327,7 +327,7 @@ namespace CohortManager.SubComponents
             }
         }
         
-        public ICompileable GetTask(IMapsDirectlyToDatabaseTable o)
+        public ICompileable GetTaskIfExists(IMapsDirectlyToDatabaseTable o)
         {
             return Compiler.Tasks.Keys.SingleOrDefault(t => t.Child.Equals(o));
         }
@@ -340,14 +340,14 @@ namespace CohortManager.SubComponents
 
         public void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer)
         {
-            var task = Compiler.GetTask(configOrContainer, _globals);
+            var task = Compiler.AddTask(configOrContainer, _globals);
 
             //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
             Compiler.CancelTask(task, true);
             
             RecreateAllTasks();
 
-            task = Compiler.GetTask(configOrContainer, _globals);
+            task = Compiler.AddTask(configOrContainer, _globals);
 
             //Task is now in state NotScheduled so we can start it
             Compiler.LaunchSingleTask(task, _timeout);
@@ -412,7 +412,7 @@ namespace CohortManager.SubComponents
 
         public CompilationState GetState(IMapsDirectlyToDatabaseTable o)
         {
-            var task = GetTask(o);
+            var task = GetTaskIfExists(o);
 
             if (task == null)
                 return CompilationState.NotScheduled;
@@ -461,7 +461,7 @@ namespace CohortManager.SubComponents
         
         public void Clear(IMapsDirectlyToDatabaseTable o)
         {
-            var task = GetTask(o);
+            var task = GetTaskIfExists(o);
 
             if(task == null)
                 return;

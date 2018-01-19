@@ -70,11 +70,11 @@ namespace CohortManagerLibrary.Execution
 
             Compiler.CancelAllTasks(false);
 
-            RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTaskExecution && c.State == CompilationState.NotScheduled));
+            RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTask && c.State == CompilationState.NotScheduled));
 
             SetPhase(Phase.CachingJoinableTasks);
 
-            CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTaskExecution>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
+            CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
 
             SetPhase(Phase.RunningAggregateTasks);
 
