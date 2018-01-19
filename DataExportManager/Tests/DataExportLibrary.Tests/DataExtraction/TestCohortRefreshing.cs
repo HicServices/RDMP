@@ -1,8 +1,20 @@
+using System;
+using System.Linq;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.ExternalDatabaseServerPatching;
 using DataExportLibrary.CohortCreationPipeline;
+using DataExportLibrary.CohortCreationPipeline.Destinations;
+using DataExportLibrary.CohortCreationPipeline.Sources;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Tests.DataExtraction
@@ -37,6 +49,126 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             Assert.AreEqual(oldData.ExternalDescription, engine.Request.NewCohortDefinition.Description);
             Assert.AreEqual(oldData.ExternalVersion + 1, engine.Request.NewCohortDefinition.Version);
+        }
+
+        /// <summary>
+        /// This is a giant scenario test in which we create a cohort of 5 people and a dataset with a single row with 1 person in it and a result field (the basic setup for 
+        /// TestsRequiringAnExtractionConfiguration).  
+        /// 
+        /// 1.We run the extraction.
+        /// 2.We create a cohort refresh query that pulls the 1 dude from the above single row table
+        /// 3.We configure a query caching server which the cohort query is setup to use so that after executing the sql to identify the person it will cache the identifier list (of 1)
+        /// 4.We then the ExtractionConfiguration that it's refresh pipeline is a cohort query builder query and build a pipeline for executing the cic and using basic cohort destination
+        /// 5.We then run the refresh pipeline which should execute the cic and cache the record and commit it as a new version of cohort for the ExtractionConfiguration
+        /// 6.We then truncate the live table, this will result in the cic returning nobody 
+        /// 7.Without touching the cache we run the cohort refresh pipeline again
+        /// 
+        /// Thing being tested: After 7 we are confirming that the refresh failed because there was nobody identified by the query, furthermore we then test that the progress messages sent
+        /// included an explicit message about clearing the cache
+        /// </summary>
+        [Test]
+        public void RefreshCohort_WithCaching()
+        {
+            ExtractionPipelineUseCase useCase;
+            IExecuteDatasetExtractionDestination results;
+
+            var pipe = new Pipeline(CatalogueRepository, "RefreshPipe");
+
+            var source = new PipelineComponent(CatalogueRepository, pipe, typeof (CohortIdentificationConfigurationSource), 0);
+            var args = source.CreateArgumentsForClassIfNotExists<CohortIdentificationConfigurationSource>();
+            var freezeArg = args.Single(a => a.Name.Equals("FreezeAfterSuccessfulImport"));
+            freezeArg.SetValue(false);
+            freezeArg.SaveToDatabase();
+                 
+            var dest = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicCohortDestination), 0);
+            pipe.SourcePipelineComponent_ID = source.ID;
+            pipe.DestinationPipelineComponent_ID = dest.ID;
+            pipe.SaveToDatabase();
+
+            Execute(out useCase, out results);
+
+            var oldcohort = _configuration.Cohort;
+
+            //Create a query cache
+            var p = new QueryCachingDatabasePatcher();
+            ExternalDatabaseServer queryCacheServer = new ExternalDatabaseServer(CatalogueRepository, "TestCohortRefreshing_CacheTest", p.GetDbAssembly());
+
+            DiscoveredDatabase cachedb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("TestCohortRefreshing_CacheTest");
+            if (cachedb.Exists())
+                cachedb.ForceDrop();
+
+            new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p.GetHostAssembly(), new ThrowImmediatelyCheckNotifier());
+            queryCacheServer.SetProperties(cachedb);
+            
+            //Create a Cohort Identification configuration (query) that will identify the cohort
+            CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs"); ;
+
+            try
+            {
+                //make it use the cache
+                cic.QueryCachingServer_ID = queryCacheServer.ID;
+                cic.SaveToDatabase();
+
+                //give it a single table query to fetch distinct chi from test data
+                var agg = cic.CreateNewEmptyConfigurationForCatalogue(_catalogue, null);
+                
+                //add the sub query as the only entry in the cic (in the root container)
+                cic.CreateRootContainerIfNotExists();
+                cic.RootCohortAggregateContainer.AddChild(agg,1);
+
+                //make the ExtractionConfiguration refresh cohort query be the cic
+                _configuration.CohortIdentificationConfiguration_ID = cic.ID;
+                _configuration.CohortRefreshPipeline_ID = pipe.ID;
+                _configuration.SaveToDatabase();
+
+                //get a refreshing engine
+                var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+                engine.Execute();
+
+                Assert.NotNull(engine.Request.NewCohortDefinition);
+
+                var oldData = oldcohort.GetExternalData();
+
+                Assert.AreEqual(oldData.ExternalDescription, engine.Request.NewCohortDefinition.Description);
+                Assert.AreEqual(oldData.ExternalVersion + 1, engine.Request.NewCohortDefinition.Version);
+
+                Assert.AreNotEqual(oldcohort.CountDistinct,engine.Request.CohortCreatedIfAny.CountDistinct);
+
+                //now nuke all data in the catalogue so the cic returns nobody (except that the identifiers are cached eh?)
+                DataAccessPortal.GetInstance().ExpectDatabase(_tableInfo,DataAccessContext.InternalDataProcessing).ExpectTable(_tableInfo.GetRuntimeName()).Truncate();
+
+                var toMem = new ToMemoryDataLoadEventListener(false);
+
+                //get a new engine
+                engine = new CohortRefreshEngine(toMem, _configuration);
+                
+                //execute it
+                var ex = Assert.Throws<Exception>(()=>engine.Execute());
+
+                Assert.IsTrue(ex.InnerException.InnerException.Message.Contains("CohortIdentificationCriteria execution resulted in an empty dataset"));
+                
+                //expected this message to happen
+                //that it did clear the cache
+                Assert.AreEqual(1,toMem.EventsReceivedBySender.SelectMany(kvp=>kvp.Value).Count(msg=>msg.Message.Equals("Clearing Cohort Identifier Cache")));
+
+
+            }
+            finally
+            {
+                //make the ExtractionConfiguration not use the cic query
+                _configuration.CohortRefreshPipeline_ID = null;
+                _configuration.CohortIdentificationConfiguration_ID = null;
+                _configuration.SaveToDatabase();
+
+                //delete the cic query
+                cic.QueryCachingServer_ID = null;
+                cic.SaveToDatabase();
+                cic.DeleteInDatabase();
+
+                //delete the caching database
+                queryCacheServer.DeleteInDatabase();
+                cachedb.ForceDrop();
+            }
         }
     }
 }
