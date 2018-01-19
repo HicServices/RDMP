@@ -72,7 +72,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             ExtractionPipelineUseCase useCase;
             IExecuteDatasetExtractionDestination results;
 
-            var pipe = new Pipeline(CatalogueRepository, "RefreshPipe");
+            var pipe = new Pipeline(CatalogueRepository, "RefreshPipeWithCaching");
 
             var source = new PipelineComponent(CatalogueRepository, pipe, typeof (CohortIdentificationConfigurationSource), 0);
             var args = source.CreateArgumentsForClassIfNotExists<CohortIdentificationConfigurationSource>();
