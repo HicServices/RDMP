@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.CohortCreationPipeline.Sources;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.Progress;
@@ -37,7 +38,18 @@ namespace DataExportLibrary.CohortCreationPipeline
 
         public void Execute()
         {
-            Request.GetEngine(_configuration.CohortRefreshPipeline,_listener).ExecutePipeline(new GracefulCancellationToken());
+            var engine = Request.GetEngine(_configuration.CohortRefreshPipeline,_listener);
+
+            //if the refresh pipeline is a cic source
+            var cicSource = engine.SourceObject as CohortIdentificationConfigurationSource;
+            if (cicSource != null)
+            {
+                //a cohort identification configuration is a complex query possibly with many cached subqueries, if we are refreshing the cic we will want to clear (and recache) identifiers
+                //from the live tables
+                cicSource.ClearCohortIdentificationConfigurationCacheBeforeRunning = true;
+            }
+            
+            engine.ExecutePipeline(new GracefulCancellationToken());
 
             var newCohort = Request.CohortCreatedIfAny;
             if (newCohort != null)

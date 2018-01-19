@@ -75,19 +75,71 @@ namespace CohortManagerLibrary.Execution
                 TaskCompleted(this, task);
         }
 
-        public ICompileable GetTask(IMapsDirectlyToDatabaseTable c, IEnumerable<ISqlParameter> globals)
+        /// <summary>
+        /// Adds all subqueries and containers that are below the current CohortIdentificationConfiguration as tasks to the compiler
+        /// </summary>
+        /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
+        /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
+        /// <returns></returns>
+        public List<ICompileable> AddAllTasks(bool addSubcontainerTasks = true)
         {
-            //sync it / add it
-            AddTask(c,globals);
+            var toReturn = new List<ICompileable>();
+            var globals = CohortIdentificationConfiguration.GetAllParameters();
+            CohortIdentificationConfiguration.CreateRootContainerIfNotExists();
+            
+            foreach (var joinable in CohortIdentificationConfiguration.GetAllJoinables())
+                toReturn.Add(AddTask(joinable, globals));
 
-            return Tasks.SingleOrDefault(kvp => kvp.Key.Child.Equals(c)).Key;
+            toReturn.AddRange( AddTasksRecursively(globals,CohortIdentificationConfiguration.RootCohortAggregateContainer,addSubcontainerTasks));
+            
+            return toReturn;
         }
 
-        public void AddTask(IMapsDirectlyToDatabaseTable c, IEnumerable<ISqlParameter> globals)
+        /// <summary>
+        /// Adds all AggregateConfigurations and CohortAggregateContainers in the specified container or subcontainers. Passing addSubcontainerTasks false will still process the subcontainers
+        /// but will only add AggregateConfigurations to the task list
+        /// </summary>
+        /// <param name="globals"></param>
+        /// <param name="container"></param>
+        /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
+        /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
+        /// <returns></returns>
+        public List<ICompileable> AddTasksRecursively(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
+        {
+            var toReturn = new List<ICompileable>();
+
+            //if it is the root container or we are adding tasks for all containers including subcontainers
+            if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
+                toReturn.Add(AddTask(container,globals));
+
+            foreach (IOrderable c in container.GetOrderedContents())
+            {
+                var aggregateContainer = c as CohortAggregateContainer;
+                var aggregate = c as AggregateConfiguration;
+                
+                if (aggregateContainer != null)
+                    toReturn.AddRange(AddTasksRecursively(globals, aggregateContainer, addSubcontainerTasks));
+
+                if(aggregate != null)
+                    toReturn.Add(AddTask(aggregate, globals));
+            }
+
+            return toReturn;
+        }
+
+        /// <summary>
+        /// Adds the given AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration to the compiler Task list or returns the existing
+        /// ICompileable if it is already part of the Compilation list.  This will not start the task, you will have to call Launch... to start the ICompileable executing
+        /// </summary>
+        /// <param name="c">An AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration you want to schedule for execution</param>
+        /// <param name="globals"></param>
+        /// <returns></returns>
+        public ICompileable AddTask(IMapsDirectlyToDatabaseTable c, IEnumerable<ISqlParameter> globals)
         {
             var aggregate = c as AggregateConfiguration;
             var container = c as CohortAggregateContainer;
             var joinable = c as JoinableCohortAggregateConfiguration;
+
 
             if (aggregate == null && container == null && joinable == null)
                 throw new NotSupportedException(
@@ -113,7 +165,7 @@ namespace CohortManagerLibrary.Execution
             }
             else if (joinable != null)
             {
-                task = new JoinableTaskExecution(joinable,this);
+                task = new JoinableTask(joinable,this);
                 queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,true);
                 parent = null;
             }
@@ -192,7 +244,7 @@ namespace CohortManagerLibrary.Execution
                     if (existingTask.Key.Order != task.Order)//do not delete this if statement, it prevents rewrites to the database where Order asignment has side affects
                         existingTask.Key.Order = task.Order;
 
-                    return; //existing task has the same SQL
+                    return existingTask.Key; //existing task has the same SQL
                 }
                 else
                 {
@@ -214,6 +266,8 @@ namespace CohortManagerLibrary.Execution
 
             //create a new task 
             Tasks.Add(task, taskExecution);
+
+            return task;
         }
 
         public void LaunchSingleTask(ICompileable compileable,int timeout)
@@ -245,11 +299,11 @@ namespace CohortManagerLibrary.Execution
             t.Start();
         }
         
-        public int GetRowCount(AggregateConfiguration aggregate)
-        {
-            return -1;
-        }
-
+        /// <summary>
+        /// Stops the execution of all currently executing ICompileable CohortIdentificationTaskExecutions. If it is executing an SQL query this should cancel the ongoing query.  If the
+        /// ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is always respected
+        /// </summary>
+        /// <param name="alsoClearTaskList">True to also remove all ICompileables, False to leave the Tasks intact (allows you to rerun them or clear etc)</param>
         public void CancelAllTasks(bool alsoClearTaskList)
         {
             foreach (var v in Tasks.Values)
@@ -260,7 +314,12 @@ namespace CohortManagerLibrary.Execution
                 Tasks.Clear();
         }
 
-
+        /// <summary>
+        /// Stops execution of the specified ICompileable CohortIdentificationTaskExecutions.  If it is executing an SQL query this should cancel the ongoing query.  If the
+        /// ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is always respected
+        /// </summary>
+        /// <param name="compileable"></param>
+        /// <param name="alsoClearFromTaskList">True to remove the ICompileable from the tasks list, False to leave the Tasks intact (allows you to rerun it or clear etc) </param>
         public void CancelTask(ICompileable compileable, bool alsoClearFromTaskList)
         {
             if (Tasks.ContainsKey(compileable))

@@ -94,12 +94,12 @@ USE {0}
 
 CREATE TABLE [dbo].[Cohort](
        [PrivateID] [char](10) NOT NULL,
-       [ReleaseID] [char](10) NOT NULL,
+       [ReleaseID] [char](10) NULL,
        [cohortDefinition_id] [int] NOT NULL,
 CONSTRAINT [PK_Cohort] PRIMARY KEY CLUSTERED 
 (
        [PrivateID] ASC,
-       [ReleaseID] ASC
+       [cohortDefinition_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
