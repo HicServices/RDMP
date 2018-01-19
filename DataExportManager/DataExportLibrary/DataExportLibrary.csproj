@@ -334,6 +334,10 @@
       <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
       <Name>HIC.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
+      <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
+      <Name>QueryCaching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
       <Name>MapsDirectlyToDatabaseTable</Name>

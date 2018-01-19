@@ -29,13 +29,19 @@ namespace CohortManagerLibrary.Execution
 
         private CohortIdentificationConfiguration _cic;
         private ExternalDatabaseServer _queryCachingServer;
-
-
+        
+        /// <summary>
+        /// The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
+        /// and you don't have a dependant UI etc.  Setting false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) 
+        /// but not the other subcontainers (if there were any in the first place!).  Defaults to true.
+        /// </summary>
+        public bool RunSubcontainers { get; set; }
+        
         public CohortCompilerRunner(CohortCompiler compiler, int timeout)
         {
             _timeout = timeout;
             Compiler = compiler;
-
+            
             if(Compiler.CohortIdentificationConfiguration == null)
                 throw new ArgumentException("CohortCompiler must have a CohortIdentificationConfiguration");
 
@@ -43,6 +49,8 @@ namespace CohortManagerLibrary.Execution
 
             if (_cic.QueryCachingServer_ID != null)
                 _queryCachingServer = _cic.QueryCachingServer;
+
+            RunSubcontainers = true;
         }
 
         public enum Phase
@@ -55,8 +63,8 @@ namespace CohortManagerLibrary.Execution
             RunningFinalTotals,
             Finished
         }
-
-        public void Run()
+        
+        public ICompileable Run()
         {
             var globals = _cic.GetAllParameters();
 
@@ -78,8 +86,7 @@ namespace CohortManagerLibrary.Execution
 
             SetPhase(Phase.RunningAggregateTasks);
 
-            foreach (var a in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
-                Compiler.AddTask(a, globals);
+            Compiler.AddTasksRecursively(globals, _cic.RootCohortAggregateContainer, false);
 
             Compiler.CancelAllTasks(false);
 
@@ -91,16 +98,19 @@ namespace CohortManagerLibrary.Execution
 
             SetPhase(Phase.RunningFinalTotals);
 
-            Compiler.AddTask(_cic.RootCohortAggregateContainer, globals);
+            var toReturn = Compiler.AddTask(_cic.RootCohortAggregateContainer, globals);
 
-            foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
-                Compiler.AddTask(a, globals);
+            if(RunSubcontainers)
+                foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
+                    Compiler.AddTask(a, globals);
 
             Compiler.CancelAllTasks(false);
 
             RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled));
 
             SetPhase(Phase.Finished);
+
+            return toReturn;
         }
 
         private void RunAsync(IEnumerable<ICompileable> toRun)
