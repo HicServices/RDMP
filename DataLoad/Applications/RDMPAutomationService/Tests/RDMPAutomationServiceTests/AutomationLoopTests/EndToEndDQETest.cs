@@ -36,8 +36,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             //give it time to get itself together
             Thread.Sleep(1000);
             Assert.IsTrue(slot.IsAcceptingNewJobs(AutomationJobType.DQE));//there shouldn't be any dqe runs executing just yet because theres no validation results
-            Assert.IsTrue(loop.StillRunning);
-
+            
             var dqeRepository = new DQERepository(CatalogueRepository);
 
             //no evaluations yet
@@ -113,8 +112,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             loop.Stop = true;
 
             Thread.Sleep(3000);
-            Assert.IsFalse(loop.StillRunning);//it should have ended its main loop regardless of cancellation
-
+            
             //cleanup
             if (!cancelEarly)
                 dqeRepository.GetAllEvaluationsFor(bulkTests.catalogue).Single().DeleteInDatabase();

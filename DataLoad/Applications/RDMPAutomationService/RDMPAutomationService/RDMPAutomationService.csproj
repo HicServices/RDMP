@@ -98,6 +98,7 @@
     <Compile Include="EventHandlers\AutomatedThrowImmediatelyDataLoadEventsListener.cs" />
     <Compile Include="Interfaces\IAutomateable.cs" />
     <Compile Include="EventHandlers\LoggingStartedEventHandler.cs" />
+    <Compile Include="Pipeline\PipelineRunStatus.cs" />
     <Compile Include="Pipeline\Sources\CacheAutomationSource.cs" />
     <Compile Include="Pipeline\Sources\DLEAutomationSource.cs" />
     <Compile Include="Logic\DQE\AutomatedDQERun.cs" />

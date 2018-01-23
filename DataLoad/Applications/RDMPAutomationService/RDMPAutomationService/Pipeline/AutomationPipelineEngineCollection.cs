@@ -33,7 +33,7 @@ namespace RDMPAutomationService.Pipeline
 
         public List<DataFlowPipelineEngine<OnGoingAutomationTask>> UserSpecificPipelines { get; private set; }
 
-        public Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus> PipeStatuses { get; set; }
+        internal Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus> PipeStatuses { get; set; }
 
         public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator,AutomationServiceSlot slot, AutomationDestination fixedDestination)
         {
@@ -136,12 +136,6 @@ namespace RDMPAutomationService.Pipeline
                     throw ex;
                 }
             });
-        }
-        
-        public class PipelineRunStatus
-        {
-            public int NumErrors { get; set; }
-            public DateTime LastError { get; set; }
         }
     }
 }

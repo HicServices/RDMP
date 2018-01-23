@@ -29,16 +29,6 @@ namespace RDMPAutomationService
         
         public bool Stop { get; set; }
 
-        public bool StillRunning
-        {
-            get
-            {
-                return
-                    t == null //not started yet 
-                    || t.IsAlive; //or running
-            }
-        }
-        
         public event EventHandler<ServiceEventArgs> Failed;
         public event EventHandler<ServiceEventArgs> StartCompleted;
         
@@ -99,9 +89,6 @@ namespace RDMPAutomationService
             catch (Exception e)
             {
                 OnFailed(e);
-            }
-            finally
-            {
                 if (lockEstablished)
                     _serviceSlot.Unlock();
             }
