@@ -27,6 +27,7 @@ namespace RDMPAutomationService
             eventLogger.WriteEntry("Starting up RDMP AutomationService", EventLogEntryType.Information);
             autoRDMP = new AutoRDMP();
             autoRDMP.LogEvent += (o,e) => eventLogger.WriteEntry(e.Message, e.EntryType);
+
             Task.Run(() => autoRDMP.Start());
         }
 

@@ -34,7 +34,10 @@ namespace ReusableLibraryCode.Checks
         /// By default this class will only throw Fail results but if you set this flag then it will also throw warning messages
         /// </summary>
         public bool ThrowOnWarning { get; set; }
-        
+
+        /// <summary>
+        /// By default this class will also log to StdOut. Set to false to skip this (in case of non-interactive environments)
+        /// </summary>
         public bool WriteToConsole { get; set; }
     }
 }
