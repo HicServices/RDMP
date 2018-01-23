@@ -54,7 +54,6 @@ namespace CatalogueManager.Collections
             this.tlvLoadMetadata.UseCompatibleStateImageBehavior = false;
             this.tlvLoadMetadata.View = System.Windows.Forms.View.Details;
             this.tlvLoadMetadata.VirtualMode = true;
-            this.tlvLoadMetadata.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.otvLoadMetadata_CellRightClick);
             this.tlvLoadMetadata.ItemActivate += new System.EventHandler(this.otvLoadMetadata_ItemActivate);
             this.tlvLoadMetadata.KeyUp += new System.Windows.Forms.KeyEventHandler(this.otvLoadMetadata_KeyUp);
             // 
