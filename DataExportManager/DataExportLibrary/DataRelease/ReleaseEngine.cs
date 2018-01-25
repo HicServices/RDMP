@@ -137,18 +137,18 @@ namespace DataExportLibrary.DataRelease
         protected virtual DirectoryInfo PrepareAndVerifyReleaseFolder()
         {
             var folder = GetIntendedReleaseDirectory();
-            if (!folder.Exists)
+            if (folder.Exists)
             {
-                if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
-                    folder.Create();
-                else
-                    throw new Exception("Intended release directory was not found and I was forbidden to create it: " + folder.FullName);
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Cleaning non-empty existing release folder: " + folder.FullName));
+                folder.Delete(true);
             }
-
-            //make sure user isn't sneaking any pollution into this directory
-            if (folder.EnumerateDirectories().Any() || folder.EnumerateFiles().Any())
-                throw new Exception("Intended release directory is not empty:" + folder.FullName);
-
+            
+            if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
+                folder.Create();
+            else
+                throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
+                                    folder.FullName);
+        
             return folder;
         }
 
@@ -216,8 +216,11 @@ namespace DataExportLibrary.DataRelease
                 }
 
                 //mark configuration as released
-                kvp.Key.IsReleased = true;
-                kvp.Key.SaveToDatabase();
+                if (ReleaseSettings.FreezeReleasedConfigurations)
+                {
+                    kvp.Key.IsReleased = true;
+                    kvp.Key.SaveToDatabase();
+                }
 
                 ConfigurationsReleased.Add(kvp.Key);
             }
