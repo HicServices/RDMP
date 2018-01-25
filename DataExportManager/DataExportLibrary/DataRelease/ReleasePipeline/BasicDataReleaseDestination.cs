@@ -23,13 +23,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public ReleaseData CurrentRelease { get; set; }
         private Project _project;
         private DirectoryInfo _destinationFolder;
+        private ReleaseEngine _engine;
 
         public ReleaseData ProcessPipelineData(ReleaseData currentRelease, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             this.CurrentRelease = currentRelease;
-
-            var engine = new ReleaseEngine(_project, ReleaseSettings, listener);
-
+            
             if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
@@ -52,9 +51,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
             }
 
-            engine.DoRelease(CurrentRelease.ConfigurationsForRelease, CurrentRelease.EnvironmentPotential, isPatch: CurrentRelease.ReleaseState == ReleaseState.DoingPatch);
+            _engine.DoRelease(CurrentRelease.ConfigurationsForRelease, CurrentRelease.EnvironmentPotential, isPatch: CurrentRelease.ReleaseState == ReleaseState.DoingPatch);
 
-            _destinationFolder = engine.ReleaseFolder;
+            _destinationFolder = _engine.ReleaseFolder;
 
             return CurrentRelease;
         }
@@ -95,11 +94,13 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public void Check(ICheckNotifier notifier)
         {
             ((ICheckable)ReleaseSettings).Check(notifier);
+            _engine.Check(notifier);
         }
 
         public void PreInitialize(Project value, IDataLoadEventListener listener)
         {
             _project = value;
+            _engine = new ReleaseEngine(_project, ReleaseSettings, listener);
         }
     }
 }
