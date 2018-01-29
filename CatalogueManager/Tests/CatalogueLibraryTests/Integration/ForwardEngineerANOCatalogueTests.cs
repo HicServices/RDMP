@@ -20,7 +20,7 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
 {
-    public class ForwardEngineerANOCatalogueTests:TestsRequiringANOStore
+    public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationSuite
     {
         [SetUp]
         public void ClearRemnants()
@@ -176,6 +176,12 @@ namespace CatalogueLibraryTests.Integration
                     i3.DoImport(out toNecksTableInfo,out toNecksColumnInfo);
                 }
 
+                //Create a JoinInfo so the query builder knows how to connect the tables
+                CatalogueRepository.JoinInfoFinder.AddJoinInfo(
+                    fromHeadsColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")),
+                    fromNeckColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")), ExtractionJoinType.Inner, null
+                    );
+
                 var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo, true);
                 Catalogue cata;
                 CatalogueItem[] cataItems;
@@ -229,18 +235,13 @@ namespace CatalogueLibraryTests.Integration
                 Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("Vertebrae"))); //actually there will be 2 copies of this one from Necks one from Heads
 
                 //new ColumnInfo should have a reference to the anotable
-                Assert.IsTrue(newCataItems.Single(ci => ci.Name.Equals("SkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
+                Assert.IsTrue(newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
 
 
-                var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("SpineColor")).ColumnInfo;
+                var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo;
 
-                if (tableInfoAlreadyExistsForSkippedTable)
-                {
-                    //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
-                    Assert.IsTrue(toNecksColumnInfo.Contains(newSpineColorColumnInfo));
-                }
-                else
-                    Assert.IsTrue(newSpineColorColumnInfo != null);
+                //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
+                Assert.IsTrue(toNecksColumnInfo.Contains(newSpineColorColumnInfo));
                 
             }
             finally
