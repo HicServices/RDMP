@@ -6,7 +6,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Validation;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Dashboard.CommandExecution.AtomicCommands
 {

@@ -9,24 +9,27 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.ExtractionTime.FileOutputFormats
 {
+    /// <summary>
+    /// Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips out all problem fields rather
+    /// than applying proper escaping etc.  This is done because some researcher end point tools / scripts do not support the full specification of CSV and
+    /// it is easier to provide them with a file where problem symbols are not present than explain that they have to join multiple lines together when it is
+    /// bounded by quotes.
+    /// </summary>
     public class CSVOutputFormat : FileOutputFormat
     {
         public string Separator { get; set; }
         public string DateFormat { get; set; }
-        public bool IncludeValidation { get; private set; }
-
 
         public int SeparatorsStrippedOut { get; private set; }
-        private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t" };
+        private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t","\""};
         private StreamWriter _sw;
         private StringBuilder _sbWriteOutLinesBuffer;
         private const string _illegalCharactersReplacement = " ";
 
-        public CSVOutputFormat(string outputFilename,string separator, string dateFormat, bool includeValidation): base(outputFilename)
+        public CSVOutputFormat(string outputFilename,string separator, string dateFormat): base(outputFilename)
         {
             Separator = separator;
             DateFormat = dateFormat;
-            IncludeValidation = includeValidation;
         }
 
         public override string GetFileExtension() 

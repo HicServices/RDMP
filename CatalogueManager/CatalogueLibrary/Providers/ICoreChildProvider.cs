@@ -10,6 +10,13 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Providers
 {
+    /// <summary>
+    /// Extension of IChildProvider which also lists all the high level cached objects so that if you need to fetch objects from the database to calculate 
+    /// things you don't expect to have been the result of an immediate user change you can access the cached object from one of these arrays instead.  For 
+    /// example if you want to know whether you are within the PermissionWindow of your CacheProgress when picking an icon and you only have the PermissionWindow_ID
+    /// property you can just look at the array AllPermissionWindows (especially since you might get lots of spam requests for the icon - you don't want to lookup
+    /// the PermissionWindow from the database every time).
+    /// </summary>
     public interface ICoreChildProvider:IChildProvider
     {
         Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; }
@@ -32,5 +39,7 @@ namespace CatalogueLibrary.Providers
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);
+
+        void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
     }
 }

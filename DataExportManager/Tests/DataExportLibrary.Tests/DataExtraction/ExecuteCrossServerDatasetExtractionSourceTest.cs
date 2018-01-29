@@ -17,7 +17,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void CrossServerExtraction()
         {
-            ExtractionPipelineHost execute;
+            ExtractionPipelineUseCase execute;
             IExecuteDatasetExtractionDestination result;
 
             base.Execute(out execute, out result);
@@ -36,8 +36,8 @@ namespace DataExportLibrary.Tests.DataExtraction
             var pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
             var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteDatasetExtractionFlatFileDestination), 0, "Destination");
             var arguments = component.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionFlatFileDestination>().ToArray();
-            
-            if (arguments.Length != 2)
+
+            if (arguments.Length < 3)
                 throw new Exception("Expected only 2 arguments for type ExecuteDatasetExtractionFlatFileDestination, did somebody add another [DemandsInitialization]? if so handle it below");
 
             arguments.Single(a => a.Name.Equals("DateFormat")).SetValue("yyyy-MM-dd");

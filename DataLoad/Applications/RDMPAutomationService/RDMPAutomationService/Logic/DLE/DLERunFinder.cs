@@ -5,6 +5,13 @@ using CatalogueLibrary.Repositories;
 
 namespace RDMPAutomationService.Logic.DLE
 {
+    /// <summary>
+    /// Identifies data loads (LoadMetadatas) which are due to run (and not already executing/crashed/locked etc).  Used by DLEAutomationSource to 
+    /// identify when a new AutomatedDLELoad can be started.  Loads can be due to run either because they have a LoadPeriodically that indicates they should
+    /// be run every so often or a LoadProgress / CacheProgress which indicate that there is data available to load.
+    /// 
+    /// Used by DLEAutomationSource to decide when a new AutomatedDLELoad/AutomatedDLELoadFromCache can be started.
+    /// </summary>
     public class DLERunFinder
     {
         private readonly ICatalogueRepository _catalogueRepository;

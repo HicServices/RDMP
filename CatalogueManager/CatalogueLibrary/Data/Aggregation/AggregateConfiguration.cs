@@ -21,8 +21,20 @@ namespace CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
     /// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a 
-    /// dataset by region over time since 2001 to present.  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of the
-    /// configuration (e.g. AggregateDimension / AggregateFilter)
+    /// dataset by region over time since 2001 to present).  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of
+    /// the configuration (e.g. AggregateDimension / AggregateFilter)
+    /// 
+    /// AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
+    /// query being built.
+    /// 
+    /// There are Three types of AggregateConfiguration:
+    ///  1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard
+    ///  2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')
+    ///  3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See 
+    /// JoinableCohortAggregateConfiguration).
+    /// 
+    /// The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
+    /// AggregateConfiguration is. 
     /// </summary>
     public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters,INamed,IHasDependencies
     {

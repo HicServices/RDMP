@@ -21,7 +21,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             try
             {
                 //if it is a bool
-                if (typeof (Pipeline).IsAssignableFrom(argumentType))
+                if (typeof (IPipeline).IsAssignableFrom(argumentType))
                     toReturn = new ArgumentValuePipelineUI(catalogueRepository,parent, argumentType);
                 else if (typeof (bool) == argumentType)
                     toReturn = new ArgumentValueBoolUI();

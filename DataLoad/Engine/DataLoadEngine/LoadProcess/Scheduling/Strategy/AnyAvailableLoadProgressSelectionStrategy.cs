@@ -5,6 +5,9 @@ using CatalogueLibrary.Data.DataLoad;
 
 namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
 {
+    /// <summary>
+    /// ILoadProgressSelectionStrategy in which all LoadProgresses are suggested and all are locked.
+    /// </summary>
     public class AnyAvailableLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
     {
         private readonly ILoadMetadata _loadMetadata;

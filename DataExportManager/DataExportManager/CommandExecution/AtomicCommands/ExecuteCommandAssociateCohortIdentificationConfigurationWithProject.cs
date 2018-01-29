@@ -14,8 +14,8 @@ using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -81,10 +81,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
             base.Execute();
 
-            new ProjectCohortIdentificationConfigurationAssociation(Activator.RepositoryLocator.DataExportRepository,_project, _cic);
+            var assoc = new ProjectCohortIdentificationConfigurationAssociation(Activator.RepositoryLocator.DataExportRepository,_project, _cic);
             
             Publish(_project);
             Publish(_cic);
+
+            Activator.WindowArranger.SetupEditAnything(this,assoc);
         }
 
         public Image GetImage(IIconProvider iconProvider)

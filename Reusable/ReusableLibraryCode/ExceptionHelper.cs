@@ -4,6 +4,9 @@ using System.Reflection;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// Helper for unwrapping Exception.InnerExceptions and ReflectionTypeLoadExceptions.LoaderExceptions into a single flat message string of all errors.
+    /// </summary>
     public class ExceptionHelper
     {
         [Pure]

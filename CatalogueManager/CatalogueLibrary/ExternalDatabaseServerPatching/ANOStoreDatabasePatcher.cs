@@ -8,33 +8,19 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
+    /// <summary>
+    /// Records that the host assembly ANOStore stores types for the database assembly 
+    /// </summary>
     public class ANOStoreDatabasePatcher:IPatcher
     {
-        private readonly IRepository _catalogueRepository;
-        
-
-        public ANOStoreDatabasePatcher(IRepository catalogueRepository)
+        public Assembly GetHostAssembly()
         {
-            _catalogueRepository = catalogueRepository;
+            return Assembly.Load("ANOStore");
         }
 
-        public IExternalDatabaseServer[] FindDatabases(out Assembly hostAssembly, out Assembly dbAssembly)
+        public Assembly GetDbAssembly()
         {
-            var uniqueServers =
-                _catalogueRepository.GetAllObjects<ANOTable>() //get all the ANOTables
-                    .Select(a => a.Server_ID) //get unique server IDs among ANOTables
-                    .Distinct()
-                    .Select(_catalogueRepository.GetObjectByID<ExternalDatabaseServer>);//Get the external database server object
-
-            var d = new ServerDefaults((CatalogueRepository)_catalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore);
-
-            if(d != null)
-                uniqueServers = uniqueServers.Union(new[] { (ExternalDatabaseServer)d });
-            
-            hostAssembly = Assembly.Load("ANOStore");
-            dbAssembly = Assembly.Load("ANOStore.Database");
-            
-            return  uniqueServers.ToArray();
+            return Assembly.Load("ANOStore.Database");
         }
     }
 }

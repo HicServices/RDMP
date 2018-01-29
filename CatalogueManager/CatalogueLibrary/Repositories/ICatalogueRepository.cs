@@ -10,6 +10,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
 {
+    /// <summary>
+    /// See CatalogueRepository
+    /// </summary>
     public interface ICatalogueRepository : ITableRepository
     {
         AggregateForcedJoin AggregateForcedJoiner { get; set; }

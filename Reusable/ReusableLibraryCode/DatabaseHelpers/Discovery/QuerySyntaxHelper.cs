@@ -46,6 +46,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public virtual string GetRuntimeName(string s)
         {
+            if (string.IsNullOrWhiteSpace(s))
+                return s;
+
             var match = GetAliasRegex().Match(s.Trim());//if it is an aliased entity e.g. AS fish then we should return fish (this is the case for table valued functions and not much else)
             if (match.Success)
                 return match.Groups[1].Value;
@@ -202,7 +205,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
             return adjustedHeader;
         }
+
+        public string GetSensibleTableNameFromString(string potentiallyDodgyName)
+        {
+            potentiallyDodgyName = GetRuntimeName(potentiallyDodgyName);
+
+            //replace anything that isn't a digit, letter or underscore with underscores
+            Regex r = new Regex("[^A-Za-z0-9_]");
+            string adjustedHeader = r.Replace(potentiallyDodgyName, "_");
+
+            //if it starts with a digit (illegal) put an underscore before it
+            if (Regex.IsMatch(adjustedHeader, "^[0-9]"))
+                adjustedHeader = "_" + adjustedHeader;
+
+            return adjustedHeader;
+        }
     }
-
-
 }

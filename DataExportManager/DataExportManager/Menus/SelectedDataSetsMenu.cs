@@ -18,8 +18,8 @@ using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
 using RDMPStartup;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.Menus
 {

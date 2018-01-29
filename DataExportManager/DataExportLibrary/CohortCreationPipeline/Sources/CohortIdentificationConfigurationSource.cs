@@ -1,26 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
-using ADOX;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CohortManagerLibrary;
 using CohortManagerLibrary.Execution;
-using CohortManagerLibrary.QueryBuilding;
-using ReusableLibraryCode;
+using QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Sources
 {
+    /// <summary>
+    /// Executes a Cohort Identification Configuration query and releases the identifiers read into the pipeline as a single column DataTable.
+    /// </summary>
     public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<CohortIdentificationConfiguration>
     {
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
@@ -33,6 +29,12 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         private bool haveSentData = false;
 
+        /// <summary>
+        /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that
+        /// when run you will get a view of the live tables (which might be recached as part of building the cic) rather than the (potentially stale) current cache
+        /// </summary>
+        public bool ClearCohortIdentificationConfigurationCacheBeforeRunning { get; set; }
+
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
 
@@ -41,7 +43,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             haveSentData = true;
 
-            return GetDataTable(Timeout, listener);
+            return GetDataTable(listener);
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -63,10 +65,10 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         public DataTable TryGetPreview()
         {
-            return GetDataTable(10,null);
+            return GetDataTable(new ThrowImmediatelyDataLoadEventListener());
         }
 
-        private DataTable GetDataTable(int timeout, IDataLoadEventListener listener)
+        private DataTable GetDataTable(IDataLoadEventListener listener)
         {
             if(listener != null)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to lookup which server to interrogate for CohortIdentificationConfiguration " + _cohortIdentificationConfiguration));
@@ -75,21 +77,47 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "CohortIdentificationConfiguration '" + _cohortIdentificationConfiguration + "' has no RootCohortAggregateContainer_ID, is it empty?"));
 
             var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
-            cohortCompiler.AddTask(_cohortIdentificationConfiguration.RootCohortAggregateContainer,_cohortIdentificationConfiguration.GetAllParameters());
 
-            var task = cohortCompiler.Tasks.Single();
+            ICompileable rootContainerTask;
+            //no caching set up so no point in running CohortCompilerRunner 
+            if(_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
+                rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
+            else
+                rootContainerTask =  RunAllTasksWithRunner(cohortCompiler,listener);
 
-            cohortCompiler.LaunchSingleTask(task.Key,timeout);
+            if (rootContainerTask.State != CompilationState.Finished)
+                throw new Exception("CohortIdentificationCriteria execution resulted in state '" + rootContainerTask.State + "'", rootContainerTask.CrashMessage);
+
+            var execution = cohortCompiler.Tasks[rootContainerTask];
+
+            if (execution.Identifiers == null || execution.Identifiers.Rows.Count == 0)
+                throw new Exception("CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
+
+            var dt = execution.Identifiers;
+
+            foreach (DataColumn column in dt.Columns)
+                column.ReadOnly = false;
+
+            return dt;
+        }
+
+
+        private ICompileable RunRootContainerOnlyNoCaching(CohortCompiler cohortCompiler)
+        {
+            //add root container task
+            var task = cohortCompiler.AddTask(_cohortIdentificationConfiguration.RootCohortAggregateContainer, _cohortIdentificationConfiguration.GetAllParameters());
+
+            cohortCompiler.LaunchSingleTask(task, Timeout);
 
             //timeout is in seconds
-            int countDown = timeout * 1000;
+            int countDown = Timeout * 1000;
 
-            while ( 
+            while (
                 //hasn't timed out
-                countDown > 0 && 
+                countDown > 0 &&
                 (
-                    //state isn't a final state
-                    task.Key.State == CompilationState.Executing || task.Key.State == CompilationState.NotScheduled || task.Key.State == CompilationState.Scheduled)
+                //state isn't a final state
+                    task.State == CompilationState.Executing || task.State == CompilationState.NotScheduled || task.State == CompilationState.Scheduled)
                 )
             {
                 Thread.Sleep(100);
@@ -97,28 +125,36 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             }
 
 
-            if(countDown <= 0)
+            if (countDown <= 0)
                 try
                 {
-                    throw new Exception("Cohort failed to reach a final state (Finished/Crashed) after " + Timeout + " seconds. Current state is " + task.Key.State + ".  The task will be cancelled");
+                    throw new Exception("Cohort failed to reach a final state (Finished/Crashed) after " + Timeout + " seconds. Current state is " + task.State + ".  The task will be cancelled");
                 }
                 finally
                 {
                     cohortCompiler.CancelAllTasks(true);
                 }
 
-            if(task.Key.State != CompilationState.Finished)
-                throw new Exception("CohortIdentificationCriteria execution resulted in state '" + task.Key.State +"'",task.Key.CrashMessage);
+            return task;
+        }
 
-            if(task.Value.Identifiers == null || task.Value.Identifiers.Rows.Count  == 0)
-                throw new Exception("CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
+        private ICompileable RunAllTasksWithRunner(CohortCompiler cohortCompiler, IDataLoadEventListener listener)
+        {
+            if (ClearCohortIdentificationConfigurationCacheBeforeRunning)
+            {
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Clearing Cohort Identifier Cache"));
 
-            var dt = task.Value.Identifiers;
+                var cacheManager = new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
+                
+                cohortCompiler.AddAllTasks(false);
+                foreach (var cacheable in cohortCompiler.Tasks.Keys.OfType<ICacheableTask>())
+                    cacheable.ClearYourselfFromCache(cacheManager);
+            }
 
-            foreach (DataColumn column in dt.Columns)
-                column.ReadOnly = false;
-            
-            return dt;
+            var runner = new CohortCompilerRunner(cohortCompiler, Timeout);
+            runner.RunSubcontainers = false;
+            runner.PhaseChanged += (s,e)=> listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CohortCompilerRunner entered Phase '" + runner.ExecutionPhase + "'"));
+            return runner.Run();
         }
 
         public void Check(ICheckNotifier notifier)

@@ -6,8 +6,6 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -23,6 +21,11 @@ using Version = System.Version;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
+    /// <summary>
+    /// Deploys a .Database assembly (e.g. CatalogueLibrary.Database) into a database server (e.g. localhost\sqlexpress).  .Database assemblies are just lists
+    /// of SQL scripts for creating and patching a specific schema.  This class wraps roundhouse for the executing of the scripts and the creation of the 
+    /// ScriptsRun and Version tables which are used to ensure that the host assembly (e.g. CatalogueLibrary) version matches the current database version. 
+    /// </summary>
     public class MasterDatabaseScriptExecutor
     {
         private readonly string _server;

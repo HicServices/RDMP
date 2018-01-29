@@ -2,6 +2,9 @@ using System;
 
 namespace ReusableLibraryCode.Exceptions
 {
+    /// <summary>
+    /// Thrown when two strings that were expected to be identical are different.  Includes ASCII art to show where they are different.
+    /// </summary>
     public class ExpectedIdenticalStringsException : Exception
     {
         public string Expected { get; set; }

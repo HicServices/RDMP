@@ -5,6 +5,9 @@ using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 
 namespace DataExportLibrary.Interfaces.ExtractionTime.UserPicks
 {
+    /// <summary>
+    /// See ExtractableDatasetBundle
+    /// </summary>
     public interface IExtractableDatasetBundle
     {
         IExtractableDataSet DataSet { get; }

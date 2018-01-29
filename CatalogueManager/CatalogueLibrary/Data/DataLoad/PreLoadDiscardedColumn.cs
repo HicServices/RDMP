@@ -4,6 +4,7 @@ using System.Data.Common;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
@@ -138,7 +139,7 @@ namespace CatalogueLibrary.Data.DataLoad
         public string GetRuntimeName()
         {
             //belt and bracers, the user could be typing something mental into this field in his database
-            return SqlSyntaxHelper.GetRuntimeName(RuntimeColumnName);
+            return new MicrosoftQuerySyntaxHelper().GetRuntimeName(RuntimeColumnName);
         }
         
         public string GetRuntimeName(LoadStage stage)

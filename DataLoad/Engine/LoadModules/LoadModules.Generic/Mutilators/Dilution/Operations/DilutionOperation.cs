@@ -10,6 +10,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
+    /// <summary>
+    /// See IDilutionOperation
+    /// </summary>
     public abstract class DilutionOperation : IPluginDilutionOperation
     {
         public DatabaseTypeRequest ExpectedDestinationType { get; private set; }

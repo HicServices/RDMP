@@ -16,7 +16,6 @@ using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
 using DataExportManager.Collections.Nodes;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CohortManager
 {

@@ -9,6 +9,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace QueryCaching.Aggregation.Arguments
 {
+    /// <summary>
+    /// Request to cache an AggregateConfiguration that is a cohort identifier list subquery from a CohortIdentificationConfiguration (it is a query that 
+    /// identifies patients fitting certain criteria e.g. 'patients with HBA1c biochemistry results > 50').  
+    /// 
+    /// Serves as an input to CachedAggregateConfigurationResultsManager.
+    /// </summary>
     public class CacheCommitIdentifierList : CacheCommitArguments
     {
         private DatabaseColumnRequest _identifierColumn;

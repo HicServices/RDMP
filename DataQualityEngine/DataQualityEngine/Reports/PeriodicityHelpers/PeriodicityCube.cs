@@ -5,6 +5,11 @@ using HIC.Common.Validation.Constraints;
 
 namespace DataQualityEngine.Reports.PeriodicityHelpers
 {
+    /// <summary>
+    /// Records the number of records passing / failing validation with each consquence (See PeriodicityState).
+    /// 
+    /// This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).
+    /// </summary>
     public class PeriodicityCube
     {
         readonly Dictionary<Consequence, PeriodicityState> _consequenceCube = new Dictionary<Consequence, PeriodicityState>();

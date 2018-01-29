@@ -15,6 +15,11 @@ using DataExportLibrary.Repositories;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 {
+    /// <summary>
+    /// Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction pipeline.  This includes bundled content 
+    /// (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can realise the request by running the 
+    /// QueryBuilder SQL. 
+    /// </summary>
     public class ExtractDatasetCommand : IExtractDatasetCommand
     {
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
@@ -104,7 +109,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
         public void GenerateQueryBuilder()
         {
             List<ReleaseIdentifierSubstitution> substitutions;
-            var host = new QueryBuilderHost(RepositoryLocator.DataExportRepository);
+            var host = new ExtractionQueryBuilder(RepositoryLocator.DataExportRepository);
             QueryBuilder = host.GetSQLCommandForFullExtractionSet(this,out substitutions);
             QueryBuilder.Sort = true;
             ReleaseIdentifierSubstitutions = substitutions;

@@ -63,6 +63,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AggregateContinuousDateAxis {
+            get {
+                object obj = ResourceManager.GetObject("AggregateContinuousDateAxis", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AggregateDimension {
             get {
                 object obj = ResourceManager.GetObject("AggregateDimension", resourceCulture);
@@ -86,6 +96,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap AggregatesNode {
             get {
                 object obj = ResourceManager.GetObject("AggregatesNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AggregateTopX {
+            get {
+                object obj = ResourceManager.GetObject("AggregateTopX", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -206,6 +226,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap AutomateablePipeline {
             get {
                 object obj = ResourceManager.GetObject("AutomateablePipeline", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AutomationServiceException {
+            get {
+                object obj = ResourceManager.GetObject("AutomationServiceException", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

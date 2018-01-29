@@ -20,6 +20,9 @@ using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 {
+    /// <summary>
+    /// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an Sql Server database
+    /// </summary>
     [Description("The Extraction target for DataExportManager into a Microsoft SQL Database, this should only be used by ExtractionPipelineHost as it is the only class that knows how to correctly call PreInitialize ")]
     public class ExecuteFullExtractionToDatabaseMSSql : IExecuteDatasetExtractionDestination
     {
@@ -27,6 +30,19 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization("External server to create the extraction into, a new table will be created for each dataset extracted with datatypes and column names appropriate to the anonymised extracted datasets",Mandatory = true)]
         public ExternalDatabaseServer TargetDatabaseServer { get; set; }
+
+
+        [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
+         $p - Project Name ('e.g. My Project'
+         $n - Project Number (e.g. 234)
+         $c - Configuration Name (e.g. 'Cases')
+         $d - Dataset name (e.g. 'Prescribing')
+         $a - Dataset acronym (e.g. 'Presc') 
+
+         You must have either $a or $d
+         ",Mandatory=true,DefaultValue="$c_$d")]
+        public string TableNamingPattern { get; set; }
+
         private DiscoveredDatabase _server;
         private DataTableUploadDestination _destination;
         
@@ -35,9 +51,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            //give the data table the correct name
-            toProcess.TableName = GetTableName();
-
             if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
             {
                 var bundle = ((ExtractDatasetCommand) _request).DatasetBundle;
@@ -62,12 +75,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 {
                     if (!_server.Exists())
                         throw new Exception("Could not connect to server " + TargetDatabaseServer.Server);
+                    
+                    var tblName = GetTableName();
 
                     //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
-                    if (_server.ExpectTable(GetTableName()).Exists())
+                    if (_server.ExpectTable(tblName).Exists())
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Warning,
-                                "A table called " + GetTableName() + " already exists on server " + TargetDatabaseServer +
+                                "A table called " + tblName + " already exists on server " + TargetDatabaseServer +
                                 ", rows will be appended to this table - or data load might crash if it has an incompatible schema"));
                 }
                 catch (Exception e)
@@ -76,7 +91,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Failed to inspect destination for already existing datatables",e));
                 }
 
-
                 _destination = new DataTableUploadDestination();
                 _destination.AllowResizingColumnsAtUploadTime = true;
                 _destination.PreInitialize(_server, listener);
@@ -84,6 +98,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it
                 TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + toProcess.TableName, toProcess.TableName, new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
             }
+
+            //give the data table the correct name
+            toProcess.TableName = GetTableName();
 
             _destination.ProcessPipelineData(toProcess, listener, cancellationToken);
             TableLoadInfo.Inserts += toProcess.Rows.Count;
@@ -94,16 +111,36 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private string _cachedGetTableNameAnswer;
         
-
-
         public string GetTableName()
         {
             //if there is a cached answer return it
             if (_cachedGetTableNameAnswer != null) return _cachedGetTableNameAnswer;
+            
+            string tblName = TableNamingPattern;
+            var project = _request.Configuration.Project;
+
+            var extractDataset = _request as ExtractDatasetCommand;
+
+            tblName = tblName.Replace("$p", project.Name);
+            tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
+            tblName = tblName.Replace("$c", _request.Configuration.Name);
+
+            if(extractDataset != null)
+            {
+                tblName = tblName.Replace("$d", extractDataset.DatasetBundle.DataSet.Catalogue.Name);
+                tblName = tblName.Replace("$a", extractDataset.DatasetBundle.DataSet.Catalogue.Acronym);
+            }
+            else
+            {
+                tblName = tblName.Replace("$d", _request.ToString());
+                tblName = tblName.Replace("$a", _request.ToString());
+            }
+
+            if (_server == null)
+                throw new Exception("Cannot pick a TableName until we know what type of server it is going to, _server is null");
 
             //otherwise, fetch and cache answer
-            var project = _request.Configuration.Project;
-            _cachedGetTableNameAnswer =  SqlSyntaxHelper.GetSensibleTableNameFromString(project.Name + "_" + project.ProjectNumber + "_" + _request.Configuration + "_" + _request);
+            _cachedGetTableNameAnswer = _server.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
 
             return _cachedGetTableNameAnswer;
         }
@@ -170,7 +207,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     sw.Start();
                     DataTable dt = new DataTable();
                     da.Fill(dt);
-                    dt.TableName = SqlSyntaxHelper.GetSensibleTableNameFromString(sql.Name);
+                    
+                    dt.TableName = _server.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sql.Name);
 
                     listener.OnProgress(this, new ProgressEventArgs("Reading from SupportingSQL " + sql.Name, new ProgressMeasurement(dt.Rows.Count, ProgressType.Records), sw.Elapsed));
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Decided on the following destination table name for SupportingSQL:" + dt.TableName));
@@ -232,6 +270,15 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabaseServer does not have a .Database specified", CheckResult.Fail));
                 return;
             }
+
+            if(string.IsNullOrWhiteSpace(TableNamingPattern))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("You must specify TableNamingPattern, this will tell the component how to name tables it generates in the remote destination",CheckResult.Fail));
+                return;
+            }
+
+            if (!TableNamingPattern.Contains("$d") && !TableNamingPattern.Contains("$a"))
+                notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain either $d or $a, the name/acronym of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once",CheckResult.Warning));
 
             try
             {

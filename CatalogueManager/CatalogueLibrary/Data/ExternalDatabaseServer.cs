@@ -10,6 +10,7 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -141,7 +142,11 @@ namespace CatalogueLibrary.Data
         {
             return Name;
         }
-        
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return _selfCertifyingDataAccessPoint.GetQuerySyntaxHelper();
+        }
         
         /// <summary>
         /// Returns true if this objects servername and databasename match the paramters, will return false if any of the
@@ -191,6 +196,14 @@ namespace CatalogueLibrary.Data
 
             if(save)
                 SaveToDatabase();
+        }
+
+        public bool WasCreatedByDatabaseAssembly(Assembly databaseAssembly)
+        {
+            if (string.IsNullOrWhiteSpace(CreatedByAssembly))
+                return false;
+
+            return databaseAssembly.GetName().Name == CreatedByAssembly;
         }
     }
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>$title$</title>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
+        <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+        <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>$Description$</description>
+        <copyright>Copyright 2018</copyright>
+        <dependencies>
+            <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
+            <dependency id="DocX" version="1.1.0" />
+            <dependency id="JetBrains.Annotations" version="10.4.0" />
+            <dependency id="Microsoft.SqlServer.SqlManagementObjects" version="140.17199.0" />
+            <dependency id="log4net" version="2.0.3" />
+            <dependency id="Common.Logging" version="3.4.1" />
+            <dependency id="CsvHelper" version="2.11.0" />
+            <dependency id="MySql.Data" version="[6.9.3]" />
+            <dependency id="Newtonsoft.Json" version="9.0.1" />
+            <dependency id="Oracle.ManagedDataAccess" version="12.1.2400" />
+            <dependency id="AutoCompleteMenu-ScintillaNET" version="1.5.0" />
+            <dependency id="jacobslusser.ScintillaNET" version="3.6.3" />
+            <dependency id="ObjectListView.Official" version="2.9.1" />
+            <dependency id="SharpZipLib" version="0.86.0" />
+            <dependency id="GraphX" version="2.2.0.2" />
+            <dependency id="QuickGraphPCL" version="3.6.61114.2" />
+            <dependency id="CommandLineParser" version="1.9.71" />
+            <dependency id="SSH.NET" version="2013.4.7" />
+            <dependency id="Mono.Reflection" version="1.1.0" />
+        </dependencies>
+    </metadata>
+</package>

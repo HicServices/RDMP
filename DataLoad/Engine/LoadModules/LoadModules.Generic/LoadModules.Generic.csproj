@@ -187,7 +187,6 @@
     </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
@@ -222,6 +221,7 @@
     <Compile Include="Attachers\AnySeparatorFileAttacher.cs" />
     <Compile Include="Attachers\DelimitedFlatFileAttacher.cs" />
     <Compile Include="Attachers\ExcelAttacher.cs" />
+    <Compile Include="Attachers\KVPAttacherPipelineUseCase.cs" />
     <Compile Include="Checks\ExcelInstalledChecker.cs" />
     <Compile Include="DataFlowDestinations\DoNothingCacheDestination.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasException.cs" />
@@ -252,11 +252,8 @@
     <Compile Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cs" />
     <Compile Include="DataFlowSources\ExcelDataFlowSource.cs" />
     <Compile Include="DataFlowSources\ExplicitTypingCollection.cs" />
-    <Compile Include="DataProvider\ArchiveFileProvider.cs" />
     <Compile Include="DataProvider\DoNothingDataProvider.cs" />
-    <Compile Include="DataProvider\FileProvider.cs" />
     <Compile Include="DataProvider\WebServiceConfiguration.cs" />
-    <Compile Include="FileOperations\ExcelToCsvConverter.cs" />
     <Compile Include="LoadProgressUpdating\DataLoadProgressUpdateStrategy.cs" />
     <Compile Include="LoadProgressUpdating\UpdateProgressToResultOfDelegate.cs" />
     <Compile Include="LoadProgressUpdating\UpdateProgressToSpecificValueIfLoadsuccessful.cs" />
@@ -273,8 +270,6 @@
     <Compile Include="Mutilators\PrematureLoadEnder.cs" />
     <Compile Include="Mutilators\PrimaryKeyCollisionResolverMutilation.cs" />
     <Compile Include="Mutilators\QueryBuilders\BackfillSqlHelper.cs" />
-    <Compile Include="Mutilators\QueryBuilders\CascadeSqlBuilder.cs" />
-    <Compile Include="Mutilators\QueryBuilders\TableInfoJoiningQueryBuilder.cs" />
     <Compile Include="Mutilators\StagingBackfillMutilator.cs" />
     <Compile Include="Mutilators\TableVarcharMaxer.cs" />
     <Compile Include="ScheduleStrategy.cs" />

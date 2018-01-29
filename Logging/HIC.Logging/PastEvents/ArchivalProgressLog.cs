@@ -2,12 +2,15 @@
 
 namespace HIC.Logging.PastEvents
 {
+    /// <summary>
+    /// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)
+    /// </summary>
     public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable
     {
-        public int ID { get; set; }
-        public DateTime Date { get; set; }
-        public string EventType { get; set; }
-        public string Description { get; set; }
+        public int ID { get; internal set; }
+        public DateTime Date { get; internal set; }
+        public string EventType { get; internal set; }
+        public string Description { get; internal set; }
 
         public ArchivalProgressLog(int id, DateTime date,string eventType,string description)
         {

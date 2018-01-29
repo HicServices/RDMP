@@ -10,14 +10,13 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.UserPicks;
 
 namespace DataExportLibrary.ExtractionTime.Commands
-{
+{ 
+    /// <summary>
+    /// Identifies all extractable components of a given ExtractionConfiguration (all datasets, any custom tables etc).  These are returned as an
+    /// ExtractCommandCollection.  
+    /// </summary>
     public class ExtractCommandCollectionFactory
     {
-        public ExtractCommandCollectionFactory()
-        {
-            
-        }
-
         public ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration)
         {
             var cohort = configuration.Cohort;

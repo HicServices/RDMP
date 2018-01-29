@@ -17,9 +17,10 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
 
@@ -58,8 +59,16 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             Task.Run(
 
                 //run the pipeline in a Thread
-                () => engine.Execute()).ContinueWith(s =>
+                () =>
+                {
+
+                    progressUi.ShowRunning(true);
+                    engine.Execute();
+                }
+                ).ContinueWith(s =>
             {
+                progressUi.ShowRunning(false);
+
                 //then on the UI thread 
                 if(s.IsFaulted)
                     return;

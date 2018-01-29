@@ -14,6 +14,11 @@ using Xceed.Words.NET;
 
 namespace DataExportLibrary.ExtractionTime
 {
+    /// <summary>
+    /// Generates a Microsoft Word DocX file containing information about all the datasets extracted (and released) as part of a Data Release.  This includes
+    /// row counts and unique patient counts as well as the number of patients in the original cohort (not all patients will appear in all datasets).  Also
+    /// included are the tickets for the project, the cohort ID number etc
+    /// </summary>
     public class WordDataReleaseFileGenerator : RequiresMicrosoftOffice
     {
         private readonly IRepository _repository;
@@ -92,7 +97,7 @@ namespace DataExportLibrary.ExtractionTime
 
             SetTableCell(table,0, 0, "Project:"+Environment.NewLine + Project.Name);
             SetTableCell(table,0, 1, "Master Issue:" +  Project.MasterTicket);
-            SetTableCell(table,0, 2, "ReleaseIdentifier:" + SqlSyntaxHelper.GetRuntimeName(Cohort.GetReleaseIdentifier()));
+            SetTableCell(table,0, 2, "ReleaseIdentifier:" + Cohort.GetReleaseIdentifier(true));
             SetTableCell(table,0, 3, "Configuration ID:" + Configuration.ID + Environment.NewLine + "Name:" + Configuration.Name);
 
             if (!Cohort.GetReleaseIdentifier().ToLower().Contains("prochi"))

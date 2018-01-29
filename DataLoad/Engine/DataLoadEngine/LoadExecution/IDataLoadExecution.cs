@@ -9,6 +9,9 @@ using DataLoadEngine.LoadExecution.Delegates;
 
 namespace DataLoadEngine.LoadExecution
 {
+    /// <summary>
+    /// See SingleJobExecution
+    /// </summary>
     public interface IDataLoadExecution
     {
         List<DataLoadComponent> Components { get; }

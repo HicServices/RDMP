@@ -23,6 +23,7 @@ using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using WeifenLuo.WinFormsUI.Docking;
@@ -100,7 +101,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             //////////////////////////////////Data Loading////////////////////////////////////
             AddCommand(new ExecuteCommandCreateNewLoadMetadata(_windowManager.ContentManager),tlpDataLoad);
-            AddCommand(new ExecuteCommandEditExistingLoadMetadata(_windowManager.ContentManager), 
+            AddCommand(new ExecuteCommandExecuteLoadMetadata(_windowManager.ContentManager), 
                 _windowManager.ContentManager.CoreChildProvider.AllLoadMetadatas,
                 lmd=>lmd.Name,
                 tlpDataLoad);

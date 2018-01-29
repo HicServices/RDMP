@@ -8,6 +8,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Sources
 {
+    /// <summary>
+    /// Reads records in Batches (of size BatchSize) from the remote database (DbConnectionStringBuilder builder) by executing the specified _sql.
+    /// </summary>
     public class DbDataCommandDataFlowSource : IDataFlowSource<DataTable>
     {
         private readonly string _sql;

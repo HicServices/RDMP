@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 {
+    /// <summary>
+    /// Hacky string container class that holds a single variable: the script needed to run on a Microsoft Sql Server to support WordAccessRightsByUser and 
+    /// WordAccessRightsByDatabase classes.  This SQL creates a database called Audit and a stored proceedure that longitudinally snapshots database access
+    /// permissions (not something Sql Server handles normally) so that you have a record of who had access to what and when. 
+    /// </summary>
     public class AccessRightsReportPrerequisites
     {
         public const string SQL = @"

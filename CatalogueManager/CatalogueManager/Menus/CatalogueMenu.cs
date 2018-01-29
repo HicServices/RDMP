@@ -1,61 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Cloning;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.DataLoadUIs;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
-using CatalogueManager.ExtractionUIs;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Issues;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.LocationsMenu;
-using CatalogueManager.MainFormUITabs.SubComponents;
-using CatalogueManager.Menus.MenuItems;
-using CatalogueManager.ObjectVisualisation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Validation;
-using DataLoadEngine.Migration;
-using DataQualityEngine.Data;
-using DataQualityEngine.Reports;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Copying;
-using RDMPStartup;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
-using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Dependencies;
 using CatalogueLibrary.Data;
-using ReusableUIComponents.Icons.IconProvision;
-using ReusableUIComponents.Progress;
 
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     public class CatalogueMenu:RDMPContextMenuStrip
     {
-        public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args,null)
+        public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder): base(args, folder)
         {
             AddImportOptions();
         }

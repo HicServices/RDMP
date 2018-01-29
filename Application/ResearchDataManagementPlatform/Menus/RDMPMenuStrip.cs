@@ -148,15 +148,7 @@ namespace ResearchDataManagementPlatform.Menus
             if (form != null)
                 form.Show();
         }
-
-        private void automationManagementToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new AutomationServiceSlotManagement();
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.Show();
-        }
-
-
+        
         private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConfigureAccessRightsReport dialog = new ConfigureAccessRightsReport();
@@ -240,8 +232,11 @@ namespace ResearchDataManagementPlatform.Menus
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
-            var imagesDictionary = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager).ToStringDictionary();
-            report.GenerateReport(new PopupChecksUI("Generating class summaries", false), imagesDictionary);
+            report.GenerateReport(
+                new PopupChecksUI("Generating class summaries", false),
+                _activator.CoreIconProvider,
+                typeof(Catalogue).Assembly,
+                typeof(ExtractionConfiguration).Assembly);
         }
 
         private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)

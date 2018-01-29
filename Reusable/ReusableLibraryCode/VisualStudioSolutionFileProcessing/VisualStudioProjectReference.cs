@@ -1,5 +1,8 @@
 ﻿namespace ReusableLibraryCode.VisualStudioSolutionFileProcessing
 {
+    /// <summary>
+    /// A csproj file referenced by a .sln file (See VisualStudioSolutionFile)
+    /// </summary>
     public class VisualStudioProjectReference
     {
         public string Guid;

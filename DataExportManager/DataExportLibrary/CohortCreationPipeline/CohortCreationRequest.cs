@@ -16,6 +16,10 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.CohortCreationPipeline
 {
+    /// <summary>
+    /// All metadata details nessesary to create a cohort including which project it goes into, it's name, version etc.  There are no identifiers for the cohort.
+    /// Also functions as the use case for cohort creation (to which it passes itself as an input object).
+    /// </summary>
     public class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICheckable
     {
         private readonly DataExportRepository _repository;
@@ -74,7 +78,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             };
         }
 
-        public override object[] GetInitializationObjects(ICatalogueRepository repository)
+        public override object[] GetInitializationObjects()
         {
             if(FileToLoad != null && CohortIdentificationConfiguration != null)
                 throw new Exception("CohortCreationRequest should either have a FileToLoad or a CohortIdentificationConfiguration not both");

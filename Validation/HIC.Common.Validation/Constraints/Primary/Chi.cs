@@ -3,6 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace HIC.Common.Validation.Constraints.Primary
 {
+    /// <summary>
+    /// Field must contain a chi number, this is a 10 digit number in which the first 6 digits are the patients date of birth and the last 2 digits are
+    /// a gender digit and a checksum.  Validation will fail if the checksum is invalid or the value does not match the pattern.
+    /// </summary>
     public class Chi : PrimaryConstraint
     {
         public override ValidationFailure Validate(object value)

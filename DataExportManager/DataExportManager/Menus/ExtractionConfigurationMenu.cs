@@ -31,8 +31,8 @@ using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying.Commands;
 using RDMPStartup;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.Menus
@@ -112,7 +112,7 @@ namespace DataExportManager.Menus
             try
             {
                 var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                Publish(clone);
+                Publish((DatabaseEntity) clone.Project);
             }
             catch (Exception exception)
             {

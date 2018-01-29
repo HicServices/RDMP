@@ -7,7 +7,6 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
-using ReusableUIComponents.Annotations;
 
 namespace CatalogueLibrary.Data
 {

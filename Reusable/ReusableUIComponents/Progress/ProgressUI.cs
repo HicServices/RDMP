@@ -28,7 +28,6 @@ namespace ReusableUIComponents.Progress
     /// </summary>
     public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
-
         DataTable progress = new DataTable();
 
         /// <summary>
@@ -115,6 +114,9 @@ namespace ReusableUIComponents.Progress
         {
             olvProgressEvents.ClearObjects();
             progress.Rows.Clear();
+            
+            progressBar1.Style = ProgressBarStyle.Continuous;
+            progressBar1.Value = 0;
         }
         
         Dictionary<object, HashSet<string>> JobsreceivedFromSender = new Dictionary<object, HashSet<string>>();
@@ -143,14 +145,31 @@ namespace ReusableUIComponents.Progress
         }
         private void Notify(object sender, NotifyEventArgs notifyEventArgs)
         {
-
             lock (oNotifyQueLock)
             {
                 NotificationQueue.Add(new ProgressUIEntry(sender,DateTime.Now, notifyEventArgs));
             }
-
-            
         }
+
+        public void ShowRunning(bool isRunning)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => ShowRunning(isRunning)));
+                return;
+            }
+
+            if (isRunning)
+                progressBar1.Style = ProgressBarStyle.Marquee;
+            else
+            {
+                progressBar1.Style = ProgressBarStyle.Continuous;
+                progressBar1.Minimum = 0;
+                progressBar1.Maximum = 1;
+                progressBar1.Value = 1;
+            }
+        }
+
         void ProcessAndClearQueuedProgressMessages(object sender, EventArgs e)
         {
             lock (oProgressQueLock)

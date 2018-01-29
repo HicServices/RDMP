@@ -22,6 +22,7 @@ using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
 
 using ScintillaNET;
@@ -157,7 +158,7 @@ namespace DataExportManager.ProjectUI
                             !IsAlreadySelected(cohortCustomColumn) &&
 
                             //if the column has the same name as CHI (or whatever the private field is then don't add it)
-                            !cohortCustomColumn.GetRuntimeName().ToLower().EndsWith(SqlSyntaxHelper.GetRuntimeName(cohort.GetPrivateIdentifier()).ToLower())
+                            !cohortCustomColumn.GetRuntimeName().ToLower().EndsWith(cohort.GetPrivateIdentifier(true).ToLower())
 
                             //if the show custom columns is checked
                             && cbShowCohortColumns.Checked
@@ -229,7 +230,9 @@ namespace DataExportManager.ProjectUI
             toMatch = toMatch.TrimEnd(thingsToTrimOff);
             try
             {
-                return info.GetRuntimeName().Equals(SqlSyntaxHelper.GetRuntimeName(toMatch));
+                var syntax = new MicrosoftQuerySyntaxHelper();
+
+                return info.GetRuntimeName().Equals(syntax.GetRuntimeName(toMatch));
             }
             catch (Exception)
             {

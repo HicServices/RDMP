@@ -5,7 +5,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
-using ReusableLibraryCode.Reflection;
 
 namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
 {
@@ -43,7 +42,7 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
             var pipelineSelectionUIType = typeof(PipelineSelectionUI<>).MakeGenericType(context.GetFlowType());
             var uiConstructor = pipelineSelectionUIType.GetConstructors().Single();
 
-            var initObjects = _useCase.GetInitializationObjects(_repository).ToList();
+            var initObjects = _useCase.GetInitializationObjects().ToList();
 
             _pipelineSelectionUIInstance = (IPipelineSelectionUI) uiConstructor.Invoke(new object[] { _useCase.ExplicitSource, _useCase.ExplicitDestination, _repository });
             _pipelineSelectionUIInstance.SetContext(context);

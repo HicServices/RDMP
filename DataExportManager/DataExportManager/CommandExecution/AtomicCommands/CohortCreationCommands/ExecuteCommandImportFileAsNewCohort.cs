@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
 {
@@ -36,6 +37,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         {
             base.Execute();
 
+            FlatFileToLoad flatFile;
+
             //if no explicit file has been chosen
             if(_file == null)
             {
@@ -43,11 +46,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
                 OpenFileDialog ofd = new OpenFileDialog();
                 if (ofd.ShowDialog() != DialogResult.OK)
                     return;
-
-                _file = new FileInfo(ofd.FileName);
+                
+                flatFile = new FlatFileToLoad(new FileInfo(ofd.FileName));
             }
-
-            var flatFile = new FlatFileToLoad(_file);
+            else
+                flatFile = new FlatFileToLoad(_file);
 
             var request = GetCohortCreationRequest();
             //user choose to cancel the cohort creation request dialogue

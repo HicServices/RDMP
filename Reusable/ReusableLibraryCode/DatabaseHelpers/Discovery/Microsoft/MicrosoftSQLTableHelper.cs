@@ -12,11 +12,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
     {
         public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
         {
-            tableName = SqlSyntaxHelper.GetRuntimeName(tableName);
-
             List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
 
-      
             DbCommand cmd = DatabaseCommandHelper.GetCommand("use [" + database + @"];  exec sp_columns @table_name", connection.Connection);
             cmd.Transaction = connection.Transaction;
 
@@ -148,32 +145,6 @@ select @rowcount", (SqlConnection) connection);
                     cmdCount.Parameters["@tableName"].Value = table.GetRuntimeName();
 
                     return Convert.ToInt32(cmdCount.ExecuteScalar());
-        }
-
-        public override string WrapStatementWithIfTableExistanceMatches(bool existanceDesiredForExecution, StringLiteralSqlInContext bodySql, string tableName)
-        {
-            if(bodySql.IsDynamic)
-                throw new NotSupportedException("Cannot wrap dynamic SQL im afraid");
-
-            //get the runtime name of it
-            tableName = new MicrosoftQuerySyntaxHelper().GetRuntimeName(tableName);
-
-            return string.Format(@"
---If the table does not yet exist then create it
-IF {0} (EXISTS (SELECT * 
-                 FROM INFORMATION_SCHEMA.TABLES 
-                 WHERE 
-                 TABLE_NAME = '{1}'))
-BEGIN
-
-{2}
-
-END
-", 
- 
- existanceDesiredForExecution?"":"NOT",tableName,bodySql.Sql);
-
-
         }
         
         public override DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection,DiscoveredTableValuedFunction discoveredTableValuedFunction, DbTransaction transaction)

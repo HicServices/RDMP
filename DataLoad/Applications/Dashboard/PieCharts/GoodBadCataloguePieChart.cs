@@ -13,8 +13,8 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace Dashboard.PieCharts
 {

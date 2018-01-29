@@ -12,7 +12,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ReusableUIComponents
 {
@@ -282,12 +282,7 @@ namespace ReusableUIComponents
         {
             UpdateDatabaseList();
         }
-
-        public string GetTableNameFullyQualified()
-        {
-            return SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database, Table);
-        }
-
+        
         private void UpdateTableList()
         {
             if (string.IsNullOrWhiteSpace(cbxServer.Text) || string.IsNullOrWhiteSpace(cbxDatabase.Text))

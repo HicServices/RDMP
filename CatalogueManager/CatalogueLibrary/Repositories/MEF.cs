@@ -19,6 +19,15 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Repositories
 {
+    /// <summary>
+    /// MEF stands for Managed Extensibility Framework which is a Microsoft library for building Extensions (Plugins) into programs.  It involves decoarting classes as
+    /// [Export] or [InheritedExport] and defining contracts, importing constructors, paramters etc.  RDMP makes use of MEF in a limited fashion, it processes all 
+    /// Exported classes into a SafeDirectoryCatalog (a collection of MEF AssemblyCatalogs/AggregateCatalog).
+    /// 
+    /// This class provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the SafeDirectoryCatalog.  It also includes
+    /// methods for creating instances of the exported Types.  Because MEF only gets you so far it also has some generally helpful reflection based methods such as 
+    /// GetAllTypesFromAllKnownAssemblies.
+    /// </summary>
     public class MEF
     {
         public DirectoryInfo DownloadDirectory { get; private set; }
@@ -26,17 +35,12 @@ namespace CatalogueLibrary.Repositories
         public bool HaveDownloadedAllAssemblies = false;
         public SafeDirectoryCatalog SafeDirectoryCatalog;
 
-        private object MEFDownloadLock = new object();
         private readonly object ExportLocatorLock = new object();
         
-        private readonly CatalogueRepository _repository;
-
         private readonly string _localPath = null;
 
         public MEF(CatalogueRepository repository)
         {
-            _repository = repository;
-
             //try to use the app data folder to download MEF but also evaluate everything in _localPath
             _localPath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath);
 
@@ -357,7 +361,11 @@ namespace CatalogueLibrary.Repositories
         }
 
 
-
+        /// <summary>
+        /// Lists every single Type in the current AppDomain (every assembly that is currently loaded) regardless of whether it is a MEF Export or not.
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
         public IEnumerable<Type> GetAllTypesFromAllKnownAssemblies(out List<Exception> ex)
         {
             List<Type> toReturn = new List<Type>();
@@ -374,7 +382,7 @@ namespace CatalogueLibrary.Repositories
                 }
                 catch (ReflectionTypeLoadException e)
                 {
-                    toReturn.AddRange(e.Types);
+                    toReturn.AddRange(e.Types.Where(t => t != null)); // because the exception contains null types!
                     ex.Add(new Exception("Error loading module " + assembly.FullName, e));
                 }
 

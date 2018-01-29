@@ -2,6 +2,10 @@
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// A conceptual 'source' which contributed records to a table being loaded during a logged activity (See TableLoadInfo).  This can be as explicit
+    /// as a flat file 'myfile.csv' or as isoteric as an sql query run on a server (e.g. during extraction we audit the extraction sql with one of these).
+    /// </summary>
     public class DataSource
     {
         public DataSource(string source, DateTime originDate)

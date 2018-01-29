@@ -64,9 +64,7 @@ namespace CatalogueLibrary.Data
         public DataAccessCredentials(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
-            // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
-            var catalogueRepository = new CatalogueRepository(((TableRepository)repository).ConnectionStringBuilder);
-            _encryptedPasswordHost = new EncryptedPasswordHost(catalogueRepository);
+            _encryptedPasswordHost = new EncryptedPasswordHost(repository);
             
             Name = (string)r["Name"];
             Username = r["Username"].ToString();

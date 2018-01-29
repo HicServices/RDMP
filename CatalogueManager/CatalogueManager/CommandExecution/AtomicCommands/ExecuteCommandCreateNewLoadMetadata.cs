@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -56,16 +47,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
                 Publish(lmd);
 
-                var arrangeEditting = new ExecuteCommandEditExistingLoadMetadata(Activator);
-                arrangeEditting.LoadMetadata = lmd;
-                arrangeEditting.Execute();
-                
+                Activator.WindowArranger.SetupEditAnything(this,lmd);
             }
         }
 
         private void GetUserToPickACatalogue()
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues,false,false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues, false, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 _catalogue = dialog.Selected as Catalogue;

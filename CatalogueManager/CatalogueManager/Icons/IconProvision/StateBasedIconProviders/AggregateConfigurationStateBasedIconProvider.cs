@@ -1,7 +1,8 @@
+using System;
 using System.Drawing;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Icons.IconOverlays;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 {
@@ -20,11 +21,14 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 
         public Bitmap GetImageIfSupportedObject(object o)
         {
+            if (o is Type && o.Equals(typeof (AggregateConfiguration)))
+                return _aggregates;
+
             var ac = o as AggregateConfiguration;
 
             if (ac == null)
                 return null;
-
+            
             Bitmap img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
 
             if (ac.IsExtractable)

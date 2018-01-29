@@ -443,14 +443,14 @@ GO
                 ISqlQueryBuilder extractionCommand = request.QueryBuilder;
 
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "QueryBuilderHost has decided that the extraction SQL is:" + extractionCommand.SQL,
+                    "ExtractionQueryBuilder has decided that the extraction SQL is:" + extractionCommand.SQL,
                     CheckResult.Success, null));
                 return true;
             }
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "QueryBuilderHost could not build extraction SQL for the configuration, see Exception for details",
+                    "ExtractionQueryBuilder could not build extraction SQL for the configuration, see Exception for details",
                     CheckResult.Fail, e));
                 return false;
 

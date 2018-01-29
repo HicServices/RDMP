@@ -189,6 +189,7 @@
     <Folder Include="backups\" />
     <Folder Include="db\functions\" />
     <Folder Include="db\indexes\" />
+    <Folder Include="db\permissions\" />
     <Folder Include="db\sprocs\" />
     <Folder Include="db\up\views\" />
   </ItemGroup>
@@ -199,8 +200,6 @@
     <EmbeddedResource Include="db\runAfterCreateDatabase\CreateCatalogue.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Content Include="db\permissions\0001_PRODUCTION.catalogue.permissions.env.sql" />
-    <Content Include="db\permissions\0002_PRODUCTION.catalogue.permissions.env.sql" />
     <EmbeddedResource Include="db\up\001_AddCacheLagPeriodToLoadSchedule.sql" />
     <EmbeddedResource Include="db\up\002_AddAlternativeCacheLocationToLoadSchedule.sql" />
     <EmbeddedResource Include="db\up\003_AddPipelineEntities.sql" />

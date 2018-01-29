@@ -28,9 +28,7 @@ namespace DataLoadEngineTests.Unit
         {
             var lp = MockRepository.GenerateMock<ILoadProgress>();
             
-            var server = new DiscoveredServer(new SqlConnectionStringBuilder("server=localhost;initial catalog=fish"));
-
-            var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp), new HICDatabaseConfiguration(server));
+            var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
             var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() => factory.Create(lp,new ThrowImmediatelyDataLoadEventListener()));
 
@@ -42,10 +40,8 @@ namespace DataLoadEngineTests.Unit
         {
             var lp = MockRepository.GenerateMock<ILoadProgress>();
             lp.Expect(p => p.DataLoadProgress).Return(new DateTime(2001, 01, 01));
-
-            var server = new DiscoveredServer(new SqlConnectionStringBuilder("server=localhost;initial catalog=fish"));
-
-            var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp), new HICDatabaseConfiguration(server));
+            
+            var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
             Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy), factory.Create(lp,new ThrowImmediatelyDataLoadEventListener()).GetType());
         }

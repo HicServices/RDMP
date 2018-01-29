@@ -12,6 +12,15 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators.Dilution
 {
+    /// <summary>
+    /// load component responsible for diluting data.  For example data might be diluted from date of birth to a bit flag indicating only whether it is known or 
+    /// not (alternatively it might round the date to the first of the month etc).  This mutilation occurs after migration from RAW to STAGING (at which point
+    /// the undiluted values will have been stored in the IdentifierDump).  The mutilation might change the data type of the column (e.g. from date to bit in the
+    /// above example) based on the user specified IDilutionOperation.
+    /// 
+    /// Checking for this component is quite good and should detect incompatible Types (where LIVE column does not match the IDilutionOperation), missing columns
+    /// / dump server configuration etc.
+    /// </summary>
     [Description("This operation MUST only appear in AdjustSTAGING.  It works in concert with PreLoadDiscardedColumns.  Create a PreLoadDiscardedColumn with Destination=Dilution, this operation can then be used to mutilate the value (for example cutting off the ends of postcodes).  The pristene (un-mutilated) value will be stored in the IdentifierDump along with all the other dumped columns but the LIVE will also contain the mutilated value")]
     public class Dilution : IPluginMutilateDataTables
     {

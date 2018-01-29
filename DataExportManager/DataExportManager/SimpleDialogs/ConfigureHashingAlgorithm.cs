@@ -71,7 +71,7 @@ namespace DataExportManager.SimpleDialogs
             try
             {
                 QueryPreview.ReadOnly = false;
-                QueryPreview.Text = SqlSyntaxHelper.WrapStringWithHashingAlgorithm(pattern, "[TEST]..[ExampleColumn]","123");
+                QueryPreview.Text = String.Format(pattern, "[TEST]..[ExampleColumn]", "123");
                 _configurationProperties.SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, pattern);
                 
             }

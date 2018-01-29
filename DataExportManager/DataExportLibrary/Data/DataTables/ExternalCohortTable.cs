@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
@@ -13,7 +14,9 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -63,13 +66,13 @@ namespace DataExportLibrary.Data.DataTables
         public string TableName
         {
             get { return _tableName; }
-            set {SetField(ref _tableName , SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database, value)); }
+            set { SetField(ref _tableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, value)); }
         }
 
         public string DefinitionTableName
         {
             get { return _definitionTableName; }
-            set { SetField(ref _definitionTableName , SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database, value)); }
+            set { SetField(ref _definitionTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null, value)); }
         }
 
         private string _customTablesTableName;
@@ -77,13 +80,13 @@ namespace DataExportLibrary.Data.DataTables
         public string CustomTablesTableName
         {
             get { return _customTablesTableName; }
-            set { SetField( ref _customTablesTableName , SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database, value)); }
+            set { SetField(ref _customTablesTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null, value)); }
         }
 
         public string PrivateIdentifierField
         {
             get { return _privateIdentifierField; }
-            set {SetField(ref _privateIdentifierField , SqlSyntaxHelper.EnsureFullyQualified(Database,TableName, value)); }
+            set { SetField(ref _privateIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, TableName, value)); }
         }
 
         /// <summary>
@@ -92,7 +95,7 @@ namespace DataExportLibrary.Data.DataTables
         public string ReleaseIdentifierField
         {
             get { return _releaseIdentifierField; }
-            set { SetField(ref _releaseIdentifierField , SqlSyntaxHelper.EnsureFullyQualified(Database, TableName, value)); }
+            set { SetField(ref _releaseIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, TableName, value)); }
         }
 
         public static readonly string[] CohortDefinitionTable_RequiredFields = new[]
@@ -147,14 +150,20 @@ namespace DataExportLibrary.Data.DataTables
 
             DefinitionTableForeignKeyField = r["DefinitionTableForeignKeyField"] as string;
 
-            TableName = SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database,r["TableName"] as string); 
-            DefinitionTableName = SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database,r["DefinitionTableName"] as string);
-            CustomTablesTableName = SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(Database, r["CustomTablesTableName"] as string);
+            var syntaxHelper = GetQuerySyntaxHelper();
+            TableName = syntaxHelper.EnsureFullyQualified(Database, null, r["TableName"] as string);
+            DefinitionTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["DefinitionTableName"] as string);
+            CustomTablesTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["CustomTablesTableName"] as string);
 
-            PrivateIdentifierField = SqlSyntaxHelper.EnsureFullyQualified(Database,TableName,r["PrivateIdentifierField"] as string);
-            ReleaseIdentifierField = SqlSyntaxHelper.EnsureFullyQualified(Database,TableName,r["ReleaseIdentifierField"] as string);
+            PrivateIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["PrivateIdentifierField"] as string);
+            ReleaseIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["ReleaseIdentifierField"] as string);
         }
-        
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
+        }
+
         public string GetReleaseIdentifier(IExtractableCohort cohort)
         {
             if (cohort == null)
@@ -168,8 +177,10 @@ namespace DataExportLibrary.Data.DataTables
             if (toReturn.Equals(PrivateIdentifierField))
                 throw new Exception("ReleaseIdentifier for cohort " + cohort.ID +
                                     " is the same as the PrivateIdentifierSQL, this is forbidden");
+            
+            var syntaxHelper = GetQuerySyntaxHelper();
 
-            if (SqlSyntaxHelper.GetRuntimeName(toReturn).Equals(SqlSyntaxHelper.GetRuntimeName(PrivateIdentifierField)))
+            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(PrivateIdentifierField)))
                 throw new Exception("ReleaseIdentifier for cohort " + cohort.ID +
                                     " is the same as the PrivateIdentifierSQL, this is forbidden");
 
@@ -303,7 +314,7 @@ namespace DataExportLibrary.Data.DataTables
 
         private void ComplainIfColumnMissing(string tableNameFullyQualified, DiscoveredColumn[] columns, string colToFindCanBeFullyQualifiedIfYouLike, ICheckNotifier notifier)
         {
-            string tofind = SqlSyntaxHelper.GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
+            string tofind = GetQuerySyntaxHelper().GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
 
             if (columns.Any(col=>col.GetRuntimeName().Equals(tofind)))
                 notifier.OnCheckPerformed(new CheckEventArgs("Found required field " + tofind + " in table " + tableNameFullyQualified,

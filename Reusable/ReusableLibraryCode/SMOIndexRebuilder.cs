@@ -11,6 +11,9 @@ using ReusableLibraryCode.Checks;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// Rebuilds all indexes in all tables in the supplied database (using SMO)
+    /// </summary>
     public class SMOIndexRebuilder
     {
         public SMOIndexRebuilder()

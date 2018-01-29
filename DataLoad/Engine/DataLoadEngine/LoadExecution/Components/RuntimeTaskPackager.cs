@@ -9,6 +9,12 @@ using DataLoadEngine.LoadExecution.Components.Runtime;
 
 namespace DataLoadEngine.LoadExecution.Components
 {
+    /// <summary>
+    /// Converts multiple user defined DLE ProcessTasks into a single hydrated CompositeDataLoadComponent.  This involves converting the ProcessTasks
+    /// (which are user defined class names, argument values etc) into instances of IRuntimeTask.  You can either call CreateCompositeDataLoadComponentFor
+    /// to create a generic CompositeDataLoadComponent containing all the IRuntimeTasks or you can get the IRuntimeTask list directly and use it yourself in
+    /// a more advanced DataLoadComponent (e.g. PopulateRAW - See usages in HICDataLoadFactory)
+    /// </summary>
     public class RuntimeTaskPackager
     {
         public readonly IEnumerable<ProcessTask> ProcessTasks;
@@ -45,7 +51,7 @@ namespace DataLoadEngine.LoadExecution.Components
                 runtimeTasks.Add(runtimeTask);
             }
 
-            runtimeTasks = runtimeTasks.OrderBy(task => task.Order).ToList();
+            runtimeTasks = runtimeTasks.OrderBy(task => task.ProcessTask.Order).ToList();
             return runtimeTasks;
         }
 
@@ -66,7 +72,7 @@ namespace DataLoadEngine.LoadExecution.Components
             var tasks = new List<IDataLoadComponent>();
 
             foreach (var task in GetRuntimeTasksForStage(loadStage))
-                tasks.Add(factory.Create(task, _loadArgsDictionary[loadStage]));
+                tasks.Add(factory.Create(task.ProcessTask, _loadArgsDictionary[loadStage]));
 
             return new CompositeDataLoadComponent(tasks) { Description = descriptionForComponent };
         }

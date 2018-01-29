@@ -9,7 +9,6 @@ using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.PluginChildProvision;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace MyExamplePlugin
 {

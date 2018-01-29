@@ -18,7 +18,7 @@ using DataExportManager.Collections.Providers;
 using DataQualityEngine.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Dashboard.Raceway
 {

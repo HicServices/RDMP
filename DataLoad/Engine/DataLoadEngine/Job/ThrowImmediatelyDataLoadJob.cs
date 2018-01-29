@@ -8,6 +8,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
 {
+    /// <summary>
+    /// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc 
+    /// </summary>
     public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     {
         private readonly IDataLoadEventListener _listener;

@@ -1,14 +1,15 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading;
-using System.Windows.Media;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 {
+    /// <summary>
+    /// Generates a historic report of which user accounts have access to which databases by database (requires AccessRightsReportPrerequisites to have been run on 
+    /// your database server an for the snapshotting stored proceedure to have been called at least once)
+    /// </summary>
     public class WordAccessRightsByDatabase:RequiresMicrosoftOffice
     {
         private readonly string _database;

@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Security.AccessControl;
 using System.Xml;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable.RepositoryResultCaching;
@@ -15,6 +16,11 @@ using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 namespace PluginPackager
 {
+    /// <summary>
+    /// Creates a .zip file containing all binary files and (optionally) source code for an RDMP plugin.  The resulting zip file can be committed as a Plugin 
+    /// to the Catalogue database.  Takes as input the .sln file path.  Binaries that are already part of the core RDMP will not be included in the zip (e.g.
+    /// CatalogueLibrary.dll etc). 
+    /// </summary>
     public class Packager
     {
         private readonly FileInfo _solutionToPackage;
@@ -23,12 +29,16 @@ namespace PluginPackager
 
         private DirectoryInfo _packageSourceDirectory;
         private Version _pluginVersionOfCatalogueLibrary;
-        private string _pluginBaseName;
+
+        private List<FileInfo> _dllPackage = new List<FileInfo>();
+        private List<FileInfo> _srcFilesFound = new List<FileInfo>();
+        private List<FileInfo> _pluginAssemblies = new List<FileInfo>();
+
+        readonly List<string> _blacklist = new List<string>();
 
         public Packager(FileInfo solutionToPackage, string outputZipFilePath, bool skipSourceCollection = false)
         {
             _solutionToPackage = solutionToPackage;
-            _pluginBaseName = Path.GetFileNameWithoutExtension(_solutionToPackage.Name);
             _outputZipFilePath = outputZipFilePath;
             _skipSourceCollection = skipSourceCollection;
 
@@ -41,39 +51,59 @@ namespace PluginPackager
             try
             {
                 // Pull all the dlls and pdbs from all related project directories into one place for processing
-                SetupWorkingDirectory(notifier);
+                SetupWorkingDictionaries(notifier);
 
                 GenerateExclusionList();
 
-                FileInfo[] candidates = _workingDirectory.GetFiles("*.dll").ToArray();
-                FileInfo pluginsCopyOfCatalogueLibrary =
-                    candidates.SingleOrDefault(c => c.Name.Equals("CatalogueLibrary.dll"));
+                FileInfo pluginsCopyOfCatalogueLibrary = _dllPackage.FirstOrDefault(c => c.Name.Equals("CatalogueLibrary.dll"));
 
                 if (pluginsCopyOfCatalogueLibrary == null)
                     throw new Exception(
                         "Package target does not have a copy of CatalogueLibrary.dll in it's output directory");
 
-                _pluginVersionOfCatalogueLibrary =
-                    new Version(FileVersionInfo.GetVersionInfo(pluginsCopyOfCatalogueLibrary.FullName).FileVersion);
-                notifier.OnCheckPerformed(new CheckEventArgs("Your plugin targets CatalogueLibrary version " + _pluginVersionOfCatalogueLibrary,CheckResult.Success));
+                _pluginVersionOfCatalogueLibrary = new Version(FileVersionInfo.GetVersionInfo(pluginsCopyOfCatalogueLibrary.FullName).FileVersion);
+                notifier.OnCheckPerformed(new CheckEventArgs("Your plugin targets CatalogueLibrary version " + _pluginVersionOfCatalogueLibrary, CheckResult.Success));
+                
+                var memStream = new MemoryStream();
+                var archive = new ZipArchive(memStream, ZipArchiveMode.Update, true);
+
+                var manifest = archive.CreateEntry("PluginManifest.txt");
 
                 //add the version of CatalogueLibrary that we are targetting
-                File.WriteAllText(Path.Combine(_outputDirectory.FullName, "PluginManifest.txt"),
-                    "CatalogueLibraryVersion:" + _pluginVersionOfCatalogueLibrary);
+                using (var entryStream = manifest.Open())
+                using (var streamWriter = new StreamWriter(entryStream))
+                {
+                    streamWriter.Write("CatalogueLibraryVersion:" + _pluginVersionOfCatalogueLibrary);
+                }
 
                 foreach (var assembly in _pluginAssemblies)
-                    AddWithDependencies(notifier,assembly);
+                    AddWithDependencies(notifier, assembly, archive);
 
                 //create a src.zip file within the archive
                 if (!_skipSourceCollection)
                 {
-                    ZipFile.CreateFromDirectory(_srcDirectory.FullName,
-                        Path.Combine(_outputDirectory.FullName, "src.zip"));
-                    _srcDirectory.Delete(true);
+                    var srcZip = ZipFile.Open(Path.Combine(_solutionToPackage.Directory.FullName, "src.zip"), ZipArchiveMode.Create);
+                    foreach (var file in _srcFilesFound)
+                    {
+                        srcZip.CreateEntryFromFile(file.FullName, file.Name);
+                    }
+                    srcZip.Dispose();
+
+                    archive.CreateEntryFromFile(Path.Combine(_solutionToPackage.Directory.FullName, "src.zip"), "src.zip");
                 }
 
-                ZipFile.CreateFromDirectory(_outputDirectory.FullName, _outputZipFilePath);
+                archive.Dispose(); // this writes the archive to the memorystream!
 
+                using (var fileStream = new FileStream(_outputZipFilePath, FileMode.Create))
+                {
+                    memStream.Seek(0, SeekOrigin.Begin);
+                    memStream.CopyTo(fileStream);
+                }
+
+                memStream.Dispose();
+
+                // now delete the temp source file:
+                File.Delete(Path.Combine(_solutionToPackage.Directory.FullName, "src.zip"));
             }
             catch (Exception e)
             {
@@ -81,46 +111,36 @@ namespace PluginPackager
             }
         }
 
-        private void SetupWorkingDirectory(ICheckNotifier notifier)
+        private void SetupWorkingDictionaries(ICheckNotifier notifier)
         {
-            CreateWorkingDirectory();
-
             _pluginAssemblies = new List<FileInfo>();
-
             
-            VisualStudioSolutionFile sln = new VisualStudioSolutionFile(_solutionToPackage);
-
-
-            List<string> pathsToProcess = new List<string>();
+            var sln = new VisualStudioSolutionFile(_solutionToPackage);
+            
+            var pathsToProcess = new List<string>();
             foreach (VisualStudioProjectReference project in sln.Projects.Where(p => !p.Name.Contains("Tests")))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Found .csproj file reference at path: " + project.Path,CheckResult.Success));
 
-                string expectedPath = Path.Combine(_solutionToPackage.Directory.FullName,Path.GetDirectoryName(project.Path));
-
-
+                string expectedPath = Path.Combine(_solutionToPackage.Directory.FullName, Path.GetDirectoryName(project.Path));
+                
                 if(Directory.Exists(expectedPath))
-                    notifier.OnCheckPerformed(new CheckEventArgs("SUCCESS: Found it at:" + expectedPath,CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs("SUCCESS: Found it at: " + expectedPath, CheckResult.Success));
                 else
-                    notifier.OnCheckPerformed(new CheckEventArgs("FAIL: Did not find it at:" + expectedPath,CheckResult.Fail));
+                    notifier.OnCheckPerformed(new CheckEventArgs("FAIL: Did not find it at: " + expectedPath, CheckResult.Fail));
 
                 pathsToProcess.Add(expectedPath);
             }
 
             foreach (var path in pathsToProcess)
-                CopyAssembliesToWorkingDir(path);
+                CollectAssemblies(path);
             
             if(!_skipSourceCollection && _solutionToPackage.Directory != null)
             {
                 CollateSourceRecursively(_solutionToPackage.Directory);
-
-                //now zip the source
-
             }
         }
-
-        List<FileInfo> _srcFilesFound = new List<FileInfo>();
-
+        
         private void CollateSourceRecursively(DirectoryInfo dir)
         {
             //do not add all the source code from all the nuget packages!
@@ -130,18 +150,17 @@ namespace PluginPackager
             foreach (FileInfo file in dir.EnumerateFiles("*.cs"))
             {
                 //already found this one
-                if(_srcFilesFound.Any(f=>f.Name.Equals(file.Name)))
+                if (_srcFilesFound.Any(f => f.Name.Equals(file.Name)))
                     continue;
                 
                 _srcFilesFound.Add(file);
-                file.CopyTo(Path.Combine(_srcDirectory.FullName,file.Name), true);
             }
 
             foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
                 CollateSourceRecursively(subDir);
         }
 
-        private void CopyAssembliesToWorkingDir(string projectDir, string assemblyName = null)
+        private void CollectAssemblies(string projectDir, string assemblyName = null)
         {
             var projectOutputDir = Path.Combine(projectDir, "bin", "Debug");
             if (!Directory.Exists(projectOutputDir))
@@ -151,51 +170,35 @@ namespace PluginPackager
 
             foreach (var srcFilename in Directory.GetFiles(projectOutputDir, "*.dll"))
             {
-                var destFilename = Path.Combine(_workingDirectory.FullName, Path.GetFileName(srcFilename));
-                if (File.Exists(destFilename)) continue;
-                File.Copy(srcFilename, destFilename);
+                if (_dllPackage.Any(fi => fi.FullName == srcFilename))
+                    continue;
+                _dllPackage.Add(new FileInfo(srcFilename));
             }
 
             foreach (var srcFilename in Directory.GetFiles(projectOutputDir, "*.pdb"))
             {
-                var destFilename = Path.Combine(_workingDirectory.FullName, Path.GetFileName(srcFilename));
-                if (File.Exists(destFilename)) continue;
-                File.Copy(srcFilename, destFilename);
+                if (_dllPackage.Any(fi => fi.FullName == srcFilename))
+                    continue;
+                _dllPackage.Add(new FileInfo(srcFilename));
             }
         }
-
-        private void CreateWorkingDirectory()
-        {
-            _workingDirectory = _solutionToPackage.Directory.CreateSubdirectory(Path.GetRandomFileName());
-            _outputDirectory = _workingDirectory.CreateSubdirectory("output");
-            _srcDirectory = _outputDirectory.CreateSubdirectory("src");
-        }
-
-        readonly List<string> _blacklist = new List<string>();
-        private DirectoryInfo _workingDirectory;
-        private List<FileInfo> _pluginAssemblies;
-        private DirectoryInfo _outputDirectory;
-        private DirectoryInfo _srcDirectory;
-
+        
         private void GenerateExclusionList()
         {
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 _blacklist.Add(assembly.GetName().Name);
         }
 
-        private void AddWithDependencies(ICheckNotifier notifier, FileInfo dll)
+        private void AddWithDependencies(ICheckNotifier notifier, FileInfo dll, ZipArchive archive)
         {
-            string copyToLocation = Path.Combine(_outputDirectory.FullName, dll.Name);
-            
-            if(!File.Exists(copyToLocation))
-                File.Copy(dll.FullName,copyToLocation);
+            if (archive.Entries.All(ze => ze.Name != dll.Name))
+                archive.CreateEntryFromFile(dll.FullName, dll.Name);
 
             var pdb = new FileInfo(dll.FullName.Substring(0, dll.FullName.Length - ".dll".Length) + ".pdb");
             if (pdb.Exists)
             {
-                var pdbCopyDestination = Path.Combine(_outputDirectory.FullName, pdb.Name);
-                if (!File.Exists(pdbCopyDestination))
-                    File.Copy(pdb.FullName, Path.Combine(_outputDirectory.FullName, pdb.Name));
+                if (archive.Entries.All(ze => ze.Name != pdb.Name))
+                    archive.CreateEntryFromFile(pdb.FullName, pdb.Name);
             }
             
             foreach (AssemblyName name in Assembly.LoadFile(dll.FullName).GetReferencedAssemblies())
@@ -203,15 +206,15 @@ namespace PluginPackager
                 if(_blacklist.Contains(name.Name))
                     continue;
 
-                if(LoadModuleAssembly.ProhibitedDllNames.Any(prohibitedName=>prohibitedName.Equals(name.Name +".dll")))
+                if (LoadModuleAssembly.ProhibitedDllNames.Any(prohibitedName => prohibitedName.Equals(name.Name + ".dll")))
                     continue;
                 
-                var dependentDll = new FileInfo(Path.Combine(_workingDirectory.FullName,name.Name + ".dll"));
+                var dependentDll = _dllPackage.FirstOrDefault(f => f.Name.EndsWith(name.Name + ".dll"));
 
-                if(!dependentDll.Exists)
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not find dependent dll "+ dependentDll.Name,CheckResult.Warning));
+                if(dependentDll == null)
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not find dependent dll " + name.Name, CheckResult.Warning));
                 else
-                    AddWithDependencies(notifier,dependentDll);
+                    AddWithDependencies(notifier, dependentDll, archive);
             }
 
             

@@ -5,6 +5,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace HIC.Logging
 {
+    /// <summary>
+    /// Static class for logging fatal exceptions that have crashed / ended a logged activity (See DataLoadRun / Logging.cd)
+    /// </summary>
     public class FatalErrorLogging
     {
         private static FatalErrorLogging _instance;

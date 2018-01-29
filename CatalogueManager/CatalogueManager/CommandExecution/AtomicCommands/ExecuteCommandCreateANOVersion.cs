@@ -8,8 +8,8 @@ using CatalogueLibrary.Data;
 using CatalogueManager.ANOEngineeringUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

@@ -4,6 +4,10 @@ using CatalogueLibrary.Repositories;
 
 namespace CatalogueLibrary
 {
+    /// <summary>
+    /// Creates a Catalogue from a TableInfo (See TableInfoImporter for how to create a TableInfo from your live database table).  A Catalogue is an extractable dataset
+    /// which can be made by joining multiple underlying tables and often contains only a subset of columns (those that are extractable to researchers).
+    /// </summary>
     public class ForwardEngineerCatalogue
     {
         private readonly TableInfo _tableInfo;

@@ -260,6 +260,7 @@ namespace CatalogueManager.LoadExecutionUIs
                 {
                     //reset the system state because the execution has completed
                     _checksPassed = false;
+                    
                     //adjust the buttons accordingly
                     SetButtonStates();
                 }
@@ -366,7 +367,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private SingleJobScheduledDataLoadProcess CreateSingleScheduledJobLoadProcess()
         {
             var toAttempt = CreateLoadProgressSelectionStrategy();
-            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt, _databaseLoadConfiguration);
+            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
 
             var logManager = CreateLogManager(_loadMetadata);
             var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
@@ -385,7 +386,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private IterativeScheduledDataLoadProcess CreateIterativeScheduledDataLoadProcess()
         {
             var toAttempt = CreateLoadProgressSelectionStrategy();
-            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt, _databaseLoadConfiguration);
+            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
             var logManager = CreateLogManager(_loadMetadata);
             var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
             var pipeline = CreateLoadPipeline(logManager);
@@ -396,6 +397,9 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private void RunDataLoadProcess()
         {
+
+            loadProgressUI1.ShowRunning(true);
+
             try
             {
                 var exitCode = _dataLoadProcess.Run(_cancellationTokenSource.Token);
@@ -422,6 +426,7 @@ namespace CatalogueManager.LoadExecutionUIs
             finally
             {
                 _cancellationTokenSource = null;
+                loadProgressUI1.ShowRunning(false);
             }
         }
 

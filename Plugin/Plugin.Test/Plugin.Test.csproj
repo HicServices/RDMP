@@ -47,6 +47,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="PluginTest.build">
       <SubType>Designer</SubType>
     </None>
@@ -98,6 +99,10 @@
     <ProjectReference Include="..\..\DataExportManager\Tests\DataExportLibrary.Tests\DataExportLibrary.Tests.csproj">
       <Project>{c37254b9-2224-4ddc-b2b2-4e3e8cb963b7}</Project>
       <Name>DataExportLibrary.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Applications\RDMPAutomationService\Tests\RDMPAutomationServiceTests\RDMPAutomationServiceTests.csproj">
+      <Project>{33cdfc10-6e3a-44c1-b29c-caf77d846421}</Project>
+      <Name>RDMPAutomationServiceTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\Tests\DataLoadEngineTests\DataLoadEngineTests.csproj">
       <Project>{066c4228-210d-4f22-a7fd-ca6304d5ffb5}</Project>

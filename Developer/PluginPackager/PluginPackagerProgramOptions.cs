@@ -5,6 +5,9 @@ using CommandLine.Text;
 
 namespace PluginPackager
 {
+    /// <summary>
+    /// Command line arguments for PluginPackager.exe
+    /// </summary>
     public class PluginPackagerProgramOptions
     {
         [ValueList(typeof(List<string>), MaximumElements = 2)]

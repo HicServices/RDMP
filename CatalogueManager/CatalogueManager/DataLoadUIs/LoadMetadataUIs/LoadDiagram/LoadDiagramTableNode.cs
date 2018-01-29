@@ -10,6 +10,7 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents.CommandExecution;
 
@@ -69,7 +70,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         
         public ICommand GetCommand()
         {
-            return new SqlTextOnlyCommand(SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(DatabaseName,TableName));
+            return new SqlTextOnlyCommand(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
         }
 
         public void DiscoverState()

@@ -8,6 +8,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace QueryCaching.Aggregation.Arguments
 {
+    /// <summary>
+    /// Request to cache an AggregateConfiguration that results in a DataTable suitable for producing a useful graph (e.g. 'number of records per year in 
+    /// Biochemistry by healthboard').  Should not contain patient identifiers.
+    /// 
+    /// Serves as an input to CachedAggregateConfigurationResultsManager.
+    ///</summary>
     public class CacheCommitExtractableAggregate : CacheCommitArguments
     {
         public CacheCommitExtractableAggregate(AggregateConfiguration configuration, string sql, DataTable results, int timeout)

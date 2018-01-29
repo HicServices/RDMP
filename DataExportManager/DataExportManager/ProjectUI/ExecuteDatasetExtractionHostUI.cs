@@ -37,7 +37,7 @@ namespace DataExportManager.ProjectUI
 
         public IExtractCommand ExtractCommand { get; set; }
 
-        private ExtractionPipelineHost _pipelineHost;
+        private ExtractionPipelineUseCase _pipelineUseCase;
         public Project Project { get; set; }
 
         public static Semaphore NumberBuildingQueries = new Semaphore(5,5);
@@ -64,7 +64,7 @@ namespace DataExportManager.ProjectUI
         private void btnCancel_Click(object sender, EventArgs e)
         {
 
-            if (_pipelineHost != null)
+            if (_pipelineUseCase != null)
             {
                 
                 //display it on the screen
@@ -72,11 +72,11 @@ namespace DataExportManager.ProjectUI
                 
                 try
                 {
-                    _pipelineHost.Cancel();
+                    _pipelineUseCase.Cancel();
                 }
                 catch (Exception exception)
                 {
-                    progressUI1.OnNotify(_pipelineHost,new NotifyEventArgs(ProgressEventType.Error,exception.Message,exception));
+                    progressUI1.OnNotify(_pipelineUseCase,new NotifyEventArgs(ProgressEventType.Error,exception.Message,exception));
                 }
             }
         
@@ -96,6 +96,8 @@ namespace DataExportManager.ProjectUI
                 //Waits on Semaphore
                 WaitForExecutionOpportunity(ExtractCommand);
 
+                progressUI1.ShowRunning(true);
+
                 var extractionRequest = ExtractCommand as ExtractDatasetCommand;
 
                 if (extractionRequest != null)
@@ -112,6 +114,8 @@ namespace DataExportManager.ProjectUI
             {
                 //Always release the Semaphore
                 NumberBuildingQueries.Release();
+
+                progressUI1.ShowRunning(false);
                 Finished();
             }
         }
@@ -119,40 +123,40 @@ namespace DataExportManager.ProjectUI
         private void DoExtractionAsync(ExtractCohortCustomTableCommand extractCohortCustomTableCommandCohortPair)
         {
             extractCohortCustomTableCommandCohortPair.State = ExtractCommandState.WaitingForSQLServer;
-            _pipelineHost = new ExtractionPipelineHost(extractCohortCustomTableCommandCohortPair, _pipeline, _dataLoadInfo);
-            _pipelineHost.Execute(progressUI1);
+            _pipelineUseCase = new ExtractionPipelineUseCase(extractCohortCustomTableCommandCohortPair, _pipeline, _dataLoadInfo);
+            _pipelineUseCase.Execute(progressUI1);
 
-            if (_pipelineHost.Source.WasCancelled)
+            if (_pipelineUseCase.Source.WasCancelled)
                 extractCohortCustomTableCommandCohortPair.State = ExtractCommandState.UserAborted;
             else
-                extractCohortCustomTableCommandCohortPair.State = _pipelineHost.Crashed?ExtractCommandState.Crashed:ExtractCommandState.Completed;
+                extractCohortCustomTableCommandCohortPair.State = _pipelineUseCase.Crashed?ExtractCommandState.Crashed:ExtractCommandState.Completed;
         }
 
         private void DoExtractionAsync(ExtractDatasetCommand request)
         {
             request.State = ExtractCommandState.WaitingForSQLServer;
                 
-            _pipelineHost = new ExtractionPipelineHost(request, _pipeline, _dataLoadInfo);
-            _pipelineHost.Execute(progressUI1);
+            _pipelineUseCase = new ExtractionPipelineUseCase(request, _pipeline, _dataLoadInfo);
+            _pipelineUseCase.Execute(progressUI1);
 
-            if (_pipelineHost.Crashed)
+            if (_pipelineUseCase.Crashed)
             {
                 request.State = ExtractCommandState.Crashed;
             }
             else
-                if (_pipelineHost.Source != null)
-                    if (_pipelineHost.Source.WasCancelled)
+                if (_pipelineUseCase.Source != null)
+                    if (_pipelineUseCase.Source.WasCancelled)
                         request.State = ExtractCommandState.UserAborted;
-                    else if (_pipelineHost.Source.ValidationFailureException != null)
+                    else if (_pipelineUseCase.Source.ValidationFailureException != null)
                         request.State = ExtractCommandState.Warning;
                     else
                     {
                         request.State = ExtractCommandState.Completed;
                             
-                        progressUI1.OnNotify(_pipelineHost.Destination,
+                        progressUI1.OnNotify(_pipelineUseCase.Destination,
                             new NotifyEventArgs(ProgressEventType.Information,
                                 "Extraction completed successfully into : " +
-                                _pipelineHost.Destination.GetDestinationDescription()));
+                                _pipelineUseCase.Destination.GetDestinationDescription()));
 
                         WriteMetadata(request);
                     }
@@ -161,11 +165,11 @@ namespace DataExportManager.ProjectUI
         private void WriteMetadata(ExtractDatasetCommand request)
         {
             request.State = ExtractCommandState.WritingMetadata;
-            WordDataWritter wordDataWritter;
+            WordDataWriter wordDataWriter;
 
             try
             {
-                wordDataWritter = new WordDataWritter(_pipelineHost);
+                wordDataWriter = new WordDataWriter(_pipelineUseCase);
             }
             catch (NotSupportedException e)
             {
@@ -177,15 +181,15 @@ namespace DataExportManager.ProjectUI
                 return;
             }
 
-            wordDataWritter.GenerateWordFile();//run the report
+            wordDataWriter.GenerateWordFile();//run the report
 
             //if there were any exceptions
-            if (wordDataWritter.ExceptionsGeneratingWordFile.Any())
+            if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
             {
                 request.State = ExtractCommandState.Warning;
                     
-                foreach (Exception e in wordDataWritter.ExceptionsGeneratingWordFile)
-                    progressUI1.OnNotify(wordDataWritter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
+                foreach (Exception e in wordDataWriter.ExceptionsGeneratingWordFile)
+                    progressUI1.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
             }
             else
             {

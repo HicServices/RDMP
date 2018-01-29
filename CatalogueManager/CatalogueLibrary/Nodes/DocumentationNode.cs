@@ -1,7 +1,11 @@
+using System;
 using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSqlTables 
+    /// </summary>
     public class DocumentationNode
     {
         public Catalogue Catalogue { get; set; }

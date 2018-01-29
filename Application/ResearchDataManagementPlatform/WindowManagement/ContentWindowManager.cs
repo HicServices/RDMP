@@ -165,7 +165,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 try
                 {
                     CoreChildProvider = new DataExportChildProvider(RepositoryLocator,PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
-                    return;
                 }
                 catch (Exception e)
                 {
@@ -175,7 +174,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //there was an error generating a data export repository or there was no repository specified
 
             //so just create a catalogue one
-            CoreChildProvider = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
+            if (CoreChildProvider == null)
+                CoreChildProvider = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
+
+
+            CoreChildProvider.GetPluginChildren();
         }
 
         public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control,DatabaseEntity objectOfTypeT)
@@ -214,6 +217,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable, string overrideConfirmationText = null)
         {
+            var databaseObject = deleteable as DatabaseEntity;
+
+            //it has already been deleted before
+            if (databaseObject != null && !databaseObject.Exists())
+                return false;
+
             DialogResult result = MessageBox.Show(
                 overrideConfirmationText??
                 ("Are you sure you want to delete " + deleteable + " from the database?"), "Delete Record", MessageBoxButtons.YesNo);
@@ -222,8 +231,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 deleteable.DeleteInDatabase();
                 
-                var databaseObject = deleteable as DatabaseEntity;
-
                 if (databaseObject == null)
                 {
                     var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
@@ -267,7 +274,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo)
         {
-            Activate<ConvertColumnInfoIntoANOColumnInfo, ColumnInfo>(columnInfo);
+            Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(columnInfo);
         }
 
         public void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument)

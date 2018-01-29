@@ -8,12 +8,11 @@ namespace CatalogueLibrary.Data.DataLoad
     /// Records the user configured value of a property marked with [DemandsInitialization] declared on a data flow/dle component (including plugin components).
     ///  See Argument for full description.
     /// </summary>
-    public interface IArgument:ISaveable
+    public interface IArgument:IMapsDirectlyToDatabaseTable,ISaveable
     {
         string Name { get; set; }
         string Description { get; set; }
         string Value { get; }
-        IRepository Repository { get; }
         string Type { get; }
 
         void SetValue(object o);

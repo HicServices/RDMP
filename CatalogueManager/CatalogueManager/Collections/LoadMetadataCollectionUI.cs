@@ -23,7 +23,6 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
-using ReusableUIComponents.Annotations;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 
 namespace CatalogueManager.Collections
@@ -111,16 +110,6 @@ namespace CatalogueManager.Collections
         {
             foreach (LoadMetadata loadMetadata in tlvLoadMetadata.Objects)
                 tlvLoadMetadata.Expand(loadMetadata);
-        }
-        
-        private void otvLoadMetadata_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-
-            var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
-            
-            if (allCataloguesNode != null)
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator,allCataloguesNode.LoadMetadata));
         }
         
         public override void SetItemActivator(IActivateItems activator) 

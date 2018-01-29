@@ -32,6 +32,7 @@ namespace CatalogueLibrary.Data
 
         CatalogueItem[] CatalogueItems { get; }
         AggregateConfiguration[] AggregateConfigurations { get; }
+        string Acronym { get; set; }
 
         /// <summary>
         /// In the context of the DLE, you should use current jobs tableinfo list where possible for performance gain etc

@@ -20,6 +20,12 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Destinations
 {
+    /// <summary>
+    /// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform 
+    /// targets (MySql , Sql Server etc).  Normally the SQL Data Types and column names will be computed from the DataTable and a table will be created with the
+    /// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take 
+    /// place.
+    /// </summary>
     public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<DiscoveredDatabase>
     {
         [DemandsInitialization("The logging server to log the upload to (leave blank to not bother auditing)")]
@@ -30,6 +36,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         [DemandsInitialization("Set to true if you want to restrict table creation to datetime instead of datetime2 (means any dates before 1753 will crash)", DemandType.Unspecified,false)]
         public bool OnlyUseOldDateTimes { get; set; }
+
+        [DemandsInitialization("Normally when DataTableUploadDestination encounters a table that already contains records it will abandon the insertion attempt.  Set this to true to instead continue with the load.", DefaultValue = false)]
+        public bool AllowLoadingPopulatedTables { get; set; }
 
         public string TargetTableName { get; private set; }
         private IBulkCopy _bulkcopy;
@@ -80,13 +89,15 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
                 //table already exists
                 if (discoveredTable.Exists())
-                    if (discoveredTable.GetRowCount() == 0)
-                    {
-                        tableAlreadyExistsButEmpty = true;
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
-                    }
-                    else
-                        throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
+                {
+                    tableAlreadyExistsButEmpty = true;
+                    
+                    if(!AllowLoadingPopulatedTables)
+                        if (discoveredTable.GetRowCount() == 0)
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
+                        else
+                            throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
+                }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
                 
@@ -148,7 +159,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
 
             Dictionary<string, int> currentDatabaseStringSizes = new Dictionary<string, int>();
-            Dictionary<string, Pair<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Pair<int, int>>();
+            Dictionary<string, Tuple<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Tuple<int, int>>();
 
             Dictionary<string, DataTypeComputer> thisBatch = new Dictionary<string, DataTypeComputer>();
 
@@ -183,8 +194,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
             //work out the max sizes - expensive bit
             foreach (DataRow row in toProcess.Rows)
+                //for each destination column
                 foreach (string col in thisBatch.Keys.ToArray())
-                    thisBatch[col].AdjustToCompensateForValue(row[col]);//run the datatype computer over it
+                    //if it appears in the toProcess DataTable
+                    if (toProcess.Columns.Contains(col))
+                        //run the datatype computer over it to compute max lengths
+                        thisBatch[col].AdjustToCompensateForValue(row[col]);
 
             //cheap bit
             foreach (KeyValuePair<string, DataTypeComputer> kvp in thisBatch)
@@ -227,12 +242,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 if (currentDatabaseDecimalSizes.ContainsKey(kvp.Key))
                 {
                     //if we need more space on either side of the decimal point
-                    if (currentDatabaseDecimalSizes[kvp.Key].First < kvp.Value.numbersBeforeDecimalPlace
+                    if (currentDatabaseDecimalSizes[kvp.Key].Item1 < kvp.Value.numbersBeforeDecimalPlace
                         ||
-                        currentDatabaseDecimalSizes[kvp.Key].Second < kvp.Value.numbersAfterDecimalPlace)
+                        currentDatabaseDecimalSizes[kvp.Key].Item2 < kvp.Value.numbersAfterDecimalPlace)
                     {
-                        int newBeforeDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].First, kvp.Value.numbersBeforeDecimalPlace);
-                        int newAfterDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Second, kvp.Value.numbersAfterDecimalPlace);
+                        int newBeforeDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item1, kvp.Value.numbersBeforeDecimalPlace);
+                        int newAfterDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item2, kvp.Value.numbersAfterDecimalPlace);
 
                         var col = columns.Single(c => c.GetRuntimeName().Equals(kvp.Key));
 
@@ -260,12 +275,30 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
             try
             {
-                _managedConnection.ManagedTransaction.CommitAndCloseConnection();
-                
-                if (_bulkcopy != null)
-                    _bulkcopy.Dispose();
+                if (_managedConnection != null)
+                {
+                    //if there was an error
+                    if (pipelineFailureExceptionIfAny != null)
+                    {
+                        _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
+                        
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back sucessfully"));
 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
+                        if (_bulkcopy != null)
+                            _bulkcopy.Dispose();
+                    }
+                    else
+                    {
+                        _managedConnection.ManagedTransaction.CommitAndCloseConnection();
+
+                        if (_bulkcopy != null)
+                            _bulkcopy.Dispose();
+
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
+                    }
+
+                    
+                }
             }
             catch (Exception e)
             {

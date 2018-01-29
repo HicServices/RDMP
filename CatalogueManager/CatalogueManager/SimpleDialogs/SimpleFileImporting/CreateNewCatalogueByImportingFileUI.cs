@@ -24,7 +24,6 @@ using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using CatalogueManager.Tutorials;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using LoadModules.Generic.DataFlowSources;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;

@@ -8,6 +8,8 @@ using CachingEngine;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
@@ -17,10 +19,9 @@ using CatalogueManager.Icons.IconProvision.Exceptions;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.PluginChildProvision;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 using ScintillaNET;
 
 namespace CatalogueManager.Icons.IconProvision
@@ -85,7 +86,7 @@ namespace CatalogueManager.Icons.IconProvision
                 else 
                     return null; //it's a string but an unhandled one so give them null back
             }
-
+            
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
             if (_pluginIconProviders != null)
                 foreach (IIconProvider plugin in _pluginIconProviders)
@@ -106,18 +107,27 @@ namespace CatalogueManager.Icons.IconProvision
 
             if (concept is DataAccessCredentialUsageNode)
                 return GetImage(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
-            
-            if (concept is IFilter)
+
+            if (ConceptIs(typeof(IFilter),concept))
                 return GetImage(RDMPConcept.Filter, kind);
 
-            if (concept is ISqlParameter)
+            if (ConceptIs(typeof(ISqlParameter), concept))
                 return GetImage(RDMPConcept.ParametersNode,kind);
 
-            if (concept is IContainer)
+            if (ConceptIs(typeof(IContainer), concept))
                 return GetImage(RDMPConcept.FilterContainer, kind);
-            
+
+            if (ConceptIs(typeof (JoinableCohortAggregateConfiguration), concept))
+                return GetImage(RDMPConcept.PatientIndexTable);
+
+            if (ConceptIs(typeof(JoinableCohortAggregateConfigurationUse), concept))
+                return GetImage(RDMPConcept.PatientIndexTable,OverlayKind.Link);
+
             if (concept is PermissionWindowUsedByCacheProgressNode)
                 return GetImage(((PermissionWindowUsedByCacheProgressNode)concept).PermissionWindow, OverlayKind.Link);
+
+            if (ConceptIs(typeof (DashboardObjectUse),concept))
+                return GetImage(RDMPConcept.DashboardControl, OverlayKind.Link);
 
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
@@ -125,16 +135,35 @@ namespace CatalogueManager.Icons.IconProvision
                 if (bmp != null)
                     return GetImage(bmp,kind);
             }
-
+            
             string conceptTypeName = concept.GetType().Name;
             
             RDMPConcept t;
 
+            //It is a System.Type, get the name and see if theres a corresponding image
+            if (concept is Type)
+                if (Enum.TryParse(((Type)concept).Name, out t))
+                    return GetImage(ImagesCollection[t], kind);
+
+            //It is an instance of something, get the System.Type and see if theres a corresponding image
             if(Enum.TryParse(conceptTypeName,out t))
                 return GetImage(ImagesCollection[t],kind);
 
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
+        }
+
+        private bool ConceptIs(Type t, object concept)
+        {
+            if (t.IsInstanceOfType(concept))
+                return true;
+
+            var type = concept as Type;
+
+            if (type != null && t.IsAssignableFrom(type))
+                return true;
+
+            return false;
         }
 
         private bool IsLockedLockable(object concept)

@@ -223,7 +223,7 @@
     <Compile Include="Data\DQEGraphAnnotation.cs" />
     <Compile Include="Data\DQERepository.cs" />
     <Compile Include="Data\Evaluation.cs" />
-    <Compile Include="Reports\DQEStateTesseract.cs" />
+    <Compile Include="Reports\DQEStateOverDataLoadRunId.cs" />
     <Compile Include="Reports\LoadProgressSummaryReport.cs" />
     <Compile Include="Reports\PeriodicityHelpers\PeriodicityCube.cs" />
     <Compile Include="Data\PeriodicityState.cs" />
@@ -232,7 +232,7 @@
     <Compile Include="Reports\CatalogueConstraintReport.cs" />
     <Compile Include="Reports\DataQualityReport.cs" />
     <Compile Include="Reports\IDataQualityReport.cs" />
-    <Compile Include="Reports\PeriodicityHelpers\PeriodicityHyperCube.cs" />
+    <Compile Include="Reports\PeriodicityHelpers\PeriodicityCubesOverTime.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Caching\Engine\CachingEngine\CachingEngine.csproj">

@@ -47,6 +47,7 @@
             this.tbChunkPeriod = new System.Windows.Forms.TextBox();
             this.tbCacheProgressID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.gbCacheProgress.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDuration)).BeginInit();
@@ -55,6 +56,7 @@
             // gbCacheProgress
             // 
             this.gbCacheProgress.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.gbCacheProgress.Controls.Add(this.ragSmiley1);
             this.gbCacheProgress.Controls.Add(this.pPipeline);
             this.gbCacheProgress.Controls.Add(this.btnRefresh);
             this.gbCacheProgress.Controls.Add(this.btnEdit);
@@ -230,6 +232,15 @@
             this.label9.TabIndex = 21;
             this.label9.Text = "ID:";
             // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Location = new System.Drawing.Point(65, 159);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 47;
+            // 
             // CacheProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -265,5 +276,6 @@
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Panel pPipeline;
+        private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

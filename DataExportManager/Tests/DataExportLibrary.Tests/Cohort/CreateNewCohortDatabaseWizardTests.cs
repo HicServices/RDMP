@@ -42,6 +42,8 @@ namespace DataExportLibrary.Tests.Cohort
             
             _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString());
             _extractionInfo2 = new ExtractionInformation(CatalogueRepository, _ci2, _c2, _c2.ToString());
+
+            cohortDatabaseName = TestDatabaseNames.GetConsistentName("Tests_CreateCohortDatabaseWizard");
         }
 
         private string cohortDatabaseName;
@@ -55,7 +57,6 @@ namespace DataExportLibrary.Tests.Cohort
             _t1.DeleteInDatabase();
             _t2.DeleteInDatabase();
 
-            cohortDatabaseName = TestDatabaseNames.GetConsistentName("Tests_CreateCohortDatabaseWizard");
             foreach (
                 ExternalCohortTable source in
                     DataExportRepository.GetAllObjects<ExternalCohortTable>()

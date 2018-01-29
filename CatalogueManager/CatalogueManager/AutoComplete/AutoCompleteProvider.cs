@@ -32,9 +32,10 @@ namespace CatalogueManager.AutoComplete
         List<AutocompleteItem> items = new List<AutocompleteItem>();
         private ImageList _imageList;
 
-        public AutoCompleteProvider(ICoreIconProvider coreIconProvider)
+        public AutoCompleteProvider(IActivateItems activator)
         {
-            _imageList = coreIconProvider.GetImageList(true);
+            _activator = activator;
+            _imageList = _activator.CoreIconProvider.GetImageList(true);
             _autocomplete.ImageList = _imageList;
         }
 
@@ -43,32 +44,32 @@ namespace CatalogueManager.AutoComplete
         {
             _autocomplete.TargetControlWrapper = new ScintillaWrapper(queryEditor);
         }
-
+        
         public void Add(TableInfo tableInfo)
         {
             Add(tableInfo,LoadStage.PostLoad);
         }
 
 
-        private void Add(ColumnInfo columnInfo, string tableName, string databaseName,LoadStage stage)
+        private void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName,LoadStage stage)
         {
             var runtimeName = columnInfo.GetRuntimeName(stage);
 
             var snip = new SubstringAutocompleteItem(runtimeName);
             snip.MenuText = runtimeName;
-            snip.Text = SqlSyntaxHelper.EnsureFullyQualified(databaseName, tableName, runtimeName);
+            snip.Text = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(databaseName, null, tableInfo.GetRuntimeName(), runtimeName);
             snip.Tag = columnInfo;
             snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
             
             AddUnlessDuplicate(snip);
         }
-        private void Add(PreLoadDiscardedColumn discardedColumn, string tableName, string rawDbName)
+        private void Add(PreLoadDiscardedColumn discardedColumn, TableInfo tableInfo, string rawDbName)
         {
             var snip = new SubstringAutocompleteItem(discardedColumn.GetRuntimeName());
             var colName = discardedColumn.GetRuntimeName();
             snip.MenuText = colName;
-            
-            snip.Text = SqlSyntaxHelper.EnsureFullyQualified(rawDbName, tableName,colName);
+
+            snip.Text = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName,null, tableInfo.GetRuntimeName(), colName);
             snip.Tag = discardedColumn;
             snip.ImageIndex = GetIndexFor(discardedColumn, RDMPConcept.ColumnInfo.ToString());
 
@@ -160,12 +161,7 @@ namespace CatalogueManager.AutoComplete
 
             AddUnlessDuplicate(snip);
         }
-
-        public void SetActivator(IActivateItems activator)
-        {
-            _activator = activator;
-        }
-
+        
         public void Add(TableInfo tableInfo, LoadStage loadStage)
         {
             //we already have it
@@ -175,7 +171,7 @@ namespace CatalogueManager.AutoComplete
             var runtimeName = tableInfo.GetRuntimeName(loadStage);
             var dbName = tableInfo.GetDatabaseRuntimeName(loadStage);
 
-            var fullSql = SqlSyntaxHelper.EnsureFullyQualifiedMicrosoftSQL(dbName, runtimeName);
+            var fullSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(dbName,null, runtimeName);
 
             var snip = new SubstringAutocompleteItem(tableInfo.GetRuntimeName());
             snip.MenuText = runtimeName; //name of table
@@ -190,10 +186,10 @@ namespace CatalogueManager.AutoComplete
                 var columnInfo = o as ColumnInfo;
 
                 if(preDiscarded != null)
-                    Add(preDiscarded, runtimeName, dbName);
+                    Add(preDiscarded, tableInfo, dbName);
                 else
                 if(columnInfo != null)
-                    Add(columnInfo, runtimeName, dbName, loadStage);
+                    Add(columnInfo, tableInfo, dbName, loadStage);
                 else throw new Exception("Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '" + o.GetType().Name +"'");
             }
 
@@ -204,6 +200,43 @@ namespace CatalogueManager.AutoComplete
         {
             items.Clear();
             _autocomplete.SetAutocompleteItems(items);
+        }
+
+        public void Add(Type type)
+        {
+            //we already have it
+            if (items.Any(i => i.Tag.Equals(type)))
+                return;
+
+            var snip = new SubstringAutocompleteItem(type.Name);
+            snip.MenuText = type.Name; //name of table
+            snip.Text = type.Name;//full text
+            snip.Tag = type; //record object for future reference
+
+            if (!_imageList.Images.ContainsKey(type.Name))
+            {
+                var img = _activator.CoreIconProvider.GetImage(type);
+                if (img != null)
+                    _imageList.Images.Add(type.Name, img);
+            }
+
+            snip.ImageIndex = GetIndexFor(type, type.Name);
+            items.Add(snip);
+
+            _autocomplete.SetAutocompleteItems(items);
+        }
+
+        public bool IsShowing()
+        {
+            if (_autocomplete == null)
+                return false;
+
+            return _autocomplete.Visible;
+        }
+
+        public void UnRegister()
+        {
+            _autocomplete.TargetControlWrapper = null;
         }
     }
 }

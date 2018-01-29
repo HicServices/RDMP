@@ -6,6 +6,9 @@ using DataLoadEngine.LoadExecution;
 
 namespace DataLoadEngine.LoadProcess
 {
+    /// <summary>
+    /// See DataLoadProcess
+    /// </summary>
     public interface IDataLoadProcess 
     {
         ExitCodeType Run(GracefulCancellationToken loadCancellationToken);

@@ -175,7 +175,6 @@
     </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
@@ -192,8 +191,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\libs\Microsoft.Office.Interop\Office.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="RestSharp">
       <HintPath>..\..\libs\JIRA\RestSharp.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -205,15 +202,12 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Words.NET, Version=1.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DocX.1.1.0\lib\Xceed.Words.NET.dll</HintPath>
       <Private>True</Private>
@@ -254,7 +248,6 @@
     <Compile Include="Data\DataTables\DeployedExtractionFilterFactory.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
     <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
-    <Compile Include="Data\Hierarchy\ExtractionFilterUser.cs" />
     <Compile Include="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollectionFactory.cs" />
@@ -284,7 +277,7 @@
     <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteDatasetExtractionFlatFileDestination.cs" />
     <Compile Include="ExtractionTime\ExtractionDirectory.cs" />
-    <Compile Include="ExtractionTime\ExtractionPipeline\ExtractionPipelineHost.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\ExtractionPipelineUseCase.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractDatasetCommand.cs" />
     <Compile Include="ExtractionTime\ExtractionTimeTimeCoverageAggregator.cs" />
     <Compile Include="ExtractionTime\ExtractionTimeTimeCoverageAggregatorBucket.cs" />
@@ -297,10 +290,9 @@
     <Compile Include="ExtractionTime\FileOutputFormats\MicrosoftAccessDatabaseFormat.cs" />
     <Compile Include="ExtractionTime\UserPicks\GlobalsBundle.cs" />
     <Compile Include="ExtractionTime\WordDataReleaseFileGenerator.cs" />
-    <Compile Include="ExtractionTime\QueryBuilderHost.cs" />
+    <Compile Include="ExtractionTime\ExtractionQueryBuilder.cs" />
     <Compile Include="ExtractionTime\ReleaseIdentifierSubstitution.cs" />
-    <Compile Include="ExtractionTime\WordDataWritter.cs" />
-    <Compile Include="CsvDataTableHelper.cs" />
+    <Compile Include="ExtractionTime\WordDataWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataRelease\ReleasePotential.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
@@ -341,6 +333,10 @@
     <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
       <Name>HIC.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
+      <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
+      <Name>QueryCaching</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>

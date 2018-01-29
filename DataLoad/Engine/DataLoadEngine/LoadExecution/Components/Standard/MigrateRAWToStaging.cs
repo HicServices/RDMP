@@ -13,20 +13,22 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Standard
 {
+    /// <summary>
+    /// DLE component resonsible for streaming data off the RAW database and writing it to the STAGING database.  Happens one table at a time with the actual
+    /// implementation of moving data in MigrateRAWTableToStaging (See MigrateRAWTableToStaging).
+    /// </summary>
     public class MigrateRAWToStaging : DataLoadComponent
     {
         private readonly HICDatabaseConfiguration _databaseConfiguration;
-        private readonly ILoadMetadata _loadMetadata;
         private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
 
         private readonly Stack<IDisposeAfterDataLoad> _toDispose = new Stack<IDisposeAfterDataLoad>();
 
         private readonly List<MigrateRAWTableToStaging> _tableMigrations = new List<MigrateRAWTableToStaging>();
         
-        public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration, ILoadMetadata loadMetadata, HICLoadConfigurationFlags loadConfigurationFlags)
+        public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
         {
             _databaseConfiguration = databaseConfiguration;
-            _loadMetadata = loadMetadata;
             _loadConfigurationFlags = loadConfigurationFlags;
 
             Description = "Migrate RAW to Staging";
@@ -66,7 +68,7 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
 
         private void MigrateRAWTableToStaging(IDataLoadJob job, TableInfo tableInfo, bool isLookupTable, GracefulCancellationToken cancellationToken)
         {
-            var component = new MigrateRAWTableToStaging(tableInfo, isLookupTable, _databaseConfiguration, _loadMetadata, _loadConfigurationFlags);
+            var component = new MigrateRAWTableToStaging(tableInfo, isLookupTable, _databaseConfiguration);
             _tableMigrations.Add(component);
             component.Run(job, cancellationToken);
         }

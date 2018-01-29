@@ -19,8 +19,8 @@
         </PropertyGroup>
     -->
 	
-  	<Exec Command="nuget pack Plugin.Test.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName)" />
-    <Exec Command="nuget push HIC.RDMP.Plugin.Test.*.nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />
+  	<Exec Command="nuget pack Plugin.Test.csproj -IncludeReferencedProjects -Properties Configuration=$(ConfigurationName) -Symbols -Version $(Version) -Exclude **/*/*.sql;**/*/_BuildInfo.xml;**/*/readme.txt;**/*/Microsoft.SqlServer.*;**/*/Pencil.cur;**/*/*.png;**/*/*.ico;**/*/*.dll.config.template;**/*/Test_DB*.?df;**/*/*.zip" />
+    <Exec Command="nuget push HIC.RDMP.Plugin.Test.$(Version).nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />
   </Target>
   
   <Target Name="Build">

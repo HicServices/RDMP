@@ -44,7 +44,7 @@ namespace DataLoadEngine.LoadExecution
 
         public IDataLoadExecution Create(IDataLoadEventListener postLoadEventListener)
         {
-            var loadArgsDictionary = new LoadArgsDictionary(LoadMetadata, _databaseConfiguration.DeployInfo, false);
+            var loadArgsDictionary = new LoadArgsDictionary(LoadMetadata, _databaseConfiguration.DeployInfo);
 
             //warn user about disabled tasks
             var processTasks = LoadMetadata.ProcessTasks.ToList();
@@ -62,7 +62,7 @@ namespace DataLoadEngine.LoadExecution
             
             var adjustRaw = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustRaw, "Adjust RAW");
 
-            var migrateToStaging = new MigrateRAWToStaging(_databaseConfiguration, LoadMetadata, _loadConfigurationFlags);
+            var migrateToStaging = new MigrateRAWToStaging(_databaseConfiguration, _loadConfigurationFlags);
             
             var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
 

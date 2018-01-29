@@ -167,8 +167,8 @@ namespace CatalogueManager.Collections
             if(e.Object is DataAccessCredentials)
                 tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
             
-            if(e.Object is Catalogue || e.Object is TableInfo)
-                tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllServersNode);
+            if(e.Object is Catalogue || e.Object is TableInfo) 
+                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
         }
         
         private bool bExpand = true;

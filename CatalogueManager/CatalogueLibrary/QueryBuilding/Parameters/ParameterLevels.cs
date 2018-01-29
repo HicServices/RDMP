@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace CatalogueLibrary.QueryBuilding.Parameters
 {
-    //do not reorder these!
+    /// <summary>
+    /// Describes the hierarchical level at which an ISqlParameter was found at by a ParameterManager.
+    /// 
+    /// Do not reorder these!
+    /// </summary>
     public enum ParameterLevel
     {
         /// <summary>
@@ -20,12 +24,12 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
         QueryLevel,
 
         /// <summary>
-        /// These are done when joining multiple queries together in an super query (usually separated with set operations such as UNION, EXCEPT etc)
+        /// These are done when joining multiple queries together in an super query (usually separated with set operations such as UNION, EXCEPT etc). See CohortQueryBuilder
         /// </summary>
         CompositeQueryLevel,
 
         /// <summary>
-        /// highest, these are added to the QueryBuilder by the code and should always be preserved, e.g. CohortID is explicitly added by the data export manager
+        /// highest, these are added to the QueryBuilder by the code and should always be preserved, e.g. CohortID is explicitly added by the data export manager.
         /// </summary>
         Global,
     }

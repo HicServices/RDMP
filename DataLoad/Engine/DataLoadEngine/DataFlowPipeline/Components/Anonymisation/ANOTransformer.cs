@@ -18,6 +18,11 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 {
+    /// <summary>
+    /// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in
+    /// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate 
+    /// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure SubstitutionStoredprocedure.
+    /// </summary>
     public class ANOTransformer
     {
         private readonly ANOTable _anoTable;

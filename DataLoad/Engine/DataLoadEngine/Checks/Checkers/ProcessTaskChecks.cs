@@ -8,6 +8,10 @@ using ReusableLibraryCode.Checks;
 
 namespace DataLoadEngine.Checks.Checkers
 {
+    /// <summary>
+    /// Checks all ProcessTasks that the user has configured for a given data load (See LoadMetadata).  This involves both constructing and initializing 
+    /// the instances (which can fail if Type names don't resolve etc) and calling check on the instantiated ProcessTask.
+    /// </summary>
     public class ProcessTaskChecks : ICheckable
     {
         private readonly ILoadMetadata _loadMetadata;
@@ -24,7 +28,7 @@ namespace DataLoadEngine.Checks.Checkers
             {
                 try
                 {
-                    dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo, false);
+                    dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
                 }
                 catch (Exception e)
                 {

@@ -6,6 +6,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components
 {
+    /// <summary>
+    /// DLE post load disposal operation which deletes all the files in the ForLoading directory.  This is added to the disposal stack and should be executed
+    /// after the archiving of ForLoading (See ArchiveFiles).
+    /// </summary>
     public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
     {
         private readonly IDataLoadJob _job;

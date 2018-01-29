@@ -8,7 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using GraphX.PCL.Common.Models;
 using ReusableLibraryCode;
-using ReusableUIComponents.Annotations;
+using ReusableLibraryCode.Annotations;
 
 namespace ReusableUIComponents.Dependencies.Models
 {

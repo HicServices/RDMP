@@ -8,6 +8,10 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Pipeline.Sources
 {
+    /// <summary>
+    /// Identifies when a Catalogue Data Quality Engine Evaluation can be executed (according to DQERunFinder), packages it as an AutomatedDQERun and releases it
+    /// into the automation pipeline for scheduling/execution.
+    /// </summary>
     public class DQEAutomationSource : IAutomationSource
     {
         public DQEAutomationSource()

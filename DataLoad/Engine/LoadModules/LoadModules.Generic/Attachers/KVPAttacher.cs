@@ -23,7 +23,16 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
 {
-    public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline<DataTable>, IDataFlowDestination<DataTable>
+    /// <summary>
+    /// Data load component for loading very wide files into RAW tables by translating columns into key value pairs.  Relies on a user configured pipeline for
+    /// reading from the file (so it can support csv, fixed width, excel etc).  Once the user configured pipeline has read a DataTable from the file (which is
+    /// expected to have lots of columns which might be sparsely populated or otherwise suitable for key value pair representation rather than traditional 
+    /// relational/flat format.
+    /// 
+    /// Component converts each DataTable row into one or more rows in the format pk,key,value where pk are the column(s) which uniquely identify the source
+    /// row (e.g. Labnumber).  See KVPAttacher.docx for a full explanation.
+    /// </summary>
+    public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDestination<DataTable>
     {
         [DemandsInitialization("Pipeline for reading from the flat file",Mandatory = true)]
         public Pipeline PipelineForReadingFromFlatFile { get; set; }
@@ -48,12 +57,7 @@ namespace LoadModules.Generic.Attachers
             var flatFileToLoad = new FlatFileToLoad(fileToLoad);
 
             //stamp out the pipeline into an instance
-            var mef = ((CatalogueRepository)PipelineForReadingFromFlatFile.Repository).MEF;
-            var context = GetContext();
-            var factory = new DataFlowPipelineEngineFactory<DataTable>(mef, context);
-            factory.ExplicitDestination = this;
-            var dataFlow = factory.Create(PipelineForReadingFromFlatFile,listener);
-            dataFlow.Initialize(flatFileToLoad);
+            var dataFlow = new KVPAttacherPipelineUseCase(this, flatFileToLoad).GetEngine(PipelineForReadingFromFlatFile, listener);
 
             //will result in the opening and processing of the file and the passing of DataTables through the Pipeline finally arriving at the destination (us) in ProcessPipelineData
             dataFlow.ExecutePipeline(new GracefulCancellationToken());
@@ -164,30 +168,6 @@ namespace LoadModules.Generic.Attachers
         }
         #endregion
 
-        #region Pipeline Demands
-        public DataFlowPipelineContext<DataTable> GetContext()
-        {
-            var context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.FixedDestination);
-            context.MustHaveSource = typeof (IDataFlowSource<DataTable>);
-            
-            return context;
-        }
-
-        public IDataFlowSource<DataTable> GetFixedSourceIfAny()
-        {
-            return null;
-        }
-
-        public IDataFlowDestination<DataTable> GetFixedDestinationIfAny()
-        {
-            return this;
-        }
-
-        public List<object> GetInputObjectsForPreviewPipeline()
-        {
-            return new List<object>(new Object[]{new FlatFileToLoad(null)});
-        }
-        #endregion
 
         public override void Check(ICheckNotifier notifier)
         {
@@ -212,6 +192,11 @@ namespace LoadModules.Generic.Attachers
             if (TargetDataTableKeyColumnName != null && TargetDataTableKeyColumnName.Equals(TargetDataTableValueColumnName))
                 notifier.OnCheckPerformed(new CheckEventArgs("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName",CheckResult.Fail));
 
+        }
+
+        public IPipelineUseCase GetDesignTimePipelineUseCase(RequiredPropertyInfo property)
+        {
+            return new KVPAttacherPipelineUseCase(this,new FlatFileToLoad(null));
         }
     }
 }

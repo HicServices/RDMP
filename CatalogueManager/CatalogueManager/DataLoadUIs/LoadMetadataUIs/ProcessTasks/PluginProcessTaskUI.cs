@@ -96,7 +96,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 var factory = new RuntimeTaskFactory(_activator.RepositoryLocator.CatalogueRepository);
 
                 var lmd = _processTask.LoadMetadata;
-                var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo, false);
+                var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
                 var mefTask = (IMEFRuntimeTask) factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
             
                 ragSmiley1.StartChecking(mefTask.MEFPluginClassInstance);

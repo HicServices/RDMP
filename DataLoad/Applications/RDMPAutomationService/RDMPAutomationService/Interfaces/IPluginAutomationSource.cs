@@ -9,6 +9,9 @@ using ReusableLibraryCode.Checks;
 
 namespace RDMPAutomationService.Interfaces
 {
+    /// <summary>
+    /// MEF discoverable version of IAutomationSource
+    /// </summary>
     [InheritedExport(typeof(IDataFlowSource<OnGoingAutomationTask>))]
     [InheritedExport(typeof(ICheckable))]
     public interface IPluginAutomationSource : IAutomationSource

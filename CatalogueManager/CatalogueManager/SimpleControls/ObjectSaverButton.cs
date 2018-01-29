@@ -103,7 +103,10 @@ namespace CatalogueManager.SimpleControls
         
         public void Save()
         {
-            if(BeforeSave!= null)
+            if(_o == null)
+                throw new Exception("Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
+            
+            if(BeforeSave != null)
                 if (!BeforeSave(_o))
                     return;
 
@@ -213,7 +216,10 @@ namespace CatalogueManager.SimpleControls
                 if(MessageBox.Show(_o + " is out of date with database, would you like to reload a fresh copy?","Object Changed",MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     _o.RevertToDatabaseState();
-                    _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+                    
+                    //if we are not in the middle of a publish already
+                    if (!_refreshBus.PublishInProgress)
+                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
                 }
         }
 

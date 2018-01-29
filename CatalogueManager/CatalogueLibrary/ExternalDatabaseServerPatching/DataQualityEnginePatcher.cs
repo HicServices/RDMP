@@ -5,26 +5,19 @@ using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
+    /// <summary>
+    /// Documents the relationship between the patching and database assemblies of the DQE
+    /// </summary>
     public class DataQualityEnginePatcher : IPatcher
     {
-        private readonly IServerDefaults _serverDefaults;
-
-        public DataQualityEnginePatcher(IServerDefaults serverDefaults)
+        public Assembly GetHostAssembly()
         {
-            _serverDefaults = serverDefaults;
+            return Assembly.Load("DataQualityEngine");
         }
 
-        public IExternalDatabaseServer[] FindDatabases(out Assembly hostAssembly, out Assembly dbAssembly)
+        public Assembly GetDbAssembly()
         {
-            var dqe = _serverDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
-
-            hostAssembly = Assembly.Load("DataQualityEngine");
-            dbAssembly = Assembly.Load("DataQualityEngine.Database");
-
-            if (dqe == null)
-                return null;
-
-            return new[] {dqe};
+            return Assembly.Load("DataQualityEngine.Database");
         }
     }
 }

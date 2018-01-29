@@ -9,6 +9,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.CohortDescribing
 {
+    /// <summary>
+    /// Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a cohort database (ExternalCohortTable)
+    /// </summary>
     public class CohortDescriptionDataTableAsyncFetch
     {
         public ExternalCohortTable Source { get; private set; }

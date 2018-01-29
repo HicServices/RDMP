@@ -72,6 +72,7 @@ namespace CatalogueManager.Collections
             // olvColumn2
             // 
             this.olvColumn2.AspectName = "";
+            this.olvColumn2.IsEditable = false;
             this.olvColumn2.Text = "DataType";
             this.olvColumn2.Width = 110;
             // 

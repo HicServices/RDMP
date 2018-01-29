@@ -17,7 +17,12 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataProvider
 {
-    [Description("Copies files from the DirectoryPath into the forLoading directory.  If the data load is successful")]
+    /// <summary>
+    /// Data load component that copies files into the ForLoading directory from the remote directory (that match the file pattern e.g. *.csv).  A good use case
+    /// for this is if you want to expose a network location as a share for data provders to send you files to but want the DLE to take a copy of the files at 
+    /// runtime for the purposes of loading.
+    /// </summary>
+    [Description("Copies files from the DirectoryPath into the forLoading directory.  Optionally deletes files from the fetch location if the data load is successful")]
     public class ImportFilesDataProvider : IPluginDataProvider
     {
         private FileInfo[] _files;
@@ -74,21 +79,6 @@ namespace LoadModules.Generic.DataProvider
                         postLoadEventsListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to delete " + f.FullName));
                         f.Delete();
                     }
-        }
-
-        public string GetDescription()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDataProvider Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Validate(IHICProjectDirectory destination)
-        {
-            return true;
         }
     }
 }

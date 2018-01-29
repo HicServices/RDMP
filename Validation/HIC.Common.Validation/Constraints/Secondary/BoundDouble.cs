@@ -3,6 +3,10 @@ using System.ComponentModel;
 
 namespace HIC.Common.Validation.Constraints.Secondary
 {
+    /// <summary>
+    /// Values (if present) in a column must be within a certain range of numeric values.  This can include referencing another column.  For example you could
+    /// specify that the column 'AverageResult' must have an Inclusive Upper bound of the column 'MaxResult'.
+    /// </summary>
     public class BoundDouble :  Bound
     {
         [Description("Optional, Requires the value being validated to be HIGHER than this number")]

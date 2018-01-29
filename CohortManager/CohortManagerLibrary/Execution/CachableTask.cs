@@ -7,9 +7,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
-    public abstract class CachableTask : Compileable, ICachableTask
+    public abstract class CacheableTask : Compileable, ICacheableTask
     {
-        protected CachableTask(CohortCompiler compiler) : base(compiler)
+        protected CacheableTask(CohortCompiler compiler) : base(compiler)
         {
         }
 

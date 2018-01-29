@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Triggers;
 using DataExportLibrary.Tests.DataExtraction;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Data;
@@ -45,7 +46,7 @@ namespace DataQualityEngine.Tests
             testData.catalogue.TimeCoverage_ExtractionInformation_ID = toBeTimePeriodicityCol.ID;
             
             //do the validation
-            CatalogueConstraintReport report = new CatalogueConstraintReport(testData.catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(testData.catalogue, SpecialFieldNames.DataLoadRunID);
             report.Check(new ThrowImmediatelyCheckNotifier());
 
             CancellationTokenSource source = new CancellationTokenSource();
@@ -113,7 +114,7 @@ namespace DataQualityEngine.Tests
 
             try
             {
-                CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+                CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
                 var e = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier()));
                 Assert.IsTrue(
@@ -141,7 +142,7 @@ namespace DataQualityEngine.Tests
             
             try
             {
-                CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+                CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
                 var e = Assert.Throws<Exception>(()=> report.Check(new ThrowImmediatelyCheckNotifier()));
                 Assert.IsTrue(
@@ -161,7 +162,7 @@ namespace DataQualityEngine.Tests
         public void SupportsValidation_NoValidatorXML()
         {
 
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
             _catalogue.ValidatorXML = null;
 
             //it has no validator XML currently 
@@ -174,7 +175,7 @@ namespace DataQualityEngine.Tests
         [ExpectedException(ExpectedMessage = "ValidatorXML for Catalogue TestTable could not be deserialized into a Validator", MatchType = MessageMatch.Contains)]
         public void SupportsValidation_BadXML()
         {
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
             _catalogue.ValidatorXML = "fish";
             //it has no validator XML currently 
@@ -188,7 +189,7 @@ namespace DataQualityEngine.Tests
         public void SupportsValidation_MadeUpColumnName()
         {
 
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
             _catalogue.ValidatorXML = dodgyColumnXML;
             //it has no validator XML currently 
@@ -200,7 +201,7 @@ namespace DataQualityEngine.Tests
         [Test]
         public void SupportsValidation_GoodButNoDataLoadRunID()
         {
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, MigrationColumnSet.DataLoadRunField);
+            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
             _catalogue.ValidatorXML = validColumnXML;
             

@@ -17,7 +17,6 @@ using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableUIComponents;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options

@@ -81,7 +81,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 var factory = new RuntimeTaskFactory(_activator.RepositoryLocator.CatalogueRepository);
 
                 var lmd = _processTask.LoadMetadata;
-                var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo, false);
+                var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
                 _runtimeTask = (ExecutableRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
                 tbExeCommand.Text = _runtimeTask.ExeFilepath + " " + _runtimeTask.CreateArgString();
                 btnRunExe.Enabled = true;

@@ -17,6 +17,12 @@ using ReusableLibraryCode.Progress;
 
 namespace DataQualityEngine.Reports
 {
+    /// <summary>
+    /// Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.  The second containing all CacheFetch
+    /// counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed into the contructor.  These tables are
+    /// intended to assist the user in rapidly determining how much of a given dataset collection based on a cache fetch/load DLE job has currently been loaded 
+    /// (according to the DQE).  See LoadProgressDiagram
+    /// </summary>
     public class LoadProgressSummaryReport:ICheckable
     {
         private readonly LoadProgress _loadProgress;
@@ -31,9 +37,11 @@ namespace DataQualityEngine.Reports
 
         public DirectoryInfo ResolvedCachePath;
         
-        private HashSet<Catalogue> cataloguesMissingDQERuns = new HashSet<Catalogue>();
+        public HashSet<Catalogue> CataloguesMissingDQERuns { get; private set; }
         private CacheProgress _cacheProgress;
-        
+
+        public Dictionary<Catalogue,Evaluation> CataloguesWithDQERuns { get; private set; }
+
         public LoadProgressSummaryReport(LoadProgress loadProgress)
         {
             _loadProgress = loadProgress;
@@ -52,16 +60,18 @@ namespace DataQualityEngine.Reports
 
         public void FetchDataFromDQE(ICheckNotifier notifier)
         {
-            var allCatalogues = _loadMetadata.GetAllCatalogues().Cast<Catalogue>().ToList();
-
+            CataloguesWithDQERuns = new Dictionary<Catalogue, Evaluation>();
+            CataloguesMissingDQERuns = new HashSet<Catalogue>();
 
             //tell them about the missing evaluations catalogues
-            foreach (Catalogue catalogue in allCatalogues.ToArray())
-                if (!dqeRepository.HasAnyEvaluations(catalogue))
+            foreach (Catalogue catalogue in _loadMetadata.GetAllCatalogues().Cast<Catalogue>())
+            {
+                var evaluation = dqeRepository.GetMostRecentEvaluationFor(catalogue);
+
+                if (evaluation == null)
                 {
                     //Catalogue has never been run in the DQE
-                    cataloguesMissingDQERuns.Add(catalogue);
-                    allCatalogues.Remove(catalogue);
+                    CataloguesMissingDQERuns.Add(catalogue);
 
                     if (notifier != null)
                         notifier.OnCheckPerformed(
@@ -70,7 +80,12 @@ namespace DataQualityEngine.Reports
                                 "' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
                                 CheckResult.Warning));
                 }
-
+                else
+                {
+                    CataloguesWithDQERuns.Add(catalogue,evaluation);
+                }
+                
+            }
             //The following code uses an epic pivot to produce something like:
             /*YearMonth	Year	Month	 6429	 6430
                 1970-1	1970	    1	    4	    0
@@ -79,13 +94,13 @@ namespace DataQualityEngine.Reports
                 1970-4	1970	    4	    4	    0
                 1970-6	1970	    6	    2	    0*/
 
-            
 
-            if (!allCatalogues.Any())
+
+            if (!CataloguesWithDQERuns.Any())
                 throw new Exception("There are no Catalogues that have had DQE run on them in this LoadMetadata");
             
             if (notifier != null)
-                foreach (var catalogue in allCatalogues)
+                foreach (var catalogue in CataloguesWithDQERuns)
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Found DQE Evaluations for Catalogue '" + catalogue + "'",
@@ -95,7 +110,7 @@ namespace DataQualityEngine.Reports
             {
                 CataloguesPeriodictiyData = new DataTable();
 
-                var cmd = dqeRepository.DiscoveredServer.GetCommand(GetTotalsByMonthSQL(allCatalogues.ToArray()), con);
+                var cmd = dqeRepository.DiscoveredServer.GetCommand(GetTotalsByMonthSQL(CataloguesWithDQERuns.Keys.ToArray()), con);
                 var da = dqeRepository.DiscoveredServer.GetDataAdapter(cmd);
                 da.Fill(CataloguesPeriodictiyData);
             }
@@ -105,7 +120,7 @@ namespace DataQualityEngine.Reports
             {
                 int cataId;
                 if (int.TryParse(col.ColumnName, out cataId))
-                    col.ColumnName = allCatalogues.Single(c => c.ID == cataId).Name;
+                    col.ColumnName = CataloguesWithDQERuns.Keys.Single(c => c.ID == cataId).Name;
             }
 
             //Now extend the X axis up to the cache fill location
@@ -113,6 +128,8 @@ namespace DataQualityEngine.Reports
             if (cacheProgress != null && cacheProgress.CacheFillProgress != null)
                 ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
         }
+
+        
 
         private void ExtendXAxisTill(DateTime value)
         {
@@ -205,7 +222,7 @@ namespace DataQualityEngine.Reports
             if (CachePeriodictiyData == null)
                 FetchCacheData(notifier);
 
-            foreach (Catalogue cataloguesMissingDQERun in cataloguesMissingDQERuns)
+            foreach (Catalogue cataloguesMissingDQERun in CataloguesMissingDQERuns)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         "Catalogue '" + cataloguesMissingDQERun +
@@ -228,8 +245,6 @@ namespace DataQualityEngine.Reports
                     var layout = cacheFileSystem.CreateCacheLayout();
                     availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
                     ResolvedCachePath = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
-
-
                 }
                 catch (Exception e)
                 {

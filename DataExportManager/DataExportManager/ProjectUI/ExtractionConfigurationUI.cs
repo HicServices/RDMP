@@ -34,11 +34,11 @@ using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Icons.IconProvision;
 using ReusableUIComponents.TransparentHelpSystem;
 
 namespace DataExportManager.ProjectUI
@@ -206,7 +206,7 @@ namespace DataExportManager.ProjectUI
                 return;
 
             //the use case is extracting a dataset
-            var useCase = new ExtractionPipelineHost();
+            var useCase = new ExtractionPipelineUseCase();
 
             //the user is DefaultPipeline_ID field of ExtractionConfiguration
             var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),ExtractionConfiguration);

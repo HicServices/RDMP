@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
@@ -18,6 +15,14 @@ using Ticketing;
 
 namespace DataExportLibrary.DataRelease
 {
+    /// <summary>
+    /// Facilitates the release of anonymous project extracts to researchers including the generation of the release documents / Audit.  This typically involves
+    /// collecting all the extracted files (csv data extracts, docx metadata documents, custom data files and supporting documents etc) and moving them into a single
+    /// release directory followed by deleting all redundant extraction artifacts.
+    /// 
+    /// In order to DoRelease you will need to evaluate the environment and each ExtractionConfiguration to confirm they are in a releasable state (extracted files
+    /// match current configuration, ticketing system says that the project has governance approval for release etc).  
+    /// </summary>
     public class ReleaseEngine
     {
         protected readonly IDataLoadEventListener _listener;
@@ -42,7 +47,7 @@ namespace DataExportLibrary.DataRelease
             _listener = listener ?? new ToMemoryDataLoadEventListener(false);
         }
 
-        public virtual void DoRelease(Dictionary<IExtractionConfiguration,List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
+        public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
         {
             VerifyReleasability(toRelease, environment);
 
@@ -50,9 +55,9 @@ namespace DataExportLibrary.DataRelease
             ReleaseFolder = PrepareAndVerifyReleaseFolder();
 
             StreamWriter sw = PrepareAuditFile();
-            
+
             ReleaseGlobalFolder();
-            
+
             // Audit Global Folder if there are any
             if (SourceGlobalFolder != null)
             {
@@ -74,7 +79,7 @@ namespace DataExportLibrary.DataRelease
                 CleanupExtractionFolders(this.Project.ExtractionDirectory);
             }
         }
-        
+
         protected virtual void VerifyReleasability(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment)
         {
             //make sure everything is releasable
@@ -85,7 +90,7 @@ namespace DataExportLibrary.DataRelease
                             //these are the only permissable release states
                             p.Assesment != Releaseability.Releaseable &&
                             p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)).ToArray();
-            
+
             if (dodgyStates.Any())
             {
                 StringBuilder sb = new StringBuilder();
@@ -169,11 +174,6 @@ namespace DataExportLibrary.DataRelease
             {
                 var destination = new DirectoryInfo(Path.Combine(ReleaseFolder.FullName, SourceGlobalFolder.Name));
                 SourceGlobalFolder.CopyAll(destination);
-
-                //if (ReleaseSettings.DeleteFilesOnSuccess)
-                //{
-                //    SourceGlobalFolder.Delete(recursive: true);
-                //}
             }
         }
 
@@ -203,7 +203,7 @@ namespace DataExportLibrary.DataRelease
                 var generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
                 generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
                 AuditFileCreation("ReleaseDocument" + extractionIdentifier + ".docx", sw, 1);
-                
+
 
                 //only copy across directories that are explicitly validated with a ReleasePotential
                 foreach (ReleasePotential rp in kvp.Value)
@@ -231,13 +231,6 @@ namespace DataExportLibrary.DataRelease
             {
                 var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
                 fromCustomData.CopyAll(destination);
-                //if (ReleaseSettings.DeleteFilesOnSuccess)
-                //    fromCustomData.MoveTo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
-                //else
-                //{
-                //    var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
-                //    fromCustomData.CopyAll(destination);
-                //}
             }
             return fromCustomData;
         }
@@ -318,7 +311,7 @@ namespace DataExportLibrary.DataRelease
         {
             ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
 
-            var expectedFilename = rp.DataSet + ".csv";
+            var expectedFilename = rp.ExtractFile.Name;
             var datasetFile = rpDirectory.EnumerateFiles().SingleOrDefault(f => f.Name.Equals(expectedFilename));
             if (datasetFile == null)
             {
@@ -342,9 +335,9 @@ namespace DataExportLibrary.DataRelease
                 else
                     suffix = Project.MasterTicket;
 
-                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release-" + suffix)); 
+                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release-" + suffix));
             }
-            
+
             return ReleaseSettings.CustomReleaseFolder;
         }
 
@@ -368,7 +361,7 @@ namespace DataExportLibrary.DataRelease
                 yield return (globalFolderForThisExtract);
             }
         }
-        
+
         protected DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)
         {
             if (!directoryInfos.Any())
@@ -387,13 +380,13 @@ namespace DataExportLibrary.DataRelease
 
         protected void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
         {
-            if(globalsDirectoryInfo.EnumerateDirectories().Any())
+            if (globalsDirectoryInfo.EnumerateDirectories().Any())
                 throw new Exception("Folder \"" + globalsDirectoryInfo.FullName + "\" contains subdirectories, this is not permitted");
         }
 
         protected void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
         {
-            if(first.EnumerateFiles().Count()!= other.EnumerateFiles().Count())
+            if (first.EnumerateFiles().Count() != other.EnumerateFiles().Count())
                 throw new Exception("found different number of files in Globals directory " + first.FullName + " and " + other.FullName);
 
             var filesInFirst = first.EnumerateFiles().ToArray();
@@ -403,10 +396,10 @@ namespace DataExportLibrary.DataRelease
             {
                 FileInfo file1 = filesInFirst[i];
                 FileInfo file2 = filesInOther[i];
-                if(!file1.Name.Equals(file2.Name))
-                    throw new Exception("Although there were the same number of files in Globals directories " + first.FullName + " and " + other.FullName + ", there were differing file names ("+file1.Name +" and "+file2.Name+")");
+                if (!file1.Name.Equals(file2.Name))
+                    throw new Exception("Although there were the same number of files in Globals directories " + first.FullName + " and " + other.FullName + ", there were differing file names (" + file1.Name + " and " + file2.Name + ")");
 
-                if(!UsefulStuff.MD5File(file1.FullName).Equals(UsefulStuff.MD5File(file2.FullName)))
+                if (!UsefulStuff.MD5File(file1.FullName).Equals(UsefulStuff.MD5File(file2.FullName)))
                     throw new Exception("File found in Globals directory which has a different MD5 from another Globals file.  Files were \"" + file1.FullName + "\" and \"" + file2.FullName + "\"");
             }
         }
@@ -419,10 +412,6 @@ namespace DataExportLibrary.DataRelease
                 //audit as -Filename at tab indent 
                 AuditFileCreation(file.Name, audit, tabDepth);
                 file.CopyTo(Path.Combine(into.FullName, file.Name));
-                //if (ReleaseSettings.DeleteFilesOnSuccess)
-                //    file.MoveTo(Path.Combine(into.FullName, file.Name));
-                //else
-                //    file.CopyTo(Path.Combine(into.FullName, file.Name));
             }
 
             //found subdirectory
@@ -435,9 +424,7 @@ namespace DataExportLibrary.DataRelease
                     AuditDirectoryCreation(dir.Name, audit, tabDepth);
                     CutTreeRecursive(dir, into.CreateSubdirectory(dir.Name), audit, tabDepth + 1);
                 }
-
             }
-
         }
 
         protected void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
@@ -454,7 +441,7 @@ namespace DataExportLibrary.DataRelease
                 audit.Write("\t");
 
             audit.WriteLine("+" + dir);
-            
+
         }
     }
 }

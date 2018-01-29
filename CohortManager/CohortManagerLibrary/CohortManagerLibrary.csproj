@@ -86,7 +86,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -102,10 +101,11 @@
     <Compile Include="Execution\CachableTask.cs" />
     <Compile Include="Execution\CohortCompiler.cs" />
     <Compile Include="Execution\AggregationTask.cs" />
+    <Compile Include="Execution\CohortCompilerRunner.cs" />
     <Compile Include="Execution\ExecutingAggregateState.cs" />
     <Compile Include="Execution\CohortIdentificationTaskExecution.cs" />
-    <Compile Include="Execution\ICachableTask.cs" />
-    <Compile Include="Execution\Joinables\JoinableTaskExecution.cs" />
+    <Compile Include="Execution\ICacheableTask.cs" />
+    <Compile Include="Execution\Joinables\JoinableTask.cs" />
     <Compile Include="FreeText\FreeTextCompiler.cs" />
     <Compile Include="FreeText\Paragraphing\ParagraphSection.cs" />
     <Compile Include="FreeText\SyntaxCalculator.cs" />
@@ -144,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Execution\CohortAggregateExecution.cd" />
+    <None Include="Execution\CohortCompiler.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -33,9 +33,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
     /// </summary>
     public partial class MEFStartupUI : UserControl, ICheckNotifier
     {
-        private ToMemoryCheckNotifier _record;
-        private ReplayCheckable _replay;
-
         public MEFStartupUI()
         {
             InitializeComponent();
@@ -44,11 +41,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             DoTransparencyProperly.ThisHoversOver(ragSmiley2, pbDosBox);
             DoTransparencyProperly.ThisHoversOver(lblFilesDownloaded,pbDownloadArrow);
             DoTransparencyProperly.ThisHoversOver(lblFilesLoaded, pbBigArrowPointingRight);
-
-            _record = new ToMemoryCheckNotifier();
-            _replay = new ReplayCheckable(_record);
-
-            ragSmiley2.AlwaysShowHandCursor = true;
         }
 
 
@@ -56,8 +48,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         {
             filesLoaded++;
 
-            ragSmiley2.ElevateState(args.Result);
-            _record.OnCheckPerformed(args);
+            ragSmiley2.OnCheckPerformed(args);
 
             lblFilesLoaded.Text = filesLoaded + " Files";
             return false;
@@ -93,18 +84,9 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         public void Reset()
         {
             filesLoaded = 0;
-
-            _record = new ToMemoryCheckNotifier();
-            _replay = new ReplayCheckable(_record);
             
             ragSmiley1.Reset();
             ragSmiley2.Reset();
-        }
-
-        private void ragSmiley2_Click(object sender, EventArgs e)
-        {
-            PopupChecksUI popup = new PopupChecksUI("Loading MEF Assemblies", false);
-            _replay.Check(popup);
         }
     }
 }

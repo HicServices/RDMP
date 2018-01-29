@@ -20,10 +20,15 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 {
     public class SuspiciousRelationshipPropertyUse
     {
+        private readonly MEF mef;
         List<string>  _fails = new List<string>();
-
         private BiDictionary<PropertyInfo, MethodInfo> RelationshipPropertyInfos = new BiDictionary<PropertyInfo, MethodInfo>();
-        
+
+        public SuspiciousRelationshipPropertyUse(MEF mef)
+        {
+            this.mef = mef;
+        }
+
         public void FindPropertyMisuse(List<string> csFilesFound)
         {
             //Find all the types that come from the database
@@ -195,50 +200,49 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
         private void AnalyseRelationshipPropertyUsages()
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            List<Exception> whoCares;
+            foreach (var t in mef.GetAllTypesFromAllKnownAssemblies(out whoCares))
             {
-                foreach (var t in assembly.GetTypes())
+                if (!t.IsClass)
+                    continue;
+
+                var toStringMethod = t.GetMethod("ToString", new Type[0]);
+
+                //it doesn't have any ToString methods!
+                if (toStringMethod == null)
+                    continue;
+
+                if (toStringMethod.DeclaringType == typeof (System.Object))
+                    continue;
+
+                if (toStringMethod.DeclaringType == typeof (MarshalByRefObject))
+                    continue;
+
+                IList<Instruction> instructions = null;
+                try
                 {
-                    if (!t.IsClass)
-                        continue;
-
-                    var toStringMethod = t.GetMethod("ToString", new Type[0]);
-
-                    //it doesn't have any ToString methods!
-                    if (toStringMethod == null)
-                        continue;
-
-                    if (toStringMethod.DeclaringType == typeof(System.Object))
-                        continue;
-
-                    if (toStringMethod.DeclaringType == typeof(MarshalByRefObject))
-                        continue;
-
-                    IList<Instruction> instructions = null;
-                    try
-                    {
-                        instructions = toStringMethod.GetInstructions();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-
-                    if (instructions != null)
-                        foreach (Instruction instruction in instructions)
-                        {
-                            MethodInfo methodInfo = instruction.Operand as MethodInfo;
-
-                            if (methodInfo != null)
-                            {
-                                //is it a call to property
-                                PropertyInfo prop;
-
-                                if(RelationshipPropertyInfos.TryGetBySecond(methodInfo,out prop))
-                                    _fails.Add("FAIL: ToString method in Type " + t.FullName + " uses Relationship PropertyInfo " + prop.Name );
-                            }
-                        }
+                    instructions = toStringMethod.GetInstructions();
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                if (instructions != null)
+                    foreach (Instruction instruction in instructions)
+                    {
+                        MethodInfo methodInfo = instruction.Operand as MethodInfo;
+
+                        if (methodInfo != null)
+                        {
+                            //is it a call to property
+                            PropertyInfo prop;
+
+                            if (RelationshipPropertyInfos.TryGetBySecond(methodInfo, out prop))
+                                _fails.Add("FAIL: ToString method in Type " + t.FullName +
+                                           " uses Relationship PropertyInfo " + prop.Name);
+                        }
+                    }
             }
         }
 

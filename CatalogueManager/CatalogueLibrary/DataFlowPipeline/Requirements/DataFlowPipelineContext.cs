@@ -108,7 +108,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
 
         private bool IsAllowable(Type t, out Type forbiddenType)
         {
-            forbiddenType = CannotHave.SingleOrDefault(type => type.IsAssignableFrom(t));
+            forbiddenType = CannotHave.FirstOrDefault(type => type.IsAssignableFrom(t));
 
             return forbiddenType == null;
         }

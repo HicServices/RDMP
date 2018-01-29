@@ -9,6 +9,9 @@ using Microsoft.Win32;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// Determines whether a given Microsoft Office component (e.g. Microsoft Word) is installed on the current computer.
+    /// </summary>
     public class OfficeVersionFinder
     {
         public enum OfficeComponent

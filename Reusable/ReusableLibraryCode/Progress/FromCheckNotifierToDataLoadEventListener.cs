@@ -5,6 +5,11 @@ using ReusableLibraryCode.Checks;
 
 namespace ReusableLibraryCode.Progress
 {
+    /// <summary>
+    /// Allows you to route IDataLoadEventListener messages to an ICheckNotifier.  All OnNotify events will be translated into a similar OnCheckPerformed event.
+    /// For OnProgress events there is a loss of granularity since ICheckNotifiers are not designed to record incremental progress messages.  Therefore the 
+    /// ICheckNotifier will only be given one OnCheckPerformed event for each novel OnProgress Tasks seen with the message 'Started progress on x'.
+    /// </summary>
     public class FromCheckNotifierToDataLoadEventListener : IDataLoadEventListener
     {
         private readonly ICheckNotifier _checker;

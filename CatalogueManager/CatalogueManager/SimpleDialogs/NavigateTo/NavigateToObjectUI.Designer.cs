@@ -28,16 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tbFind = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // tbFind
+            // panel1
             // 
-            this.tbFind.Location = new System.Drawing.Point(25, 0);
-            this.tbFind.Name = "tbFind";
-            this.tbFind.Size = new System.Drawing.Size(628, 20);
-            this.tbFind.TabIndex = 0;
-            this.tbFind.TextChanged += new System.EventHandler(this.tbFind_TextChanged);
+            this.panel1.Location = new System.Drawing.Point(25, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(631, 20);
+            this.panel1.TabIndex = 1;
             // 
             // NavigateToObjectUI
             // 
@@ -45,19 +44,19 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.ClientSize = new System.Drawing.Size(1275, 639);
-            this.ControlBox = false;
-            this.Controls.Add(this.tbFind);
+            this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "NavigateToObjectUI";
             this.Text = "NavigateToObjectUI";
             this.TransparencyKey = System.Drawing.Color.Magenta;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NavigateToObjectUI_FormClosed);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox tbFind;
+        private System.Windows.Forms.Panel panel1;
+
     }
 }

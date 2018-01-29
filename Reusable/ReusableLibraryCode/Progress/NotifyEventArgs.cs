@@ -4,6 +4,10 @@ using ReusableLibraryCode.Checks;
 
 namespace ReusableLibraryCode.Progress
 {
+    /// <summary>
+    /// Event args for IDataLoadEventListener.OnNotify events.  Includes the StackTrace the message was raised from, the ProgressEventType (Error, Warning etc) and
+    /// Any Exception.
+    /// </summary>
     public class NotifyEventArgs
     {
         public ProgressEventType ProgressEventType { get; set; }

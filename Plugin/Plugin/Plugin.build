@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="DebugBuild"  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--<UsingTask AssemblyFile="$(MSBuildStartupDirectory)\.build\MSBuild.Community.Tasks.dll" TaskName="NUnit"/>-->
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!--<UsingTask AssemblyFile="$(MSBuildStartupDirectory)\.build\MSBuild.Community.Tasks.dll" TaskName="NUnit"/>-->
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
-  <Target Name="Deploy">
-    <CallTarget Targets="Build" />
-    	
-    <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
+    <Target Name="Deploy">
+        <CallTarget Targets="Build" />
+
+        <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
        Text="Please pass 'ReleaseNugetPackageSource' in to this build task (/p:ReleaseNugetPackageSource=foo)" />
 
-    <Message Text="Pushing to nuget server at $(ReleaseNugetPackageSource) after build" />
-	
-    <!--
+        <Message Text="Pushing to nuget server at $(ReleaseNugetPackageSource) after build" />
+
+        <!--
         <PropertyGroup Condition="'$(ConfigurationName)'=='Release' And '$(PushRelease)'!='' And '$(PushRelease)'==1">
             <ReleaseNugetPackage>true</ReleaseNugetPackage>
             <ReleaseNugetPackageSource>http://adp-hicci-01/nuget/</ReleaseNugetPackageSource>
             <ReleaseNugetPushParams>-ApiKey hicteamserver</ReleaseNugetPushParams>
         </PropertyGroup>
     -->
-	
-  	<Exec Command="nuget pack Plugin.csproj -Base ..\.. -Properties Configuration=$(ConfigurationName)" />    
-    <Exec Command="nuget push HIC.RDMP.Plugin.*.nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />    
-  </Target>
-  
-  <Target Name="Build">
-    <MSBuild Projects="Plugin.csproj" Properties="Configuration=$(ConfigurationName)" />
-  </Target>
+
+        <Exec Command="nuget pack Plugin.csproj -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -Symbols -Version $(Version) -Exclude **/*/*.sql;**/*/_BuildInfo.xml;**/*/readme.txt;**/*/Microsoft.SqlServer.*;**/*/Pencil.cur" />    
+        <Exec Command="nuget push HIC.RDMP.Plugin.$(Version).nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />    
+    </Target>
+
+    <Target Name="Build">
+        <MSBuild Projects="Plugin.csproj" Properties="Configuration=$(ConfigurationName)" />
+    </Target>
 </Project>

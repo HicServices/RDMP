@@ -8,6 +8,7 @@ using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Data.DataTables;
 using DataQualityEngine.Data;
 using HIC.Common.Validation;
@@ -21,6 +22,14 @@ using ReusableLibraryCode.DataAccess;
 
 namespace RDMPStartup
 {
+    /// <summary>
+    /// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2 
+    /// databases) and plugin databases (Called Tier3).
+    /// 
+    /// Identifies which databases need to be patched.
+    /// 
+    /// Loads MEF assemblies and identifies assembly incompatibilities / Type Load errors.
+    /// </summary>
     public class Startup
     {
         public SafeDirectoryCatalog MEFSafeDirectoryCatalog { get; private set; }
@@ -117,26 +126,23 @@ namespace RDMPStartup
 
         private void FindTier3Databases(CatalogueRepository catalogueRepository)
         {
-            var pluginBootstrapper = new PluginBootstrapper(catalogueRepository);
-            
-            var pluginPatcherTypes = pluginBootstrapper.FindPatchers();
+            ObjectConstructor constructor = new ObjectConstructor();
 
-            foreach (Type t in pluginPatcherTypes)
+            foreach (Type patcherType in catalogueRepository.MEF.GetTypes<IPatcher>().Where(type => type.IsPublic))
             {
                 try
                 {
-                    var instance = pluginBootstrapper.Create(t);
+                    var instance = (IPatcher)constructor.Construct(patcherType);
 
-                    PluginPatcherFound(this, new PluginPatcherFoundEventArgs(t, instance, PluginPatcherStatus.Healthy));
+                    PluginPatcherFound(this, new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
                     FindWithPatcher(instance, 3, RDMPPlatformType.Plugin);
 
                 }
                 catch (Exception e)
                 {
-                    PluginPatcherFound(this,new PluginPatcherFoundEventArgs(t,null, PluginPatcherStatus.CouldNotConstruct,e));
+                    PluginPatcherFound(this, new PluginPatcherFoundEventArgs(patcherType, null, PluginPatcherStatus.CouldNotConstruct, e));
                 }
             }
-
         }
 
         private bool Find(ITableRepository tableRepository, Assembly hostAssembly, Assembly dbAssembly, int tier,RDMPPlatformType rdmpPlatformType)
@@ -189,30 +195,30 @@ namespace RDMPStartup
             //DQE
             Type type = typeof(DataQualityEngine.Class1);
             Debug.Assert(type != null);
-            var dqe = new DataQualityEnginePatcher(defaults);
+            var dqe = new DataQualityEnginePatcher();
             FindWithPatcher(dqe,2,RDMPPlatformType.DQE);
 
             //Logging
             type = typeof(HIC.Logging.Class1);
             Debug.Assert(type != null);
-            var logging = new LoggingDatabasePatcher(catalogueRepository);
+            var logging = new LoggingDatabasePatcher();
             FindWithPatcher(logging,2,RDMPPlatformType.Logging);
 
             //ANO
             type = typeof(ANOStore.Class1);
             Debug.Assert(type != null);
-            var ano = new ANOStoreDatabasePatcher(catalogueRepository);
+            var ano = new ANOStoreDatabasePatcher();
             FindWithPatcher(ano,2,RDMPPlatformType.ANO);
 
             //Identifier Dump
             type = typeof(IdentifierDump.Class1);
             Debug.Assert(type != null);
-            var identifierDump = new IdentifierDumpDatabasePatcher(catalogueRepository);
+            var identifierDump = new IdentifierDumpDatabasePatcher();
             FindWithPatcher(identifierDump, 2, RDMPPlatformType.IdentifierDump);
             
             //Query cache
             type = typeof(QueryCaching.Class1);
-            var cache = new QueryCachingDatabasePatcher(catalogueRepository);
+            var cache = new QueryCachingDatabasePatcher();
             FindWithPatcher(cache, 2, RDMPPlatformType.QueryCache);
 
             Debug.Assert(type != null);
@@ -220,12 +226,10 @@ namespace RDMPStartup
 
         private void FindWithPatcher(IPatcher patcher,int tier, RDMPPlatformType type)
         {
-            Assembly hostAssembly, dbAssembly;
-            var dbs = patcher.FindDatabases(out hostAssembly, out dbAssembly);
+            Assembly hostAssembly = patcher.GetHostAssembly();
+            Assembly dbAssembly = patcher.GetDbAssembly();
 
-            //there are none
-            if(dbs == null)
-                return;
+            var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.WasCreatedByDatabaseAssembly(dbAssembly));
 
             foreach (IExternalDatabaseServer server in dbs)
             {

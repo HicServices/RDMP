@@ -10,6 +10,12 @@ using ReusableLibraryCode.Exceptions;
 
 namespace ReusableLibraryCode.DataAccess
 {
+    /// <summary>
+    /// Translation class for converting IDataAccessPoints into DiscoveredServer / DiscoveredDatabase / ConnectionStrings etc.  IDataAccessPoints are named 
+    /// servers/databases which might have usernames/passwords associated with them (or might use Integrated Security).  Each IDataAccessPoint can have multiple 
+    /// credentials that can be used with it depending on the DataAccessContext.  Therefore when using the DataAccessPortal you always have to specify the 
+    /// Context of the activity you are doing e.g. DataAccessContext.DataLoad.
+    /// </summary>
     public class DataAccessPortal
     {
         private static readonly object oLockInstance = new object();
@@ -37,7 +43,7 @@ namespace ReusableLibraryCode.DataAccess
         }
         public DiscoveredDatabase ExpectDatabase(IDataAccessPoint dataAccessPoint, DataAccessContext context)
         {
-            return ExpectServer(dataAccessPoint, context).ExpectDatabase(SqlSyntaxHelper.GetRuntimeName(dataAccessPoint.Database));
+            return ExpectServer(dataAccessPoint, context).ExpectDatabase(dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database));
         }
         public DiscoveredServer ExpectDistinctServer(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
         {
@@ -51,7 +57,7 @@ namespace ReusableLibraryCode.DataAccess
 
             return new DatabaseHelperFactory(dataAccessPoint.DatabaseType).CreateInstance().GetConnectionStringBuilder(
                 dataAccessPoint.Server,
-                setInitialDatabase?SqlSyntaxHelper.GetRuntimeName(dataAccessPoint.Database):"",
+                setInitialDatabase ? dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database) : "",
                 credentials != null?credentials.Username:null,
                 credentials != null ? credentials.GetDecryptedPassword() : null);
         }
@@ -75,8 +81,10 @@ namespace ReusableLibraryCode.DataAccess
                     if(string.IsNullOrWhiteSpace(first.Database))
                         throw new Exception("DataAccessPoint '" + first +"' does not have a Database specified on it");
 
-                    var firstDbName = SqlSyntaxHelper.GetRuntimeName(first.Database);
-                    var currentDbName = SqlSyntaxHelper.GetRuntimeName(accessPoint.Database);
+                    var querySyntaxHelper = accessPoint.GetQuerySyntaxHelper();
+
+                    var firstDbName = querySyntaxHelper.GetRuntimeName(first.Database);
+                    var currentDbName = querySyntaxHelper.GetRuntimeName(accessPoint.Database);
 
                     if (!firstDbName.Equals(currentDbName))
                         throw new ExpectedIdenticalStringsException("All data access points must be into the same database, access points '" + first + "' and '" + accessPoint + "' are into different databases", firstDbName, currentDbName);    

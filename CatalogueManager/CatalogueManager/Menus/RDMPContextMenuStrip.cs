@@ -25,10 +25,11 @@ using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Dependencies;
-using ReusableUIComponents.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
@@ -99,13 +100,23 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
             if (deletable != null)
+            {
+                if (_args.Masquerader is IDeleteable)
+                    deletable = (IDeleteable)_args.Masquerader;
+
                 Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
+            }
 
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
 
             if (databaseEntity != null)
             {
+                if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
+                    Add(new ExecuteCommandUnpin(_activator, databaseEntity));
+                else
+                    Add(new ExecuteCommandPin(_activator, databaseEntity));
+
                 Add(new ExecuteCommandShowKeywordHelp(_activator, databaseEntity));
                 Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
             }

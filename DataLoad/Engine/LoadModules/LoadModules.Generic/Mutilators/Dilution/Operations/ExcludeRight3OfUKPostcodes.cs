@@ -9,6 +9,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
+    /// <summary>
+    /// Dilutes data in the ColumnToDilute which is expected to contain postcodes by replacing stripping the last 3 digits such that DD3 7LX becomes DD3.
+    /// See TestExcludeRight3OfUKPostcodes for expected inputs/outputs.
+    /// </summary>
     public class ExcludeRight3OfUKPostcodes: DilutionOperation
     {
         public ExcludeRight3OfUKPostcodes() : 

@@ -20,7 +20,7 @@ using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Pipelines;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
 {
@@ -94,7 +94,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             configureAndExecuteDialog.Dock = DockStyle.Fill;
             configureAndExecuteDialog.SetPipelineOptions(null, null, (DataFlowPipelineContext<DataTable>)request.GetContext(), catalogueRepository);
 
-            foreach (object o in request.GetInitializationObjects(catalogueRepository))
+            foreach (object o in request.GetInitializationObjects())
                 configureAndExecuteDialog.AddInitializationObject(o);
 
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);
@@ -106,7 +106,15 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             {
                 var logManager = new LogManager(loggingServer);
                 logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
-                configureAndExecuteDialog.SetAdditionalProgressListener(new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description));
+
+                //create a db listener 
+                var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,ExtractableCohort.CohortLoggingTask, description);
+
+                //make all messages go to both the db and the UI
+                configureAndExecuteDialog.SetAdditionalProgressListener(toDbListener);
+
+                //after executing the pipeline finalise the db listener table info records
+                configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (s,e)=>toDbListener.FinalizeTableLoadInfos();
             }
 
             return configureAndExecuteDialog;

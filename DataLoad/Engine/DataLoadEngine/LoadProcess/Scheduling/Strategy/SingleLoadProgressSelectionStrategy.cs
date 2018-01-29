@@ -5,6 +5,9 @@ using CatalogueLibrary.Data;
 
 namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
 {
+    /// <summary>
+    /// Hacky ILoadProgressSelectionStrategy in which only the specific LoadProgress in the constructor to this class is ever suggested.
+    /// </summary>
     public class SingleLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
     {
         private readonly ILoadProgress _loadProgress;

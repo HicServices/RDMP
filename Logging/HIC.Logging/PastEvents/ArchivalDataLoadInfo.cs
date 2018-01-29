@@ -8,7 +8,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace HIC.Logging.PastEvents
 {
-
+    /// <summary>
+    /// Used when requesting a specific recent ArchivalDataLoadInfo for a given task.
+    /// </summary>
     public enum PastEventType
     {
         MostRecent,
@@ -16,6 +18,11 @@ namespace HIC.Logging.PastEvents
     }
 
 
+    /// <summary>
+    /// Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites across all areas of the program in a central
+    /// place.  You can process these records programatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
+    /// messages, Tables loaded etc).  See Logging.cd for more information
+    /// </summary>
     public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
     {
         public int ID { get; private set; }

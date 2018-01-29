@@ -12,17 +12,20 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Reports
 {
+    /// <summary>
+    /// Extracts comments from SourceCodeForSelfAwareness.zip for all IMapsDirectlyToDatabaseTable object Types (all things that the user can store in the Catalogue/Data Export
+    /// repository - e.g. Catalogues, TableInfos etc).  This ensures that the help is always up-to-date and matches the source code 100%.
+    /// </summary>
     public class DocumentationReportMapsDirectlyToDatabase: ICheckable
     {
-        private readonly Assembly _assembly;
+        private readonly Assembly[] _assemblies;
         private const int NumberOfNewlinesPerParagraph = 1;
 
         public Dictionary<Type, string> Summaries = new Dictionary<Type, string>();
 
-        public DocumentationReportMapsDirectlyToDatabase(Assembly assembly)
+        public DocumentationReportMapsDirectlyToDatabase(params Assembly[] assemblieses)
         {
-            _assembly = assembly;
-            
+            _assemblies = assemblieses;
         }
 
         public void Check(ICheckNotifier notifier)
@@ -34,51 +37,52 @@ namespace CatalogueLibrary.Reports
 
             using (var z = ZipFile.Open(zipArchive,ZipArchiveMode.Read))
             {
-                foreach (Type t in _assembly.GetTypes())
-                    if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
-                    {
-                        if (t.IsInterface || t.IsAbstract)
-                            continue;
-                        try
+                foreach (Assembly assembly in _assemblies)
+                    foreach (Type t in assembly.GetTypes())
+                        if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
                         {
-                            //spontaneous objects don't exist in the database.
-                            if(t.Name.StartsWith("Spontaneous"))
+                            if (t.IsInterface || t.IsAbstract)
                                 continue;
+                            try
+                            {
+                                //spontaneous objects don't exist in the database.
+                                if(t.Name.StartsWith("Spontaneous"))
+                                    continue;
+                            }
+                            catch(Exception)
+                            {
+                                continue;
+                            }
+                            notifier.OnCheckPerformed(new CheckEventArgs("Found type " + t, CheckResult.Success));
+
+                            string toFind = t.Name + ".cs";
+
+                            var entries = z.Entries.Where(e => e.Name == toFind).ToArray();
+
+                            if (entries.Length != 1)
+                            {
+                                notifier.OnCheckPerformed(
+                                    new CheckEventArgs("Found " + entries.Length + " files called " + toFind,
+                                        CheckResult.Fail));
+                                continue;
+                            }
+
+                            string classSourceCode = new StreamReader(entries[0].Open()).ReadToEnd();
+
+                            try
+                            {
+                                string definition = GetSummaryFromContent(t, classSourceCode, notifier);
+                                if (definition != null)
+                                    Summaries.Add(t, definition);
+                            }
+                            catch (Exception e)
+                            {
+                                notifier.OnCheckPerformed(
+                                    new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail,
+                                        e));
+                            }
+
                         }
-                        catch(Exception)
-                        {
-                            continue;
-                        }
-                        notifier.OnCheckPerformed(new CheckEventArgs("Found type " + t, CheckResult.Success));
-
-                        string toFind = t.Name + ".cs";
-
-                        var entries = z.Entries.Where(e => e.Name == toFind).ToArray();
-
-                        if (entries.Length != 1)
-                        {
-                            notifier.OnCheckPerformed(
-                                new CheckEventArgs("Found " + entries.Length + " files called " + toFind,
-                                    CheckResult.Fail));
-                            continue;
-                        }
-
-                        string classSourceCode = new StreamReader(entries[0].Open()).ReadToEnd();
-
-                        try
-                        {
-                            string definition = GetSummaryFromContent(t, classSourceCode, notifier);
-                            if (definition != null)
-                                Summaries.Add(t, definition);
-                        }
-                        catch (Exception e)
-                        {
-                            notifier.OnCheckPerformed(
-                                new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail,
-                                    e));
-                        }
-
-                    }
             }
 
         }

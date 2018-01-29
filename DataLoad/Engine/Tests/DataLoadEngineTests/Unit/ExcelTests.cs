@@ -260,8 +260,9 @@ namespace DataLoadEngineTests.Unit
             }
         }
 
-        [Test]
-        public void TestToCSVConverter()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestToCSVConverter(bool prefixWithWorkbookName)
         {
             if (!officeInstalled)
                 Assert.Inconclusive();
@@ -270,6 +271,7 @@ namespace DataLoadEngineTests.Unit
 
             ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
             converter.ExcelFilePattern = loc.Name;
+            converter.PrefixWithWorkbookName = prefixWithWorkbookName;
             
             var mockProjDir = MockRepository.GenerateMock<IHICProjectDirectory>();
             mockProjDir.Expect(p => p.ForLoading).Return(loc.Directory);
@@ -279,7 +281,7 @@ namespace DataLoadEngineTests.Unit
 
             converter.Fetch(j, new GracefulCancellationToken());
 
-            var file = loc.Directory.GetFiles("Sheet1.csv").Single();
+            var file = prefixWithWorkbookName ?  loc.Directory.GetFiles("Book1_Sheet1.csv").Single(): loc.Directory.GetFiles("Sheet1.csv").Single();
 
             Assert.IsTrue(file.Exists);
             

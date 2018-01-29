@@ -201,6 +201,9 @@
     <Compile Include="WindowManagement\WindowArranging\WindowArranger.cs" />
     <Compile Include="WindowManagement\WindowFactory.cs" />
     <Compile Include="WindowManagement\ContentWindowTracking\ContentWindowTracker.cs" />
+    <Content Include="Icon\main.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="RDMPMainForm.resx">
       <DependentUpon>RDMPMainForm.cs</DependentUpon>
     </EmbeddedResource>

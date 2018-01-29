@@ -4,6 +4,13 @@ using Common.Logging.Factory;
 
 namespace ReusableLibraryCode.Progress
 {
+    /// <summary>
+    /// Converts an IDataLoadEventListener into an Common.Logging.ILog for when you want to pass your event handler (IDataLoadEventListener) class on to other
+    /// libraries which expect a normal Common.Logging.ILog object.  
+    /// 
+    /// Once constructed this class will respond to message logging calls by translating the LogLevel to a ProgressEventType and passing it to the 
+    /// IDataLoadEventListener it was constructed with.
+    /// </summary>
     public class FromDataLoadEventListenerToILog : AbstractLogger
     {
         private readonly object _sender;

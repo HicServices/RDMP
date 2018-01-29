@@ -382,16 +382,24 @@ namespace CatalogueManager.Validation
 
         private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.CatalogueItems, true, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
             if (dialog.ShowDialog() == DialogResult.OK)
-                SetTimePeriod(dialog.Selected as ExtractionInformation);
+            {
+                var ei = dialog.Selected as ExtractionInformation;
+                cbxTimePeriodColumn.SelectedItem = ei;
+                SetTimePeriod(ei);
+            }
         }
 
         private void lblPickPivotColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.CatalogueItems, true, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
             if (dialog.ShowDialog() == DialogResult.OK)
-                SetPivot(dialog.Selected as ExtractionInformation);
+            {
+                var ei = dialog.Selected as ExtractionInformation;
+                cbxPivotColumn.SelectedItem = ei;
+                SetPivot(ei);
+            }
         }
     }
 
