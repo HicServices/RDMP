@@ -31,6 +31,11 @@ namespace CatalogueLibraryTests.Integration
             foreach (var i in CatalogueRepository.GetAllObjects<ObjectImport>())
                 i.DeleteInDatabase();
 
+            foreach (var j in CatalogueRepository.JoinInfoFinder.GetAllJoinInfos())
+                j.DeleteInDatabase();
+
+            foreach (var p in CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>())
+                p.DeleteInDatabase();
             //cleanup
             foreach (var t in CatalogueRepository.GetAllObjects<TableInfo>())
                 t.DeleteInDatabase();
@@ -213,7 +218,7 @@ namespace CatalogueLibraryTests.Integration
                 if (!tableInfoAlreadyExistsForSkippedTable)
                 {
                     var ex = Assert.Throws<Exception>(engine.Execute);
-                    Assert.IsTrue(Regex.IsMatch(ex.Message, "find ColumnInfo with expected name .*SpineColor"));
+                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "the ColumnInfo was not migrated"));
                     return;
                 }
                 else
@@ -241,7 +246,7 @@ namespace CatalogueLibraryTests.Integration
                 var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo;
 
                 //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
-                Assert.IsTrue(toNecksColumnInfo.Contains(newSpineColorColumnInfo));
+                Assert.IsTrue(newCataItems.Select(ci=>ci.ColumnInfo).Contains(newSpineColorColumnInfo));
                 
             }
             finally
