@@ -140,6 +140,10 @@ namespace CatalogueLibrary.ANOEngineering
                         if(col == null)
                             continue;
 
+                        //we are not migrating it anyway
+                        if(_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.Drop)
+                            continue;
+                        
                         ColumnInfo newColumnInfo = GetNewColumnInfoForOld(col);
 
                         var newCatalogueItem = _catalogueRepository.CloneObjectInTable(oldCatalogueItem);
@@ -155,14 +159,18 @@ namespace CatalogueLibrary.ANOEngineering
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;
 
                         var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
-                        if (oldExtractionInformation.IsExtractionIdentifier)
+
+                        //if it was previously extractable (and as an extraction identifier)
+                        if (oldExtractionInformation != null && oldExtractionInformation.IsExtractionIdentifier)
                         {
                             newExtractionInformation.IsExtractionIdentifier = true;
                             newExtractionInformation.SaveToDatabase();
                         }
 
                         AuditParenthood(oldCatalogueItem, newCatalogueItem);
-                        AuditParenthood(oldExtractionInformation, newExtractionInformation);
+                        
+                        if(oldExtractionInformation != null)
+                            AuditParenthood(oldExtractionInformation, newExtractionInformation);
                     }
 
                     var existingJoinInfos = _catalogueRepository.JoinInfoFinder.GetAllJoinInfos();
