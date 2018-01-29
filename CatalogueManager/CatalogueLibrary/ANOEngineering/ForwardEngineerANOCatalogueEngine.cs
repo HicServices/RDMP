@@ -124,9 +124,7 @@ namespace CatalogueLibrary.ANOEngineering
                             newTableInfo.SaveToDatabase();
                         }
                     }
-
                     
-
                     NewCatalogue = _catalogueRepository.CloneObjectInTable(_planManager.Catalogue);
                     NewCatalogue.Name = "ANO" + NewCatalogue.Name;
                     NewCatalogue.Folder = new CatalogueFolder(NewCatalogue, "\\anonymous" + NewCatalogue.Folder.Path);
@@ -215,10 +213,10 @@ namespace CatalogueLibrary.ANOEngineering
 
                     _catalogueRepository.EndTransactedConnection(true);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     _catalogueRepository.EndTransactedConnection(false);
-                    throw;
+                    throw new Exception("Failed to create ANO version, transaction rolled back succesfully",ex);
                 }
             }
         }
