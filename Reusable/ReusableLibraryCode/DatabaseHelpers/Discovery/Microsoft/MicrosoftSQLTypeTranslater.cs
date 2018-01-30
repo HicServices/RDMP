@@ -8,5 +8,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         {
             return "datetime2";
         }
+
+        protected override bool IsByteArray(string sqlType)
+        {
+            return base.IsByteArray(sqlType) || sqlType.Contains("image");
+        }
     }
 }

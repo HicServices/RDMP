@@ -260,7 +260,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.ProcessPipelineData( dt1, toConsole, token);
             Assert.DoesNotThrow(() => destination.ProcessPipelineData( dt2, toMemory, token));
 
-            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column 'name' to size 7 based on the latest batch containing values longer than the first seen batch values! Old size was 4")));
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column")));
 
             destination.Dispose(toConsole, null);
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
@@ -300,7 +300,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
 
         [TestCase("varchar(3)", 1.5, "x")]//RDMPDEV-932
-        [TestCase("varchar(10)", "2001-01-01", "x")]
+        [TestCase("varchar(27)", "2001-01-01", "x")]
         public void BatchResizing(string expectedDatatypeInDatabase,object batch1Value,object batch2Value)
         {
             var token = new GracefulCancellationToken();
@@ -393,7 +393,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.ProcessPipelineData( dt1, toConsole, token);
             destination.ProcessPipelineData( dt2, toMemory, token);
 
-            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column 'mynum' to size (5,2) based on the latest batch containing values longer than the first seen batch values! Old size was decimal(3,2)")));
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column ")));
 
             destination.Dispose(toConsole, null);
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
@@ -630,7 +630,7 @@ CREATE TABLE [dbo].[TestResizing](
             destination.ProcessPipelineData(dt1, toConsole, token);
             destination.ProcessPipelineData(dt2, toMemory, token);
 
-            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Altering Column 'mynum' to int based on the latest batch containing values non bit/null values")));
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column 'mynum' from 'bit' to 'int'")));
 
             destination.Dispose(toConsole, null);
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
