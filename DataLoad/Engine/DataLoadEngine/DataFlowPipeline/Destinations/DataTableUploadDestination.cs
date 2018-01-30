@@ -68,8 +68,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             {
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
-
-
+                
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSane(toProcess.TableName);
             }
 
@@ -157,6 +156,13 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         private void ResizeColumnsIfRequired(DataTable toProcess, IDataLoadEventListener listener)
         {
+
+            var tbl = _database.ExpectTable(TargetTableName);
+            var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
+            Dictionary<string,DataTypeComputer> dataTypeDictionary = 
+                tbl.DiscoverColumns(_managedConnection.ManagedTransaction)
+                .ToDictionary(k => k.GetRuntimeName(), v =>typeTranslater.GetDataTypeComputerFor(v));
+
 
             Dictionary<string, int> currentDatabaseStringSizes = new Dictionary<string, int>();
             Dictionary<string, Tuple<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Tuple<int, int>>();

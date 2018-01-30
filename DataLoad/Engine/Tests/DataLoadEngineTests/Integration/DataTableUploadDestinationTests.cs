@@ -300,6 +300,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
 
         [TestCase("varchar(3)", 1.5, "x")]//RDMPDEV-932
+        [TestCase("varchar(10)", "2001-01-01", "x")]
         public void BatchResizing(string expectedDatatypeInDatabase,object batch1Value,object batch2Value)
         {
             var token = new GracefulCancellationToken();

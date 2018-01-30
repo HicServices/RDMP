@@ -123,6 +123,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
         }
 
+        public DataTypeComputer GetDataTypeComputerFor(DiscoveredColumn discoveredColumn)
+        {
+            throw new NotImplementedException();
+        }
+
         protected bool IsTime(string sqlType)
         {
             return sqlType.Trim().Equals("time",StringComparison.CurrentCultureIgnoreCase);
