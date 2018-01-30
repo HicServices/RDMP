@@ -11,6 +11,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
@@ -187,10 +188,14 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root is AllDataAccessCredentialsNode ||
-            root is AllANOTablesNode || 
-            root is AllServersNode || 
-            root is AllExternalServersNode;
+            return
+                root is AllAutomationServerSlotsNode ||
+                root is AllRDMPRemotesNode ||
+                root is ObjectSharingNode ||
+                root is AllExternalServersNode ||
+                root is AllDataAccessCredentialsNode ||
+                root is AllANOTablesNode ||
+                root is AllServersNode;
         }
     }
 }
