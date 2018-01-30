@@ -173,6 +173,26 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllObjectExportsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AllObjectImportsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllObjectImportsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllProcessTasksUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllProcessTasksUsedByLoadMetadataNode", resourceCulture);
@@ -1066,6 +1086,36 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap NoIconAvailable {
             get {
                 object obj = ResourceManager.GetObject("NoIconAvailable", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ObjectExport {
+            get {
+                object obj = ResourceManager.GetObject("ObjectExport", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ObjectImport {
+            get {
+                object obj = ResourceManager.GetObject("ObjectImport", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ObjectSharingNode {
+            get {
+                object obj = ResourceManager.GetObject("ObjectSharingNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

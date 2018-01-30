@@ -13,6 +13,7 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
@@ -66,6 +67,10 @@ namespace CatalogueLibrary.Providers
 
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
+
+        public ObjectSharingNode ObjectSharingNode { get; private set; }
+        public ObjectImport[] AllImports { get; set; }
+        public ObjectExport[] AllExports { get; set; }
 
         public Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; private set; }
 
@@ -184,6 +189,12 @@ namespace CatalogueLibrary.Providers
             AllRDMPRemotesNode = new AllRDMPRemotesNode();
             AddChildren(AllRDMPRemotesNode);
 
+            ObjectSharingNode = new ObjectSharingNode();
+            AllExports = repository.GetAllObjects<ObjectExport>();
+            AllImports = repository.GetAllObjects<ObjectImport>();
+
+            AddChildren(ObjectSharingNode);
+            
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
 
@@ -195,7 +206,7 @@ namespace CatalogueLibrary.Providers
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
         }
-        
+
         private void AddChildren(AllExternalServersNode allExternalServersNode)
         {
             AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
@@ -211,6 +222,20 @@ namespace CatalogueLibrary.Providers
             AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
         }
 
+
+        private void AddChildren(ObjectSharingNode objectSharingNode)
+        {
+            var descendancy = new DescendancyList(objectSharingNode);
+
+            var allExportsNode = new AllObjectExportsNode();
+            var allImportsNode = new AllObjectImportsNode();
+
+            AddToDictionaries(new HashSet<object>(AllExports), descendancy.Add(allExportsNode));
+            AddToDictionaries(new HashSet<object>(AllImports), descendancy.Add(allImportsNode));
+
+            AddToDictionaries(new HashSet<object>(new object[] { allExportsNode, allImportsNode }), descendancy);
+        }
+        
         private void BuildServerNodes()
         {
             Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();

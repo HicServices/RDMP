@@ -447,6 +447,8 @@
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
+    <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
+    <Compile Include="Nodes\SharingNodes\ObjectSharingNode.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
@@ -701,6 +703,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="KeywordHelp.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Nodes\SharingNodes\AllObjectImportsNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

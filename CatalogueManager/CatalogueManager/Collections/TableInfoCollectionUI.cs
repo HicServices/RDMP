@@ -156,6 +156,7 @@ namespace CatalogueManager.Collections
 
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.ObjectSharingNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
