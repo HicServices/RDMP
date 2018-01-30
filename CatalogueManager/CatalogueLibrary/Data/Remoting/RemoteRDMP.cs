@@ -102,8 +102,26 @@ namespace CatalogueLibrary.Data.Remoting
             if (isarray)
                 baseUri.Query = "isarray=true";
 
-            baseUri.Path += "api/" + typeof(T).Name;
+            baseUri.Path += "/api/" + typeof(T).Name;
             
+            return baseUri.ToString();
+        }
+
+        public string GetUrlForRelease()
+        {
+            var baseUri = new UriBuilder(new Uri(URL));
+
+            baseUri.Path += "/api/Release/";
+
+            return baseUri.ToString();
+        }
+
+        public string GetCheckingUrl()
+        {
+            var baseUri = new UriBuilder(new Uri(URL));
+
+            baseUri.Path += "/api/values/";
+
             return baseUri.ToString();
         }
     }
