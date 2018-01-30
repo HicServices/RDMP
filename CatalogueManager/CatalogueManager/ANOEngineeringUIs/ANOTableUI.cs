@@ -16,6 +16,10 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
+    /// <summary>
+    /// Displays the live status of an ANOTable (is it pushed or not) and how many rows it has.  Also allows dropping/changing the anonymisation schema (number of
+    /// integers / characters to use in anonymous format) when the ANOTable is not pushed to the ANOStore.Database.
+    /// </summary>
     public partial class ANOTableUI : ANOTableUI_Design
     {
         private ANOTable _anoTable;

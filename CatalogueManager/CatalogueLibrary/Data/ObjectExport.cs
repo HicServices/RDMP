@@ -7,6 +7,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data
 {
+    /// <summary>
+    /// Identifies an object in the local Catalogue database (or DataExport database) which has been shared externally (via it's SharingUID).  The use of a SharingUID
+    /// allows multiple external users to access and import the shared object (and any dependant objects).  Having an ObjectExport declared on an object prevents it from
+    /// being deleted (see ObjectSharingObscureDependencyFinder) since this would leave external users with orphaned objects.
+    /// </summary>
     public class ObjectExport : DatabaseEntity
     {
         #region Database Properties

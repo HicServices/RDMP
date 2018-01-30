@@ -24,6 +24,11 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
+    /// <summary>
+    /// Allows you to create an anonymous version of a Catalogue by selecting which columns to anonymise and which to drop etc.  This will create a new table in the
+    /// database of your choice which will be imported as a new Catalogue and a new LoadMetadata will be created that will migrate and apply the anonymisations to the
+    /// original Catalogue's data.
+    /// </summary>
     public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogueUI_Design
     {
 

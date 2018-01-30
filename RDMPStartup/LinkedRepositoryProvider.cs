@@ -97,8 +97,10 @@ namespace RDMPStartup
             finder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(this);
             finder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(this);
 
+            if(DataExportRepository == null)
+                return;
 
-            if (DataExportRepository.ObscureDependencyFinder == null)
+            if ( DataExportRepository.ObscureDependencyFinder == null)
                 DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
             else
                 if(!(DataExportRepository.ObscureDependencyFinder is ObjectSharingObscureDependencyFinder))
