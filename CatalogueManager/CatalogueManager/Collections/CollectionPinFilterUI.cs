@@ -145,6 +145,9 @@ namespace CatalogueManager.Collections
 
         public void OnRefreshObject(ICoreChildProvider childProvider,DatabaseEntity oRefreshedObject, DescendancyList knownDescendancy)
         {
+            if(_tree == null)
+                return;
+
             var whitelistFilter = _tree.ModelFilter as WhiteListOnlyFilter;
             
             //someone somehow erased the pin filter? or overwrote it with another filter
