@@ -43,7 +43,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// because it could be a serial number or otherwise important leading 0).  In this case the DataTypeComputer will use varchar(x) to
         /// represent the column instead of decimal(x,y)
         /// </summary>
-        Regex zeroPrefixedNumber = new Regex(@"^0[\d]+$");
+        Regex zeroPrefixedNumber = new Regex(@"^0+[1-9]+");
 
         /// <summary>
         /// Creates a new DataType 
