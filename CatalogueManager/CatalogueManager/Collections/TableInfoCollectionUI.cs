@@ -82,6 +82,7 @@ namespace CatalogueManager.Collections
             olvColumn2.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
         }
 
+
         private object tlvTableInfos_DataTypeAspectGetter(object rowobject)
         {
             var c = rowobject as ColumnInfo;
