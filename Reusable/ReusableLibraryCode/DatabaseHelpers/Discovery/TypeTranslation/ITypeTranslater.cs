@@ -26,5 +26,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="sqlType"></param>
         /// <returns></returns>
         Type GetCSharpTypeForSQLDBType(string sqlType);
+
+        DataTypeComputer GetDataTypeComputerFor(DiscoveredColumn discoveredColumn);
     }
 }

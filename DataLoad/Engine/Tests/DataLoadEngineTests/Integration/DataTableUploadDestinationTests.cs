@@ -260,7 +260,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.ProcessPipelineData( dt1, toConsole, token);
             Assert.DoesNotThrow(() => destination.ProcessPipelineData( dt2, toMemory, token));
 
-            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column 'name' to size 7 based on the latest batch containing values longer than the first seen batch values! Old size was 4")));
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column")));
 
             destination.Dispose(toConsole, null);
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
@@ -296,6 +296,37 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
             Assert.AreEqual(5, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
             Assert.AreEqual("decimal(3,1)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
+        }
+
+
+        [TestCase("varchar(3)", 1.5, "x")]//RDMPDEV-932
+        [TestCase("varchar(27)", "2001-01-01", "x")]
+        public void BatchResizing(string expectedDatatypeInDatabase,object batch1Value,object batch2Value)
+        {
+            var token = new GracefulCancellationToken();
+            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+
+            DataTableUploadDestination destination = new DataTableUploadDestination();
+            destination.PreInitialize(db, toConsole);
+            destination.AllowResizingColumnsAtUploadTime = true;
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add("mycol");
+            dt1.Rows.Add(new[] {batch1Value});
+            
+            dt1.TableName = "DataTableUploadDestinationTests";
+
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            
+            DataTable dt2 = new DataTable();
+            dt2.Columns.Add("mycol");
+            dt2.Rows.Add(new object[] { batch2Value });
+
+            destination.ProcessPipelineData(dt2, toConsole, token);
+
+            destination.Dispose(toConsole, null);
+            Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mycol").DataType.SQLType);
         }
 
         [Test]
@@ -362,7 +393,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.ProcessPipelineData( dt1, toConsole, token);
             destination.ProcessPipelineData( dt2, toMemory, token);
 
-            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column 'mynum' to size (5,2) based on the latest batch containing values longer than the first seen batch values! Old size was decimal(3,2)")));
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column ")));
 
             destination.Dispose(toConsole, null);
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
@@ -599,7 +630,7 @@ CREATE TABLE [dbo].[TestResizing](
             destination.ProcessPipelineData(dt1, toConsole, token);
             destination.ProcessPipelineData(dt2, toMemory, token);
 
-            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Altering Column 'mynum' to int based on the latest batch containing values non bit/null values")));
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column 'mynum' from 'bit' to 'int'")));
 
             destination.Dispose(toConsole, null);
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());

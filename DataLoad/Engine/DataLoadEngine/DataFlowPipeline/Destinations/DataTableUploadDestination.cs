@@ -68,8 +68,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             {
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
-
-
+                
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSane(toProcess.TableName);
             }
 
@@ -158,109 +157,38 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         private void ResizeColumnsIfRequired(DataTable toProcess, IDataLoadEventListener listener)
         {
 
-            Dictionary<string, int> currentDatabaseStringSizes = new Dictionary<string, int>();
-            Dictionary<string, Tuple<int, int>> currentDatabaseDecimalSizes = new Dictionary<string, Tuple<int, int>>();
+            var tbl = _database.ExpectTable(TargetTableName);
+            var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
 
-            Dictionary<string, DataTypeComputer> thisBatch = new Dictionary<string, DataTypeComputer>();
+            Dictionary<string,DataTypeComputer> dataTypeDictionaryCurrent = 
+                tbl.DiscoverColumns(_managedConnection.ManagedTransaction)
+                .ToDictionary(k => k.GetRuntimeName(), typeTranslater.GetDataTypeComputerFor);
 
-            List<string> bitColumns = new List<string>();
-
-            //go interrogate the database about the current size
-            DiscoveredColumn[] columns = _database.ExpectTable(TargetTableName).DiscoverColumns(_managedConnection.ManagedTransaction).ToArray();
-
-            //build 2 dictionaries one with the current database size, the other with 0s which will become the size of the toProcess columns
-            foreach (var column in columns)
-            {
-                int length = column.DataType.GetLengthIfString();
-                if (length > 0)
-                {
-                    currentDatabaseStringSizes.Add(column.GetRuntimeName(), length);
-                    thisBatch.Add(column.GetRuntimeName(), new DataTypeComputer());
-                }
-
-                var pair = column.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal();
-                if (pair != null)
-                {
-                    currentDatabaseDecimalSizes.Add(column.GetRuntimeName(), pair);
-                    thisBatch.Add(column.GetRuntimeName(), new DataTypeComputer());
-                }
-
-                if (column.DataType.SQLType.Equals("bit"))
-                {
-                    bitColumns.Add(column.GetRuntimeName());
-                    thisBatch.Add(column.GetRuntimeName(), new DataTypeComputer());
-                }
-            }
-
+            
             //work out the max sizes - expensive bit
             foreach (DataRow row in toProcess.Rows)
                 //for each destination column
-                foreach (string col in thisBatch.Keys.ToArray())
+                foreach (string col in dataTypeDictionaryCurrent.Keys)
                     //if it appears in the toProcess DataTable
                     if (toProcess.Columns.Contains(col))
                         //run the datatype computer over it to compute max lengths
-                        thisBatch[col].AdjustToCompensateForValue(row[col]);
+                        dataTypeDictionaryCurrent[col].AdjustToCompensateForValue(row[col]);
 
-            //cheap bit
-            foreach (KeyValuePair<string, DataTypeComputer> kvp in thisBatch)
+            foreach (DiscoveredColumn column in tbl.DiscoverColumns(_managedConnection.ManagedTransaction))
             {
-                //handle type change from bit to more advanced type
-                var currentDatatype = kvp.Value.GetSqlDBType(_database.Server);
+                DataTypeComputer computer = dataTypeDictionaryCurrent[column.GetRuntimeName()];
+                string newType = computer.GetSqlDBType(typeTranslater);
+                string oldType = column.DataType.SQLType;
 
-
-                //if it is currently a bit in the database and it isn't a bit in the DataTypeComputer (current batch)
-                if (bitColumns.Contains(kvp.Key) && !currentDatatype.Equals("bit"))
+                if (newType != column.DataType.SQLType)
                 {
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + oldType + "' to '" + newType +"'"));
 
-                    //warn the user of the change
-                    listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Warning,
-                            "Altering Column '" + kvp.Key + "' to " + currentDatatype +
-                            " based on the latest batch containing values non bit/null values"));
+                    string sql = column.Helper.GetAlterColumnToSql(column, newType, column.AllowNulls);
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
+                    var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
 
-                    columns.Single(c => c.GetRuntimeName().Equals(kvp.Key)).DataType.AlterTypeTo(currentDatatype, _managedConnection.ManagedTransaction);
-
-                }
-
-
-                //handle longer strings
-                if (currentDatabaseStringSizes.ContainsKey(kvp.Key))
-                    if (currentDatabaseStringSizes[kvp.Key] < kvp.Value.Length) //string is longer in the batch than the database
-                    {
-                        //warn the user of the change
-                        listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Warning,
-                                "Resizing column '" + kvp.Key + "' to size " + kvp.Value.Length +
-                                " based on the latest batch containing values longer than the first seen batch values! Old size was " +
-                                currentDatabaseStringSizes[kvp.Key]));
-
-                        //attempt to make the change
-                        columns.Single(c => c.GetRuntimeName().Equals(kvp.Key)).DataType.Resize(kvp.Value.Length, _managedConnection.ManagedTransaction);
-                    }
-
-                //handle longer decimals
-                if (currentDatabaseDecimalSizes.ContainsKey(kvp.Key))
-                {
-                    //if we need more space on either side of the decimal point
-                    if (currentDatabaseDecimalSizes[kvp.Key].Item1 < kvp.Value.numbersBeforeDecimalPlace
-                        ||
-                        currentDatabaseDecimalSizes[kvp.Key].Item2 < kvp.Value.numbersAfterDecimalPlace)
-                    {
-                        int newBeforeDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item1, kvp.Value.numbersBeforeDecimalPlace);
-                        int newAfterDecimalPoint = Math.Max(currentDatabaseDecimalSizes[kvp.Key].Item2, kvp.Value.numbersAfterDecimalPlace);
-
-                        var col = columns.Single(c => c.GetRuntimeName().Equals(kvp.Key));
-
-                        //warn the user of the change
-                        listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Warning,
-                                "Resizing column '" + kvp.Key + "' to size (" + (newBeforeDecimalPoint + newAfterDecimalPoint) + "," + newAfterDecimalPoint + ")" +
-                                " based on the latest batch containing values longer than the first seen batch values! Old size was " +
-                                col.DataType.SQLType));
-
-                        col.DataType.Resize(newBeforeDecimalPoint, newAfterDecimalPoint, _managedConnection.ManagedTransaction);
-
-                    }
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
