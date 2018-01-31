@@ -358,7 +358,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
             Assert.AreEqual(1, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
-            Assert.AreEqual("text", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myText").DataType.SQLType);
+            Assert.AreEqual("varchar(max)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myText").DataType.SQLType);
         }
 
         [Test]
