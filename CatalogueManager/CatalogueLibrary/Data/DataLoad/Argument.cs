@@ -7,6 +7,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
@@ -40,7 +41,9 @@ namespace CatalogueLibrary.Data.DataLoad
             typeof(Type),
 
             //IMapsDirectlyToDatabaseTable
-            typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),typeof(CohortIdentificationConfiguration),
+            typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), 
+            typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),typeof(CohortIdentificationConfiguration),
+            typeof(RemoteRDMP),
            
             //wierd special cases
             typeof(ICustomUIDrivenClass), typeof(EncryptedString),

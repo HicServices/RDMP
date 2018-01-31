@@ -112,16 +112,6 @@ namespace CatalogueManager.Collections
                 tlvLoadMetadata.Expand(loadMetadata);
         }
         
-        private void otvLoadMetadata_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            var factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-
-            var allCataloguesNode = e.Model as AllCataloguesUsedByLoadMetadataNode;
-            
-            if (allCataloguesNode != null)
-                e.MenuStrip = factory.CreateMenu(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator,allCataloguesNode.LoadMetadata));
-        }
-        
         public override void SetItemActivator(IActivateItems activator) 
         {
             _activator = activator;

@@ -231,9 +231,6 @@
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\..\libs\JIRA\RestSharp.dll</HintPath>
-    </Reference>
     <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
       <Private>True</Private>
@@ -408,6 +405,7 @@
       <DependentUpon>DoReleaseAndAuditUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ChangesSavedHandler.cs" />
+    <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
     <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
     <Compile Include="Menus\CustomDataTableNodeMenu.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />

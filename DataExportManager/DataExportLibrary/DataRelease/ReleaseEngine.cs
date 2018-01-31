@@ -10,6 +10,7 @@ using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.ExtractionTime;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Ticketing;
 
@@ -23,7 +24,7 @@ namespace DataExportLibrary.DataRelease
     /// In order to DoRelease you will need to evaluate the environment and each ExtractionConfiguration to confirm they are in a releasable state (extracted files
     /// match current configuration, ticketing system says that the project has governance approval for release etc).  
     /// </summary>
-    public class ReleaseEngine
+    public class ReleaseEngine : ICheckable
     {
         protected readonly IDataLoadEventListener _listener;
         protected readonly IRepository _repository;
@@ -36,7 +37,7 @@ namespace DataExportLibrary.DataRelease
         public DirectoryInfo SourceGlobalFolder { get; set; }
         public DirectoryInfo ReleaseFolder { get; set; }
 
-        public ReleaseEngine(Project project, ReleaseEngineSettings settings = null, IDataLoadEventListener listener = null)
+        public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener)
         {
             _repository = project.Repository;
             Project = project;
@@ -137,18 +138,14 @@ namespace DataExportLibrary.DataRelease
         protected virtual DirectoryInfo PrepareAndVerifyReleaseFolder()
         {
             var folder = GetIntendedReleaseDirectory();
-            if (!folder.Exists)
-            {
-                if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
-                    folder.Create();
-                else
-                    throw new Exception("Intended release directory was not found and I was forbidden to create it: " + folder.FullName);
-            }
+            Check(new ThrowImmediatelyCheckNotifier());
 
-            //make sure user isn't sneaking any pollution into this directory
-            if (folder.EnumerateDirectories().Any() || folder.EnumerateFiles().Any())
-                throw new Exception("Intended release directory is not empty:" + folder.FullName);
-
+            if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
+                folder.Create();
+            else
+                throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
+                                    folder.FullName);
+        
             return folder;
         }
 
@@ -216,8 +213,11 @@ namespace DataExportLibrary.DataRelease
                 }
 
                 //mark configuration as released
-                kvp.Key.IsReleased = true;
-                kvp.Key.SaveToDatabase();
+                if (ReleaseSettings.FreezeReleasedConfigurations)
+                {
+                    kvp.Key.IsReleased = true;
+                    kvp.Key.SaveToDatabase();
+                }
 
                 ConfigurationsReleased.Add(kvp.Key);
             }
@@ -442,6 +442,26 @@ namespace DataExportLibrary.DataRelease
 
             audit.WriteLine("+" + dir);
 
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            var folder = GetIntendedReleaseDirectory();
+            if (folder.Exists)
+            {
+                if (notifier.OnCheckPerformed(new CheckEventArgs("Release folder exists", CheckResult.Warning, null, "Delete it!")))
+                {
+                    folder.Delete(true);
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Cleaned non-empty existing release folder: " + folder.FullName));
+                }
+                else
+                {
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Intended release directory was existing and I was forbidden to delete it: " +
+                            folder.FullName, CheckResult.Fail));
+                }
+            }
         }
     }
 }

@@ -39,5 +39,7 @@ namespace CatalogueLibrary.Providers
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);
+
+        void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
     }
 }

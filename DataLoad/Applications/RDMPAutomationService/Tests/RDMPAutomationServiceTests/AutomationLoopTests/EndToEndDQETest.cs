@@ -36,8 +36,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             //give it time to get itself together
             Thread.Sleep(1000);
             Assert.IsTrue(slot.IsAcceptingNewJobs(AutomationJobType.DQE));//there shouldn't be any dqe runs executing just yet because theres no validation results
-            Assert.IsTrue(loop.StillRunning);
-
+            
             var dqeRepository = new DQERepository(CatalogueRepository);
 
             //no evaluations yet
@@ -48,7 +47,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             int timeout = 30000;
             bool cancelledsuccessfully = false;
             bool taskAppeared = false;
-
 
             while ((timeout -= 10) > 0)
             {
@@ -87,7 +85,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                         cancelledsuccessfully = true;
                     }
                 }
-
             }
 
             if (cancelEarly)
@@ -103,7 +100,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                     Assert.IsNotNull(job.DataLoadRunID);
                 }
 
-
             //catalogue is now compatible with DQE and has never been run! so automation should pick it up
 
             //Automation should have finished by now
@@ -116,8 +112,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             loop.Stop = true;
 
             Thread.Sleep(3000);
-            Assert.IsFalse(loop.StillRunning);//it should have ended its main loop regardless of cancellation
-
+            
             //cleanup
             if (!cancelEarly)
                 dqeRepository.GetAllEvaluationsFor(bulkTests.catalogue).Single().DeleteInDatabase();
@@ -126,7 +121,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 loop.AutomationDestination.OnGoingTasks.Single().Job.DeleteInDatabase();
 
             bulkTests.DeleteCatalogue();
-
 
             Assert.AreEqual(0,slot.AutomationJobs.Length);
 

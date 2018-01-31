@@ -336,7 +336,7 @@
     <Compile Include="Unit\SimpleColumnInfoTests.cs" />
     <Compile Include="Unit\SqlSyntaxHelperTests.cs" />
     <Compile Include="Integration\TableInfoTests.cs" />
-    <Compile Include="Unit\TestAcronymnGeneration.cs" />
+    <Compile Include="Unit\TestAcronymGeneration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj">

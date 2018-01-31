@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Cohort.Joinables;
+using CohortManagerLibrary;
 using CohortManagerLibrary.Execution;
+using CohortManagerLibrary.Execution.Joinables;
 using NUnit.Framework;
 
 namespace CohortManagerTests
@@ -82,6 +87,100 @@ namespace CohortManagerTests
 
             rootcontainer.RemoveChild(aggregate1);
             rootcontainer.RemoveChild(aggregate2);
+        }
+
+        public enum TestCompilerAddAllTasksTestCase
+        {
+            CIC,
+            RootContainer,
+            Subcontainer
+        }
+
+        [TestCase(TestCompilerAddAllTasksTestCase.CIC,true)]
+        [TestCase(TestCompilerAddAllTasksTestCase.CIC, false)]
+        [TestCase(TestCompilerAddAllTasksTestCase.RootContainer, true)]
+        [TestCase(TestCompilerAddAllTasksTestCase.RootContainer, false)]
+        [TestCase(TestCompilerAddAllTasksTestCase.Subcontainer, true)]
+        [TestCase(TestCompilerAddAllTasksTestCase.Subcontainer, false)]
+        public void TestCompilerAddAllTasks(TestCompilerAddAllTasksTestCase testCase,bool includeSubcontainers)
+        {
+            var aggregate4 =
+            new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate4");
+            aggregate4.CountSQL = null;
+            aggregate4.SaveToDatabase();
+            new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
+            
+            var aggregate5 =
+            new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate5");
+            aggregate5.CountSQL = null;
+            aggregate5.SaveToDatabase();
+            new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate5);
+
+            var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository,cohortIdentificationConfiguration, aggregate5);
+
+            
+            try
+            {
+                //EXCEPT
+                    //Aggregate 1
+                    //UNION
+                        //Aggregate 3
+                        //Aggregate 4
+                    //Aggregate 2
+
+                //Joinable:aggregate5 (patient index table, the other Aggregates could JOIN to this)
+
+                CohortCompiler compiler = new CohortCompiler(cohortIdentificationConfiguration);
+                rootcontainer.AddChild(aggregate1, 1);
+                rootcontainer.AddChild(container1);
+                container1.Order = 2;
+                container1.SaveToDatabase();
+
+                rootcontainer.AddChild(aggregate2, 3);
+
+                container1.AddChild(aggregate3,1);
+                container1.AddChild(aggregate4, 2);
+
+                cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
+                cohortIdentificationConfiguration.SaveToDatabase();
+                
+                //The bit we are testing
+                List<ICompileable> tasks;
+                switch (testCase)
+                {
+                    case TestCompilerAddAllTasksTestCase.CIC:
+                        tasks = compiler.AddAllTasks(includeSubcontainers);
+                        Assert.AreEqual(joinable,tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
+                        Assert.AreEqual(includeSubcontainers?7:6,tasks.Count); //all joinables, aggregates and root container 
+
+                        break;
+                    case TestCompilerAddAllTasksTestCase.RootContainer:
+                        tasks = compiler.AddTasksRecursively(new ISqlParameter[0], cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
+                        Assert.AreEqual(includeSubcontainers?6:5,tasks.Count); //all aggregates and root container (but not joinables)
+                        break;
+                    case TestCompilerAddAllTasksTestCase.Subcontainer:
+                        tasks = compiler.AddTasksRecursively(new ISqlParameter[0], container1, includeSubcontainers);
+                        Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and it's aggregates
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("testCase");
+                }
+
+
+                rootcontainer.RemoveChild(aggregate1);
+                rootcontainer.RemoveChild(aggregate2);
+
+                container1.RemoveChild(aggregate3);
+                container1.RemoveChild(aggregate4);
+                container1.MakeIntoAnOrphan();
+
+            }
+            finally
+            {
+                aggregate4.DeleteInDatabase();
+                joinable.DeleteInDatabase();
+                aggregate5.DeleteInDatabase();
+            }
         }
     }
 }

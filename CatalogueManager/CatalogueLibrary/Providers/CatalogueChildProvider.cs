@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Automation;
@@ -586,37 +588,12 @@ namespace CatalogueLibrary.Providers
 
         public virtual object[] GetChildren(object model)
         {
-            List<object> children = new List<object>();
-
-            foreach (var plugin in PluginChildProviders.Except(_blacklistedPlugins))
-            {
-                try
-                {
-                    //otherwise ask plugin what it's children are
-                    var pluginChildren = plugin.GetChildren(model);
-
-                    //it has children
-                    if(pluginChildren != null)
-                        children.AddRange(pluginChildren);//add them
-                }
-                catch (Exception e)
-                {
-                    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
-                }
-            }
-
+           
             //if we don't have a record of any children in the child dictionary for the parent model object
             if(!_childDictionary.ContainsKey(model))
-                return children.ToArray();//return the plugin ones only
-
-            //otherwise add the plugin ones to the core ones
-            children.AddRange(_childDictionary[model]);
-
-            //no children at all anywhere
-            if(!children.Any())
-                return new object[0];
+                return new object[0];//return none
             
-            return children.ToArray();
+            return _childDictionary[model].ToArray();
         }
 
         private void AddChildren(CohortIdentificationConfiguration cic)
@@ -848,6 +825,86 @@ namespace CatalogueLibrary.Providers
             }
 
             return toReturn;
+        }
+
+        /// <summary>
+        /// Asks all plugins to provide the child objects for every object we have found so far.  This method is recursive, call it with null the first time to use all objects.  It will then
+        /// call itself with all the new objects that were sent back by the plugin (so that new objects found can still have children).
+        /// </summary>
+        /// <param name="objectsToAskAbout"></param>
+        public void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
+        {
+            HashSet<object> newObjectsFound = new HashSet<object>();
+            
+            Stopwatch sw = new Stopwatch();
+
+            //for every object found so far
+            foreach (var o in objectsToAskAbout?? GetAllObjects())
+            {
+                //for every plugin loaded (that is not blacklisted)
+                foreach (var plugin in PluginChildProviders.Except(_blacklistedPlugins))
+                {
+                    //ask about the children
+                    try
+                    {
+                        sw.Restart();
+                        //otherwise ask plugin what it's children are
+                        var pluginChildren = plugin.GetChildren(o);
+
+                        //if the plugin takes too long to respond we need to stop
+                        if (sw.ElapsedMilliseconds > 1000)
+                        {
+                            _blacklistedPlugins.Add(plugin);
+                            throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
+                        }
+
+                        //it has children
+                        if (pluginChildren != null && pluginChildren.Any())
+                        {
+                            //get the descendancy of the parent
+                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
+
+                            DescendancyList newDescendancy;
+                            if(parentDescendancy == null)
+                                newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
+                            else
+                                newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                            //record that 
+
+                            foreach (object pluginChild in pluginChildren)
+                            {
+                                //if the parent didn't have any children before
+                                if (!_childDictionary.ContainsKey(o))
+                                    _childDictionary.Add(o,new HashSet<object>());//it does now
+
+
+                                //add us to the parent objects child collection
+                                _childDictionary[o].Add(pluginChild);
+                                
+                                //add to the child collection of the parent object kvp.Key
+                                _descendancyDictionary.Add(pluginChild, newDescendancy);
+
+                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                newObjectsFound.Add(pluginChild);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                    }
+                }
+            }
+
+            if(newObjectsFound.Any())
+                GetPluginChildren(newObjectsFound);
+        }
+
+        private HashSet<object> GetAllObjects()
+        {
+            //anything which has children or is a child of someone else (distinct because HashSet)
+            return new HashSet<object>(_childDictionary.SelectMany(kvp => kvp.Value).Union(_childDictionary.Keys));
         }
 
         protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)

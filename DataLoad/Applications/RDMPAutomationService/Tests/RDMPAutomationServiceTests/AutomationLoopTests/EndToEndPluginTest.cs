@@ -68,8 +68,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             Task.Delay(3000).Wait();
 
-            Assert.IsFalse(loop.StillRunning);
-
             Task.Delay(2000).Wait();
 
             //no new ones should be appearing

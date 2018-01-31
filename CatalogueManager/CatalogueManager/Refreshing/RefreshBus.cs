@@ -22,12 +22,12 @@ namespace CatalogueManager.Refreshing
         public event RefreshObjectEventHandler BeforePublish;
         private event RefreshObjectEventHandler RefreshObject;
 
-        private bool publishInProgress = false;
+        public bool PublishInProgress { get; private set; }
         private object oPublishLock = new object();
 
         public void Publish(object sender, RefreshObjectEventArgs e)
         {
-            if(publishInProgress)
+            if(PublishInProgress)
                 throw new SubscriptionException("Refresh Publish Cascade error.  Subscriber " + sender + " just attempted a publish during an existing publish execution, cylic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
 
             lock (oPublishLock)
@@ -35,7 +35,7 @@ namespace CatalogueManager.Refreshing
                 if (BeforePublish != null)
                     BeforePublish(sender, e);
 
-                publishInProgress = true;
+                PublishInProgress = true;
                 try
                 {
                     if (RefreshObject != null)
@@ -43,7 +43,7 @@ namespace CatalogueManager.Refreshing
                 }
                 finally
                 {
-                    publishInProgress = false;
+                    PublishInProgress = false;
                 }  
             }
         }
