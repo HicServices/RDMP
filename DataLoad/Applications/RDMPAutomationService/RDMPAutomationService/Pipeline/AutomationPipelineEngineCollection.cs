@@ -33,30 +33,37 @@ namespace RDMPAutomationService.Pipeline
 
         public List<DataFlowPipelineEngine<OnGoingAutomationTask>> UserSpecificPipelines { get; private set; }
 
+        internal Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus> PipeStatuses { get; set; }
+
         public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator,AutomationServiceSlot slot, AutomationDestination fixedDestination)
         {
             _slot = slot;
 
-            _listener = new FromCheckNotifierToDataLoadEventListener(new ThrowImmediatelyCheckNotifier(){WriteToConsole = false});
-            
-            DLEPipe = new DataFlowPipelineEngine<OnGoingAutomationTask>(AutomationPipelineContext.Context, new DLEAutomationSource(), fixedDestination,_listener);
+            _listener = new FromCheckNotifierToDataLoadEventListener(new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
+            PipeStatuses = new Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus>();
+
+            DLEPipe = new DataFlowPipelineEngine<OnGoingAutomationTask>(AutomationPipelineContext.Context, new DLEAutomationSource(), fixedDestination, _listener);
             DLEPipe.Initialize(slot, repositoryLocator);
+            PipeStatuses.Add(DLEPipe, new PipelineRunStatus());
 
             DQEPipe = new DataFlowPipelineEngine<OnGoingAutomationTask>(AutomationPipelineContext.Context, new DQEAutomationSource(), fixedDestination, _listener);
             DQEPipe.Initialize(slot, repositoryLocator);
+            PipeStatuses.Add(DQEPipe, new PipelineRunStatus());
 
             CachePipe = new DataFlowPipelineEngine<OnGoingAutomationTask>(AutomationPipelineContext.Context, new CacheAutomationSource(), fixedDestination, _listener);
-            CachePipe.Initialize(slot,repositoryLocator);
+            CachePipe.Initialize(slot, repositoryLocator);
+            PipeStatuses.Add(CachePipe, new PipelineRunStatus());
 
             UserSpecificPipelines = new List<DataFlowPipelineEngine<OnGoingAutomationTask>>();
             foreach (AutomateablePipeline automateablePipeline in slot.AutomateablePipelines)
             {
                 var factory = new DataFlowPipelineEngineFactory<OnGoingAutomationTask>(((CatalogueRepository)slot.Repository).MEF,AutomationPipelineContext.Context);
                 factory.ExplicitDestination = fixedDestination;
-                var pipe = factory.Create(automateablePipeline.Pipeline, _listener);
+                var pipe = (DataFlowPipelineEngine<OnGoingAutomationTask>)factory.Create(automateablePipeline.Pipeline, _listener);
                 pipe.Initialize(slot, repositoryLocator);
 
-                UserSpecificPipelines.Add((DataFlowPipelineEngine<OnGoingAutomationTask>) pipe);
+                UserSpecificPipelines.Add(pipe);
+                PipeStatuses.Add(pipe, new PipelineRunStatus());
             }
         }
 
@@ -67,26 +74,68 @@ namespace RDMPAutomationService.Pipeline
         /// <param name="minimumLengthOfTimeToWaitWhileDoingThis"></param>
         public void ExecuteAll(int minimumLengthOfTimeToWaitWhileDoingThis)
         {
-            var delay = Task.Delay(minimumLengthOfTimeToWaitWhileDoingThis);//yes we really do mean MINIMUM - this method should always take this long or longer
-            Task task = new Task(() =>
-            {
-                //we are not trying to stop so look for new tasks
-                _slot.RevertToDatabaseState();
-
-                DLEPipe.ExecutePipeline(new GracefulCancellationToken());
-                DQEPipe.ExecutePipeline(new GracefulCancellationToken());
-                CachePipe.ExecutePipeline(new GracefulCancellationToken());
-
-                foreach (var pipeline in UserSpecificPipelines)
-                    pipeline.ExecutePipeline(new GracefulCancellationToken());
-            });
+            var tasks = new List<Task>();
+            if (ShouldRun(DLEPipe))
+                tasks.Add(GetPipelineTask(DLEPipe));
+            if (ShouldRun(DQEPipe))
+                tasks.Add(GetPipelineTask(DQEPipe));
+            if (ShouldRun(CachePipe))
+                tasks.Add(GetPipelineTask(CachePipe));
             
-            task.Start();
+            foreach (var pipeline in UserSpecificPipelines)
+            {
+                if (ShouldRun(pipeline))
+                    tasks.Add(GetPipelineTask(pipeline));
+            }
 
-            var tasks = new[] {delay, task};
+            _slot.RevertToDatabaseState();
+            foreach (var task in tasks)
+            {
+                task.Start();
+            } 
+            
+            var delay = Task.Delay(minimumLengthOfTimeToWaitWhileDoingThis);//yes we really do mean MINIMUM - this method should always take this long or longer
 
-            Task.WaitAll(tasks);
+            tasks.Add(delay);
 
+            Task.WaitAll(tasks.ToArray());
+        }
+
+        private bool ShouldRun(DataFlowPipelineEngine<OnGoingAutomationTask> pipeline)
+        {
+            if (!PipeStatuses.ContainsKey(pipeline))
+                return false;
+
+            var status = PipeStatuses[pipeline];
+
+            // if the last error is more than a day ago
+            if (status.LastError < DateTime.UtcNow.AddDays(-1))
+            {
+                status.NumErrors = 0;
+                return true;
+            }
+
+            if (status.NumErrors < 5)
+                return true;
+
+            return false;
+        }
+
+        private Task GetPipelineTask(DataFlowPipelineEngine<OnGoingAutomationTask> pipeline)
+        {
+            return new Task(() =>
+            {
+                try
+                {
+                    pipeline.ExecutePipeline(new GracefulCancellationToken());
+                }
+                catch (Exception ex)
+                {
+                    PipeStatuses[pipeline].NumErrors++;
+                    PipeStatuses[pipeline].LastError = DateTime.UtcNow;
+                    throw ex;
+                }
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Policy;
@@ -28,16 +29,6 @@ namespace RDMPAutomationService
         
         public bool Stop { get; set; }
 
-        public bool StillRunning
-        {
-            get
-            {
-                return
-                    t == null //not started yet 
-                    || t.IsAlive; //or running
-            }
-        }
-        
         public event EventHandler<ServiceEventArgs> Failed;
         public event EventHandler<ServiceEventArgs> StartCompleted;
         
@@ -66,20 +57,14 @@ namespace RDMPAutomationService
         public void Start()
         {
             Stop = false;
-
-            t = new Thread(Run);
-            t.Start();
-        }
-
-        private void Run()
-        {
             lockEstablished = false;
             _serviceSlot = GetFirstAutomationServiceSlot(_options.ForceSlot);
             try
             {
                 if (_serviceSlot == null)
                 {
-                    _log(EventLogEntryType.Error, "Cannot start automation service without an AutomationServiceSlot, are they all locked?");
+                    _log(EventLogEntryType.Error,
+                        "Cannot start automation service without an AutomationServiceSlot, are they all locked?");
                     return;
                 }
 
@@ -88,7 +73,8 @@ namespace RDMPAutomationService
 
                 if (_serviceSlot.LockedBecauseRunning && _serviceSlot.LockHeldBy != mySelf)
                 {
-                    _log(EventLogEntryType.Error, "AutomationServiceSlots seems to be locked by someone else: " + _serviceSlot.LockHeldBy);
+                    _log(EventLogEntryType.Error,
+                        "AutomationServiceSlots seems to be locked by someone else: " + _serviceSlot.LockHeldBy);
                     return;
                 }
 
@@ -96,10 +82,24 @@ namespace RDMPAutomationService
                 _serviceSlot.Lock();
 
                 Startup startup = new Startup(_locator);
-                startup.DoStartup(new AutomationMEFLoadingCheckNotifier());//who cares if MEF has problems eh?
+                startup.DoStartup(new AutomationMEFLoadingCheckNotifier()); //who cares if MEF has problems eh?
 
                 OnStartCompleted();
-                
+            }
+            catch (Exception e)
+            {
+                OnFailed(e);
+                if (lockEstablished)
+                    _serviceSlot.Unlock();
+            }
+            t = new Thread(Run);
+            t.Start();
+        }
+
+        private void Run()
+        {
+            try
+            {
                 if (_serviceSlot.GlobalTimeoutPeriod.HasValue && _serviceSlot.GlobalTimeoutPeriod.Value > 0)
                     DatabaseCommandHelper.GlobalTimeout = _serviceSlot.GlobalTimeoutPeriod.Value;
 
@@ -126,9 +126,33 @@ namespace RDMPAutomationService
                 //while it is not the case that we are told to stop and can stop
                 while (!(Stop && AutomationDestination.CanStop()))
                 {
-                    //Check for new tasks, if it takes less than 1 second chill out till 1s has passed
+                    //Check for new tasks, if it takes less than 30 minutes chill out till 30 minutes have passed
                     if (!Stop)
-                        _collection.ExecuteAll(1000);
+                    {
+                        try
+                        {
+                            _collection.ExecuteAll(1000);
+                        }
+                        catch (Exception e)
+                        {
+                            var messages = new List<string>();
+                            if (e is AggregateException)
+                            {
+                                foreach (var exception in ((AggregateException)e).InnerExceptions)
+                                {
+                                    messages.Add(ExceptionHelper.ExceptionToListOfInnerMessages(exception));
+                                }
+                            }
+                            else
+                            {
+                                messages = new List<string>() { ExceptionHelper.ExceptionToListOfInnerMessages(e) };
+                            }
+                            _log(EventLogEntryType.Error,
+                                "Pipeline execution failed: \r\n" + 
+                                String.Join("\r\n----\r\n", messages) +
+                                "\r\n\r\nWill retry...");
+                        }
+                    }
 
                     //let people know we are still alive - Even if we were told to stop
                     _serviceSlot.TickLifeline();

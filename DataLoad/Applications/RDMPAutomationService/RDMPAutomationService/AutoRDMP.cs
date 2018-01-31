@@ -15,6 +15,7 @@ namespace RDMPAutomationService
     public class AutoRDMP
     {
         public event EventHandler<ServiceEventArgs> LogEvent;
+        public event EventHandler<ServiceEventArgs> HostStarted;
 
         private RDMPAutomationLoop host;
 
@@ -25,10 +26,6 @@ namespace RDMPAutomationService
         public AutoRDMP()
         {
             logAction = (et, msg) => OnLogEvent(new ServiceEventArgs() { EntryType = et, Message = msg });
-            timer = new Timer(600000);
-            timer.Elapsed += (sender, args) => Start();
-            timer.Start();
-
             InitialiseAutomationLoop();
         }
 
@@ -44,8 +41,7 @@ namespace RDMPAutomationService
             var serviceEventArgs = new ServiceEventArgs()
             {
                 EntryType = e.EntryType,
-                Message = "RDMP Automation Loop did not start: \r\n\r\n" + e.Message +
-                          "\r\n\r\nWill try again in about " + timer.Interval / 60000 + " minute(s)."
+                Message = "RDMP Automation Loop failed catastrophically: \r\n\r\n" + e.Message
             };
             if (e.Exception != null)
             {
@@ -66,16 +62,13 @@ namespace RDMPAutomationService
 
         public void Start()
         {
-            if (hostStarted)
-                return;
+            host.Start();
 
             OnLogEvent(new ServiceEventArgs()
             {
                 EntryType = EventLogEntryType.Information,
                 Message = "Starting Host Container..."
             });
-
-            host.Start();
             
             if (Environment.UserInteractive)
             {

@@ -20,6 +20,7 @@ using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Progress;
 
 namespace DataExportManager.DataRelease
@@ -184,6 +185,7 @@ namespace DataExportManager.DataRelease
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
+            engine.Check(new PopupChecksUI("Checking engine", true));
 
             try
             {

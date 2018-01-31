@@ -51,9 +51,7 @@ assemblyinfo :assemblyinfo do |asm|
     end
 
     version = "#{major}.#{minor}.#{patch}.#{build}"
-    puts "version: #{version}"
-    f = File.new('version', 'w')
-    f.write "#{version}#{suffix}"
+    puts "version: #{version}#{suffix}"
     asm.version = version
     asm.file_version = version
     asm.informational_version = "#{version}#{suffix}"
@@ -61,8 +59,18 @@ end
 
 desc "Pushes the plugin packages into the specified folder"    
 task :deployplugins, [:folder,:version] do |t, args|
+    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
+        
+    major, minor, patch, build = asminfoversion.split(/\./)
+   
+    build = build.to_i + 1
+    suffix = "-alpha"
+    
+    version = "#{major}.#{minor}.#{patch}.#{build}"
+    puts "version: #{version}#{suffix}"
+    
     Dir.chdir('Plugin/Plugin') do
-        sh "./build-and-deploy-local.bat #{args.folder} '' #{args.version}"
+        sh "./build-and-deploy-local.bat #{args.folder} '' #{version}#{suffix}"
     end
 end
 

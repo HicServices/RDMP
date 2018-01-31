@@ -31,15 +31,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             var loop = new RDMPAutomationLoop(mockOptions, mockLog);
             loop.Start();
 
-            int timeout = 0;
-            while (loop.StillRunning)
-            {
-                if ((timeout += 1000) > 10000)
-                    Assert.Fail("Timed out waiting for automation service to stop running");
-
-                Thread.Sleep(1000);
-            }
-
             Assert.That(error, Is.EqualTo(EventLogEntryType.Error));
             Assert.That(message, Is.StringStarting("Cannot start automation service"));
         }
@@ -66,7 +57,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 slot.RevertToDatabaseState();
 
                 //wait till it has started 
-                if (loop.StillRunning && slot.LockedBecauseRunning && startupComplete)
+                if (slot.LockedBecauseRunning && startupComplete)
                 {
                     //check it's lifeline is ticking
                     Assert.IsTrue(slot.Lifeline.HasValue);
@@ -91,7 +82,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 
                 Assert.NotNull(slot.Lifeline);
 
-                Assert.IsTrue(loop.StillRunning);
                 Assert.IsFalse(loop.Stop);
 
                 if(!timesSeen.Contains(slot.Lifeline.Value))
@@ -122,7 +112,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
                 //shouldn't be locked anymore
                 if (!slot.LockedBecauseRunning)
                 {
-                    Assert.IsFalse(loop.StillRunning);
                     break;
                 }
             }
@@ -130,7 +119,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             if (timeout <= 0)
                 throw new TimeoutException("Slot did not shut down properly before the timeout had expired");
            
-            
             //shouldn't be any errors either
             var errors = CatalogueRepository.GetAllObjects<AutomationServiceException>().ToArray();
             Assert.IsFalse(errors.Any(),string.Join(Environment.NewLine, errors.Select(e=>e.ToString())));

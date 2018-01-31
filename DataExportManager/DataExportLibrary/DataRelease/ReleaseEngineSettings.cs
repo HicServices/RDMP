@@ -20,10 +20,13 @@ namespace DataExportLibrary.DataRelease
         [DemandsInitialization("Delete the released files from the origin location if release is succesful", DefaultValue = true)]
         public bool DeleteFilesOnSuccess { get; set; }
 
+        public bool FreezeReleasedConfigurations { get; set; }
+
         public ReleaseEngineSettings()
         {
             CreateReleaseDirectoryIfNotFound = true;
             DeleteFilesOnSuccess = true;
+            FreezeReleasedConfigurations = true;
         }
 
         public void Check(ICheckNotifier notifier)
