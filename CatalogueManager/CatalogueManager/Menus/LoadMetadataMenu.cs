@@ -25,7 +25,7 @@ using ReusableUIComponents;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class LoadMetadataMenu:RDMPContextMenuStrip
+    class LoadMetadataMenu:RDMPContextMenuStrip
     {
         private LoadMetadata _loadMetadata;
 

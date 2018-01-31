@@ -29,7 +29,7 @@ using ReusableUIComponents;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ExtractableCohortMenu:RDMPContextMenuStrip
+    class ExtractableCohortMenu:RDMPContextMenuStrip
     {
         private readonly ExtractableCohort _cohort;
 

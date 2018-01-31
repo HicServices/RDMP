@@ -16,7 +16,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
-    public class FilterMenu : RDMPContextMenuStrip
+    class FilterMenu : RDMPContextMenuStrip
     {
         public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
         {

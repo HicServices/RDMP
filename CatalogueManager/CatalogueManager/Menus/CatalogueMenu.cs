@@ -10,7 +10,7 @@ using CatalogueLibrary.Data;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class CatalogueMenu:RDMPContextMenuStrip
+    class CatalogueMenu:RDMPContextMenuStrip
     {
         public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder): base(args, folder)
         {

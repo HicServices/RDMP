@@ -21,7 +21,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
-    public class CatalogueItemsNodeMenu : RDMPContextMenuStrip
+     class CatalogueItemsNodeMenu : RDMPContextMenuStrip
     {
         public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node): base(args, null)
         {

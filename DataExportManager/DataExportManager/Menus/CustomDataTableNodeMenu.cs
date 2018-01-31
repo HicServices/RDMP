@@ -23,7 +23,7 @@ using ReusableUIComponents;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class CustomDataTableNodeMenu:RDMPContextMenuStrip
+    class CustomDataTableNodeMenu:RDMPContextMenuStrip
     {
         private readonly CustomDataTableNode _customDataTableNode;
 

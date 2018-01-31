@@ -18,7 +18,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
-    public class AggregateFilterContainerMenu : RDMPContextMenuStrip
+    class AggregateFilterContainerMenu : RDMPContextMenuStrip
     {
         private readonly AggregateFilterContainer _filterContainer;
         private ExtractionFilter[] _importableFilters;

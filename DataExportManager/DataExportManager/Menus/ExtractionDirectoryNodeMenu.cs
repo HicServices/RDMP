@@ -9,7 +9,7 @@ using DataExportManager.CommandExecution.AtomicCommands;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
+    class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
     {
         public ExtractionDirectoryNodeMenu(RDMPContextMenuStripArgs args, ExtractionDirectoryNode folder)
             : base(args, null)

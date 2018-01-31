@@ -10,7 +10,7 @@ using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus
 {
-    public class AllANOTablesNodeMenu:RDMPContextMenuStrip
+    class AllANOTablesNodeMenu:RDMPContextMenuStrip
     {
         public AllANOTablesNodeMenu(RDMPContextMenuStripArgs args, AllANOTablesNode node)
             : base(args, null)

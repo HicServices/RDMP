@@ -12,7 +12,7 @@ using DataExportManager.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.Menus
 {
-    public class ProjectCohortIdentificationConfigurationAssociationsNodeMenu:RDMPContextMenuStrip
+    class ProjectCohortIdentificationConfigurationAssociationsNodeMenu:RDMPContextMenuStrip
     {
         public ProjectCohortIdentificationConfigurationAssociationsNodeMenu(RDMPContextMenuStripArgs args, ProjectCohortIdentificationConfigurationAssociationsNode node)
             : base(args, null)
