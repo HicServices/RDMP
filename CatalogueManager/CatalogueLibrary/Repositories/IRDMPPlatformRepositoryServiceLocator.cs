@@ -18,5 +18,6 @@ namespace CatalogueLibrary.Repositories
         /// <param name="objectID"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName,int objectID);
+        bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID);
     }
 }

@@ -181,8 +181,8 @@ namespace MapsDirectlyToDatabaseTableUI
 
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
 
-                MessageBox.Show("Application will now restart");
-                Application.Restart();
+                if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    Application.Restart();
             }
             catch (Exception exception)
             {

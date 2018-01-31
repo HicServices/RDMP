@@ -16,7 +16,7 @@ using RDMPStartup;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class CohortSourceUsedByProjectNodeMenu : RDMPContextMenuStrip
+    class CohortSourceUsedByProjectNodeMenu : RDMPContextMenuStrip
     {
         private readonly CohortSourceUsedByProjectNode _cohortSourceUsedByProjectNode;
 

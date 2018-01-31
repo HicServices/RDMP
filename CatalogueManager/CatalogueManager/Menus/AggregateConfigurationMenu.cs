@@ -25,7 +25,7 @@ using ReusableUIComponents.ChecksUI;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class AggregateConfigurationMenu :RDMPContextMenuStrip
+    class AggregateConfigurationMenu :RDMPContextMenuStrip
     {
         private readonly AggregateConfiguration _aggregate;
 

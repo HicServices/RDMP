@@ -14,7 +14,7 @@ using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 namespace DataExportManager.Menus
 {
-    public class ProjectSavedCohortsNodeMenu:RDMPContextMenuStrip
+    class ProjectSavedCohortsNodeMenu:RDMPContextMenuStrip
     {
         public ProjectSavedCohortsNodeMenu(RDMPContextMenuStripArgs args, ProjectSavedCohortsNode savedCohortsNode): base(args, null)
         {

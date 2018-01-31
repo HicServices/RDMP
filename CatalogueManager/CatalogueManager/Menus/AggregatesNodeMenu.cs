@@ -10,7 +10,7 @@ using RDMPStartup;
 
 namespace CatalogueManager.Menus
 {
-    public class AggregatesNodeMenu : RDMPContextMenuStrip
+    class AggregatesNodeMenu : RDMPContextMenuStrip
     {
         public AggregatesNodeMenu(RDMPContextMenuStripArgs args, AggregatesNode aggregatesNode):base(args,null)
         {

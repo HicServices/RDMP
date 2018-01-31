@@ -35,6 +35,9 @@ namespace AnonymisationTests
             //now create a new reference!
             IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName);
             IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
+
+            new ServerDefaults(CatalogueRepository).SetDefault(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
+
         }
 
         [TestFixtureTearDown]

@@ -17,7 +17,7 @@ namespace CohortManager.Menus
 {
 
     [System.ComponentModel.DesignerCategory("")]
-    public class CohortIdentificationConfigurationMenu :RDMPContextMenuStrip
+    class CohortIdentificationConfigurationMenu :RDMPContextMenuStrip
     {
         private CohortIdentificationConfiguration _cic;
         private IAtomicCommandWithTarget _executeAndImportCommand;

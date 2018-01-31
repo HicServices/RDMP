@@ -160,13 +160,17 @@ namespace CatalogueLibrary.Data.DataLoad
 
         public bool IsTablePushed()
         {
+            return GetPushedTable() != null;
+        }
+
+        public DiscoveredTable GetPushedTable()
+        {
             var tables = DataAccessPortal.GetInstance()
                 .ExpectDatabase(Server, DataAccessContext.DataLoad)
                 .DiscoverTables(false);
 
-            return tables.Any(t=>t.GetRuntimeName().Equals(TableName));
+            return tables.SingleOrDefault(t => t.GetRuntimeName().Equals(TableName));
         }
-
 
         /// <summary>
         /// Connects to the remote ANO Server and creates a swap table of Identifier to ANOIdentifier
@@ -193,7 +197,7 @@ namespace CatalogueLibrary.Data.DataLoad
                             "You asked to create a table with a datatype of length " + length + "(" + identifiableDatatype +
                             ") but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation=" +
                             (NumberOfCharactersToUseInAnonymousRepresentation +
-                             NumberOfIntegersToUseInAnonymousRepresentation) + ")", CheckResult.Fail));
+                             NumberOfIntegersToUseInAnonymousRepresentation) + ")", CheckResult.Warning));
             }
 
             var con = forceConnection ?? server.GetConnection();//use the forced connection or open a new one
@@ -268,7 +272,7 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
             
         }
 
-        private void DeleteANOTableInANOStore()
+        public void DeleteANOTableInANOStore()
         {
             RevertToDatabaseState();
 

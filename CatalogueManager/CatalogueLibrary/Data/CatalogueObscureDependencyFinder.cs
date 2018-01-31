@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data
@@ -36,6 +39,15 @@ namespace CatalogueLibrary.Data
             if(AnyTableSqlParameter.IsSupportedType(oTableWrapperObject.GetType()))
                 foreach (var p in _repository.GetAllParametersForParentTable(oTableWrapperObject))
                     p.DeleteInDatabase();
+        }
+
+        public void AddOtherDependencyFinderIfNotExists<T>(IRDMPPlatformRepositoryServiceLocator repositoryLocator) where T:IObscureDependencyFinder
+        {
+            if (OtherDependencyFinders.All(f => f.GetType() != typeof(T)))
+            {
+                ObjectConstructor constructor = new ObjectConstructor();
+                OtherDependencyFinders.Add((T)constructor.Construct(typeof(T), repositoryLocator));
+            }
         }
     }
 }

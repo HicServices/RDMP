@@ -25,7 +25,7 @@ using ReusableUIComponents;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class AllCohortsNodeMenu:RDMPContextMenuStrip
+    class AllCohortsNodeMenu:RDMPContextMenuStrip
     {
         [ImportingConstructor]
         public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)

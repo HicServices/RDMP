@@ -11,6 +11,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
@@ -129,19 +130,6 @@ namespace CatalogueManager.Collections
 
         private void olvTableInfos_KeyUp(object sender, KeyEventArgs e)
         {
-            
-            if (e.KeyCode == Keys.Delete)
-            {
-                var credentialUsage = tlvTableInfos.SelectedObject as DataAccessCredentialUsageNode;
-
-                if(credentialUsage != null)
-                    if(MessageBox.Show("Are you sure you want to remove usage rights under Context " + credentialUsage.Context + " for TableInfo " + credentialUsage.TableInfo,"Revoke Usage Permission",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.BreakLinkBetween(credentialUsage.Credentials, credentialUsage.TableInfo, credentialUsage.Context);
-                        _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(credentialUsage.TableInfo));
-
-                    }
-            }
             if (e.KeyCode == Keys.C && e.Control && tlvTableInfos.SelectedObject != null)
             {
                 Clipboard.SetText(tlvTableInfos.SelectedObject.ToString());
@@ -169,6 +157,7 @@ namespace CatalogueManager.Collections
 
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.ObjectSharingNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
@@ -199,10 +188,14 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root is AllDataAccessCredentialsNode ||
-            root is AllANOTablesNode || 
-            root is AllServersNode || 
-            root is AllExternalServersNode;
+            return
+                root is AllAutomationServerSlotsNode ||
+                root is AllRDMPRemotesNode ||
+                root is ObjectSharingNode ||
+                root is AllExternalServersNode ||
+                root is AllDataAccessCredentialsNode ||
+                root is AllANOTablesNode ||
+                root is AllServersNode;
         }
     }
 }

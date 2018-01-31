@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data.DataLoad;
 using LoadModules.Generic.Mutilators.Dilution.Exceptions;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {
@@ -15,6 +16,11 @@ namespace LoadModules.Generic.Mutilators.Dilution.Operations
     /// </summary>
     public class RoundDateToMiddleOfQuarter : DilutionOperation
     {
+        public RoundDateToMiddleOfQuarter() :
+            base(new DatabaseTypeRequest(typeof(DateTime)))
+        {
+        }
+
         public override void Check(ICheckNotifier notifier)
         {
             base.Check(notifier);

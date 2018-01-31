@@ -444,5 +444,10 @@ dt.Columns.Add(SpecialFieldNames.DataLoadRunID);
 
             catalogue.SaveToDatabase();
         }
+
+        public ColumnInfo GetColumnInfo(string colName)
+        {
+            return columnInfos.Single(c => c.GetRuntimeName().Equals(colName));
+        }
     }
 }

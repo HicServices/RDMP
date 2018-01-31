@@ -123,6 +123,14 @@ namespace CatalogueManager.Icons.IconProvision
         PermissionWindow,
         Pipeline,
         PipelineComponent,
-        PipelineComponentArgument
+        PipelineComponentArgument,
+
+
+        ObjectExport,
+        ObjectImport,
+
+        ObjectSharingNode,
+        AllObjectImportsNode,
+        AllObjectExportsNode
     }
 }

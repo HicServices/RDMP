@@ -19,7 +19,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.Menus
 {
-    public class FilterContainerMenu : RDMPContextMenuStrip
+    class FilterContainerMenu : RDMPContextMenuStrip
     {
         private readonly FilterContainer _filterContainer;
         private ExtractionFilter[] _importableFilters;

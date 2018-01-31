@@ -16,7 +16,7 @@ using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
 {
-    public class DataAccessCredentialUsageNodeMenu : RDMPContextMenuStrip
+    class DataAccessCredentialUsageNodeMenu : RDMPContextMenuStrip
     {
         public DataAccessCredentialUsageNodeMenu(RDMPContextMenuStripArgs args, DataAccessCredentialUsageNode node): base(args, null)
         {

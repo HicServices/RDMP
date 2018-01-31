@@ -20,7 +20,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class CatalogueItemMenu : RDMPContextMenuStrip
+    class CatalogueItemMenu : RDMPContextMenuStrip
     {
         private readonly CatalogueItem _catalogueItem;
         private CatalogueItemClassification _classification;

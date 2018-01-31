@@ -6,6 +6,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.SharingNodes;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Providers
@@ -36,6 +37,9 @@ namespace CatalogueLibrary.Providers
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
+        ObjectSharingNode ObjectSharingNode { get; }
+        ObjectImport[] AllImports { get; }
+        ObjectExport[] AllExports { get; }
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);

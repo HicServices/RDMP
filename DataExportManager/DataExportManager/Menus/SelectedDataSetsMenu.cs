@@ -23,7 +23,7 @@ using ReusableUIComponents;
 
 namespace DataExportManager.Menus
 {
-    public class SelectedDataSetsMenu : RDMPContextMenuStrip
+    class SelectedDataSetsMenu : RDMPContextMenuStrip
     {
         private readonly SelectedDataSets _selectedDataSet;
         private ExtractionConfiguration _extractionConfiguration;
