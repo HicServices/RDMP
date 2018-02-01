@@ -19,7 +19,5 @@ namespace CatalogueLibrary
         FileInfo FTPDetails { get; }
         
         bool Test { get; }
-        XmlNodeList GetTagFromConfigurationDataXML(string tagName);
-        bool HasTagInConfigurationDataXML(string tagName);
     }
 }
