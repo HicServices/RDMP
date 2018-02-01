@@ -1,10 +1,11 @@
+using System;
 using System.Windows.Forms;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
 using RDMPStartup;
@@ -18,33 +19,18 @@ namespace CatalogueManager.Menus
 {
     class DataAccessCredentialUsageNodeMenu : RDMPContextMenuStrip
     {
-        public DataAccessCredentialUsageNodeMenu(RDMPContextMenuStripArgs args, DataAccessCredentialUsageNode node): base(args, null)
+        public DataAccessCredentialUsageNodeMenu(RDMPContextMenuStripArgs args, DataAccessCredentialUsageNode node): base(args, node)
         {
             var setUsage = new ToolStripMenuItem("Set Context");
 
-            AddMenuItem(setUsage, DataAccessContext.Any, node);
-            AddMenuItem(setUsage, DataAccessContext.DataExport, node);
-            AddMenuItem(setUsage, DataAccessContext.DataLoad, node);
-            AddMenuItem(setUsage, DataAccessContext.InternalDataProcessing, node);
-            AddMenuItem(setUsage, DataAccessContext.Logging, node);
+            var existingUsages = _activator.RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.GetCredentialsIfExistsFor(node.TableInfo);
+
+            foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
+                Add(new ExecuteCommandSetDataAccessContextForCredentials(_activator, node, context, existingUsages), Keys.None, setUsage);
             
             Items.Add(setUsage);
 
             Add(new ExecuteCommandViewDependencies(node.Credentials,new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
-        }
-
-        private void AddMenuItem(ToolStripMenuItem setUsage, DataAccessContext context, DataAccessCredentialUsageNode node)
-        {
-            var newItem = new ToolStripMenuItem(context.ToString(), null, (s, e) => SetContext(context, node));
-            newItem.Enabled = node.Context != context;
-            setUsage.DropDownItems.Add(newItem);
-        }
-
-        private void SetContext(DataAccessContext destinationContext, DataAccessCredentialUsageNode node)
-        {
-            RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.SetContextFor(node,destinationContext);
-            Publish(node.TableInfo);
-
         }
     }
 }

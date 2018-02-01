@@ -525,6 +525,7 @@
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\AllANOTablesNodeMenu.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetDataAccessContextForCredentials.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
