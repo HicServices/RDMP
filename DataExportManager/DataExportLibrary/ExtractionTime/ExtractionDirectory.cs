@@ -30,7 +30,7 @@ namespace DataExportLibrary.ExtractionTime
             
             root = new DirectoryInfo(rootExtractionDirectory);
 
-            string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;
+            string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + DateTime.Now.ToString("yyyyMMdd");
             
             if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
                 extractionDirectory = root.CreateSubdirectory(subdirectoryName);
