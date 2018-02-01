@@ -24,7 +24,7 @@ namespace CatalogueLibrary.ANOEngineering
     /// TableInfo(s) and creating a new Catalogue entry.  Since Catalogues can have multiple underlying tables (e.g. lookup tables shared join tables etc) the engine
     /// supports migrating only a subset of tables across (the remaining tables must have already been migrated and exist in the destination database).
     /// 
-    /// Finally the engine creates a LoadMetadata which when run will migrate (copy) the data from the old 
+    /// Finally the engine creates a LoadMetadata which when run will migrate (copy) the data from the old table into the new table.
     /// </summary>
     public class ForwardEngineerANOCatalogueEngine
     {

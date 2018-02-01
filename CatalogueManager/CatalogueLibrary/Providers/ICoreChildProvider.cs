@@ -37,7 +37,7 @@ namespace CatalogueLibrary.Providers
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
-        ObjectSharingNode ObjectSharingNode { get; }
+        AllObjectSharingNode AllObjectSharingNode { get; }
         ObjectImport[] AllImports { get; }
         ObjectExport[] AllExports { get; }
 

@@ -69,7 +69,7 @@ namespace CatalogueLibrary.Providers
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
 
-        public ObjectSharingNode ObjectSharingNode { get; private set; }
+        public AllObjectSharingNode AllObjectSharingNode { get; private set; }
         public ObjectImport[] AllImports { get; set; }
         public ObjectExport[] AllExports { get; set; }
 
@@ -190,11 +190,11 @@ namespace CatalogueLibrary.Providers
             AllRDMPRemotesNode = new AllRDMPRemotesNode();
             AddChildren(AllRDMPRemotesNode);
 
-            ObjectSharingNode = new ObjectSharingNode();
+            AllObjectSharingNode = new AllObjectSharingNode();
             AllExports = repository.GetAllObjects<ObjectExport>();
             AllImports = repository.GetAllObjects<ObjectImport>();
 
-            AddChildren(ObjectSharingNode);
+            AddChildren(AllObjectSharingNode);
             
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
@@ -234,9 +234,9 @@ namespace CatalogueLibrary.Providers
         }
 
 
-        private void AddChildren(ObjectSharingNode objectSharingNode)
+        private void AddChildren(AllObjectSharingNode allObjectSharingNode)
         {
-            var descendancy = new DescendancyList(objectSharingNode);
+            var descendancy = new DescendancyList(allObjectSharingNode);
 
             var allExportsNode = new AllObjectExportsNode();
             var allImportsNode = new AllObjectImportsNode();

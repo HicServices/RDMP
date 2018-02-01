@@ -158,7 +158,7 @@ namespace CatalogueManager.Collections
 
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.ObjectSharingNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
@@ -192,7 +192,7 @@ namespace CatalogueManager.Collections
             return
                 root is AllAutomationServerSlotsNode ||
                 root is AllRDMPRemotesNode ||
-                root is ObjectSharingNode ||
+                root is AllObjectSharingNode ||
                 root is AllExternalServersNode ||
                 root is AllDataAccessCredentialsNode ||
                 root is AllANOTablesNode ||
