@@ -8,6 +8,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Repositories.Sharing
 {
+    /// <summary>
+    /// Handles querying/updating the ObjectExport and ObjectImport tables (See ObjectExport and ObjectImport classes).  These tables record which objects have
+    /// been shared externally (with a SharingUID) or imported locally.  This table handles tasks such as identifying whether a given object is shared or not
+    /// as well as handling the import process (in which a MapsDirectlyToDatabaseTableStatelessDefinition is translated into a local object and an ObjectImport
+    /// record is created - to allow updating/synchronising later on).
+    /// </summary>
     public class ShareManager
     {
         private readonly ICatalogueRepository _catalogueRepository;

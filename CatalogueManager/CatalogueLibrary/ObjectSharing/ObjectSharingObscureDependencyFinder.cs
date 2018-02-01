@@ -10,6 +10,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.ObjectSharing
 {
+    /// <summary>
+    /// Handles preventing deletion of shareable references to existing classes e.g. if a Catalogue is shared (has an entry in ObjectExport table) then you
+    /// cannot delete it.  Also handles cascading deletes of imported classes e.g. if a Catalogue was imported from somewhere else (has an entry in ObjectImport) and
+    /// then you delete it the ObjectImport reference will also be deleted.
+    /// </summary>
     public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;

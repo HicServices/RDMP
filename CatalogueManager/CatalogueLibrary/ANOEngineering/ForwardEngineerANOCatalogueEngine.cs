@@ -18,6 +18,14 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.ANOEngineering
 {
+    /// <summary>
+    /// Creates a new 'anonymous' version of a Catalogue based on a configuration the user has set up in a ForwardEngineerANOCataloguePlanManager.  This involves creating
+    /// a new empty data table in the destination database (adjusted to accomodate anonymous datatypes / dropped columns etc), importing the empty table as a new
+    /// TableInfo(s) and creating a new Catalogue entry.  Since Catalogues can have multiple underlying tables (e.g. lookup tables shared join tables etc) the engine
+    /// supports migrating only a subset of tables across (the remaining tables must have already been migrated and exist in the destination database).
+    /// 
+    /// Finally the engine creates a LoadMetadata which when run will migrate (copy) the data from the old 
+    /// </summary>
     public class ForwardEngineerANOCatalogueEngine
     {
         private readonly ICatalogueRepository _catalogueRepository;

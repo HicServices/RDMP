@@ -16,6 +16,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.ANOEngineering
 {
+    /// <summary>
+    /// Configuration class for ForwardEngineerANOCatalogueEngine (See ForwardEngineerANOCatalogueEngine).  This class stores which anonymisation transforms/dilutions
+    /// etc to apply to which columns, which TableInfos are to be mirated etc.  Also stores whether the LoadMetadata that is to be created should be a single one off
+    /// load or should load in date based batches (e.g. 1 year at a time - use this option if you have too much data in the source table to be migrated in one go - e.g.
+    /// tens of millions of records). 
+    /// </summary>
     public class ForwardEngineerANOCataloguePlanManager : ICheckable
     {
         public Catalogue Catalogue { get; private set; }
