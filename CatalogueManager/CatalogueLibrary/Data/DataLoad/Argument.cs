@@ -44,6 +44,7 @@ namespace CatalogueLibrary.Data.DataLoad
             typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), 
             typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),typeof(CohortIdentificationConfiguration),
             typeof(RemoteRDMP),
+            typeof(DataAccessCredentials),
            
             //wierd special cases
             typeof(ICustomUIDrivenClass), typeof(EncryptedString),
