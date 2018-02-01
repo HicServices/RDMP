@@ -59,7 +59,7 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
                 throw new Exception("Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
 
             //if there is no data to transform, don't bother
-            if (table.Rows.Count == 0) 
+            if (table.Rows.Count == 0 || tableOfIdentifiersRequiringSubstitution.Rows.Count == 0)
                 return;
 
             //translate all values into ANO equivalents
