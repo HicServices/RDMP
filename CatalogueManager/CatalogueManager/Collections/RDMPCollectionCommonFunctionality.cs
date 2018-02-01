@@ -354,15 +354,10 @@ namespace CatalogueManager.Collections
             
             //now tell tree view to refresh the object
             object parent = null; 
-
-            //or from known descendancy
-            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-            if (knownDescendancy != null)
-                parent = knownDescendancy.Last();
-
+            
             //if the descendancy is known 
             if (_pinFilter != null)
-                _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e.Object, knownDescendancy);
+                _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e);
 
             //if it is a root object maintained by this tree and it exists
             if (MaintainRootObjects != null && MaintainRootObjects.Contains(e.Object.GetType()) && e.Object.Exists())
