@@ -33,7 +33,7 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             
             Bitmap img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
 
-            if (ac.IsJoinablePatientIndexTable(true))
+            if (ac.IsJoinablePatientIndexTable())
                 img = _patientIndexTable;
 
             if (ac.IsExtractable)

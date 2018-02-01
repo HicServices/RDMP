@@ -212,8 +212,10 @@ namespace CatalogueLibrary.Providers
             Dictionary<int, JoinableCohortAggregateConfiguration> joinableDictionaryByAggregateConfigurationId =  _cohortContainerChildProvider.AllJoinables.ToDictionary(j => j.AggregateConfiguration_ID,v=> v);
 
             foreach (AggregateConfiguration ac in AllAggregateConfigurations)
-                if (joinableDictionaryByAggregateConfigurationId.ContainsKey(ac.ID))
-                    ac.InjectKnownJoinable(joinableDictionaryByAggregateConfigurationId[ac.ID]);
+                ac.InjectKnownJoinableOrNone(
+                    joinableDictionaryByAggregateConfigurationId.ContainsKey(ac.ID) //if theres a joinable
+                    ? joinableDictionaryByAggregateConfigurationId[ac.ID] //inject that we know the joinable (and what it is)
+                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
         }
 
         private void AddChildren(AllExternalServersNode allExternalServersNode)
