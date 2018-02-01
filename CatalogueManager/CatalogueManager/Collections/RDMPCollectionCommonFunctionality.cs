@@ -353,8 +353,13 @@ namespace CatalogueManager.Collections
             OnRefreshChildProvider(_activator.CoreChildProvider);
             
             //now tell tree view to refresh the object
-            object parent = null; 
-            
+            object parent = null;
+
+            //or from known descendancy
+            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+            if (knownDescendancy != null)
+                parent = knownDescendancy.Last();
+
             //if the descendancy is known 
             if (_pinFilter != null)
                 _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e);
