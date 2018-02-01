@@ -143,7 +143,7 @@ namespace DataExportLibrary.Data.DataTables
             if (ProjectNumber == null)
                 return Name;
 
-            return ProjectNumber + "_" + Name;
+            return ProjectNumber + "_" + Name + "_" + MasterTicket;
         }
 
         #region Stuff for updating our internal database records

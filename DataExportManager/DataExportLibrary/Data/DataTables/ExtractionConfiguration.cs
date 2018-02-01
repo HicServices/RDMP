@@ -30,7 +30,7 @@ namespace DataExportLibrary.Data.DataTables
     /// If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
     /// e.g. 'Cases - 5 year update'.
     /// </summary>
-    public class ExtractionConfiguration : VersionedDatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed
+    public class ExtractionConfiguration : VersionedDatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
     {
         #region Database Properties
         private DateTime? _dtCreated;
@@ -308,6 +308,11 @@ namespace DataExportLibrary.Data.DataTables
         public override int GetHashCode()
         {
             return ID.GetHashCode();
+        }
+
+        public string GetSearchString()
+        {
+            return ToString() + "_" + RequestTicket + "_" + ReleaseTicket;
         }
 
         public ISqlParameter[] GetAllParameters()
