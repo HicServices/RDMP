@@ -129,7 +129,7 @@ namespace CatalogueManager.Icons.IconProvision
         ObjectExport,
         ObjectImport,
 
-        ObjectSharingNode,
+        AllObjectSharingNode,
         AllObjectImportsNode,
         AllObjectExportsNode
     }
