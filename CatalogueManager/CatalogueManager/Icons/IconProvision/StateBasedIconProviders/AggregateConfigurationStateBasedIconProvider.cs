@@ -11,12 +11,14 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
         private readonly IconOverlayProvider _overlayProvider;
         private Bitmap _cohortAggregates;
         private Bitmap _aggregates;
+        private Bitmap _patientIndexTable;
 
         public AggregateConfigurationStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _overlayProvider = overlayProvider;
             _cohortAggregates = CatalogueIcons.CohortAggregate;
             _aggregates = CatalogueIcons.AggregateGraph;
+            _patientIndexTable = CatalogueIcons.PatientIndexTable;
         }
 
         public Bitmap GetImageIfSupportedObject(object o)
@@ -30,6 +32,9 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
                 return null;
             
             Bitmap img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
+
+            if (ac.IsJoinablePatientIndexTable(true))
+                img = _patientIndexTable;
 
             if (ac.IsExtractable)
                 img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);

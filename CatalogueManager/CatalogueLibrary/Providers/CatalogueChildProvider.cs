@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Remoting;
@@ -205,6 +206,14 @@ namespace CatalogueLibrary.Providers
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
+
+            //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
+            //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
+            Dictionary<int, JoinableCohortAggregateConfiguration> joinableDictionaryByAggregateConfigurationId =  _cohortContainerChildProvider.AllJoinables.ToDictionary(j => j.AggregateConfiguration_ID,v=> v);
+
+            foreach (AggregateConfiguration ac in AllAggregateConfigurations)
+                if (joinableDictionaryByAggregateConfigurationId.ContainsKey(ac.ID))
+                    ac.InjectKnownJoinable(joinableDictionaryByAggregateConfigurationId[ac.ID]);
         }
 
         private void AddChildren(AllExternalServersNode allExternalServersNode)
