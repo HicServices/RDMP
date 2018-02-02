@@ -14,6 +14,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision.Exceptions;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
@@ -96,6 +97,9 @@ namespace CatalogueManager.Icons.IconProvision
                         return img;
                 }
 
+            if (concept is RDMPCollection)
+                return GetImage(GetConceptForCollection((RDMPCollection)concept),kind);
+
             if (concept is RDMPConcept)
                 return GetImage(ImagesCollection[(RDMPConcept) concept], kind);
 
@@ -151,6 +155,31 @@ namespace CatalogueManager.Icons.IconProvision
 
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
+        }
+
+        public RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
+        {
+            switch (rdmpCollection)
+            {
+                case RDMPCollection.None:
+                    return RDMPConcept.NoIconAvailable;
+                case RDMPCollection.Tables:
+                    return RDMPConcept.TableInfo;
+                case RDMPCollection.Catalogue:
+                    return RDMPConcept.Catalogue;
+                case RDMPCollection.DataExport:
+                    return RDMPConcept.Project;
+                case RDMPCollection.SavedCohorts:
+                    return RDMPConcept.AllCohortsNode;
+                case RDMPCollection.Favourites:
+                    return RDMPConcept.Favourite;
+                case RDMPCollection.Cohort:
+                    return RDMPConcept.CohortIdentificationConfiguration;
+                case RDMPCollection.DataLoad:
+                    return RDMPConcept.LoadMetadata;
+                default:
+                    throw new ArgumentOutOfRangeException("rdmpCollection");
+            }
         }
 
         private bool ConceptIs(Type t, object concept)

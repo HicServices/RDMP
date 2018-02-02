@@ -17,6 +17,7 @@ using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Providers;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.Icons.IconOverlays;
@@ -56,7 +57,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         Color keyboardSelectionColor = Color.FromArgb(210,230,255);
         Color mouseSelectionColor = Color.FromArgb(230, 245, 251);
 
-        private const float DrawMatchesStartingAtY = 25;
+        private const float DrawMatchesStartingAtY = 50;
         private const float RowHeight = 20;
         
         const int DiagramTabDistance = 20;
@@ -95,7 +96,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if(!TypesThatAreNotUsefulParents.Contains(t))
                 TypesThatAreNotUsefulParents.Add(t);
         }
-        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null)
+        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None)
         {
             _activator = activator;
             _coreIconProvider = activator.CoreIconProvider;
@@ -134,7 +135,42 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 _autoCompleteProvider.Add(t);
 
             _autoCompleteProvider.RegisterForEvents(_scintilla);
+
+            foreach (RDMPCollection collection in Enum.GetValues(typeof(RDMPCollection)))
+            {
+                if (collection == RDMPCollection.None || collection == RDMPCollection.Favourites)
+                    continue;
+
+                var b = new ToolStripButton();
+                b.Image = activator.CoreIconProvider.GetImage(collection);
+                b.CheckOnClick = true;
+                b.Tag = collection;
+                b.DisplayStyle = ToolStripItemDisplayStyle.Image;
+                b.Text = collection.ToString();
+                b.CheckedChanged += CollectionCheckedChanged;
+                b.Checked = collection == focusedCollection;
+
+                toolStrip1.Items.Add(b);
+            }
         }
+
+        List<RDMPCollection> showOnlyCollections = new List<RDMPCollection>();
+
+        private void CollectionCheckedChanged(object sender, EventArgs e)
+        {
+            var button = (ToolStripButton) sender;
+
+            var togglingCollection = (RDMPCollection) button.Tag;
+
+            if (button.Checked)
+                showOnlyCollections.Add(togglingCollection);
+            else
+                showOnlyCollections.Remove(togglingCollection);
+
+            //refresh the objects showing
+            tbFind_TextChanged(null, null);
+        }
+
 
         void _scintilla_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
@@ -323,15 +359,12 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void FetchMatches(string text, CancellationToken cancellationToken)
         {
-
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                _matches = _searchables.Take(MaxMatches).Select(t => t.Key).ToList();
-                return;
-            }
-
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
+
+            if (showOnlyCollections.Any())
+                scorer.OnlyShowMatches(showOnlyCollections, _activator);
+
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken);
 
             if (scores == null)

@@ -45,12 +45,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
-            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
-            this.tbFind = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnFavourites = new System.Windows.Forms.ToolStripButton();
-            this.btnLaunchNavigateTo = new SimpleCounterButton();
+            this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,8 +68,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnCatalogues.Image = ((System.Drawing.Image)(resources.GetObject("btnCatalogues.Image")));
             this.btnCatalogues.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnCatalogues.Name = "btnCatalogues";
-            this.btnCatalogues.Size = new System.Drawing.Size(125, 22);
-            this.btnCatalogues.Text = "Data Management";
+            this.btnCatalogues.Size = new System.Drawing.Size(86, 22);
+            this.btnCatalogues.Text = "Catalogues";
             this.btnCatalogues.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // btnCohorts
@@ -166,44 +162,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripLabel1,
             this.cbxDashboards,
             this.btnAddDashboard,
-            this.toolStripSeparator3,
-            this.toolStripLabel2,
-            this.tbFind,
-            this.btnLaunchNavigateTo,
-            this.toolStripSeparator4});
+            this.toolStripSeparator3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1179, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btnSavedCohorts
-            // 
-            this.btnSavedCohorts.Image = ((System.Drawing.Image)(resources.GetObject("btnSavedCohorts.Image")));
-            this.btnSavedCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSavedCohorts.Name = "btnSavedCohorts";
-            this.btnSavedCohorts.Size = new System.Drawing.Size(103, 22);
-            this.btnSavedCohorts.Text = "Saved Cohorts";
-            this.btnSavedCohorts.Click += new System.EventHandler(this.ToolboxButtonClicked);
-            // 
-            // toolStripLabel2
-            // 
-            this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(33, 22);
-            this.toolStripLabel2.Text = "Find:";
-            // 
-            // tbFind
-            // 
-            this.tbFind.Name = "tbFind";
-            this.tbFind.Size = new System.Drawing.Size(100, 25);
-            this.tbFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbFind_KeyDown);
-            this.tbFind.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbFind_KeyUp);
-            this.tbFind.TextChanged += new System.EventHandler(this.tbFind_TextChanged);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // btnFavourites
             // 
@@ -214,16 +178,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnFavourites.Text = "Favourites";
             this.btnFavourites.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
-            // btnLaunchNavigateTo
+            // btnSavedCohorts
             // 
-            this.btnLaunchNavigateTo.Count = null;
-            this.btnLaunchNavigateTo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnLaunchNavigateTo.Image = ((System.Drawing.Image)(resources.GetObject("btnLaunchNavigateTo.Image")));
-            this.btnLaunchNavigateTo.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnLaunchNavigateTo.Name = "btnLaunchNavigateTo";
-            this.btnLaunchNavigateTo.Size = new System.Drawing.Size(23, 22);
-            this.btnLaunchNavigateTo.Text = "Launch Advanced Find";
-            this.btnLaunchNavigateTo.Click += new System.EventHandler(this.btnLaunchNavigateTo_Click);
+            this.btnSavedCohorts.Image = ((System.Drawing.Image)(resources.GetObject("btnSavedCohorts.Image")));
+            this.btnSavedCohorts.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSavedCohorts.Name = "btnSavedCohorts";
+            this.btnSavedCohorts.Size = new System.Drawing.Size(103, 22);
+            this.btnSavedCohorts.Text = "Saved Cohorts";
+            this.btnSavedCohorts.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // RDMPTaskBar
             // 
@@ -256,10 +218,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnSavedCohorts;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
-        private System.Windows.Forms.ToolStripTextBox tbFind;
-        private SimpleCounterButton btnLaunchNavigateTo;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton btnFavourites;
 
     }

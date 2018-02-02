@@ -160,5 +160,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateTableInfo(object sender, TableInfo tableInfo);
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
         void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
+        bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
     }
 }

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;

@@ -1,4 +1,6 @@
-﻿namespace ResearchDataManagementPlatform.WindowManagement.Events
+﻿using CatalogueManager.Collections;
+
+namespace ResearchDataManagementPlatform.WindowManagement.Events
 {
     /// <summary>
     /// Arguments for when an RDMPCollection has been made visible (opened)

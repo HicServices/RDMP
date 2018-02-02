@@ -169,7 +169,6 @@
     <Compile Include="WindowManagement\Licenses\LicenseUI.Designer.cs">
       <DependentUpon>LicenseUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="WindowManagement\RDMPCollection.cs" />
     <Compile Include="WindowManagement\ExtenderFunctionality\CustomFloatWindow.cs" />
     <Compile Include="WindowManagement\ExtenderFunctionality\CustomFloatWindowFactory.cs" />
     <Compile Include="WindowManagement\TabChangedHandler.cs" />

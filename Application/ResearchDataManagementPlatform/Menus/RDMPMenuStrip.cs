@@ -392,7 +392,9 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            rdmpTaskBar1.FocusFind();
+            var visibleCollection = _windowManager.GetFocusedCollection();
+
+            new NavigateToObjectUI(_activator, null, visibleCollection).Show();
         }
     }
 }

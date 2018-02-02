@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueManager.Collections;
 using CatalogueManager.LoadExecutionUIs;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;

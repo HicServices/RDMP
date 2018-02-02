@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Providers;
+using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 
 namespace CatalogueManager.Collections.Providers.Filtering
@@ -14,6 +17,11 @@ namespace CatalogueManager.Collections.Providers.Filtering
     public class SearchablesMatchScorer
     {
         private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
+        
+        private List<RDMPCollection> _showOnlyCollections;
+        private IActivateItems _activator;
+
+
         public string[] TypeNames { get; set; }
 
         public SearchablesMatchScorer()
@@ -23,16 +31,24 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
         public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken)
         {
-            var tokens = searchText.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             
             var regexes = new List<Regex>();
             
             //any token that 100% matches a type name is an explicitly typed token
-            var explicitTypesRequested = TypeNames.Intersect(tokens);
+            IEnumerable<string> explicitTypesRequested;
 
-            //else it's a regex
-            foreach (string token in tokens.Except(TypeNames))
-                regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
+            if (TypeNames != null)
+            {
+                explicitTypesRequested = TypeNames.Intersect(tokens);
+
+                //else it's a regex
+                foreach (string token in tokens.Except(TypeNames))
+                    regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
+
+            }
+            else
+                explicitTypesRequested = new string[0];
 
             if (cancellationToken.IsCancellationRequested)
                 return null;
@@ -54,17 +70,31 @@ namespace CatalogueManager.Collections.Providers.Filtering
                 if (!explicitTypeNames.Contains(kvp.Key.GetType().Name))
                     return 0;
 
+            //if we are only to show results for objects which are in the supplied RDMPCollections 
+            if (_showOnlyCollections != null)
+            {
+                //root is either the first parent or the object itself (if no descendancy)
+                var root = kvp.Value != null && kvp.Value.Parents != null && kvp.Value.Parents.Any()
+                    ? kvp.Value.Parents[0]
+                    : kvp.Key;
+
+                //if none of the filtered collections own the root object
+                if(!_showOnlyCollections.Any(c=>_activator.IsRootObjectOfCollection(c,root)))
+                      return 0;
+            }
+
+
+            //don't suggest AND/OR containers it's not helpful to navigate to these
+            if (kvp.Key is CatalogueLibrary.Data.IContainer)
+                return 0;
+
             //if there are no tokens
             if (!regexes.Any())
                 if (explicitTypeNames.Any()) //if they have so far just typed a TypeName
                     return 1;
                 else
-                    return 0;//no regexes AND no TypeName what did they type!
+                    return 1;//no regexes AND no TypeName what did they type! whatever everyone scores the same
             
-            //don't suggest AND/OR containers it's not helpful to navigate to these
-            if (kvp.Key is CatalogueLibrary.Data.IContainer)
-                return 0;
-
             //make a new list so we can destructively read it
             regexes = new List<Regex>(regexes);
             
@@ -129,5 +159,10 @@ namespace CatalogueManager.Collections.Providers.Filtering
             return matches;
         }
 
+        public void OnlyShowMatches(List<RDMPCollection> showOnlyCollections, IActivateItems activator)
+        {
+            _showOnlyCollections = showOnlyCollections;
+            _activator = activator;
+        }
     }
 }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Providers;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.Icons.IconOverlays;
@@ -202,62 +203,5 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         {
             toolStrip1.Items.Add(button);
         }
-
-        private void tbFind_TextChanged(object sender, EventArgs e)
-        {
-            RunFind(true);
-        }
-
-        private void tbFind_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                RunFind(false,true);
-        }
-
-        private void RunFind(bool returnFocusToTextBox,bool pin = false)
-        {
-            var activator = _manager.ContentManager;
-
-            var scorer = new SearchablesMatchScorer();
-
-            var matches = scorer.ScoreMatches(activator.CoreChildProvider.GetAllSearchables(), tbFind.Text, new CancellationToken())
-                .Where(score => score.Value > 0)
-                .OrderByDescending(score => score.Value).ToArray();
-
-            btnLaunchNavigateTo.Count = matches.Count();
-
-            if (matches.Length > 0)
-            {
-                activator.RequestItemEmphasis(this, new EmphasiseRequest(matches[0].Key.Key, int.MaxValue){Pin=pin});
-                
-                if (returnFocusToTextBox)
-                    tbFind.Focus();
-            }
-            else
-                btnLaunchNavigateTo.Count = null;
-        }
-
-        private void btnLaunchNavigateTo_Click(object sender, EventArgs e)
-        {
-            ShowNavigateTo();
-        }
-
-        private void ShowNavigateTo()
-        {
-            var dialog = new NavigateToObjectUI(_manager.ContentManager, tbFind.Text);
-            dialog.Show();
-        }
-
-        public void FocusFind()
-        {
-            ShowNavigateTo();
-        }
-
-        private void tbFind_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Enter)
-                e.SuppressKeyPress = true;
-        }
-
     }
 }
