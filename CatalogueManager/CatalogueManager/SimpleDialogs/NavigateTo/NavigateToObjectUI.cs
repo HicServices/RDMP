@@ -12,6 +12,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AutocompleteMenuNS;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Providers;
@@ -25,6 +29,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using DataExportLibrary.Data;
+using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -72,6 +77,37 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private Type[] _types;
         private string[] _typeNames;
 
+        /// <summary>
+        /// Object types that appear in the task bar as filterable types
+        /// </summary>
+        private Type[] EasyFilterTypes = new[]
+        {
+            typeof(Catalogue),
+            typeof(CatalogueItem),
+            typeof(SupportingDocument),
+            typeof(Project),
+            typeof(ExtractionConfiguration),
+            typeof(ExtractableCohort),
+            typeof(CohortIdentificationConfiguration),
+            typeof(TableInfo),
+            typeof(ColumnInfo),
+            typeof(LoadMetadata)
+        };
+
+
+        /// <summary>
+        /// Identifies which Types are checked by default when the NavigateToObjectUI is shown when the given RDMPCollection has focus
+        /// </summary>
+        public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
+            = new Dictionary<RDMPCollection, Type[]>()
+            {
+                {RDMPCollection.Catalogue,new []{typeof(Catalogue)}},
+                {RDMPCollection.Cohort,new []{typeof(CohortIdentificationConfiguration)}},
+                {RDMPCollection.DataExport,new []{typeof(Project),typeof(ExtractionConfiguration)}},
+                {RDMPCollection.DataLoad,new []{typeof(LoadMetadata)}},
+                {RDMPCollection.SavedCohorts,new []{typeof(ExtractableCohort)}},
+                {RDMPCollection.Tables,new []{typeof(TableInfo)}}
+            };
 
         private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
             new []
@@ -90,6 +126,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private bool _isClosed;
         private bool _skipEnter;
         private bool _skipEscape;
+
+        private List<Type> showOnlyTypes = new List<Type>();
 
         public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
         {
@@ -136,36 +174,37 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             _autoCompleteProvider.RegisterForEvents(_scintilla);
 
-            foreach (RDMPCollection collection in Enum.GetValues(typeof(RDMPCollection)))
-            {
-                if (collection == RDMPCollection.None || collection == RDMPCollection.Favourites)
-                    continue;
+            Type[] startingFilters = null;
 
+            if (StartingEasyFilters.ContainsKey(focusedCollection))
+                startingFilters = StartingEasyFilters[focusedCollection];
+            
+            foreach (Type t in EasyFilterTypes)
+            {
                 var b = new ToolStripButton();
-                b.Image = activator.CoreIconProvider.GetImage(collection);
+                b.Image = activator.CoreIconProvider.GetImage(t);
                 b.CheckOnClick = true;
-                b.Tag = collection;
+                b.Tag = t;
                 b.DisplayStyle = ToolStripItemDisplayStyle.Image;
-                b.Text = collection.ToString();
+                b.Text = t.ToString();
                 b.CheckedChanged += CollectionCheckedChanged;
-                b.Checked = collection == focusedCollection;
+                b.Checked = startingFilters != null && startingFilters.Contains(t);
 
                 toolStrip1.Items.Add(b);
             }
         }
 
-        List<RDMPCollection> showOnlyCollections = new List<RDMPCollection>();
 
         private void CollectionCheckedChanged(object sender, EventArgs e)
         {
             var button = (ToolStripButton) sender;
 
-            var togglingCollection = (RDMPCollection) button.Tag;
+            var togglingType = (Type) button.Tag;
 
             if (button.Checked)
-                showOnlyCollections.Add(togglingCollection);
+                showOnlyTypes.Add(togglingType);
             else
-                showOnlyCollections.Remove(togglingCollection);
+                showOnlyTypes.Remove(togglingType);
 
             //refresh the objects showing
             tbFind_TextChanged(null, null);
@@ -362,8 +401,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
 
-            if (showOnlyCollections.Any())
-                scorer.OnlyShowMatches(showOnlyCollections, _activator);
+            //and the explicit types
+            foreach (var showOnlyType in showOnlyTypes)
+                text = text + " " + showOnlyType.Name;
 
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken);
 
@@ -374,6 +414,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                scores
                 .Where(score => score.Value > 0)
                 .OrderByDescending(score => score.Value)
+                .ThenByDescending(id=>id.Key.Key.ID) //favour newer objects over ties
                 .Take(MaxMatches)
                 .Select(score => score.Key.Key)
                 .ToList();
