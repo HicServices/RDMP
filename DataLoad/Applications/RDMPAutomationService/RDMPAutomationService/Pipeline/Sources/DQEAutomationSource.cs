@@ -21,11 +21,13 @@ namespace RDMPAutomationService.Pipeline.Sources
 
         private AutomationServiceSlot _slottedService;
         private DQERunFinder _finder;
+        private IDataLoadEventListener _listener;
 
         public void PreInitialize(AutomationServiceSlot value, IDataLoadEventListener listener)
         {
             _slottedService = value;
-            _finder = new DQERunFinder((CatalogueRepository) _slottedService.Repository,_slottedService.DQESelectionStrategy,_slottedService.DQEDaysBetweenEvaluations);
+            _listener = listener;
+            _finder = new DQERunFinder((CatalogueRepository) _slottedService.Repository,_slottedService.DQESelectionStrategy,_slottedService.DQEDaysBetweenEvaluations, _listener);
         }
 
         public OnGoingAutomationTask GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)

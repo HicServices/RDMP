@@ -31,6 +31,7 @@ namespace ReusableLibraryCode.Progress
                 //Stack trace not available ah well
             }
         }
+
         public NotifyEventArgs(ProgressEventType progressEventType, string message,  Exception exception)
         {
             ProgressEventType = progressEventType;

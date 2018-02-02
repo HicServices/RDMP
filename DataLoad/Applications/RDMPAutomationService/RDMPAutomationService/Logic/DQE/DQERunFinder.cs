@@ -13,6 +13,7 @@ using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.DQE
 {
@@ -27,12 +28,14 @@ namespace RDMPAutomationService.Logic.DQE
         private readonly CatalogueRepository _catalogueRepository;
         private AutomationDQEJobSelectionStrategy _strategy;
         private readonly int _dqeDaysBetweenEvaluations;
+        private readonly IDataLoadEventListener listener;
 
-        public DQERunFinder(CatalogueRepository catalogueRepository, AutomationDQEJobSelectionStrategy strategy, int dqeDaysBetweenEvaluations)
+        public DQERunFinder(CatalogueRepository catalogueRepository, AutomationDQEJobSelectionStrategy strategy, int dqeDaysBetweenEvaluations, IDataLoadEventListener listener = null)
         {
             _catalogueRepository = catalogueRepository;
             _strategy = strategy;
             _dqeDaysBetweenEvaluations = dqeDaysBetweenEvaluations;
+            this.listener = listener;
         }
 
         public Catalogue SuggestRun()
@@ -138,6 +141,11 @@ namespace RDMPAutomationService.Logic.DQE
 
             var checker = new ToMemoryCheckNotifier();
             report.Check(checker);
+
+            foreach (var check in checker.Messages)
+            {
+                listener.OnNotify(this, check.ToNotifyEventArgs());
+            }
 
             return checker.GetWorst() != CheckResult.Fail;
         }
