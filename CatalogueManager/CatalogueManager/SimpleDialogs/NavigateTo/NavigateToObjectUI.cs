@@ -374,6 +374,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                scores
                 .Where(score => score.Value > 0)
                 .OrderByDescending(score => score.Value)
+                .ThenByDescending(id=>id.Key.Key.ID) //favour newer objects over ties
                 .Take(MaxMatches)
                 .Select(score => score.Key.Key)
                 .ToList();

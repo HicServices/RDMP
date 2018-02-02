@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Providers;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
@@ -88,6 +89,10 @@ namespace CatalogueManager.Collections.Providers.Filtering
             if (kvp.Key is CatalogueLibrary.Data.IContainer)
                 return 0;
 
+            //don't suggest AND/OR containers it's not helpful to navigate to these
+            if (kvp.Key is CatalogueLibrary.Data.Cohort.CohortAggregateContainer)
+                return 0;
+
             //if there are no tokens
             if (!regexes.Any())
                 if (explicitTypeNames.Any()) //if they have so far just typed a TypeName
@@ -133,7 +138,23 @@ namespace CatalogueManager.Collections.Providers.Filtering
             if (regexes.Any())
                 return 0;
 
+            Catalogue catalogueIfAny = GetCatalogueIfAnyInDescendancy(kvp);
+
+            if (catalogueIfAny != null && catalogueIfAny.IsDeprecated)
+                return score /10;
+            
             return score;
+        }
+
+        private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+        {
+            if (kvp.Key is Catalogue)
+                return (Catalogue) kvp.Key;
+
+            if (kvp.Value != null)
+                return (Catalogue)kvp.Value.Parents.FirstOrDefault(p => p is Catalogue);
+
+            return null;
         }
 
         private int CountMatchType(List<Regex> regexes, object key)
