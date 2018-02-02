@@ -573,6 +573,45 @@ namespace CatalogueLibraryTests.Integration
                 c2.DeleteInDatabase();
             }
         }
+
+
+        [Test]
+        public void CatalogueFolder_SubfolderingDuplicateNames()
+        {
+            var c1 = new Catalogue(CatalogueRepository, "C1");
+            var c2 = new Catalogue(CatalogueRepository, "C2");
+            var c3 = new Catalogue(CatalogueRepository, "C3");
+
+            try
+            {
+                c1.Folder.Path = @"\A\B\C\";
+                c1.SaveToDatabase();
+
+                c2.Folder.Path = @"\B\C\";
+                c2.SaveToDatabase();
+
+                c3.Folder.Path = @"\A\B\";
+                c3.SaveToDatabase();
+                
+                //c1 is a subfolder of c3
+                Assert.IsFalse(c1.Folder.IsSubFolderOf(c2.Folder));
+                Assert.IsTrue(c1.Folder.IsSubFolderOf(c3.Folder));
+
+                //c2 is nobodies subfolder
+                Assert.IsFalse(c2.Folder.IsSubFolderOf(c1.Folder));
+                Assert.IsFalse(c2.Folder.IsSubFolderOf(c3.Folder));
+
+                //c2 is nobodies subfolder
+                Assert.IsFalse(c3.Folder.IsSubFolderOf(c1.Folder));
+                Assert.IsFalse(c3.Folder.IsSubFolderOf(c2.Folder));
+
+            }
+            finally
+            {
+                c1.DeleteInDatabase();
+                c2.DeleteInDatabase();
+            }
+        }
         [Test]
         public void CatalogueFolder_SubfolderingAdvanced()
         {
