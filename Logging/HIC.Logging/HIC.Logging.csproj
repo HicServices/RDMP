@@ -138,6 +138,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -154,6 +158,7 @@
     <Compile Include="IProgressLogging.cs" />
     <Compile Include="ITableLoadInfo.cs" />
     <Compile Include="Listeners\ToLoggingDatabaseDataLoadEventListener.cs" />
+    <Compile Include="Listeners\ToNLogAndDbDataLoadEventListener.cs" />
     <Compile Include="LoggingDatabaseChecker.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="PastEvents\ArchivalDataSource.cs" />
@@ -173,6 +178,13 @@
     <None Include="app.config" />
     <None Include="HICSSISLibraryKey.snk" />
     <None Include="Logging.cd" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">

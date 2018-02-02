@@ -5,11 +5,14 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using HIC.Logging;
+using HIC.Logging.Listeners;
 using RDMPAutomationService.EventHandlers;
 using RDMPAutomationService.Pipeline.Sources;
 using RDMPStartup;
@@ -35,11 +38,20 @@ namespace RDMPAutomationService.Pipeline
 
         internal Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus> PipeStatuses { get; set; }
 
-        public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator,AutomationServiceSlot slot, AutomationDestination fixedDestination)
+        public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator, AutomationServiceSlot slot, AutomationDestination fixedDestination)
         {
             _slot = slot;
+            
+            var loggingServer = new ServerDefaults(repositoryLocator.CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            
+            var logListener = new ToFileAndDbDataLoadEventListener(this, new LogManager(loggingServer), "Automation.Pipelines", "Automation pipelines");
+            logListener.StartLogging();
 
-            _listener = new FromCheckNotifierToDataLoadEventListener(new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
+            _listener = new ForkDataLoadEventListener(
+                logListener,
+                new ThrowImmediatelyDataLoadEventListener()
+            );
+              
             PipeStatuses = new Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus>();
 
             DLEPipe = new DataFlowPipelineEngine<OnGoingAutomationTask>(AutomationPipelineContext.Context, new DLEAutomationSource(), fixedDestination, _listener);

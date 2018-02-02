@@ -59,7 +59,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             Exception exception = null;
             try
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Starting pipeline engine"));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Starting pipeline engine"));
 
                 if (!initialized)
                     throw new Exception(
@@ -90,11 +90,11 @@ namespace CatalogueLibrary.DataFlowPipeline
             }
             finally
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to Dispose of DataFlowPipelineEngine components"));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing to Dispose of DataFlowPipelineEngine components"));
 
                 foreach (IDataFlowComponent<T> dataLoadComponent in Components)
                 {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + dataLoadComponent));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + dataLoadComponent));
                     try
                     {
 
@@ -106,7 +106,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                     }
                 }
 
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + Source));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Source));
                 try
                 {
                     Source.Dispose(_listener, exception);
@@ -116,7 +116,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                     _listener.OnNotify(Source, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Source Component", e));
                 }
 
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + Destination));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Destination));
                 try
                 {
 
@@ -153,7 +153,7 @@ namespace CatalogueLibrary.DataFlowPipeline
 
             if (currentChunk == null)
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Received null chunk from the Source component, stopping engine"));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Received null chunk from the Source component, stopping engine"));
                 return false;
             }
 
