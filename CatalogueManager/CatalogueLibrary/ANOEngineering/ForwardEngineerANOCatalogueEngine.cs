@@ -266,6 +266,16 @@ namespace CatalogueLibrary.ANOEngineering
             }
         }
 
+
+        /// <summary>
+        /// Here we are migrating a Catalogue but some of the TableInfos have already been migrated e.g. lookup tables as part of migrating another Catalogue.  We are
+        /// now trying to find one of those 'not migrated' ColumnInfos by name without knowing whether the user has since deleted the reference or worse introduced 
+        /// duplicate references to the same TableInfo/ColumnInfos.
+        /// </summary>
+        /// <param name="syntaxHelper"></param>
+        /// <param name="col"></param>
+        /// <param name="expectedName"></param>
+        /// <returns></returns>
         private ColumnInfo FindNewColumnNamed(IQuerySyntaxHelper syntaxHelper, ColumnInfo col, string expectedName)
         {
             string expectedNewName = syntaxHelper.EnsureFullyQualified(
@@ -274,7 +284,22 @@ namespace CatalogueLibrary.ANOEngineering
                 col.TableInfo.GetRuntimeName(),
                 expectedName);
 
-            return _catalogueRepository.GetColumnInfoWithNameExactly(expectedNewName);
+            var columns = _catalogueRepository.GetColumnInfosWithNameExactly(expectedNewName);
+
+            if (columns.Length == 1)
+                return columns[0];
+
+            var columnsFromCorrectServer = columns.Where(c => c.TableInfo.Server.Equals(_planManager.TargetDatabase.Server.Name)).ToArray();
+
+            if (columnsFromCorrectServer.Length == 1)
+                return columnsFromCorrectServer[0];
+
+            var columnsFromCorrectServerThatAreaAlsoLocalImports = columnsFromCorrectServer.Where(_catalogueRepository.ShareManager.IsImportedObject).ToArray();
+
+            if (columnsFromCorrectServerThatAreaAlsoLocalImports.Length == 1)
+                return columnsFromCorrectServerThatAreaAlsoLocalImports[0];
+
+            throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedName +"'");
         }
 
         Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();

@@ -208,21 +208,20 @@ namespace CatalogueLibrary.Repositories
             return GetAllObjects<AnyTableSqlParameter>("where ParentTable = '" + type.Name + "' and Parent_ID =" + parent.ID);
         }
 
-        public ColumnInfo GetColumnInfoWithNameExactly(string name)
+        /// <summary>
+        /// Returns all ColumnInfos which have names exactly matching name, this must be a fully qualified string e.g. [MyDatabase]..[MyTable].[MyColumn].  You can use
+        /// IQuerySyntaxHelper.EnsureFullyQualified to get this.  Return is an array because you can have an identical table/database structure on two different servers
+        /// in each case the ColumnInfo will have the same fully qualified name (or you could have duplicate references to the same ColumnInfo/TableInfo for some reason)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ColumnInfo[] GetColumnInfosWithNameExactly(string name)
         {
-            var columnInfos = SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE Name = @name","ID",
+            return SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE Name = @name","ID",
                 new Dictionary<string, object>
                 {
                     {"name", name}
-                }).ToList();
-
-            if (!columnInfos.Any())
-                return null;
-
-            if (columnInfos.Count > 1)
-                throw new Exception("Found 2+ ColumnInfo named " + name);
-
-            return columnInfos[0];
+                }).ToArray();
         }
 
         public TicketingSystemConfiguration GetTicketingSystem()

@@ -42,7 +42,7 @@ namespace CatalogueLibrary.Repositories
         Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();
         IEnumerable<CohortIdentificationConfiguration> GetAllCohortIdentificationConfigurationsWithDependencyOn(AggregateConfiguration aggregate);
         IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent);
-        ColumnInfo GetColumnInfoWithNameExactly(string name);
+        ColumnInfo[] GetColumnInfosWithNameExactly(string name);
         TicketingSystemConfiguration GetTicketingSystem();
         IEnumerable<CacheProgress> GetAllCacheProgressWithoutAPermissionWindow();
         TableInfo GetTableWithNameApproximating(string tableName, string database);
