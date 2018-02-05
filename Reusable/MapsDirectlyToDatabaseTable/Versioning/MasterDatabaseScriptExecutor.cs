@@ -6,17 +6,11 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using roundhouse.consoles;
-using roundhouse.cryptography;
-using roundhouse.databases.sqlserver;
-using roundhouse.environments;
-using roundhouse.infrastructure;
-using roundhouse.infrastructure.app;
-using roundhouse.migrators;
-using ConnectionType = roundhouse.infrastructure.app.ConnectionType;
 using Version = System.Version;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
@@ -34,7 +28,6 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         private const string RoundhouseSchemaName ="RoundhousE";
         private const string RoundhouseVersionTable = "Version";
         private const string RoundhouseScriptsRunTable = "ScriptsRun";
-        private const string RoundhouseScriptErrorsTable = "ScriptsRunErrors";
 
         private readonly SqlConnectionStringBuilder _builder;
         private const string InitialDatabaseScriptName = @"Initial Database Setup";
@@ -103,48 +96,6 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             return _builder.ConnectionString;
         }
 
-        private DefaultDatabaseMigrator CreateDatabaseMigratorForConnection(SqlConnectionStringBuilder builder, string connectionString, ICheckNotifier notifier, out ConfigurationPropertyHolder propertyHolder)
-        {
-            ApplicationParameters.CurrentMappings.roundhouse_schema_name = RoundhouseSchemaName;
-            ApplicationParameters.CurrentMappings.scripts_run_errors_table_name = RoundhouseScriptErrorsTable;
-            ApplicationParameters.CurrentMappings.scripts_run_table_name = RoundhouseScriptsRunTable;
-            ApplicationParameters.CurrentMappings.version_table_name = RoundhouseVersionTable;
-
-            //Configuration setup
-            propertyHolder = new DefaultConfiguration
-            {
-                DoNotCreateDatabase = false,
-                DatabaseName = builder.InitialCatalog,
-                DatabaseType = @"roundhouse.databases.sqlserver.SqlServerDatabase, roundhouse.databases.sqlserver",
-                VersionTableName = RoundhouseVersionTable,
-                ScriptsRunTableName = RoundhouseScriptsRunTable,
-                ScriptsRunErrorsTableName = RoundhouseScriptErrorsTable,
-                SchemaName = RoundhouseSchemaName,
-                ConnectionStringAdmin = connectionString,
-                ConnectionString = connectionString
-            };
-
-            //database target
-            var s = new SqlServerDatabase
-            {
-                server_name = builder.DataSource,
-                database_name = builder.InitialCatalog,
-                roundhouse_schema_name = RoundhouseSchemaName,
-                configuration = propertyHolder,
-                admin_connection_string = connectionString,
-                connection_string = connectionString,
-                version_table_name = RoundhouseVersionTable,
-                scripts_run_table_name = RoundhouseScriptsRunTable,
-                scripts_run_errors_table_name = RoundhouseScriptErrorsTable
-
-            };
-
-            notifier.OnCheckPerformed(new CheckEventArgs("RoundhousE settings configured", CheckResult.Success, null));
-
-            //migration to create the database 
-            return new DefaultDatabaseMigrator(s, new MD5CryptographicService(), propertyHolder);
-        }
-
         public bool CreateDatabase(string createTablesAndFunctionsSql, string initialVersionNumber, ICheckNotifier notifier)
         {
             try
@@ -155,10 +106,9 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 DiscoveredServer server = new DiscoveredServer(serverBuilder);
                 server.TestConnection();
 
-                ConfigurationPropertyHolder propertyHolder;
+                var db = server.ExpectDatabase(_database);
 
-
-                if (server.ExpectDatabase(_database).Exists())//make sure database does not already exist
+                if (db.Exists())//make sure database does not already exist
                 {
                     bool createAnyway = notifier.OnCheckPerformed(new CheckEventArgs("Database already exists", CheckResult.Warning, null,"Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
 
@@ -177,17 +127,52 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 
                 SqlConnection.ClearAllPools();
 
-                var migratorForTableCreation = CreateDatabaseMigratorForConnection(_builder, _builder.ConnectionString, notifier, out propertyHolder);
-                migratorForTableCreation.initialize_connections();
-                migratorForTableCreation.open_connection(false);
-                migratorForTableCreation.run_roundhouse_support_tasks();
-                migratorForTableCreation.close_connection();
-                notifier.OnCheckPerformed(new CheckEventArgs("run_roundhouse_support_tasks called", CheckResult.Success, null));
-                
-                var environment = new DefaultEnvironment(propertyHolder);
-                if (!migratorForTableCreation.run_sql(createTablesAndFunctionsSql, InitialDatabaseScriptName, true, false, 1, environment, initialVersionNumber, "Custom", ConnectionType.Default))
-                    throw new Exception("run_sql did not succeed (don't know where to get any further information...). Connection string = " + _builder.ConnectionString);
-                migratorForTableCreation.version_the_database("Initial Setup", initialVersionNumber);
+                using (var con = db.Server.GetConnection())
+                {
+                    con.Open();
+
+                    var cmd =  db.Server.GetCommand("CREATE SCHEMA " + RoundhouseSchemaName, con);
+                    cmd.ExecuteNonQuery();
+
+                    var sql = 
+                    @"CREATE TABLE [RoundhousE].[ScriptsRun](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[version_id] [bigint] NULL,
+	[script_name] [nvarchar](255) NULL,
+	[text_of_script] [text] NULL,
+	[text_hash] [nvarchar](512) NULL,
+	[one_time_script] [bit] NULL,
+	[entry_date] [datetime] NULL,
+	[modified_date] [datetime] NULL,
+	[entered_by] [nvarchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)
+)
+
+CREATE TABLE [RoundhousE].[Version](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[repository_path] [nvarchar](255) NULL,
+	[version] [nvarchar](50) NULL,
+	[entry_date] [datetime] NULL,
+	[modified_date] [datetime] NULL,
+	[entered_by] [nvarchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)
+)
+";
+
+                    var cmd2 = db.Server.GetCommand(sql, con);
+                    cmd2.ExecuteNonQuery();
+                }
+
+                RunSQL(db, createTablesAndFunctionsSql, InitialDatabaseScriptName);
+
+                SetVersion(db,"Initial Setup", initialVersionNumber);
+
                 notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
@@ -201,10 +186,107 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             }
         }
 
+        private void RunSQL(DiscoveredDatabase db, string sql, string filename)
+        {
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+
+                UsefulStuff.ExecuteBatchNonQuery(sql, con);
+
+                string insert = @"
+INSERT INTO [RoundhousE].[ScriptsRun]
+           ([script_name],
+           [text_of_script],
+           [text_hash],
+           [one_time_script],
+           [entry_date],
+           [modified_date],
+           [entered_by])
+     VALUES
+          (@script_name,
+           @text_of_script,
+           @text_hash,
+           @one_time_script,
+           @entry_date,
+           @modified_date,
+           @entered_by)
+";
+
+                DateTime dt = DateTime.Now;
+
+                var cmd2 = db.Server.GetCommand(insert, con);
+
+                db.Server.AddParameterWithValueToCommand("@script_name",cmd2,filename);
+                db.Server.AddParameterWithValueToCommand("@text_of_script",cmd2,sql);
+                db.Server.AddParameterWithValueToCommand("@text_hash",cmd2,CalculateMD5Hash(sql));
+                db.Server.AddParameterWithValueToCommand("@one_time_script",cmd2,1);
+                db.Server.AddParameterWithValueToCommand("@entry_date",cmd2,dt);
+                db.Server.AddParameterWithValueToCommand("@modified_date",cmd2,dt);
+                db.Server.AddParameterWithValueToCommand("@entered_by",cmd2,Environment.UserName);
+
+                cmd2.ExecuteNonQuery();
+            }
+
+        }
+        
+        public string CalculateMD5Hash(string input)
+        {
+            // step 1, calculate MD5 hash from input
+
+            MD5 md5 = MD5.Create();
+
+            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+
+            // step 2, convert byte array to hex string
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < hash.Length; i++)
+                sb.Append(i.ToString("X2"));
+
+            return sb.ToString();
+
+        }
+
+
+
+        private void SetVersion(DiscoveredDatabase db, string name, string version)
+        {
+            var versionTable = db.ExpectTable(RoundhouseVersionTable,RoundhouseSchemaName);
+            versionTable.Truncate();
+
+            //repository_path	version	entry_date	modified_date	entered_by
+            //Patching	2.6.0.1	2018-02-05 08:26:54.000	2018-02-05 08:26:54.000	DUNDEE\TZNind
+            
+            using(var con =  db.Server.GetConnection())
+            {
+                con.Open();
+
+                var sql = "INSERT INTO " + versionTable.GetFullyQualifiedName() +
+                          "(repository_path,version,entry_date,modified_date,entered_by) VALUES (@repository_path,@version,@entry_date,@modified_date,@entered_by)";
+
+
+                var cmd = db.Server.GetCommand(sql, con);
+
+                var dt = DateTime.Now;
+
+                db.Server.AddParameterWithValueToCommand("@repository_path", cmd, name);
+                db.Server.AddParameterWithValueToCommand("@version",cmd,version);
+                db.Server.AddParameterWithValueToCommand("@entry_date",cmd, dt);
+                db.Server.AddParameterWithValueToCommand("@modified_date",cmd,dt);
+                db.Server.AddParameterWithValueToCommand("@entered_by", cmd, Environment.UserName);
+
+                cmd.ExecuteNonQuery();
+            }
+                
+        }
+
         public bool PatchDatabase(SortedDictionary<string, Patch> patches, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt)
         {
-            ConfigurationPropertyHolder configurationPropertyHolder;
-
             if(!patches.Any())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("There are no patches to apply so skipping patching", CheckResult.Success,null));
@@ -213,19 +295,14 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
             Version maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
 
-            DefaultDatabaseMigrator migrator;
             try
             {
-                migrator = CreateDatabaseMigratorForConnection(_builder, _builder.ConnectionString, notifier, out configurationPropertyHolder);
-                
                 notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
 
                 UsefulStuff.BackupSqlServerDatabase(CreateConnectionString(),_database, "Full backup of " + _database);
             
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
-
-                migrator.initialize_connections();
-                migrator.open_connection(true);
+                
             }
             catch (Exception e)
             {
@@ -234,6 +311,8 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                     CheckResult.Fail, e));
                 return false;
             }
+
+            var db = new DiscoveredServer(_builder).GetCurrentDatabase();
 
             try
             {
@@ -247,7 +326,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                     if (shouldRun)
                     {
 
-                        migrator.run_sql(patch.Value.EntireScript, patch.Key, true, false, i, new DefaultEnvironment(configurationPropertyHolder), "1.0.0.0",patch.Key, ConnectionType.Default);
+                        RunSQL(db,patch.Value.EntireScript, patch.Key);
 
                         notifier.OnCheckPerformed(new CheckEventArgs("Executed patch " + patch.Value, CheckResult.Success, null));
                     }
@@ -255,10 +334,9 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                         throw new Exception("User decided not to execute patch " + patch.Key + " aborting ");
                 }
 
-                UpdateVersionIncludingClearingLastVersion(migrator,notifier,maxPatchVersion);
+                UpdateVersionIncludingClearingLastVersion(db,notifier,maxPatchVersion);
                 
                 //all went fine
-                migrator.close_connection();
                 notifier.OnCheckPerformed(new CheckEventArgs("All Patches applied, transaction committed", CheckResult.Success, null));
                 
                 return true;
@@ -271,7 +349,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             }
         }
 
-        private void UpdateVersionIncludingClearingLastVersion(DefaultDatabaseMigrator migrator, ICheckNotifier notifier, Version maxPatchVersion)
+        private void UpdateVersionIncludingClearingLastVersion(DiscoveredDatabase db,ICheckNotifier notifier, Version maxPatchVersion)
         {
             try
             {
@@ -289,7 +367,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                     CheckResult.Fail, e));
             }
             //increment the version number if there were any patches
-            migrator.version_the_database("Patching", maxPatchVersion.ToString());
+            SetVersion(db,"Patching", maxPatchVersion.ToString());
             notifier.OnCheckPerformed(new CheckEventArgs("Updated database version to " + maxPatchVersion.ToString(), CheckResult.Success, null));
                 
         }
