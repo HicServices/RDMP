@@ -224,9 +224,8 @@ namespace CatalogueLibrary.Data.Automation
             ((CatalogueRepository)Repository).RefreshLockPropertiesFromDatabase(this);
         }
 
-        public bool IsAcceptingNewJobs( AutomationJobType jobType)
+        public bool IsAcceptingNewJobs(AutomationJobType jobType)
         {
-
             AutomationFailureStrategy strategy;
 
             int maxAcceptable;
@@ -255,16 +254,16 @@ namespace CatalogueLibrary.Data.Automation
 
             //if Failure strategy is to stop and there are failed/crashed jobs of the type proposed
             if (strategy == AutomationFailureStrategy.Stop && jobs.Any(j =>
-                
-                //job type matches
-                j.AutomationJobType == jobType &&
-
-                //AND job was crashed or cancelled
-                (j.LastKnownStatus == AutomationJobStatus.Cancelled ||j.LastKnownStatus == AutomationJobStatus.Crashed)
+                    //job type matches
+                    j.AutomationJobType == jobType &&
+                    //AND job was crashed or cancelled
+                    (j.LastKnownStatus == AutomationJobStatus.Cancelled ||j.LastKnownStatus == AutomationJobStatus.Crashed)
                 ))
-                    return false;//do not start any new jobs
+            {
+                return false;//do not start any new jobs
+            }
 
-            //if the number of automation jobs is 
+            //if the number of automation jobs is less than the max allowed then go ahead!
             return jobs.Count(j => j.AutomationJobType == jobType) < maxAcceptable;
         }
 

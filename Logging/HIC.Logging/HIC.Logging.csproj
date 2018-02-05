@@ -157,8 +157,9 @@
     <Compile Include="ILogManager.cs" />
     <Compile Include="IProgressLogging.cs" />
     <Compile Include="ITableLoadInfo.cs" />
+    <Compile Include="Listeners\NlogLoggerExtensions.cs" />
     <Compile Include="Listeners\ToLoggingDatabaseDataLoadEventListener.cs" />
-    <Compile Include="Listeners\ToNLogAndDbDataLoadEventListener.cs" />
+    <Compile Include="Listeners\ToFileDataLoadEventListener.cs" />
     <Compile Include="LoggingDatabaseChecker.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="PastEvents\ArchivalDataSource.cs" />

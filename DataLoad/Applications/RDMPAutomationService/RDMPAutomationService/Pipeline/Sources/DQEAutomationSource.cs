@@ -27,21 +27,27 @@ namespace RDMPAutomationService.Pipeline.Sources
         {
             _slottedService = value;
             _listener = listener;
-            _finder = new DQERunFinder((CatalogueRepository) _slottedService.Repository,_slottedService.DQESelectionStrategy,_slottedService.DQEDaysBetweenEvaluations, _listener);
+            _finder = new DQERunFinder((CatalogueRepository) _slottedService.Repository, _slottedService.DQESelectionStrategy, _slottedService.DQEDaysBetweenEvaluations, _listener);
         }
 
         public OnGoingAutomationTask GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if (_slottedService.IsAcceptingNewJobs(AutomationJobType.DQE))
             {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Slot is accepting new DQE jobs... let's find one."));
                 var catalogueWeCanRun = _finder.SuggestRun();
 
                 //if a run was suggested, set it up
                 if (catalogueWeCanRun != null)
                     return new AutomatedDQERun(_slottedService, catalogueWeCanRun).GetTask();
+                else
+                    return null;
             }
-
-            return null;
+            else
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Slot is not accepting any new DQE jobs..."));
+                return null;
+            }
         }
 
 

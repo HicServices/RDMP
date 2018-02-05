@@ -42,13 +42,8 @@ namespace RDMPAutomationService.Pipeline
         {
             _slot = slot;
             
-            var loggingServer = new ServerDefaults(repositoryLocator.CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
-            
-            var logListener = new ToFileAndDbDataLoadEventListener(this, new LogManager(loggingServer), "Automation.Pipelines", "Automation pipelines");
-            logListener.StartLogging();
-
             _listener = new ForkDataLoadEventListener(
-                logListener,
+                new ToFileDataLoadEventListener(this),
                 new ThrowImmediatelyDataLoadEventListener()
             );
               
