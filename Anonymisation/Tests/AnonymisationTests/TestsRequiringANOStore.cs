@@ -63,6 +63,8 @@ namespace AnonymisationTests
             //now create a new reference!
             ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,typeof(ANOStore.Class1).Assembly);
             ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
+
+            new ServerDefaults(CatalogueRepository).SetDefault(ServerDefaults.PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
         }
 
         private void RemovePreExistingReference()

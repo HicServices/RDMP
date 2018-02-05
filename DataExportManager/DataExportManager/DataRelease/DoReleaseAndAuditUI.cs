@@ -75,6 +75,12 @@ namespace DataExportManager.DataRelease
                 return;
             }
 
+            if (ConfigurationsForRelease.Keys.Any(config => config.ReleaseTicket != toAdd.ReleaseTicket))
+            {
+                MessageBox.Show("You cannot add a Configuration belonging to another Release Ticket!");
+                return;
+            }
+
             CheckForCumulativeExtractionResults(datasetReleasePotentials);
 
             if (_environmentPotential != null)

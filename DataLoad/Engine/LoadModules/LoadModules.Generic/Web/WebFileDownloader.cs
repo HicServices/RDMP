@@ -27,9 +27,9 @@ namespace LoadModules.Generic.Web
 
         [DemandsInitialization("The full URI to a file that will be downloaded into project ForLoading directory, must be a valid Uri", Mandatory = true)]
         public Uri UriToFile { get; set; }
-
-        [DemandsInitialization("Processes challenges from WebSense for credentials to access stuff on the internet.  This requires that you specify a username and password for use with websense in the HICProjectDirectory properties file (ConfigurationDetails.xml) - to do this add the following <WebsenseUsername>ExmapleUsername</WebsenseUsername> and <WebsensePassword>ExamplePassword</WebsensePassword>")]
-        public bool DetectWebsenseChallenges { get; set; }
+        
+        [DemandsInitialization("Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
+        public DataAccessCredentials WebsenseCredentials { get; set; }
 
         public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
         {
@@ -84,28 +84,25 @@ namespace LoadModules.Generic.Web
 
 
                 //it is a websense challenge but user doesn't want to respond
-                if(!DetectWebsenseChallenges)
-                    throw new Exception("We received a websense challenge but DetectWebsenseChallenges is false so we will not respond and must fail the job, set ProcessTaskArgument DetectWebsenseChallenges to true and add <WebsenseUsername>ExmapleUsername</WebsenseUsername> and <WebsensePassword>ExamplePassword</WebsensePassword> to the ConfigurationDetails.xml file to get around this problem",e);
+                if (WebsenseCredentials == null)
+                    throw new Exception("We received a websense challenge but WebsenseCredentials is null so we will not respond and must fail the job, create a new DataAccessCredentials object and associate it with the pipeline component's WebsenseCredentials to get around this problem", e);
+
+                string websenseUsername;
+                string websensePassword;
 
                 //user wants to respond to the challenge
                 try
                 {
-                    string websenseUsername;
-                        string websensePassword;
-
                     try
                     {
                         //see if username and password are in the configuration details file (which is under access control on a secure filesystem - hopefully!)
-                        websenseUsername = job.HICProjectDirectory.GetTagFromConfigurationDataXML("WebsenseUsername")[0].InnerText;
-                        websensePassword = job.HICProjectDirectory.GetTagFromConfigurationDataXML("WebsensePassword")[0].InnerText;
-
-                        if(string.IsNullOrEmpty(websenseUsername) || string.IsNullOrWhiteSpace(websensePassword))
-                            throw new Exception("WebsenseUsername or WebsensePassword was missing from HICProjectDirectory ConfigurationDataXML or was blank");
+                        websenseUsername = WebsenseCredentials.Username;
+                        websensePassword = WebsenseCredentials.GetDecryptedPassword();
                     }
                     catch (Exception exception)
                     {
                         //websense details are missing or corrupt
-                        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Could not authenticate against websense because the ConfigurationDetails.xml file does not have the tags <WebsenseUsername>ExmapleUsername</WebsenseUsername> and <WebsensePassword>ExamplePassword</WebsensePassword>",exception));
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Could not authenticate against websense because there was a problem with the WebsenseCredentials of the PipelineComponent", exception));
                         throw;
                     }
 
@@ -129,6 +126,7 @@ namespace LoadModules.Generic.Web
 
                 //now make another request for the original page
                 request = CreateNewRequest(UriToFile.AbsoluteUri);
+                request.Credentials = new NetworkCredential(websenseUsername, websensePassword);
                 response = request.GetResponse(); //if it crashes again here then websense timeout must be like 0.1ms!
                 #endregion
             }

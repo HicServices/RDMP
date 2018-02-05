@@ -301,9 +301,9 @@ namespace CatalogueLibrary.Repositories
 
             container.ComposeParts(importingFactory);
         }
-        
 
-        public Type GetTypeByNameFromAnyLoadedAssembly(string name)
+
+        public Type GetTypeByNameFromAnyLoadedAssembly(string name, Type expectedBaseClassType = null)
         {
             SetupMEFIfRequired();
 
@@ -319,20 +319,43 @@ namespace CatalogueLibrary.Repositories
                 if (type.FullName.Equals(name))
                     return type;
             }
+
+            List<Type> matches = new List<Type>();
+            List<Type> fullMatches = new List<Type>();
+
             //could be basic type
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
                     foreach (Type type in asm.GetTypes())
-                        if (type.Name.Equals(name) || type.FullName.Equals(name))
-                            return type;
+                    {
+                        //type doesn't match base type
+                        if (expectedBaseClassType != null)
+                            if (!expectedBaseClassType.IsAssignableFrom(type))
+                                continue;
+
+                        if (type.FullName.Equals(name))
+                            fullMatches.Add(type);
+                        else
+                            if (type.Name.Equals(name))
+                                matches.Add(type);
+                    }
                 }
                 catch (Exception)
                 {
                     continue;
                 }
             }
+
+            if (fullMatches.Any())
+                return fullMatches.Single();
+
+            if (matches.Any())
+                if(matches.Count > 1)
+                    throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine,matches.Select(m=>m.FullName)));
+                else
+                    return matches.Single();
 
             return null;
         }

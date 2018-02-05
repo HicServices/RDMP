@@ -6,7 +6,7 @@ using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus
 {
-    public class AllRDMPRemotesNodeMenu : RDMPContextMenuStrip
+    class AllRDMPRemotesNodeMenu : RDMPContextMenuStrip
     {
         public AllRDMPRemotesNodeMenu(RDMPContextMenuStripArgs args, AllRDMPRemotesNode node)
             : base(args, null)

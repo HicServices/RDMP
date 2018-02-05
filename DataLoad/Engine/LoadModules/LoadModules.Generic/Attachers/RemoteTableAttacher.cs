@@ -63,6 +63,8 @@ namespace LoadModules.Generic.Attachers
         [DemandsInitialization("Terminates the currently executing data load with LoadNotRequired if the remote table is empty / RemoteSelectSQL returns no rows")]
         public bool LoadNotRequiredIfNoRowsRead { get; set; }
 
+        [DemandsInitialization("Username and password to use when connecting to fetch data from the remote table (e.g. sql user account).  If not provided then 'Integrated Security' (Windows user account) will be used to authenticate")]
+        public DataAccessCredentials RemoteTableAccessCredentials { get; set; }
 
         protected const string StartDateParameter = "@startDate";
         protected const string EndDateParameter = "@endDate";
@@ -267,22 +269,11 @@ namespace LoadModules.Generic.Attachers
         private void SetupUsernameAndPassword()
         {
 
-            if (HICProjectDirectory.GetTagFromConfigurationDataXML("password")==null)
-                throw new Exception("No account details found in HIC Project Directory, expected a file called ConfigurationDetails.xml");
-
-            var usernameNodeList = HICProjectDirectory.GetTagFromConfigurationDataXML("username");
-
-            if (usernameNodeList.Count != 1)
-                throw new Exception("When looking for Tag called username in ConfigurationDetails.xml we found " + usernameNodeList.Count + " tags, expected 1");
-
-            _remoteUsername = usernameNodeList[0].InnerText;
-
-            var passwordNodeList = HICProjectDirectory.GetTagFromConfigurationDataXML("password");
-
-            if (passwordNodeList.Count != 1)
-                throw new Exception("When looking for Tag called password in ConfigurationDetails.xml we found " + passwordNodeList.Count + " tags, expected 1");
-
-            _remotePassword = passwordNodeList[0].InnerText;
+            if(RemoteTableAccessCredentials != null)
+            {
+                _remoteUsername = RemoteTableAccessCredentials.Username;
+                _remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
+            }
 
             _setupDone = true;
         }

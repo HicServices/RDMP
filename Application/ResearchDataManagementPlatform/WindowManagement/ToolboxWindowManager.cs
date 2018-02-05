@@ -174,6 +174,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _visibleToolboxes.ContainsKey(collection);
         }
 
+        public RDMPCollection GetFocusedCollection()
+        {
+            foreach (KeyValuePair<RDMPCollection, PersistableToolboxDockContent> t in _visibleToolboxes)
+            {
+                if (t.Value.ContainsFocus)
+                    return t.Key;
+            }
+
+            return RDMPCollection.None;
+        }
+
         /// <summary>
         /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of 
         /// an RDMPCollectionUI.  For example Project is the a root object of DataExportCollectionUI.  If a matching collection is already visible or no collection
@@ -193,7 +204,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Create(collection);
         }
 
-        private RDMPCollection GetCollectionForRootObject(object root)
+        public RDMPCollection GetCollectionForRootObject(object root)
         {
             if (FavouritesCollectionUI.IsRootObject(ContentManager,root))
                 return RDMPCollection.Favourites;

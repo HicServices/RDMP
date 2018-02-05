@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.ObjectSharing;
 using CatalogueLibrary.Reports.Exceptions;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
@@ -92,15 +93,21 @@ namespace RDMPStartup
             //get the catalogues obscure dependency finder
             var finder = (CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder;
 
-            //and add one of this type if there isn't already one of that type
-            if (finder.OtherDependencyFinders.All(f => f.GetType() != typeof(BetweenCatalogueAndDataExportObscureDependencyFinder)))
-                finder.OtherDependencyFinders.Add(new BetweenCatalogueAndDataExportObscureDependencyFinder(this));
+            finder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(this);
+            finder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(this);
+            finder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(this);
 
-            //same again in green, but for validationxml dependencies
-            if (finder.OtherDependencyFinders.All(f => f.GetType() != typeof(ValidationXMLObscureDependencyFinder)))
-                finder.OtherDependencyFinders.Add(new ValidationXMLObscureDependencyFinder(this));
+            if(DataExportRepository == null)
+                return;
+
+            if ( DataExportRepository.ObscureDependencyFinder == null)
+                DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
+            else
+                if(!(DataExportRepository.ObscureDependencyFinder is ObjectSharingObscureDependencyFinder))
+                    throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
         }
 
+        
 
         public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
         {
@@ -111,6 +118,14 @@ namespace RDMPStartup
                 return null;
 
             return repository.GetObjectByID(objectType, objectId);
+        }
+
+        public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+        {
+            IRepository repository = GetRepository(repositoryTypeName);
+            Type objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
+
+            return repository.StillExists(objectType, objectID);
         }
 
         private IRepository GetRepository(string s)
@@ -152,17 +167,25 @@ namespace RDMPStartup
             foreach (Type type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
                 _pluginRepositoryFinders.Add((IPluginRepositoryFinder) constructor.Construct(type, this));
         }
+        
+        Dictionary<string, Type> _cachedTypesByNameDictionary = new Dictionary<string, Type>();
 
         private Type GetTypeByName(string s, Type expectedBaseClassType)
         {
-            var toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s);
+            if (_cachedTypesByNameDictionary.ContainsKey(s))
+                return _cachedTypesByNameDictionary[s];
+               
+            var toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s,expectedBaseClassType);
 
             if (toReturn == null)
                 throw new TypeLoadException("Could not find Type called '" + s + "'");
 
             if (expectedBaseClassType != null)
                 if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                    throw new TypeLoadException("Persistence string included a reference to Type '" + s + "' which we managed to find but it did not match an expected base Type (" + expectedBaseClassType + ")");
+                    throw new TypeLoadException("Found Type '" + s + "' which we managed to find but it did not match an expected base Type (" + expectedBaseClassType + ")");
+
+            //cache known type to not hammer reflection all the time!
+            _cachedTypesByNameDictionary.Add(s, toReturn);
 
             return toReturn;
         }

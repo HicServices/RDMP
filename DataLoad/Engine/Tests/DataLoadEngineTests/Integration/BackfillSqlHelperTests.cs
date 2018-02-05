@@ -80,7 +80,7 @@ namespace DataLoadEngineTests.Integration
         {
             ThreeTableSetupWhereTimePeriodIsGrandparent();
 
-            var ciTimePeriodicity = CatalogueRepository.GetColumnInfoWithNameExactly("[" + DatabaseName + "].." + _catalogue.Time_coverage);
+            var ciTimePeriodicity = CatalogueRepository.GetColumnInfosWithNameExactly("[" + DatabaseName + "].." + _catalogue.Time_coverage).SingleOrDefault();
             if (ciTimePeriodicity == null)
                 throw new InvalidOperationException("Could not find TimePeriodicity column");
 

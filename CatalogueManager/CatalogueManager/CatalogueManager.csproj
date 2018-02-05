@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CatalogueManager</RootNamespace>
     <AssemblyName>CatalogueManager</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -457,6 +457,18 @@
     <Compile Include="AggregationUIs\QueryCachingServerSelector.Designer.cs">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="ANOEngineeringUIs\ANOTableUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ANOEngineeringUIs\ANOTableUI.Designer.cs">
+      <DependentUpon>ANOTableUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.Designer.cs">
+      <DependentUpon>ForwardEngineerANOCatalogueUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="AutoCompleteTextbox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -477,12 +489,15 @@
     <Compile Include="Collections\OrderableComparer.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
+    <Compile Include="Collections\RDMPCollection.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewLookupTableRelationship.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
@@ -496,6 +511,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadPeriodically.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
@@ -509,6 +525,8 @@
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
+    <Compile Include="Menus\AllANOTablesNodeMenu.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetDataAccessContextForCredentials.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
@@ -1533,6 +1551,9 @@
     <None Include="Icons\AggregateTopX.png" />
     <None Include="Icons\AggregateContinuousDateAxis.png" />
     <None Include="Icons\AutomationServiceException.png" />
+    <None Include="Icons\AllObjectImportsNode.png" />
+    <None Include="Icons\AllObjectExportsNode.png" />
+    <None Include="Icons\AllObjectSharingNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1616,6 +1637,9 @@
     <None Include="Icons\RemoteRDMP.png" />
     <None Include="Icons\PipelineComponentArgument.png" />
     <None Include="Icons\PipelineComponent.png" />
+    <None Include="Icons\ObjectExport.png" />
+    <None Include="Icons\ObjectImport.png" />
+    <None Include="Icons\ObjectSharingNode.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1636,6 +1660,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
       <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ANOEngineeringUIs\ANOTableUI.resx">
+      <DependentUpon>ANOTableUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.resx">
+      <DependentUpon>ForwardEngineerANOCatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\CollectionPinFilterUI.resx">
       <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>

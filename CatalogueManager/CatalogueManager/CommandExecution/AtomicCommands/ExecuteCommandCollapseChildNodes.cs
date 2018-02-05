@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using BrightIdeasSoftware;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -25,17 +27,28 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-        
-            foreach (var o in _tree.GetChildren(_rootToCollapseTo))
-                CollapseRecursively(o);
+
+            HashSet<object> expanded = new HashSet<object> (_tree.ExpandedObjects.OfType<object>());
+
+            try
+            {
+                foreach (var o in _tree.GetChildren(_rootToCollapseTo))
+                    CollapseRecursively(o,expanded);
+            }
+            finally
+            {
+                _tree.ExpandedObjects = expanded;
+                _tree.RebuildAll(true);
+            }
         }
 
-        private void CollapseRecursively(object o)
+        private void CollapseRecursively(object o, HashSet<object> expanded)
         {
             foreach (var child in _tree.GetChildren(o))
-                CollapseRecursively(child);
+                CollapseRecursively(child,expanded);
 
-            _tree.Collapse(o);
+            if(expanded.Contains(o))
+                expanded.Remove(o);
         }
 
         public Image GetImage(IIconProvider iconProvider)

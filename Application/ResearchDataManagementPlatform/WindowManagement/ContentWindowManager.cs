@@ -15,6 +15,7 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.AggregationUIs.Advanced;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CredentialsUIs;
@@ -407,7 +408,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
         }
 
-        
+        public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
+        {
+            return _toolboxWindowManager.GetCollectionForRootObject(rootObject) == collection;
+        }
+
+
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {
             return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);

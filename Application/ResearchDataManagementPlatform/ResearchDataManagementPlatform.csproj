@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ResearchDataManagementPlatform</RootNamespace>
     <AssemblyName>ResearchDataManagementPlatform</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -169,7 +169,6 @@
     <Compile Include="WindowManagement\Licenses\LicenseUI.Designer.cs">
       <DependentUpon>LicenseUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="WindowManagement\RDMPCollection.cs" />
     <Compile Include="WindowManagement\ExtenderFunctionality\CustomFloatWindow.cs" />
     <Compile Include="WindowManagement\ExtenderFunctionality\CustomFloatWindowFactory.cs" />
     <Compile Include="WindowManagement\TabChangedHandler.cs" />

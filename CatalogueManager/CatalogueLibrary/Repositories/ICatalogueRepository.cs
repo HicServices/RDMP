@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Repositories.Sharing;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
@@ -19,6 +20,7 @@ namespace CatalogueLibrary.Repositories
         PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
         JoinInfoFinder JoinInfoFinder { get; set; }
         MEF MEF { get; set; }
+        ShareManager ShareManager { get; set; }
         IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase);
 
         /// <summary>
@@ -40,7 +42,7 @@ namespace CatalogueLibrary.Repositories
         Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();
         IEnumerable<CohortIdentificationConfiguration> GetAllCohortIdentificationConfigurationsWithDependencyOn(AggregateConfiguration aggregate);
         IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent);
-        ColumnInfo GetColumnInfoWithNameExactly(string name);
+        ColumnInfo[] GetColumnInfosWithNameExactly(string name);
         TicketingSystemConfiguration GetTicketingSystem();
         IEnumerable<CacheProgress> GetAllCacheProgressWithoutAPermissionWindow();
         TableInfo GetTableWithNameApproximating(string tableName, string database);
@@ -64,5 +66,6 @@ namespace CatalogueLibrary.Repositories
         DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
 
         Catalogue[] GetAllAutomationLockedCatalogues();
+        
     }
 }

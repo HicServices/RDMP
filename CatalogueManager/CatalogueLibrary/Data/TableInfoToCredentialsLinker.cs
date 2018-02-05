@@ -86,6 +86,8 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         public DataAccessCredentials GetCredentialsIfExistsFor(TableInfo tableInfo, DataAccessContext context)
         {
+            int toReturn = -1;
+
             using (var con = _repository.GetConnection())
             {
                 var cmd = DatabaseCommandHelper.GetCommand("SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context="+((int)DataAccessContext.Any)+") ", con.Connection,con.Transaction);
@@ -95,33 +97,32 @@ namespace CatalogueLibrary.Data
                 cmd.Parameters["@context"].Value = context;
 
                 var r = cmd.ExecuteReader();
-
-                DataAccessCredentials toReturn = null;
                 
                 //gets the first liscenced usage
                 if(r.Read())
                 {
                     //there is one 
                     //get it by it's id
-                    var repository = new CatalogueRepository(_repository.ConnectionStringBuilder);
-                    toReturn = repository.GetObjectByID<DataAccessCredentials>(Convert.ToInt32(r["DataAccessCredentials_ID"]));
+                    toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
                     //if the first record is liscenced for Any
                     if (Convert.ToInt32(r["Context"]) == ((int) DataAccessContext.Any))
                     {
                         //see if there is a more specific second record (e.g. DataLoad)
                         if(r.Read())
-                            toReturn = repository.GetObjectByID<DataAccessCredentials>(Convert.ToInt32(r["DataAccessCredentials_ID"]));
-                    }
-                        
+                            toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
+                    }           
                 }
-                return toReturn;
             }
+
+            return toReturn != -1 ?_repository.GetObjectByID<DataAccessCredentials>(toReturn):null;
         }
 
 
         public Dictionary<DataAccessContext, DataAccessCredentials> GetAllLinksBetween(TableInfo tableInfo, DataAccessCredentials credential)
         {
+            var toReturn = new Dictionary<DataAccessContext, int>();
+
             using (var con = _repository.GetConnection())
             {
                 var cmd = DatabaseCommandHelper.GetCommand("SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and DataAccessCredentials_ID = @cid", con.Connection,con.Transaction);
@@ -131,12 +132,16 @@ namespace CatalogueLibrary.Data
                 cmd.Parameters["@cid"].Value = credential.ID;
 
                 var r = cmd.ExecuteReader();
-                return GetLinksFromReader(r);
+                toReturn = GetLinksFromReader(r);
             }
+
+            return toReturn.ToDictionary(k => k.Key, v => _repository.GetObjectByID<DataAccessCredentials>(v.Value));
         }
 
         public Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(TableInfo tableInfo)
         {
+            var toReturn = new Dictionary<DataAccessContext, int>();
+
             using (var con = _repository.GetConnection())
             {
                 var cmd = DatabaseCommandHelper.GetCommand("SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid", con.Connection,con.Transaction);
@@ -144,11 +149,10 @@ namespace CatalogueLibrary.Data
                 cmd.Parameters["@tid"].Value = tableInfo.ID;
 
                 var r = cmd.ExecuteReader();
-                return GetLinksFromReader(r);
+                toReturn = GetLinksFromReader(r);
             }
+            return toReturn.ToDictionary(k => k.Key, v => _repository.GetObjectByID<DataAccessCredentials>(v.Value));
         }
-
-
 
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, TableInfo[] allTableInfos)
         {
@@ -192,13 +196,13 @@ namespace CatalogueLibrary.Data
 
         public Dictionary<DataAccessContext, List<TableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
         {
-            Dictionary<DataAccessContext,List<TableInfo>> toReturn = new Dictionary<DataAccessContext, List<TableInfo>>();
+            Dictionary<DataAccessContext,List<int>> toReturn = new Dictionary<DataAccessContext, List<int>>();
 
-            toReturn.Add(DataAccessContext.Any,new List<TableInfo>());
-            toReturn.Add(DataAccessContext.DataExport, new List<TableInfo>());
-            toReturn.Add(DataAccessContext.DataLoad, new List<TableInfo>());
-            toReturn.Add(DataAccessContext.InternalDataProcessing, new List<TableInfo>());
-            toReturn.Add(DataAccessContext.Logging, new List<TableInfo>());
+            toReturn.Add(DataAccessContext.Any, new List<int>());
+            toReturn.Add(DataAccessContext.DataExport, new List<int>());
+            toReturn.Add(DataAccessContext.DataLoad, new List<int>());
+            toReturn.Add(DataAccessContext.InternalDataProcessing, new List<int>());
+            toReturn.Add(DataAccessContext.Logging, new List<int>());
             
             using (var con = _repository.GetConnection())
             {
@@ -213,12 +217,11 @@ namespace CatalogueLibrary.Data
                     DataAccessContext context = GetContext(r);
                     
                     //add the TableInfo under that context
-                    var repository = new CatalogueRepository(_repository.ConnectionStringBuilder);
-                    toReturn[context].Add(repository.GetObjectByID<TableInfo>((int)r["TableInfo_ID"]));
+                    toReturn[context].Add((int)r["TableInfo_ID"]);
                 }
-
-                return toReturn;
             }
+
+            return toReturn.ToDictionary(k => k.Key, v => _repository.GetAllObjectsInIDList<TableInfo>(v.Value).ToList());
         }
 
         /// <summary>
@@ -226,9 +229,9 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="r"></param>
         /// <returns></returns>
-        private Dictionary<DataAccessContext, DataAccessCredentials> GetLinksFromReader(DbDataReader r)
+        private Dictionary<DataAccessContext, int> GetLinksFromReader(DbDataReader r)
         {
-            var toReturn = new Dictionary<DataAccessContext, DataAccessCredentials>();
+            var toReturn = new Dictionary<DataAccessContext, int>();
             //gets the first liscenced usage
             while (r.Read())
             {
@@ -240,8 +243,7 @@ namespace CatalogueLibrary.Data
                     throw new Exception("Invalid DataAccessContext " + r["Context"]);
 
                 //there is only one credentials per context per table info so dont worry about key collisions they should be impossible
-                var repository = new CatalogueRepository(_repository.ConnectionStringBuilder);
-                toReturn.Add(context, repository.GetObjectByID<DataAccessCredentials>(Convert.ToInt32(r["DataAccessCredentials_ID"])));
+                toReturn.Add(context, Convert.ToInt32(r["DataAccessCredentials_ID"]));
             }
 
             return toReturn;

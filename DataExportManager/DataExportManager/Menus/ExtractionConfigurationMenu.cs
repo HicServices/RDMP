@@ -38,7 +38,7 @@ using ReusableUIComponents.SqlDialogs;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ExtractionConfigurationMenu:RDMPContextMenuStrip
+    class ExtractionConfigurationMenu:RDMPContextMenuStrip
     {
         private readonly ExtractionConfiguration _extractionConfiguration;
         private readonly DataExportChildProvider _childProvider;

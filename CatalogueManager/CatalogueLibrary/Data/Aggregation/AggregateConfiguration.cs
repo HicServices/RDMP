@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Net.Configuration;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
@@ -397,9 +398,20 @@ namespace CatalogueLibrary.Data.Aggregation
                     }).SingleOrDefault();
         }
 
+        /// <summary>
+        /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method returns
+        /// true if there is an associated JoinableCohortAggregateConfiguration that would make an ordinary AggregateConfiguration into a 'Patient Index Table'.
+        /// </summary>
+        /// <returns>true if the AggregateConfiguration is part of a cic fulfilling the role of 'Patient Index Table' as defined by the existence of a JoinableCohortAggregateConfiguration object</returns>
         public bool IsJoinablePatientIndexTable()
         {
-            return Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).Any();
+            if (!_databaseLookupPerformed)
+            {
+                _cachedJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
+                _databaseLookupPerformed = true;
+            }
+
+            return _cachedJoinable != null;
         }
 
         public CohortIdentificationConfiguration GetCohortIdentificationConfigurationIfAny()
@@ -516,6 +528,20 @@ namespace CatalogueLibrary.Data.Aggregation
                 dependers.Add(cic);
 
             return dependers.ToArray();
+        }
+
+        private JoinableCohortAggregateConfiguration _cachedJoinable = null;
+        private bool _databaseLookupPerformed = false;
+        /// <summary>
+        /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
+        /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
+        /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method IsJoinablePatientIndexTable
+        /// </summary>
+        /// <param name="joinable"></param>
+        public void InjectKnownJoinableOrNone(JoinableCohortAggregateConfiguration joinable)
+        {
+            _cachedJoinable = joinable;
+            _databaseLookupPerformed = true;
         }
     }
 }

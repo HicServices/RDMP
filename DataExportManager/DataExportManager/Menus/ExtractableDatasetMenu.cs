@@ -21,7 +21,7 @@ using ReusableUIComponents;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ExtractableDatasetMenu:RDMPContextMenuStrip
+    class ExtractableDatasetMenu:RDMPContextMenuStrip
     {
         private readonly ExtractableDataSet _dataset;
 

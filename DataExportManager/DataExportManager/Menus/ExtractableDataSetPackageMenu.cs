@@ -19,7 +19,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
+    class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
     {
         private readonly ExtractableDataSetPackage _package;
         private readonly DataExportChildProvider _childProvider;

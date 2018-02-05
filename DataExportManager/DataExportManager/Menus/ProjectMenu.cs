@@ -23,7 +23,7 @@ using ReusableUIComponents;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ProjectMenu:RDMPContextMenuStrip
+    class ProjectMenu:RDMPContextMenuStrip
     {
         private readonly Project _project;
 

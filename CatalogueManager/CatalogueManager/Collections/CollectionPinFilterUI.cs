@@ -15,6 +15,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Providers;
+using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using HIC.Common.Validation.Constraints.Primary;
@@ -59,7 +60,15 @@ namespace CatalogueManager.Collections
             typeof(ExtractableCohort)
         };
 
+        /// <summary>
+        /// Records the IModelFilter that was on the Tree before we arrived on the scene.  This lets us unapply from the tree but set the IModelFilter back to what
+        /// it was before we were applied (e.g. hide deprecated catalogues)
+        /// </summary>
         private IModelFilter _beforeModelFilter;
+
+        /// <summary>
+        /// Same as _beforeModelFilter but the bool for whether it was applied before we came along
+        /// </summary>
         private bool _beforeUseFiltering;
         private object _toPin;
         
@@ -99,20 +108,25 @@ namespace CatalogueManager.Collections
 
             _tree.Parent.Controls.Add(this);
 
+            _beforeModelFilter = _tree.ModelFilter;
+            _beforeUseFiltering = _tree.UseFiltering;
+
+            RefreshWhiteList(childProvider,descendancy);
+        }
+
+        private void RefreshWhiteList(ICoreChildProvider childProvider,DescendancyList descendancy)
+        {
             //get rid of all objects that are not the object to emphasise tree either as parents or as children (recursive)
             List<object> whitelist = new List<object>();
 
             //add parents to whitelist
-            if(descendancy != null && descendancy.Parents.Any())
+            if (descendancy != null && descendancy.Parents.Any())
                 whitelist.AddRange(descendancy.Parents);
 
             whitelist.Add(_toPin);
 
             whitelist.AddRange(childProvider.GetAllChildrenRecursively(_toPin));
-
-            _beforeModelFilter = _tree.ModelFilter;
-            _beforeUseFiltering = _tree.UseFiltering;
-
+            
             _tree.UseFiltering = true;
             _tree.ModelFilter = new WhiteListOnlyFilter(whitelist);
         }
@@ -143,40 +157,19 @@ namespace CatalogueManager.Collections
             UnApplyToTree();
         }
 
-        public void OnRefreshObject(ICoreChildProvider childProvider,DatabaseEntity oRefreshedObject, DescendancyList knownDescendancy)
+        public void OnRefreshObject(ICoreChildProvider childProvider, RefreshObjectEventArgs e)
         {
+            if(_tree == null)
+                return;
+
             var whitelistFilter = _tree.ModelFilter as WhiteListOnlyFilter;
             
             //someone somehow erased the pin filter? or overwrote it with another filter
             if(whitelistFilter == null)
                 return;
 
-            //if this is an object being refreshed is to the pinned object
-            if (oRefreshedObject.Equals(_toPin))
-                RefreshWhiteList(whitelistFilter, childProvider, oRefreshedObject);
-
-            //if the descendancy is known and it includes the pinned object
-             if(knownDescendancy != null && knownDescendancy.Parents.Contains(_toPin))
-                 RefreshWhiteList(whitelistFilter, childProvider, oRefreshedObject);
-
-        }
-
-        private void RefreshWhiteList(WhiteListOnlyFilter whitelistFilter, ICoreChildProvider childProvider, DatabaseEntity oRefreshedObject)
-        {
-            //create a new whitelist filter that is the old one + oRefreshedObject + all children recursively
-            var oldList = whitelistFilter.Whitelist;
-            var newList = new HashSet<object>(oldList);
-
-            //hashset ignores duplicates
-            newList.Add(oRefreshedObject);
-
-            //and all children of oRefreshedObject incase it has multiple new children under it
-            foreach (var child in childProvider.GetAllChildrenRecursively(oRefreshedObject))
-                newList.Add(child);
-
-            //if there are new objects
-            if (oldList.Count < newList.Count)
-                _tree.ModelFilter = new WhiteListOnlyFilter(newList);
+            if(_toPin != null)
+                RefreshWhiteList(childProvider,childProvider.GetDescendancyListIfAnyFor(_toPin));
         }
     }
 }

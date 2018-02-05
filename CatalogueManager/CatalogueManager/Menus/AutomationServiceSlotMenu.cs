@@ -12,7 +12,7 @@ using CatalogueManager.SimpleDialogs.Automation;
 
 namespace CatalogueManager.Menus
 {
-    public class AutomationServiceSlotMenu:RDMPContextMenuStrip
+    class AutomationServiceSlotMenu:RDMPContextMenuStrip
     {
         public AutomationServiceSlotMenu(RDMPContextMenuStripArgs args, AutomationServiceSlot slot): base(args, slot)
         {

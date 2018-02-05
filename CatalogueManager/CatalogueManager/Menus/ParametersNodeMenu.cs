@@ -20,7 +20,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ParametersNodeMenu : RDMPContextMenuStrip
+    class ParametersNodeMenu : RDMPContextMenuStrip
     {
         public ParametersNodeMenu(RDMPContextMenuStripArgs args, ParametersNode parameterNode): base(args, null)
         {

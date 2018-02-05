@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CatalogueLibrary.Database</RootNamespace>
     <AssemblyName>CatalogueLibrary.Database</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
@@ -258,6 +258,7 @@
     <EmbeddedResource Include="db\up\056_DashboardLayoutSupport.sql" />
     <EmbeddedResource Include="db\up\057_MakeLoadProgressINamed.sql" />
     <EmbeddedResource Include="db\up\058_RemoteRDMP.sql" />
+    <EmbeddedResource Include="db\up\059_ObjectSharing.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

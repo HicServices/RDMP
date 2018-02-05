@@ -11,9 +11,6 @@ namespace CatalogueLibrary
     /// </summary>
     public class HICProjectDirectory : IHICProjectDirectory
     {
-        const string ConfigurationFilename = "ConfigurationDetails.xml";
-
-
         public const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
 1,7,gmc,7,
 8,12,gp_code,5,
@@ -42,8 +39,7 @@ namespace CatalogueLibrary
                 throw new DirectoryNotFoundException("Could not find directory '" + DataPath.FullName + "', every HICProjectDirectory must have a Data folder, the root folder was:" + RootPath);
 
             FTPDetails = DataPath.EnumerateFiles("ftp_details.xml", SearchOption.TopDirectoryOnly).SingleOrDefault();
-            ConfigurationDataXML = DataPath.EnumerateFiles(ConfigurationFilename, SearchOption.TopDirectoryOnly).SingleOrDefault();
-
+            
             ForLoading = FindFolderInPathOrThrow(DataPath, "ForLoading");
             ForArchiving = FindFolderInPathOrThrow(DataPath, "ForArchiving");
             ForErrors = FindFolderInPathOrThrow(DataPath, "ForErrors");
@@ -79,8 +75,7 @@ namespace CatalogueLibrary
         object oLockConfigurationDataXML = new object();
 
         private XmlDocument _configurationXMLDocument;
-        private FileInfo ConfigurationDataXML { get; set; }
-
+        
         public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
         {
             if (!parentDir.Exists)
@@ -105,18 +100,6 @@ namespace CatalogueLibrary
             dataDir.CreateSubdirectory("ForArchiving");
             dataDir.CreateSubdirectory("ForErrors");
             dataDir.CreateSubdirectory("Cache");
-
-
-            StreamWriter swExampleConfig = new StreamWriter(Path.Combine(dataDir.FullName, ConfigurationFilename));
-            swExampleConfig.Write(
-@"<document>
-<comment>Use this file to store any SECURE information that you don't want to store in the DLE configuration e.g. username/password of Source SqlServers</comment>
-<username></username>
-<password></password>
-<example>You can put any tags you want in here but it is likely that specific tags are required by specific Attachers, the Attacher should indicate any expected configuration details in it's description within the LoadMetadata</example>
-</document>");
-            swExampleConfig.Flush();
-            swExampleConfig.Close();
 
             StreamWriter swExampleFixedWidth = new StreamWriter(Path.Combine(dataDir.FullName, "ExampleFixedWidthFormatFile.csv"));
             swExampleFixedWidth.Write(ExampleFixedWidthFormatFileContents);
@@ -160,35 +143,5 @@ namespace CatalogueLibrary
 
             return new HICProjectDirectory(projectDir.FullName, false);
         }
-        
-        
-
-
-
-        public XmlNodeList GetTagFromConfigurationDataXML(string tagName)
-        {
-            if (ConfigurationDataXML == null)
-                return null;
-            lock (oLockConfigurationDataXML)
-            {
-                if (_configurationXMLDocument == null)
-                {
-                    _configurationXMLDocument = new XmlDocument();
-                    _configurationXMLDocument.Load(ConfigurationDataXML.FullName);
-                }
-
-                return _configurationXMLDocument.DocumentElement.GetElementsByTagName(tagName);
-            }
-        }
-
-        public bool HasTagInConfigurationDataXML(string tagName)
-        {
-            var result = GetTagFromConfigurationDataXML(tagName);
-            
-            //there are tags and there are more than 0
-            return result != null && result.Count != 0;
-        }
-
-   
     }
 }

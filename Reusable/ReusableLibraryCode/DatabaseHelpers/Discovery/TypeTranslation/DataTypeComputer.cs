@@ -2,6 +2,8 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -33,7 +35,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public int numbersBeforeDecimalPlace { get; private set; }
         public int numbersAfterDecimalPlace { get; private set; }
 
+        private bool acceptedTimespanAtSomePoint = false;
 
+        /// <summary>
+        /// Matches any number which looks like a proper decimal but has leading zeroes e.g. 012837 but does not match when there are
+        /// decimal places or other characters e.g. it wouldn't match 0.00123.  This is used to preserve leading zeroes in integers (desired
+        /// because it could be a serial number or otherwise important leading 0).  In this case the DataTypeComputer will use varchar(x) to
+        /// represent the column instead of decimal(x,y)
+        /// </summary>
+        Regex zeroPrefixedNumber = new Regex(@"^0+[1-9]+");
+
+        /// <summary>
+        /// Creates a new DataType 
+        /// </summary>
+        /// <param name="minimumLengthToMakeCharacterFields"></param>
         public DataTypeComputer(int minimumLengthToMakeCharacterFields)
         {
             Length = minimumLengthToMakeCharacterFields;
@@ -48,11 +63,40 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             
         }
 
+        /// <summary>
+        /// Creates a new DataTypComputer adjusted to compensate for all values in all rows of the supplied DataColumn
+        /// </summary>
+        /// <param name="column"></param>
         public DataTypeComputer(DataColumn column):this(-1)
         {
             var dt = column.Table;
             foreach (DataRow row in dt.Rows)
                 AdjustToCompensateForValue(row[column]);
+        }
+
+        /// <summary>
+        /// Creates a hydrated DataTypComputer  for when you want to clone an existing one or otherwise make up a DataTypComputer for a known starting datatype
+        /// (See TypeTranslater.GetDataTypeComputerFor)
+        /// </summary>
+        /// <param name="currentEstimatedType"></param>
+        /// <param name="digits"></param>
+        /// <param name="lengthIfString"></param>
+        public DataTypeComputer(Type currentEstimatedType, Tuple<int, int> digits, int lengthIfString)
+        {
+            CurrentEstimate = currentEstimatedType;
+
+            if (lengthIfString > 0)
+                Length = lengthIfString;
+
+            if (digits != null)
+            {
+                numbersBeforeDecimalPlace = digits.Item1;
+                numbersAfterDecimalPlace = digits.Item2;
+                Length = digits.Item1 + digits.Item2 + 1;
+            }
+
+            if (currentEstimatedType == typeof (TimeSpan))
+                acceptedTimespanAtSomePoint = true;
         }
 
         private bool havereceivedBonafideType = false;
@@ -111,10 +155,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 IsAcceptableAs(o.GetType(), o.ToString());
             }
         }
-
-
-
-        private bool acceptedTimespanAtSomePoint = false;
+        
+        
 
         private bool IsAcceptableAs(Type type, string value)
         {
@@ -226,10 +268,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
         private bool IsFreakilyZeroPrefixedNumber(string value)
         {
-            //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
-            if (value.StartsWith("0"))
-                if (!value.Equals("0") && !value.StartsWith("0."))
-                    //permit use of decimal to store numbers that start with 0 if they are 0 or 0.xyz
+             //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
+            if (zeroPrefixedNumber.IsMatch(value))
                     return true;
 
             return false;
@@ -239,7 +279,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         {
             decimal destructive = Math.Abs(value);
 
-           before = 0;
+            if (value == 0)
+            {
+                before = 0;
+                after = 0;
+                return;
+            }
+            
+            before = 0;
             while (destructive >= 1)
             {
                 destructive = destructive/10; //divide by 10

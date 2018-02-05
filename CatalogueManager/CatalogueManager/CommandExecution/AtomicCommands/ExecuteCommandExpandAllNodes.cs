@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using BrightIdeasSoftware;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -25,19 +27,29 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-        
-            _tree.Expand(_rootToExpandFrom);
 
-            foreach (var o in _tree.GetChildren(_rootToExpandFrom))
-                ExpandRecursively(o);
+            HashSet<object> expanded = new HashSet<object>(_tree.ExpandedObjects.OfType<object>());
+            try
+            {
+                expanded.Add(_rootToExpandFrom);
+
+                foreach (var o in _tree.GetChildren(_rootToExpandFrom))
+                    ExpandRecursively(o,expanded);
+
+                _tree.ExpandedObjects = expanded;
+            }
+            finally
+            {
+                _tree.RebuildAll(true);
+            }
         }
 
-        private void ExpandRecursively(object o)
+        private void ExpandRecursively(object o, HashSet<object> expanded)
         {
-            _tree.Expand(o);
+            expanded.Add(o);
 
-            foreach (var child in _tree.GetChildren(o))
-                ExpandRecursively(child);
+            foreach (var child in Activator.CoreChildProvider.GetChildren(o))
+                ExpandRecursively(child,expanded);
         }
 
         public Image GetImage(IIconProvider iconProvider)

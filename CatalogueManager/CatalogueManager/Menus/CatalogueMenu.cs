@@ -10,7 +10,7 @@ using CatalogueLibrary.Data;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class CatalogueMenu:RDMPContextMenuStrip
+    class CatalogueMenu:RDMPContextMenuStrip
     {
         public CatalogueMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder): base(args, folder)
         {
@@ -38,6 +38,9 @@ namespace CatalogueManager.Menus
             Items.Add(new ToolStripSeparator());
 
             Items.Add("Clone Catalogue", null, (s, e) => CloneCatalogue(catalogue));
+
+            Add(new ExecuteCommandCreateANOVersion(_activator, catalogue));
+
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////
             Items.Add(new ToolStripSeparator());
 

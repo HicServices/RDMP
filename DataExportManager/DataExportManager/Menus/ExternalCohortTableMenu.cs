@@ -35,7 +35,7 @@ using ReusableUIComponents;
 namespace DataExportManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ExternalCohortTableMenu : RDMPContextMenuStrip
+    class ExternalCohortTableMenu : RDMPContextMenuStrip
     {
         private readonly ExternalCohortTable _externalCohortTable;
         private Project _project;

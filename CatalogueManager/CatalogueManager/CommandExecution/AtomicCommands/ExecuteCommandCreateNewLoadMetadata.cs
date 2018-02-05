@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewLoadMetadata : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewLoadMetadata : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         private Catalogue[] _availableCatalogues;
+        private Catalogue _catalogue;
 
         public ExecuteCommandCreateNewLoadMetadata(IActivateItems activator):base(activator)
         {
@@ -39,53 +30,33 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues,false,false);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (_catalogue == null)
+                GetUserToPickACatalogue();
+            
+            //create the load
+            if (_catalogue != null)
             {
-                //create the load
-                var cata = dialog.Selected as Catalogue;
-                
-                if(cata != null)
-                {
-                    var cataRepository = (CatalogueRepository) cata.Repository;
+                var cataRepository = (CatalogueRepository)_catalogue.Repository;
 
-                    var lmd = new LoadMetadata(cataRepository, "Loading " + cata.Name);
+                var lmd = new LoadMetadata(cataRepository, "Loading " + _catalogue.Name);
 
-                    //if theres no logging task / logging server set them up with the same name as the lmd
-                    IExternalDatabaseServer loggingServer;
+                lmd.EnsureLoggingWorksFor(_catalogue);
 
-                    if (cata.LiveLoggingServer_ID == null)
-                    {
-                        loggingServer = new ServerDefaults(cataRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                _catalogue.LoadMetadata_ID = lmd.ID;
+                _catalogue.SaveToDatabase();
 
-                        if (loggingServer != null)
-                            cata.LiveLoggingServer_ID = loggingServer.ID;
-                        else
-                            throw new NotSupportedException("You do not yet have any logging servers configured so cannot create data loads");
-                    }
-                    else
-                        loggingServer = cataRepository.GetObjectByID<ExternalDatabaseServer>(cata.LiveLoggingServer_ID.Value);
+                Publish(lmd);
 
-                    //if theres no logging task yet and theres a logging server
-                    if (string.IsNullOrWhiteSpace(cata.LoggingDataTask))
-                    {
-                        var lm = new LogManager(loggingServer);
-                        var loggingTaskName = lmd.Name;
-                        
-                        lm.CreateNewLoggingTaskIfNotExists(loggingTaskName);
-                        cata.LoggingDataTask = loggingTaskName;
-                    }
-
-                    cata.LoadMetadata_ID = lmd.ID;
-                    cata.SaveToDatabase();
-
-                    Publish(lmd);
-
-                    var arrangeEditting = new ExecuteCommandExecuteLoadMetadata(Activator);
-                    arrangeEditting.LoadMetadata = lmd;
-                    arrangeEditting.Execute();
-                }
+                Activator.WindowArranger.SetupEditAnything(this,lmd);
             }
+        }
+
+        private void GetUserToPickACatalogue()
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues, false, false);
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+                _catalogue = dialog.Selected as Catalogue;
         }
 
         public override string GetCommandName()
@@ -96,6 +67,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Add);
+        }
+
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+        {
+            _catalogue = (Catalogue) target;
+            return this;
         }
     }
 }

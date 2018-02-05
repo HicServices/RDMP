@@ -14,7 +14,7 @@ using RDMPStartup;
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
-    public class ColumnInfoMenu : RDMPContextMenuStrip
+    class ColumnInfoMenu : RDMPContextMenuStrip
     {
         private readonly ColumnInfo _columnInfo;
 

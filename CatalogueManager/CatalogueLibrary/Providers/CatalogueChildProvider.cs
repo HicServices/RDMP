@@ -8,11 +8,13 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
@@ -66,6 +68,10 @@ namespace CatalogueLibrary.Providers
 
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
+
+        public AllObjectSharingNode AllObjectSharingNode { get; private set; }
+        public ObjectImport[] AllImports { get; set; }
+        public ObjectExport[] AllExports { get; set; }
 
         public Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; private set; }
 
@@ -184,6 +190,12 @@ namespace CatalogueLibrary.Providers
             AllRDMPRemotesNode = new AllRDMPRemotesNode();
             AddChildren(AllRDMPRemotesNode);
 
+            AllObjectSharingNode = new AllObjectSharingNode();
+            AllExports = repository.GetAllObjects<ObjectExport>();
+            AllImports = repository.GetAllObjects<ObjectImport>();
+
+            AddChildren(AllObjectSharingNode);
+            
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
 
@@ -194,8 +206,18 @@ namespace CatalogueLibrary.Providers
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
+
+            //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
+            //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
+            Dictionary<int, JoinableCohortAggregateConfiguration> joinableDictionaryByAggregateConfigurationId =  _cohortContainerChildProvider.AllJoinables.ToDictionary(j => j.AggregateConfiguration_ID,v=> v);
+
+            foreach (AggregateConfiguration ac in AllAggregateConfigurations)
+                ac.InjectKnownJoinableOrNone(
+                    joinableDictionaryByAggregateConfigurationId.ContainsKey(ac.ID) //if theres a joinable
+                    ? joinableDictionaryByAggregateConfigurationId[ac.ID] //inject that we know the joinable (and what it is)
+                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
         }
-        
+
         private void AddChildren(AllExternalServersNode allExternalServersNode)
         {
             AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
@@ -211,6 +233,20 @@ namespace CatalogueLibrary.Providers
             AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
         }
 
+
+        private void AddChildren(AllObjectSharingNode allObjectSharingNode)
+        {
+            var descendancy = new DescendancyList(allObjectSharingNode);
+
+            var allExportsNode = new AllObjectExportsNode();
+            var allImportsNode = new AllObjectImportsNode();
+
+            AddToDictionaries(new HashSet<object>(AllExports), descendancy.Add(allExportsNode));
+            AddToDictionaries(new HashSet<object>(AllImports), descendancy.Add(allImportsNode));
+
+            AddToDictionaries(new HashSet<object>(new object[] { allExportsNode, allImportsNode }), descendancy);
+        }
+        
         private void BuildServerNodes()
         {
             Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();

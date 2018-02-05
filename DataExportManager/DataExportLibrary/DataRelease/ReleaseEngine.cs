@@ -31,6 +31,7 @@ namespace DataExportLibrary.DataRelease
         public Project Project { get; private set; }
         public bool ReleaseSuccessful { get; protected set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
+        public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsToRelease { get; private set; }
 
         public ReleaseEngineSettings ReleaseSettings { get; set; }
 
@@ -50,6 +51,8 @@ namespace DataExportLibrary.DataRelease
 
         public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
         {
+            ConfigurationsToRelease = toRelease;
+
             VerifyReleasability(toRelease, environment);
 
             SourceGlobalFolder = PrepareAndVerifySourceGlobalFolder(toRelease);
@@ -179,14 +182,10 @@ namespace DataExportLibrary.DataRelease
             //for each configuration, all the release potentials can be released
             foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in toRelease)
             {
-                var extractionIdentifier = "";
-                if (!String.IsNullOrWhiteSpace(kvp.Key.RequestTicket) && !String.IsNullOrWhiteSpace(kvp.Key.ReleaseTicket))
-                    extractionIdentifier = String.Format("{0}_{1}", kvp.Key.RequestTicket, kvp.Key.ReleaseTicket);
-                else
-                    extractionIdentifier = kvp.Key.Name + "_" + kvp.Key.ID;
+                var extractionIdentifier = kvp.Key.Name + "_" + kvp.Key.ID;
 
                 //create a root folder with the same name as the configuration (e.g. controls folder then next loop iteration a cases folder - with a different cohort)
-                DirectoryInfo configurationSubDirectory = ReleaseFolder.CreateSubdirectory("Configuration-" + extractionIdentifier);
+                DirectoryInfo configurationSubDirectory = ReleaseFolder.CreateSubdirectory(extractionIdentifier);
 
                 AuditExtractionConfigurationDetails(sw, configurationSubDirectory, kvp, extractionIdentifier);
 
@@ -199,7 +198,7 @@ namespace DataExportLibrary.DataRelease
                 //generate release document
                 var generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
                 generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
-                AuditFileCreation("ReleaseDocument" + extractionIdentifier + ".docx", sw, 1);
+                AuditFileCreation("ReleaseDocument_" + extractionIdentifier + ".docx", sw, 1);
 
 
                 //only copy across directories that are explicitly validated with a ReleasePotential
@@ -329,13 +328,25 @@ namespace DataExportLibrary.DataRelease
                     return null;
 
                 var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd_");
-                string suffix;
-                if (String.IsNullOrWhiteSpace(Project.MasterTicket))
-                    suffix = Project.ID + "_" + Project.Name;
-                else
-                    suffix = Project.MasterTicket;
+                string suffix = String.Empty;
+                if (ConfigurationsToRelease.Keys.Any())
+                {
+                    var releaseTicket = ConfigurationsToRelease.Keys.First().ReleaseTicket;
+                    if (ConfigurationsToRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
+                        suffix = releaseTicket;
+                    else
+                        throw new Exception("Multiple release tickets seen, this is not allowed!");
+                }
 
-                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release-" + suffix));
+                if (String.IsNullOrWhiteSpace(suffix))
+                {
+                    if (String.IsNullOrWhiteSpace(Project.MasterTicket))
+                        suffix = Project.ID + "_" + Project.Name;
+                    else
+                        suffix = Project.MasterTicket;
+                }
+
+                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release_" + suffix));
             }
 
             return ReleaseSettings.CustomReleaseFolder;
@@ -446,6 +457,10 @@ namespace DataExportLibrary.DataRelease
 
         public void Check(ICheckNotifier notifier)
         {
+            // we are in design mode and the DoRelease has not been called!
+            if (ConfigurationsToRelease == null || !ConfigurationsToRelease.Any())
+                return;
+
             var folder = GetIntendedReleaseDirectory();
             if (folder.Exists)
             {

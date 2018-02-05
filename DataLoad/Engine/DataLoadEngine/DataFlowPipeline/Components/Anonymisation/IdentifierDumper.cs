@@ -57,7 +57,7 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
             
             if (HasAtLeastOneColumnToStoreInDump)
                 if (tableInfo.IdentifierDumpServer_ID == null)//id dump server is missing
-                    throw new ArgumentException("TableInfo " + tableInfo.Name + " does not have a listed IdentifierDump ExternalDatabaseServer but has some columns configured as  DiscardedColumnDestination.StoreInIdentifiersDump or DiscardedColumnDestination.Dillute, go into the PreLoadDiscarded columns configuration window and select a Server to dump identifiers into");
+                    throw new ArgumentException("TableInfo " + tableInfo.Name + " does not have a listed IdentifierDump ExternalDatabaseServer but has some columns configured as  DiscardedColumnDestination.StoreInIdentifiersDump or DiscardedColumnDestination.Dilute, go into the PreLoadDiscarded columns configuration window and select a Server to dump identifiers into");
                 else
                 {
                     //the place to store identifiers (at least those that are StoreInIdentifiersDump)

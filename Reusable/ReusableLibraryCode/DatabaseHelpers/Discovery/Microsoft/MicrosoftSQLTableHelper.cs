@@ -202,6 +202,9 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
                 if (UsefulStuff.RequiresLength(columnType))
                     lengthQualifier = "(" + AdjustForUnicode(columnType,Convert.ToInt32(r["LENGTH"])) + ")";
 
+            if (columnType == "text")
+                return "varchar(max)";
+
             return columnType + lengthQualifier;
         }
 

@@ -21,7 +21,6 @@ using CatalogueLibrary.Remoting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.ObjectSharing;
 using Newtonsoft.Json;
 using PluginPackager;
 using RDMPStartup;

@@ -13,7 +13,7 @@ namespace CatalogueLibrary.Nodes
     /// <summary>
     /// Tree Node for documenting the allowed usage of a specific DataAccessCredentials (username / password) under a given DataAccessContext (loading, extracting etc).
     /// </summary>
-    public class DataAccessCredentialUsageNode
+    public class DataAccessCredentialUsageNode:IDeleteable
     {
         public DataAccessCredentials Credentials { get; private set; }
         public TableInfo TableInfo { get; private set; }
@@ -53,6 +53,16 @@ namespace CatalogueLibrary.Nodes
                 hashCode = (hashCode*397) ^ (int) Context;
                 return hashCode;
             }
+        }
+
+        public void DeleteInDatabase()
+        {
+            //if (MessageBox.Show("Are you sure you want to remove usage rights under Context " + credentialUsage.Context + " for TableInfo " + credentialUsage.TableInfo, "Revoke Usage Permission", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //{
+            var cataRepo = (CatalogueRepository)TableInfo.Repository;
+                cataRepo.TableInfoToCredentialsLinker.BreakLinkBetween(Credentials, TableInfo, Context);
+
+            //;
         }
     }
 }

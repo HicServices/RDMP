@@ -12,7 +12,7 @@ using DataExportManager.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.Menus
 {
-    public class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
+    class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
     {
         public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode)
             : base(args, null)

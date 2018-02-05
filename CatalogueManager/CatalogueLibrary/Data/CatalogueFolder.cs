@@ -200,7 +200,7 @@ namespace CatalogueLibrary.Data
                 return false;
 
             //we contain the potential parents path therefore we are a child of them
-            return Path.Contains(potentialParent.Path);
+            return Path.StartsWith(potentialParent.Path);
         }
         
         
