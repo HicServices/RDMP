@@ -44,7 +44,7 @@ namespace RDMPAutomationService.Pipeline
             
             _listener = new ForkDataLoadEventListener(
                 new ToFileDataLoadEventListener(this),
-                new ThrowImmediatelyDataLoadEventListener()
+                new AutomatedThrowImmediatelyDataLoadEventsListener(slot)
             );
               
             PipeStatuses = new Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus>();

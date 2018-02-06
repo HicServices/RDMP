@@ -72,7 +72,6 @@ namespace HIC.Logging.Listeners
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
         }
 
         public virtual void OnProgress(object sender, ProgressEventArgs e)

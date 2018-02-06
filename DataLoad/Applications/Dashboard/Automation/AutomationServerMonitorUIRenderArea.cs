@@ -152,7 +152,7 @@ namespace Dashboard.Automation
                     {
                         //left click view it
                         if (e.Button == MouseButtons.Left)
-                            WideMessageBox.Show(kvp.Value.Exception);
+                            WideMessageBox.Show(kvp.Value.Exception, title: "Exception from " + kvp.Value.MachineName + " at: " + kvp.Value.EventDate.ToString("g"));
 
                         //right click delete it with explanation
                         if (e.Button == MouseButtons.Right)
