@@ -20,6 +20,9 @@ namespace CatalogueLibrary.DataFlowPipeline
         private readonly DataFlowPipelineContext<T> _context;
         private readonly IDataLoadEventListener _listener;
 
+        private bool initialized = false;
+        private string _name;
+
         public List<IDataFlowComponent<T>> Components { get; set; }
         public IDataFlowDestination<T> Destination { get; private set; }
         public IDataFlowSource<T> Source { get; private set; }
@@ -31,13 +34,20 @@ namespace CatalogueLibrary.DataFlowPipeline
         public object DestinationObject { get { return Destination; } }
         public object SourceObject { get { return Source; } }
 
-        public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, IDataFlowDestination<T> destination, IDataLoadEventListener listener)
+        public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, 
+                                      IDataFlowDestination<T> destination, IDataLoadEventListener listener,
+                                      IPipeline pipelineSource = null)
         {
             Source = source;
             Destination = destination;
             _context = context;
             _listener = listener;
             Components = new List<IDataFlowComponent<T>>();
+
+            if (pipelineSource != null)
+                _name = pipelineSource.Name;
+            else
+                _name = "Undefined pipeline";
         }
 
         public void Initialize(params object[] initializationObjects)
@@ -52,8 +62,6 @@ namespace CatalogueLibrary.DataFlowPipeline
             initialized = true;
         }
 
-
-        private bool initialized = false;
         public void ExecutePipeline(GracefulCancellationToken cancellationToken)
         {
             Exception exception = null;
@@ -182,7 +190,6 @@ namespace CatalogueLibrary.DataFlowPipeline
             return true;
         }
 
-
         public void Check(ICheckNotifier notifier)
         {
             try
@@ -241,6 +248,11 @@ namespace CatalogueLibrary.DataFlowPipeline
 
             notifier.OnCheckPerformed(new CheckEventArgs("Finished checking all components",CheckResult.Success));
                  
+        }
+
+        public override string ToString()
+        {
+            return _name;
         }
     }
 }
