@@ -35,7 +35,7 @@ namespace RDMPAutomationService.Logic.DQE
             _catalogueRepository = catalogueRepository;
             _strategy = strategy;
             _dqeDaysBetweenEvaluations = dqeDaysBetweenEvaluations;
-            this._listener = listener;
+            _listener = listener;
         }
 
         public Catalogue SuggestRun()

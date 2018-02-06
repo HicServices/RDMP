@@ -7,6 +7,7 @@ using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.Cache
 {
@@ -21,10 +22,12 @@ namespace RDMPAutomationService.Logic.Cache
         private readonly ICatalogueRepository _catalogueRepository;
         private List<PermissionWindow> _permissionWindowsAlreadyUnderway;
         private List<CacheProgress> _cacheProgressesAlreadyUnderway;
+        private IDataLoadEventListener _listener;
 
-        public CacheRunFinder(ICatalogueRepository catalogueRepository)
+        public CacheRunFinder(ICatalogueRepository catalogueRepository, IDataLoadEventListener listener = null)
         {
             _catalogueRepository = catalogueRepository;
+            _listener = listener;
         }
 
         public CacheProgress SuggestCacheProgress()
@@ -34,14 +37,20 @@ namespace RDMPAutomationService.Logic.Cache
             var caches = _catalogueRepository.GetAllObjects<CacheProgress>().ToArray();
             
             if (!caches.Any())
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No cache progress defined... exiting."));
                 return null;
+            }
 
             var automationLockedCatalogues = _catalogueRepository.GetAllAutomationLockedCatalogues();
 
             //if there is no logging server then we can't do automated cache runs
             var defaults = new ServerDefaults((CatalogueRepository) _catalogueRepository);
             if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID) == null)
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No Logging server has been defined, we cannot automate cache runs."));
                 return null;
+            }
             
             Dictionary<CacheProgress,Catalogue[]> cacheCatalogues 
                 = caches.ToDictionary(
@@ -52,21 +61,45 @@ namespace RDMPAutomationService.Logic.Cache
 
             foreach (KeyValuePair<CacheProgress, Catalogue[]> kvp in cacheCatalogues)
             {
-                var memory = new ToMemoryCheckNotifier();
-                new CachingPreExecutionChecker(kvp.Key).Check(memory);
-                
+                var checker = new ToMemoryCheckNotifier();
+                new CachingPreExecutionChecker(kvp.Key).Check(checker);
+
+                foreach (var check in checker.Messages)
+                {
+                    _listener.OnNotify(this, check.ToNotifyEventArgs());
+                }
+
                 //if it fails pre load checks
-                if(memory.GetWorst() == CheckResult.Fail)
+                if(checker.GetWorst() == CheckResult.Fail)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                        String.Format("Cache Progress {0} has failed pre-execution checks... skipping.", kvp.Key)));
                     toDiscard.Add(kvp.Key);
-                else
-                if(!kvp.Value.Any())//if there are no catalogues
+                }
+                else if(!kvp.Value.Any())//if there are no catalogues
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                        String.Format("Cache Progress  {0} has no associated catalogues... skipping.", kvp.Key)));
                     toDiscard.Add(kvp.Key);
+                }
                 else if (IsAlreadyUnderway(kvp.Key))
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                        String.Format("Cache Progress {0} is already running... skipping.", kvp.Key)));
                     toDiscard.Add(kvp.Key);
+                }
                 else if (kvp.Value.Any(automationLockedCatalogues.Contains)) //if there are locked catalogues
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                        String.Format("Cache Progress {0} contains locked catalogues... skipping.", kvp.Key)));
                     toDiscard.Add(kvp.Key);
+                }
                 else if (kvp.Key.PermissionWindow_ID != null && kvp.Key.PermissionWindow.LockedBecauseRunning)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                        String.Format("Cache Progress {0} permission window is not defined or locked... skipping.", kvp.Key)));
                     toDiscard.Add(kvp.Key);
+                }
                 else
                 {
                     //it passed checking so we know there is loadable data but we might have just finished cashing it 30 seconds ago and theres no point running it for 30s
@@ -75,7 +108,11 @@ namespace RDMPAutomationService.Logic.Cache
                     var delay = kvp.Key.GetCacheLagPeriodLoadDelay();
                     
                     if (shortfall < delay)
+                    {
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                           String.Format("Cache Progress {0} has been cached too recently ({1} ago)... skipping.", kvp.Key, shortfall)));
                         toDiscard.Add(kvp.Key);
+                    }
                 }
               
             }

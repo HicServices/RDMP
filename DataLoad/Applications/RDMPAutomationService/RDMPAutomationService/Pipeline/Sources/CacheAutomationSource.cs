@@ -21,19 +21,23 @@ namespace RDMPAutomationService.Pipeline.Sources
     public class CacheAutomationSource:IAutomationSource
     {
         private AutomationServiceSlot _slot;
+        private IDataLoadEventListener _listener;
 
         public OnGoingAutomationTask GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            if (_slot.IsAcceptingNewJobs(AutomationJobType.Cache))
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Slot is accepting new CacheLoad jobs... let's find one."));
+                var finder = new CacheRunFinder((ICatalogueRepository) _slot.Repository, listener);
+                CacheProgress toRun = finder.SuggestCacheProgress();
 
-            if(!_slot.IsAcceptingNewJobs(AutomationJobType.Cache))
+                if (toRun != null)
+                    return new AutomatedCacheRun(_slot, toRun).GetTask();
+
                 return null;
+            }
 
-            var finder = new CacheRunFinder((ICatalogueRepository) _slot.Repository);
-            CacheProgress toRun = finder.SuggestCacheProgress();
-
-            if (toRun != null)
-                return new AutomatedCacheRun(_slot,toRun).GetTask();
-
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Slot is not accepting new CacheLoad jobs..."));
             return null;
         }
 
@@ -54,6 +58,7 @@ namespace RDMPAutomationService.Pipeline.Sources
         public void PreInitialize(AutomationServiceSlot value, IDataLoadEventListener listener)
         {
             _slot = value;
+            _listener = listener;
         }
     }
 }
