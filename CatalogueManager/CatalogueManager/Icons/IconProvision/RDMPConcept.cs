@@ -133,7 +133,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllObjectImportsNode,
         AllObjectExportsNode,
 
-
-        CohortCustomColumn
+        CohortCustomColumn,
+        ExtractableColumn
     }
 }

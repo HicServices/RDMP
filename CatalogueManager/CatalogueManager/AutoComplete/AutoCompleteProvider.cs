@@ -157,6 +157,7 @@ namespace CatalogueManager.AutoComplete
 
             var snip = new SubstringAutocompleteItem(name);
             snip.Tag = name;
+            snip.Text = parameter.ParameterName;
             snip.ImageIndex = GetIndexFor(parameter, RDMPConcept.ParametersNode.ToString());//parameter icon
 
             snip.ToolTipText = snip.ToString();

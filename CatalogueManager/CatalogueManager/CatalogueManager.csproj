@@ -1555,6 +1555,7 @@
     <None Include="Icons\AllObjectExportsNode.png" />
     <None Include="Icons\AllObjectSharingNode.png" />
     <None Include="Icons\CohortCustomColumn.png" />
+    <None Include="Icons\ExtractableColumn.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

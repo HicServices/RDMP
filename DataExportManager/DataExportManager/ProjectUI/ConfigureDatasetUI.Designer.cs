@@ -37,6 +37,8 @@ namespace DataExportManager.ProjectUI
             this.btnExclude = new System.Windows.Forms.Button();
             this.btnInclude = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tbSearch = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.olvAvailable = new BrightIdeasSoftware.ObjectListView();
             this.olvAvailableColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -44,6 +46,7 @@ namespace DataExportManager.ProjectUI
             this.olvSelected = new BrightIdeasSoftware.ObjectListView();
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -112,6 +115,8 @@ namespace DataExportManager.ProjectUI
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.tbSearch);
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.olvAvailable);
             this.splitContainer1.Panel1.Controls.Add(this.btnSelectCore);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
@@ -127,15 +132,38 @@ namespace DataExportManager.ProjectUI
             this.splitContainer1.SplitterDistance = 421;
             this.splitContainer1.TabIndex = 52;
             // 
+            // tbSearch
+            // 
+            this.tbSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSearch.Location = new System.Drawing.Point(56, 711);
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(275, 20);
+            this.tbSearch.TabIndex = 156;
+            this.tbSearch.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 714);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(44, 13);
+            this.label3.TabIndex = 155;
+            this.label3.Text = "Search:";
+            // 
             // olvAvailable
             // 
             this.olvAvailable.AllColumns.Add(this.olvAvailableColumnName);
             this.olvAvailable.AllColumns.Add(this.olvAvailableColumnCategory);
-            this.olvAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.olvAvailable.AllColumns.Add(this.olvSelectedIsExtractionIdentifier);
+            this.olvAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.olvAvailable.CellEditUseWholeCell = false;
             this.olvAvailable.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvAvailableColumnName});
+            this.olvAvailableColumnName,
+            this.olvSelectedIsExtractionIdentifier});
             this.olvAvailable.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvAvailable.FullRowSelect = true;
             this.olvAvailable.HideSelection = false;
@@ -143,7 +171,7 @@ namespace DataExportManager.ProjectUI
             this.olvAvailable.Location = new System.Drawing.Point(6, 16);
             this.olvAvailable.Name = "olvAvailable";
             this.olvAvailable.RowHeight = 19;
-            this.olvAvailable.Size = new System.Drawing.Size(325, 715);
+            this.olvAvailable.Size = new System.Drawing.Size(325, 689);
             this.olvAvailable.TabIndex = 154;
             this.olvAvailable.Text = "label14";
             this.olvAvailable.UseCompatibleStateImageBehavior = false;
@@ -178,7 +206,8 @@ namespace DataExportManager.ProjectUI
             // 
             this.olvSelected.AllColumns.Add(this.olvSelectedColumnName);
             this.olvSelected.AllColumns.Add(this.olvSelectedColumnOrder);
-            this.olvSelected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.olvSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.olvSelected.CellEditUseWholeCell = false;
             this.olvSelected.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -212,6 +241,12 @@ namespace DataExportManager.ProjectUI
             // 
             this.olvSelectedColumnOrder.AspectName = "Order";
             this.olvSelectedColumnOrder.Text = "Order";
+            // 
+            // olvSelectedIsExtractionIdentifier
+            // 
+            this.olvSelectedIsExtractionIdentifier.AspectName = "IsExtractionIdentifier";
+            this.olvSelectedIsExtractionIdentifier.Text = "IsExtractionIdentifier";
+            this.olvSelectedIsExtractionIdentifier.Width = 120;
             // 
             // ConfigureDatasetUI
             // 
@@ -247,5 +282,8 @@ namespace DataExportManager.ProjectUI
         private OLVColumn olvAvailableColumnCategory;
         private OLVColumn olvSelectedColumnName;
         private OLVColumn olvSelectedColumnOrder;
+        private System.Windows.Forms.TextBox tbSearch;
+        private System.Windows.Forms.Label label3;
+        private OLVColumn olvSelectedIsExtractionIdentifier;
     }
 }

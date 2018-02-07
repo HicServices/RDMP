@@ -196,12 +196,16 @@ namespace CatalogueManager.Collections
             if (args.Request.ExpansionDepth > 0)
                 ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
 
+            if (args.Request.Pin && AllowPinning)
+                Pin(args.Request.ObjectToEmphasise, decendancyList);
+
+            //update index now pin filter is applied
+            index = Tree.IndexOf(args.Request.ObjectToEmphasise);
+
             //select the object and ensure it's visible
             Tree.SelectedObject = args.Request.ObjectToEmphasise;
             Tree.EnsureVisible(index);
 
-            if (args.Request.Pin && AllowPinning)
-                Pin(args.Request.ObjectToEmphasise,decendancyList);
             
             args.FormRequestingActivation = Tree.FindForm();
         }

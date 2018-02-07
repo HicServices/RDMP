@@ -58,6 +58,8 @@ namespace DataExportManager.ProjectUI
             InitializeComponent();
 
             olvAvailableColumnName.ImageGetter += ImageGetter;
+            olvSelectedColumnName.ImageGetter += ImageGetter;
+
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
 
@@ -353,6 +355,12 @@ namespace DataExportManager.ProjectUI
             olvAvailable.SelectObjects(
                 olvAvailable.Objects.OfType<ExtractionInformation>()
                 .Where(ei => ei.ExtractionCategory == ExtractionCategory.Core).ToArray());
+        }
+
+        private void tbSearch_TextChanged(object sender, EventArgs e)
+        {
+            olvAvailable.ModelFilter = string.IsNullOrWhiteSpace(tbSearch.Text) ? null : new TextMatchFilter(olvAvailable, tbSearch.Text);
+            olvAvailable.UseFiltering = !string.IsNullOrWhiteSpace(tbSearch.Text);
         }
     }
 
