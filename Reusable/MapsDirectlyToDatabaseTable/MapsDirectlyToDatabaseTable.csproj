@@ -134,15 +134,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate">
-      <HintPath>..\..\libs\RoundhousE\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="roundhouse">
-      <HintPath>..\..\libs\RoundhousE\roundhouse.dll</HintPath>
-    </Reference>
-    <Reference Include="roundhouse.databases.sqlserver">
-      <HintPath>..\..\libs\RoundhousE\roundhouse.databases.sqlserver.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

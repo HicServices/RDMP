@@ -318,15 +318,18 @@ namespace ResearchDataManagementPlatform.Menus
             tutorialsToolStripMenuItem.DropDownItems.Add(new DisableTutorialsMenuItem(tutorialsToolStripMenuItem, tracker));
             tutorialsToolStripMenuItem.DropDownItems.Add(new ResetTutorialsMenuItem(tutorialsToolStripMenuItem, tracker));
 
+            closeToolStripMenuItem.Enabled = false;
+
             rdmpTaskBar1.SetWindowManager(_windowManager);
         }
 
         void WindowFactory_TabChanged(object sender, DockContent newTab)
         {
             currentTab = newTab;
+            
+            closeToolStripMenuItem.Enabled = currentTab != null && !(currentTab is PersistableToolboxDockContent);
 
             var singleObjectControlTab = newTab as RDMPSingleControlTab;
-
             if (singleObjectControlTab == null)
             {
                 _saveToolStripMenuItem.Saveable = null;
@@ -395,6 +398,11 @@ namespace ResearchDataManagementPlatform.Menus
             var visibleCollection = _windowManager.GetFocusedCollection();
 
             new NavigateToObjectUI(_activator, null, visibleCollection).Show();
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentTab.Close();
         }
     }
 }

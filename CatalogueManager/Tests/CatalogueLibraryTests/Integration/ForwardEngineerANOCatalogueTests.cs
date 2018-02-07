@@ -218,7 +218,7 @@ namespace CatalogueLibraryTests.Integration
                 if (!tableInfoAlreadyExistsForSkippedTable)
                 {
                     var ex = Assert.Throws<Exception>(engine.Execute);
-                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "the ColumnInfo was not migrated"));
+                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called 'SpineColor'"));
                     return;
                 }
                 else

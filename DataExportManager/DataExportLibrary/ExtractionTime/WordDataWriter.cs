@@ -14,7 +14,6 @@ using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
-using Chart = Microsoft.Office.Interop.Excel.Chart;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace DataExportLibrary.ExtractionTime
