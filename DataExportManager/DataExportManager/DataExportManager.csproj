@@ -370,10 +370,8 @@
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />
-    <Compile Include="Collections\Providers\DataExportTextFormatProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableDataSetStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractionConfigurationStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ProjectStateBasedIconProvider.cs" />
     <Compile Include="DataRelease\CleanupConfirmationDialog.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -34,6 +34,7 @@ using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
@@ -53,6 +54,8 @@ namespace CatalogueManager.Collections
         public CopyPasteProvider CopyPasteProvider { get; private set; }
         public FavouriteColumnProvider FavouriteColumnProvider { get; private set; }
         public TreeNodeParentFinder ParentFinder { get; private set; }
+
+        public IProblemProvider ProblemProvider { get; set; }
 
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         
@@ -146,7 +149,20 @@ namespace CatalogueManager.Collections
             
             Tree.TreeFactory = TreeFactory;
             Tree.RebuildAll(true);
-            
+
+
+            Tree.FormatRow += Tree_FormatRow;
+            Tree.CellToolTipGetter += Tree_CellToolTipGetter;
+        }
+
+        private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
+        {
+            return ProblemProvider != null ? ProblemProvider.DescribeProblem(modelObject) :null;
+        }
+
+        void Tree_FormatRow(object sender, FormatRowEventArgs e)
+        {
+            e.Item.ForeColor = ProblemProvider != null && ProblemProvider.HasProblem(e.Model)? Color.Red : Color.Black;
         }
 
         private TreeListView.Tree TreeFactory(TreeListView view)
@@ -257,7 +273,9 @@ namespace CatalogueManager.Collections
 
         private object ImageGetter(object rowObject)
         {
-            return CoreIconProvider.GetImage(rowObject);
+            bool hasProblems = ProblemProvider != null && ProblemProvider.HasProblem(rowObject);
+            
+            return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None);
         }
         
 
@@ -354,6 +372,9 @@ namespace CatalogueManager.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            if(ProblemProvider != null)
+                ProblemProvider.RefreshProblems(_activator.CoreChildProvider);
+            
             OnRefreshChildProvider(_activator.CoreChildProvider);
             
             //now tell tree view to refresh the object

@@ -449,6 +449,7 @@
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
+    <Compile Include="Providers\IProblemProvider.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
