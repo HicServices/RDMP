@@ -87,6 +87,11 @@ namespace ReusableUIComponents.Progress
             if(o != null)
                 switch (o.ProgressEventType)
                 {
+                    // TODO: draw a couple of new icons if required
+                    case ProgressEventType.Debug:
+                        return _information;
+                    case ProgressEventType.Trace:
+                        return _information;
                     case ProgressEventType.Information:
                         return _information;
                     case ProgressEventType.Warning:

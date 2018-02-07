@@ -20,6 +20,9 @@ namespace CatalogueLibrary.DataFlowPipeline
         private readonly DataFlowPipelineContext<T> _context;
         private readonly IDataLoadEventListener _listener;
 
+        private bool initialized = false;
+        private string _name;
+
         public List<IDataFlowComponent<T>> Components { get; set; }
         public IDataFlowDestination<T> Destination { get; private set; }
         public IDataFlowSource<T> Source { get; private set; }
@@ -31,13 +34,20 @@ namespace CatalogueLibrary.DataFlowPipeline
         public object DestinationObject { get { return Destination; } }
         public object SourceObject { get { return Source; } }
 
-        public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, IDataFlowDestination<T> destination, IDataLoadEventListener listener)
+        public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, 
+                                      IDataFlowDestination<T> destination, IDataLoadEventListener listener,
+                                      IPipeline pipelineSource = null)
         {
             Source = source;
             Destination = destination;
             _context = context;
             _listener = listener;
             Components = new List<IDataFlowComponent<T>>();
+
+            if (pipelineSource != null)
+                _name = pipelineSource.Name;
+            else
+                _name = "Undefined pipeline";
         }
 
         public void Initialize(params object[] initializationObjects)
@@ -52,14 +62,12 @@ namespace CatalogueLibrary.DataFlowPipeline
             initialized = true;
         }
 
-
-        private bool initialized = false;
         public void ExecutePipeline(GracefulCancellationToken cancellationToken)
         {
             Exception exception = null;
             try
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Starting pipeline engine"));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Starting pipeline engine"));
 
                 if (!initialized)
                     throw new Exception(
@@ -90,11 +98,11 @@ namespace CatalogueLibrary.DataFlowPipeline
             }
             finally
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to Dispose of DataFlowPipelineEngine components"));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing to Dispose of DataFlowPipelineEngine components"));
 
                 foreach (IDataFlowComponent<T> dataLoadComponent in Components)
                 {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + dataLoadComponent));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + dataLoadComponent));
                     try
                     {
 
@@ -106,7 +114,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                     }
                 }
 
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + Source));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Source));
                 try
                 {
                     Source.Dispose(_listener, exception);
@@ -116,7 +124,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                     _listener.OnNotify(Source, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Source Component", e));
                 }
 
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to Dispose " + Destination));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Destination));
                 try
                 {
 
@@ -153,7 +161,7 @@ namespace CatalogueLibrary.DataFlowPipeline
 
             if (currentChunk == null)
             {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Received null chunk from the Source component, stopping engine"));
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Received null chunk from the Source component, stopping engine"));
                 return false;
             }
 
@@ -181,7 +189,6 @@ namespace CatalogueLibrary.DataFlowPipeline
 
             return true;
         }
-
 
         public void Check(ICheckNotifier notifier)
         {
@@ -241,6 +248,11 @@ namespace CatalogueLibrary.DataFlowPipeline
 
             notifier.OnCheckPerformed(new CheckEventArgs("Finished checking all components",CheckResult.Success));
                  
+        }
+
+        public override string ToString()
+        {
+            return _name;
         }
     }
 }

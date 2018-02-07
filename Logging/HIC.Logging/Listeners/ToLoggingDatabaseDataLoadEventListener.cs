@@ -15,7 +15,6 @@ namespace HIC.Logging.Listeners
     /// </summary>
     public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     {
-
         public Dictionary<string, ITableLoadInfo> TableLoads = new Dictionary<string, ITableLoadInfo>();
 
         private readonly object _hostingApplication;
@@ -42,20 +41,23 @@ namespace HIC.Logging.Listeners
             _logManager = logManager;
         }
 
-        public void StartLogging()
+        public virtual void StartLogging()
         {
             _logManager.CreateNewLoggingTaskIfNotExists(_loggingTask);
 
             DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
         }
 
-        public void OnNotify(object sender, NotifyEventArgs e)
+        public virtual void OnNotify(object sender, NotifyEventArgs e)
         {
             if (DataLoadInfo == null)
                 StartLogging();
 
             switch (e.ProgressEventType)
             {
+                case ProgressEventType.Trace:
+                case ProgressEventType.Debug:
+                    break;
                 case ProgressEventType.Information:
                     _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, sender.ToString(),e.Message);
                     break;
@@ -70,10 +72,9 @@ namespace HIC.Logging.Listeners
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
         }
 
-        public void OnProgress(object sender, ProgressEventArgs e)
+        public virtual void OnProgress(object sender, ProgressEventArgs e)
         {
             if (DataLoadInfo == null)
                 StartLogging();
@@ -96,7 +97,7 @@ namespace HIC.Logging.Listeners
             }
         }
 
-        public void FinalizeTableLoadInfos()
+        public virtual void FinalizeTableLoadInfos()
         {
             foreach (var tableLoadInfo in TableLoads.Values)
                 tableLoadInfo.CloseAndArchive();

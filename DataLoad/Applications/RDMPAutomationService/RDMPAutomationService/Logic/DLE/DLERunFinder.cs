@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Repositories;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.DLE
 {
@@ -15,17 +17,39 @@ namespace RDMPAutomationService.Logic.DLE
     public class DLERunFinder
     {
         private readonly ICatalogueRepository _catalogueRepository;
+        private readonly IDataLoadEventListener _listener;
 
-        public DLERunFinder(ICatalogueRepository catalogueRepository)
+        public DLERunFinder(ICatalogueRepository catalogueRepository, IDataLoadEventListener listener)
         {
             _catalogueRepository = catalogueRepository;
+            _listener = listener;
         }
+
         public LoadPeriodically SuggestLoad()
         {
             var lockedCatalogues = _catalogueRepository.GetAllAutomationLockedCatalogues();
 
+            var allLoads = _catalogueRepository.GetAllObjects<LoadPeriodically>();
+
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Found {0} Periodic Loads to run", allLoads.Length)));
+
+            foreach (var load in allLoads)
+            {
+                if (load.IsLoadDue(lockedCatalogues))
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, String.Format("Load due for: {0}", load.LoadMetadata.Name)));
+                    return load;
+                }
+                else
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load was NOT due for: {0}", load.LoadMetadata.Name)));
+                }
+            }
+
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No Load was due, exiting..."));
+            return null;
             //refresh list of push jobs
-            return _catalogueRepository.GetAllObjects<LoadPeriodically>().FirstOrDefault(p => p.IsLoadDue(lockedCatalogues));
+            //return _catalogueRepository.GetAllObjects<LoadPeriodically>().FirstOrDefault(p => p.IsLoadDue(lockedCatalogues));
         }
 
         public LoadProgress SuggestLoadBecauseCacheAvailable()
@@ -35,44 +59,68 @@ namespace RDMPAutomationService.Logic.DLE
             
             foreach (CacheProgress cp in cacheProgresses)
             {
-               var dtCache = cp.CacheFillProgress;
-               var loadProgress = cp.LoadProgress;
+                var dtCache = cp.CacheFillProgress;
+                var loadProgress = cp.LoadProgress;
                
-
                 //LoadProgress isn't allowed to run through automation anyway
                 if(!loadProgress.AllowAutomation)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load Progress {0} is not allowed through automation", loadProgress.Name)));
                     continue;
+                }
 
                 //It's already locked (either running or hard crashed)
                 if(loadProgress.LockedBecauseRunning)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load Progress {0} is already locked", loadProgress.Name)));
                     continue;
+                }
 
                 //Permission window is locked 
                 if(cp.PermissionWindow_ID != null)
-                    if(cp.PermissionWindow.LockedBecauseRunning)
+                    if (cp.PermissionWindow.LockedBecauseRunning)
+                    {
+                        _listener.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Debug,
+                                String.Format("Cache Progress {0} permission window is unavailable", cp)));
                         continue;
+                    }
 
-               //Cache has never been loaded
-               if(dtCache == null)
-                   continue;
+                //Cache has never been loaded
+                if(dtCache == null)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Cache Progress {0}: cache has never been loaded", cp)));
+                    continue;
+                }
 
                 var dtLoadProgress = loadProgress.DataLoadProgress;
                 
-                //Never loaded the LoadProgress... probably don't start now in automation, that's a bad idea.  If user wants to load it they can run load checks which will suggest to the user they set it to the OriginDate anyway
+                //Never loaded the LoadProgress... probably don't start now in automation, that's a bad idea.  
+                //If user wants to load it they can run load checks which will suggest to the user they set it to the OriginDate anyway
                 if(dtLoadProgress == null)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Cache Progress {0}: Never loaded the LoadProgress... ", cp)));
                     continue;
+                }
 
                 int daysToLoad = loadProgress.DefaultNumberOfDaysToLoadEachTime;
 
                 if (daysToLoad == 0)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load Progress {0} has 0 days to load set", loadProgress.Name)));
                     continue;
+                }
 
                 if (dtLoadProgress.Value.AddDays(daysToLoad) <= dtCache)
                     if(!LocksPreventLoading(loadProgress,lockedCatalogues))
+                    {
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, String.Format("Load Progress {0} has data to load and it's not locked. Firing!", loadProgress.Name)));
                         return loadProgress;
+                    }
             }
 
             //No tasks are ready to go
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No cache loading tasks are ready to go, exiting..."));
             return null;
         }
 

@@ -5,11 +5,14 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using HIC.Logging;
+using HIC.Logging.Listeners;
 using RDMPAutomationService.EventHandlers;
 using RDMPAutomationService.Pipeline.Sources;
 using RDMPStartup;
@@ -35,11 +38,15 @@ namespace RDMPAutomationService.Pipeline
 
         internal Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus> PipeStatuses { get; set; }
 
-        public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator,AutomationServiceSlot slot, AutomationDestination fixedDestination)
+        public AutomationPipelineEngineCollection(IRDMPPlatformRepositoryServiceLocator repositoryLocator, AutomationServiceSlot slot, AutomationDestination fixedDestination)
         {
             _slot = slot;
-
-            _listener = new FromCheckNotifierToDataLoadEventListener(new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
+            
+            _listener = new ForkDataLoadEventListener(
+                new ToFileDataLoadEventListener(this),
+                new AutomatedThrowImmediatelyDataLoadEventsListener(slot)
+            );
+              
             PipeStatuses = new Dictionary<DataFlowPipelineEngine<OnGoingAutomationTask>, PipelineRunStatus>();
 
             DLEPipe = new DataFlowPipelineEngine<OnGoingAutomationTask>(AutomationPipelineContext.Context, new DLEAutomationSource(), fixedDestination, _listener);
@@ -57,7 +64,7 @@ namespace RDMPAutomationService.Pipeline
             UserSpecificPipelines = new List<DataFlowPipelineEngine<OnGoingAutomationTask>>();
             foreach (AutomateablePipeline automateablePipeline in slot.AutomateablePipelines)
             {
-                var factory = new DataFlowPipelineEngineFactory<OnGoingAutomationTask>(((CatalogueRepository)slot.Repository).MEF,AutomationPipelineContext.Context);
+                var factory = new DataFlowPipelineEngineFactory<OnGoingAutomationTask>(((CatalogueRepository)slot.Repository).MEF, AutomationPipelineContext.Context);
                 factory.ExplicitDestination = fixedDestination;
                 var pipe = (DataFlowPipelineEngine<OnGoingAutomationTask>)factory.Create(automateablePipeline.Pipeline, _listener);
                 pipe.Initialize(slot, repositoryLocator);
@@ -75,17 +82,30 @@ namespace RDMPAutomationService.Pipeline
         public void ExecuteAll(int minimumLengthOfTimeToWaitWhileDoingThis)
         {
             var tasks = new List<Task>();
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Checking runnability of automated pipelines..."));
             if (ShouldRun(DLEPipe))
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Can run DLE pipe, starting"));
                 tasks.Add(GetPipelineTask(DLEPipe));
+            }
             if (ShouldRun(DQEPipe))
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Can run DQE pipe, starting"));
                 tasks.Add(GetPipelineTask(DQEPipe));
+            }
             if (ShouldRun(CachePipe))
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Can run Cache pipe, starting"));
                 tasks.Add(GetPipelineTask(CachePipe));
+            }
             
             foreach (var pipeline in UserSpecificPipelines)
             {
                 if (ShouldRun(pipeline))
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Can run custom pipe " + pipeline + ", starting"));
                     tasks.Add(GetPipelineTask(pipeline));
+                }
             }
 
             _slot.RevertToDatabaseState();
@@ -104,7 +124,10 @@ namespace RDMPAutomationService.Pipeline
         private bool ShouldRun(DataFlowPipelineEngine<OnGoingAutomationTask> pipeline)
         {
             if (!PipeStatuses.ContainsKey(pipeline))
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Pipe " + pipeline + " does not exist in status dictionary!"));
                 return false;
+            }
 
             var status = PipeStatuses[pipeline];
 
@@ -118,6 +141,7 @@ namespace RDMPAutomationService.Pipeline
             if (status.NumErrors < 5)
                 return true;
 
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Pipe " + pipeline + " has errored to often recently, skipping"));
             return false;
         }
 

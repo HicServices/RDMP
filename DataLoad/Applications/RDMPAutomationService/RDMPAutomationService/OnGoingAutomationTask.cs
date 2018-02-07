@@ -50,7 +50,6 @@ namespace RDMPAutomationService
                     job.SetLastKnownStatus(AutomationJobStatus.Crashed);
                     new AutomationServiceException((ICatalogueRepository)Repository, e);
                 }
-                
             }
                 
                 

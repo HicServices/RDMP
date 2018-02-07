@@ -13,6 +13,7 @@ using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.DQE
 {
@@ -27,12 +28,14 @@ namespace RDMPAutomationService.Logic.DQE
         private readonly CatalogueRepository _catalogueRepository;
         private AutomationDQEJobSelectionStrategy _strategy;
         private readonly int _dqeDaysBetweenEvaluations;
+        private readonly IDataLoadEventListener _listener;
 
-        public DQERunFinder(CatalogueRepository catalogueRepository, AutomationDQEJobSelectionStrategy strategy, int dqeDaysBetweenEvaluations)
+        public DQERunFinder(CatalogueRepository catalogueRepository, AutomationDQEJobSelectionStrategy strategy, int dqeDaysBetweenEvaluations, IDataLoadEventListener listener)
         {
             _catalogueRepository = catalogueRepository;
             _strategy = strategy;
             _dqeDaysBetweenEvaluations = dqeDaysBetweenEvaluations;
+            _listener = listener;
         }
 
         public Catalogue SuggestRun()
@@ -45,8 +48,13 @@ namespace RDMPAutomationService.Logic.DQE
                 &&
                 !lockedCatalogues.Contains(c)).ToArray();
 
-            var dqeRepository = new DQERepository(_catalogueRepository);
+            if (availableCatalogues.Length == 0)
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No catalogue available for DQE (must be not in cold storage, not deprecated and not locked)"));
+                return null;
+            }
 
+            var dqeRepository = new DQERepository(_catalogueRepository);
 
             List<Tuple<Catalogue, DateTime>> datasetsByDate;
             Tuple<Catalogue, DateTime> pairToReturn;
@@ -56,13 +64,18 @@ namespace RDMPAutomationService.Logic.DQE
                 case AutomationDQEJobSelectionStrategy.MostRecentlyLoadedDataset:
 
                     datasetsByDate = new List<Tuple<Catalogue, DateTime>>();
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Finding with strategy: MostRecentlyLoadedDataset."));
 
                     //First find whether theres a valid candidate based on dataset load date
                     foreach (var c in availableCatalogues)
                     {
                         var loggingServer = c.LiveLoggingServer;
                         if (loggingServer == null || string.IsNullOrWhiteSpace(c.LoggingDataTask)) //Catalogue is not logged
-                            continue;//try the next catalogue
+                        {
+                            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                                String.Format("Catalogue {0} has no logging... skipping.", c)));
+                            continue;
+                        }
 
                         var server = DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging);
 
@@ -72,7 +85,11 @@ namespace RDMPAutomationService.Logic.DQE
 
                         //its never been loaded
                         if(dateOfLastLoad == null)
-                            continue;//try the next catalogue
+                        {
+                            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                                String.Format("Catalogue {0} has never been loaded... skipping.", c)));
+                            continue;
+                        }
 
                         //it has been recently loaded BUT has the DQE also been run recently?
                         var candidate = dqeRepository.GetMostRecentEvaluationFor(c);
@@ -82,13 +99,23 @@ namespace RDMPAutomationService.Logic.DQE
                         {
                             //has the DQE been run since the data load ended
                             if(candidate.DateOfEvaluation > dateOfLastLoad)
+                            {
+                                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, 
+                                    String.Format("Catalogue {0} has no new data loaded after last evaluation... skipping.", candidate.Catalogue)));
                                 continue;
+                            }
 
                             //well the DQE has not been run since the data load completed but it was run in the lag window so we probably shouldn't run the DQE again
                             if(IsInQuietPeriod(candidate.DateOfEvaluation))
+                            {
+                                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                                    String.Format("Catalogue {0} has been evaluated less than {1} day(s) ago... skipping.", candidate.Catalogue, _dqeDaysBetweenEvaluations)));
                                 continue;
+                            }
                         }
 
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                            String.Format("Catalogue {0} is ready for evaluation... adding.", c)));
                         datasetsByDate.Add(new Tuple<Catalogue, DateTime>(c, dateOfLastLoad.Value));
                     }
 
@@ -97,13 +124,22 @@ namespace RDMPAutomationService.Logic.DQE
 
                     //if we found a recently loaded catalogue
                     if (pairToReturn != null)
+                    {
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                            String.Format("Found most recently loaded catalogue: {0}", pairToReturn.Item1)));
                         return pairToReturn.Item1;
+                    }
                     else
+                    {
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                            "No datasets are loaded or they have all been recently evaluated by DQE or something else. Let's fallback to the DatasetWithMostOutOfDateDQEResults Strategy."));
                         goto case AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults;//No dasets are loaded or they have all been recently evaluated by DQE or something else.  Lets fallback on the other Strategy instead
+                    }
                     
                 case AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults:
 
                     datasetsByDate = new List<Tuple<Catalogue, DateTime>>();
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Finding with strategy: DatasetWithMostOutOfDateDQEResults."));
 
                     foreach (var c in availableCatalogues)
                     {
@@ -116,7 +152,11 @@ namespace RDMPAutomationService.Logic.DQE
                         {
                             //it was recently evaluated
                             if (IsInQuietPeriod(candidate.DateOfEvaluation))
+                            {
+                                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace,
+                                    String.Format("Catalogue {0} has been evaluated less than {1} day(s) ago... skipping.", candidate.Catalogue, _dqeDaysBetweenEvaluations)));
                                 continue;//so do not add it
+                            }
                             
                             //it was evaluated ages ago
                             datasetsByDate.Add(new Tuple<Catalogue, DateTime>(c, candidate.DateOfEvaluation));
@@ -124,7 +164,18 @@ namespace RDMPAutomationService.Logic.DQE
                     }
 
                     pairToReturn = datasetsByDate.OrderBy(p => p.Item2).FirstOrDefault(p => CanBeDQEd(p.Item1));
-                    return pairToReturn == null? null : pairToReturn.Item1;
+                    if (pairToReturn == null)
+                    {
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                            "All datasets have been recently evaluated by DQE. Ending."));
+                        return null;
+                    }
+                    else
+                    {
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                            String.Format("Found oldest evaluated catalogue: {0}", pairToReturn.Item1)));
+                        return pairToReturn.Item1;
+                    }
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -138,6 +189,12 @@ namespace RDMPAutomationService.Logic.DQE
 
             var checker = new ToMemoryCheckNotifier();
             report.Check(checker);
+
+            if (_listener != null)
+                foreach (var check in checker.Messages)
+                {
+                    _listener.OnNotify(this, check.ToNotifyEventArgs());
+                }
 
             return checker.GetWorst() != CheckResult.Fail;
         }
