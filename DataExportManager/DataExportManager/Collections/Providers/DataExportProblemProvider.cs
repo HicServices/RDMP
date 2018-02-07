@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Data.LinkCreators;
 using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 
@@ -86,8 +87,19 @@ namespace DataExportManager.Collections.Providers
             foreach (var config in _exportChildProvider.ExtractionConfigurations)
                 FindProblemsIn(config);
 
+            foreach (var selectedDataset in _exportChildProvider.SelectedDataSets)
+                FindProblemsIn(selectedDataset);
+
             foreach (var project in _exportChildProvider.Projects)
                 FindProblemsIn(project);
+        }
+
+        private void FindProblemsIn(SelectedDataSets selectedDataset)
+        {
+            var cols = _exportChildProvider.GetColumnsIn(selectedDataset);
+
+            if(!cols.Any(c=>c.IsExtractionIdentifier))
+                _problems.Add(selectedDataset,"There are no IsExtractionIdentifier columns in dataset");
         }
 
         public bool HasProblem(object o)
