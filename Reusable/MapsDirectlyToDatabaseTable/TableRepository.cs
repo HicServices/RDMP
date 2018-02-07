@@ -13,7 +13,6 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Microsoft.SqlServer.Management.Common;
 using MySql.Data.MySqlClient;
-using Remotion.Linq.Utilities;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
@@ -467,7 +466,7 @@ namespace MapsDirectlyToDatabaseTable
             //if there is whereSQL make sure it is a legit SQL where
             if (!string.IsNullOrWhiteSpace(whereSQL))
                 if(!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
-                    throw new ArgumentEmptyException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
+                    throw new ArgumentException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
 
             List<T> toReturn = new List<T>();
 
@@ -509,7 +508,7 @@ namespace MapsDirectlyToDatabaseTable
 
             // if there is whereSQL make sure it is a legit SQL where
             if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
-                throw new ArgumentEmptyException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
+                throw new ArgumentException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
 
             var toReturn = new List<T>();
             using (var opener = GetConnection())

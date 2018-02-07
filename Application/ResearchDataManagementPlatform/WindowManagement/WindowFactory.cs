@@ -124,7 +124,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 content.FormClosing += consult.ConsultAboutClosing;
 
             content.KeyPreview = true;
-            content.KeyUp += ContentOnKeyUp;
             content.FormClosed += FormClosed; //when content is closed activate the last focused document
             
             var tab = content as RDMPSingleControlTab;
@@ -168,13 +167,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             foreach (var dc in activationQueue.ToArray())
                 if (dc.IsDisposed || !dc.IsHandleCreated || dc.IsHidden)
                     activationQueue.Remove(dc);
-        }
-
-
-        private void ContentOnKeyUp(object sender, KeyEventArgs keyEventArgs)
-        {
-            if(keyEventArgs.KeyCode == Keys.W && keyEventArgs.Control)
-                ((DockContent)sender).Close();
         }
 
     }

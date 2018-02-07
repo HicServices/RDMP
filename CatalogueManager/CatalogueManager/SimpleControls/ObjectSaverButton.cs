@@ -137,9 +137,9 @@ namespace CatalogueManager.SimpleControls
 
         private void CheckForLocalChanges()
         {
-            var changes = _o.HasLocalChanges();
-            var isDifferent = changes.Evaluation == ChangeDescription.DatabaseCopyDifferent;
-
+            
+            bool isDifferent = IsDifferent();
+            
             btnSave.Enabled = isDifferent;
             btnUndoRedo.Enabled = isDifferent;
             
@@ -152,6 +152,7 @@ namespace CatalogueManager.SimpleControls
         }
 
         private RevertableObjectReport _undoneChanges;
+        private readonly string[] _ignoreChangesToTheseProperties = new[] { "Lifeline", "LockHeldBy", "LockedBecauseRunning" };
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {
@@ -207,12 +208,7 @@ namespace CatalogueManager.SimpleControls
 
         public void CheckForOutOfDateObjectAndOfferToFix()
         {
-            if(_o == null)
-                return;
-
-            var differences = _o.HasLocalChanges();
-
-            if (differences.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+            if (IsDifferent())
                 if(MessageBox.Show(_o + " is out of date with database, would you like to reload a fresh copy?","Object Changed",MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     _o.RevertToDatabaseState();
@@ -221,6 +217,20 @@ namespace CatalogueManager.SimpleControls
                     if (!_refreshBus.PublishInProgress)
                         _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
                 }
+        }
+
+        private bool IsDifferent()
+        {
+            if (_o == null)
+                return false;
+
+            var changes = _o.HasLocalChanges();
+            //are there changes
+            if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                return changes.Differences.Any(d => !_ignoreChangesToTheseProperties.Contains(d.Property.Name)); //are the changes to properties we care about
+
+
+            return false;
         }
 
         public void CheckForUnsavedChangesAnOfferToSave()

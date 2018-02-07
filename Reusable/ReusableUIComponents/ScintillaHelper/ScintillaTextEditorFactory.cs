@@ -43,6 +43,7 @@ namespace ReusableUIComponents.ScintillaHelper
             toReturn.Margins[0].Width = 40; //allows display of line numbers
             toReturn.ClearCmdKey(Keys.Control | Keys.S); //prevent Ctrl+S displaying ascii code
             toReturn.ClearCmdKey(Keys.Control | Keys.R); //prevent Ctrl+R displaying ascii code
+            toReturn.ClearCmdKey(Keys.Control | Keys.W); //prevent Ctrl+W displaying ascii code
             
             if (language == "mssql")
                 SetSQLHighlighting(toReturn);
