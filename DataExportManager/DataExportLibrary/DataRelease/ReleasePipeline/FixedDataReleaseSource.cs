@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

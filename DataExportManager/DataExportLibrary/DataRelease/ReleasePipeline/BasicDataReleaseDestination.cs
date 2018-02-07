@@ -15,7 +15,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// <summary>
     /// Default release pipeline destination implementation wraps Release Engine for the supplied ReleaseData.
     /// </summary>
-    public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseData>, IDataFlowDestination<ReleaseData>, IPipelineRequirement<Project>
+    public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseData>, IDataFlowDestination<ReleaseData>, IPipelineRequirement<Project>, IPipelineRequirement<DirectoryInfo>
     {
         [DemandsNestedInitialization()]
         public ReleaseEngineSettings ReleaseSettings { get; set; }
@@ -24,6 +24,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private Project _project;
         private DirectoryInfo _destinationFolder;
         private ReleaseEngine _engine;
+
+        public DirectoryInfo ReleaseFolder { get; set; }
 
         public ReleaseData ProcessPipelineData(ReleaseData currentRelease, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -100,7 +102,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public void PreInitialize(Project value, IDataLoadEventListener listener)
         {
             _project = value;
-            _engine = new ReleaseEngine(_project, ReleaseSettings, listener);
+            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, ReleaseFolder);
+        }
+
+        public void PreInitialize(DirectoryInfo value, IDataLoadEventListener listener)
+        {
+            this.ReleaseFolder = value;
         }
     }
 }

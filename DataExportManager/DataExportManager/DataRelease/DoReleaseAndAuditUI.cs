@@ -175,7 +175,7 @@ namespace DataExportManager.DataRelease
                 return;
             
             //the data we are trying to extract
-            FixedDataReleaseSource.CurrentRelease = new ReleaseData
+            FixedDataReleaseSource.CurrentRelease =  new ReleaseData
             {
                 ConfigurationsForRelease = ConfigurationsForRelease,
                 EnvironmentPotential = _environmentPotential,
@@ -187,11 +187,12 @@ namespace DataExportManager.DataRelease
             _activator.ShowWindow(progressUI, false);
             
             //the release context for the project
-            var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
+            var context = new ReleaseUseCase(_project, FixedDataReleaseSource, GetPotentialReleaseFolder(ConfigurationsForRelease));
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
-            engine.Check(new PopupChecksUI("Checking engine", true));
+            //engine.Initialize(FixedDataReleaseSource.CurrentRelease);
+            engine.Check(new PopupChecksUI("Checking engine", false));
 
             try
             {
@@ -203,6 +204,33 @@ namespace DataExportManager.DataRelease
             {
                 progressUI.ShowRunning(false);
             }
+        }
+
+        private DirectoryInfo GetPotentialReleaseFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> configurationsForRelease)
+        {
+            if (string.IsNullOrWhiteSpace(_project.ExtractionDirectory))
+                return null;
+
+            var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            string suffix = String.Empty;
+            if (configurationsForRelease.Keys.Any())
+            {
+                var releaseTicket = configurationsForRelease.Keys.First().ReleaseTicket;
+                if (configurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
+                    suffix = releaseTicket;
+                else
+                    throw new Exception("Multiple release tickets seen, this is not allowed!");
+            }
+
+            if (String.IsNullOrWhiteSpace(suffix))
+            {
+                if (String.IsNullOrWhiteSpace(_project.MasterTicket))
+                    suffix = _project.ID + "_" + _project.Name;
+                else
+                    suffix = _project.MasterTicket;
+            }
+
+            return new DirectoryInfo(Path.Combine(_project.ExtractionDirectory, prefix + "_" + suffix));
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)
@@ -242,7 +270,7 @@ namespace DataExportManager.DataRelease
         {
             if (_pipelineUI == null)
             {
-                var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
+                var context = new ReleaseUseCase(_project, FixedDataReleaseSource, new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"))));
                 _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release",DockStyle.Fill,pnlPipeline);
             }
         }

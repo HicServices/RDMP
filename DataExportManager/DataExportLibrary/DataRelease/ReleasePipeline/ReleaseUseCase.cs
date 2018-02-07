@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using CatalogueLibrary.Data.Pipelines;
@@ -17,7 +18,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private readonly object[] _initObjects;
         private CatalogueRepository _catalogueRepository;
 
-        public ReleaseUseCase(Project project, IDataFlowSource<ReleaseData> explicitSource)
+        public ReleaseUseCase(Project project, IDataFlowSource<ReleaseData> explicitSource, DirectoryInfo releaseFolder)
         {
             ExplicitSource = explicitSource;
             ExplicitDestination = null;
@@ -32,9 +33,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             _context.CannotHave.Add(typeof(IDataFlowSource<ReleaseData>));
             
             _context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseData>);
-            
 
-            _initObjects = new object[] {_project,_catalogueRepository};
+            _initObjects = new object[] { releaseFolder, _project, _catalogueRepository };
         }
 
         public override object[] GetInitializationObjects()

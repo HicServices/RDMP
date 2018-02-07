@@ -38,7 +38,7 @@ namespace DataExportLibrary.DataRelease
         public DirectoryInfo SourceGlobalFolder { get; set; }
         public DirectoryInfo ReleaseFolder { get; set; }
 
-        public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener)
+        public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener, DirectoryInfo releaseFolder)
         {
             _repository = project.Repository;
             Project = project;
@@ -47,6 +47,8 @@ namespace DataExportLibrary.DataRelease
 
             ReleaseSettings = settings ?? new ReleaseEngineSettings();
             _listener = listener ?? new ToMemoryDataLoadEventListener(false);
+
+            ReleaseFolder = releaseFolder;
         }
 
         public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
@@ -140,16 +142,19 @@ namespace DataExportLibrary.DataRelease
 
         protected virtual DirectoryInfo PrepareAndVerifyReleaseFolder()
         {
-            var folder = GetIntendedReleaseDirectory();
-            Check(new ThrowImmediatelyCheckNotifier());
+            if (ReleaseSettings.CustomReleaseFolder != null &&
+                !String.IsNullOrWhiteSpace(ReleaseSettings.CustomReleaseFolder.FullName))
+            {
+                ReleaseFolder = ReleaseSettings.CustomReleaseFolder;
+            }
 
             if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
-                folder.Create();
+                ReleaseFolder.Create();
             else
                 throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
-                                    folder.FullName);
-        
-            return folder;
+                                    ReleaseFolder.FullName);
+
+            return ReleaseFolder;
         }
 
         protected virtual StreamWriter PrepareAuditFile()
@@ -236,7 +241,7 @@ namespace DataExportLibrary.DataRelease
 
         protected void CleanupExtractionFolders(string extractionDirectory)
         {
-            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(extractionDirectory);
+            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionDirectory.ExtractionSubFolderName));
             var directoriesToDelete = new List<DirectoryInfo>();
             var filesToDelete = new List<FileInfo>();
 
@@ -457,24 +462,19 @@ namespace DataExportLibrary.DataRelease
 
         public void Check(ICheckNotifier notifier)
         {
-            // we are in design mode and the DoRelease has not been called!
-            if (ConfigurationsToRelease == null || !ConfigurationsToRelease.Any())
-                return;
-
-            var folder = GetIntendedReleaseDirectory();
-            if (folder.Exists)
+            if (ReleaseFolder.Exists)
             {
                 if (notifier.OnCheckPerformed(new CheckEventArgs("Release folder exists", CheckResult.Warning, null, "Delete it!")))
                 {
-                    folder.Delete(true);
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Cleaned non-empty existing release folder: " + folder.FullName));
+                    ReleaseFolder.Delete(true);
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Cleaned non-empty existing release folder: " + ReleaseFolder.FullName));
                 }
                 else
                 {
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Intended release directory was existing and I was forbidden to delete it: " +
-                            folder.FullName, CheckResult.Fail));
+                            ReleaseFolder.FullName, CheckResult.Fail));
                 }
             }
         }
