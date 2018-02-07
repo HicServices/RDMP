@@ -30,7 +30,7 @@ namespace RDMPAutomationService.Logic.DQE
         private readonly int _dqeDaysBetweenEvaluations;
         private readonly IDataLoadEventListener _listener;
 
-        public DQERunFinder(CatalogueRepository catalogueRepository, AutomationDQEJobSelectionStrategy strategy, int dqeDaysBetweenEvaluations, IDataLoadEventListener listener = null)
+        public DQERunFinder(CatalogueRepository catalogueRepository, AutomationDQEJobSelectionStrategy strategy, int dqeDaysBetweenEvaluations, IDataLoadEventListener listener)
         {
             _catalogueRepository = catalogueRepository;
             _strategy = strategy;

@@ -20,6 +20,7 @@ using RDMPAutomationService.Logic.DLE;
 using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
@@ -68,7 +69,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             patternArgument.SaveToDatabase();
 
             //The run finder should be suggesting this run - See DLECacheRunFinderTest.cs
-            Assert.AreEqual(lp,new DLERunFinder(CatalogueRepository).SuggestLoadBecauseCacheAvailable());
+            Assert.AreEqual(lp,new DLERunFinder(CatalogueRepository, new ThrowImmediatelyDataLoadEventListener()).SuggestLoadBecauseCacheAvailable());
 
             var hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
 

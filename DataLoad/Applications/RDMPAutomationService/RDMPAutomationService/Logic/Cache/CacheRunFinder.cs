@@ -24,7 +24,7 @@ namespace RDMPAutomationService.Logic.Cache
         private List<CacheProgress> _cacheProgressesAlreadyUnderway;
         private IDataLoadEventListener _listener;
 
-        public CacheRunFinder(ICatalogueRepository catalogueRepository, IDataLoadEventListener listener = null)
+        public CacheRunFinder(ICatalogueRepository catalogueRepository, IDataLoadEventListener listener)
         {
             _catalogueRepository = catalogueRepository;
             _listener = listener;

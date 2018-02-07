@@ -26,7 +26,7 @@ namespace RDMPAutomationServiceTests
         [Test]
         public void TestSuggestCatalogue_NoCatalogues()
         {
-            var finder = new DQERunFinder(CatalogueRepository, AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults,1);
+            var finder = new DQERunFinder(CatalogueRepository, AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults, 1, new ThrowImmediatelyDataLoadEventListener());
             Assert.IsNull(finder.SuggestRun());
         }
 
@@ -57,7 +57,7 @@ namespace RDMPAutomationServiceTests
                 Assert.IsNotNull(cata);
             
                 //finder shouldn't currently be suggesting it because it's validation won't be set
-                var finder = new DQERunFinder(CatalogueRepository, strategy,365);
+                var finder = new DQERunFinder(CatalogueRepository, strategy, 365, new ThrowImmediatelyDataLoadEventListener());
                 Assert.IsNull(finder.SuggestRun());
 
                 testData.SetupValidationOnCatalogue();

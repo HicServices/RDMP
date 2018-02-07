@@ -19,7 +19,7 @@ namespace RDMPAutomationService.Logic.DLE
         private readonly ICatalogueRepository _catalogueRepository;
         private readonly IDataLoadEventListener _listener;
 
-        public DLERunFinder(ICatalogueRepository catalogueRepository, IDataLoadEventListener listener = null)
+        public DLERunFinder(ICatalogueRepository catalogueRepository, IDataLoadEventListener listener)
         {
             _catalogueRepository = catalogueRepository;
             _listener = listener;
