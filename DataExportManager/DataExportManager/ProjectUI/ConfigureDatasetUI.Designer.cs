@@ -36,7 +36,6 @@ namespace DataExportManager.ProjectUI
             this.btnExcludeAll = new System.Windows.Forms.Button();
             this.btnExclude = new System.Windows.Forms.Button();
             this.btnInclude = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.olvAvailable = new BrightIdeasSoftware.ObjectListView();
             this.olvAvailableColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -45,8 +44,6 @@ namespace DataExportManager.ProjectUI
             this.olvSelected = new BrightIdeasSoftware.ObjectListView();
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.lblExtractionInformationDeletedColor = new System.Windows.Forms.Label();
-            this.lblExtractionInformationDeleted = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -106,16 +103,6 @@ namespace DataExportManager.ProjectUI
             this.btnInclude.UseVisualStyleBackColor = true;
             this.btnInclude.Click += new System.EventHandler(this.btnInclude_Click);
             // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(179, 716);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(134, 13);
-            this.label3.TabIndex = 47;
-            this.label3.Text = "(Ctrl+V to paste in headers)";
-            // 
             // splitContainer1
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -135,10 +122,7 @@ namespace DataExportManager.ProjectUI
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.olvSelected);
-            this.splitContainer1.Panel2.Controls.Add(this.lblExtractionInformationDeletedColor);
-            this.splitContainer1.Panel2.Controls.Add(this.lblExtractionInformationDeleted);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
-            this.splitContainer1.Panel2.Controls.Add(this.label3);
             this.splitContainer1.Size = new System.Drawing.Size(755, 738);
             this.splitContainer1.SplitterDistance = 421;
             this.splitContainer1.TabIndex = 52;
@@ -154,6 +138,8 @@ namespace DataExportManager.ProjectUI
             this.olvAvailableColumnName});
             this.olvAvailable.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvAvailable.FullRowSelect = true;
+            this.olvAvailable.HideSelection = false;
+            this.olvAvailable.IsSimpleDragSource = true;
             this.olvAvailable.Location = new System.Drawing.Point(6, 16);
             this.olvAvailable.Name = "olvAvailable";
             this.olvAvailable.RowHeight = 19;
@@ -186,6 +172,7 @@ namespace DataExportManager.ProjectUI
             this.btnSelectCore.TabIndex = 46;
             this.btnSelectCore.Text = "Select Core";
             this.btnSelectCore.UseVisualStyleBackColor = true;
+            this.btnSelectCore.Click += new System.EventHandler(this.btnSelectCore_Click);
             // 
             // olvSelected
             // 
@@ -199,15 +186,20 @@ namespace DataExportManager.ProjectUI
             this.olvSelectedColumnOrder});
             this.olvSelected.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvSelected.FullRowSelect = true;
+            this.olvSelected.HideSelection = false;
+            this.olvSelected.IsSimpleDragSource = true;
+            this.olvSelected.IsSimpleDropSink = true;
             this.olvSelected.Location = new System.Drawing.Point(6, 16);
             this.olvSelected.Name = "olvSelected";
             this.olvSelected.RowHeight = 19;
             this.olvSelected.ShowGroups = false;
-            this.olvSelected.Size = new System.Drawing.Size(317, 697);
+            this.olvSelected.Size = new System.Drawing.Size(317, 715);
             this.olvSelected.TabIndex = 154;
             this.olvSelected.Text = "label14";
             this.olvSelected.UseCompatibleStateImageBehavior = false;
             this.olvSelected.View = System.Windows.Forms.View.Details;
+            this.olvSelected.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelCanDrop);
+            this.olvSelected.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelDropped);
             // 
             // olvSelectedColumnName
             // 
@@ -220,26 +212,6 @@ namespace DataExportManager.ProjectUI
             // 
             this.olvSelectedColumnOrder.AspectName = "Order";
             this.olvSelectedColumnOrder.Text = "Order";
-            // 
-            // lblExtractionInformationDeletedColor
-            // 
-            this.lblExtractionInformationDeletedColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblExtractionInformationDeletedColor.BackColor = System.Drawing.Color.Red;
-            this.lblExtractionInformationDeletedColor.ForeColor = System.Drawing.Color.Red;
-            this.lblExtractionInformationDeletedColor.Location = new System.Drawing.Point(5, 719);
-            this.lblExtractionInformationDeletedColor.Name = "lblExtractionInformationDeletedColor";
-            this.lblExtractionInformationDeletedColor.Size = new System.Drawing.Size(10, 10);
-            this.lblExtractionInformationDeletedColor.TabIndex = 152;
-            // 
-            // lblExtractionInformationDeleted
-            // 
-            this.lblExtractionInformationDeleted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblExtractionInformationDeleted.AutoSize = true;
-            this.lblExtractionInformationDeleted.Location = new System.Drawing.Point(21, 718);
-            this.lblExtractionInformationDeleted.Name = "lblExtractionInformationDeleted";
-            this.lblExtractionInformationDeleted.Size = new System.Drawing.Size(122, 13);
-            this.lblExtractionInformationDeleted.TabIndex = 153;
-            this.lblExtractionInformationDeleted.Text = "Catalogue Entry Deleted";
             // 
             // ConfigureDatasetUI
             // 
@@ -267,11 +239,8 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.Button btnExcludeAll;
         private System.Windows.Forms.Button btnExclude;
         private System.Windows.Forms.Button btnInclude;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnSelectCore;
-        private System.Windows.Forms.Label lblExtractionInformationDeleted;
-        private System.Windows.Forms.Label lblExtractionInformationDeletedColor;
         private ObjectListView olvAvailable;
         private ObjectListView olvSelected;
         private OLVColumn olvAvailableColumnName;

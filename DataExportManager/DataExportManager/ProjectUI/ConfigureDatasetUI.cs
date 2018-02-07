@@ -5,7 +5,9 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager;
@@ -58,8 +60,22 @@ namespace DataExportManager.ProjectUI
             olvAvailableColumnName.ImageGetter += ImageGetter;
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
+
             
-            olvSelected.Sort(olvSelectedColumnOrder,SortOrder.Ascending);
+
+            var dropSink = (SimpleDropSink) olvSelected.DropSink;
+            
+            dropSink.CanDropOnItem = false;
+            dropSink.CanDropBetween = true;
+        }
+
+        private void SortSelectedByOrder()
+        {
+            //user cannot sort columns
+            olvSelectedColumnName.Sortable = false;
+            olvSelectedColumnOrder.Sortable = true;
+            olvSelected.Sort(olvSelectedColumnOrder, SortOrder.Ascending);
+            olvSelectedColumnOrder.Sortable = false;
         }
 
         private object ImageGetter(object rowObject)
@@ -225,6 +241,8 @@ namespace DataExportManager.ProjectUI
             
             SetupUserInterface();
 
+            SortSelectedByOrder();
+
         }
 
         public override string GetTabName()
@@ -238,6 +256,103 @@ namespace DataExportManager.ProjectUI
 
             if(_activator.CommandExecutionFactory.CanActivate(o))
                 _activator.CommandExecutionFactory.Activate(o);
+        }
+
+        private void olvSelected_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+            
+            //dragging within our own control
+            if (e.SourceListView == olvSelected)
+            {
+                //only allow drag of one object
+                if (e.SourceModels == null || e.SourceModels.Count != 1)
+                    return;
+
+                e.Effect = DragDropEffects.Move;
+            }
+
+            //allow dragging multiple from the left hand side though
+            if (e.SourceListView == olvAvailable)
+            {
+                e.Effect = DragDropEffects.Move;
+
+            }
+        }
+
+        private void olvSelected_ModelDropped(object sender, ModelDropEventArgs e)
+        {
+            if (e.SourceListView == olvSelected)
+                HandleReorder(e);
+
+            if (e.SourceListView == olvAvailable)
+                HandleDropAdding(e);
+        }
+
+        private void HandleDropAdding(ModelDropEventArgs e)
+        {
+            if (e.SourceModels != null)
+                foreach (var sourceModel in e.SourceModels.OfType<IColumn>())
+                    if (!IsAlreadySelected(sourceModel)) 
+                        AddColumnToExtraction(sourceModel);
+
+            RefreshDisabledObjectStatus();
+        }
+
+        private void HandleReorder(ModelDropEventArgs e)
+        {
+            if (e.SourceModels == null || e.SourceModels.Count != 1)
+                return;
+
+            var sourceColumn = (ConcreteColumn) e.SourceModels[0];
+
+            var targetOrderable = (IOrderable) e.TargetModel;
+
+            int destinationOrder = targetOrderable.Order;
+
+            switch (e.DropTargetLocation)
+            {
+                case DropTargetLocation.AboveItem:
+
+                    //bump down the other columns
+                    foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
+                        if (c.Order >= destinationOrder && !Equals(c, sourceColumn))
+                        {
+                            c.Order++;
+                            c.SaveToDatabase();
+                        }
+
+                    //should now be space at the destination order position
+                    sourceColumn.Order = destinationOrder;
+                    break;
+                case DropTargetLocation.BelowItem:
+
+                    //bump up other columns
+                    foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
+                        if (c.Order <= destinationOrder && !Equals(c, sourceColumn))
+                        {
+                            c.Order--;
+                            c.SaveToDatabase();
+                        }
+
+                    sourceColumn.Order = destinationOrder;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            sourceColumn.SaveToDatabase();
+
+            olvSelected.RefreshObjects(olvSelected.Objects.OfType<object>().ToArray());
+
+            SortSelectedByOrder();
+        }
+
+        private void btnSelectCore_Click(object sender, EventArgs e)
+        {
+            olvAvailable.SelectObjects(
+                olvAvailable.Objects.OfType<ExtractionInformation>()
+                .Where(ei => ei.ExtractionCategory == ExtractionCategory.Core).ToArray());
         }
     }
 
