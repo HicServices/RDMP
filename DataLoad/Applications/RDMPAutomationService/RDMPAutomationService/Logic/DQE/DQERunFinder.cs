@@ -190,10 +190,11 @@ namespace RDMPAutomationService.Logic.DQE
             var checker = new ToMemoryCheckNotifier();
             report.Check(checker);
 
-            foreach (var check in checker.Messages)
-            {
-                _listener.OnNotify(this, check.ToNotifyEventArgs());
-            }
+            if (_listener != null)
+                foreach (var check in checker.Messages)
+                {
+                    _listener.OnNotify(this, check.ToNotifyEventArgs());
+                }
 
             return checker.GetWorst() != CheckResult.Fail;
         }
