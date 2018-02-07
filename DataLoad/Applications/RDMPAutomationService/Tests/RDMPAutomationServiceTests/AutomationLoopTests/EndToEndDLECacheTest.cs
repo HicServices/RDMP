@@ -69,7 +69,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             patternArgument.SaveToDatabase();
 
             //The run finder should be suggesting this run - See DLECacheRunFinderTest.cs
-            Assert.AreEqual(lp,new DLERunFinder(CatalogueRepository, new ThrowImmediatelyDataLoadEventListener()).SuggestLoadBecauseCacheAvailable());
+            Assert.AreEqual(lp, new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestLoadBecauseCacheAvailable());
 
             var hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
 

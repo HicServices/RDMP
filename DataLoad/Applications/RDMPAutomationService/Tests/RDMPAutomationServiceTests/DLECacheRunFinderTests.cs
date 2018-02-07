@@ -19,7 +19,7 @@ namespace RDMPAutomationServiceTests
         [Test]
         public void SuggestLoadMetadata_NoneExist()
         {
-            DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ThrowImmediatelyDataLoadEventListener());
+            DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
             Assert.IsNull(finder.SuggestLoadBecauseCacheAvailable());
         }
 
@@ -52,7 +52,7 @@ namespace RDMPAutomationServiceTests
 
             try
             {
-                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ThrowImmediatelyDataLoadEventListener());
+                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
 
                 //No catalogues
                 Assert.IsNull(finder.SuggestLoadBecauseCacheAvailable());
@@ -103,7 +103,7 @@ namespace RDMPAutomationServiceTests
 
             try
             {
-                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ThrowImmediatelyDataLoadEventListener());
+                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
                 //Shouldnt be any remnant suggestions
                 Assert.IsNull(finder.SuggestLoadBecauseCacheAvailable());
                 
