@@ -32,10 +32,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checksUIIconOnly1 = new ReusableUIComponents.ChecksUI.ChecksUIIconOnly();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cbxInsertColumnName = new ReusableUIComponents.SuggestComboBox();
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.cbIsMandatory = new System.Windows.Forms.CheckBox();
             this.tbFilterName = new System.Windows.Forms.TextBox();
@@ -44,63 +41,19 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterDescription = new System.Windows.Forms.TextBox();
             this.lblWhere = new System.Windows.Forms.Label();
             this.pQueryEditor = new System.Windows.Forms.Panel();
-            this.parameterCollectionUI1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterCollectionUI();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
             this.btnParametersExpand = new System.Windows.Forms.Button();
             this.lblParams = new System.Windows.Forms.Label();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.parameterCollectionUI1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterCollectionUI();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox2.Controls.Add(this.checksUIIconOnly1);
-            this.groupBox2.Location = new System.Drawing.Point(4, 776);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(60, 50);
-            this.groupBox2.TabIndex = 8;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Checks";
-            // 
-            // checksUIIconOnly1
-            // 
-            this.checksUIIconOnly1.Location = new System.Drawing.Point(12, 15);
-            this.checksUIIconOnly1.Name = "checksUIIconOnly1";
-            this.checksUIIconOnly1.Size = new System.Drawing.Size(32, 32);
-            this.checksUIIconOnly1.TabIndex = 0;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.cbxInsertColumnName);
-            this.groupBox1.Location = new System.Drawing.Point(166, 798);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(900, 38);
-            this.groupBox1.TabIndex = 10;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Insert Column Name";
-            this.groupBox1.Visible = false;
-            // 
-            // cbxInsertColumnName
-            // 
-            this.cbxInsertColumnName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.cbxInsertColumnName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbxInsertColumnName.FilterRule = null;
-            this.cbxInsertColumnName.FormattingEnabled = true;
-            this.cbxInsertColumnName.Location = new System.Drawing.Point(3, 16);
-            this.cbxInsertColumnName.Name = "cbxInsertColumnName";
-            this.cbxInsertColumnName.PropertySelector = null;
-            this.cbxInsertColumnName.Size = new System.Drawing.Size(894, 21);
-            this.cbxInsertColumnName.SuggestBoxHeight = 96;
-            this.cbxInsertColumnName.SuggestListOrderRule = null;
-            this.cbxInsertColumnName.TabIndex = 0;
             // 
             // label1
             // 
@@ -113,13 +66,14 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             // cbIsMandatory
             // 
-            this.cbIsMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbIsMandatory.AutoSize = true;
-            this.cbIsMandatory.Location = new System.Drawing.Point(76, 819);
+            this.cbIsMandatory.Location = new System.Drawing.Point(0, 394);
             this.cbIsMandatory.Name = "cbIsMandatory";
             this.cbIsMandatory.Size = new System.Drawing.Size(84, 17);
             this.cbIsMandatory.TabIndex = 9;
             this.cbIsMandatory.Text = "IsMandatory";
+            this.toolTip1.SetToolTip(this.cbIsMandatory, "Mandatory filters are automatically added to ExtractionConfigurations and Cohort " +
+        "Identification Queries when the parent dataset is selected");
             this.cbIsMandatory.UseVisualStyleBackColor = true;
             this.cbIsMandatory.CheckedChanged += new System.EventHandler(this.cbIsMandatory_CheckedChanged);
             // 
@@ -135,13 +89,14 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             // btnPublishToCatalogue
             // 
-            this.btnPublishToCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPublishToCatalogue.Enabled = false;
-            this.btnPublishToCatalogue.Location = new System.Drawing.Point(1072, 819);
+            this.btnPublishToCatalogue.Location = new System.Drawing.Point(11, 417);
             this.btnPublishToCatalogue.Name = "btnPublishToCatalogue";
-            this.btnPublishToCatalogue.Size = new System.Drawing.Size(118, 23);
+            this.btnPublishToCatalogue.Size = new System.Drawing.Size(56, 23);
             this.btnPublishToCatalogue.TabIndex = 11;
-            this.btnPublishToCatalogue.Text = "Publish To Catalogue";
+            this.btnPublishToCatalogue.Text = "Publish";
+            this.toolTip1.SetToolTip(this.btnPublishToCatalogue, "Filters declared at data export / cohort identification can be elevated (as a cop" +
+        "y) to Catalogue level which makes them reusable  in other configurations.");
             this.btnPublishToCatalogue.UseVisualStyleBackColor = true;
             this.btnPublishToCatalogue.Click += new System.EventHandler(this.btnPublishToCatalogue_Click);
             // 
@@ -162,7 +117,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterDescription.Location = new System.Drawing.Point(76, 28);
             this.tbFilterDescription.Multiline = true;
             this.tbFilterDescription.Name = "tbFilterDescription";
-            this.tbFilterDescription.Size = new System.Drawing.Size(1195, 96);
+            this.tbFilterDescription.Size = new System.Drawing.Size(1195, 93);
             this.tbFilterDescription.TabIndex = 3;
             this.tbFilterDescription.TextChanged += new System.EventHandler(this.tbFilterDescription_TextChanged);
             // 
@@ -179,19 +134,13 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             // pQueryEditor
             // 
-            this.pQueryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pQueryEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pQueryEditor.Location = new System.Drawing.Point(0, 0);
             this.pQueryEditor.Name = "pQueryEditor";
-            this.pQueryEditor.Size = new System.Drawing.Size(1195, 290);
+            this.pQueryEditor.Size = new System.Drawing.Size(1195, 284);
             this.pQueryEditor.TabIndex = 0;
-            // 
-            // parameterCollectionUI1
-            // 
-            this.parameterCollectionUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.parameterCollectionUI1.Location = new System.Drawing.Point(0, 0);
-            this.parameterCollectionUI1.Name = "parameterCollectionUI1";
-            this.parameterCollectionUI1.Size = new System.Drawing.Size(1195, 368);
-            this.parameterCollectionUI1.TabIndex = 0;
             // 
             // splitContainer1
             // 
@@ -204,18 +153,27 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.autocompleteReminder);
             this.splitContainer1.Panel1.Controls.Add(this.pQueryEditor);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.parameterCollectionUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(1195, 662);
-            this.splitContainer1.SplitterDistance = 290;
+            this.splitContainer1.Size = new System.Drawing.Size(1195, 716);
+            this.splitContainer1.SplitterDistance = 313;
             this.splitContainer1.TabIndex = 26;
+            // 
+            // autocompleteReminder
+            // 
+            this.autocompleteReminder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.autocompleteReminder.Location = new System.Drawing.Point(3, 290);
+            this.autocompleteReminder.Name = "autocompleteReminder";
+            this.autocompleteReminder.Size = new System.Drawing.Size(10, 20);
+            this.autocompleteReminder.TabIndex = 27;
             // 
             // btnParametersExpand
             // 
-            this.btnParametersExpand.Location = new System.Drawing.Point(53, 423);
+            this.btnParametersExpand.Location = new System.Drawing.Point(56, 451);
             this.btnParametersExpand.Name = "btnParametersExpand";
             this.btnParametersExpand.Size = new System.Drawing.Size(17, 23);
             this.btnParametersExpand.TabIndex = 7;
@@ -228,11 +186,21 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.lblParams.AutoSize = true;
             this.lblParams.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblParams.ForeColor = System.Drawing.Color.Blue;
-            this.lblParams.Location = new System.Drawing.Point(0, 428);
+            this.lblParams.Location = new System.Drawing.Point(3, 456);
             this.lblParams.Name = "lblParams";
             this.lblParams.Size = new System.Drawing.Size(48, 13);
             this.lblParams.TabIndex = 6;
             this.lblParams.Text = "Params";
+            // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragSmiley1.Location = new System.Drawing.Point(39, 146);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 27;
             // 
             // objectSaverButton1
             // 
@@ -242,15 +210,22 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
             this.objectSaverButton1.TabIndex = 4;
             // 
+            // parameterCollectionUI1
+            // 
+            this.parameterCollectionUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.parameterCollectionUI1.Location = new System.Drawing.Point(0, 0);
+            this.parameterCollectionUI1.Name = "parameterCollectionUI1";
+            this.parameterCollectionUI1.Size = new System.Drawing.Size(1195, 399);
+            this.parameterCollectionUI1.TabIndex = 0;
+            // 
             // ExtractionFilterUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.btnParametersExpand);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbIsMandatory);
             this.Controls.Add(this.tbFilterName);
@@ -262,8 +237,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.Name = "ExtractionFilterUI";
             this.Size = new System.Drawing.Size(1274, 849);
             this.SizeChanged += new System.EventHandler(this.ExtractionFilterUI_SizeChanged);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -275,10 +248,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox2;
-        private ReusableUIComponents.ChecksUI.ChecksUIIconOnly checksUIIconOnly1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private SuggestComboBox cbxInsertColumnName;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbIsMandatory;
         private System.Windows.Forms.TextBox tbFilterName;
@@ -292,6 +261,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         private System.Windows.Forms.Button btnParametersExpand;
         private System.Windows.Forms.Label lblParams;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private KeyboardReminder autocompleteReminder;
+        private RAGSmiley ragSmiley1;
+        private System.Windows.Forms.ToolTip toolTip1;
 
     }
 }
