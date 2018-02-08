@@ -54,9 +54,7 @@ namespace CatalogueManager.Collections
         public CopyPasteProvider CopyPasteProvider { get; private set; }
         public FavouriteColumnProvider FavouriteColumnProvider { get; private set; }
         public TreeNodeParentFinder ParentFinder { get; private set; }
-
-        public IProblemProvider ProblemProvider { get; set; }
-
+        
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         
         public OLVColumn FavouriteColumn { get; private set; }
@@ -157,12 +155,12 @@ namespace CatalogueManager.Collections
 
         private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
         {
-            return ProblemProvider != null ? ProblemProvider.DescribeProblem(modelObject) :null;
+            return  _activator.DescribeProblemIfAny(modelObject);
         }
 
         void Tree_FormatRow(object sender, FormatRowEventArgs e)
         {
-            e.Item.ForeColor = ProblemProvider != null && ProblemProvider.HasProblem(e.Model)? Color.Red : Color.Black;
+            e.Item.ForeColor = _activator.HasProblem(e.Model) ? Color.Red : Color.Black;
         }
 
         private TreeListView.Tree TreeFactory(TreeListView view)
@@ -273,7 +271,7 @@ namespace CatalogueManager.Collections
 
         private object ImageGetter(object rowObject)
         {
-            bool hasProblems = ProblemProvider != null && ProblemProvider.HasProblem(rowObject);
+            bool hasProblems = _activator.HasProblem(rowObject);
             
             return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None);
         }
@@ -372,9 +370,6 @@ namespace CatalogueManager.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            if(ProblemProvider != null)
-                ProblemProvider.RefreshProblems(_activator.CoreChildProvider);
-            
             OnRefreshChildProvider(_activator.CoreChildProvider);
             
             //now tell tree view to refresh the object

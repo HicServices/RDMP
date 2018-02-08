@@ -59,7 +59,7 @@ namespace CatalogueLibrary.Providers
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
         private Dictionary<object, DescendancyList> _descendancyDictionary = new Dictionary<object, DescendancyList>();
 
-        private CatalogueItem[] _allCatalogueItems;
+        public CatalogueItem[] AllCatalogueItems { get; private set; }
         private Dictionary<int,ColumnInfo> _allColumnInfos;
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         
@@ -103,6 +103,11 @@ namespace CatalogueLibrary.Providers
         public AnyTableSqlParameter[] AllAnyTableParameters;
 
         //Filter / extraction side of things
+
+        public IEnumerable<ExtractionInformation> AllExtractionInformations { get
+        {
+            return _allExtractionInformations.Values;
+        } }
 
         private Dictionary<int,ExtractionInformation> _allExtractionInformations;
 
@@ -157,7 +162,7 @@ namespace CatalogueLibrary.Providers
 
             AllCohortIdentificationConfigurations = repository.GetAllObjects<CohortIdentificationConfiguration>();
             
-            _allCatalogueItems = repository.GetAllObjects<CatalogueItem>();
+            AllCatalogueItems = repository.GetAllObjects<CatalogueItem>();
             _allColumnInfos = repository.GetAllObjects<ColumnInfo>().ToDictionary(i=>i.ID,o=>o);
             _allExtractionInformations = repository.GetAllObjects<ExtractionInformation>().ToDictionary(i => i.ID, o => o);
 
@@ -497,7 +502,7 @@ namespace CatalogueLibrary.Providers
                     AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
             }
             
-            var cis = _allCatalogueItems
+            var cis = AllCatalogueItems
                 .Where(ci => ci.Catalogue_ID == c.ID).OrderBy(ci2=>
                     //order them by the Order field in the classification (extraction) where not extractable columns (Order is null) appear afterwards and finally unclassified CatalogueItems (really shouldn't happen) appear last
                     CatalogueItemClassifications.ContainsKey(ci2.ID) ? CatalogueItemClassifications[ci2.ID].Order ?? 99999 : 999999)

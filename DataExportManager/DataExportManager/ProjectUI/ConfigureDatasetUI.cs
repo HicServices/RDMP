@@ -142,8 +142,6 @@ namespace DataExportManager.ProjectUI
                 {
                     foreach (var cohortCustomColumn in cohort.CustomCohortColumns)
                         if (
-                            !IsAlreadySelected(cohortCustomColumn) &&
-
                             //if the column has the same name as CHI (or whatever the private field is then don't add it)
                             !cohortCustomColumn.GetRuntimeName().ToLower().EndsWith(cohort.GetPrivateIdentifier(true).ToLower())
                             )
@@ -199,6 +197,7 @@ namespace DataExportManager.ProjectUI
             olvSelected.AddObject(addMe);
 
             RefreshDisabledObjectStatus();
+            SortSelectedByOrder();
         }
         
         private void btnInclude_Click(object sender, EventArgs e)
@@ -232,6 +231,7 @@ namespace DataExportManager.ProjectUI
             }
 
             RefreshDisabledObjectStatus();
+            SortSelectedByOrder();
         }
 
         public override void SetDatabaseObject(IActivateItems activator, SelectedDataSets databaseObject)

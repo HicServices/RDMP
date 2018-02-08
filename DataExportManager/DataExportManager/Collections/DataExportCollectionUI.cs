@@ -116,8 +116,6 @@ namespace DataExportManager.Collections
                 new ExecuteCommandCreateNewExtractableDataSetPackage(activator)
             };
 
-            CommonFunctionality.ProblemProvider =  new DataExportProblemProvider(activator.CoreChildProvider);
-
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             CommonFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};

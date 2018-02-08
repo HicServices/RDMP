@@ -34,6 +34,7 @@ namespace CatalogueLibrary.Providers
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
         PermissionWindow[] AllPermissionWindows { get;}
+        CatalogueItem[] AllCatalogueItems { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
@@ -43,6 +44,7 @@ namespace CatalogueLibrary.Providers
 
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);
+        IEnumerable<ExtractionInformation> AllExtractionInformations { get; }
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
     }
