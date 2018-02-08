@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.DataLoad;
 using NUnit.Framework;
 using RDMPAutomationService.Logic.DLE;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace RDMPAutomationServiceTests
@@ -17,7 +18,7 @@ namespace RDMPAutomationServiceTests
         [Test]
         public void SuggestLoadMetadata_NoneExist()
         {
-            DLERunFinder finder = new DLERunFinder(CatalogueRepository);
+            DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
             Assert.IsNull(finder.SuggestLoad());
         }
 
@@ -28,7 +29,7 @@ namespace RDMPAutomationServiceTests
             var periodically = new LoadPeriodically(CatalogueRepository, lmd, 1);
             try
             {
-                DLERunFinder finder = new DLERunFinder(CatalogueRepository);
+                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
                 Assert.IsNull(finder.SuggestLoad());
             }
             finally
@@ -55,7 +56,7 @@ namespace RDMPAutomationServiceTests
             job.LockCatalogues(new []{cata});
             try
             {
-                DLERunFinder finder = new DLERunFinder(CatalogueRepository);
+                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
                 Assert.IsNull(finder.SuggestLoad());
             }
             finally
@@ -123,7 +124,7 @@ namespace RDMPAutomationServiceTests
 
             try
             {
-                DLERunFinder finder = new DLERunFinder(CatalogueRepository);
+                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
                 Assert.AreEqual(periodically,finder.SuggestLoad());
             }
             finally
@@ -174,7 +175,7 @@ namespace RDMPAutomationServiceTests
                 Assert.IsFalse(periodically.IsLoadDue(null));
                 Assert.IsTrue(periodically2.IsLoadDue(null));
 
-                DLERunFinder finder = new DLERunFinder(CatalogueRepository);
+                DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
                 Assert.AreEqual(periodically2, finder.SuggestLoad());
             }
             finally

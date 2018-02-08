@@ -17,11 +17,14 @@ namespace RDMPAutomationService.Pipeline.Sources
     {
         private AutomationServiceSlot _serviceSlot;
         private DLERunFinder _dleRunFinder;
+        private IDataLoadEventListener _listener;
 
         public OnGoingAutomationTask GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if (_serviceSlot.IsAcceptingNewJobs(AutomationJobType.DLE))
             {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Slot is accepting new DLE jobs... let's find one."));
+                
                 LoadPeriodically periodicallyWeCanRun = _dleRunFinder.SuggestLoad();
 
                 //if a run was suggested,set it up
@@ -29,14 +32,12 @@ namespace RDMPAutomationService.Pipeline.Sources
                 {
                     string msg = "Started Loading Periodic ID=" + periodicallyWeCanRun.ID + " (LoadMetadata ID=" +periodicallyWeCanRun.LoadMetadata_ID + ")";
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, msg));
-                    Console.WriteLine(msg);
-
+                    
                     var toReturn = new AutomatedDLELoad(_serviceSlot, periodicallyWeCanRun).GetTask();
 
                     msg = "Automation Job ID is " + toReturn.Job.ID;
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, msg));
-                    Console.WriteLine(msg);
-
+                    
                     return toReturn;
                 }
                 else
@@ -49,20 +50,17 @@ namespace RDMPAutomationService.Pipeline.Sources
 
                     string msg = "Started cache based load ID = " + cacheBasedLoadWeCanRun.ID;
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, msg));
-                    Console.WriteLine(msg);
-
-
+                    
                     var toReturn = new AutomatedDLELoadFromCache(_serviceSlot, cacheBasedLoadWeCanRun).GetTask();
 
                     msg = "Automation Job ID is " + toReturn.Job.ID;
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, msg));
-                    Console.WriteLine(msg);
-
+                    
                     return toReturn;
                 }
-
             }
 
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Slot is not accepting any new DLE jobs..."));
             return null;
         }
 
@@ -82,7 +80,8 @@ namespace RDMPAutomationService.Pipeline.Sources
         public void PreInitialize(AutomationServiceSlot value, IDataLoadEventListener listener)
         {
             _serviceSlot = value;
-            _dleRunFinder = new DLERunFinder((ICatalogueRepository) _serviceSlot.Repository);
+            _listener = listener;
+            _dleRunFinder = new DLERunFinder((ICatalogueRepository) _serviceSlot.Repository, _listener);
 
         }
     }

@@ -281,7 +281,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
             if (value == 0)
             {
-                before = 0;
+                before = 1;
                 after = 0;
                 return;
             }

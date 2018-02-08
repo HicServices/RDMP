@@ -75,7 +75,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private CancellationTokenSource _lastCancellationToken;
         private AutoCompleteProvider _autoCompleteProvider;
         private Type[] _types;
-        private string[] _typeNames;
+        private HashSet<string> _typeNames;
 
         /// <summary>
         /// Object types that appear in the task bar as filterable types
@@ -166,7 +166,13 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             DoubleBuffered = true;
             
             _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
-            _typeNames = _types.Select(t => t.Name).ToArray();
+            _typeNames = new HashSet<string>(_types.Select(t => t.Name));
+
+            foreach (Type t in StartingEasyFilters.SelectMany(v=>v.Value))
+            {
+                if (!_typeNames.Contains(t.Name))
+                    _typeNames.Add(t.Name);
+            }
 
             _autoCompleteProvider = new AutoCompleteProvider(_activator);
             foreach (Type t in _types)

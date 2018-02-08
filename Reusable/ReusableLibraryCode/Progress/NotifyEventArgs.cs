@@ -31,6 +31,7 @@ namespace ReusableLibraryCode.Progress
                 //Stack trace not available ah well
             }
         }
+
         public NotifyEventArgs(ProgressEventType progressEventType, string message,  Exception exception)
         {
             ProgressEventType = progressEventType;
@@ -52,6 +53,10 @@ namespace ReusableLibraryCode.Progress
             CheckResult result;
             switch (ProgressEventType)
             {
+                case ProgressEventType.Trace:
+                case ProgressEventType.Debug:
+                    result = CheckResult.Success;
+                    break;
                 case ProgressEventType.Information:
                     result = CheckResult.Success;
                     break;

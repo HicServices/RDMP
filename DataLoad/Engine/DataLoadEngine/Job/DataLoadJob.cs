@@ -152,6 +152,9 @@ namespace DataLoadEngine.Job
             if(DataLoadInfo != null)
                 switch (e.ProgressEventType)
                 {
+                    case ProgressEventType.Trace:
+                    case ProgressEventType.Debug:
+                        break;
                     case ProgressEventType.Information:
                         _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : ""));
                         break;

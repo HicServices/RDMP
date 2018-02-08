@@ -123,15 +123,19 @@ namespace RDMPAutomationService
 
                 pollTask.Start();
 
+                var waitTime = 1000;
+
                 //while it is not the case that we are told to stop and can stop
                 while (!(Stop && AutomationDestination.CanStop()))
                 {
-                    //Check for new tasks, if it takes less than 30 minutes chill out till 30 minutes have passed
+                    //Check for new tasks, if nothing fails throttle up and run the next batch at increased intervals
                     if (!Stop)
                     {
                         try
                         {
-                            _collection.ExecuteAll(1000);
+                            _collection.ExecuteAll(waitTime);
+                            if (waitTime <= 300000) // max 10 minutes yo!
+                                waitTime *= 2;
                         }
                         catch (Exception e)
                         {
@@ -151,6 +155,7 @@ namespace RDMPAutomationService
                                 "Pipeline execution failed: \r\n" + 
                                 String.Join("\r\n----\r\n", messages) +
                                 "\r\n\r\nWill retry...");
+                            waitTime = 1000;
                         }
                     }
 

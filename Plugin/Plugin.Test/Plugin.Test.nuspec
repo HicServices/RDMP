@@ -38,6 +38,5 @@
     </metadata>
     <files>
         <file src="..\..\Tests.Common\TestDatabases.txt" target="content" />
-        <file src="..\..\libs\RoundhousE\*.dll" target="lib\net45" />
     </files>
 </package>

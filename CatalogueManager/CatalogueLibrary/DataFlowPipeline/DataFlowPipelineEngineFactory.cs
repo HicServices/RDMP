@@ -55,7 +55,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             var source = GetBest(ExplicitSource, CreateSourceIfExists(pipeline),"source");
             
             //engine (this is the source, target is the destination)
-            DataFlowPipelineEngine<T> dataFlowEngine = new DataFlowPipelineEngine<T>(_context, source, destination, listener);
+            DataFlowPipelineEngine<T> dataFlowEngine = new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
 
             //now go fetch everything that the user has configured for this particular pipeline
             foreach (PipelineComponent toBuild in pipeline.PipelineComponents)

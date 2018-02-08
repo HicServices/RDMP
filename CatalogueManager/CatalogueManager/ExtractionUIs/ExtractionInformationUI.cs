@@ -62,7 +62,7 @@ namespace CatalogueManager.ExtractionUIs
     ///
     /// 
     /// </summary>
-    public partial class ExtractionInformationUI : ExtractionInformationUI_Design, IConsultableBeforeClosing, ISaveableUI
+    public partial class ExtractionInformationUI : ExtractionInformationUI_Design, ISaveableUI
     {
         public ExtractionInformation ExtractionInformation { get; private set; }
         
@@ -257,7 +257,7 @@ namespace CatalogueManager.ExtractionUIs
             }
         }
         
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = false;
 
