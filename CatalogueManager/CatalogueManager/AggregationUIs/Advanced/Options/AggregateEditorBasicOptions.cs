@@ -71,7 +71,8 @@ namespace CatalogueManager.AggregationUIs.Advanced.Options
         public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
         {
             var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-                .Select(e => e.ColumnInfo.TableInfo)
+                .Select(e => e.ColumnInfo != null? e.ColumnInfo.TableInfo:null)
+                .Where( t=> t != null)
                 .Distinct();
 
             var implicitJoins =
