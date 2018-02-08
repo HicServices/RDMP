@@ -278,6 +278,12 @@
       <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="IKnowIfImHostedByVisualStudio.cs" />
+    <Compile Include="KeyboardReminder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KeyboardReminder.Designer.cs">
+      <DependentUpon>KeyboardReminder.cs</DependentUpon>
+    </Compile>
     <Compile Include="KeywordHelpTextListbox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -463,6 +469,9 @@
       <LastGenOutput>Images.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="KeyboardReminder.resx">
+      <DependentUpon>KeyboardReminder.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="KeywordHelpTextListbox.resx">
       <DependentUpon>KeywordHelpTextListbox.cs</DependentUpon>
     </EmbeddedResource>
@@ -555,6 +564,8 @@
     <None Include="Resources\exclamation.png" />
     <None Include="Resources\Blocked.png" />
     <None Include="Resources\Tick.png" />
+    <None Include="Images\KeyboardKeySpace.png" />
+    <None Include="Images\KeyboardKey.png" />
     <Content Include="Pencil.cur">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

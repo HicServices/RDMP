@@ -70,9 +70,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                 btnPublishToCatalogue.Enabled = !(value is ExtractionFilter) && Catalogue != null;
 
                 RunChecksIfFilterIsICheckable();
-
-                cbxInsertColumnName.Enabled = true;
-
+                
                 RefreshParameters();
             }
         }
@@ -107,6 +105,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             
             objectSaverButton1.BeforeSave += BeforeSave;
             objectSaverButton1.AfterSave += AfterSave;
+
+            autocompleteReminder.Setup("Show Objects",Keys.Control,Keys.Space);
         }
 
         void QueryEditor_TextChanged(object sender, EventArgs e)
@@ -244,7 +244,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             var checkable = ExtractionFilter as ICheckable;
 
             if (checkable != null)
-                checksUIIconOnly1.Check(checkable);
+                ragSmiley1.StartChecking(checkable);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
@@ -273,36 +273,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             }
         }
         
-        /// <summary>
-        /// Sets the list of columns (SQL) that are available for selection in the filter UI
-        /// </summary>
-        /// <param name="cols"></param>
-        public void SetInsertColumnCollection(IColumn[] cols)
-        {
-            if (cols != null)
-            {
-                groupBox1.Visible = true;
-                cbxInsertColumnName.Items.Clear();
-
-                foreach (IColumn col in cols)
-                {
-                    if(col.Alias != null)
-                        cbxInsertColumnName.Items.Add(col.ToString());
-                    else
-                    {
-                        string selectSql;
-                        string embeddedAlias;
-
-                        _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.SelectSQL, out selectSql, out embeddedAlias);
-                        cbxInsertColumnName.Items.Add(embeddedAlias ?? selectSql);   
-                    }
-                }
-            }
-            else
-            {
-                groupBox1.Visible = false;
-            }
-        }
 
         /// <summary>
         /// Used for publishing IFilters created here back to the main Catalogue

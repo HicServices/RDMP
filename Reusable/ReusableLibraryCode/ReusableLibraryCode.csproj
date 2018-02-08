@@ -357,6 +357,7 @@
     <Compile Include="CommandExecution\ICommand.cs" />
     <Compile Include="CommandExecution\ICommandExecution.cs" />
     <Compile Include="CommandExecution\ICommandSource.cs" />
+    <Compile Include="CommandExecution\ImpossibleCommand.cs" />
     <Compile Include="DataAccess\DataAccessContext.cs" />
     <Compile Include="DataAccess\DataAccessPortal.cs" />
     <Compile Include="DataAccess\IDataAccessCredentials.cs" />

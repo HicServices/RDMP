@@ -31,7 +31,7 @@ namespace CatalogueLibrary.Data
     /// At query building time QueryBuilder rationalizes all the various containers, subcontainers, filters and parameters into one extraction
     /// SQL query (including whatever columns/transforms it was setup with).
     /// </summary>
-    public class ExtractionFilter : ConcreteFilter, IFilter, IHasDependencies,INamed
+    public class ExtractionFilter : ConcreteFilter, IHasDependencies
     {
      
         #region Database Properties

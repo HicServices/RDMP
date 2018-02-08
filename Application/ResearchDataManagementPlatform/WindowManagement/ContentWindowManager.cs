@@ -6,15 +6,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs;
-using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
@@ -22,25 +18,18 @@ using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
 using CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
-using CatalogueManager.DataQualityUIs;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ExtractionUIs.JoinsAndLookups;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Issues;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.LoadExecutionUIs;
-using CatalogueManager.MainFormUITabs;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
@@ -52,23 +41,12 @@ using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
 using Dashboard.Automation;
-using Dashboard.CatalogueSummary;
-using Dashboard.CatalogueSummary.LoadEvents;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportManager.CohortUI;
-using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.Collections.Providers;
-using DataExportManager.DataRelease;
 using DataExportManager.Icons.IconProvision;
-using DataExportManager.ProjectUI;
-using DataExportManager.ProjectUI.Graphs;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying;
-using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
-using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
@@ -81,7 +59,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// Central class for RDMP main application, this class provides acceess to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
     /// provision etc.  See IActivateItems for full details
     /// </summary>
-    public class ContentWindowManager : IActivateItems
+    public class ContentWindowManager : IActivateItems, IRefreshBusSubscriber
     {
         public event EmphasiseItemHandler Emphasise;
 
@@ -108,6 +86,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICommandFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
+
+        public List<IProblemProvider> ProblemProviders { get; private set; }
 
         public ContentWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, ToolboxWindowManager toolboxWindowManager, ICheckNotifier globalErrorCheckNotifier)
         {
@@ -139,6 +119,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             CommandFactory = new RDMPCommandFactory();
             CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
+
+            ProblemProviders = new List<IProblemProvider>();
+            ProblemProviders.Add(new DataExportProblemProvider());
+            ProblemProviders.Add(new CatalogueProblemProvider());
+            RefreshProblemProviders();
+
+            RefreshBus.Subscribe(this);
         }
 
         private void ConstructPluginChildProviders()
@@ -413,7 +400,27 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _toolboxWindowManager.GetCollectionForRootObject(rootObject) == collection;
         }
 
+        /// <summary>
+        /// Consults all currently configured IProblemProviders and returns true if any report a problem with the object
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool HasProblem(object model)
+        {
+            return ProblemProviders.Any(p => p.HasProblem(model));
+        }
 
+        /// <summary>
+        /// Consults all currently configured IProblemProviders and returns the first Problem reported by any about the object or null
+        /// if there are no problems reported.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public string DescribeProblemIfAny(object model)
+        {
+            return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
+        }
+        
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {
             return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);
@@ -528,5 +535,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return floatable;
         }
 
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+            RefreshProblemProviders();
+        }
+
+        private void RefreshProblemProviders()
+        {
+            foreach (IProblemProvider p in ProblemProviders)
+                p.RefreshProblems(CoreChildProvider);
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
     /// paramaterise (for the user) your AggregateFilter
     /// </summary>
-    public class AggregateFilter : ConcreteFilter, IFilter, ICheckable,INamed
+    public class AggregateFilter : ConcreteFilter
     {
         #region Database Properties
 
@@ -137,8 +137,10 @@ namespace CatalogueLibrary.Data.Aggregation
             return agg.Catalogue;
         }
 
-        public void Check(ICheckNotifier notifier)
+        public override void Check(ICheckNotifier notifier)
         {
+            base.Check(notifier);
+
             var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID, Repository);
             checker.Check(notifier);
         }

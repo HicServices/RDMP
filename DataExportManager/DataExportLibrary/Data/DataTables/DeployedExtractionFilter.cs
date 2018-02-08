@@ -33,7 +33,7 @@ namespace DataExportLibrary.Data.DataTables
     /// When you open an DeployedExtractionFilter and it differs from the master (either because you have deliberately adjusted your copy or because the master has been updated to fix
     /// a problem) then you will be alerted via the Filter Checks. 
     /// </summary>
-    public class DeployedExtractionFilter : ConcreteFilter, ICheckable
+    public class DeployedExtractionFilter : ConcreteFilter
     {
         #region Database Properties
 
@@ -138,8 +138,10 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         
-        public void Check(ICheckNotifier notifier)
+        public override void Check(ICheckNotifier notifier)
         {
+            base.Check(notifier);
+
             var checker = new ClonedFilterChecker(this, this.ClonedFromExtractionFilter_ID, ((DataExportRepository)Repository).CatalogueRepository);
             checker.Check(notifier);
         }
