@@ -174,24 +174,15 @@ namespace DataExportManager.DataRelease
             if (_pipelineUI.Pipeline == null)
                 return;
             
-            //the data we are trying to extract
-            FixedDataReleaseSource.CurrentRelease =  new ReleaseData
-            {
-                ConfigurationsForRelease = ConfigurationsForRelease,
-                EnvironmentPotential = _environmentPotential,
-                ReleaseState = _releaseState
-            };
-
             //a window for monitoring the progress
             var progressUI = new ProgressUI();
             _activator.ShowWindow(progressUI, false);
             
             //the release context for the project
-            var context = new ReleaseUseCase(_project, FixedDataReleaseSource, GetPotentialReleaseFolder(ConfigurationsForRelease));
+            var context = new ReleaseUseCase(_project, GetReleaseData());
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
-            //engine.Initialize(FixedDataReleaseSource.CurrentRelease);
             engine.Check(new PopupChecksUI("Checking engine", false));
 
             try
@@ -205,34 +196,7 @@ namespace DataExportManager.DataRelease
                 progressUI.ShowRunning(false);
             }
         }
-
-        private DirectoryInfo GetPotentialReleaseFolder(Dictionary<IExtractionConfiguration, List<ReleasePotential>> configurationsForRelease)
-        {
-            if (string.IsNullOrWhiteSpace(_project.ExtractionDirectory))
-                return null;
-
-            var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
-            string suffix = String.Empty;
-            if (configurationsForRelease.Keys.Any())
-            {
-                var releaseTicket = configurationsForRelease.Keys.First().ReleaseTicket;
-                if (configurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
-                    suffix = releaseTicket;
-                else
-                    throw new Exception("Multiple release tickets seen, this is not allowed!");
-            }
-
-            if (String.IsNullOrWhiteSpace(suffix))
-            {
-                if (String.IsNullOrWhiteSpace(_project.MasterTicket))
-                    suffix = _project.ID + "_" + _project.Name;
-                else
-                    suffix = _project.MasterTicket;
-            }
-
-            return new DirectoryInfo(Path.Combine(_project.ExtractionDirectory, prefix + "_" + suffix));
-        }
-
+        
         private void treeView1_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -257,12 +221,9 @@ namespace DataExportManager.DataRelease
             _project = project;
             ConfigurationsForRelease.Clear();
             ReloadTreeView();
-            this.FixedDataReleaseSource = new FixedDataReleaseSource();
-
+        
             SetupPipeline();
         }
-
-        public FixedDataReleaseSource FixedDataReleaseSource { get; set; }
 
         private IPipelineSelectionUI _pipelineUI;
 
@@ -270,12 +231,22 @@ namespace DataExportManager.DataRelease
         {
             if (_pipelineUI == null)
             {
-                var context = new ReleaseUseCase(_project, FixedDataReleaseSource, new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"))));
+                var releaseData = GetReleaseData();
+                releaseData.IsDesignTime = true;
+                var context = new ReleaseUseCase(_project, releaseData);
                 _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release",DockStyle.Fill,pnlPipeline);
             }
         }
 
-        
+        private ReleaseData GetReleaseData()
+        {
+            return new ReleaseData
+            {
+                ConfigurationsForRelease = ConfigurationsForRelease,
+                EnvironmentPotential = _environmentPotential,
+                ReleaseState = _releaseState
+            };
+        }
     }
 
     

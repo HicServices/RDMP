@@ -24,7 +24,7 @@ namespace DataExportLibrary.DataRelease
     /// In order to DoRelease you will need to evaluate the environment and each ExtractionConfiguration to confirm they are in a releasable state (extracted files
     /// match current configuration, ticketing system says that the project has governance approval for release etc).  
     /// </summary>
-    public class ReleaseEngine : ICheckable
+    public class ReleaseEngine
     {
         protected readonly IDataLoadEventListener _listener;
         protected readonly IRepository _repository;
@@ -58,8 +58,7 @@ namespace DataExportLibrary.DataRelease
             VerifyReleasability(toRelease, environment);
 
             SourceGlobalFolder = PrepareAndVerifySourceGlobalFolder(toRelease);
-            ReleaseFolder = PrepareAndVerifyReleaseFolder();
-
+            
             StreamWriter sw = PrepareAuditFile();
 
             ReleaseGlobalFolder();
@@ -138,23 +137,6 @@ namespace DataExportLibrary.DataRelease
             }
 
             return null;
-        }
-
-        protected virtual DirectoryInfo PrepareAndVerifyReleaseFolder()
-        {
-            if (ReleaseSettings.CustomReleaseFolder != null &&
-                !String.IsNullOrWhiteSpace(ReleaseSettings.CustomReleaseFolder.FullName))
-            {
-                ReleaseFolder = ReleaseSettings.CustomReleaseFolder;
-            }
-
-            if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
-                ReleaseFolder.Create();
-            else
-                throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
-                                    ReleaseFolder.FullName);
-
-            return ReleaseFolder;
         }
 
         protected virtual StreamWriter PrepareAuditFile()
@@ -458,25 +440,6 @@ namespace DataExportLibrary.DataRelease
 
             audit.WriteLine("+" + dir);
 
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            if (ReleaseFolder.Exists)
-            {
-                if (notifier.OnCheckPerformed(new CheckEventArgs("Release folder exists", CheckResult.Warning, null, "Delete it!")))
-                {
-                    ReleaseFolder.Delete(true);
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Cleaned non-empty existing release folder: " + ReleaseFolder.FullName));
-                }
-                else
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Intended release directory was existing and I was forbidden to delete it: " +
-                            ReleaseFolder.FullName, CheckResult.Fail));
-                }
-            }
         }
     }
 }

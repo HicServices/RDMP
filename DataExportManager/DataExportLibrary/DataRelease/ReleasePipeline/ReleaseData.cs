@@ -15,5 +15,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; set; }
         public ReleaseEnvironmentPotential EnvironmentPotential { get; set; }
         public ReleaseState ReleaseState { get; set; }
+        public bool IsDesignTime { get; set; }
     }
 }

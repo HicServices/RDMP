@@ -227,7 +227,7 @@
     <Compile Include="DataRelease\ReleaseEngineSettings.cs" />
     <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
-    <Compile Include="DataRelease\ReleasePipeline\FixedDataReleaseSource.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\ReleaseAudit.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />
