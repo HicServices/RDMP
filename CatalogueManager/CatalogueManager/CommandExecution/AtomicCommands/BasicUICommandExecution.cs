@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data;
+using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -35,6 +38,16 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
         {
             Activator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
+        }
+
+        protected T SelectOne<T>(IEnumerable<T> availableObjects) where T : DatabaseEntity
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+                return (T)dialog.Selected;
+
+            return null;
         }
     }
 }
