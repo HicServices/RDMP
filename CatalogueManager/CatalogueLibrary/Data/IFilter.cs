@@ -11,7 +11,7 @@ namespace CatalogueLibrary.Data
     /// A line of WHERE sql which can be combined in IContainers.  IFilters can be either ConcreteFilter (there is persisted user defined database object that makes 
     /// up the IFilter) or SpontaneouslyInventedFilter.
     /// </summary>
-    public interface IFilter : ISaveable, IMapsDirectlyToDatabaseTable,IDeleteable,IRevertable,ICollectSqlParameters, INamed
+    public interface IFilter : ICollectSqlParameters, INamed
     {
         string WhereSQL { get; set; }
         string Description { get; set; }

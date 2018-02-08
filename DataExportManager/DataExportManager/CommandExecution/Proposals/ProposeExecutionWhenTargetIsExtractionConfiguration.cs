@@ -7,6 +7,7 @@ using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
+using DataExportManager.Collections.Providers;
 using DataExportManager.ProjectUI;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
@@ -35,6 +36,20 @@ namespace DataExportManager.CommandExecution.Proposals
         {
             //user is trying to set the cohort of the configuration
             var sourceExtractableCohortComand = cmd as ExtractableCohortCommand;
+
+            var sourceCatalogueCommand = cmd as CatalogueCommand;
+
+            if (sourceCatalogueCommand != null)
+            {
+                var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
+                var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == sourceCatalogueCommand.Catalogue.ID);
+
+                if (eds == null)
+                    return new ImpossibleCommand("Catalogue is not Extractable");
+                
+                return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds,targetExtractionConfiguration);
+                
+            }
 
             if (sourceExtractableCohortComand != null)
                 return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortComand, targetExtractionConfiguration);

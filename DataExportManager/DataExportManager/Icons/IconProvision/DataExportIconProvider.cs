@@ -18,25 +18,12 @@ namespace DataExportManager.Icons.IconProvision
 {
     public class DataExportIconProvider : CatalogueIconProvider
     {
-        private readonly ProjectStateBasedIconProvider _projectIconProvider;
-        private ExtractionConfigurationStateBasedIconProvider _extractionConfigurationIconProvider;
-
         public DataExportIconProvider(IIconProvider[] pluginIconProviders): base(pluginIconProviders)
         {
             //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once  
-            _projectIconProvider = new ProjectStateBasedIconProvider(this);
-            StateBasedIconProviders.Add(_projectIconProvider);
             StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider());
             StateBasedIconProviders.Add(new CustomDataTableNodeStateBasedIconProvider());
-            _extractionConfigurationIconProvider = new ExtractionConfigurationStateBasedIconProvider(this);
-            StateBasedIconProviders.Add(_extractionConfigurationIconProvider);
-
-        }
-
-        public void SetProviders(DataExportChildProvider childProvider, DataExportProblemProvider problemProvider)
-        {
-            _projectIconProvider.SetProviders(childProvider,problemProvider);
-            _extractionConfigurationIconProvider.SetProviders(childProvider,problemProvider);
+            StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
         }
 
         public override Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
@@ -60,7 +47,5 @@ namespace DataExportManager.Icons.IconProvision
             //fallback on parent implementation if none of the above unique snowflake cases are met
             return base.GetImage(concept, kind);
         }
-        
-        
     }
 }

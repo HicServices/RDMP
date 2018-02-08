@@ -44,7 +44,7 @@ namespace CatalogueManager.LoadExecutionUIs
     /// There are various options for debugging for example you can override the location of the RAW bubble (e.g. to a test server), stop the data load after RAW is populated (in which
     /// case the load will crash out early allowing you to evaluated the RAW data in a database environment conducive with debugging dataset issues). 
     /// </summary>
-    public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design, IConsultableBeforeClosing
+    public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
         private IDataLoadProcess _dataLoadProcess;
         private HICDatabaseConfiguration _databaseLoadConfiguration;
@@ -313,7 +313,7 @@ namespace CatalogueManager.LoadExecutionUIs
             }
         }
 
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (_cancellationTokenSource == null) return;
 

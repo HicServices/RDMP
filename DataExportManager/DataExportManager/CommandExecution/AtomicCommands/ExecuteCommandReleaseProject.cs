@@ -11,6 +11,8 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.DataRelease;
+using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
@@ -42,7 +44,15 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
+            if (_project == null)
+                _project = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+
             Activator.Activate<DataReleaseUI, Project>(_project);
+       
+            _project = null;
+            
         }
+
+        
     }
 }

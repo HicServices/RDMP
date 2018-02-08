@@ -30,24 +30,32 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (_catalogue == null)
-                GetUserToPickACatalogue();
-            
-            //create the load
-            if (_catalogue != null)
+            var catalogueBefore = _catalogue;
+            try
             {
-                var cataRepository = (CatalogueRepository)_catalogue.Repository;
+                if (_catalogue == null)
+                    GetUserToPickACatalogue();
+            
+                //create the load
+                if (_catalogue != null)
+                {
+                    var cataRepository = (CatalogueRepository)_catalogue.Repository;
 
-                var lmd = new LoadMetadata(cataRepository, "Loading " + _catalogue.Name);
+                    var lmd = new LoadMetadata(cataRepository, "Loading " + _catalogue.Name);
 
-                lmd.EnsureLoggingWorksFor(_catalogue);
+                    lmd.EnsureLoggingWorksFor(_catalogue);
 
-                _catalogue.LoadMetadata_ID = lmd.ID;
-                _catalogue.SaveToDatabase();
+                    _catalogue.LoadMetadata_ID = lmd.ID;
+                    _catalogue.SaveToDatabase();
 
-                Publish(lmd);
+                    Publish(lmd);
 
-                Activator.WindowArranger.SetupEditAnything(this,lmd);
+                    Activator.WindowArranger.SetupEditAnything(this,lmd);
+                }
+            }
+            finally
+            {
+                _catalogue = catalogueBefore;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using NUnit.Framework;
@@ -125,7 +126,44 @@ namespace Tests.OtherProviders
             Assert.IsTrue(database.Exists());
         }
 
-        [TearDown]
+        [Test]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(4,2)", "-23.00")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(3,1)", "23.0")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "int", "0")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(1,0)", "00.0")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "int", "-24")]
+        [TestCase(DatabaseType.MYSQLServer, "decimal(4,2)", "-23.00")]
+        [TestCase(DatabaseType.MYSQLServer, "int", "-25")]
+        [TestCase(DatabaseType.MYSQLServer, "int", "0")]
+        public void TypeConsensusBetweenDataTypeComputerAndDiscoveredTableTest(DatabaseType type, string datatType,string insertValue)
+        {
+            GetCleanedServer(type, out server, out database);
+
+            var tbl = database.ExpectTable("TestTableCreationStrangeTypology");
+
+            if (tbl.Exists())
+                tbl.Drop();
+
+            var dt = new DataTable("TestTableCreationStrangeTypology");
+            dt.Columns.Add("mycol");
+            dt.Rows.Add(insertValue);
+
+            var c = new DataTypeComputer();
+
+            var tt = tbl.GetQuerySyntaxHelper().TypeTranslater;
+            c.AdjustToCompensateForValue(insertValue);
+
+            database.CreateTable(tbl.GetRuntimeName(),dt);
+
+            Assert.AreEqual(datatType, c.GetSqlDBType(tt));
+
+            Assert.AreEqual(datatType,tbl.DiscoverColumn("mycol").DataType.SQLType);
+            Assert.AreEqual(1,tbl.GetRowCount());
+
+            tbl.Drop();
+        }
+
+        [TestFixtureTearDown]
         public void TearDown()
         {
             if(database != null && database.Exists())

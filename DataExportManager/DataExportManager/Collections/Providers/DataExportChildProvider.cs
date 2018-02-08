@@ -72,6 +72,11 @@ namespace DataExportManager.Collections.Providers
 
         public GlobalExtractionFilterParameter[] AllGlobalExtractionFilterParameters;
 
+        /// <summary>
+        /// All columns extracted in any dataset extracted in any ExtractionConfiguration.  Use GetColumnsIn to interrogate this in a more manageable way
+        /// </summary>
+        public Dictionary<int,List<ExtractableColumn>> ExtractionConfigurationToExtractableColumnsDictionary = new Dictionary<int, List<ExtractableColumn>>();
+
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
             _repositoryLocator = repositoryLocator;
@@ -81,6 +86,16 @@ namespace DataExportManager.Collections.Providers
             AllProjectAssociatedCics = dataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
             CohortSources = dataExportRepository.GetAllObjects<ExternalCohortTable>();
             ExtractableDataSets = dataExportRepository.GetAllObjects<ExtractableDataSet>();
+
+
+            //record all extractable columns in each ExtractionConfiguration for fast reference later
+            foreach (var c in dataExportRepository.GetAllObjects<ExtractableColumn>())
+            {
+                if(!ExtractionConfigurationToExtractableColumnsDictionary.ContainsKey(c.ExtractionConfiguration_ID))
+                    ExtractionConfigurationToExtractableColumnsDictionary.Add(c.ExtractionConfiguration_ID,new List<ExtractableColumn>());   
+                
+                ExtractionConfigurationToExtractableColumnsDictionary[c.ExtractionConfiguration_ID].Add(c);
+            }
 
             SelectedDataSets = dataExportRepository.GetAllObjects<SelectedDataSets>();
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
@@ -488,6 +503,22 @@ namespace DataExportManager.Collections.Providers
             AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
             AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
             return toReturn;
+        }
+
+        /// <summary>
+        /// Returns all currently selected ExtractableColumns in the given SelectedDataSets
+        /// </summary>
+        /// <param name="selectedDataset"></param>
+        /// <returns></returns>
+        public IEnumerable<ExtractableColumn> GetColumnsIn(SelectedDataSets selectedDataset)
+        {
+            if (ExtractionConfigurationToExtractableColumnsDictionary.ContainsKey(selectedDataset.ExtractionConfiguration_ID))
+            {
+                return ExtractionConfigurationToExtractableColumnsDictionary[selectedDataset.ExtractionConfiguration_ID]
+                .Where(ec => ec.ExtractableDataSet_ID == selectedDataset.ExtractableDataSet_ID);
+            }
+
+            return Enumerable.Empty<ExtractableColumn>();
         }
     }
 }

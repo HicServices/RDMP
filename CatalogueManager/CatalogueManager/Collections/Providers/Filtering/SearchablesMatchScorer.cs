@@ -14,11 +14,11 @@ namespace CatalogueManager.Collections.Providers.Filtering
     {
         private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
 
-        public string[] TypeNames { get; set; }
+        public HashSet<string> TypeNames { get; set; }
 
         public SearchablesMatchScorer()
         {
-            TypeNames = new string[0];
+            TypeNames = new HashSet<string>();
         }
 
         public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken)

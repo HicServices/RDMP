@@ -17,6 +17,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private readonly bool _autoImport;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="autoImport">true to automatically create the catalogue without showing the UI</param>
         public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool autoImport) : base(activator)
         {
             _autoImport = autoImport;

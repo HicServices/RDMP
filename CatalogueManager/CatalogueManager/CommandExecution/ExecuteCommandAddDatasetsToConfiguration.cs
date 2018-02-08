@@ -5,39 +5,45 @@ using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using RDMPObjectVisualisation.Copying.Commands;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution
 {
     public class ExecuteCommandAddDatasetsToConfiguration : BasicUICommandExecution
     {
-        private readonly ExtractableDataSetCommand _sourceExtractableDataSetCommand;
         private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
-        private readonly IExtractableDataSet[] _toadd;
+        private IExtractableDataSet[] _toadd;
 
-        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems activator,ExtractableDataSetCommand sourceExtractableDataSetCommand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
+        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems activator,ExtractableDataSetCommand sourceExtractableDataSetCommand, ExtractionConfiguration targetExtractionConfiguration) 
+            : this(activator,targetExtractionConfiguration)
         {
-            _sourceExtractableDataSetCommand = sourceExtractableDataSetCommand;
-            _targetExtractionConfiguration = targetExtractionConfiguration;
+            SetExtractableDataSets(sourceExtractableDataSetCommand.ExtractableDataSets);
             
-            var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();
+        }
 
-            _toadd = _sourceExtractableDataSetCommand.ExtractableDataSets.Except(alreadyInConfiguration).ToArray();
+        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
+            : this(itemActivator,targetExtractionConfiguration)
+        {
+            SetExtractableDataSets(extractableDataSet);
+        }
 
+        private ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractionConfiguration targetExtractionConfiguration) : base(itemActivator)
+        {
+            _targetExtractionConfiguration = targetExtractionConfiguration;
 
             if (_targetExtractionConfiguration.IsReleased)
-            {
                 SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
-                return;
-            }
+        }
 
+        private void SetExtractableDataSets(params IExtractableDataSet[] toAdd)
+        {
+            var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();
+            _toadd = toAdd.Except(alreadyInConfiguration).ToArray();
 
             if(!_toadd.Any())
                 SetImpossible("ExtractionConfiguration already contains this dataset(s)");
-
-
-            
         }
 
         public override void Execute()

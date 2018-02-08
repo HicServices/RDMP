@@ -689,7 +689,6 @@
     </Compile>
     <Compile Include="Icons\IconProvision\EnumImageCollection.cs" />
     <Compile Include="Icons\IconProvision\Exceptions\IconProvisionException.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\HICProjectDirectoryStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\ICoreIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\AggregateConfigurationStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\CatalogueItemIssueStateBasedIconProvider.cs" />
@@ -1554,6 +1553,8 @@
     <None Include="Icons\AllObjectImportsNode.png" />
     <None Include="Icons\AllObjectExportsNode.png" />
     <None Include="Icons\AllObjectSharingNode.png" />
+    <None Include="Icons\CohortCustomColumn.png" />
+    <None Include="Icons\ExtractableColumn.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

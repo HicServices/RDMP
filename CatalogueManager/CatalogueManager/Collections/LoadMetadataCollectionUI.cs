@@ -60,15 +60,6 @@ namespace CatalogueManager.Collections
         {
             InitializeComponent();
             tlvLoadMetadata.RowHeight = 19;
-            tlvLoadMetadata.FormatRow += tlvLoadMetadata_FormatRow;
-        }
-
-        void tlvLoadMetadata_FormatRow(object sender, FormatRowEventArgs e)
-        {
-            var projDir = e.Model as HICProjectDirectoryNode;
-
-            if(projDir != null && projDir.IsEmpty)
-                e.Item.ForeColor = Color.Red;
         }
 
         

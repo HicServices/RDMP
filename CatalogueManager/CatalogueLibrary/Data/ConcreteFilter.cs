@@ -5,6 +5,7 @@ using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
@@ -15,7 +16,7 @@ namespace CatalogueLibrary.Data
     /// ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / VersionedDatabaseEntity logic to IFilter (which would break 
     /// SpontaneouslyInventedFilters)
     /// </summary>
-    public abstract class ConcreteFilter :  VersionedDatabaseEntity,IFilter
+    public abstract class ConcreteFilter :  VersionedDatabaseEntity,IFilter, ICheckable
     {
         protected ConcreteFilter(IRepository repository,DbDataReader r) : base(repository, r)
         {
@@ -102,6 +103,12 @@ namespace CatalogueLibrary.Data
 
             
             return _cachedDatabaseTypeAnswer.Value;
+        }
+
+        public virtual void Check(ICheckNotifier notifier)
+        {
+            if (WhereSQL != null && WhereSQL.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase))
+                notifier.OnCheckPerformed(new CheckEventArgs("Filters do not need to start with 'where' keyword, it is implicit",CheckResult.Fail));
         }
     }
 }

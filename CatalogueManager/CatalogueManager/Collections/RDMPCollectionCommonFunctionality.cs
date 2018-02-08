@@ -34,6 +34,7 @@ using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
@@ -53,7 +54,7 @@ namespace CatalogueManager.Collections
         public CopyPasteProvider CopyPasteProvider { get; private set; }
         public FavouriteColumnProvider FavouriteColumnProvider { get; private set; }
         public TreeNodeParentFinder ParentFinder { get; private set; }
-
+        
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         
         public OLVColumn FavouriteColumn { get; private set; }
@@ -146,7 +147,20 @@ namespace CatalogueManager.Collections
             
             Tree.TreeFactory = TreeFactory;
             Tree.RebuildAll(true);
-            
+
+
+            Tree.FormatRow += Tree_FormatRow;
+            Tree.CellToolTipGetter += Tree_CellToolTipGetter;
+        }
+
+        private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
+        {
+            return  _activator.DescribeProblemIfAny(modelObject);
+        }
+
+        void Tree_FormatRow(object sender, FormatRowEventArgs e)
+        {
+            e.Item.ForeColor = _activator.HasProblem(e.Model) ? Color.Red : Color.Black;
         }
 
         private TreeListView.Tree TreeFactory(TreeListView view)
@@ -196,12 +210,16 @@ namespace CatalogueManager.Collections
             if (args.Request.ExpansionDepth > 0)
                 ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
 
+            if (args.Request.Pin && AllowPinning)
+                Pin(args.Request.ObjectToEmphasise, decendancyList);
+
+            //update index now pin filter is applied
+            index = Tree.IndexOf(args.Request.ObjectToEmphasise);
+
             //select the object and ensure it's visible
             Tree.SelectedObject = args.Request.ObjectToEmphasise;
             Tree.EnsureVisible(index);
 
-            if (args.Request.Pin && AllowPinning)
-                Pin(args.Request.ObjectToEmphasise,decendancyList);
             
             args.FormRequestingActivation = Tree.FindForm();
         }
@@ -253,7 +271,9 @@ namespace CatalogueManager.Collections
 
         private object ImageGetter(object rowObject)
         {
-            return CoreIconProvider.GetImage(rowObject);
+            bool hasProblems = _activator.HasProblem(rowObject);
+            
+            return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None);
         }
         
 
