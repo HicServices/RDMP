@@ -65,14 +65,11 @@ namespace ReusableUIComponents
 
         private Bitmap GetBitmap(Keys k)
         {
-            if (k == Keys.Space)
-                return _space;
-
             //draw it
-            var clone = (Bitmap)_key.Clone();
+            var clone = (Bitmap)(k == Keys.Space?_space.Clone():_key.Clone());
 
             var graphics = Graphics.FromImage(clone);
-            graphics.DrawString(GetTextForKey(k),Font,Brushes.Black, new Rectangle(2, 2, clone.Width, clone.Height));
+            graphics.DrawString(GetTextForKey(k),Font,Brushes.Black, new Rectangle( k==Keys.Space?10:2, 2, clone.Width, clone.Height));
 
             return clone;
         }
