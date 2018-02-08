@@ -90,20 +90,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
         public void SetupEditLoadMetadata(object sender, LoadMetadata loadMetadata)
         {
-            _toolboxWindowManager.CloseAllToolboxes();
-            _toolboxWindowManager.CloseAllWindows();
-
-            _toolboxWindowManager.Create(RDMPCollection.DataLoad, DockState.DockLeft);
-
-            _activator.Activate<ExecuteLoadMetadataUI, LoadMetadata>(loadMetadata);
+            if(!_toolboxWindowManager.IsVisible(RDMPCollection.DataLoad))
+                _toolboxWindowManager.Create(RDMPCollection.DataLoad, DockState.DockLeft);
 
             var diagram = (Control)_activator.ActivateViewLoadMetadataDiagram(this, loadMetadata);
             ((DockContent)diagram.Parent).DockTo(_mainDockPanel,DockStyle.Right);
 
-
-            var pin = new ExecuteCommandPin(_activator, loadMetadata);
-            if(!pin.IsImpossible)
-                pin.Execute();
+            _activator.Activate<ExecuteLoadMetadataUI, LoadMetadata>(loadMetadata);
+            _activator.RequestItemEmphasis(this,new EmphasiseRequest(loadMetadata,int.MaxValue));
         }
     }
 }

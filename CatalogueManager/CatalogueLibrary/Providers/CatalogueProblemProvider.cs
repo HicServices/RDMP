@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Nodes.LoadMetadataNodes;
 
 namespace CatalogueLibrary.Providers
 {
@@ -35,9 +36,19 @@ namespace CatalogueLibrary.Providers
 
         public string DescribeProblem(object o)
         {
-            var ci = o as CatalogueItem;
-            if (ci != null)
+            if (o is CatalogueItem)
                 return DescribeProblem((CatalogueItem) o);
+
+            if (o is HICProjectDirectoryNode)
+                return DescribeProblem((HICProjectDirectoryNode) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(HICProjectDirectoryNode hicProjectDirectoryNode)
+        {
+            if (hicProjectDirectoryNode.IsEmpty)
+                return "No Project Directory has been specified for the load";
 
             return null;
         }
