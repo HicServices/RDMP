@@ -61,5 +61,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         {
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
+
+        public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
     }
 }

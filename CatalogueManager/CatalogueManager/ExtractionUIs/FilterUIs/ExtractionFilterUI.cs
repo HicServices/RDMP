@@ -45,7 +45,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
     /// If you want to parameterise your query (e.g. a filter for 'Approved name of drug like X') then just type a parameter like you normally would e.g. 'Prescription.DrugName like @drugName'
     /// and save. This will automatically create an empty parameter (See ParameterCollectionUI).
     /// </summary>
-    public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSubscriber,IConsultableBeforeClosing, ISaveableUI
+    public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
     {
         private IQuerySyntaxHelper _querySyntaxHelper;
 
@@ -140,7 +140,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         /// <summary>
         /// Gives the user an option to save the changes to the filter (if they have unsaved changes) call things for example when closing the host form.
         /// </summary>
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (ExtractionFilter != null && ExtractionFilter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 if (DialogResult.Yes ==

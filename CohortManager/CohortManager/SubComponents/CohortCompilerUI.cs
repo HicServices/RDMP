@@ -88,7 +88,7 @@ namespace CohortManager.SubComponents
     /// 
     /// </summary>
     public partial class 
-        CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing, IRefreshBusSubscriber
+        CohortCompilerUI : CohortCompilerUI_Design, IRefreshBusSubscriber
     {
         private CohortAggregateContainer _root;
         private CohortIdentificationConfiguration _cic;
@@ -445,7 +445,7 @@ namespace CohortManager.SubComponents
             Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
         }
         
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (Compiler != null)
             {
