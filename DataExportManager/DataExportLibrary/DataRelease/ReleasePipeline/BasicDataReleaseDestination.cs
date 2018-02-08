@@ -128,7 +128,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             if (ReleaseFolder.Exists)
             {
-                if (notifier.OnCheckPerformed(new CheckEventArgs("Release folder exists", CheckResult.Warning, null, "Delete it!")))
+                if (notifier.OnCheckPerformed(new CheckEventArgs("Release folder exists", CheckResult.Warning, null, "You should delete it or the release will fail.")))
                 {
                     ReleaseFolder.Delete(true);
                     notifier.OnCheckPerformed(new CheckEventArgs("Cleaned non-empty existing release folder: " + ReleaseFolder.FullName,
