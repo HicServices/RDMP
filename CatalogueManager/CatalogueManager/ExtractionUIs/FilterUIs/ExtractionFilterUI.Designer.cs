@@ -66,8 +66,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             // cbIsMandatory
             // 
+            this.cbIsMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cbIsMandatory.AutoSize = true;
-            this.cbIsMandatory.Location = new System.Drawing.Point(0, 394);
+            this.cbIsMandatory.Location = new System.Drawing.Point(1044, 289);
             this.cbIsMandatory.Name = "cbIsMandatory";
             this.cbIsMandatory.Size = new System.Drawing.Size(84, 17);
             this.cbIsMandatory.TabIndex = 9;
@@ -83,14 +84,15 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFilterName.Location = new System.Drawing.Point(76, 5);
             this.tbFilterName.Name = "tbFilterName";
-            this.tbFilterName.Size = new System.Drawing.Size(868, 20);
+            this.tbFilterName.Size = new System.Drawing.Size(1194, 20);
             this.tbFilterName.TabIndex = 1;
             this.tbFilterName.TextChanged += new System.EventHandler(this.tbFilterName_TextChanged);
             // 
             // btnPublishToCatalogue
             // 
+            this.btnPublishToCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPublishToCatalogue.Enabled = false;
-            this.btnPublishToCatalogue.Location = new System.Drawing.Point(11, 417);
+            this.btnPublishToCatalogue.Location = new System.Drawing.Point(1134, 285);
             this.btnPublishToCatalogue.Name = "btnPublishToCatalogue";
             this.btnPublishToCatalogue.Size = new System.Drawing.Size(56, 23);
             this.btnPublishToCatalogue.TabIndex = 11;
@@ -139,7 +141,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pQueryEditor.Location = new System.Drawing.Point(0, 0);
             this.pQueryEditor.Name = "pQueryEditor";
-            this.pQueryEditor.Size = new System.Drawing.Size(1195, 284);
+            this.pQueryEditor.Size = new System.Drawing.Size(1193, 282);
             this.pQueryEditor.TabIndex = 0;
             // 
             // splitContainer1
@@ -147,6 +149,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer1.Location = new System.Drawing.Point(79, 130);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -155,6 +158,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             this.splitContainer1.Panel1.Controls.Add(this.autocompleteReminder);
             this.splitContainer1.Panel1.Controls.Add(this.pQueryEditor);
+            this.splitContainer1.Panel1.Controls.Add(this.btnPublishToCatalogue);
+            this.splitContainer1.Panel1.Controls.Add(this.cbIsMandatory);
             // 
             // splitContainer1.Panel2
             // 
@@ -166,7 +171,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // autocompleteReminder
             // 
             this.autocompleteReminder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.autocompleteReminder.Location = new System.Drawing.Point(3, 290);
+            this.autocompleteReminder.Location = new System.Drawing.Point(3, 288);
             this.autocompleteReminder.Name = "autocompleteReminder";
             this.autocompleteReminder.Size = new System.Drawing.Size(10, 20);
             this.autocompleteReminder.TabIndex = 27;
@@ -215,7 +220,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.parameterCollectionUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.parameterCollectionUI1.Location = new System.Drawing.Point(0, 0);
             this.parameterCollectionUI1.Name = "parameterCollectionUI1";
-            this.parameterCollectionUI1.Size = new System.Drawing.Size(1195, 399);
+            this.parameterCollectionUI1.Size = new System.Drawing.Size(1193, 397);
             this.parameterCollectionUI1.TabIndex = 0;
             // 
             // ExtractionFilterUI
@@ -227,9 +232,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.Controls.Add(this.btnParametersExpand);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.cbIsMandatory);
             this.Controls.Add(this.tbFilterName);
-            this.Controls.Add(this.btnPublishToCatalogue);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbFilterDescription);
             this.Controls.Add(this.lblParams);
@@ -238,6 +241,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.Size = new System.Drawing.Size(1274, 849);
             this.SizeChanged += new System.EventHandler(this.ExtractionFilterUI_SizeChanged);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
