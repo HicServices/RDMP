@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.Cohort;
+﻿using CatalogueLibrary.Data.Cohort;
 using DataExportLibrary.Data.DataTables;
 
-namespace DataExportManager.Collections.Nodes
+namespace DataExportManager.Collections.Nodes.ProjectCohortNodes
 {
-    public class ProjectCohortIdentificationConfigurationAssociationsNode:IOrderable
+    public class ProjectSavedCohortsNode:IOrderable
     {
         public Project Project { get; set; }
 
-        public ProjectCohortIdentificationConfigurationAssociationsNode(Project project)
+        public ProjectSavedCohortsNode(Project project)
         {
             Project = project;
         }
 
         public override string ToString()
         {
-            return "Cohort Builder Queries";
+            return "Saved Cohorts";
         }
 
-        protected bool Equals(ProjectCohortIdentificationConfigurationAssociationsNode other)
+        protected bool Equals(ProjectSavedCohortsNode other)
         {
             return Equals(Project, other.Project);
         }
@@ -32,7 +27,7 @@ namespace DataExportManager.Collections.Nodes
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ProjectCohortIdentificationConfigurationAssociationsNode) obj);
+            return Equals((ProjectSavedCohortsNode) obj);
         }
 
         public override int GetHashCode()
@@ -40,6 +35,6 @@ namespace DataExportManager.Collections.Nodes
             return (Project != null ? Project.GetHashCode() : 0);
         }
 
-        public int Order { get { return 1; } set{} }
+        public int Order { get { return 2; } set{}}
     }
 }

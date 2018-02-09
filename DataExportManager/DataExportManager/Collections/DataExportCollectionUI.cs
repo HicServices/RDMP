@@ -26,6 +26,7 @@ using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.ProjectCohortNodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;

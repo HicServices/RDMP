@@ -23,6 +23,7 @@ using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.ProjectCohortNodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.SimpleDialogs;
 using HIC.Common.Validation.Constraints.Primary;
@@ -156,15 +157,10 @@ namespace DataExportManager.Collections.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
-            var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(project);
-            children.Add(projectCiCsNode);
-            AddChildren(projectCiCsNode,descendancy.Add(projectCiCsNode));
-
-            var savedCohortsNode = new ProjectSavedCohortsNode(project);
-            children.Add(savedCohortsNode);
-            AddChildren(savedCohortsNode,descendancy.Add(savedCohortsNode));
-
-
+            var projectCohortNode = new ProjectCohortsNode(project);
+            children.Add(projectCohortNode);
+            AddChildren(projectCohortNode,descendancy.Add(projectCohortNode));
+            
             var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
             children.Add(extractionConfigurationsNode);
 
@@ -173,6 +169,20 @@ namespace DataExportManager.Collections.Providers
             var folder = new ExtractionDirectoryNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ProjectCohortsNode projectCohortsNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+            var projectCiCsNode = new ProjectCohortIdentificationConfigurationAssociationsNode(projectCohortsNode.Project);
+            children.Add(projectCiCsNode);
+            AddChildren(projectCiCsNode, descendancy.Add(projectCiCsNode));
+
+            var savedCohortsNode = new ProjectSavedCohortsNode(projectCohortsNode.Project);
+            children.Add(savedCohortsNode);
+            AddChildren(savedCohortsNode, descendancy.Add(savedCohortsNode));
+
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(ProjectSavedCohortsNode savedCohortsNode, DescendancyList descendancy)
@@ -221,14 +231,39 @@ namespace DataExportManager.Collections.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
+            //Create a frozen extraction configurations folder as a subfolder of each ExtractionConfigurationsNode
+            var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
+
+            //Make the frozen folder appear under the extractionConfigurationsNode
+            children.Add(frozenConfigurationsNode);
+
+            //Add children to the frozen folder
+            AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
+
+            //Add ExtractionConfigurations which are not released (frozen)
             var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-            foreach (ExtractionConfiguration config in configs)
+            foreach (ExtractionConfiguration config in configs.Where(c=>!c.IsReleased))
             {
                 AddChildren(config, descendancy.Add(config));
                 children.Add(config);
             }
 
             AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            //Add ExtractionConfigurations which are not released (frozen)
+            var configs = ExtractionConfigurations.Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
+            foreach (ExtractionConfiguration config in configs.Where(c => c.IsReleased))
+            {
+                AddChildren(config, descendancy.Add(config));
+                children.Add(config);
+            }
+
+            AddToDictionaries(children,descendancy);
         }
 
         private void AddChildren(ExtractionConfiguration extractionConfiguration, DescendancyList descendancy)
@@ -492,9 +527,14 @@ namespace DataExportManager.Collections.Providers
 
         public bool ProjectHasNoSavedCohorts(Project project)
         {
+            //get the projects cohort umbrella folder
+            var projectCohortsNode = GetChildren(project).OfType<ProjectCohortsNode>().Single();
 
-            return GetChildren(GetChildren(project).Single(n => n is ProjectSavedCohortsNode))
-                .OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
+            //get the saved cohorts folder under it
+            var projectSavedCohortsNode = GetChildren(projectCohortsNode).OfType<ProjectSavedCohortsNode>().Single();
+
+            //if ther are no children that are Cohort Sources (cohort databases) under this saved cohorts folder then the Project has no 
+            return GetChildren(projectSavedCohortsNode).OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
         }
 
         public override Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()

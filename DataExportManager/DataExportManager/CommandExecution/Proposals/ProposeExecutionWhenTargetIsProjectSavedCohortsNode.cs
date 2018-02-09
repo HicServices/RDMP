@@ -7,6 +7,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;

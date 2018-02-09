@@ -913,6 +913,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap FrozenExtractionConfigurationsNode {
+            get {
+                object obj = ResourceManager.GetObject("FrozenExtractionConfigurationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap GetFilesStage {
             get {
                 object obj = ResourceManager.GetObject("GetFilesStage", resourceCulture);
@@ -1266,6 +1276,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap ProjectCohortIdentificationConfigurationAssociationsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectCohortsNode {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCohortsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

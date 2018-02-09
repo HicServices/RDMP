@@ -16,6 +16,7 @@ using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.ProjectCohortNodes;
 
 namespace CohortManager
 {

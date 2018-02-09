@@ -323,8 +323,10 @@
     </Compile>
     <Compile Include="Collections\Nodes\AllCohortsNode.cs" />
     <Compile Include="Collections\Nodes\ExtractionConfigurationsNode.cs" />
-    <Compile Include="Collections\Nodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
-    <Compile Include="Collections\Nodes\ProjectSavedCohortsNode.cs" />
+    <Compile Include="Collections\Nodes\FrozenExtractionConfigurationsNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
     <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
