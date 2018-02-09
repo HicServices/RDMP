@@ -80,7 +80,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             AllImportantClassesDocumented documented = new AllImportantClassesDocumented();
             documented.FindProblems(csFilesFound);
-            
+
+            var crossExamination = new DocumentationCrossExaminationTest(slndir);
+            crossExamination.FindProblems(csFilesFound);
+
             var uiStandardisationTest = new UserInterfaceStandardisationChecker();
             uiStandardisationTest.FindProblems(csFilesFound,RepositoryLocator.CatalogueRepository.MEF);
 

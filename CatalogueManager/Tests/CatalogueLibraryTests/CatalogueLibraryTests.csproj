@@ -292,6 +292,7 @@
     <Compile Include="Integration\VersioningTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />
+    <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\DocumentationCrossExaminationTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\ExplicitDatabaseNameChecker.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousRelationshipPropertyUse.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\UserInterfaceStandardisationChecker.cs" />

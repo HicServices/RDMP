@@ -36,6 +36,9 @@ namespace CatalogueLibrary.Data.Aggregation
     /// 
     /// The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
     /// AggregateConfiguration is. 
+    /// 
+    /// If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
+    /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).
     /// </summary>
     public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters,INamed,IHasDependencies
     {
