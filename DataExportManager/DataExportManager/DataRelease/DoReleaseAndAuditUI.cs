@@ -192,21 +192,19 @@ namespace DataExportManager.DataRelease
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
+            engine.Check(new PopupChecksUI("Checking engine", true));
 
-            var ui = new PopupChecksUI("Checking engine", true);
-            ui.Check(engine);
+            try
+            {
+                progressUI.ShowRunning(true);
+                //and executed
+                engine.ExecutePipeline(new GracefulCancellationToken());
+            }
+            finally
+            {
+                progressUI.ShowRunning(false);
+            }
 
-            if(ui.GetWorst() < CheckResult.Fail)
-                try
-                {
-                    progressUI.ShowRunning(true);
-                    //and executed
-                    engine.ExecutePipeline(new GracefulCancellationToken());
-                }
-                finally
-                {
-                    progressUI.ShowRunning(false);
-                }
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)
