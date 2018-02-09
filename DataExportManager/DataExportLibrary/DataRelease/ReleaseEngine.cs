@@ -307,38 +307,6 @@ namespace DataExportLibrary.DataRelease
             logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
         }
 
-        protected DirectoryInfo GetIntendedReleaseDirectory()
-        {
-            if (ReleaseSettings.CustomReleaseFolder == null || String.IsNullOrWhiteSpace(ReleaseSettings.CustomReleaseFolder.FullName))
-            {
-                if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-                    return null;
-
-                var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd_");
-                string suffix = String.Empty;
-                if (ConfigurationsToRelease.Keys.Any())
-                {
-                    var releaseTicket = ConfigurationsToRelease.Keys.First().ReleaseTicket;
-                    if (ConfigurationsToRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
-                        suffix = releaseTicket;
-                    else
-                        throw new Exception("Multiple release tickets seen, this is not allowed!");
-                }
-
-                if (String.IsNullOrWhiteSpace(suffix))
-                {
-                    if (String.IsNullOrWhiteSpace(Project.MasterTicket))
-                        suffix = Project.ID + "_" + Project.Name;
-                    else
-                        suffix = Project.MasterTicket;
-                }
-
-                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release_" + suffix));
-            }
-
-            return ReleaseSettings.CustomReleaseFolder;
-        }
-
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
             var customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CustomCohortDataFolderName, toRelease);

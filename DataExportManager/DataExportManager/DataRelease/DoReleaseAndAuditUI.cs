@@ -18,6 +18,7 @@ using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Revertable;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
@@ -174,26 +175,31 @@ namespace DataExportManager.DataRelease
             if (_pipelineUI.Pipeline == null)
                 return;
             
-            //a window for monitoring the progress
+            // the data listener in this case is a window for monitoring the progress
             var progressUI = new ProgressUI();
-            _activator.ShowWindow(progressUI, false);
-            
+
             //the release context for the project
             var context = new ReleaseUseCase(_project, GetReleaseData());
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
-            engine.Check(new PopupChecksUI("Checking engine", false));
-
-            try
+            var checksUI = new PopupChecksUI("Checking engine", false);
+            checksUI.Check(engine);
+            
+            if (checksUI.GetWorst() < CheckResult.Fail)
             {
-                progressUI.ShowRunning(true);
-                //and executed
-                engine.ExecutePipeline(new GracefulCancellationToken());
-            }
-            finally
-            {
-                progressUI.ShowRunning(false);
+                try
+                {
+                    _activator.ShowWindow(progressUI, false);
+            
+                    progressUI.ShowRunning(true);
+                    //and execute it
+                    engine.ExecutePipeline(new GracefulCancellationToken());
+                }
+                finally
+                {
+                    progressUI.ShowRunning(false);
+                }
             }
         }
         

@@ -224,10 +224,12 @@
     <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
     <Compile Include="DataRelease\ReleaseEngine.cs" />
+    <Compile Include="DataRelease\ReleaseFolderSettings.cs" />
     <Compile Include="DataRelease\ReleaseEngineSettings.cs" />
     <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseAudit.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\ReleaseFolderProvider.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />

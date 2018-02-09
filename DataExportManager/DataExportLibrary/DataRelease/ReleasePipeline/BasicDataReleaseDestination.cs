@@ -20,15 +20,19 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         [DemandsNestedInitialization()]
         public ReleaseEngineSettings ReleaseSettings { get; set; }
 
-        public ReleaseData CurrentRelease { get; set; }
+        private ReleaseData CurrentRelease { get; set; }
         private Project _project;
         private DirectoryInfo _destinationFolder;
         private ReleaseEngine _engine;
-
-        public DirectoryInfo ReleaseFolder { get; set; }
-
-        public ReleaseAudit ProcessPipelineData(ReleaseAudit currentRelease, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        
+        public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            if (releaseAudit == null)
+                return null;
+
+            if (releaseAudit.ReleaseFolder == null)
+                throw new ArgumentException("This component needs a destination folder! Did you forget to introduce and initialize the ReleaseFolderProvider in the pipeline?");
+
             if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
@@ -51,7 +55,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
             }
 
-            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, ReleaseFolder);
+            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit.ReleaseFolder);
 
             _engine.DoRelease(CurrentRelease.ConfigurationsForRelease, CurrentRelease.EnvironmentPotential, isPatch: CurrentRelease.ReleaseState == ReleaseState.DoingPatch);
 
@@ -85,7 +89,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             if(pipelineFailureExceptionIfAny == null && _destinationFolder != null)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -96,7 +100,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public void Check(ICheckNotifier notifier)
         {
             ((ICheckable)ReleaseSettings).Check(notifier);
-            PrepareAndCheckReleaseFolder(notifier);
         }
 
         public void PreInitialize(Project value, IDataLoadEventListener listener)
@@ -107,73 +110,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
         {
             this.CurrentRelease = value;
-        }
-
-        private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
-        {
-            if (CurrentRelease.IsDesignTime)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Release folder will be checked at runtime...", CheckResult.Success));
-                return;
-            }
-
-            if (ReleaseSettings.CustomReleaseFolder != null && !String.IsNullOrWhiteSpace(ReleaseSettings.CustomReleaseFolder.FullName))
-            {
-                ReleaseFolder = ReleaseSettings.CustomReleaseFolder;
-            }
-            else
-            {
-                ReleaseFolder = GetFromProjectFolder();// new DirectoryInfo(_project.ExtractionDirectory);
-            }
-
-            if (ReleaseFolder.Exists)
-            {
-                if (notifier.OnCheckPerformed(new CheckEventArgs("Release folder exists", CheckResult.Warning, null, "You should delete it or the release will fail.")))
-                {
-                    ReleaseFolder.Delete(true);
-                    notifier.OnCheckPerformed(new CheckEventArgs("Cleaned non-empty existing release folder: " + ReleaseFolder.FullName,
-                                                                 CheckResult.Success));
-                }
-                else
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Intended release directory was existing and I was forbidden to delete it: " + ReleaseFolder.FullName,
-                                                                 CheckResult.Fail));
-                    return;
-                }
-            }
-
-            if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
-                ReleaseFolder.Create();
-            else
-                throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
-                                    ReleaseFolder.FullName);
-        }
-
-        private DirectoryInfo GetFromProjectFolder()
-        {
-            if (string.IsNullOrWhiteSpace(_project.ExtractionDirectory))
-                return null;
-
-            var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
-            string suffix = String.Empty;
-            if (CurrentRelease.ConfigurationsForRelease.Keys.Any())
-            {
-                var releaseTicket = CurrentRelease.ConfigurationsForRelease.Keys.First().ReleaseTicket;
-                if (CurrentRelease.ConfigurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
-                    suffix = releaseTicket;
-                else
-                    throw new Exception("Multiple release tickets seen, this is not allowed!");
-            }
-
-            if (String.IsNullOrWhiteSpace(suffix))
-            {
-                if (String.IsNullOrWhiteSpace(_project.MasterTicket))
-                    suffix = _project.ID + "_" + _project.Name;
-                else
-                    suffix = _project.MasterTicket;
-            }
-
-            return new DirectoryInfo(Path.Combine(_project.ExtractionDirectory, prefix + "_" + suffix));
         }
     }
 }

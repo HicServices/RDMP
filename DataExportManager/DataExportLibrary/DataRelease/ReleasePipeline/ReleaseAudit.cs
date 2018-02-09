@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
     /// <summary>
@@ -5,5 +7,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// </summary>
     public class ReleaseAudit
     {
+        public DirectoryInfo ReleaseFolder { get; set; }
     }
 }
