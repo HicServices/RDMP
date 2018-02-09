@@ -13,8 +13,8 @@ using ReusableUIComponents;
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 {
     /// <summary>
-    /// Allows you to mark a LoadMetadata for periodic automated loading.  This will only work if you have a computer running the DLEWindowsService (the routine loader).  If the automation
-    /// service is not running you can still configure periodic loading in which case the Dashboard will simply show that a load is due. 
+    /// Allows you to mark a LoadMetadata for periodic automated loading.  This will only work if you have a computer running the RDMPAutomationService (the routine loader).  If the automation
+    /// service is not running you can still configure periodic loading in which case the DueLoads Dashboard will simply show that a load is due. 
     /// 
     /// You can set how often to run the load and also chain it to another load e.g. you might want 'Load GP data' to always trigger 'Load Practice data'.  Chained loads will only ever launch
     /// if the primary load was successful.

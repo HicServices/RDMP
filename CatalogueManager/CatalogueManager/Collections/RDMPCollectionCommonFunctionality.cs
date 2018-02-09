@@ -41,6 +41,11 @@ using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
 {
+    /// <summary>
+    /// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row 
+    /// height, child nodes etc.  Also centralises functionality like applying a CollectionPinFilterUI to an RDMPCollectionUI, keeping trees up to date during object
+    /// refreshes / deletes etc.
+    /// </summary>
     public class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         private IActivateItems _activator;
@@ -81,11 +86,7 @@ namespace CatalogueManager.Collections
         /// </summary>
         /// <param name="tree">The main tree in the collection UI</param>
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
-        /// <param name="repositoryLocator">The object for finding the Catalogue/DataExport repository databases</param>
-        /// <param name="commandFactory">A command factory for starting commands in appropriate circumstances e.g. when the user starts a drag of a Catalogue a CatalogueCommand should be created.  Try using a new RDMPCommandFactory </param>
-        /// <param name="commandExecutionFactory">A command execution factory for completing a started ICommand in appropriate circumstances e.g. when the user completes a drop operation onto a second item.  Try using a new RDMPCommandExecutionFactory</param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
-        /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
         public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true,bool allowPinning = true)
         {
@@ -144,8 +145,8 @@ namespace CatalogueManager.Collections
 
             AllowPinning = allowPinning;
 
-            
-            Tree.TreeFactory = TreeFactory;
+
+            Tree.TreeFactory = TreeFactoryGetter;
             Tree.RebuildAll(true);
 
 
@@ -163,7 +164,7 @@ namespace CatalogueManager.Collections
             e.Item.ForeColor = _activator.HasProblem(e.Model) ? Color.Red : Color.Black;
         }
 
-        private TreeListView.Tree TreeFactory(TreeListView view)
+        private TreeListView.Tree TreeFactoryGetter(TreeListView view)
         {
             return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
         }

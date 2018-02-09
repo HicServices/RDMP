@@ -44,7 +44,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// extraction for researchers who use the underlying dataset and receive a data extraction (they will receive the 'master' aggregate run on the entire data repository and a 'personal'
     /// version which is the same query run against their project extraction only) See ExtractionAggregateGraphObjectCollection.
     /// 
-    /// You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the JoinDirection column to edit the direction (LEFT or RIGHT) of 
+    /// You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of 
     /// any supplemental JOINs.
     /// 
     /// If your Catalogue has multiple underlying TableInfos you can pick which ones to include in the query generated in the FROM section (any Columns included in the SELECT section

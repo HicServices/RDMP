@@ -31,18 +31,16 @@ using ReusableUIComponents.SingleControlForms;
 namespace CatalogueManager.LoadExecutionUIs
 {
     /// <summary>
-    /// Main form for the Data Export Manager.  At the top of the screen is a list of all the loads you have configured with the RDMP (See LoadMetadataUI).  Selecting a load will start
-    /// 'pre execution checks' which will tick away.  You can edit a load by selecting 'View Load Metadata' (Launches LoadMetadataUI).
+    /// Runs the Data Load Engine on a single LoadMetadata.  This user interface is intended for manually executing and debugging loads.  If you have a stable load and you want
+    /// to execute it automatically you can set up a periodic execution (See LoadPeriodicallyUI / AutomationServiceSlotUI).
     /// 
-    /// This user interface is intended for building and executing loads until they are stable after which you should set up periodic execution (See LoadPeriodicallyUI).
+    /// You can only attempt to launch a data load if the checks are all passing (or giving Warnings that you understand and are not concerned about).  
     /// 
-    /// Only attempt to launch a data load if the checks are all passing (or giving Warnings that you understand and are not concerned about).  
+    /// Once started the load progress will appear and show as data is loaded into RAW, migrated to STAGING and committed to LIVE (See  'RAW Bubble, STAGING Bubble, LIVE Model'
+    /// in UserManual.docx for full implementation details).
     /// 
-    /// Once started the load progress will appear on the right as data is loaded into RAW, migrated to STAGING and committed to LIVE (See  'RAW Bubble, STAGING Bubble, LIVE Model' in
-    /// UserManual.docx for full implementation details).
-    /// 
-    /// There are various options for debugging for example you can override the location of the RAW bubble (e.g. to a test server), stop the data load after RAW is populated (in which
-    /// case the load will crash out early allowing you to evaluated the RAW data in a database environment conducive with debugging dataset issues). 
+    /// There are various options for debugging for example you can override and stop the data load after RAW is populated (in which case the load will crash out early allowing
+    /// you to evaluated the RAW data in a database environment conducive with debugging dataset issues). 
     /// </summary>
     public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {

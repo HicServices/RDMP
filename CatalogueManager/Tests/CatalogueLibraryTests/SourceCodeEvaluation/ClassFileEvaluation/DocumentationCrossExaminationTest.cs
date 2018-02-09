@@ -21,6 +21,12 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         private string[] _whitelist = new []
         {
             "MyDateCol",
+            "NumberOfResults",
+            "ANOGPCode",
+            "ANOPatientIdentifier",
+            "PracticeGP",
+            "UNIONing",
+
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
@@ -40,19 +46,21 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             //find all comments in class files
             foreach (string file in csFilesFound)
             {
-                if(file.Contains(".Designer.cs"))
-                    continue;
+                bool isDesignerFile = file.Contains(".Designer.cs");
 
                 foreach (string line in File.ReadAllLines(file))
                 {
                     //if it is a comment
                     if (matchComments.IsMatch(line))
                     {
+                        if (isDesignerFile)
+                            continue;
+
                         if (!fileCommentTokens.ContainsKey(file))
                             fileCommentTokens.Add(file, new HashSet<string>());
                         
                         //its a comment extract all pascal case words
-                        foreach (Match word in Regex.Matches(line, @"([A-Z]\w+){2,}"))
+                        foreach (Match word in Regex.Matches(line, @"\b([A-Z]\w+){2,}"))
                             fileCommentTokens[file].Add(word.Value);
                     }
                     else
@@ -79,11 +87,25 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             {
                 foreach (string s in kvp.Value)
                 {
-                    if(_whitelist.Contains(s))
-                        continue;
-                    
                     if(!codeTokens.Contains(s))
-                        problems.Add("FATAL PROBLEM: File " + kvp.Key +" talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
+                    {
+                        if (_whitelist.Contains(s))
+                            continue;
+
+                        //it's SHOUTY TEXT
+                        if (s.ToUpper() == s)
+                            continue;
+
+                        //if it's a plural e.g. TableInfos then we are still ok if we find TableInfo
+                        if (s.Length > 2 && s.EndsWith("s"))
+                        {
+                            if (codeTokens.Contains(s.Substring(0, s.Length - 1)))
+                                continue;
+                        }
+                        
+                        problems.Add("FATAL PROBLEM: File '" + Path.GetFileName(kvp.Key) +" talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
+                        
+                    }
                 }
             }
 

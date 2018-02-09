@@ -6,6 +6,9 @@ namespace CatalogueManager.Collections
     /// <summary>
     /// The Tree data model that is served by TreeFactoryGetter in RDMPCollectionCommonFunctionality.  Allows overriding of default TreeListView object model
     /// functionality e.g. sorting.
+    /// 
+    /// This implementation involves ensuring that ordering tree nodes always respects our OrderableComparer class.  This means that even when you reorder Projects
+    /// for example, the order of the subfolders (Cohorts, ExtractionConfigurations) doesn't change (which it would normally if only alphabetical comparing was done).
     /// </summary>
     internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
     {

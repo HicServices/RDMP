@@ -28,15 +28,28 @@ using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 namespace CatalogueManager.Collections
 {
     /// <summary>
-    /// Shows all your data load configurations (See LoadMetadataUI for description of how these operate).  Each load configuration (LoadMetadata) is associated with 1 or more Catalogues. But 
-    /// each Catalogue can only have one load configuration
+    /// This collection Shows all your data load configurations.  Each load configuration (LoadMetadata) is associated with 1 or more Catalogues. But each Catalogue can only have one load configuration
     /// 
     /// Loads are made up of a collection Process Tasks  (See PluginProcessTaskUI, SqlProcessTaskUI and ExeProcessTaskUI). which are run in sequence at pre defined states of the data load
     /// (RAW => STAGING => LIVE).
     /// 
-    /// There are many plugins that come as standard in the RDMP distribution such as the DelimitedFlatFileAttacher which lets you load files where cells are delimited by a specific character
-    /// (e.g. commas).  Clicking 'Description' will display the plugins instructions on how/what stage in which to use it.  Where a plugin has a base class the help text will also be displayed
-    /// for the base class which will in most cases be more generic description of the use case.
+    /// Within the tree collection you can configure each stage in a data load (LoadMetadata).  A LoadMetadata is a recipe for how to load one or more datasets.  It should have a name and 
+    /// description which accurately describes what it does (e.g. 'Load GP/Practice data' - 'Downloads PracticeGP.zip from FTP server, unzips and loads.  Also includes duplication resolution logic for 
+    /// dealing with null vs 0 exact record duplication').
+    /// 
+    /// A data load takes place across 3 stages (RAW, STAGING, LIVE - see UserManual.docx).  Each stage can have 0 or more tasks associated with it (See PluginProcessTaskUI).  The minimum requirement
+    /// for a data load is to have an Attacher (class which populates RAW) e.g. AnySeparatorFileAttacher for comma separated files.  This supposes that your project folder loading directory 
+    /// already has the files you are trying to load (See ChooseHICProjectDialog).  If you want to build an elegant automated solution then you may choose to use a GetFiles process such as 
+    /// FTPDownloader to fetch new files directly off a data providers server.  After this you may need to write some bespoke SQL/Python scripts etc to deal with unclean/unloadable data or 
+    /// just to iron out idiosyncrasies in the data.
+    ///  
+    /// Each module will have 0 or more arguments, each of which (when selected) will give you a description of what it expects and an appropriate control for you to choose an option. For
+    /// example the argument SendLoadNotRequiredIfFileNotFound on FTPDownloader explains that when ticked 'If true the entire data load process immediately stops with exit code LoadNotRequired,
+    /// if false then the load proceeds as normal'.  This means that you can end cleanly if there are no files to download or proceed anyway on the assumption that one of the other modules will
+    /// produce the files that the load needs.
+    ///
+    ///  There are many plugins that come as standard in the RDMP distribution such as the DelimitedFlatFileAttacher which lets you load files where cells are delimited by a specific character
+    /// (e.g. commas).  Clicking 'Description' will display the plugins instructions on how/what stage in which to use it.
     /// 
     /// DataProvider tasks should mostly be used in GetFiles stage and are intended to be concerned with creating files in the ForLoading directory
     /// 
