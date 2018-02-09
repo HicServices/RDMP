@@ -1,4 +1,4 @@
-#Table of contents
+# Table of contents
 1. [Background](#background)
 1. [Tools](#tools)
 1. [Create the icon](#createIcon)
@@ -11,7 +11,7 @@ The RDMP displays almost all the persistent objects  (Projects, Cohorts, Extract
 
 At the time of writing this tutorial, all `ExtractionConfiguration` (![Pr](Icons\ExtractionConfiguration.png)) in a `Project` (![Pr](Icons\Project.png))appear in a single `ExtractionConfigurationsNode` folder (![Pr](Icons\ExtractionConfigurationsNode.png)).  This means that over time a Project can accrue a considerable number of configurations and it can be difficult to see the active one.  RDMP lets you freeze old Extraction Configurations but they are still visible in the tree. We want to add a new node under the `ExtractionConfigurationsNode` (![Pr](Icons\ExtractionConfigurationsNode.png)) in which to store all the frozen configurations.
 
-![Goal](Images\CreatingANewCollectionTreeNode/Goal.png) 
+![Goal](Images/CreatingANewCollectionTreeNode/Goal.png) 
 
 <a name="tools"></a>
 # Tools
@@ -26,26 +26,26 @@ Feel free to substitute in alternate tooling
 # Creating The Icon
 Go to the root directory of your RDMP checkout and open `\CatalogueManager\CatalogueManager\Icons\FolderOfX.pdn` and select the middle Layer 'Background'.  Copy in the new icon and resize it to look nice.
 
-![EditFolderOfX](Images\CreatingANewCollectionTreeNode/EditFolderOfX.png) 
+![EditFolderOfX](Images/CreatingANewCollectionTreeNode/EditFolderOfX.png) 
 
  Save the new image as a 19x19 png with the name of the class you intend to use (think about this before you save it!) e.g. `FrozenExtractionConfigurationsNode.png`.  When naming you should use the suffix Node for any class which is not directly tied to a a database persistence object.  For example Project inherits from `DatabaseEntity` and is a persistent object but anything which is created arbitrarily at runtime or is a container of other items should be called a Node.
 
 <a name="addIcon"></a>
-#Adding the icon to the project
+# Adding the icon to the project
 RDMP requires that all tree view objects have an entry in RDMPConcept Enum, a class with the same name and a .png icon file with the same name.  So the first step is to open RDMPConcept and add a new Enum value `FrozenExtractionConfigurationsNode`
-![AddToRDMPConcept](Images\CreatingANewCollectionTreeNode/AddToRDMPConcept.png) 
+![AddToRDMPConcept](Images/CreatingANewCollectionTreeNode/AddToRDMPConcept.png) 
 
 Next add a class 'FrozenExtractionConfigurationsNode.cs' (leave this empty for now).  This class should appear in one of the `Nodes` folders if it is a node.  If you are creating an icon for a `DatabaseEntity` then you will already have your class implemented and tested so you can skip this stage (You still need the RDMPConcept though).
 
 It is worth launching RDMP at this point to see the error that occurs when you have an Enum value in `RDMPConcept` that doesn't have an associated png (we have created it but not added it to the resources file yet)
-![NoResourceFileError](Images\CreatingANewCollectionTreeNode/NoResourceFileError.png) 
+![NoResourceFileError](Images/CreatingANewCollectionTreeNode/NoResourceFileError.png) 
 
 Open CatalogueIcons.resx and add your image.
 
-![AddToResx](Images\CreatingANewCollectionTreeNode/AddToResx.png) 
+![AddToResx](Images/CreatingANewCollectionTreeNode/AddToResx.png) 
 
 <a name="nodeClass"></a>
-#Writing the node class
+# Writing the node class
 In the previous section we created a class `FrozenExtractionConfigurationsNode` (or whatever your node is called) which we left empty.  Ensure the name of this class exactly matches (including capitalisation) the png file and an `RDMPConcept` Enum value.  Now we will write the code that makes the node behave correctly.
 
 Start out by overriding the ToString method to return the text you want to appear in the tree view.
@@ -122,10 +122,10 @@ class FrozenExtractionConfigurationsNode
 ```
 
 <a name="addToTree"></a>
-#Adding the node to the tree
+# Adding the node to the tree
 Finally we can add instances of the node class to the tree.  This is done through the `CatalogueLibrary.Providers.IChildProvider`.  Open  `DataExportManager.Collections.Providers.DataExportChildProvider` and `CatalogueLibrary.Providers.CatalogueChildProvider` and identify the method which adds children for your parent object.  It will be called `AddChildren` and take a first parameter of the Type you want to add children to.  In this example we want to add the child node to the class `ExtractionConfigurationsNode` (![Pr](Icons\ExtractionConfigurationsNode.png)).  So we search for '`AddChildren(ExtractionConfigurationsNode`'
 
-![FindAddChildren](Images\CreatingANewCollectionTreeNode/FindAddChildren.png) 
+![FindAddChildren](Images/CreatingANewCollectionTreeNode/FindAddChildren.png) 
 
 If you are adding your node to a class that doesn't have any children yet (and therefore doesn't have an `AddChildren` method declared for it) then you will need to find the constructor calls for your chosen parent and add create an `AddChildren` method for it (See [Adding Children with AddChildren method](#addChildren) below for how to do this).
 
@@ -158,10 +158,10 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 
 Run RDMP and your new node should now appear.
 
-![FrozenFolderNowAppears](Images\CreatingANewCollectionTreeNode/FrozenFolderNowAppears.png) 
+![FrozenFolderNowAppears](Images/CreatingANewCollectionTreeNode/FrozenFolderNowAppears.png) 
 <a name="addChildren"></a>
 
-#Adding Children with an `AddChildren` method
+# Adding Children with an `AddChildren` method
 All AddChildren methods have the same basic structure:
 ```csharp
 private void AddChildren(SomeType someTypeInstance, DescendancyList descendancy)
@@ -233,7 +233,7 @@ Just as an example add the number 87 to the children HashSet:
 }
 ```
 
-![FrozenFolderNowAppears](Images\CreatingANewCollectionTreeNode/AddIntegerToTree.png) 
+![FrozenFolderNowAppears](Images/CreatingANewCollectionTreeNode/AddIntegerToTree.png) 
 
 Firstly notice how we get a missing icon appearing.  This is because there is no RDMPConcept or icon associated with int (unsurprisingly!).  Secondly notice that the tree hierarchy is looking dodgy.  This is because the same object (87) is appearing in the hierarchy twice which is a big no no.
 
@@ -281,4 +281,4 @@ private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConf
 ```
 Now when you run RDMP, the final tree should look something like:
 
-![FinalTree](Images\CreatingANewCollectionTreeNode/FinalTree.png) 
+![FinalTree](Images/CreatingANewCollectionTreeNode/FinalTree.png) 
