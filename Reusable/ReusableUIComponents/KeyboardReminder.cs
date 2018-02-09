@@ -11,6 +11,9 @@ using System.Windows.Input;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Displays a visual of a keyboard shortcut to the user by rendering the supplied key combination onto bitmaps of keys.
+    /// </summary>
     [TechnicalUI]
     public partial class KeyboardReminder : UserControl
     {

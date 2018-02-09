@@ -8,6 +8,9 @@ using CatalogueLibrary.Nodes.LoadMetadataNodes;
 
 namespace CatalogueLibrary.Providers
 {
+    /// <summary>
+    /// Identifies all problems with all objects found in the Catalogue database.  This only includes problems that are fast to detect at runtime.
+    /// </summary>
     public class CatalogueProblemProvider : IProblemProvider
     {
         private ICoreChildProvider _childProvider;
