@@ -117,8 +117,19 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 
                 var office = new DocumentationReportFormsAndControlsOfficeBit();
                 var images = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager).ToStringDictionary(12);
-                
-                office.GenerateReport(checksUI1, applicationToClasses, GetImagesForType,images );
+
+
+                Dictionary<string,Bitmap> icons = new Dictionary<string, Bitmap>();
+                foreach (RDMPConcept c in Enum.GetValues(typeof (RDMPConcept)))
+                {
+                    //things we don't want to show icons for because it would be confusing
+                    if(c == RDMPConcept.SQL || c == RDMPConcept.Clipboard || c == RDMPConcept.File || c == RDMPConcept.Help)
+                        continue;
+
+                    icons.Add(c.ToString(), _activator.CoreIconProvider.GetImage(c));
+                }
+
+                office.GenerateReport(checksUI1, applicationToClasses, GetImagesForType, images, icons);
             }
             catch (Exception exception)
             {
