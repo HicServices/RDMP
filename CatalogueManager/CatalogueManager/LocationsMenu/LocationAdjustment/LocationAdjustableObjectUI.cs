@@ -16,9 +16,9 @@ using ReusableLibraryCode;
 namespace CatalogueManager.LocationsMenu.LocationAdjustment
 {
     /// <summary>
-    /// Used in LocationAdjuster which is a tool for performing mass find/replace on file paths in the RDMP database across all tables.  For full details see LocationAdjuster documentation.
+    /// Used in LocationsAdjuster which is a tool for performing mass find/replace on file paths in the RDMP database across all tables.  For full details see LocationsAdjuster documentation.
     /// This control reflects a single cell of a single record which the system has determined contains a reference to a physical location e.g. 'Z:\Documentation\MyDoc.docx'.  You can manually
-    /// change the value of it using this control or use LocationAdjuster to do bulk operations across all database records/tables in the RDMP database.
+    /// change the value of it using this control or use LocationsAdjuster to do bulk operations across all database records/tables in the RDMP database.
     /// </summary>
     public partial class LocationAdjustableObjectUI : UserControl
     {

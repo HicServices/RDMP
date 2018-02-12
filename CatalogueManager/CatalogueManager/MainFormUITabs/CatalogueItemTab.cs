@@ -34,15 +34,7 @@ namespace CatalogueManager.MainFormUITabs
     /// an extraction transform/rule set (See ExtractionInformationUI) and a descriptive entity which describes what the researcher will receive if they are given the column in an extract.
     /// This helpfully also lets you delete/restructure your data tables underneath without losing the descriptive data, validation rules, logging history etc of your datasets.
     /// 
-    /// This control lets you view all the CatalogueItems in a dataset (Catalogue).  By selecting a CatalogueItem you can change the description (use Ctrl+S to save changes).  Double 
-    /// clicking a CatalogueItem you launch ExtractionInformationUI which allows you to configure if/how the column is extracted.
-    /// 
-    /// On the near right of the control you can see what underlying ColumnInfo (reference to a specific column in your data repository) powers the CatalogueItem (Associated Columns).  And 
-    /// finally on the extreme right is a list of all the tables and columns that the RDMP knows about in your data warehouse.  You can change which ColumnInfo powers the currently 
-    /// selected CatalogueItem by dragging a ColumnInfo from the tree into the AssociatedColumns listbox.
-    /// 
-    /// Double clicking an Associated ColumnInfo has the same effect as double clicking the CatalogueItem (Launching ExtractionInformationUI)
-    /// 
+    /// This control lets you view/edit the descriptive metadata of a CatalogueItem in a dataset (Catalogue).
     /// </summary>
     public partial class CatalogueItemTab : CatalogueItemTab_Design ,ISaveableUI
     {

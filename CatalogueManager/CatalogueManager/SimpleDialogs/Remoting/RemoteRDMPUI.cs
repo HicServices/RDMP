@@ -10,8 +10,7 @@ using ReusableUIComponents;
 namespace CatalogueManager.SimpleDialogs.Remoting
 {
     /// <summary>
-    /// Part of AutomationServiceSlotManagement which lets you change the settings for the currently selected AutomationServiceSlot (See AutomationServiceSlotManagement for full description of
-    /// the effects of changes in this control).
+    /// Lets you change the settings for a RemoteRDMP which is a set of web credentials / url to reach another RDMP instance across the network/internet via a web service.
     /// </summary>
     public partial class RemoteRDMPUI : RemoteRDMPUI_Design, ISaveableUI
     {

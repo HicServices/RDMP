@@ -21,7 +21,7 @@ using RDMPObjectVisualisation.Pipelines;
 namespace CatalogueManager.SimpleDialogs.Automation
 {
     /// <summary>
-    /// Part of AutomationServiceSlotManagement, this dialog is where you configure your custom Automation activities if you have one or more Automation Plugins.  If you do not have any 
+    /// Part of AutomationServiceSlotUI, this dialog is where you configure your custom Automation activities if you have one or more Automation Plugins.  If you do not have any 
     /// automation plugins or do not know what those are then you won't need this user interface!
     /// 
     /// TECHNICAL: Automation plugins are custom plugins that generate async Tasks which are executed on the automation server.  For example you could write a plugin which ran.  Check on

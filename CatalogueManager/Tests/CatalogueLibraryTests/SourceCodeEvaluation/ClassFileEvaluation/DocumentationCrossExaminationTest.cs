@@ -26,6 +26,97 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "ANOPatientIdentifier",
             "PracticeGP",
             "UNIONing",
+            "PatientId",
+            "PatientIds",
+            "MotherId",
+            "BabyId",
+            "MyColumn",
+            "DrugCode",
+            "DrugCode_Desc",
+            "DrugName",
+            "LabNumber",
+            "DrugName",
+            "SendingLocation",
+            "DischargeLocation",
+            "SendingLocation_Desc",
+            "DischargeLocation_Desc",
+            "MyDb",
+            "NewBiochemistry",
+            "AdmissionDateTime",
+            "DataAge",
+            "PatientCareNumber",
+            "MyDb",
+            "PatCHI",
+            "PatientCHI",
+            "MotherCHI",
+            "FatherChiNo",
+            "LabNumber",
+            "ANOchi",
+            "INFOs",
+            "PluginDatabase",
+            "PatientDateOfBirth",
+            "PatientDateOfBirthApprox",
+            "ANOLocation",
+            "ConditionList",
+            "DataAnalyst",
+            "HumanReadableDrugName",
+            "DrugPrescribed",
+            "DrugAbuse",
+            "RoutineLoaderAccount",
+            "ReadonlyUserAccount",
+            "HBA1c",
+            "PrescribedDate",
+            "NodaTime",
+            "MotherCHI",
+            "BabyCHI",
+            "ANOIdentifier",
+            "ANOLabNumber",
+            "LabNumber",
+            "EmailAddressOfAuthorizor",
+            "GrandParent",
+            "TestLabCode",
+            "DataAge",
+            "CatalogueItem1",
+            "CatalogueItem2",
+            "CatalogueItem1",
+            "CatalogueItem2",
+            "UPDATEd",
+            "GUIDs",
+            "MyColRenamed",
+            "DateConsentedToStudy",
+            "PrescribingGP",
+            "CasesForProject123",
+            "ControlsForProject123",
+            "GUIDs",
+            "UPPERd",
+            "StackOverflow",
+            "LabNumbers",
+            "LabNumber",
+            "ANOLabNumber",
+            "PatientName",
+            "PatientDob",
+            "DataAge",
+            "DemographyLoading",
+            "MyDb",
+            "MyTbl",
+            "CapsName",
+            "SummaryComment",
+            "MySoftwareSuite",
+            "MyApplication",
+            "MyResources",
+            "MyClass1",
+            "FishFishFish",
+            "CASCADEing",
+            "MyAssembly",
+            "HBA1c",
+            "EnumNameFavourite",
+            "EnumName",
+            "CatalogueFavourite",
+            "PatientDeleted",
+            "MyDoc",
+            "MyDataFiles",
+            "MyServer",
+            "MyData"
 
         };
 
@@ -38,6 +129,16 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
         public void FindProblems(List<string> csFilesFound)
         {
+            //find all non coment code and extract all unique tokens
+
+            //find all .md files and extract all `` code blocks
+
+            //for each commend and `` code block
+
+            //identify Pascal case words
+
+            //are they in the codebase tokens?
+
             List<string> problems = new List<string>();
 
             HashSet<string> codeTokens = new HashSet<string>();
@@ -47,7 +148,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             foreach (string file in csFilesFound)
             {
                 bool isDesignerFile = file.Contains(".Designer.cs");
-
+                
+                if(file.Contains("CodeTutorials"))
+                    continue;
+                
                 foreach (string line in File.ReadAllLines(file))
                 {
                     //if it is a comment
@@ -83,6 +187,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                         fileCommentTokens[mdFile].Add(word.Value);
             }
 
+
             foreach (KeyValuePair<string, HashSet<string>> kvp in fileCommentTokens)
             {
                 foreach (string s in kvp.Value)
@@ -109,21 +214,18 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 }
             }
 
+            if (problems.Any())
+            {
+                Console.WriteLine("Found problem words in comments (Scroll down to see by file):");
+                foreach (var pLine in problems.Select(p => p.Split('\n')))
+                    Console.WriteLine("\"" + pLine[1] + "\",");
+                
+            }
 
             foreach (string problem in problems)
                 Console.WriteLine(problem);
 
             Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
-
-            //find all non coment code and extract all unique tokens
-
-            //find all .md files and extract all `` code blocks
-
-            //for each commend and `` code block
-
-            //identify Pascal case words
-
-            //are they in the codebase tokens?
         }
     }
 }

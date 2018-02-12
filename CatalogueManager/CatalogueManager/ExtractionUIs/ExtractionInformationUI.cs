@@ -42,7 +42,7 @@ namespace CatalogueManager.ExtractionUIs
     /// curate filter logic, flag it as the datasets extraction identifier (e.g. PatientId).
     /// 
     /// Start by deciding whether a given Column is extractable by ticking Yes or No.  Then choose an extraction category, a column will only appear in DataExportManager as extractable if
-    /// it is Core, Supplemental or SpecialApproval (Internal and Deprecated columns cannot be extracted).  
+    /// it is Core, Supplemental or SpecialApprovalRequired (Internal and Deprecated columns cannot be extracted).  
     /// 
     /// You should have a single field across all your datasets which identifies your cohorts (patients) e.g. PatientId.  If this column contains PatientIds then tick 'Is Extraction 
     /// Identifier', very occasionally you might have multiple columns containing PatientIds e.g. Birth records might have a column for MotherId and a column for BabyId both of which contain
