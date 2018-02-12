@@ -19,7 +19,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// the data.   This dialog assists you with that (if you need it) by helping you set up an SQL Agent Job which enumerates all the database tables and database users and audits the 
     /// access levels over time (giving a longitudinal history of user access).
     /// 
-    /// To use this functionality click 'Display PreRequisite SQL...' and run the script on the server you want to audit user permissions on.  This will create a database called Audit
+    /// To use this functionality click 'Display Prerequisite SQL...' and run the script on the server you want to audit user permissions on.  This will create a database called Audit
     /// with several tables and stored procedures for auditing user access.  Test that it works by running 'exec Audit.dbo.UpdatePrivilegesAudit' and look at the contents of the table.
     /// 
     /// Next you should set up an SQL Agent job to run nightly/weekly that executes that stores procedure (Audit.dbo.UpdatePrivilegesAudit).
@@ -30,7 +30,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// 
     /// TECHNICAL: All the information generated from the stored procedure comes from Sql Servers inbuilt user/database/permissions tables but these tables are not longitudinal which 
     /// is why we create the Audit database at all and need the periodic update.  If you don't want the database to be called Audit (e.g. because you already have a database called that)
-    /// then you can do a find/replace on the PreRequisiteSQL and set the Database correctly in this dialog when generating reports.
+    /// then you can do a find/replace on the Prerequisite SQL and set the Database correctly in this dialog when generating reports.
     /// </summary>
     public partial class ConfigureAccessRightsReport : Form
     {

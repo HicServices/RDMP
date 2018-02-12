@@ -53,7 +53,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         /// <summary>
-        /// Used to fulfil requirements of interface so that the FilterUI can be used, will throw if accessed.  Filters at Catalogue level are never nested / used in AND/OR containers
+        /// Used to fulfil requirements of interface. But Filters at Catalogue level are never nested / used in AND/OR containers
         /// </summary>
         [NoMappingToDatabase]
         public override int? FilterContainer_ID

@@ -31,9 +31,6 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _order, value); }
         }
 
-        /// <summary>
-        /// Do not use this in SELECT commands, instead use GetExtractionSelectSQL as this method will deal with cases where SelectSQL is null
-        /// </summary>
         public string SelectSQL
         {
             get { return _selectSql; }

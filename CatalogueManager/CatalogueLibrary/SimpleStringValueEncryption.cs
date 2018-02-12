@@ -67,7 +67,7 @@ namespace CatalogueLibrary
         }
 
         /// <summary>
-        /// Encrypts using its PublicKey then returns a the encrypted byte[] as a string by using BitConverter.ToString()
+        /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
         /// </summary>
         /// <returns></returns>
         public string Encrypt(string toEncrypt)

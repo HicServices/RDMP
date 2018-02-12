@@ -15,7 +15,7 @@ using ReusableLibraryCode.Progress;
 namespace CatalogueManager.SimpleDialogs.Reports
 {
     /// <summary>
-    /// Part of UserExercisesUI  (See UserExercisesUI).  This control lets you decide how many records in the dataset to create.  This data is fictional although it is designed to look
+    /// Part of GenerateTestDataUI  (See GenerateTestDataUI).  This control lets you decide how many records in the dataset to create.  This data is fictional although it is designed to look
     /// semi real and exhibit peculiarities common to medical records.  The slider is exponential so if you drag it all the way to the top expect to wait for a weekend for it to generate
     /// all the data.
     /// </summary>
