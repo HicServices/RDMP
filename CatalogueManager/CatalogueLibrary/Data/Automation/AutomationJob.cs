@@ -223,7 +223,7 @@ namespace CatalogueLibrary.Data.Automation
 
 
     /// <summary>
-    /// The state of an AutomationJob on an AutomationServerSlot.
+    /// The last known state of the AutomationJob on an AutomationServiceSlot run by an automation server.
     /// </summary>
     public enum AutomationJobStatus
     {

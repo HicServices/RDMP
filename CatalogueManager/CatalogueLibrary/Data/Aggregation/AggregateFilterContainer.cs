@@ -11,7 +11,7 @@ using ReusableLibraryCode;
 namespace CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
-    /// All AggregateFilters must be contained within an AggregateFilterContainer at QueryGeneration time.  This tells QueryBuilder how to use brackets and whether to AND / OR 
+    /// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR 
     /// the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data Export Manager but for AggregateConfigurations (GROUP BY queries)
     /// 
     /// FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 

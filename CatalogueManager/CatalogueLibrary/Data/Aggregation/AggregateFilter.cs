@@ -19,7 +19,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// in the last 6 months.  To do this you would need to set a root AggregateFilterContainer on the AggregateConfiguration and then put in an appropriate
     /// AggregateFilter.  Each AggregateFilter can be associated with a given ColumnInfo this will ensure that it is included when it comes to JoinInfo time
     /// in QueryBuilding even if it is not a selected dimension (this allows you to for example aggregate the drug codes but filter by drug prescribed date even
-    /// when the two fields are in different tables - that will be joined at QueryTime).
+    /// when the two fields are in different tables - that will be joined at Query Time).
     /// 
     /// Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
     /// paramaterise (for the user) your AggregateFilter

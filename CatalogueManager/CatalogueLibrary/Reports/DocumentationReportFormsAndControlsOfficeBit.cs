@@ -96,15 +96,35 @@ namespace CatalogueLibrary.Reports
                     p.Append(word);
 
                 p.Append(" ");
-           
-                if(icons.ContainsKey(word))
-                {
-                    p.Append("(");
-                    var pict = GetPicture(document,icons[word]);
-                    p.AppendPicture(pict);
-                    p.Append(") ");
-                }
+
+                if (GetIconKeyForWordIfAny(word, icons) != null)
+                    AddImage(document,p,icons,word);
             }
+        }
+
+        private string GetIconKeyForWordIfAny(string word, Dictionary<string, Bitmap> icons)
+        {
+            var exactMatch = icons.Keys.SingleOrDefault(k => k.Equals(word, StringComparison.CurrentCultureIgnoreCase));
+
+            if (exactMatch != null)
+                return exactMatch;
+
+            if(word.Length > 1 && word.EndsWith("s"))
+            {
+                var nonPlural = word.Substring(0, word.Length - 1);
+                return icons.Keys.SingleOrDefault(k => k.Equals(nonPlural, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            //no compatible icon
+            return null;
+        }
+
+        private void AddImage(DocX document, Paragraph p, Dictionary<string, Bitmap> icons, string word)
+        {
+            p.Append("(");
+            var pict = GetPicture(document, icons[GetIconKeyForWordIfAny(word, icons)]);
+            p.AppendPicture(pict);
+            p.Append(") ");
         }
 
 

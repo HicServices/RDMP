@@ -166,7 +166,7 @@ namespace CatalogueLibrary.DataFlowPipeline
         /// Sets the value of a property on instance toReturn. 
         /// </summary>
         /// <param name="toBuild">IPipelineComponent which is the persistence record - the template of what to build</param>
-        /// <param name="toReturn">An instance of the Class referenced by IPipelineComponent.Class (or in the case of [NestedDemandsInitialization] a reference to the nested property)</param>
+        /// <param name="toReturn">An instance of the Class referenced by IPipelineComponent.Class (or in the case of [DemandsNestedInitializationAttribute] a reference to the nested property)</param>
         /// <param name="propertyInfo">The specific property you are trying to populate on toBuild</param>
         /// <param name="arguments">IArguments of toBuild (the values to populate toReturn with)</param>
         /// <param name="nestedProperty">If you are populating a sub property of the class then pass the instance of the sub property as toBuild and pass the nesting property as nestedProperty</param>

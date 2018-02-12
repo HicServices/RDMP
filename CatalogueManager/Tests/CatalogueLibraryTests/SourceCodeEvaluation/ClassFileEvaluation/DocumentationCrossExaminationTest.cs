@@ -116,7 +116,12 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "MyDoc",
             "MyDataFiles",
             "MyServer",
-            "MyData"
+            "MyData",
+            "RemoteDataFetcher",
+            "EndpointDefinition",
+            "LoadID_Data_STAGING",
+            "AuditObject",
+            "EmailAddressOfAuthorizor",
 
         };
 

@@ -12,7 +12,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
 {
     /// <summary>
     /// Relationship object which indicates that a given AggregateConfiguration is a 'PatientIndexTable'.  In order to be compatible as a 'PatientIndexTable' the 
-    /// AggregateConfiguration must have one IsReleaseIdentifier AggregateDimension and usually at least one other column which has useful values in it (e.g. 
+    /// AggregateConfiguration must have one IsExtractionIdentifier AggregateDimension and usually at least one other column which has useful values in it (e.g. 
     /// admission dates).  The patient index table can then be used as part of other AggregateConfigurations in a CohortIdentificationConfiguration (e.g. 'find 
     /// all people in Deaths dataset who died within 3 months of having a prescription for drug Y' - where Prescriptions is the 'PatientIndexTable'. 
     /// </summary>

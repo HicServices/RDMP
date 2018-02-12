@@ -123,7 +123,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 foreach (RDMPConcept c in Enum.GetValues(typeof (RDMPConcept)))
                 {
                     //things we don't want to show icons for because it would be confusing
-                    if(c == RDMPConcept.SQL || c == RDMPConcept.Clipboard || c == RDMPConcept.File || c == RDMPConcept.Help)
+                    if(c == RDMPConcept.SQL || c == RDMPConcept.Clipboard || c == RDMPConcept.File || c == RDMPConcept.Help || c== RDMPConcept.Release || c == RDMPConcept.Database || c== RDMPConcept.Filter || c == RDMPConcept.Logging || c == RDMPConcept.DQE)
                         continue;
 
                     icons.Add(c.ToString(), _activator.CoreIconProvider.GetImage(c));

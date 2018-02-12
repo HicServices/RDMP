@@ -11,7 +11,7 @@ namespace CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
     /// Describes the requirement to include a given TableInfo in an AggregateConfiguration query even though the TableInfo is not the owner of any of the Columns in the
-    /// query (the usual way of deciding which TablesInfos to join).  This is needed if you want a count(*) for example in which both header and result records tables are
+    /// query (the usual way of deciding which TableInfos to join).  This is needed if you want a count(*) for example in which both header and result records tables are
     /// joined together. 
     /// </summary>
     public class AggregateForcedJoin
