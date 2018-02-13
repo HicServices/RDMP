@@ -91,7 +91,7 @@ namespace DatabaseCreation
 
             CreatePipeline("IMPORT COHORT CUSTOM DATA: From PatientIndexTable", typeof (PatientIndexTableSource), null);
 
-            CreatePipeline("DATA EXPORT:To CSV", typeof (ExecuteDatasetExtractionSource),typeof (ExecuteDatasetExtractionFlatFileDestination));
+            CreatePipeline("DATA EXPORT:To CSV", typeof (ExecuteDatasetExtractionSource), typeof (ExecuteDatasetExtractionFlatFileDestination));
 
             CreatePipeline("RELEASE PROJECT:To Directory", null, typeof (BasicDataReleaseDestination));
         }
@@ -103,7 +103,25 @@ namespace DatabaseCreation
             s.SaveToDatabase();
         }
 
-        private Pipeline CreatePipeline(string nameOfPipe, Type sourceType,Type destinationTypeIfAny)
+        private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny, params Type[] componentTypes)
+        {
+            if (componentTypes == null || componentTypes.Length == 0)
+                return CreatePipeline(nameOfPipe, sourceType, destinationTypeIfAny);
+
+            var pipeline = CreatePipeline(nameOfPipe, sourceType, destinationTypeIfAny);
+
+            int i = 1;
+            foreach (var componentType in componentTypes)
+            {
+                var component = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipeline, componentType, i++);
+                component.CreateArgumentsForClassIfNotExists(componentType);
+                component.Pipeline_ID = pipeline.ID;
+            }
+
+            return pipeline;
+        }
+
+        private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny)
         {
             var pipe = new Pipeline(_repositoryLocator.CatalogueRepository, nameOfPipe);
 
@@ -116,7 +134,7 @@ namespace DatabaseCreation
             
             if (destinationTypeIfAny != null)
             {
-                var destination = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe,destinationTypeIfAny, 1);
+                var destination = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe,destinationTypeIfAny, 100);
                 destination.CreateArgumentsForClassIfNotExists(destinationTypeIfAny);
                 pipe.DestinationPipelineComponent_ID = destination.ID;
             }

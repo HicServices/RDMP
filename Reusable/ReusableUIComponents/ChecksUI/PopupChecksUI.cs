@@ -33,9 +33,13 @@ namespace ReusableUIComponents.ChecksUI
         }
 
         private bool haveDemandedVisibility = false;
+        private CheckResult _worstSeen = CheckResult.Success;
 
         public bool OnCheckPerformed(CheckEventArgs args)
         {
+            if (_worstSeen < args.Result)
+                _worstSeen = args.Result;
+
             if(args.Result == CheckResult.Fail || args.Result == CheckResult.Warning)
                 if(!haveDemandedVisibility)
                 {
@@ -70,6 +74,11 @@ namespace ReusableUIComponents.ChecksUI
         {
             this.Show();
             checksUI1.StartChecking(checkable);
+        }
+
+        public CheckResult GetWorst()
+        {
+            return _worstSeen;
         }
     }
 }

@@ -175,38 +175,35 @@ namespace DataExportManager.DataRelease
             if (_pipelineUI.Pipeline == null)
                 return;
             
-            //the data we are trying to extract
-            FixedDataReleaseSource.CurrentRelease = new ReleaseData
-            {
-                ConfigurationsForRelease = ConfigurationsForRelease,
-                EnvironmentPotential = _environmentPotential,
-                ReleaseState = _releaseState
-            };
-
-            //a window for monitoring the progress
+            // the data listener in this case is a window for monitoring the progress
             var progressUI = new ProgressUI();
-            _activator.ShowWindow(progressUI, false);
-            
+
             //the release context for the project
-            var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
+            var context = new ReleaseUseCase(_project, GetReleaseData());
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
-            engine.Check(new PopupChecksUI("Checking engine", true));
-
-            try
+            var checksUI = new PopupChecksUI("Checking engine", false);
+            checksUI.Check(engine);
+            
+            if (checksUI.GetWorst() < CheckResult.Fail)
             {
-                progressUI.ShowRunning(true);
-                //and executed
-                engine.ExecutePipeline(new GracefulCancellationToken());
-            }
-            finally
-            {
-                progressUI.ShowRunning(false);
+                try
+                {
+                    _activator.ShowWindow(progressUI, false);
+            
+                    progressUI.ShowRunning(true);
+                    //and execute it
+                    engine.ExecutePipeline(new GracefulCancellationToken());
+                }
+                finally
+                {
+                    progressUI.ShowRunning(false);
+                }
             }
 
         }
-
+        
         private void treeView1_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -231,12 +228,9 @@ namespace DataExportManager.DataRelease
             _project = project;
             ConfigurationsForRelease.Clear();
             ReloadTreeView();
-            this.FixedDataReleaseSource = new FixedDataReleaseSource();
-
+        
             SetupPipeline();
         }
-
-        public FixedDataReleaseSource FixedDataReleaseSource { get; set; }
 
         private IPipelineSelectionUI _pipelineUI;
 
@@ -244,12 +238,22 @@ namespace DataExportManager.DataRelease
         {
             if (_pipelineUI == null)
             {
-                var context = new ReleaseUseCase(_project, FixedDataReleaseSource);
+                var releaseData = GetReleaseData();
+                releaseData.IsDesignTime = true;
+                var context = new ReleaseUseCase(_project, releaseData);
                 _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release",DockStyle.Fill,pnlPipeline);
             }
         }
 
-        
+        private ReleaseData GetReleaseData()
+        {
+            return new ReleaseData
+            {
+                ConfigurationsForRelease = ConfigurationsForRelease,
+                EnvironmentPotential = _environmentPotential,
+                ReleaseState = _releaseState
+            };
+        }
     }
 
     

@@ -15,33 +15,37 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// <summary>
     /// Default release pipeline destination implementation wraps Release Engine for the supplied ReleaseData.
     /// </summary>
-    public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseData>, IDataFlowDestination<ReleaseData>, IPipelineRequirement<Project>
+    public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit>, IDataFlowDestination<ReleaseAudit>, IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     {
         [DemandsNestedInitialization()]
         public ReleaseEngineSettings ReleaseSettings { get; set; }
 
-        public ReleaseData CurrentRelease { get; set; }
+        private ReleaseData _releaseData;
         private Project _project;
         private DirectoryInfo _destinationFolder;
         private ReleaseEngine _engine;
-
-        public ReleaseData ProcessPipelineData(ReleaseData currentRelease, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        
+        public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            this.CurrentRelease = currentRelease;
-            
-            if (CurrentRelease.ReleaseState == ReleaseState.DoingPatch)
+            if (releaseAudit == null)
+                return null;
+
+            if (releaseAudit.ReleaseFolder == null)
+                throw new ArgumentException("This component needs a destination folder! Did you forget to introduce and initialize the ReleaseFolderProvider in the pipeline?");
+
+            if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
                     
                 int recordsDeleted = 0;
 
-                foreach (var configuration in this.CurrentRelease.ConfigurationsForRelease.Keys)
+                foreach (var configuration in this._releaseData.ConfigurationsForRelease.Keys)
                 {
                     IExtractionConfiguration current = configuration;
                     var currentResults = configuration.CumulativeExtractionResults;
                 
                     //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-                    foreach (var redundantResult in currentResults.Where(r => CurrentRelease.ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+                    foreach (var redundantResult in currentResults.Where(r => _releaseData.ConfigurationsForRelease[current].All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
                     {
                         redundantResult.DeleteInDatabase();
                         recordsDeleted++;
@@ -51,22 +55,24 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
             }
 
-            _engine.DoRelease(CurrentRelease.ConfigurationsForRelease, CurrentRelease.EnvironmentPotential, isPatch: CurrentRelease.ReleaseState == ReleaseState.DoingPatch);
+            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit.ReleaseFolder);
+
+            _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotential, isPatch: _releaseData.ReleaseState == ReleaseState.DoingPatch);
 
             _destinationFolder = _engine.ReleaseFolder;
 
-            return CurrentRelease;
+            return null;
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            if (pipelineFailureExceptionIfAny != null && CurrentRelease != null)
+            if (pipelineFailureExceptionIfAny != null && _releaseData != null)
             {
                 try
                 {
                     int remnantsDeleted = 0;
 
-                    foreach (ExtractionConfiguration configuration in CurrentRelease.ConfigurationsForRelease.Keys)
+                    foreach (ExtractionConfiguration configuration in _releaseData.ConfigurationsForRelease.Keys)
                         foreach (ReleaseLogEntry remnant in configuration.ReleaseLogEntries)
                         {
                             remnant.DeleteInDatabase();
@@ -83,7 +89,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             if(pipelineFailureExceptionIfAny == null && _destinationFolder != null)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -94,13 +100,16 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public void Check(ICheckNotifier notifier)
         {
             ((ICheckable)ReleaseSettings).Check(notifier);
-            _engine.Check(notifier);
         }
 
         public void PreInitialize(Project value, IDataLoadEventListener listener)
         {
             _project = value;
-            _engine = new ReleaseEngine(_project, ReleaseSettings, listener);
+        }
+
+        public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+        {
+            this._releaseData = value;
         }
     }
 }
