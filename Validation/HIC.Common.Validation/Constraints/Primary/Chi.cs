@@ -73,7 +73,7 @@ namespace HIC.Common.Validation.Constraints.Primary
         }
 
         /// <summary>
-        /// Copied from CIB_Systems Connection class, it does the CHI check digit calculation
+        /// Does the CHI check digit calculation
         /// </summary>
         /// <param name="sCHI"></param>
         /// <returns></returns>

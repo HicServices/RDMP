@@ -11,11 +11,11 @@ using ReusableUIComponents;
 namespace DataExportManager.SimpleDialogs
 {
     /// <summary>
-    /// Allows you to select a cohort form your Cohort Database which is not yet been imported into the RDMP.  The RDMP lets you import cohorts directly into the cohort database through
+    /// Allows you to select a cohort from your Cohort Database which is not yet been imported into the RDMP.  The RDMP lets you import cohorts directly into the cohort database through
     /// its user interface in which case a reference is created to the cohort in the cohort database once it has been successfully committed (so you won't need this dialog) (See 
     /// CohortCreationRequestUI).
     /// 
-    /// Only use this dialog if you have manually added a cohort into your cohort database yourself and RDMP does not show it in ExtractableCohortManagementUI.
+    /// Only use this dialog if you have manually added a cohort into your cohort database yourself and RDMP does not show it in SavedCohortsCollectionUI.
     /// </summary>
     public partial class SelectWhichCohortToImport : RDMPForm
     {
