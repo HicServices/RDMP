@@ -4,7 +4,7 @@ using CatalogueLibrary.Data;
 namespace CatalogueLibrary.Nodes
 {
     /// <summary>
-    /// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSqlTables 
+    /// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSQLTables 
     /// </summary>
     public class DocumentationNode
     {

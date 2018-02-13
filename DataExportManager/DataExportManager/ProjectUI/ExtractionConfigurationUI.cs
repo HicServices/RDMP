@@ -38,25 +38,20 @@ using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
-using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.TransparentHelpSystem;
-
 namespace DataExportManager.ProjectUI
 {
     /// <summary>
-    /// Allows you to choose the cohort and selected datasets for a project extraction configuration.  This will involve joining the selected datasets against the selected cohort (and
-    /// substituting the private identifiers for project specific anonymous release identifiers) as well as applying an configured filters (See ConfigureDatasetUI).
-    /// 
-    /// You can have multiple active configurations in a project, for example you might extract 'Prescribing', 'Biochemistry' and 'Demography' for the cohort 'CasesForProject123' and
+    /// Allows you to change high level attributes of an ExtractionConfiguration in a data extraction Project.  Executing an ExtractionConfiguration involves joining the 
+    /// selected datasets against the selected cohort (and substituting the private identifiers for project specific anonymous release identifiers) as well as applying any
+    /// configured filters (See ConfigureDatasetUI).  You can have multiple active configurations in a project, for example you might extract 'Prescribing', 'Biochemistry' and 'Demography' for the cohort 'CasesForProject123' and
     /// only datasets 'Biochemistry' and 'Demography' for the cohort 'ControlsForProject123'.
     /// 
-    /// Cohorts will only appear in the dropdown if the cohort manager database lists them as being associated with the Project (to help reduce the possibility of extracting the wrong
-    /// cohort - which would be catastrophic!)
+    /// The attributes you can change include the name, description, ticketting system tickets etc.
     /// 
-    /// On the left you can see a list of all the currently extractable datasets (See DataSetManagementUI) that are not already part of the extraction configuration.  You can add these
-    /// datasets to the configuration by selecting them and pressing the '>' button.  Once a dataset is included in the extraction you must choose which columns the researcher will receive
-    /// and whether there are any dataset filters (e.g. is the researchers only allowed prescribing records for 'Propranolol').  For instructions on how to adjust the columns/filters see
-    /// ConfigureDatasetUI
+    /// You can also define global SQL parameters which will be available to all Filters in all datasets extracted as part of the configuration.
+    /// 
+    /// You can associate a specific CohortIdentificationConfiguration with the ExtractionConfiguration.  This will allow you to do a 'cohort refresh' (replace the current saved cohort 
+    /// identifier list with a new version built by executing the query - helpful if you have new data being loaded regularly and this results in the study cohort changing).
     /// </summary>
     public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Design, ISaveableUI
     {

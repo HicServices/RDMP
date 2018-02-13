@@ -21,7 +21,7 @@ namespace CatalogueLibrary.QueryBuilding
     /// 
     /// You can ask it what is on line X or ask what line number has ExtractionInformation Y on it
     /// 
-    /// ExtractionInformation is sorted by DefaultOrder prior to generating the SQL 
+    /// ExtractionInformation is sorted by column order prior to generating the SQL (i.e. not the order you add them to the query builder)
     /// </summary>
     public class QueryBuilder : ISqlQueryBuilder
     {
@@ -78,7 +78,8 @@ namespace CatalogueLibrary.QueryBuilding
         public int LineCount { get; private set; }
 
         /// <summary>
-        /// A container that contains all the subcontainers and filters to be assembled during the query (use PlaceholderContainer if you want only a single AND container with no subcontainers e.g. for testing)
+        /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your 
+        /// own container tree at runtime rather than referencing a database entity)
         /// </summary>
         public IContainer RootFilterContainer
         {
@@ -95,7 +96,8 @@ namespace CatalogueLibrary.QueryBuilding
         private string _salt = null;
 
         /// <summary>
-        /// Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a QueryEditor all fields so marked will be hashed using the specified salt
+        /// Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a QueryEditor all fields so marked will be hashed using the
+        /// specified salt
         /// </summary>
         /// <param name="salt">A 3 letter string indicating the desired SALT</param>
         public void SetSalt(string salt)

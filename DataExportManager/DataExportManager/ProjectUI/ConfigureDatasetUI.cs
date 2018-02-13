@@ -33,18 +33,15 @@ using Clipboard = System.Windows.Forms.Clipboard;
 namespace DataExportManager.ProjectUI
 {
     /// <summary>
-    /// Allows you to choose which columns you want to extract from a given dataset (Catalogue) for a specific research project extraction.  For example Researcher A wants prescribing
-    /// dataset including all the Core columns but he also has obtained governance approval to receive Supplemental column 'PrescribingGP' so the configuration would need to include this
-    /// column.
+    /// Allows you to choose which columns you want to extract from a given dataset (Catalogue) for a specific research project extraction (ExtractionConfiguration).  For example
+    /// Researcher A wants prescribing dataset including all the Core columns but he also has obtained governance approval to receive Supplemental column 'PrescribingGP' so the
+    /// configuration would need to include this column.
     /// 
     /// On the left you can see all the available columns and transforms in the selected dataset (see ExtractionConfigurationUI for selecting datasets).  You can add these by selecting them
-    /// and pressing the '>' button.  On the right the QueryBuilder will show you what the extraction SQL will be for the dataset when it is executed.  
+    /// and pressing the '>' button.  On the right the QueryBuilder will show you what columns are currently included in the researchers extract. 
     /// 
     /// Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See 
     /// ExtractionInformationUI).
-    /// 
-    /// You can click the 'Filters' button to configure extraction filters for the dataset.  For example a researcher might only have governance approval to receive prescriptions for 
-    /// specific drugs relevant to his research question and not all prescriptions.  This launches a DeployedExtractionFilterUI. 
     /// </summary>
     public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design
     {

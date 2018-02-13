@@ -20,6 +20,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         //since the very fact that you add something to _whitelist means that it is in the codebase after all!
         private string[] _whitelist = new []
         {
+            "PublicKeyToken",
+            "DatabaseEntities",
             "MyDateCol",
             "NumberOfResults",
             "ANOGPCode",
@@ -122,6 +124,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "LoadID_Data_STAGING",
             "AuditObject",
             "EmailAddressOfAuthorizor",
+            "FixedSource"
 
         };
 

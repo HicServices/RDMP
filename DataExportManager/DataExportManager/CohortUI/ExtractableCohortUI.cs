@@ -28,7 +28,7 @@ namespace DataExportManager.CohortUI
 {
     
     /// <summary>
-    /// Describes a named cohort in one of your Cohort Databases (you might only have 1 cohort database - See ExternalCohortSourcesManagementUI).  Each cohort is associated with a specific
+    /// Describes a named cohort in one of your Cohort Databases (you might only have 1 cohort database - See ExternalCohortTable).  Each cohort is associated with a specific
     /// Project.  Cohorts can have 'custom data', these are researcher datasets or datasets specific to the project extraction that are not needed for any other project (for example 
     /// questionnaire data which relates to the cohort).  
     /// 
