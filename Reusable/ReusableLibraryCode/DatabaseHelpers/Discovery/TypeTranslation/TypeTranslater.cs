@@ -95,7 +95,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return "bit";
         }
 
-        private string GetSmallIntDataType()
+        protected string GetSmallIntDataType()
         {
             return "smallint";
         }
