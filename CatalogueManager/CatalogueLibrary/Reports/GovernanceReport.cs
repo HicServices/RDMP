@@ -101,8 +101,6 @@ namespace CatalogueLibrary.Reports
         /// Pass false for active or true for expired
         /// </summary>
         /// <param name="govs"></param>
-        /// <param name="ws"></param>
-        /// <param name="currentRow"></param>
         /// <param name="expired"></param>
         private void OutputGovernanceList(Dictionary<GovernancePeriod, Catalogue[]> govs, StringBuilder sb, bool expired)
         {

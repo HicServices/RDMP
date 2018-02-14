@@ -146,7 +146,7 @@ namespace CatalogueManager.LoadExecutionUIs
             SetButtonStates();
         }
 
-        private async void StopCachingJob()
+        private void StopCachingJob()
         {
             if (_stopTokenSource == null)
                 return;
@@ -157,7 +157,7 @@ namespace CatalogueManager.LoadExecutionUIs
                     "Stopping...this may take some time depending on what the pipeline is up to (and where the next cancellation check is)"));
         }
 
-        private async void AbortCachingJob()
+        private void AbortCachingJob()
         {
             if (_abortTokenSource == null)
                 return;

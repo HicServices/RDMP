@@ -44,7 +44,7 @@ namespace CatalogueLibraryTests.Integration
                 {
                     var c = Enum.Parse(typeof (RDMPConcept), typeName);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     missingConcepts.Add(typeName);
                 }

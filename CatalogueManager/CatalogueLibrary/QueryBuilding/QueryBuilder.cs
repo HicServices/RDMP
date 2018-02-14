@@ -190,7 +190,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// <summary>
         /// Pass in a column and it will tell you which line of .SQL it wrote it out to.  Returns -1 if it is not found
         /// </summary>
-        /// <param name="columnEntity"></param>
+        /// <param name="column"></param>
         /// <returns></returns>
         [Pure]
         public int GetLineNumberForColumn(IColumn column)

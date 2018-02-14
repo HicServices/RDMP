@@ -56,14 +56,13 @@ namespace LoadModules.Generic.Attachers
                             string.Join(",", loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName)) + ")")); 
         }
 
-        private bool bHaveAlreadySubmittedData = false;
+        private bool bHaveAlreadySubmittedData;
         
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="destination"></param>
-        /// <param name="reader"></param>
         /// <param name="maxBatchSize"></param>
         /// <returns></returns>
         protected override int IterativelyBatchLoadDataIntoDataTable(DataTable destination, int maxBatchSize)

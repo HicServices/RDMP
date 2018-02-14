@@ -8,7 +8,6 @@ namespace MapsDirectlyToDatabaseTableUI
     public class TextMatchFilterWithWhiteList : TextMatchFilter
     {
         HashSet<object>  _whiteList = new HashSet<object>();
-        private ICoreChildProvider _coreChildProvider;
         private string[] _tokens;
         private CompositeAllFilter _compositeFilter;
 

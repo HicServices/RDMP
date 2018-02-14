@@ -37,7 +37,6 @@ namespace CachingEngine.DataRetrievers
         /// 
         /// </summary>
         /// <param name="permissionWindow">May be null, then allows downloading of CacheProgress with no associated PermissionWindow</param>
-        /// <param name="dynamicPipelineEngineFactory"></param>
         /// <param name="repository"></param>
         /// <param name="pipelineEngineExecutionStrategy">Multiple CacheProgresses will result in multiple PipelineEngines, this strategy determines how these should be run, e.g. Round-robin, Async</param>
         public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, ICatalogueRepository repository, IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)
@@ -53,7 +52,6 @@ namespace CachingEngine.DataRetrievers
         /// </summary>
         /// <param name="permissionWindow"></param>
         /// <param name="cacheProgressItems"></param>
-        /// <param name="dynamicPipelineEngineFactory"></param>
         /// <param name="repository"></param>
         /// <param name="pipelineEngineExecutionStrategy"></param>
         public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, List<ICacheProgress> cacheProgressItems, ICatalogueRepository repository, IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)

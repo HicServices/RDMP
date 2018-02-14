@@ -280,7 +280,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
                 Project.ProjectNumber = newProjectNumber;
                 Project.SaveToDatabase();
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 tbSetProjectNumber.ForeColor = Color.Red;
             }

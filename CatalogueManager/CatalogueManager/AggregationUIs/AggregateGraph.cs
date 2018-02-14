@@ -764,7 +764,7 @@ namespace CatalogueManager.AggregationUIs
                 Timeout = int.Parse(tbTimeout.Text);
                 tbTimeout.ForeColor = Color.Black;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 tbTimeout.ForeColor = Color.Red;
             }
