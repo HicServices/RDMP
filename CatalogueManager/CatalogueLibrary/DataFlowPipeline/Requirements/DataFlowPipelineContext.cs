@@ -99,7 +99,6 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
                     reason = "Type " + GetFullName(t) + " is a generic parameter of forbidden type " + GetFullName(forbiddenType) + "(Forbidden within the current context)";
                     return false;
                 }
-
             }
 
             reason = null;
