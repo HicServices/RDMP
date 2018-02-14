@@ -88,29 +88,37 @@ task :publishall, [:folder, :url] do |t, args|
     end
     
     major, minor, patch, build, suffix = asminfoversion.split(/[\.\-]/)
+        
+    basefolder = args.folder.chomp("/").chomp("\\")
+    baseurl = args.url.chomp("/").chomp("\\")
+    version = "#{major}.#{minor}.#{patch}.#{build}"
     
     if (suffix)
-        version = "#{major}.#{minor}.#{patch}.#{build}-#{suffix}"
+        deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}-#{suffix}"
+        deployurl = "#{baseurl}/RC/"
     else
-        version = "#{major}.#{minor}.#{patch}.#{build}"
+        deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}"
+        deployurl = "#{baseurl}/Stable/"
     end
     
     minversion = "#{major}.#{minor}.#{patch}.0"
     
-    puts "version: #{version}"
-    puts "minversion: #{minversion}"
+    #puts "version: #{version}"
+    #puts "minversion: #{minversion}"
+    #puts "folder: #{folder}"
+    #puts "url: #{url}"
     
     Dir.chdir('Application/ResearchDataManagementPlatform') do
-        #sh "./publish.bat #{version} #{minversion} #{args.folder}#{version}\\ #{args.url}"
+        sh "./publish.bat #{version} #{minversion} #{deployfolder}/ #{deployurl}"
     end
     
-    # reset symlinks:
-    File.delete "#{args.folder}ResearchDataManagementPlatform.application" if File.exists?("#{args.folder}ResearchDataManagementPlatform.application")
-    sh "rd \"#{args.folder}Application Files\"" if Dir.exists?("#{args.folder}Application Files")
-    #args.folder.gsub!("/","\\")
-    #puts args.folder
-    sh "call mklink \"#{args.folder}ResearchDataManagementPlatform.application\" \"#{args.folder}#{version}/ResearchDataManagementPlatform.application\""
-    sh "call mklink /J \"#{args.folder}Application Files\" \"#{args.folder}#{version}/Application Files\""
+    # reset symlinks, only if STABLE:
+    if (!suffix)
+        File.delete "#{basefolder}/ResearchDataManagementPlatform.application" if File.exists?("#{basefolder}/ResearchDataManagementPlatform.application")
+        sh "rd \"#{basefolder}/Application Files\"" if Dir.exists?("#{basefolder}/Application Files")
+        sh "call mklink \"#{basefolder}/ResearchDataManagementPlatform.application\" \"#{deployfolder}/ResearchDataManagementPlatform.application\""
+        sh "call mklink /J \"#{basefolder}/Application Files\" \"#{deployfolder}/Application Files\""
+    end
 end
 
 
