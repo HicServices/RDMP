@@ -83,7 +83,7 @@ namespace CatalogueManager.AutoComplete
             {
                 runtimeName = column.GetRuntimeName();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
             }

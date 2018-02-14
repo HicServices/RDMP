@@ -29,7 +29,6 @@ namespace CohortManagerTests.QueryTests
         private ExtractionInformation ei_Chi;
         
         private CohortIdentificationConfiguration cic;
-        private CohortAggregateContainer container;
         private ExtractionInformation ei_Year;
 
         private ISqlParameter parama1;

@@ -10,7 +10,7 @@ namespace CatalogueLibrary.Data.Pipelines
 {
     /// <summary>
     /// Describes the flow of strongly typed objects (usually DataTables) from a source to a destination (e.g. extracting linked cohort data into a flat file ).  
-    /// This entity is the serialized version of DataFlowPipelineEngine&lt;T&gt; (built by a DataFlowPipelineEngineFactory&lt;T&gt ).
+    /// This entity is the serialized version of DataFlowPipelineEngine&lt;T&gt; (built by a DataFlowPipelineEngineFactory&lt;T&gt; ).
     /// 
     /// It is the hanging off point of a sequence of steps e.g. 'clean strings', 'substitute column X for column Y by mapping values off of remote server B'.
     /// 

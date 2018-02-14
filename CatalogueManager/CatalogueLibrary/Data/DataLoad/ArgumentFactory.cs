@@ -22,7 +22,6 @@ namespace CatalogueLibrary.Data.DataLoad
         /// Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under the parent ProcessTask
         /// </summary>
         /// <typeparam name="T">A class with one or more Properties marked with DemandsInitialization</typeparam>
-        /// <param name="parent">The ProcessTask that owns the wrapper class, e.g. AttacherRuntimeTask would host AnySeparatorFileAttacher (which would be T) </param>
         /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
         public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
         {

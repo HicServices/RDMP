@@ -140,7 +140,6 @@ namespace CatalogueManager.ItemActivation
         /// <summary>
         /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
         /// </summary>
-        /// <param name="o"></param>
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
         
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);

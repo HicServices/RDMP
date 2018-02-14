@@ -484,7 +484,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
                 
                     object lastParent = null;
-                    int H = -1;
 
                     if(descendancy != null)
                     {

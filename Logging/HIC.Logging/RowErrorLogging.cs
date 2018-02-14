@@ -57,11 +57,10 @@ namespace HIC.Logging
         /// <summary>
         /// Records that a data load row failed to load into the database.
         /// </summary>
-        /// <param name="dataLoadInfo">Class holding information about the ongoing data load</param>
+        /// <param name="tableLoadInfo">Class holding information about the ongoing data load</param>
         /// <param name="typeOfError">The general type of the error e.g. ValidationFailed could be for a dodgy postcode</param>
         /// <param name="description">Full description of why the row is not inserted (including any Exception messages) </param>
         /// <param name="locationOfRow">The full name of a data table or flat file that contains the row</param>
-        /// <param name="rowNumberOrId">The ID of the ErrorRow or the line number (if being written to a flat file)</param>
         /// <param name="requiresReloading">true if the load needs to be re-run on this row, false if not e.g. the row is a duplicate</param>
         public void LogRowError(ITableLoadInfo tableLoadInfo, RowErrorType typeOfError, string description, string locationOfRow, bool requiresReloading, string columnName = null)
         {

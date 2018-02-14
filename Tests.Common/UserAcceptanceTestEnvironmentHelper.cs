@@ -19,7 +19,6 @@ namespace Tests.Common
         private readonly SqlConnectionStringBuilder _identifierDumpConnectionString;
 
         private bool _isSetUp;
-        private string _stagingDbName;
         private TestDirectoryHelper _testDirectoryHelper;
 
         private UserAcceptanceTestEnvironment _testEnvironment;

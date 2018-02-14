@@ -110,7 +110,7 @@ CONSTRAINT pk_Fish PRIMARY KEY (id, height)
                             con2.Open();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                     }
 

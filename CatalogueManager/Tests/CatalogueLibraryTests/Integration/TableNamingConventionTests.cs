@@ -19,17 +19,6 @@ namespace CatalogueLibraryTests.Integration
             ti.DeleteInDatabase();
         }
 
-        [Test]
-        public void CreateNewTableInfoInDatabase_valid_pass()
-        {
-            var tableInfo = new TableInfo(CatalogueRepository, "TestDB..TestTableName");
-            Assert.NotNull(tableInfo);
-
-            tableInfo.DeleteInDatabase();
-
-            var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<TableInfo>(tableInfo.ID));
-            Assert.AreEqual(ex.Message,"Could not find TableInfo with ID " + tableInfo.ID);
-        }
 
         [Test]
         public void update_changeAllProperties_pass()
@@ -68,12 +57,6 @@ namespace CatalogueLibraryTests.Integration
 
             var newLookupTable = namingScheme.GetName(baseTableName, LoadBubble.Live);
             Assert.AreEqual("MyTable", newLookupTable);
-
-            var renamedLookupTable = namingScheme.ConvertTableName("MyTable_STAGING", LoadBubble.Staging, LoadBubble.Live);
-            Assert.AreEqual("MyTable", renamedLookupTable);
-
-            var renamedLookupTableFromLiveToStaging = namingScheme.ConvertTableName(baseTableName, LoadBubble.Live, LoadBubble.Staging);
-            Assert.AreEqual("MyTable_STAGING", renamedLookupTableFromLiveToStaging);
         }
 
     }

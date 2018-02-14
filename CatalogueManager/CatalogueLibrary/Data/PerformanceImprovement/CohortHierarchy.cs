@@ -82,7 +82,7 @@ namespace CatalogueLibrary.Data.PerformanceImprovement
                         
                         config = _childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         throw new Exception("Error occured trying to find AggregateConfiguration with ID " + currentChildId + " which is allegedly a child of CohortAggregateContainer " + currentParentId);
                     }

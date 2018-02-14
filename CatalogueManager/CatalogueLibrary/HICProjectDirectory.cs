@@ -73,8 +73,6 @@ namespace CatalogueLibrary
         public bool Test { get; private set; }
 
         object oLockConfigurationDataXML = new object();
-
-        private XmlDocument _configurationXMLDocument;
         
         public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
         {

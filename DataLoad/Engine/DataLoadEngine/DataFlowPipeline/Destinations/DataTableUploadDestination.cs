@@ -61,8 +61,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            string whoCares;//used for out parameters we are not using
-
             //work out the table name for the table we are going to create
             if (TargetTableName == null)
             {

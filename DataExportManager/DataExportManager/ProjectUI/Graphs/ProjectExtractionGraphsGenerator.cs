@@ -16,8 +16,8 @@ namespace DataExportManager.ProjectUI.Graphs
 {
     public class ProjectExtractionGraphsGenerator
     {
-        private readonly DirectoryInfo _root;
-        /*
+        /*private readonly DirectoryInfo _root;
+        
 
         /// <summary>
         /// Key is the name of the dataset being extracted, the list is the graphs for that dataset

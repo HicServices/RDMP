@@ -73,7 +73,7 @@ namespace CatalogueManager.Tutorials
                         PersistStringHelper helper = new PersistStringHelper();
                         TutorialSeen = helper.LoadDictionaryFromString(text).ToDictionary(k=>k.Key,v=>Boolean.Parse(v.Value));
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         //user has corrupted his save file
                         CreateNewDictionary();

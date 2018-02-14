@@ -34,8 +34,6 @@ namespace DataLoadEngine.Job
         /// of disposal (DO NOT DISPOSE OF CLONER YOURSELF)
         /// </summary>
         /// <param name="cloner"></param>
-        /// <param name="namingScheme"></param>
-        /// <param name="namingConvention"></param>
         /// <param name="stage"></param>
         void CreateTablesInStage(DatabaseCloner cloner,LoadBubble stage);
 

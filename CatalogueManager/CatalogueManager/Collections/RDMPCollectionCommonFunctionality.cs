@@ -50,7 +50,6 @@ namespace CatalogueManager.Collections
     {
         private IActivateItems _activator;
         public TreeListView Tree;
-        private TextBox _filterTextBox;
 
         public ICoreIconProvider CoreIconProvider { get; private set; }
         public ICoreChildProvider CoreChildProvider { get; set; }

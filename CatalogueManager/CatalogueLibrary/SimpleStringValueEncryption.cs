@@ -92,7 +92,6 @@ namespace CatalogueLibrary
         /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
         /// </summary>
         /// <param name="toDecrypt"></param>
-        /// <param name="encoding"></param>
         /// <returns></returns>
         public string Decrypt(string toDecrypt)
         {
