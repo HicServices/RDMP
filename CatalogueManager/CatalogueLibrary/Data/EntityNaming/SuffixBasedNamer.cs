@@ -39,32 +39,6 @@ namespace CatalogueLibrary.Data.EntityNaming
 
             return tableName + Suffixes[convention];
         }
-
-        public virtual bool IsNamedCorrectly(string tableName, LoadBubble convention)
-        {
-            if (!Suffixes.ContainsKey(convention))
-                throw new ArgumentException("Do not have a suffix for convention: " + convention);
-
-            return tableName.EndsWith(Suffixes[convention]);
-        }
-
-        public virtual string RetrieveTableName(string fullName, LoadBubble convention)
-        {
-            if (!Suffixes.ContainsKey(convention))
-                throw new ArgumentException("Do not have a suffix for convention: " + convention);
-
-            if (string.IsNullOrWhiteSpace(Suffixes[convention]))
-                return fullName;
-
-            if (!fullName.EndsWith(Suffixes[convention]))
-                throw new ArgumentException("'" + fullName + "' is not named according to the " + convention + " convention");
-
-            return fullName.Remove(fullName.Length - Suffixes[convention].Length);
-        }
-
-        public string ConvertTableName(string tableName, LoadBubble from, LoadBubble to)
-        {
-            return GetName(RetrieveTableName(tableName, from), to);
-        }
+        
     }
 }
