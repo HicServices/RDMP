@@ -61,7 +61,7 @@ namespace DataExportManager.ProjectUI
         private ExtractionConfiguration _configurationToExecute;
         private readonly IExtractableDataSet[] _toExtract;
         
-        private bool extractionInProgress = false;
+        private bool extractionInProgress;
         DataLoadInfo _dataLoadInfo;
 
         BiDictionary<TabPage, ExecuteDatasetExtractionHostUI> tabPagesDictionary = new BiDictionary<TabPage, ExecuteDatasetExtractionHostUI>();

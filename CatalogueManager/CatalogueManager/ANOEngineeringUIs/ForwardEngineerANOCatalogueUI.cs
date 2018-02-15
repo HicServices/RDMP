@@ -279,7 +279,6 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             if (_planManager.TargetDatabase != null)
             {
-                Exception ex;
                 if (_planManager.TargetDatabase.Exists())
                 {
                     _planManager.SkippedTables.Clear();

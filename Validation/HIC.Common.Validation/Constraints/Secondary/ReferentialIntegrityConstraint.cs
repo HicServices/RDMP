@@ -56,7 +56,7 @@ namespace HIC.Common.Validation.Constraints.Secondary
         }
 
         /// <summary>
-        /// Only for XMLSerializer, do not use otherwise
+        /// Only for XmlSerializer, do not use otherwise
         /// </summary>
         public ReferentialIntegrityConstraint()
         {

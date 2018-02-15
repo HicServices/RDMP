@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return null;
         }
 
-        public override async void Execute()
+        public override void Execute()
         {
             var allSlots = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<AutomationServiceSlot>().ToArray();
 

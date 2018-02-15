@@ -319,7 +319,7 @@ namespace DataExportLibrary.Data.DataTables
 
         /// <summary>
         /// Defines a new potentially extractable cohort (based on a database table only - new, used to be based on a query), this is stored in the 
-        /// DataExportManager2 database and the ID of the new record is returned by this method, use GetCohortDatabaseTableByID to get the object 
+        /// Data Export database and the ID of the new record is returned by this method, use GetCohortDatabaseTableByID to get the object 
         /// back from the database
         /// </summary>
         /// <returns>ID of the newly created database record</returns>

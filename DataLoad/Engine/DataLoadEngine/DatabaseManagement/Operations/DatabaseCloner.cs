@@ -48,7 +48,6 @@ namespace DataLoadEngine.DatabaseManagement.Operations
         /// <param name="Catalogues"></param>
         /// <param name="copyToStage"></param>
         /// <param name="tableNamingScheme"></param>
-        /// <param name="copyTableNamingConvention"></param>
         /// <param name="includeLookupTables"></param>
         public void CreateTablesInDatabaseFromCatalogueInfo(IEnumerable<ICatalogue> Catalogues, LoadBubble copyToStage, INameDatabasesAndTablesDuringLoads tableNamingScheme, bool includeLookupTables)
         {

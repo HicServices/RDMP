@@ -15,9 +15,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         {
             var t = request.CSharpType;
 
-            if (t == typeof(int) || t == typeof(Int64) || t == typeof(Int32) || t == typeof(Int16) || t == typeof(int?))
+            if (t == typeof(int) || t == typeof(Int32)  || t == typeof(uint) || t == typeof(int?) || t == typeof(uint?))
                 return GetIntDataType();
-            
+
+            if (t == typeof (short) || t == typeof (Int16) || t == typeof (ushort) || t == typeof (short?) || t == typeof (ushort?))
+                return GetSmallIntDataType();
+
+            if (t == typeof (long) || t == typeof(ulong) || t == typeof(long?) || t == typeof(ulong?))
+                return GetBigIntDataType();
+
             if (t == typeof(bool) || t == typeof(bool?)) 
                 return GetBoolDataType();
             
@@ -45,8 +51,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             throw new NotSupportedException("Unsure what SQL Database type to use for Property Type " + t.Name);
 
         }
-
-
         protected virtual string GetByteArrayDataType()
         {
             return "varbinary(max)";
@@ -91,11 +95,21 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return "bit";
         }
 
+        protected string GetSmallIntDataType()
+        {
+            return "smallint";
+        }
+
         protected virtual string GetIntDataType()
         {
             return "int";
         }
         
+        protected virtual string GetBigIntDataType()
+        {
+            return "bigint";
+        }
+
         public Type GetCSharpTypeForSQLDBType(string sqlType)
         {
             if (IsFloatingPoint(sqlType))

@@ -321,7 +321,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
                 if(Options.IsHigherLevel(sqlParameter))
                    return "Locked.png";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Warning.png"; //if it crashed trying to get an image then ... bad times return warning
             }

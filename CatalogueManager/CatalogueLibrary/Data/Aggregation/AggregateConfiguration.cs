@@ -51,7 +51,6 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _pivotOnDimensionID;
         private bool _isExtractable;
         private string _havingSQL;
-        private int? _topX_ID;
 
 
         public string CountSQL
@@ -385,7 +384,7 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _overrideFiltersByUsingParentAggregateConfigurationInsteadID;
         private int? _rootFilterContainerID;
         
-        private bool orderFetchAttempted = false;
+        private bool orderFetchAttempted;
         
 
 
@@ -533,8 +532,8 @@ namespace CatalogueLibrary.Data.Aggregation
             return dependers.ToArray();
         }
 
-        private JoinableCohortAggregateConfiguration _cachedJoinable = null;
-        private bool _databaseLookupPerformed = false;
+        private JoinableCohortAggregateConfiguration _cachedJoinable;
+        private bool _databaseLookupPerformed;
         /// <summary>
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
         /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 

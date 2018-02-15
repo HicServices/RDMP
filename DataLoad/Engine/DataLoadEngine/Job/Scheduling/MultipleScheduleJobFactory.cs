@@ -20,7 +20,6 @@ namespace DataLoadEngine.Job.Scheduling
         private readonly Dictionary<ILoadProgress, IJobDateGenerationStrategy> _availableSchedules;
         private readonly List<ILoadProgress> _scheduleList;
         private int _lastScheduleId;
-        private int _lastJobId;
 
         public MultipleScheduleJobFactory(Dictionary<ILoadProgress, IJobDateGenerationStrategy> availableSchedules, int? overrideNumberOfDaysToLoad , ILoadMetadata loadMetadata, ILogManager logManager)
             : base(overrideNumberOfDaysToLoad, loadMetadata, logManager)
@@ -30,7 +29,6 @@ namespace DataLoadEngine.Job.Scheduling
             _scheduleList = _availableSchedules.Keys.ToList();
 
             _lastScheduleId = 0;
-            _lastJobId = 0;
         }
 
         /// <summary>

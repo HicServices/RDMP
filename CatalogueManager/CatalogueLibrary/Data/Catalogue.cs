@@ -949,7 +949,7 @@ namespace CatalogueLibrary.Data
         /// mapping according to the convention and the table naming scheme
         /// </summary>
         /// <param name="destinationNamingConvention"></param>
-        /// <param name="tableNamingScheme"></param>
+        /// <param name="namer"></param>
         /// <returns></returns>
         public Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destinationNamingConvention, INameDatabasesAndTablesDuringLoads namer)
         {

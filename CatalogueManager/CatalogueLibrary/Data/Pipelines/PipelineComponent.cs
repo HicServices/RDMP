@@ -132,7 +132,6 @@ namespace CatalogueLibrary.Data.Pipelines
         /// Creates new ProcessTaskArguments for the supplied class T (based on what DemandsInitialization fields it has).  Parent is the ProcessTask that hosts the class T e.g. IAttacher
         /// </summary>
         /// <typeparam name="T">A class that has some DemandsInitialization fields</typeparam>
-        /// <param name="parent"></param>
         public IEnumerable<PipelineComponentArgument> CreateArgumentsForClassIfNotExists<T>()
         {
            return CreateArgumentsForClassIfNotExists(typeof(T));

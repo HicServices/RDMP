@@ -1172,15 +1172,5 @@ namespace DataLoadEngineTests.Integration
         {
             return true;
         }
-
-        public string RetrieveTableName(string fullName, LoadBubble convention)
-        {
-            return fullName;
-        }
-
-        public string ConvertTableName(string tableName, LoadBubble @from, LoadBubble @to)
-        {
-            return tableName;
-        }
     }
 }

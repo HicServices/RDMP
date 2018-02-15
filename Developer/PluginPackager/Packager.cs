@@ -27,7 +27,6 @@ namespace PluginPackager
         private readonly string _outputZipFilePath;
         private readonly bool _skipSourceCollection;
 
-        private DirectoryInfo _packageSourceDirectory;
         private Version _pluginVersionOfCatalogueLibrary;
 
         private List<FileInfo> _dllPackage = new List<FileInfo>();

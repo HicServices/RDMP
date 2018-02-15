@@ -7,10 +7,6 @@ namespace CatalogueLibrary.Data.EntityNaming
     public interface INameDatabasesAndTablesDuringLoads
     {
         string GetDatabaseName(string rootDatabaseName, LoadBubble convention);
-
         string GetName(string tableName, LoadBubble convention);
-        bool IsNamedCorrectly(string tableName, LoadBubble convention);
-        string RetrieveTableName(string fullName, LoadBubble convention);
-        string ConvertTableName(string tableName, LoadBubble from, LoadBubble to);
     };
 }

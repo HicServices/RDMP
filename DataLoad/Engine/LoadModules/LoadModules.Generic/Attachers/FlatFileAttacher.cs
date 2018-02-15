@@ -196,7 +196,6 @@ namespace LoadModules.Generic.Attachers
         /// 
         /// </summary>
         /// <param name="dt"></param>
-        /// <param name="reader"></param>
         /// <param name="maxBatchSize"></param>
         /// <returns>return the number of rows read, if you return >0 then you will be called again to get more data (if during this second or subsequent call there is no more data to read from source, return 0)</returns>
         protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize);

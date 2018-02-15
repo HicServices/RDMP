@@ -20,7 +20,6 @@ namespace DataExportLibrary.Tests
         [Test]
         public void ImportFile()
          {
-             Exception ex = null;
             string file = Path.GetTempFileName();
             string databaseName = TestDatabaseNames.GetConsistentName(GetType().Name);
             

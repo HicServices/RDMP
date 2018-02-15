@@ -32,7 +32,9 @@ namespace DataExportLibrary.CohortDescribing
         }
 
         /// <summary>
-        /// Starts 1 async fetch request for each cohort endpoint e.g. NormalCohorts ExternalCohortTable contains 100 cohorts while FreakyCohorts ExternalCohortTable has another 30. 
+        /// Starts 1 async fetch request for each cohort endpoint e.g. NormalCohorts ExternalCohortTable database contains 100 cohorts while FreakyCohorts ExternalCohortTable database
+        /// has another 30. 
+        /// 
         /// These async requests are managed by the CohortDescriptionDataTableAsyncFetch object which has a callback for compeltion.  Each ExtractableCohortDescription subscribes to
         /// the callback to self populate
         /// </summary>
