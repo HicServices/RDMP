@@ -40,12 +40,12 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
-        public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile)
+        public Plugin(ICatalogueRepository repository, string pluginName, string directoryName)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
-                {"Name", pluginZipFile.Name},
-                {"UploadedFromDirectory",pluginZipFile.DirectoryName}
+                {"Name", pluginName},
+                {"UploadedFromDirectory", directoryName}
             });
             
         }

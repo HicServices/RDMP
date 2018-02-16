@@ -25,6 +25,7 @@ namespace PluginPackager
     {
         private readonly FileInfo _solutionToPackage;
         private readonly string _outputZipFilePath;
+        private readonly string _pluginName;
         private readonly bool _skipSourceCollection;
 
         private Version _pluginVersionOfCatalogueLibrary;
@@ -39,6 +40,7 @@ namespace PluginPackager
         {
             _solutionToPackage = solutionToPackage;
             _outputZipFilePath = outputZipFilePath;
+            _pluginName = Path.GetFileNameWithoutExtension(outputZipFilePath);
             _skipSourceCollection = skipSourceCollection;
 
             if (File.Exists(_outputZipFilePath))
@@ -68,11 +70,13 @@ namespace PluginPackager
 
                 var manifest = archive.CreateEntry("PluginManifest.txt");
 
-                //add the version of CatalogueLibrary that we are targetting
+                //add the version of CatalogueLibrary that we are targeting and the plugin name 
                 using (var entryStream = manifest.Open())
                 using (var streamWriter = new StreamWriter(entryStream))
                 {
                     streamWriter.Write("CatalogueLibraryVersion:" + _pluginVersionOfCatalogueLibrary);
+                    streamWriter.Write(Environment.NewLine);
+                    streamWriter.Write("PluginName:" + _pluginName);
                 }
 
                 foreach (var assembly in _pluginAssemblies)

@@ -48,7 +48,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
             Assert.IsTrue(fi.Exists);
 
-            var p = new Plugin(CatalogueRepository, fi);
+            var p = new Plugin(CatalogueRepository, fi.Name, fi.DirectoryName);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
             
             var n = new SharedPluginImporter(p);
@@ -70,7 +70,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
             Assert.IsTrue(fi.Exists);
 
-            var p = new Plugin(CatalogueRepository, fi);
+            var p = new Plugin(CatalogueRepository, fi.Name, fi.DirectoryName);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
 
             Assert.IsTrue(lma.Exists());
@@ -107,7 +107,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
             Assert.IsTrue(fi.Exists);
 
-            var p = new Plugin(CatalogueRepository, fi);
+            var p = new Plugin(CatalogueRepository, fi.Name, fi.DirectoryName);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
 
             var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p);
@@ -142,7 +142,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi = new FileInfo("CommitAssemblyEmptyAssembly.dll");
             Assert.IsTrue(fi.Exists);
 
-            var p = new Plugin(CatalogueRepository, fi);
+            var p = new Plugin(CatalogueRepository, fi.Name, fi.DirectoryName);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
 
             var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p);

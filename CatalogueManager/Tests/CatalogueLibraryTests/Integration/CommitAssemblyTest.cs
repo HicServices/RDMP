@@ -49,7 +49,7 @@ namespace CatalogueLibraryTests.Integration
             if(remnant != null)
                 remnant.DeleteInDatabase();
 
-            Plugin plugin = new Plugin(CatalogueRepository,new FileInfo("Imaginary.Zip"));
+            Plugin plugin = new Plugin(CatalogueRepository, new FileInfo("Imaginary.Zip").Name, new FileInfo("Imaginary.Zip").DirectoryName);
             Assert.AreEqual(plugin.Name, "Imaginary.Zip");
 
             new LoadModuleAssembly(CatalogueRepository, _testDll, plugin);

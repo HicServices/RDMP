@@ -40,8 +40,12 @@ namespace RDMPStartup.PluginManagement
 
             ZipFile.ExtractToDirectory(toCommit.FullName, workingDirectory);
 
+            var pluginName = GetPluginNameFromManifest(workingDirectory);
+            if (String.IsNullOrWhiteSpace(pluginName))
+                pluginName = toCommit.Name;
+
             //delete old versions of the file
-            var oldVersions = _repository.GetAllObjects<Plugin>().Where(p => p.Name.Equals(toCommit.Name));
+            var oldVersions = _repository.GetAllObjects<Plugin>().Where(p => p.Name.Equals(pluginName));
             
             foreach (Plugin p in oldVersions)
             {
@@ -49,7 +53,7 @@ namespace RDMPStartup.PluginManagement
                 toReturn = true;
             }
 
-            var plugin = new Plugin(_repository, toCommit);
+            var plugin = new Plugin(_repository, pluginName, toCommit.DirectoryName);
 
             try
             {
@@ -63,7 +67,7 @@ namespace RDMPStartup.PluginManagement
             }
             catch (Exception e)
             {
-                _notifier.OnCheckPerformed(new CheckEventArgs("Failed processing plugin " + toCommit.Name,
+                _notifier.OnCheckPerformed(new CheckEventArgs("Failed processing plugin " + pluginName,
                     CheckResult.Fail, e));
                 throw;
             }
@@ -74,6 +78,20 @@ namespace RDMPStartup.PluginManagement
             }
 
             return toReturn;
+        }
+
+        private string GetPluginNameFromManifest(string workingDirectory)
+        {
+            string manifest = Directory.GetFiles(workingDirectory, "PluginManifest.*").SingleOrDefault();
+            if (manifest == null)
+                throw new FileNotFoundException("Could not find a file called PluginManifest.txt in the zip file.");
+
+            var pluginLine = File.ReadAllLines(manifest).SingleOrDefault(l => l.StartsWith("PluginName"));
+            
+            if (pluginLine == null)
+                return null;
+
+            return pluginLine.Split(':')[1];
         }
 
         private void ProcessFile(Plugin plugin, FileInfo toCommit)
@@ -92,6 +110,7 @@ namespace RDMPStartup.PluginManagement
                 _notifier.OnCheckPerformed(new CheckEventArgs("Failed to construct new load module assembly",CheckResult.Fail, e));
             }
         }
+
         /*
         private bool CheckAssemblyAndManifestAgreement(string workingDirectory, Version pluginCatalogueVersionFromManifest)
         {
