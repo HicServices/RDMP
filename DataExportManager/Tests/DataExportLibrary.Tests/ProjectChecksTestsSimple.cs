@@ -97,7 +97,7 @@ namespace DataExportLibrary.Tests
             var p = GetProjectWithConfigDirectory(out config, out dir);
 
             //create remnant directory (empty)
-            var remnantDir = dir.CreateSubdirectory("Extraction_" + config.ID + "20011225");
+            var remnantDir = dir.CreateSubdirectory("Extr_" + config.ID + "20011225");
                 
             //with empty subdirectories
             remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
@@ -135,7 +135,7 @@ namespace DataExportLibrary.Tests
             var p = GetProjectWithConfigDirectory(out config, out dir);
 
             //create remnant directory (empty)
-            var remnantDir = dir.CreateSubdirectory("Extraction_" + config.ID + "20011225");
+            var remnantDir = dir.CreateSubdirectory("Extr_" + config.ID + "20011225");
 
             //with empty subdirectories
             var lookupDir = remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
