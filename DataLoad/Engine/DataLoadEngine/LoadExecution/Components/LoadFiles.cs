@@ -32,7 +32,7 @@ namespace DataLoadEngine.LoadExecution.Components
             // Figure out where we are getting the source files from
             try
             {
-                if (_components.Any())
+                if (Components.Any())
                 {
                    toReturn = base.Run(job, cancellationToken);
                 }
