@@ -165,7 +165,10 @@ namespace PluginPackager
             if (!Directory.Exists(projectOutputDir))
                 throw new InvalidOperationException("The project dir (" + projectOutputDir + ") does not exist, has the project been built? You need to build the project before invoking this packager.");
 
-            _pluginAssemblies.Add(new FileInfo(Path.Combine(projectOutputDir, assemblyName ?? Path.GetFileName(projectDir) + ".dll")));
+            var dllFile = new FileInfo(Path.Combine(projectOutputDir, assemblyName ?? Path.GetFileName(projectDir) + ".dll"));
+
+            if(dllFile.Exists)
+                _pluginAssemblies.Add(dllFile);
 
             foreach (var srcFilename in Directory.GetFiles(projectOutputDir, "*.dll"))
             {
