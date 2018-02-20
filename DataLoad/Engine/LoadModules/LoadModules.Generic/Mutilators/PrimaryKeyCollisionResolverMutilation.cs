@@ -30,7 +30,6 @@ namespace LoadModules.Generic.Mutilators
         [DemandsInitialization("The table on which to resolve primary key collisions, must have PrimaryKeyCollision resolution setup for it in the Data Catalogue", Mandatory = true)]
         public TableInfo TargetTable { get; set; }
 
-        
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
         {
 
@@ -45,8 +44,6 @@ namespace LoadModules.Generic.Mutilators
             _dbInfo = dbInfo;
         }
 
-        public string DatabaseServer { get; private set; }
-        public string DatabaseName { get; private set; }
         public ExitCodeType Mutilate(IDataLoadEventListener job)
         {
             ResolvePrimaryKeyConflicts(job);
