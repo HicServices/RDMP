@@ -397,6 +397,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
+            //if the collection an arbitrary one then it is definetly not the root collection for anyone
+            if (collection == RDMPCollection.None)
+                return false;
+
             return _toolboxWindowManager.GetCollectionForRootObject(rootObject) == collection;
         }
 
@@ -420,7 +424,23 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
         }
-        
+
+        /// <summary>
+        /// Returns the root tree object which hosts the supplied object.  If the supplied object has no known descendancy it is assumed
+        /// to be the root object itself so it is returned
+        /// </summary>
+        /// <param name="objectToEmphasise"></param>
+        /// <returns></returns>
+        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
+        {
+            var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(objectToEmphasise);
+
+            if (descendancy != null && descendancy.Parents.Any())
+                return descendancy.Parents[0];
+
+            return objectToEmphasise;
+        }
+
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {
             return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);

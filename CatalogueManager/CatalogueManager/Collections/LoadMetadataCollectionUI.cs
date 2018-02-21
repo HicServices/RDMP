@@ -122,6 +122,7 @@ namespace CatalogueManager.Collections
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             CommonFunctionality.SetUp(
+                RDMPCollection.DataLoad,
                 tlvLoadMetadata,
                 activator,
                 olvName,

@@ -31,7 +31,7 @@ namespace DataExportManager.Collections
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
-            CommonFunctionality.SetUp(tlvSavedCohorts,_activator,olvName,olvName);
+            CommonFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,_activator,olvName,olvName);
             
             tlvSavedCohorts.AddObject(((DataExportChildProvider)_activator.CoreChildProvider).RootCohortsNode);
         }
