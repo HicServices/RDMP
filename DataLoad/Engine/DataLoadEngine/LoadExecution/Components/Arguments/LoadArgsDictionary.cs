@@ -39,7 +39,7 @@ namespace DataLoadEngine.LoadExecution.Components.Arguments
         {
             return
                 new StageArgs(loadStage,
-                _dbDeployInfo[LoadStageToNamingConventionMapper.LoadStageToLoadBubble(loadStage)]
+                _dbDeployInfo[loadStage.ToLoadBubble()]
                 , new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles.TrimEnd(new[] { '\\' }), false));
         }
     }

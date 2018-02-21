@@ -948,17 +948,17 @@ namespace CatalogueLibrary.Data
         /// For a particular destination naming convention (e.g. RAW, STAGING), return a map of all table names in the catalogue and their correct
         /// mapping according to the convention and the table naming scheme
         /// </summary>
-        /// <param name="destinationNamingConvention"></param>
+        /// <param name="destination"></param>
         /// <param name="namer"></param>
         /// <returns></returns>
-        public Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destinationNamingConvention, INameDatabasesAndTablesDuringLoads namer)
+        public Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destination, INameDatabasesAndTablesDuringLoads namer)
         {
             var mappings = new Dictionary<string, string>();
 
             var normalTableInfoList = GetTableInfoList(false).ToList();
             
             normalTableInfoList.ForEach(info =>
-                mappings.Add(info.GetRuntimeName(), info.GetRuntimeNameFor(namer, destinationNamingConvention)));
+                mappings.Add(info.GetRuntimeName(), info.GetRuntimeName(destination.ToLoadStage(), namer)));
 
             return mappings;
         }

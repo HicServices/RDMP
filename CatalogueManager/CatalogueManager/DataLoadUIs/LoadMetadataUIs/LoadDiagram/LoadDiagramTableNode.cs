@@ -44,7 +44,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
 
             var cols =
-                TableInfo.GetColumnsAtStage(LoadStageToNamingConventionMapper.LoadBubbleToLoadStage(Bubble))
+                TableInfo.GetColumnsAtStage(Bubble.ToLoadStage())
                     .Select(c => new LoadDiagramColumnNode(this, c, Bubble));
 
             _anticipatedChildren.AddRange(cols);

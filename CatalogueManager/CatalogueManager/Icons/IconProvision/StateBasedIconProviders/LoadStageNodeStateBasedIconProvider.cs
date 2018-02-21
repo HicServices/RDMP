@@ -23,7 +23,7 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
                 return GetImageForStage((LoadStage) o);
 
             if (o is LoadBubble)
-                return GetImageForStage(LoadStageToNamingConventionMapper.LoadBubbleToLoadStage((LoadBubble) o));
+                return GetImageForStage(((LoadBubble) o).ToLoadStage());
 
             if (node != null)
                 return GetImageForStage(node.LoadStage);

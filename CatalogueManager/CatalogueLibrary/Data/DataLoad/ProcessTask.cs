@@ -459,13 +459,10 @@ namespace CatalogueLibrary.Data.DataLoad
                      "is your opportunity to update dependent data, run longitudinal/dataset wide cleaning algorithms etc.")]
         PostLoad
     }
-
-    /// <summary>
-    /// Provides a mapping between LoadStage (a specific activity that occurs during RAW=>STAGING=>LIVE) and the stage it occurs at (RAW, STAGING or LIVE).
-    /// </summary>
-    public static class LoadStageToNamingConventionMapper
+    
+    public static class LoadStageExtensions
     {
-        public static LoadBubble LoadStageToLoadBubble(LoadStage loadStage)
+        public static LoadBubble ToLoadBubble(this LoadStage loadStage)
         {
             switch (loadStage)
             {
@@ -483,7 +480,11 @@ namespace CatalogueLibrary.Data.DataLoad
                     throw new ArgumentOutOfRangeException("Unknown value for LoadStage: " + loadStage);
             }
         }
-        public static LoadStage LoadBubbleToLoadStage(LoadBubble bubble)
+    }
+
+    public static class LoadBubbleExtensions
+    {
+        public static LoadStage ToLoadStage(this LoadBubble bubble)
         {
             switch (bubble)
             {
@@ -499,6 +500,5 @@ namespace CatalogueLibrary.Data.DataLoad
                     throw new ArgumentOutOfRangeException("bubble");
             }
         }
-
     }
 }

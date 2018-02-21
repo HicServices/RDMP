@@ -13,9 +13,7 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IHasDependencies, ICollectSqlParameters, IMapsDirectlyToDatabaseTable
     {
-        string GetRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null);
-        string GetRuntimeNameFor(INameDatabasesAndTablesDuringLoads namer, LoadBubble namingConvention);
-
-        IQuerySyntaxHelper GetQuerySyntaxHelper();
+        string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null);
+        string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null);
     }
 }
