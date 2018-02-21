@@ -210,7 +210,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// Get the runtime name of the table for a particular load stage, as the table name may be modified depending on the stage.
         /// </summary>
-        /// <param name="loadStage"></param>
+        /// <param name="bubble"></param>
         /// <param name="tableNamingScheme"></param>
         /// <returns></returns>
         public string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)

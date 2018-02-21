@@ -48,7 +48,6 @@ namespace DataExportLibrary.CohortCreationPipeline
         /// For refreshing the current extraction configuration CohortIdentificationConfiguration ONLY.  The ExtractionConfiguration must have a cic and a refresh pipeline configured on it.
         /// </summary>
         /// <param name="configuration"></param>
-        /// <param name="cic"></param>
         public CohortCreationRequest(ExtractionConfiguration configuration):this()
         {
             _repository = (DataExportRepository) configuration.Repository;

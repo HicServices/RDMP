@@ -37,7 +37,7 @@ namespace DataExportLibrary.ExtractionTime
         /// <summary>
         /// Runs the supplied SQL and puts it out to the file specified (in the outputDirectory), will deal with stripping separators etc automatically
         /// </summary>
-        /// <param name="connectionString"></param>
+        /// <param name="server"></param>
         /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
         /// <param name="outputName">The name of the csv file you would like to create in the outputDirectory.  Do not include.csv in your string it will be put on automatically</param>
         /// <param name="outputDirectory"></param>
