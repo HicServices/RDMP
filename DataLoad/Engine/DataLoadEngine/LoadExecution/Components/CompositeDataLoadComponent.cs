@@ -13,12 +13,11 @@ namespace DataLoadEngine.LoadExecution.Components
     /// </summary>
     public class CompositeDataLoadComponent : DataLoadComponent
     {
-        protected readonly IList<IDataLoadComponent> _components = new List<IDataLoadComponent>();
+        public IList<IDataLoadComponent> Components {get;private set;}
 
         public CompositeDataLoadComponent(IList<IDataLoadComponent> components)
         {
-            _components = components;
-
+            Components = components?? new List<IDataLoadComponent>();
         }
 
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -26,7 +25,7 @@ namespace DataLoadEngine.LoadExecution.Components
             if (Skip(job))
                 return ExitCodeType.Error;
 
-            foreach (var component in _components)
+            foreach (var component in Components)
             {
                 var result = component.Run(job, cancellationToken);
                 

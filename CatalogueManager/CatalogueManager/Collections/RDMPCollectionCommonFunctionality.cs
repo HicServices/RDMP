@@ -48,6 +48,8 @@ namespace CatalogueManager.Collections
     /// </summary>
     public class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
+        private RDMPCollection _collection;
+
         private IActivateItems _activator;
         public TreeListView Tree;
 
@@ -87,8 +89,9 @@ namespace CatalogueManager.Collections
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true,bool allowPinning = true)
+        public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true,bool allowPinning = true)
         {
+            _collection = collection;
             IsSetup = true;
             _activator = activator;
             _activator.RefreshBus.Subscribe(this);
@@ -180,10 +183,12 @@ namespace CatalogueManager.Collections
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
         {
-            // unpin first if there is somthing pinned, so we find our object!
-            if (_pinFilter != null)
-                _pinFilter.UnApplyToTree();
+            var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
 
+            // unpin first if there is somthing pinned, so we find our object!
+            if (_pinFilter != null && _activator.IsRootObjectOfCollection(_collection,rootObject))
+                _pinFilter.UnApplyToTree();
+            
             //get the parental hierarchy
             var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
             
@@ -460,6 +465,7 @@ namespace CatalogueManager.Collections
 
         private bool expand = true;
         
+
         /// <summary>
         /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
         /// </summary>

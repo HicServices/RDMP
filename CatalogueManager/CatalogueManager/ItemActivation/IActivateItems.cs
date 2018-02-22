@@ -162,5 +162,6 @@ namespace CatalogueManager.ItemActivation
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);
+        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
     }
 }

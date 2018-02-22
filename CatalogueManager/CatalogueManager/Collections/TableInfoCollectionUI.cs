@@ -117,6 +117,7 @@ namespace CatalogueManager.Collections
         {
             _activator = activator;
             CommonFunctionality.SetUp(
+                RDMPCollection.Tables, 
                 tlvTableInfos,
                 activator,
                 olvColumn1,

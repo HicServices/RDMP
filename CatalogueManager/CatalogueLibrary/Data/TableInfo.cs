@@ -186,12 +186,6 @@ namespace CatalogueLibrary.Data
 
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
         }
-        
-        public string GetRuntimeNameFor(INameDatabasesAndTablesDuringLoads namer, LoadBubble namingConvention)
-        {
-            string baseName = GetQuerySyntaxHelper().GetRuntimeName(Name);
-            return namer.GetName(baseName, namingConvention);
-        }
 
         public string GetRuntimeName()
         {
@@ -203,50 +197,36 @@ namespace CatalogueLibrary.Data
             return Database.Trim(new[] { '[', ']' });
         }
 
-        public string GetDatabaseRuntimeName(LoadStage loadStage)
+        public string GetDatabaseRuntimeName(LoadStage loadStage,INameDatabasesAndTablesDuringLoads namer = null)
         {
             var baseName = GetDatabaseRuntimeName();
+            
+            if(namer == null)
+                namer = new FixedStagingDatabaseNamer(baseName);
 
-            switch (loadStage)
-            {
-                case LoadStage.GetFiles:
-                    throw new NotSupportedException();
-                case LoadStage.Mounting:
-                    return baseName + "_RAW";
-                case LoadStage.AdjustRaw:
-                    return baseName + "_RAW";
-                case LoadStage.AdjustStaging:
-                    return "DLE_STAGING";
-                case LoadStage.PostLoad:
-                    return baseName;
-                default:
-                    throw new ArgumentOutOfRangeException("loadStage");
-            }
+            return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
         }
 
         /// <summary>
         /// Get the runtime name of the table for a particular load stage, as the table name may be modified depending on the stage.
         /// </summary>
-        /// <param name="loadStage"></param>
+        /// <param name="bubble"></param>
         /// <param name="tableNamingScheme"></param>
         /// <returns></returns>
-        public string GetRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
-        {
-            return GetRuntimeName(LoadStageToNamingConventionMapper.LoadStageToLoadBubble(loadStage), tableNamingScheme);
-        }
-        /// <summary>
-        /// Get the runtime name of the table for a particular load bubble, as the table name may be modified depending on the stage.
-        /// </summary>
-        /// <param name="loadBubble"></param>
-        /// <param name="tableNamingScheme"></param>
-        /// <returns></returns>
-        public string GetRuntimeName(LoadBubble loadBubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
+        public string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
         {
             // If no naming scheme is specified, the default 'FixedStaging...' prepends the database name and appends '_STAGING'
             if (tableNamingScheme == null)
                 tableNamingScheme = new FixedStagingDatabaseNamer(Database);
 
-            return GetRuntimeNameFor(tableNamingScheme, loadBubble);
+            string baseName = GetQuerySyntaxHelper().GetRuntimeName(Name);
+
+            return tableNamingScheme.GetName(baseName, bubble);
+        }
+
+        public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
+        {
+            return GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
         }
         
         IDataAccessCredentials IDataAccessPoint.GetCredentialsIfExists(DataAccessContext context)
@@ -375,5 +355,6 @@ select 0", con.Connection, con.Transaction);
         {
             return new QuerySyntaxHelperFactory().Create(DatabaseType);
         }
+
     }
 }

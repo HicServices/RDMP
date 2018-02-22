@@ -79,13 +79,13 @@ namespace CatalogueLibraryTests.Integration
                 Assert.AreEqual("ANOMyCol", c.GetRuntimeName(LoadStage.PostLoad));
 
                 Assert.AreEqual("TestTableName", table.GetRuntimeName());
-                Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadStage.AdjustRaw));
-                Assert.AreEqual("TestDB_TestTableName_STAGING", table.GetRuntimeName(LoadStage.AdjustStaging));
-                
-                Assert.AreEqual("TestTableName_STAGING", table.GetRuntimeNameFor(new SuffixBasedNamer(), LoadBubble.Staging));
-                Assert.AreEqual("TestDB_TestTableName_STAGING", table.GetRuntimeNameFor(new FixedStagingDatabaseNamer("TestDB"), LoadBubble.Staging));
+                Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadBubble.Raw));
+                Assert.AreEqual("TestDB_TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging));
 
-                Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadStage.PostLoad));
+                Assert.AreEqual("TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()));
+                Assert.AreEqual("TestDB_TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")));
+
+                Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadBubble.Live));
 
             }
             finally 

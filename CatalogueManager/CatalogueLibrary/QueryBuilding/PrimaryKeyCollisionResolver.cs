@@ -104,7 +104,7 @@ WHERE DuplicateCount > 1";
 
         private string GetTableName()
         {
-            return _syntaxHelper.EnsureFullyQualified(_tableInfo.GetDatabaseRuntimeName(LoadStage.AdjustRaw),null,_tableInfo.GetRuntimeName(LoadStage.AdjustRaw));
+            return _tableInfo.GetRuntimeName(LoadStage.AdjustRaw);
         }
 
         private string AppendRelevantOrderBySql(string sql, IResolveDuplication col)

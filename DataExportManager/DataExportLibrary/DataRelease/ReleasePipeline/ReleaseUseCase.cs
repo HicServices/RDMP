@@ -21,7 +21,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private readonly DataFlowPipelineContext<ReleaseAudit> _context;
         private readonly object[] _initObjects;
         private CatalogueRepository _catalogueRepository;
-        private bool _isDesignTime;
 
         public ReleaseUseCase(Project project, ReleaseData releaseData)
         {

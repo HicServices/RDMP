@@ -265,6 +265,7 @@ namespace CatalogueManager.Collections
 
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonFunctionality.SetUp(
+                RDMPCollection.Catalogue,
                 tlvCatalogues,
                 _activator,
                 olvColumn1, //the icon column

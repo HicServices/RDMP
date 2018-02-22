@@ -66,7 +66,7 @@ namespace DataLoadEngine.Checks.Checkers
             var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
 
-            var tableNames = allTableInfos.Select(info => info.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, LoadBubble.Staging));
+            var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
             foreach (var tableName in tableNames)
             {
                 if (DatabaseOperations.CheckTableExists(tableName, stagingDbInfo))
@@ -128,7 +128,7 @@ namespace DataLoadEngine.Checks.Checkers
                 }
                 else
                 {
-                    string tableName = tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, deploymentStage);
+                    string tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
                     var table = dbInfo.ExpectTable(tableName);
                     
                     if(!table.Exists())
@@ -157,7 +157,7 @@ namespace DataLoadEngine.Checks.Checkers
             var dbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Live];
             foreach (var tableInfo in allTableInfos)
             {
-                var tableName = tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, tableNamingConvention);
+                var tableName = tableInfo.GetRuntimeName(tableNamingConvention, _databaseConfiguration.DatabaseNamer);
                 try
                 {
                     DatabaseOperations.CheckTableContainsColumns(dbInfo, tableName, columnNames);

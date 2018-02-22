@@ -33,7 +33,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             _tableNode = tableNode;
             _column = column;
             _bubble = bubble;
-            ColumnName = _column.GetRuntimeName(LoadStageToNamingConventionMapper.LoadBubbleToLoadStage(_bubble));
+            ColumnName = _column.GetRuntimeName(_bubble.ToLoadStage());
             
             var colInfo = _column as ColumnInfo;
             var preLoadDiscarded = _column as PreLoadDiscardedColumn;
@@ -42,7 +42,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 _expectedDataType = preLoadDiscarded.SqlDataType;
             else
             if (colInfo != null)
-                _expectedDataType = colInfo.GetRuntimeDataType(LoadStageToNamingConventionMapper.LoadBubbleToLoadStage(_bubble));
+                _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
             else
                 throw new Exception("Expected _column to be ColumnInfo or PreLoadDiscardedColumn but it was:" + _column.GetType().Name);
         }

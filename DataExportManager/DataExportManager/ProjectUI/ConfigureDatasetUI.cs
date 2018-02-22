@@ -23,6 +23,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
@@ -190,9 +191,15 @@ namespace DataExportManager.ProjectUI
         /// <param name="item"></param>
         private void AddColumnToExtraction(IColumn item)
         {
+            var r = item as IRevertable;
+            
+            //if the column is out of date
+            if(r != null && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                r.RevertToDatabaseState();//get a fresh copy
+
             var addMe = _config.AddColumnToExtraction(_dataSet,item);
             olvSelected.AddObject(addMe);
-
+            
             RefreshDisabledObjectStatus();
             SortSelectedByOrder();
         }

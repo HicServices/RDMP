@@ -80,7 +80,7 @@ namespace DataLoadEngine.DatabaseManagement.Operations
             
             if (copyToStage == LoadBubble.Raw)
             {
-                var tableName = tableInfo.GetRuntimeNameFor(_hicDatabaseConfiguration.DatabaseNamer, copyToStage);
+                var tableName = tableInfo.GetRuntimeName(copyToStage, _hicDatabaseConfiguration.DatabaseNamer);
 
                 string[] existingColumns = tableInfo.ColumnInfos.Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray();
 

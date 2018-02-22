@@ -35,6 +35,7 @@ namespace CohortManager.Collections
             
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonFunctionality.SetUp(
+                RDMPCollection.Cohort, 
                 tlvCohortIdentificationConfigurations,
                 _activator,
                 olvName,//column with the icon

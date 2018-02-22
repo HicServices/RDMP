@@ -105,6 +105,7 @@ namespace DataExportManager.Collections
             _activator = activator;
 
             CommonFunctionality.SetUp(
+                RDMPCollection.DataExport, 
                 tlvDataExport,
                 _activator,
                 olvName,

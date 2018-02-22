@@ -119,7 +119,7 @@ namespace DataLoadEngine.Checks.Checkers
                     //fair bit of work if you want to realise such a monstrosity (for one cleanup on each run probably cleans up STAGING on exit)
 
                     //live can have additional hic_ columns which do not appear in staging (lookups cannot)
-                    var stagingTable = staging.ExpectTable(tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer,LoadBubble.Staging));
+                    var stagingTable = staging.ExpectTable(tableInfo.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
 
                     if (!stagingTable.Exists())
                         notifier.OnCheckPerformed(new CheckEventArgs("RequiresStagingTableCreation is false but staging does not exist, this flag should indicate that you anticipate STAGING to be already setup before you kick off the load", CheckResult.Fail));
@@ -272,8 +272,8 @@ namespace DataLoadEngine.Checks.Checkers
             if (source != LoadBubble.Staging)
                 throw new Exception("Expected source to be either a STAGING table or a new lookup values table");
 
-            var nameOfTableInSourceDatabase = tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, source);
-            var nameOfTableInDestinationDatabase = tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, source);
+            var nameOfTableInSourceDatabase = tableInfo.GetRuntimeName(source, _databaseConfiguration.DatabaseNamer);
+            var nameOfTableInDestinationDatabase = tableInfo.GetRuntimeName(destination, _databaseConfiguration.DatabaseNamer);
 
             try
             {

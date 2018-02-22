@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconOverlays;
@@ -389,7 +390,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                     throw new Exception("No Foreign key column selected");
 
                 var allExtractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
-                var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo.Equals(fk1.SelectedColumn));
+                var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn));
 
                 if (foreignKeyExtractionInformation == null)
                     throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
@@ -493,6 +494,17 @@ Only define secondary columns if you really need them! if any of the key fields 
                 ragSmiley1.Fatal(e);
             }
 
+        }
+
+        public override string GetTabName()
+        {
+            return "Add Lookup (" + base.GetTabName()+ ")";
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            olvExtractionInformations.UseFiltering = true;
+            olvExtractionInformations.ModelFilter = new TextMatchFilter(olvExtractionInformations,tbFilter.Text);
         }
     }
 
