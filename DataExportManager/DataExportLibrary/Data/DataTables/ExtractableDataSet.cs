@@ -65,7 +65,7 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         /// <summary>
-        /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExportManage database
+        /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
         /// </summary>
         /// <returns></returns>
         public ExtractableDataSet(IDataExportRepository repository, Catalogue catalogue, int disableExtraction = 0)

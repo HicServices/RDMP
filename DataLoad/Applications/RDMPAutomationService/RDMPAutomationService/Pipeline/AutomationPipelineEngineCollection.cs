@@ -75,8 +75,8 @@ namespace RDMPAutomationService.Pipeline
         }
 
         /// <summary>
-        /// Runs all automation pipelines once.  This will identify all new automation jobs and dispatch them to the IAutomationDestination but will not wait
-        /// for the jobs to complete before returning (IAutomationDestination is multi threaded).
+        /// Runs all automation pipelines once.  This will identify all new automation jobs and dispatch them to the AutomationDestination but will not wait
+        /// for the jobs to complete before returning (AutomationDestination is multi threaded).
         /// </summary>
         /// <param name="minimumLengthOfTimeToWaitWhileDoingThis"></param>
         public void ExecuteAll(int minimumLengthOfTimeToWaitWhileDoingThis)

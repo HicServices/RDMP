@@ -65,8 +65,7 @@ namespace CohortManager.SubComponents
     /// Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See QueryCachingServerSelector for how this is 
     /// implemented).
     /// 
-    /// You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.  Selecting a set will allow you to
-    /// see an extract of the rows that matched the filters (See CohortIdentificationExecutionResultsUI)
+    /// You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.
     /// 
     /// Ticking 'Include Cumulative Totals' will give you a second total for each set that is in a container with at least 1 other set, this is the number of unique identifiers after
     /// performing the set operation e.g.

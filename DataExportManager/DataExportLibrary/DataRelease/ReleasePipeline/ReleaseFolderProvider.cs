@@ -10,6 +10,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
+    /// <summary>
+    /// Middle component for preparing the Release Folders for the Release Pipeline.
+    /// Some destination components will complain if this is not present!
+    /// </summary>
     public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     {
         private Project _project;

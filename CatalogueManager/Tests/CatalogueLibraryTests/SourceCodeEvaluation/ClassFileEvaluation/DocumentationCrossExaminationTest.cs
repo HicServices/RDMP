@@ -130,6 +130,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "AverageResult",
             "MaxResult",
             "FormatFile",
+            "IndexedExtractionIdentifierList_AggregateConfiguration5",
+            "YAXLib",
 
         };
 
