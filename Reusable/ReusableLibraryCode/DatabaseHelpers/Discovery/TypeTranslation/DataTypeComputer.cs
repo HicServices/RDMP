@@ -64,7 +64,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         }
 
         /// <summary>
-        /// Creates a new DataTypComputer adjusted to compensate for all values in all rows of the supplied DataColumn
+        /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn
         /// </summary>
         /// <param name="column"></param>
         public DataTypeComputer(DataColumn column):this(-1)
@@ -75,7 +75,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         }
 
         /// <summary>
-        /// Creates a hydrated DataTypComputer  for when you want to clone an existing one or otherwise make up a DataTypComputer for a known starting datatype
+        /// Creates a hydrated DataTypeComputer  for when you want to clone an existing one or otherwise make up a DataTypeComputer for a known starting datatype
         /// (See TypeTranslater.GetDataTypeComputerFor)
         /// </summary>
         /// <param name="currentEstimatedType"></param>

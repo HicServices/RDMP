@@ -3,7 +3,7 @@ using System;
 namespace ReusableLibraryCode.Checks
 {
     /// <summary>
-    /// CheckNotifier which accepts ProposedFixes automatically and throws Exceptions on Fail messages
+    /// ICheckNotifier which accepts a;; ProposedFixes automatically and throws Exceptions on Fail messages (if there wasn't a ProposedFix)
     /// </summary>
     public class AcceptAllCheckNotifier : ICheckNotifier
     {
