@@ -72,6 +72,9 @@ namespace CatalogueManager.Collections
         private CollectionPinFilterUI _pinFilter;
         private object _currentlyPinned;
 
+        public IDColumnProvider IDColumnProvider { get; set; }
+        public OLVColumn IDColumn { get; set; }
+
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
         /// You can cut off any branch with this property, just specify the Types to stop descending at and you will get that object Type (assuming you normally would)
@@ -89,7 +92,7 @@ namespace CatalogueManager.Collections
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true,bool allowPinning = true)
+        public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn, bool addFavouriteColumn = true, bool allowPinning = true, bool addIDColumn = true)
         {
             _collection = collection;
             IsSetup = true;
@@ -136,6 +139,16 @@ namespace CatalogueManager.Collections
                 FavouriteColumn = FavouriteColumnProvider.CreateColumn();
                 FavouriteColumn.Sortable = false;
             }
+
+            if (addIDColumn)
+            {
+                IDColumnProvider = new IDColumnProvider(tree);
+                IDColumn = IDColumnProvider.CreateColumn();
+
+                Tree.AllColumns.Add(IDColumn);
+                Tree.RebuildColumns();
+            }
+
             CoreIconProvider = activator.CoreIconProvider;
 
             CopyPasteProvider = new CopyPasteProvider();
@@ -146,16 +159,14 @@ namespace CatalogueManager.Collections
             _activator.Emphasise += _activator_Emphasise;
 
             AllowPinning = allowPinning;
-
-
+            
             Tree.TreeFactory = TreeFactoryGetter;
             Tree.RebuildAll(true);
-
-
+            
             Tree.FormatRow += Tree_FormatRow;
             Tree.CellToolTipGetter += Tree_CellToolTipGetter;
         }
-
+        
         private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
         {
             return  _activator.DescribeProblemIfAny(modelObject);
@@ -465,6 +476,7 @@ namespace CatalogueManager.Collections
 
         private bool expand = true;
         
+
 
         /// <summary>
         /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
