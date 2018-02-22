@@ -34,7 +34,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
     /// While it might seem redundant to have to configure this logic in the RDMP as well as (if you choose to) constraints in your data repository, this approach allows for 
     /// flexibility when it comes to incomplete/corrupt lookup tables (common in the research data management domain) as well as letting us bundle lookups with data extracts etc.
     /// 
-    /// This window is a low level alternative to AdvancedLookupConfiguration (the recommended way of creating these Lookup relationships), this form lets you explicitly create a Lookup
+    /// This window is a low level alternative to LookupConfiguration (the recommended way of creating these Lookup relationships), this form lets you explicitly create a Lookup
     /// relationship using the supplied columns.  First of all you should make sure that the column you right clicked to activate the Form is the Description column.  Then select the
     /// 'Primary Key' and 'Foreign Key' as described above.  
     /// 
@@ -53,7 +53,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
     /// All Lookups and Lookup column description configurations are artifacts in the RDMP database and no actual changes will take place on your data repository (i.e. no constraints will be added
     /// to the underlying data database). 
     /// </summary>
-    public partial class LookupConfiguration : AdvancedLookupConfiguration_Design
+    public partial class LookupConfiguration : LookupConfiguration_Design
     {
         private Catalogue _catalogue;
         private ToolTip toolTip = new ToolTip();
@@ -183,7 +183,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
         LookupCreationStage _currentStage = LookupCreationStage.ChooseLookupTable;
 
-        private void AdvancedLookupConfiguration_Paint(object sender, PaintEventArgs e)
+        private void LookupConfiguration_Paint(object sender, PaintEventArgs e)
         {
             Point drawTaskListAt = new Point(500,10);
 
@@ -508,8 +508,8 @@ Only define secondary columns if you really need them! if any of the key fields 
         }
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AdvancedLookupConfiguration_Design, UserControl>))]
-    public abstract class AdvancedLookupConfiguration_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupConfiguration_Design, UserControl>))]
+    public abstract class LookupConfiguration_Design : RDMPSingleDatabaseObjectControl<Catalogue>
     {
     }
 }

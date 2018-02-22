@@ -13,7 +13,7 @@ using ReusableLibraryCode.Progress;
 namespace DataLoadEngine.DatabaseManagement.Operations
 {
     /// <summary>
-    /// Clones databases and tables using CatalogueInfos, and records operations so the cloning can be undone.
+    /// Clones databases and tables using ColumnInfos, and records operations so the cloning can be undone.
     /// </summary>
     public class DatabaseCloner : IDisposeAfterDataLoad
     {

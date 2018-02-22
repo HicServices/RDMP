@@ -126,7 +126,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "LoadID_Data_STAGING",
             "AuditObject",
             "EmailAddressOfAuthorizor",
-            "FixedSource"
+            "FixedSource",
+            "AverageResult",
+            "MaxResult",
+            "FormatFile",
 
         };
 

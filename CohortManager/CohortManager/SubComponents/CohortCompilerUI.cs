@@ -45,7 +45,7 @@ namespace CohortManager.SubComponents
     /// sized pieces (Sets).
     /// 
     /// Start by identifying the first dataset you will need to interrogate (e.g. if they want to know about diabetic medications drag in 'Prescribing').  Next double click the set
-    /// and configure appropriate filters (See AggregateConfigurationUI) do not change the Dimension (this should already be the patient identifier).  Finally once you have configured
+    /// and configure appropriate filters (See AggregateEditor) do not change the Dimension (this should already be the patient identifier).  Finally once you have configured
     /// the correct filters you should rename your set (AggregateConfiguration) to have a name that reflects the filters (e.g. 'People who have been prescribed a diabetic medication).
     /// 
     /// Next identify the next dataset you need to interrogate (e.g. if they want to exclude patients who have a 'Biochemistry' test result of 'CREATANINE' > 100)  create this set as 

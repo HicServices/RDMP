@@ -65,8 +65,7 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         /// <summary>
-        /// Defines a new potentially extractable data set (based on a database query), this is stored in the DataExportManager2 database and the ID of
-        /// the new record is returned by this method, use GetExtractableDataSetByID to get the object back from the database
+        /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExportManage database
         /// </summary>
         /// <returns></returns>
         public ExtractableDataSet(IDataExportRepository repository, Catalogue catalogue, int disableExtraction = 0)

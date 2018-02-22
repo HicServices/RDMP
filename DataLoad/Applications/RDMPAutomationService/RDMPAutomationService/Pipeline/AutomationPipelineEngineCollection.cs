@@ -22,8 +22,8 @@ using ReusableLibraryCode.Progress;
 namespace RDMPAutomationService.Pipeline
 {
     /// <summary>
-    /// Hosts and runs all the AutomationPipelines running in the currently running Automation Service executable.  Each pipeline has an IAutomationSource which
-    /// is polled for new jobs, all jobs are passed to the same instance of IAutomationDestination which manages async execution of them.
+    /// Hosts and runs all the Automation Pipelines running in the currently running Automation Service executable.  Each pipeline has an IAutomationSource which
+    /// is polled for new jobs, all jobs are passed to the same instance of AutomationDestination which manages async execution of them.
     /// </summary>
     public class AutomationPipelineEngineCollection
     {
