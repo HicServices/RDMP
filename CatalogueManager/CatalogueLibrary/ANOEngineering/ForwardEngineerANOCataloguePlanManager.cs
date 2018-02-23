@@ -202,6 +202,9 @@ namespace CatalogueLibrary.ANOEngineering
 
                 foreach (JoinInfo joinInfo in joinInfos)
                     notifier.OnCheckPerformed(new CheckEventArgs("Found required JoinInfo '" + joinInfo + "' that will have to be migrated",CheckResult.Success));
+
+                foreach (Lookup lookup in GetLookupsRequiredCatalogue())
+                    notifier.OnCheckPerformed(new CheckEventArgs("Found required Lookup '" + lookup + "' that will have to be migrated", CheckResult.Success));
             }
             catch (Exception ex)
             {
@@ -335,6 +338,15 @@ namespace CatalogueLibrary.ANOEngineering
             qb.AddColumnRange(Catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
             qb.RegenerateSQL();
             return qb.JoinsUsedInQuery;
+        }
+
+        public List<Lookup> GetLookupsRequiredCatalogue()
+        {
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumnRange(Catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+            qb.RegenerateSQL();
+
+            return qb.GetDistinctRequiredLookups().ToList();
         }
 
         /// <summary>

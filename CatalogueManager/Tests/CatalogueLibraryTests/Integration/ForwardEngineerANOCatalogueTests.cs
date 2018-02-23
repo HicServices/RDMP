@@ -255,12 +255,11 @@ namespace CatalogueLibraryTests.Integration
                 dbFrom.ForceDrop();
                 dbTo.ForceDrop();
             }
-
         }
 
         //todo : test lookup already being on the destination database from anonymising another dataset
         [Test]
-        public void CreateANOVersionTest_Lookups()
+        public void CreateANOVersionTest_LookupsAndExtractionInformations()
         {
             var dbName = TestDatabaseNames.GetConsistentName("CreateANOVersionTest");
 
@@ -290,6 +289,16 @@ namespace CatalogueLibraryTests.Integration
             //Create a Lookup reference
             var ciSex = bulk.catalogue.CatalogueItems.Single(c => c.Name == "sex");
             var ciHb = bulk.catalogue.CatalogueItems.Single(c => c.Name == "hb_extract");
+            
+            var eiChi = bulk.extractionInformations.Single(ei => ei.GetRuntimeName() == "chi");
+            eiChi.IsExtractionIdentifier = true;
+            eiChi.SaveToDatabase();
+
+            var eiCentury = bulk.extractionInformations.Single(ei => ei.GetRuntimeName() == "century");
+            eiCentury.HashOnDataRelease = true;
+            eiCentury.ExtractionCategory = ExtractionCategory.Internal;
+            eiCentury.SaveToDatabase();
+            
             var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
             
             //now lets make it worse, lets assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
@@ -324,6 +333,7 @@ namespace CatalogueLibraryTests.Integration
             //the query builder should have identified the lookup
             Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
             
+            //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
             var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
             planManager.TargetDatabase = db;
 
@@ -335,6 +345,7 @@ namespace CatalogueLibraryTests.Integration
 
             var engine = new ForwardEngineerANOCatalogueEngine(CatalogueRepository, planManager);
             engine.Execute();
+            //////////////////////////////////////////////////////////////////////////////////////End The Actual Bit Being Tested////////////////////////////////////////////////////
 
             var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
@@ -351,9 +362,29 @@ namespace CatalogueLibraryTests.Integration
                 
                 Assert.AreEqual(eiSource[i].GetRuntimeName(), 
                     eiDestination[i].GetRuntimeName().Replace("ANO",""), "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
+
+                Assert.AreEqual(eiSource[i].ExtractionCategory, eiDestination[i].ExtractionCategory, "Old / New ANO ExtractionInformations did not match on ExtractionCategory");
+                Assert.AreEqual(eiSource[i].IsExtractionIdentifier, eiDestination[i].IsExtractionIdentifier, "Old / New ANO ExtractionInformations did not match on IsExtractionIdentifier");
+                Assert.AreEqual(eiSource[i].HashOnDataRelease, eiDestination[i].HashOnDataRelease, "Old / New ANO ExtractionInformations did not match on HashOnDataRelease");
+                Assert.AreEqual(eiSource[i].IsPrimaryKey, eiDestination[i].IsPrimaryKey, "Old / New ANO ExtractionInformations did not match on IsPrimaryKey");
             }
 
+            //check it worked
+            QueryBuilder qbdestination = new QueryBuilder(null, null);
+            qbdestination.AddColumnRange(anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
+            //The query builder should be able to succesfully create SQL
+            Console.WriteLine(qbdestination.SQL);
+
+            //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
+            Assert.AreEqual(2, qbdestination.TablesUsedInQuery.Count);
+
+            //the query builder should have identified the lookup but it should be the new one not the old one
+            Assert.AreEqual(1, qbdestination.GetDistinctRequiredLookups().Count(), "New query builder for ano catalogue did not correctly identify that there was a Lookup");
+            Assert.AreNotEqual(lookup, qbdestination.GetDistinctRequiredLookups().Single(), "New query builder for ano catalogue identified the OLD Lookup!");
+            
+            Assert.AreEqual(1, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins().Count(),"The new Lookup did not have the composite join key (sex/hb_extract)");
+            Assert.AreNotEqual(compositeLookup, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins(), "New query builder for ano catalogue identified the OLD LookupCompositeJoinInfo!");
 
             db.ForceDrop();
 

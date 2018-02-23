@@ -182,6 +182,8 @@ namespace CatalogueLibrary.ANOEngineering
                     }
 
                     var existingJoinInfos = _catalogueRepository.JoinInfoFinder.GetAllJoinInfos();
+                    var existingLookups = _catalogueRepository.GetAllObjects<Lookup>();
+                    var existingLookupComposites = _catalogueRepository.GetAllObjects<LookupCompositeJoinInfo>();
 
                     //migrate join infos
                     foreach (JoinInfo joinInfo in _planManager.GetJoinInfosRequiredCatalogue())
@@ -192,6 +194,32 @@ namespace CatalogueLibrary.ANOEngineering
                         //already exists
                         if(!existingJoinInfos.Any(ej=>ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
                             _catalogueRepository.JoinInfoFinder.AddJoinInfo(newFk,newPk,joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
+                    }
+
+                    //migrate Lookups
+                    foreach (Lookup lookup in _planManager.GetLookupsRequiredCatalogue())
+                    {
+                        //Find the new columns in the ANO table that match the old lookup columns
+                        var newDesc = GetNewColumnInfoForOld(lookup.Description);
+                        var newFk = GetNewColumnInfoForOld(lookup.ForeignKey);
+                        var newPk = GetNewColumnInfoForOld(lookup.PrimaryKey);
+
+                        //see if we already have a Lookup declared for the NEW columns (unlikely)
+                        Lookup newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID);
+                         
+                        //create new Lookup that mirrors the old but references the ANO columns instead
+                        if(newLookup == null)
+                            newLookup = new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
+
+                        //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard) 
+                        foreach (LookupCompositeJoinInfo compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
+                        {
+                            var newCompositeFk = GetNewColumnInfoForOld(compositeJoin.ForeignKey);
+                            var newCompositePk = GetNewColumnInfoForOld(compositeJoin.PrimaryKey);
+
+                            if (!existingLookupComposites.Any(c => c.ForeignKey_ID == newCompositeFk.ID && c.PrimaryKey_ID == newCompositePk.ID))
+                                new LookupCompositeJoinInfo(_catalogueRepository, newLookup, newCompositeFk,newCompositePk, compositeJoin.Collation);
+                        }
                     }
 
                     //create new data load confguration
