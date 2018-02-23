@@ -298,6 +298,13 @@ namespace CatalogueLibraryTests.Integration
             eiCentury.HashOnDataRelease = true;
             eiCentury.ExtractionCategory = ExtractionCategory.Internal;
             eiCentury.SaveToDatabase();
+
+            //add a transform
+            var eiPostcode = bulk.extractionInformations.Single(ei => ei.GetRuntimeName() == "current_postcode");
+            eiPostcode.SelectSQL = "LEFT(10,current_postcode)";
+            eiPostcode.Alias = "MyMutilatedColumn";
+            eiPostcode.SaveToDatabase();
+
             
             var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
             
@@ -315,7 +322,8 @@ namespace CatalogueLibraryTests.Integration
             }
             
             var ciDescription = new CatalogueItem(CatalogueRepository, bulk.catalogue, "Sex_Desc");
-            var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],lookupColumnInfos[2].Name + " as Sex_Desc");
+            var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],lookupColumnInfos[2].Name);
+            eiDescription.Alias = "Sex_Desc";
             eiDescription.Order = orderToInsertDescriptionFieldAt +1;
             eiDescription.ExtractionCategory = ExtractionCategory.Supplemental;
             eiDescription.SaveToDatabase();
@@ -332,7 +340,7 @@ namespace CatalogueLibraryTests.Integration
 
             //the query builder should have identified the lookup
             Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
-            
+
             //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
             var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
             planManager.TargetDatabase = db;

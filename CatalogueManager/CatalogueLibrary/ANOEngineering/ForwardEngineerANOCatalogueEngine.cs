@@ -140,6 +140,7 @@ namespace CatalogueLibrary.ANOEngineering
 
                     AuditParenthood(_planManager.Catalogue, NewCatalogue);
                     
+                    //For each of the old ExtractionInformations (95% of the time that's just a reference to a ColumnInfo e.g. '[People].[Height]' but 5% of the time it's some horrible aliased transform e.g. 'dbo.RunMyCoolFunction([People].[Height]) as BigHeight'
                     foreach (CatalogueItem oldCatalogueItem in _planManager.Catalogue.CatalogueItems)
                     {
                         var col = oldCatalogueItem.ColumnInfo;
@@ -168,10 +169,16 @@ namespace CatalogueLibrary.ANOEngineering
 
                         var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
 
-                        //if it was previously extractable (and as an extraction identifier)
-                        if (oldExtractionInformation != null && oldExtractionInformation.IsExtractionIdentifier)
+                        //if it was previously extractable
+                        if (oldExtractionInformation != null)
                         {
-                            newExtractionInformation.IsExtractionIdentifier = true;
+                            //make the new one exactly as extractable
+                            newExtractionInformation.Order = oldExtractionInformation.Order;
+                            newExtractionInformation.ExtractionCategory = oldExtractionInformation.ExtractionCategory;
+                            newExtractionInformation.Alias = oldExtractionInformation.Alias;
+                            newExtractionInformation.IsExtractionIdentifier = oldExtractionInformation.IsExtractionIdentifier;
+                            newExtractionInformation.HashOnDataRelease = oldExtractionInformation.HashOnDataRelease;
+                            newExtractionInformation.IsPrimaryKey = oldExtractionInformation.IsPrimaryKey;
                             newExtractionInformation.SaveToDatabase();
                         }
 

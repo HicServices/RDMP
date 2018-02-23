@@ -280,6 +280,10 @@ namespace CatalogueLibrary.ANOEngineering
                             " TableInfos at once", CheckResult.Fail));
 
             }
+
+            foreach (ExtractionInformation e in _allExtractionInformations)
+                if (e.IsProperTransform())
+                    notifier.OnCheckPerformed(new CheckEventArgs("ExtractionInformation '" + e +"' is an Extraction Transform which is currently not supported", CheckResult.Fail));
         }
 
         private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier,T m) where T:IMapsDirectlyToDatabaseTable
