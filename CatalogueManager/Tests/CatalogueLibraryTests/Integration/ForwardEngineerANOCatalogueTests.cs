@@ -11,6 +11,7 @@ using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using Diagnostics.TestData;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;
@@ -255,6 +256,112 @@ namespace CatalogueLibraryTests.Integration
                 dbTo.ForceDrop();
             }
 
+        }
+
+        //todo : test lookup already being on the destination database from anonymising another dataset
+        [Test]
+        public void CreateANOVersionTest_Lookups()
+        {
+            var dbName = TestDatabaseNames.GetConsistentName("CreateANOVersionTest");
+
+            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
+
+            db.Create(true);
+
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            bulk.SetupTestData();
+            bulk.ImportAsCatalogue();
+
+            //Create a lookup table on the server
+            var lookupTbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("z_sexLookup", new[]
+            {
+                new DatabaseColumnRequest("Code", "varchar(1)"){IsPrimaryKey = true},
+                new DatabaseColumnRequest("hb_Code", "varchar(1)"){IsPrimaryKey = true},
+                new DatabaseColumnRequest("Description", "varchar(100)")
+            });
+
+            //import a reference to the table
+            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository,lookupTbl);
+
+            ColumnInfo[] lookupColumnInfos;
+            TableInfo lookupTableInfo;
+            importer.DoImport(out lookupTableInfo,out lookupColumnInfos);
+
+            //Create a Lookup reference
+            var ciSex = bulk.catalogue.CatalogueItems.Single(c => c.Name == "sex");
+            var ciHb = bulk.catalogue.CatalogueItems.Single(c => c.Name == "hb_extract");
+            var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
+            
+            //now lets make it worse, lets assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
+            var compositeLookup = new LookupCompositeJoinInfo(CatalogueRepository, lookup, ciHb.ColumnInfo, lookupColumnInfos[1]);
+
+            //now lets make the _Desc field in the original Catalogue
+            int orderToInsertDescriptionFieldAt = ciSex.ExtractionInformation.Order;
+
+            //bump everyone down 1
+            foreach (var toBumpDown in bulk.catalogue.CatalogueItems.Select(ci=>ci.ExtractionInformation).Where(e => e.Order > orderToInsertDescriptionFieldAt))
+            {
+                toBumpDown.Order++;
+                toBumpDown.SaveToDatabase();
+            }
+            
+            var ciDescription = new CatalogueItem(CatalogueRepository, bulk.catalogue, "Sex_Desc");
+            var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],lookupColumnInfos[2].Name + " as Sex_Desc");
+            eiDescription.Order = orderToInsertDescriptionFieldAt +1;
+            eiDescription.ExtractionCategory = ExtractionCategory.Supplemental;
+            eiDescription.SaveToDatabase();
+
+            //check it worked
+            QueryBuilder qb = new QueryBuilder(null,null);
+            qb.AddColumnRange(bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+            
+            //The query builder should be able to succesfully create SQL
+            Console.WriteLine(qb.SQL);
+            
+            //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
+            Assert.AreEqual(2,qb.TablesUsedInQuery.Count);
+
+            //the query builder should have identified the lookup
+            Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
+            
+            var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
+            planManager.TargetDatabase = db;
+
+            //setup test rules for migrator
+            CreateMigrationRules(planManager, bulk);
+
+            //rules should pass checks
+            Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
+
+            var engine = new ForwardEngineerANOCatalogueEngine(CatalogueRepository, planManager);
+            engine.Execute();
+
+            var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            Assert.IsTrue(anoCatalogue.Exists());
+
+            //The new Catalogue should have the same number of ExtractionInformations
+            var eiSource = bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei=>ei.Order).ToArray();
+            var eiDestination = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei=>ei.Order).ToArray();
+
+            Assert.AreEqual(eiSource.Length,eiDestination.Length,"Both the new and the ANO catalogue should have the same number of ExtractionInformations (extractable columns)");
+
+            for (int i = 0; i < eiSource.Length; i++)
+            {
+                Assert.AreEqual(eiSource[i].Order , eiDestination[i].Order,"ExtractionInformations in the source and destination Catalogue should have the same order");
+                
+                Assert.AreEqual(eiSource[i].GetRuntimeName(), 
+                    eiDestination[i].GetRuntimeName().Replace("ANO",""), "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
+            }
+
+
+
+            db.ForceDrop();
+
+            var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
+            var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+
+            Assert.AreEqual(exports, imports);
+            Assert.IsTrue(exports > 0);
         }
 
 
