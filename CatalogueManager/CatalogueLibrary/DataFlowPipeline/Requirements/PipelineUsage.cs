@@ -14,5 +14,6 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         LoadsSingleTableInfo = 2,
         LogsToTableLoadInfo = 4,
         LoadsSingleFlatFile = 8,
+        FixedSource = 16,
     }
 }

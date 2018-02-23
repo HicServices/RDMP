@@ -137,7 +137,6 @@ namespace CatalogueManager.Collections
             {
                 FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
                 FavouriteColumn = FavouriteColumnProvider.CreateColumn();
-                FavouriteColumn.Sortable = false;
             }
 
             if (addIDColumn)

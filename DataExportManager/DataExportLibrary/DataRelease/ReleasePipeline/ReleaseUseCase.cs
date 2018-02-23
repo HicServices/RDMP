@@ -34,8 +34,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 _catalogueRepository = ((IDataExportRepository)project.Repository).CatalogueRepository;
 
             var contextFactory = new DataFlowPipelineContextFactory<ReleaseAudit>();
-            _context = contextFactory.Create(PipelineUsage.None);
-            _context.CannotHave.Add(typeof(IDataFlowSource<ReleaseAudit>));
+            _context = contextFactory.Create(PipelineUsage.FixedSource);
 
             _context.MustHaveDestination = typeof(IDataFlowDestination<ReleaseAudit>);
 
