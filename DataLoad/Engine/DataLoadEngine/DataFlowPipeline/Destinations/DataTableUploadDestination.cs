@@ -276,6 +276,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             _server = value.Server;
         }
 
+        /// <summary>
+        /// Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should always have the associated database type (e.g. varchar(59))
+        /// The columnName is Case insensitive.
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <param name="explicitType"></param>
         public void AddExplicitWriteType(string columnName, string explicitType)
         {
             explicitTypes.Add(new DatabaseColumnRequest(columnName, explicitType, true));
