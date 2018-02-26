@@ -28,16 +28,21 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
     /// </summary>
     public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<DiscoveredDatabase>
     {
-        [DemandsInitialization("The logging server to log the upload to (leave blank to not bother auditing)")]
+        public const string LoggingServer_Description = "The logging server to log the upload to (leave blank to not bother auditing)";
+        public const string AllowResizingColumnsAtUploadTime_Description = "If the target table being loaded has columns that are too small the destination will attempt to resize them";
+        public const string OnlyUseOldDateTimes_Description = "Set to true if you want to restrict table creation to datetime instead of datetime2 (means any dates before 1753 will crash)";
+        public const string AllowLoadingPopulatedTables_Description = "Normally when DataTableUploadDestination encounters a table that already contains records it will abandon the insertion attempt.  Set this to true to instead continue with the load.";
+
+        [DemandsInitialization(LoggingServer_Description)]
         public ExternalDatabaseServer LoggingServer { get; set; }
 
-        [DemandsInitialization("If the target table being loaded has columns that are too small the destination will attempt to resize them", DemandType.Unspecified, true)]
+        [DemandsInitialization(AllowResizingColumnsAtUploadTime_Description, DemandType.Unspecified, true)]
         public bool AllowResizingColumnsAtUploadTime { get; set; }
-
-        [DemandsInitialization("Set to true if you want to restrict table creation to datetime instead of datetime2 (means any dates before 1753 will crash)", DemandType.Unspecified,false)]
+        
+        [DemandsInitialization(OnlyUseOldDateTimes_Description, DemandType.Unspecified, false)]
         public bool OnlyUseOldDateTimes { get; set; }
 
-        [DemandsInitialization("Normally when DataTableUploadDestination encounters a table that already contains records it will abandon the insertion attempt.  Set this to true to instead continue with the load.", DefaultValue = false)]
+        [DemandsInitialization(AllowLoadingPopulatedTables_Description, DefaultValue = false)]
         public bool AllowLoadingPopulatedTables { get; set; }
 
         public string TargetTableName { get; private set; }

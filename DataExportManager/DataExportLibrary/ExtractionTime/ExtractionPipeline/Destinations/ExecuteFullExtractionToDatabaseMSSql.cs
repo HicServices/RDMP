@@ -30,8 +30,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization("External server to create the extraction into, a new table will be created for each dataset extracted with datatypes and column names appropriate to the anonymised extracted datasets",Mandatory = true)]
         public ExternalDatabaseServer TargetDatabaseServer { get; set; }
-
-
+        
         [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
          $p - Project Name ('e.g. My Project'
          $n - Project Number (e.g. 234)
@@ -43,11 +42,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
          ",Mandatory=true,DefaultValue="$c_$d")]
         public string TableNamingPattern { get; set; }
 
+        [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
+        public bool DropTableIfLoadFails { get; set; }
+
         private DiscoveredDatabase _server;
         private DataTableUploadDestination _destination;
         
         private DataLoadInfo _dataLoadInfo;
         private bool haveExtractedBundledContent = false;
+
+        private bool _tableDidNotExistAtStartOfLoad;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -84,6 +88,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                             new NotifyEventArgs(ProgressEventType.Warning,
                                 "A table called " + tblName + " already exists on server " + TargetDatabaseServer +
                                 ", rows will be appended to this table - or data load might crash if it has an incompatible schema"));
+                    else
+                    {
+                        _tableDidNotExistAtStartOfLoad = true;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -96,7 +104,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 _destination.PreInitialize(_server, listener);
                 
                 //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it
-                TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + toProcess.TableName, toProcess.TableName, new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+                TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + GetTableName(), GetTableName(), new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
             }
 
             //give the data table the correct name
@@ -111,6 +119,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private string _cachedGetTableNameAnswer;
         
+
         public string GetTableName()
         {
             //if there is a cached answer return it
@@ -142,6 +151,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             //otherwise, fetch and cache answer
             _cachedGetTableNameAnswer = _server.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
 
+            if(string.IsNullOrWhiteSpace(_cachedGetTableNameAnswer) )
+                throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" +_request +"'");
+
             return _cachedGetTableNameAnswer;
         }
 
@@ -150,6 +162,22 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if(_destination != null)
             {
                 _destination.Dispose(listener,pipelineFailureExceptionIfAny);
+
+                //if the extraction failed, the table didn't exist in the destination (i.e. the table was created during the extraction) and we are to DropTableIfLoadFails
+                if (pipelineFailureExceptionIfAny != null && _tableDidNotExistAtStartOfLoad && DropTableIfLoadFails)
+                {
+                    if(_server != null)
+                    {
+                        var tbl = _server.ExpectTable(GetTableName());
+                        
+                        if(tbl.Exists())
+                        {
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "DropTableIfLoadFails is true so about to drop table " + tbl));
+                            tbl.Drop();
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Dropped table " + tbl));
+                        }
+                    }
+                }
             }
             TableLoadInfo.CloseAndArchive();
         }
