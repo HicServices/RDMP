@@ -256,8 +256,7 @@ namespace CatalogueLibraryTests.Integration
                 dbTo.ForceDrop();
             }
         }
-
-        //todo : test lookup already being on the destination database from anonymising another dataset
+        
         [Test]
         public void CreateANOVersionTest_LookupsAndExtractionInformations()
         {
@@ -301,10 +300,10 @@ namespace CatalogueLibraryTests.Integration
 
             //add a transform
             var eiPostcode = bulk.extractionInformations.Single(ei => ei.GetRuntimeName() == "current_postcode");
-            eiPostcode.SelectSQL = "LEFT(10,current_postcode)";
+
+            eiPostcode.SelectSQL = string.Format("LEFT(10,{0}.[current_postcode])", eiPostcode.ColumnInfo.TableInfo.Name);
             eiPostcode.Alias = "MyMutilatedColumn";
             eiPostcode.SaveToDatabase();
-
             
             var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
             
@@ -340,7 +339,7 @@ namespace CatalogueLibraryTests.Integration
 
             //the query builder should have identified the lookup
             Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
-
+            
             //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
             var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
             planManager.TargetDatabase = db;
@@ -384,6 +383,11 @@ namespace CatalogueLibraryTests.Integration
             //The query builder should be able to succesfully create SQL
             Console.WriteLine(qbdestination.SQL);
 
+            var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
+
+            //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
+            Assert.AreEqual(string.Format("LEFT(10,{0}.[current_postcode])", anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()),anoEiPostcode.SelectSQL);
+            
             //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
             Assert.AreEqual(2, qbdestination.TablesUsedInQuery.Count);
 
@@ -401,6 +405,8 @@ namespace CatalogueLibraryTests.Integration
 
             Assert.AreEqual(exports, imports);
             Assert.IsTrue(exports > 0);
+
+            
         }
 
 

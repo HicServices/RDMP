@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Refactoring;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
@@ -204,7 +205,22 @@ namespace CatalogueLibrary.ANOEngineering
                     notifier.OnCheckPerformed(new CheckEventArgs("Found required JoinInfo '" + joinInfo + "' that will have to be migrated",CheckResult.Success));
 
                 foreach (Lookup lookup in GetLookupsRequiredCatalogue())
+                {
                     notifier.OnCheckPerformed(new CheckEventArgs("Found required Lookup '" + lookup + "' that will have to be migrated", CheckResult.Success));
+
+                    //for each key involved in the lookup
+                    foreach (ColumnInfo c in new[] { lookup.ForeignKey ,lookup.PrimaryKey,lookup.Description})
+                    {
+                        //lookup / table has already been migrated 
+                        if(SkippedTables.Any(t=>t.ID == c.TableInfo_ID))
+                            continue;
+
+                        //make sure that the plan is sensible
+                        if (GetPlanForColumnInfo(c) != Plan.PassThroughUnchanged)
+                            notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo '" + c + "' is part of a Lookup so must PassThroughUnchanged", CheckResult.Fail));
+                            
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -281,9 +297,11 @@ namespace CatalogueLibrary.ANOEngineering
 
             }
 
+            var refactorer = new SelectSQLRefactorer();
+
             foreach (ExtractionInformation e in _allExtractionInformations)
-                if (e.IsProperTransform())
-                    notifier.OnCheckPerformed(new CheckEventArgs("ExtractionInformation '" + e +"' is an Extraction Transform which is currently not supported", CheckResult.Fail));
+                if (!refactorer.IsRefactorable(e))
+                    notifier.OnCheckPerformed(new CheckEventArgs("ExtractionInformation '" + e +"' is a not refactorable due to reason:"+ refactorer.GetReasonNotRefactorable(e), CheckResult.Fail));
         }
 
         private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier,T m) where T:IMapsDirectlyToDatabaseTable

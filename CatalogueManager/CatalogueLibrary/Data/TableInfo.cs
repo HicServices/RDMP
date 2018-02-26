@@ -29,7 +29,7 @@ namespace CatalogueLibrary.Data
     /// This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
     /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).
     /// </summary>
-    public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed
+    public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo
     {
 
         public static int Name_MaxLength = -1;
@@ -191,7 +191,12 @@ namespace CatalogueLibrary.Data
         {
             return GetQuerySyntaxHelper().GetRuntimeName(Name);
         }
-        
+
+        public string GetFullyQualifiedName()
+        {
+            return Name;
+        }
+
         public string GetDatabaseRuntimeName()
         {
             return Database.Trim(new[] { '[', ']' });
