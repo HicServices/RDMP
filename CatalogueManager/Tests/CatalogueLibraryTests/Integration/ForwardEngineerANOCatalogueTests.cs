@@ -304,7 +304,17 @@ namespace CatalogueLibraryTests.Integration
             eiPostcode.SelectSQL = string.Format("LEFT(10,{0}.[current_postcode])", eiPostcode.ColumnInfo.TableInfo.Name);
             eiPostcode.Alias = "MyMutilatedColumn";
             eiPostcode.SaveToDatabase();
-            
+
+            //add a combo transform
+            var ciComboCol = new CatalogueItem(CatalogueRepository, bulk.catalogue, "ComboColumn");
+
+            var colForename = bulk.columnInfos.Single(c => c.GetRuntimeName() == "forename");
+            var colSurname =  bulk.columnInfos.Single(c => c.GetRuntimeName() == "surname");
+
+            var eiComboCol = new ExtractionInformation(CatalogueRepository, ciComboCol, colForename,colForename + " + ' ' + " + colSurname );
+            eiComboCol.Alias = "ComboColumn";
+            eiComboCol.SaveToDatabase();
+
             var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
             
             //now lets make it worse, lets assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
@@ -384,10 +394,15 @@ namespace CatalogueLibraryTests.Integration
             Console.WriteLine(qbdestination.SQL);
 
             var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
-
+            
             //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
             Assert.AreEqual(string.Format("LEFT(10,{0}.[current_postcode])", anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()),anoEiPostcode.SelectSQL);
-            
+
+            var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
+
+            //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
+            Assert.AreEqual(string.Format("{0}.[forename] + ' ' + {0}.[surname]", anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()), anoEiComboCol.SelectSQL);
+
             //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
             Assert.AreEqual(2, qbdestination.TablesUsedInQuery.Count);
 
