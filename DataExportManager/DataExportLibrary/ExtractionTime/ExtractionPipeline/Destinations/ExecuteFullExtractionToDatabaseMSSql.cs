@@ -30,7 +30,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private IExtractCommand _request;
 
         [DemandsInitialization("External server to create the extraction into, a new table will be created for each dataset extracted with datatypes and column names appropriate to the anonymised extracted datasets",Mandatory = true)]
-        public ExternalDatabaseServer TargetDatabaseServer { get; set; }
+        public IExternalDatabaseServer TargetDatabaseServer { get; set; }
         
         [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
          $p - Project Name ('e.g. My Project'
