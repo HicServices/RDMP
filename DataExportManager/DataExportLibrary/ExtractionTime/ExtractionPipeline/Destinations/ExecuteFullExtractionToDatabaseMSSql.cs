@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
         public bool DropTableIfLoadFails { get; set; }
-
+        
         private DiscoveredDatabase _server;
         private DataTableUploadDestination _destination;
         
@@ -100,6 +101,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 }
 
                 _destination = new DataTableUploadDestination();
+
+                PrimeDestinationTypesBasedOnCatalogueTypes();
+
                 _destination.AllowResizingColumnsAtUploadTime = true;
                 _destination.PreInitialize(_server, listener);
                 
@@ -114,6 +118,36 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             TableLoadInfo.Inserts += toProcess.Rows.Count;
 
             return null;
+        }
+
+        private void PrimeDestinationTypesBasedOnCatalogueTypes()
+        { 
+            //if the extraction is of a Catalogue
+            var datasetCommand = _request as IExtractDatasetCommand;
+            
+            if(datasetCommand == null)
+                return;
+
+            //for every extractable column in the Catalogue
+            foreach (var extractionInformation in datasetCommand.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+            {
+                var colName = extractionInformation.GetRuntimeName();
+                var colInfo = extractionInformation.ColumnInfo;
+
+                if(colInfo == null)
+                    continue;
+
+                //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
+                //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
+                //since it will just confuse the user.  Bear in mind these data types can be degraded later by the destination
+                _destination.AddExplicitWriteType(colName,colInfo.Data_type);
+            }
+
+            //Also tell the destination about the extraction identifier column name e.g. ReleaseId is a varchar(10).  ReleaseId is not part of the Catalogue, it's part of the Cohort
+            _destination.AddExplicitWriteType(
+                datasetCommand.ExtractableCohort.GetReleaseIdentifier(true),
+            datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType());
+
         }
 
 

@@ -26,7 +26,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="sqlType"></param>
         /// <returns></returns>
         Type GetCSharpTypeForSQLDBType(string sqlType);
+        DatabaseTypeRequest GetDataTypeRequestForSQLDBType(string sqlType);
 
         DataTypeComputer GetDataTypeComputerFor(DiscoveredColumn discoveredColumn);
+
+        int GetLengthIfString(string sqlType);
+        Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType);
     }
 }

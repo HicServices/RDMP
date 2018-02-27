@@ -559,6 +559,8 @@ namespace DataExportLibrary.Data.DataTables
 
         }
 
+        
+
         public void RecordNewCustomTable(DiscoveredServer server, string tableName, DbConnection con, DbTransaction transaction)
         {
             DbCommand cmdInsert =
@@ -601,13 +603,20 @@ namespace DataExportLibrary.Data.DataTables
         public string GetPrivateIdentifierDataType()
         {
             DiscoveredTable table = ExternalCohortTable.GetExpectDatabase().ExpectTable(ExternalCohortTable.TableName);
-
-            var syntax = ExternalCohortTable.GetQuerySyntaxHelper();
-
+            
             //discover the column
-            return table.DiscoverColumn(syntax.GetRuntimeName(GetPrivateIdentifier()))
+            return table.DiscoverColumn(GetPrivateIdentifier(true))
                 .DataType.SQLType; //and return it's datatype
             
+        }
+
+        public string GetReleaseIdentifierDataType()
+        {
+            DiscoveredTable table = ExternalCohortTable.GetExpectDatabase().ExpectTable(ExternalCohortTable.TableName);
+
+            //discover the column
+            return table.DiscoverColumn(GetReleaseIdentifier(true))
+                .DataType.SQLType; //and return it's datatype
         }
 
         public void DeleteCustomData(string tableName)
