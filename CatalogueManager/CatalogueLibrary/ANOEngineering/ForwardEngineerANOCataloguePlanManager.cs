@@ -14,6 +14,7 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.ANOEngineering
 {
@@ -62,6 +63,15 @@ namespace CatalogueLibrary.ANOEngineering
 
         public string GetEndpointDataType(ColumnInfo col)
         {
+            var sourceTypeTranslater = _querySyntaxHelper.TypeTranslater;
+
+            //if we have picked a destination
+            ITypeTranslater destinationTypeTranslater;
+            if (TargetDatabase != null)
+                destinationTypeTranslater = TargetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;//ensure we handle type translation between the two platforms
+            else
+                destinationTypeTranslater = sourceTypeTranslater;//otherwise (we haven't picked a destination yet)
+
             switch (GetPlanForColumnInfo(col))
             {
                 case Plan.Drop:
@@ -72,18 +82,18 @@ namespace CatalogueLibrary.ANOEngineering
                     if (anoTable == null)
                         return "Unknown";
 
-                    return anoTable.GetRuntimeDataType(LoadStage.PostLoad);
+                    return sourceTypeTranslater.TranslateSQLDBType(anoTable.GetRuntimeDataType(LoadStage.PostLoad),destinationTypeTranslater);
                 case Plan.Dilute:
                     var dilution = GetPlannedDilution(col);
 
                     if (dilution == null)
                         return "Unknown";
-                    
-                    return _querySyntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(dilution.ExpectedDestinationType);
+
+                    return destinationTypeTranslater.GetSQLDBTypeForCSharpType(dilution.ExpectedDestinationType);
 
                 case Plan.PassThroughUnchanged:
-                    return col.Data_type;
 
+                    return sourceTypeTranslater.TranslateSQLDBType(col.Data_type, destinationTypeTranslater);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

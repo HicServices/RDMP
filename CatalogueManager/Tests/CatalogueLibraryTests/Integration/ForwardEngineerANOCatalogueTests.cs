@@ -37,6 +37,10 @@ namespace CatalogueLibraryTests.Integration
 
             foreach (var p in CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>())
                 p.DeleteInDatabase();
+
+            foreach (var l in CatalogueRepository.GetAllObjects<Lookup>())
+                l.DeleteInDatabase();
+
             //cleanup
             foreach (var t in CatalogueRepository.GetAllObjects<TableInfo>())
                 t.DeleteInDatabase();

@@ -19,7 +19,7 @@ namespace CatalogueLibrary.Refactoring
     {
         /// <summary>
         /// Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the column.  Ensure
-        /// that new FullySpecifiedTableName is in fact fully specified
+        /// that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
         /// </summary>
         /// <param name="column"></param>
         /// <param name="tableName"></param>
@@ -44,8 +44,8 @@ namespace CatalogueLibrary.Refactoring
         }
 
         /// <summary>
-        /// Replaces all references to the given table with the new table name in a ColumnInfo.  This will also save the column.  Ensure
-        /// that new FullySpecifiedTableName is in fact fully specified
+        /// Replaces all references to the given table with the new table name in a ColumnInfo.  This will also save the column.    Ensure
+        /// that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
         /// </summary>
         /// <param name="column"></param>
         /// <param name="tableName"></param>
@@ -73,7 +73,7 @@ namespace CatalogueLibrary.Refactoring
 
         /// <summary>
         /// Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the column.  Ensure
-        /// that new FullySpecifiedTableName is in fact fully specified
+        /// that newFullySpecifiedColumnName is in fact fully qualified too e.g. [mydb]..[mytable].[mycol]
         /// </summary>
         /// <param name="column"></param>
         /// <param name="tableName"></param>

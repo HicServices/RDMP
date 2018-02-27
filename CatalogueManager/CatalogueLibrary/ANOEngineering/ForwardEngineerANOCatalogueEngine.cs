@@ -51,6 +51,15 @@ namespace CatalogueLibrary.ANOEngineering
             {
                 try
                 {
+                    //for each skipped table
+                    foreach (var skippedTable in _planManager.SkippedTables)
+                    {
+                        //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
+                        foreach (ColumnInfo columnInfo in skippedTable.ColumnInfos)
+                            GetNewColumnInfoForOld(columnInfo);
+                    }
+
+
                     //for each table that isn't being skipped
                     foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
                     {
@@ -76,7 +85,7 @@ namespace CatalogueLibrary.ANOEngineering
                                 if (columnPlan == ForwardEngineerANOCataloguePlanManager.Plan.ANO)
                                     colName = "ANO" + colName;
 
-                                migratedColumns.Add(colName, columnInfo);
+                                migratedColumns.Add(colName.ToLower(), columnInfo);
 
                                 columnsToCreate.Add(new DatabaseColumnRequest(colName, _planManager.GetEndpointDataType(columnInfo), !columnInfo.IsPrimaryKey){IsPrimaryKey = columnInfo.IsPrimaryKey});
                             }
@@ -99,7 +108,7 @@ namespace CatalogueLibrary.ANOEngineering
 
                         foreach (ColumnInfo newColumnInfo in newColumnInfos)
                         {
-                            var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
+                            var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName().ToLower()];
 
                             var anoTable = _planManager.GetPlannedANOTable(oldColumnInfo);
                             var dilution = _planManager.GetPlannedDilution(oldColumnInfo);
@@ -317,6 +326,8 @@ namespace CatalogueLibrary.ANOEngineering
 
                 if(toReturn == null)
                     throw new Exception("Catalogue '" + _planManager.Catalogue + "' contained a CatalogueItem referencing Column '" + col + "' the ColumnInfo was not migrated (which is fine) but we then could not find ColumnInfo in the new ANO dataset (if it was part of SkippedTables why doesn't the Catalogue have a reference to the new location?)");
+
+                _parenthoodDictionary.Add(col,toReturn);
 
                 return toReturn;
             }
