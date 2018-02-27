@@ -19,7 +19,7 @@ namespace CatalogueLibrary.Refactoring
     {
         /// <summary>
         /// Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the column.  Ensure
-        /// that new FullySpecifiedTableName is in fact fully specified
+        /// that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
         /// </summary>
         /// <param name="column"></param>
         /// <param name="tableName"></param>
@@ -44,8 +44,8 @@ namespace CatalogueLibrary.Refactoring
         }
 
         /// <summary>
-        /// Replaces all references to the given table with the new table name in a ColumnInfo.  This will also save the column.  Ensure
-        /// that new FullySpecifiedTableName is in fact fully specified
+        /// Replaces all references to the given table with the new table name in a ColumnInfo.  This will also save the column.    Ensure
+        /// that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
         /// </summary>
         /// <param name="column"></param>
         /// <param name="tableName"></param>
@@ -73,22 +73,27 @@ namespace CatalogueLibrary.Refactoring
 
         /// <summary>
         /// Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the column.  Ensure
-        /// that new FullySpecifiedTableName is in fact fully specified
+        /// that newFullySpecifiedColumnName is in fact fully qualified too e.g. [mydb]..[mytable].[mycol]
         /// </summary>
         /// <param name="column"></param>
         /// <param name="tableName"></param>
         /// <param name="newFullySpecifiedTableName"></param>
-        public void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName, string newFullySpecifiedColumnName)
+        /// <param name="strict">Determines behaviour when column SelectSQL does not contain a reference to columnName.  True will throw a RefactoringException, false will return without making any changes</param>
+        public void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName, string newFullySpecifiedColumnName,bool strict = true)
         {
             string fullyQualifiedName = columnName.GetFullyQualifiedName();
 
             if (!column.SelectSQL.Contains(fullyQualifiedName))
-                throw new RefactoringException("IColumn '" + column + "' did not contain the fully specified column name during refactoring ('" + fullyQualifiedName + "'");
-
+                if(strict)
+                    throw new RefactoringException("IColumn '" + column + "' did not contain the fully specified column name during refactoring ('" + fullyQualifiedName + "'");
+                else
+                    return;
+                
             if (newFullySpecifiedColumnName.Count(c=>c == '.')<2)
                 throw new RefactoringException("Replacement column name was not fully specified, value passed was '" + newFullySpecifiedColumnName + "' which should have had at least 2 dots");
 
             column.SelectSQL = column.SelectSQL.Replace(fullyQualifiedName, newFullySpecifiedColumnName);
+
             Save(column);
         }
 

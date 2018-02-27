@@ -208,6 +208,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return null;
         }
 
+        public string TranslateSQLDBType(string sqlType, ITypeTranslater destinationTypeTranslater)
+        {
+            //e.g. data_type is datetime2 (i.e. Sql Server), this returns System.DateTime
+            DatabaseTypeRequest requested = GetDataTypeRequestForSQLDBType(sqlType);
+
+            //this then returns datetime (e.g. mysql)
+            return destinationTypeTranslater.GetSQLDBTypeForCSharpType(requested);
+        }
+
 
         /// <summary>
         /// Return the number of characters required to not truncate/loose any data when altering a column from time (e.g. TIME etc) to varchar(x).  Return
