@@ -76,8 +76,8 @@ namespace CatalogueLibrary.Refactoring
         /// that newFullySpecifiedColumnName is in fact fully qualified too e.g. [mydb]..[mytable].[mycol]
         /// </summary>
         /// <param name="column"></param>
-        /// <param name="tableName"></param>
-        /// <param name="newFullySpecifiedTableName"></param>
+        /// <param name="columnName"></param>
+        /// <param name="newFullySpecifiedColumnName"></param>
         /// <param name="strict">Determines behaviour when column SelectSQL does not contain a reference to columnName.  True will throw a RefactoringException, false will return without making any changes</param>
         public void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName, string newFullySpecifiedColumnName,bool strict = true)
         {

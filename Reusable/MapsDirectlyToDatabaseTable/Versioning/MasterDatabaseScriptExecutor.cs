@@ -421,6 +421,7 @@ INSERT INTO [RoundhousE].[ScriptsRun]
         /// <summary>
         /// Creates a new platform database and patches it
         /// </summary>
+        /// <param name="dotDatabaseAssembly"></param>
         /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
         public void CreateAndPatchDatabaseWithDotDatabaseAssembly(Assembly dotDatabaseAssembly, ICheckNotifier notifier)
         {
