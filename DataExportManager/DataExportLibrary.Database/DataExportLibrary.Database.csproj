@@ -150,6 +150,7 @@
     <EmbeddedResource Include="db\up\012_AddNameToExtractionConfiguration.sql" />
     <EmbeddedResource Include="db\up\013_AddExtractionPipelineIDToExtractionConfiguration.sql" />
     <EmbeddedResource Include="db\up\014_AssociateCicsWithProjects.sql" />
+    <EmbeddedResource Include="db\up\015_AddedPropertiesToCumulativeExtractionResult.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

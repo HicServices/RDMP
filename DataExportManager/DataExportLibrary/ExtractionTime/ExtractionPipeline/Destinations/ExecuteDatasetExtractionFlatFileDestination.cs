@@ -249,6 +249,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return OutputFile;
         }
 
+        public DestinationType GetDestinationType()
+        {
+            return DestinationType.FileSystem;
+        }
+
         public void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globals, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             ExtractionDirectory targetDirectory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
@@ -265,7 +270,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     : ExtractCommandState.Crashed;
         }
 
-        
         private bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
         {
             SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(null);

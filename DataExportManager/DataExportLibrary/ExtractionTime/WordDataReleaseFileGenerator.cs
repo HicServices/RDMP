@@ -148,8 +148,8 @@ namespace DataExportLibrary.ExtractionTime
 
                 string filename = "";
 
-                if (!string.IsNullOrWhiteSpace(result.Filename))
-                    filename = new FileInfo(result.Filename).Name;
+                if (!string.IsNullOrWhiteSpace(result.DestinationDescription))
+                    filename = new FileInfo(result.DestinationDescription).Name;
                 else
                     filename = "N/A";
 

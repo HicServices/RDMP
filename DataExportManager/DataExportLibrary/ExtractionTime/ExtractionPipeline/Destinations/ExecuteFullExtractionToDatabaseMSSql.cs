@@ -9,6 +9,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using HIC.Logging;
@@ -45,7 +46,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
         public bool DropTableIfLoadFails { get; set; }
-        
+
+        public TableLoadInfo TableLoadInfo { get; private set; }
+
         private DiscoveredDatabase _server;
         private DataTableUploadDestination _destination;
         
@@ -53,6 +56,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private bool haveExtractedBundledContent = false;
 
         private bool _tableDidNotExistAtStartOfLoad;
+        private string _cachedGetTableNameAnswer;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -149,11 +153,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType());
 
         }
-
-
-        private string _cachedGetTableNameAnswer;
         
-
         public string GetTableName()
         {
             //if there is a cached answer return it
@@ -232,10 +232,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             _dataLoadInfo = value;
         }
 
-        public TableLoadInfo TableLoadInfo { get; private set; }
         public string GetDestinationDescription()
         {
             return GetTableName();
+        }
+
+        public DestinationType GetDestinationType()
+        {
+            return DestinationType.Database;
         }
 
         public void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globalsToExtract, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
@@ -247,9 +251,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                 foreach (var doc in globalsToExtract.Documents)
                     ExtractSupportingDocument(doc, listener);
-
             }
         }
+        
         private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener)
         {
             try
@@ -299,17 +303,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
             return ExtractCommandState.Warning;
         }
-
-
+        
         private DiscoveredDatabase GetDestinationServer(IDataLoadEventListener listener)
         {
             //tell user we are about to inspect it
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open connection to " + TargetDatabaseServer));
 
             return DataAccessPortal.GetInstance().ExpectDatabase(TargetDatabaseServer, DataAccessContext.DataExport);
-            
         }
-
 
         public void Check(ICheckNotifier notifier)
         {
@@ -321,6 +322,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                         CheckResult.Fail));
                 return;
             }
+
             if (string.IsNullOrWhiteSpace(TargetDatabaseServer.Server))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabaseServer does not have a .Server specified", CheckResult.Fail));
@@ -383,6 +385,5 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
 
         }
-
     }
 }

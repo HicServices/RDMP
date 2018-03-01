@@ -132,6 +132,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Data\DataTables\DestinationType.cs" />
     <Compile Include="Data\DataTables\ICohortDefinition.cs" />
     <Compile Include="Data\DataTables\IExternalCohortTable.cs" />
     <Compile Include="Data\DataTables\ICumulativeExtractionResults.cs" />

@@ -2,6 +2,7 @@
 using System.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.UserPicks;
@@ -18,6 +19,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
     {
         TableLoadInfo TableLoadInfo { get; }
         string GetDestinationDescription();
+        DestinationType GetDestinationType();
 
         void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globalsToExtract, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo);
     }

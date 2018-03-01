@@ -26,7 +26,8 @@ namespace DataExportLibrary.Data.DataTables
         private int _extractionConfiguration_ID;
         private int _extractableDataSet_ID;
         private DateTime _dateOfExtraction;
-        private string _filename;
+        private int _destinationType;
+        private string _destinationDescription;
         private int _recordsExtracted;
         private int _distinctReleaseIdentifiersEncountered;
         private string _filtersUsed;
@@ -49,10 +50,15 @@ namespace DataExportLibrary.Data.DataTables
             get { return _dateOfExtraction; }
             set { SetField(ref _dateOfExtraction, value); }
         }
-        public string Filename
+        public DestinationType DestinationType
         {
-            get { return _filename; }
-            set { SetField(ref _filename, value); }
+            get { return (DestinationType)_destinationType; }
+            set { SetField(ref _destinationType, (int)value); }
+        }
+        public string DestinationDescription
+        {
+            get { return _destinationDescription; }
+            set { SetField(ref _destinationDescription, value); }
         }
         public int RecordsExtracted
         {
@@ -121,7 +127,8 @@ namespace DataExportLibrary.Data.DataTables
             DistinctReleaseIdentifiersEncountered = int.Parse(r["DistinctReleaseIdentifiersEncountered"].ToString());
             Exception = r["Exception"] as string;
             FiltersUsed = r["FiltersUsed"] as string;
-            Filename = r["Filename"] as string;
+            DestinationType = (DestinationType)int.Parse(r["DestinationType"].ToString());
+            DestinationDescription = r["DestinationDescription"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
             CohortExtracted = int.Parse(r["CohortExtracted"].ToString());
         }

@@ -64,29 +64,45 @@ namespace DataExportLibrary.DataRelease
                 //always try to figure out what the current SQL is
                 SqlCurrentConfiguration = GetCurrentConfigurationSQL();
 
-                if (ExtractionResults == null || ExtractionResults.Filename == null)
+                if (ExtractionResults == null || ExtractionResults.DestinationDescription == null)
                 {
                     Assesment = Releaseability.NeverBeensuccessfullyExecuted;
                     return;
                 }
 
-                ExtractDirectory = new FileInfo(ExtractionResults.Filename).Directory;
                 //let the user know when the data was extracted
                 DateOfExtraction = ExtractionResults.DateOfExtraction;
                 SqlExtracted = ExtractionResults.SQLExecuted;
-                
+
                 //the cohort has been changed in the configuration in the time elapsed since the file we are evaluating was generated (that was when CummatliveExtractionResults was populated)
                 if (ExtractionResults.CohortExtracted != Configuration.Cohort_ID)
-                    Assesment = Releaseability.CohortDesynchronisation;
-                else
-                if (SqlOutOfSyncWithDataExportManagerConfiguration())
-                    Assesment = Releaseability.ExtractionSQLDesynchronisation;
-                else if (FilesAreMissing())
-                    Assesment = Releaseability.ExtractFilesMissing;
-                else
                 {
-                    ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
+                    Assesment = Releaseability.CohortDesynchronisation;
+                    return;
+                }
 
+                if (SqlOutOfSyncWithDataExportManagerConfiguration())
+                {
+                    Assesment = Releaseability.ExtractionSQLDesynchronisation;
+                    return;
+                }
+
+                if (ExtractionResults.DestinationType == DestinationType.FileSystem)
+                {
+                    ExtractDirectory = new FileInfo(ExtractionResults.DestinationDescription).Directory;
+                    if (FilesAreMissing())
+                        Assesment = Releaseability.ExtractFilesMissing;
+                    else
+                    {
+                        ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
+                        Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+                    }
+                    return;
+                }
+
+                if (ExtractionResults.DestinationType == DestinationType.Database)
+                {
+                    //TODO: check for pollution in the table(s)? Check that the table still exists? we need the server name tho! :(
                     Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
                 }
             }
@@ -152,8 +168,8 @@ namespace DataExportLibrary.DataRelease
 
         private bool FilesAreMissing()
         {
-            ExtractFile = new FileInfo(ExtractionResults.Filename);
-            MetadataFile = new FileInfo(ExtractionResults.Filename.Replace(".csv", ".docx"));
+            ExtractFile = new FileInfo(ExtractionResults.DestinationDescription);
+            MetadataFile = new FileInfo(ExtractionResults.DestinationDescription.Replace(".csv", ".docx"));
 
             if (!ExtractFile.Exists)
                 return true;//extract is missing
