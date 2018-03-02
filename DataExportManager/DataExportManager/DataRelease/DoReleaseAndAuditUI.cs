@@ -90,8 +90,7 @@ namespace DataExportManager.DataRelease
 
             _environmentPotential = environmentPotential;
 
-            CheckAllReleasePotentials(
-                ConfigurationsForRelease.SelectMany(cfr => cfr.Value).Union(datasetReleasePotentials));
+            CheckForMixedReleaseTypes(ConfigurationsForRelease.SelectMany(cfr => cfr.Value).Union(datasetReleasePotentials));
 
             ConfigurationsForRelease.Add((ExtractionConfiguration) toAdd, datasetReleasePotentials.ToList());
             _releaseState = ReleaseState.DoingProperRelease;
@@ -99,7 +98,7 @@ namespace DataExportManager.DataRelease
             ReloadTreeView();
         }
 
-        private void CheckAllReleasePotentials(IEnumerable<ReleasePotential> datasetReleasePotentials)
+        private void CheckForMixedReleaseTypes(IEnumerable<ReleasePotential> datasetReleasePotentials)
         {
             if (datasetReleasePotentials.Select(rp => rp.ExtractionResults.DestinationType).Distinct().Count() > 1)
                 throw new Exception(
@@ -126,7 +125,7 @@ namespace DataExportManager.DataRelease
             }
 
             if (_environmentPotential != null)
-                if (_environmentPotential.Assesment != _environmentPotential.Assesment)
+                if (_environmentPotential.Assesment != _environmentPotential.Assesment) //DAFUCK?
                     throw new Exception("We have been given two ReleaseEnvironmentPotentials but they have different .Assesment properties");
 
             _environmentPotential = environmentPotential;
