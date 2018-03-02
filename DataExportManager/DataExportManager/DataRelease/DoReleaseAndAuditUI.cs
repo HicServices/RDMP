@@ -90,17 +90,27 @@ namespace DataExportManager.DataRelease
 
             _environmentPotential = environmentPotential;
 
+            CheckAllReleasePotentials(
+                ConfigurationsForRelease.SelectMany(cfr => cfr.Value).Union(datasetReleasePotentials));
+
             ConfigurationsForRelease.Add((ExtractionConfiguration) toAdd, datasetReleasePotentials.ToList());
             _releaseState = ReleaseState.DoingProperRelease;
 
             ReloadTreeView();
         }
 
+        private void CheckAllReleasePotentials(IEnumerable<ReleasePotential> datasetReleasePotentials)
+        {
+            if (datasetReleasePotentials.Select(rp => rp.ExtractionResults.DestinationType).Distinct().Count() > 1)
+                throw new Exception(
+                    "There is a mix of extraction types (DB and filesystem) in the datasets you are trying to add. This is not allowed.");
+        }
+
         private void CheckForCumulativeExtractionResults(ReleasePotential[] datasetReleasePotentials)
         {
             var staleDatasets = datasetReleasePotentials.Where(
                 p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
-
+           
             if (staleDatasets.Any())
                 throw new Exception(
                     "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
