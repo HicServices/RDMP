@@ -234,7 +234,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public string GetDestinationDescription()
         {
-            return GetTableName();
+            var tblName = GetTableName();
+            return TargetDatabaseServer.ID + "|" + tblName;
         }
 
         public DestinationType GetDestinationType()

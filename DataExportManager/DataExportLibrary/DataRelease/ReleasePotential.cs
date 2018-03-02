@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,6 +15,9 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.DataRelease
 {
@@ -102,7 +107,29 @@ namespace DataExportLibrary.DataRelease
 
                 if (ExtractionResults.DestinationType == DestinationType.Database)
                 {
-                    //TODO: check for pollution in the table(s)? Check that the table still exists? we need the server name tho! :(
+                    var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
+                    var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+                    var tblName = ExtractionResults.DestinationDescription.Split('|')[1];
+                    var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport);
+                    using (DbConnection con = server.GetConnection())
+                    {
+                        con.Open();
+                        var database = server.ExpectDatabase(externalServer.Database);
+                        if (!database.Exists())
+                        {
+                            Assesment = Releaseability.ExtractFilesMissing;
+                            return;
+                        }
+                        
+                        var foundTable = database.ExpectTable(tblName);
+                        if (!foundTable.Exists())
+                        {
+                            Assesment = Releaseability.ExtractFilesMissing;
+                            return;
+                        }
+                    }
+
+                    // TODO: Table can be polluted, how to check??
                     Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
                 }
             }
