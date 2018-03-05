@@ -124,7 +124,7 @@ namespace DataExportManager.DataRelease
             if (toPatchIn.Configuration.Project_ID != _project.ID)
                 throw new Exception("Mismatch between ProjectID of datasets selected for release and what this UI component recons the project is");
 
-            if (ConfigurationsForRelease.Values.Any(array => array.Any(releasePotential => releasePotential.DataSet.ID == toPatchIn.DataSet.ID)))
+            if (ConfigurationsForRelease.Where(cfr => cfr.Key == toPatchIn.Configuration).Any(kvp => kvp.Value.Any(releasePotential => releasePotential.DataSet.ID == toPatchIn.DataSet.ID)))
             {
                 MessageBox.Show("Dataset already included in the patch");
                 return;
