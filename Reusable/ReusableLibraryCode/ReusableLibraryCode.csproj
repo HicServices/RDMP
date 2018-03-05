@@ -453,6 +453,7 @@
     <Compile Include="Progress\ForkDataLoadEventListener.cs" />
     <Compile Include="Progress\FromDataLoadEventListenerToCheckNotifier.cs" />
     <Compile Include="Progress\FromDataLoadEventListenerToILog.cs" />
+    <Compile Include="Progress\FromILogToDataLoadEventListener.cs" />
     <Compile Include="Progress\ToMemoryDataLoadEventListener.cs" />
     <Compile Include="Progress\FromCheckNotifierToDataLoadEventListener.cs" />
     <Compile Include="Progress\ThrowImmediatelyDataLoadEventListener.cs" />
