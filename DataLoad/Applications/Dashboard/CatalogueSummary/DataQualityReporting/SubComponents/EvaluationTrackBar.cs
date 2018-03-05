@@ -13,7 +13,7 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
     /// 
     /// If this control is not enabled then it means you have only ever done one DQE evaluation or have never evaluated the dataset by using the DQE.
     /// 
-    /// Dragging the slider will adjust the TimePeriodicityChart, ColumnStatesChart and RowStatePieChart to show the results of the DQE on that day.
+    /// Dragging the slider will adjust a IDataQualityReportingChart to show the results of the DQE on that day.
     /// </summary>
     public partial class EvaluationTrackBar : UserControl
     {

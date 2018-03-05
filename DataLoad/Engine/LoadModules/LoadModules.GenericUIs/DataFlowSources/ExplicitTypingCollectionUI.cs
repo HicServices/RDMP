@@ -18,10 +18,10 @@ using ReusableUIComponents;
 namespace LoadModules.GenericUIs.DataFlowSources
 {
     /// <summary>
-    /// An ExplicitlyTypedColumn is a an expectation that a column of a given name will appear and a notification to the RDMP that it must be given the supplied type instead of 'no type'
-    /// or the system inventing a type for it at runtime based on the column contents (default behaviour).  You should only explicitly type a few columns and usually only where they are
-    /// likely to be confused e.g. if you have a column with important leading zeroes that should be treated as a string despite looking like an int.  If you have too many explicitly typed
-    /// columns it can limit your Pipelines reusability with novel files you might receive in the future.
+    /// ExplicitlyTypedColumns are an expectation that a column of a given name will appear in the data flow pipeline DataTable and a notification to the RDMP that it must be given the
+    /// supplied C# Type instead of RDMP infering Types or leaving it as the default DataColumn Type as usually happens.  You should only explicitly type a few columns and usually only 
+    /// where they are likely to be confused e.g. if you have a column with important leading zeroes that should be treated as a string despite looking like an int.  If you have too
+    /// many explicitly typed columns it can limit your Pipelines reusability with novel files you might receive in the future.
     /// 
     /// For a use case of when this is useful see ExplicitColumnTypeUI (this form hosts a collection of these controls).
     /// </summary>

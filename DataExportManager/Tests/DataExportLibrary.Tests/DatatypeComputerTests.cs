@@ -49,7 +49,26 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(DBNull.Value);
 
             Assert.AreEqual(t.CurrentEstimate, typeof(decimal));
+            var sqlType = t.GetSqlDBType(_translater);
+            Assert.AreEqual("decimal(4,1)",sqlType) ;
+
+            var orig = t.GetTypeRequest();
+            var reverseEngineered = _translater.GetDataTypeRequestForSQLDBType(sqlType);
+            Assert.AreEqual(orig,reverseEngineered ,"The computed DataTypeRequest was not the same after going via sql datatype and reverse engineering");
+        }
+        [Test]
+        public void TestDatatypeComputer_IntAnddecimal_MustUsedecimalThenString()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("15");
+            t.AdjustToCompensateForValue("29.9");
+            t.AdjustToCompensateForValue("200");
+            t.AdjustToCompensateForValue(null);
+            t.AdjustToCompensateForValue(DBNull.Value);
+            
             Assert.AreEqual("decimal(4,1)", t.GetSqlDBType(_translater));
+            t.AdjustToCompensateForValue("D");
+            Assert.AreEqual("varchar(5)", t.GetSqlDBType(_translater));
         }
 
         [Test]

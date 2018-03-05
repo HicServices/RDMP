@@ -20,7 +20,7 @@ namespace Diagnostics
         }
 
         /// <summary>
-        /// Calls .Check on all ANOTables and IdentifierDumers in the database
+        /// Calls .Check on all ANOTables and IdentifierDumper logic (PreLoadDiscardedColumns etc) in the database
         /// </summary>
         /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)

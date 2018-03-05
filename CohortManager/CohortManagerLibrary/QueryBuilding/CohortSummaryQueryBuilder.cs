@@ -100,7 +100,7 @@ namespace CohortManagerLibrary.QueryBuilding
         /// WhereExtractionIdentifiersIn: 
         /// Returns a adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an inception WHERE statement that restricts the IsExtractionIdentifier column
         /// by those values returned by the Cohort query.  In order that this query doesn't become super insane we require that the Cohort be cached so that it is just a simple single
-        /// like IFilter e.g. conceptually: WHERE CHI IN (Select CHI from CachedResults where AggregateConfiguration_ID = 103)
+        /// like IFilter e.g. conceptually: WHERE CHI IN (Select CHI from IndexedExtractionIdentifierList_AggregateConfiguration5)
         /// 
         /// WhereRecordsIn
         /// Returns an adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an root AND container which includes both the container tree of the summary

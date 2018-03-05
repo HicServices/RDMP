@@ -36,7 +36,7 @@ namespace ReusableLibraryCode.Checks
         public bool ThrowOnWarning { get; set; }
 
         /// <summary>
-        /// By default this class will also log to StdOut. Set to false to skip this (in case of non-interactive environments)
+        /// By default this class will also log to the Console. Set to false to skip this (in case of non-interactive environments)
         /// </summary>
         public bool WriteToConsole { get; set; }
     }

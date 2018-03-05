@@ -126,7 +126,41 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "LoadID_Data_STAGING",
             "AuditObject",
             "EmailAddressOfAuthorizor",
-            "FixedSource"
+            "FixedSource",
+            "AverageResult",
+            "MaxResult",
+            "FormatFile",
+            "IndexedExtractionIdentifierList_AggregateConfiguration5",
+            "YAXLib",
+            "DependsOn",
+            "DependingOnThis",
+            "ProposedFixes",
+            "PropertyX",
+            "PropertyX_MaxLength",
+            "Property_MaxLength",
+            "FamilyMembers",
+            
+            //CreatingANewCollectionTreeNode.md
+            "FolderOfX", 
+
+            //PluginWriting.md
+            "MyPluginUserInterface",
+            "ExecuteCommandRenameCatalogueToBunnies",
+            "BasicDataTableAnonymiser1",
+            "BasicDataTableAnonymiser3",
+            "CodeExamples",
+            "MyExamplePluginTests",
+            "TEST_Catalogue",
+            "BasicDataTableAnonymiser4",
+            "GetCommonNamesTable",
+            "TestBasicDataTableAnonymiser3",
+            "BasicDataTableAnonymiser5",
+            "TestAnonymisationPlugins",
+            "LoggerTestCase",
+            "ToConsole",
+            "ToMemory",
+            "ToDatabase",
+            "TEST_Logging",
 
         };
 

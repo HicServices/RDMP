@@ -39,9 +39,9 @@ namespace MapsDirectlyToDatabaseTable
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
 
         /// <summary>
-        /// Set all BobX_MaxLength static int fields in class oTableWrapperObject.GetType() by figuring out the max storable length of 
-        /// non static field BobX in oTableWrapperObject e.g. if you store in a varchar(10) field called BobX then set the static field
-        /// BobX_MaxLength to 10.  Throw an Exception if you do not find BobX or it is a type that does not support length (e.g. date)
+        /// Each database Property 'PropertyX' can have an accompanying static int variable called 'PropertyX_MaxLength'.  Calling this 
+        /// method will examine the database table behind the class and calculate the maximum lengths supported by the schema of each
+        /// 'Property' and set the associated 'Property_MaxLength'
         /// </summary>
         /// <param name="oTableWrapperObject"></param>
         void FigureOutMaxLengths(IMapsDirectlyToDatabaseTable oTableWrapperObject);

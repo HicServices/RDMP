@@ -29,8 +29,9 @@ namespace ReusableUIComponents.ScintillaHelper
         /// <summary>
         /// Creates a new SQL (default) Scintilla editor with highlighting
         /// </summary>
-        /// <param name="commandFactory">Unless your control is going to be 100% ReadOnly then you should supply an ICopyCommandFactory e.g. RDMPCopyCommandFactory to allow dragging and dropping components
-        /// into the window</param>
+        /// <param name="commandFactory">Unless your control is going to be 100% ReadOnly then you should supply an ICommandFactory e.g. RDMPCommandFactory to allow dragging and  
+        /// dropping components into the window.  The ICommandFactory will decide whether the given object can be translated into an ICommand and hence into a unique bit of SQL
+        /// to add to the editor</param>
         /// <param name="language"></param>
         /// <returns></returns>
         public Scintilla Create(ICommandFactory commandFactory=null,string language = "mssql")

@@ -26,7 +26,7 @@ namespace DataLoadEngine.LoadProcess.Scheduling
             
         }
 
-        public override ExitCodeType Run(GracefulCancellationToken loadCancellationToken)
+        public override ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null)
         {
             // grab all the load schedules we can and lock them
             var loadProgresses = LoadProgressSelectionStrategy.GetAllLoadProgresses();
@@ -47,7 +47,7 @@ namespace DataLoadEngine.LoadProcess.Scheduling
             {
                 //Do a data load 
                 ExitCodeType result;
-                while((result = base.Run(loadCancellationToken) ) == ExitCodeType.Success) //stop if it said not required
+                while((result = base.Run(loadCancellationToken,payload)) == ExitCodeType.Success) //stop if it said not required
                 {
                     //or if between executions the token is set
                     if(loadCancellationToken.IsAbortRequested)

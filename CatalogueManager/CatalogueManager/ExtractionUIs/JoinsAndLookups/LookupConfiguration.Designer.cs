@@ -411,7 +411,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.Controls.Add(this.label1);
             this.Name = "LookupConfiguration";
             this.Size = new System.Drawing.Size(1103, 772);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.AdvancedLookupConfiguration_Paint);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.LookupConfiguration_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvSelectedDescriptionColumns)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvLookupColumns)).EndInit();

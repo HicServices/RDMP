@@ -36,7 +36,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         private DataFlowPipelineContext<DataTable> _context;
         
         /// <summary>
-        /// If Destination is a ExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly 
+        /// If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly 
         /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissable destination for an ExtractionPipeline
         /// </summary>
         public IExecuteDatasetExtractionDestination Destination { get; private set; }

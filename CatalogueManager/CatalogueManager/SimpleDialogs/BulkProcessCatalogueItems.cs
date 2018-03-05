@@ -203,7 +203,18 @@ namespace CatalogueManager.SimpleDialogs
 
                         //column already has ExtractionInformation configured for it so ignore it
                         if (catalogueItem.ExtractionInformation != null)
+                        {
+                            //unless user wants to do reckless recategorisation
+                            if(cbRecategorise.Checked)
+                            {
+
+                                var ei = catalogueItem.ExtractionInformation;
+                                ei.ExtractionCategory = (ExtractionCategory) ddExtractionCategory.SelectedItem;
+                                ei.SaveToDatabase();
+                            }
+
                             continue;
+                        }
 
                         //we got to here so we have a legit 1 column info to cataitem we can enable for extraction
                         ExtractionInformation created = new ExtractionInformation((CatalogueRepository) catalogueItem.Repository, catalogueItem, col, null);
@@ -215,7 +226,7 @@ namespace CatalogueManager.SimpleDialogs
                         }
 
                         countExtractionInformationsCreated++;
-                       }
+                    }
                 }
             }
 
@@ -262,6 +273,11 @@ namespace CatalogueManager.SimpleDialogs
         private void cbTableInfos_SelectedIndexChanged(object sender, EventArgs e)
         {
             rbGuessNewAssociatedColumns.Checked = true;
+        }
+
+        private void rbMarkExtractable_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

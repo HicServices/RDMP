@@ -27,7 +27,7 @@ namespace DataLoadEngine.LoadProcess.Scheduling
         {
         }
 
-        public override ExitCodeType Run(GracefulCancellationToken loadCancellationToken)
+        public override ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null)
         {
             // single job, so grab the first available LoadProgress and lock it
             var loadProgresses = LoadProgressSelectionStrategy.GetAllLoadProgresses();
@@ -55,7 +55,7 @@ namespace DataLoadEngine.LoadProcess.Scheduling
                 // Run the data load
                 JobProvider = _scheduledJobFactory;
 
-             return base.Run(loadCancellationToken);
+             return base.Run(loadCancellationToken,payload);
             }
             finally
             {

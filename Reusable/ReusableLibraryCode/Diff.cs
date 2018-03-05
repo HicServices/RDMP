@@ -523,7 +523,7 @@ namespace ReusableLibraryCode {
     /// <summary>
     /// Initialize the Diff-Data buffer.
     /// </summary>
-    /// <param name="data">reference to the buffer</param>
+    /// <param name="initData">reference to the buffer</param>
     internal DiffData(int[] initData) {
       data = initData;
       Length = initData.Length;

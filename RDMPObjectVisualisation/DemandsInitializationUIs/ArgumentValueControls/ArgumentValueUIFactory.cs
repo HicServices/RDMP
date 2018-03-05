@@ -98,6 +98,8 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 array = GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(repository, parent).ToArray();
             else if (argumentType == typeof (LoadProgress))
                 array = GetAllLoadProgressAssociatedWithLoadMetadata(parent).ToArray();
+            else if (argumentType == typeof(IExternalDatabaseServer))
+                array = repository.GetAllObjects<ExternalDatabaseServer>().ToArray();
             else
                 array = repository.GetAllObjects(argumentType).ToArray(); //Default case fetch all the objects of the Type
 

@@ -86,8 +86,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         /// <summary>
-        /// Defines a new extraction project this is stored in the DataExportManager2 database and the ID of the new record is returned by this
-        ///  method, use GetProjectByID to get the object back from the database
+        /// Defines a new extraction project this is stored in the Data Export database
         /// </summary>
         public Project(IDataExportRepository repository, string name)
         {

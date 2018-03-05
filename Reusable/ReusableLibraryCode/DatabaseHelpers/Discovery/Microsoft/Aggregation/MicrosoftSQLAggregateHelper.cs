@@ -55,7 +55,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation
         /// Takes the fieldname/transform from the dataset and wraps it with the date adjustment function specified by the AxisIncrement
         /// </summary>
         /// <param name="increment"></param>
-        /// <param name="thingToWrap"></param>
+        /// <param name="columnSql"></param>
         /// <returns></returns>
         public string GetDatePartOfColumn(AxisIncrement increment, string columnSql)
         {

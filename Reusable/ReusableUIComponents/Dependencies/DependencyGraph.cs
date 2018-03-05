@@ -23,8 +23,8 @@ namespace ReusableUIComponents.Dependencies
     /// a Catalogue (dataset) depends on CatalogueItems which depend on ExtractionInformation and ColumnInfos which themselves depend on TableInfos.  The upstream dependencies of Catalogue
     /// include LoadMetadata (which would then have a downstream relationship into other Catalogues it loads as part of it's load).
     /// 
-    /// Unsurprisingly this can spiral into thousands of objects.  Use DependencyDepth to limit the number of recursive dependency navigations (both up and downstream).  If you get lost in
-    /// a big network diagram you can tick Highlight on nodes of a given type e.g. Catalogue.
+    /// Unsurprisingly this can spiral into thousands of objects.  Use 'Dependency Depth' to limit the number of recursive dependency navigations (both up and downstream).  If you get lost 
+    /// in a big network diagram you can tick Highlight on nodes of a given type e.g. Catalogue.
     /// 
     /// You can change the layout to other layouts such as ring or tree but LinLog is probably the easiest to interpret.  Some layouts take longer to calculate than others if you have very
     /// a large dependency network being displayed.

@@ -22,8 +22,8 @@ using ReusableLibraryCode.Progress;
 namespace RDMPAutomationService.Pipeline
 {
     /// <summary>
-    /// Hosts and runs all the AutomationPipelines running in the currently running Automation Service executable.  Each pipeline has an IAutomationSource which
-    /// is polled for new jobs, all jobs are passed to the same instance of IAutomationDestination which manages async execution of them.
+    /// Hosts and runs all the Automation Pipelines running in the currently running Automation Service executable.  Each pipeline has an IAutomationSource which
+    /// is polled for new jobs, all jobs are passed to the same instance of AutomationDestination which manages async execution of them.
     /// </summary>
     public class AutomationPipelineEngineCollection
     {
@@ -75,8 +75,8 @@ namespace RDMPAutomationService.Pipeline
         }
 
         /// <summary>
-        /// Runs all automation pipelines once.  This will identify all new automation jobs and dispatch them to the IAutomationDestination but will not wait
-        /// for the jobs to complete before returning (IAutomationDestination is multi threaded).
+        /// Runs all automation pipelines once.  This will identify all new automation jobs and dispatch them to the AutomationDestination but will not wait
+        /// for the jobs to complete before returning (AutomationDestination is multi threaded).
         /// </summary>
         /// <param name="minimumLengthOfTimeToWaitWhileDoingThis"></param>
         public void ExecuteAll(int minimumLengthOfTimeToWaitWhileDoingThis)

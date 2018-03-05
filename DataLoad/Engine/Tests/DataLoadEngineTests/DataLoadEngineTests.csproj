@@ -388,6 +388,7 @@
     <Compile Include="Integration\ImportFilesDataProviderTests.cs" />
     <Compile Include="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
     <Compile Include="Integration\KVPAttacherTest.cs" />
+    <Compile Include="Integration\PayloadTest.cs" />
     <Compile Include="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\TransposerTests.cs" />

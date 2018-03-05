@@ -22,12 +22,20 @@ namespace DataLoadEngine.Job
         int JobID { get; set; }
         ILoadMetadata LoadMetadata { get; }
         string ArchiveFilepath { get; }
-        
+
+        /// <summary>
+        /// Optional externally provided object to drive the data load.  For example if you have an explicit list of objects in memory to process and
+        /// a custom Attacher which expects to be magically provided with this list then communicate the list to the Attacher via this property.
+        /// </summary>
+        object Payload { get; set; }
+
         List<TableInfo> RegularTablesToLoad { get; }
         List<TableInfo> LookupTablesToLoad { get; }
         
         void StartLogging();
         void CloseLogging();
+
+        
         
         /// <summary>
         /// Orders the job to create the tables it requires in the given stage (e.g. RAW/STAGING), the job will also take ownership of the cloner for the purposes

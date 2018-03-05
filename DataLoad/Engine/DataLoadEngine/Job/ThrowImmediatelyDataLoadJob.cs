@@ -43,6 +43,8 @@ namespace DataLoadEngine.Job
         {
         }
 
+        public object Payload { get; set; }
+
         public void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
         {
         }

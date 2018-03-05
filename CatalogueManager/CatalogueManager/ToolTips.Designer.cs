@@ -176,7 +176,7 @@ namespace CatalogueManager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This dialog lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data generated is completely fictional.  Test data is generated randomly usually around a distribution (e.g. there are more prescriptions for Paracetamol/Aspirin than Morphine) but complex relationships are not modelled (e.g. theres no concept of someone being diabetic so just because someone is on INSULIN doesn&apos;t mean they will have [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to This dialog lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data generated is completely fictional.  Test data is generated randomly usually around a distribution (e.g. there are more prescsriptions for Paracetamol/Aspirin than Morphine) but complex relationships are not modelled (e.g. theres no concept of someone being diabetic so just because someone is on INSULIN doesn&apos;t mean they will hav [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ExerciseData {
             get {

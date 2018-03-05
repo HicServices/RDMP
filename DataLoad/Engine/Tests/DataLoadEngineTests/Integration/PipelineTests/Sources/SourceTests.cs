@@ -102,7 +102,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         public void TestPipelineContextIsAllowable()
         {
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
-            var context = contextFactory.Create(PipelineUsage.FixedDestination | PipelineUsage.LoadsSingleTableInfo);
+            var context = contextFactory.Create(PipelineUsage.FixedSource | PipelineUsage.FixedDestination | PipelineUsage.LoadsSingleTableInfo);
 
             var pipeline = new CatalogueLibrary.Data.Pipelines.Pipeline(CatalogueRepository, "DeleteMePipeline");
             var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0);

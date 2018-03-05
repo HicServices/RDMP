@@ -131,6 +131,8 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
+
+
         public ExtractableCohort(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -314,37 +316,7 @@ namespace DataExportLibrary.Data.DataTables
         
         #endregion
 
-
-
-
-        /// <summary>
-        /// Defines a new potentially extractable cohort (based on a database table only - new, used to be based on a query), this is stored in the 
-        /// Data Export database and the ID of the new record is returned by this method, use GetCohortDatabaseTableByID to get the object 
-        /// back from the database
-        /// </summary>
-        /// <returns>ID of the newly created database record</returns>
-        public int CreateNewCohortInDatabase(ExternalCohortTable externalSource, int originalId, out int numberOfCustomColumnsCreated)
-        {
-            if(!externalSource.IDExistsInCohortTable(originalId))
-                throw new Exception("ID " + originalId + " does not exist in Cohort Definitions (Referential Integrity Problem)");
-
-            var newObjectID = Repository.InsertAndReturnID<ExtractableCohort>(new Dictionary<string, object>
-            {
-                {"OriginID", originalId},
-                {"ExternalCohortTable_ID", externalSource.ID}
-            });
-
-            //we have been added to database but now we need to create custom columns too
-            //fetch new instance we just created by it's id (autonum)
-            var created = Repository.GetObjectByID<ExtractableCohort>(newObjectID);
-                
-            //create custom columns
-            numberOfCustomColumnsCreated = created.CreateCustomColumnsIfCustomTableExists();
-
-            //return the autonum id of the row this method created so users can access their object
-            return newObjectID;
-        }
-
+        
         public void SynchronizeCustomColumns(ICheckNotifier notifier)
         {
             List<string> required = new List<string>();
@@ -587,6 +559,8 @@ namespace DataExportLibrary.Data.DataTables
 
         }
 
+        
+
         public void RecordNewCustomTable(DiscoveredServer server, string tableName, DbConnection con, DbTransaction transaction)
         {
             DbCommand cmdInsert =
@@ -629,13 +603,20 @@ namespace DataExportLibrary.Data.DataTables
         public string GetPrivateIdentifierDataType()
         {
             DiscoveredTable table = ExternalCohortTable.GetExpectDatabase().ExpectTable(ExternalCohortTable.TableName);
-
-            var syntax = ExternalCohortTable.GetQuerySyntaxHelper();
-
+            
             //discover the column
-            return table.DiscoverColumn(syntax.GetRuntimeName(GetPrivateIdentifier()))
+            return table.DiscoverColumn(GetPrivateIdentifier(true))
                 .DataType.SQLType; //and return it's datatype
             
+        }
+
+        public string GetReleaseIdentifierDataType()
+        {
+            DiscoveredTable table = ExternalCohortTable.GetExpectDatabase().ExpectTable(ExternalCohortTable.TableName);
+
+            //discover the column
+            return table.DiscoverColumn(GetReleaseIdentifier(true))
+                .DataType.SQLType; //and return it's datatype
         }
 
         public void DeleteCustomData(string tableName)
