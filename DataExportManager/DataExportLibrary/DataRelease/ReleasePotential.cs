@@ -129,7 +129,7 @@ namespace DataExportLibrary.DataRelease
                         }
                     }
 
-                    // TODO: Table can be polluted, how to check??
+                    // TODO: Table can be polluted, how to check?? CHECK FOR SPURIOUS TABLES
                     Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
                 }
             }
