@@ -11,7 +11,7 @@ using ReusableLibraryCode.DataAccess;
 namespace CohortManagerLibrary.Execution
 {
     /// <summary>
-    /// The runtime/compile time wrapper for CohortAggregateContainer. UNION,EXCEPT,INTERSECT containers with 0 or more AggregationConfiguration within
+    /// The runtime/compile time wrapper for CohortAggregateContainer. UNION,EXCEPT,INTERSECT containers with 0 or more AggregateConfigurations within
     /// them - also optionally with other sub containers.
     /// </summary>
     public class AggregationContainerTask : Compileable,IOrderable

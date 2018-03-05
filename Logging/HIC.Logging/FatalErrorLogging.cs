@@ -42,7 +42,7 @@ namespace HIC.Logging
 
 
         /// <summary>
-        /// Get a reference to the singleton RowErrorLogging class instance, If you need to change the database settings used by this class, use DatabseSettings property
+        /// Get a reference to the singleton RowErrorLogging class instance, If you need to change the database settings used by this class, use DatabaseSettings property
         /// </summary>
         /// <returns></returns>
         public static FatalErrorLogging GetInstance()

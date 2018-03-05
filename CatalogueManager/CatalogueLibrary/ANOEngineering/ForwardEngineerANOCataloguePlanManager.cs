@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Refactoring;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.ANOEngineering
 {
@@ -61,6 +63,15 @@ namespace CatalogueLibrary.ANOEngineering
 
         public string GetEndpointDataType(ColumnInfo col)
         {
+            var sourceTypeTranslater = _querySyntaxHelper.TypeTranslater;
+
+            //if we have picked a destination
+            ITypeTranslater destinationTypeTranslater;
+            if (TargetDatabase != null)
+                destinationTypeTranslater = TargetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;//ensure we handle type translation between the two platforms
+            else
+                destinationTypeTranslater = sourceTypeTranslater;//otherwise (we haven't picked a destination yet)
+
             switch (GetPlanForColumnInfo(col))
             {
                 case Plan.Drop:
@@ -71,18 +82,18 @@ namespace CatalogueLibrary.ANOEngineering
                     if (anoTable == null)
                         return "Unknown";
 
-                    return anoTable.GetRuntimeDataType(LoadStage.PostLoad);
+                    return sourceTypeTranslater.TranslateSQLDBType(anoTable.GetRuntimeDataType(LoadStage.PostLoad),destinationTypeTranslater);
                 case Plan.Dilute:
                     var dilution = GetPlannedDilution(col);
 
                     if (dilution == null)
                         return "Unknown";
-                    
-                    return _querySyntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(dilution.ExpectedDestinationType);
+
+                    return destinationTypeTranslater.GetSQLDBTypeForCSharpType(dilution.ExpectedDestinationType);
 
                 case Plan.PassThroughUnchanged:
-                    return col.Data_type;
 
+                    return sourceTypeTranslater.TranslateSQLDBType(col.Data_type, destinationTypeTranslater);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -202,6 +213,24 @@ namespace CatalogueLibrary.ANOEngineering
 
                 foreach (JoinInfo joinInfo in joinInfos)
                     notifier.OnCheckPerformed(new CheckEventArgs("Found required JoinInfo '" + joinInfo + "' that will have to be migrated",CheckResult.Success));
+
+                foreach (Lookup lookup in GetLookupsRequiredCatalogue())
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Found required Lookup '" + lookup + "' that will have to be migrated", CheckResult.Success));
+
+                    //for each key involved in the lookup
+                    foreach (ColumnInfo c in new[] { lookup.ForeignKey ,lookup.PrimaryKey,lookup.Description})
+                    {
+                        //lookup / table has already been migrated 
+                        if(SkippedTables.Any(t=>t.ID == c.TableInfo_ID))
+                            continue;
+
+                        //make sure that the plan is sensible
+                        if (GetPlanForColumnInfo(c) != Plan.PassThroughUnchanged)
+                            notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo '" + c + "' is part of a Lookup so must PassThroughUnchanged", CheckResult.Fail));
+                            
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -277,6 +306,12 @@ namespace CatalogueLibrary.ANOEngineering
                             " TableInfos at once", CheckResult.Fail));
 
             }
+
+            var refactorer = new SelectSQLRefactorer();
+
+            foreach (ExtractionInformation e in _allExtractionInformations)
+                if (!refactorer.IsRefactorable(e))
+                    notifier.OnCheckPerformed(new CheckEventArgs("ExtractionInformation '" + e +"' is a not refactorable due to reason:"+ refactorer.GetReasonNotRefactorable(e), CheckResult.Fail));
         }
 
         private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier,T m) where T:IMapsDirectlyToDatabaseTable
@@ -335,6 +370,15 @@ namespace CatalogueLibrary.ANOEngineering
             qb.AddColumnRange(Catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
             qb.RegenerateSQL();
             return qb.JoinsUsedInQuery;
+        }
+
+        public List<Lookup> GetLookupsRequiredCatalogue()
+        {
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumnRange(Catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+            qb.RegenerateSQL();
+
+            return qb.GetDistinctRequiredLookups().ToList();
         }
 
         /// <summary>

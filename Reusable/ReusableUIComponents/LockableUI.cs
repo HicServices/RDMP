@@ -15,8 +15,7 @@ namespace ReusableUIComponents
 {
     /// <summary>
     /// Allows you to view the status of an ILockable object in the Catalogue Database.  For example an AutomationServiceSlot gets locked by the Automation server so that no other automation
-    /// executables can be started up at the same time.  The control will show when the lock was established and if the thing locking supports reporting in regularly (ILifelineable) then a
-    /// LifelineGraph will appear next to the 'Force Lock Reset' button.
+    /// executables can be started up at the same time.  The control will show when the lock was established.
     /// 
     /// Sometimes an ILockable will hard crash (e.g. the someone trips over your automation servers power cable) in which case the lifeline graph will flat line (after 30 seconds or so).  Your
     /// slot will still be locked.  Pressing the 'Force Lock Reset' will unlock the slot and make it available for use again, only do this if you are sure the ILockable (e.g. the automation 

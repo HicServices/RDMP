@@ -306,7 +306,6 @@
     <Compile Include="ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
       <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
     </Compile>
-    <Compile Include="FilterControl.cs" />
     <Compile Include="FormsHelper.cs" />
     <Compile Include="Images.Designer.cs">
       <AutoGen>True</AutoGen>

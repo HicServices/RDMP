@@ -202,7 +202,7 @@ namespace MapsDirectlyToDatabaseTable
         /// and "SELECT * FROM TableX" in order to get the Insert command and then pass in a corresponding wrapper object which must have properties
         /// that exactly match the underlying table, these will be populated into insertCommand ready for you to use
         /// </summary>
-        /// <param name="InsertCommand"></param>
+        /// <param name="insertCommand"></param>
         /// <param name="oTableWrapperObject"></param>
         /// <param name="insertIdentity">Pass true to also add and populate the ID part of the insert command (including the IDENTITY_INSERT command that allows INSERT of identity columns) </param>
         public void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject, bool insertIdentity)
@@ -387,8 +387,6 @@ namespace MapsDirectlyToDatabaseTable
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parent"></param>
-        /// <param name="con"></param>
-        /// <param name="transaction"></param>
         /// <returns></returns>
         public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
         {

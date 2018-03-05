@@ -16,7 +16,7 @@ namespace HIC.Logging
     /// in HIC.Logging.Database - See DatabaseCreation.exe for how to do this). See Logging.cd for the full hierarchy of concepts.
     /// 
     /// You can both create new logging records and fetch old ones.  New logging objects are generally maintained for future use e.g. when you want to record
-    /// that a new table is being loaded during a given load (DataLoadRun) you must pass the load log object (DataloadRun).  Live logging objects generally
+    /// that a new table is being loaded during a given load (DataLoadInfo) you must pass the load log object (DataLoadInfo).  Live logging objects generally
     /// must be closed to indicate that they are completed (succesfully or otherwise), if you do not close a logging object then the EndTime will be left
     /// blank and it will be unclear if a process blue screened or if it all went fine (other than the ongoing accumulation of log events, errors etc).
     /// 

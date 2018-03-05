@@ -37,10 +37,13 @@ namespace CatalogueManager.Collections.Providers
             _olvFavourite.Text = "Favourite";
             _olvFavourite.ImageGetter += FavouriteImageGetter;
             _olvFavourite.IsEditable = false;
+            _olvFavourite.Sortable = false;
             _tlv.CellClick += OnCellClick;
             
             _tlv.AllColumns.Add(_olvFavourite);
             _tlv.RebuildColumns();
+
+            
 
             return _olvFavourite;
         }

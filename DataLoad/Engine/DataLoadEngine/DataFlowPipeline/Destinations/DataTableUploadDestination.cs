@@ -11,6 +11,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;
 using HIC.Logging.Listeners;
+using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -28,16 +29,21 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
     /// </summary>
     public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<DiscoveredDatabase>
     {
-        [DemandsInitialization("The logging server to log the upload to (leave blank to not bother auditing)")]
+        public const string LoggingServer_Description = "The logging server to log the upload to (leave blank to not bother auditing)";
+        public const string AllowResizingColumnsAtUploadTime_Description = "If the target table being loaded has columns that are too small the destination will attempt to resize them";
+        public const string OnlyUseOldDateTimes_Description = "Set to true if you want to restrict table creation to datetime instead of datetime2 (means any dates before 1753 will crash)";
+        public const string AllowLoadingPopulatedTables_Description = "Normally when DataTableUploadDestination encounters a table that already contains records it will abandon the insertion attempt.  Set this to true to instead continue with the load.";
+
+        [DemandsInitialization(LoggingServer_Description)]
         public ExternalDatabaseServer LoggingServer { get; set; }
 
-        [DemandsInitialization("If the target table being loaded has columns that are too small the destination will attempt to resize them", DemandType.Unspecified, true)]
+        [DemandsInitialization(AllowResizingColumnsAtUploadTime_Description, DemandType.Unspecified, true)]
         public bool AllowResizingColumnsAtUploadTime { get; set; }
-
-        [DemandsInitialization("Set to true if you want to restrict table creation to datetime instead of datetime2 (means any dates before 1753 will crash)", DemandType.Unspecified,false)]
+        
+        [DemandsInitialization(OnlyUseOldDateTimes_Description, DemandType.Unspecified, false)]
         public bool OnlyUseOldDateTimes { get; set; }
 
-        [DemandsInitialization("Normally when DataTableUploadDestination encounters a table that already contains records it will abandon the insertion attempt.  Set this to true to instead continue with the load.", DefaultValue = false)]
+        [DemandsInitialization(AllowLoadingPopulatedTables_Description, DefaultValue = false)]
         public bool AllowLoadingPopulatedTables { get; set; }
 
         public string TargetTableName { get; private set; }
@@ -174,15 +180,23 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
             foreach (DiscoveredColumn column in tbl.DiscoverColumns(_managedConnection.ManagedTransaction))
             {
-                DataTypeComputer computer = dataTypeDictionaryCurrent[column.GetRuntimeName()];
-                string newType = computer.GetSqlDBType(typeTranslater);
-                string oldType = column.DataType.SQLType;
+                //get what is required for the current batch and the current type that is configured in the live table
+                var requiredForCurrentBatch = dataTypeDictionaryCurrent[column.GetRuntimeName()].GetTypeRequest();
+                var currentType = typeTranslater.GetDataTypeRequestForSQLDBType(column.DataType.SQLType);
 
-                if (newType != column.DataType.SQLType)
+                //work out the most degraded type of the two (new batches may require less relaxed datatypes than the current allows for after all and we don't want to attempt to alter back
+                //up the priority hierarchy and result in truncating live data!
+                DatabaseTypeRequest newRequirement = DatabaseTypeRequest.Max(currentType, requiredForCurrentBatch);
+
+                //get the sql string for the max type
+                string newSqlTypeRequired = typeTranslater.GetSQLDBTypeForCSharpType(newRequirement);
+
+                //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
+                if (newSqlTypeRequired != column.DataType.SQLType)
                 {
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + oldType + "' to '" + newType +"'"));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + column.DataType.SQLType + "' to '" + newSqlTypeRequired + "'"));
 
-                    string sql = column.Helper.GetAlterColumnToSql(column, newType, column.AllowNulls);
+                    string sql = column.Helper.GetAlterColumnToSql(column, newSqlTypeRequired, column.AllowNulls);
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
                     var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
 
@@ -276,6 +290,13 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             _server = value.Server;
         }
 
+        /// <summary>
+        /// Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should always have the associated database type (e.g. varchar(59))
+        /// The columnName is Case insensitive.  Note that if AllowResizingColumnsAtUploadTime is true then these datatypes are only the starting types and might get changed later to
+        /// accomodate new data.
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <param name="explicitType"></param>
         public void AddExplicitWriteType(string columnName, string explicitType)
         {
             explicitTypes.Add(new DatabaseColumnRequest(columnName, explicitType, true));

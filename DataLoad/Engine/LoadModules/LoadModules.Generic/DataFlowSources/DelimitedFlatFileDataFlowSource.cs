@@ -681,7 +681,7 @@ namespace LoadModules.Generic.DataFlowSources
         }
 
         /// <summary>
-        /// Override this if you want to mess with values as they are read from the source file in some freaky way (for an example see TSVAttacher_HackersEdition)
+        /// Override this if you want to mess with values as they are read from the source file in some freaky way.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>

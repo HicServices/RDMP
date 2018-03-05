@@ -11,7 +11,7 @@ namespace DataLoadEngine.LoadProcess
     /// </summary>
     public interface IDataLoadProcess 
     {
-        ExitCodeType Run(GracefulCancellationToken loadCancellationToken);
+        ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null);
         IDataLoadExecution LoadExecution { get; }
     }
 

@@ -57,7 +57,6 @@ namespace CohortManager.Collections
             // 
             this.olvName.AspectName = "ToString";
             this.olvName.FillsFreeSpace = true;
-            this.olvName.Sortable = false;
             this.olvName.Text = "Cohort Identification Configurations";
             // 
             // CohortIdentificationCollectionUI

@@ -19,18 +19,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     /// </summary>
     public class DataTypeComputer
     {
-        private Type[] preferenceOrder =
-        {
-            typeof(bool),
-            typeof (int),
-            typeof (decimal),
-            typeof(TimeSpan),
-            typeof (DateTime), //ironically Convert.ToDateTime likes int and floats as valid dates -- nuts
-            typeof (string)
-        };
-
         public Type CurrentEstimate { get; set; }
-        public int Length { get; private set; }
+
+
+        private int _stringLength;
+
+        public int Length
+        {
+            get { return Math.Max(_stringLength, numbersAfterDecimalPlace + numbersBeforeDecimalPlace + 1); }
+        }
 
         public int numbersBeforeDecimalPlace { get; private set; }
         public int numbersAfterDecimalPlace { get; private set; }
@@ -51,11 +48,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="minimumLengthToMakeCharacterFields"></param>
         public DataTypeComputer(int minimumLengthToMakeCharacterFields)
         {
-            Length = minimumLengthToMakeCharacterFields;
+            _stringLength = minimumLengthToMakeCharacterFields;
             numbersBeforeDecimalPlace = -1;
             numbersAfterDecimalPlace = -1;
 
-            CurrentEstimate = preferenceOrder[0];
+            CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[0];
         }
 
         public DataTypeComputer():this(-1)
@@ -64,7 +61,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         }
 
         /// <summary>
-        /// Creates a new DataTypComputer adjusted to compensate for all values in all rows of the supplied DataColumn
+        /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn
         /// </summary>
         /// <param name="column"></param>
         public DataTypeComputer(DataColumn column):this(-1)
@@ -75,7 +72,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         }
 
         /// <summary>
-        /// Creates a hydrated DataTypComputer  for when you want to clone an existing one or otherwise make up a DataTypComputer for a known starting datatype
+        /// Creates a hydrated DataTypeComputer  for when you want to clone an existing one or otherwise make up a DataTypeComputer for a known starting datatype
         /// (See TypeTranslater.GetDataTypeComputerFor)
         /// </summary>
         /// <param name="currentEstimatedType"></param>
@@ -86,13 +83,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             CurrentEstimate = currentEstimatedType;
 
             if (lengthIfString > 0)
-                Length = lengthIfString;
+                _stringLength = lengthIfString;
 
             if (digits != null)
             {
                 numbersBeforeDecimalPlace = digits.Item1;
                 numbersAfterDecimalPlace = digits.Item2;
-                Length = digits.Item1 + digits.Item2 + 1;
             }
 
             if (currentEstimatedType == typeof (TimeSpan))
@@ -100,6 +96,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         }
 
         private bool havereceivedBonafideType = false;
+        
 
         public void AdjustToCompensateForValue(object o)
         {
@@ -126,18 +123,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 if(string.IsNullOrWhiteSpace(oAsString))
                     return;
 
-                int indexOfCurrentPreference = Array.IndexOf(preferenceOrder, CurrentEstimate);
+                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
 
-                for (int i = indexOfCurrentPreference; i <preferenceOrder.Length ; i++)
+                for (int i = indexOfCurrentPreference; i < DatabaseTypeRequest.PreferenceOrder.Count; i++)
                 {
-                    Debug.Assert(CurrentEstimate == preferenceOrder[i]);
+                    Debug.Assert(CurrentEstimate == DatabaseTypeRequest.PreferenceOrder[i]);
                     //try it as current estimate
                     bool canConvert = IsAcceptableAs(CurrentEstimate, oAsString);
                     
                     if (canConvert)
                         break;//it is acceptable
                     else
-                        CurrentEstimate = preferenceOrder[i+1];//try the next type because this one isn't working -- 
+                        CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[i + 1];//try the next type because this one isn't working -- 
                 }
             }
             else
@@ -161,7 +158,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         private bool IsAcceptableAs(Type type, string value)
         {
             //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
-            Length = Math.Max(Length, value.Length);
+            _stringLength = Math.Max(Length, value.Length);
 
             if (type == typeof (TimeSpan))
                 try
@@ -332,8 +329,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         {
             if(col.DataType == typeof(object) || col.DataType == typeof(string))
             {
-                int indexOfCurrentPreference = Array.IndexOf(preferenceOrder, CurrentEstimate);
-                int indexOfCurrentColumn = Array.IndexOf(preferenceOrder, typeof(string));
+                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
+                int indexOfCurrentColumn = DatabaseTypeRequest.PreferenceOrder.IndexOf(typeof(string));
                 
                 //e.g. if current preference based on data is DateTime/integer and col is a string then we SHOULD downgrade
                 return indexOfCurrentPreference < indexOfCurrentColumn;

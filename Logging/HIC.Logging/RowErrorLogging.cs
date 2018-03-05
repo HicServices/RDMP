@@ -30,7 +30,7 @@ namespace HIC.Logging
         }
 
         /// <summary>
-        /// Get a reference to the singleton RowErrorLogging class instance, If you need to change the database settings used by this class, use DatabseSettings property
+        /// Get a reference to the singleton RowErrorLogging class instance, If you need to change the database settings used by this class, use DatabaseSettings property
         /// </summary>
         /// <returns></returns>
         public static RowErrorLogging GetInstance()
@@ -58,7 +58,7 @@ namespace HIC.Logging
         /// Records that a data load row failed to load into the database.
         /// </summary>
         /// <param name="tableLoadInfo">Class holding information about the ongoing data load</param>
-        /// <param name="typeOfError">The general type of the error e.g. ValidationFailed could be for a dodgy postcode</param>
+        /// <param name="typeOfError">The general type of the error e.g. ValidationFailure could be for a dodgy postcode</param>
         /// <param name="description">Full description of why the row is not inserted (including any Exception messages) </param>
         /// <param name="locationOfRow">The full name of a data table or flat file that contains the row</param>
         /// <param name="requiresReloading">true if the load needs to be re-run on this row, false if not e.g. the row is a duplicate</param>

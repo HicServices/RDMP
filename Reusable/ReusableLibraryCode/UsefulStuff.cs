@@ -541,7 +541,7 @@ c.name = @column_name", con);
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="conn"></param>
-        /// <param name="i"></param>
+        /// <param name="transaction"></param>
         /// <param name="performanceFigures">Line number the batch started at and the time it took to complete it</param>
         public static void ExecuteBatchNonQuery(string sql, DbConnection conn, DbTransaction transaction,out Dictionary<int, Stopwatch> performanceFigures, int timeout = 30) 
         {

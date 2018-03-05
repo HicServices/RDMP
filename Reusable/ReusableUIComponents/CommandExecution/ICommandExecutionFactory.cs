@@ -14,6 +14,7 @@ namespace ReusableUIComponents.CommandExecution
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="targetModel"></param>
+        /// <param name="insertOption"></param>
         /// <returns></returns>
         ICommandExecution Create(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default);
 
