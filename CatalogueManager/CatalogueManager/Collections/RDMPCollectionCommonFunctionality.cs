@@ -440,16 +440,18 @@ namespace CatalogueManager.Collections
                 if(parent != null && Tree.IndexOf(parent) != -1)
                     Tree.RefreshObject(parent);//refresh parent
                 else
-                //parent isn't in tree, could be a root object? try to refresh the object anyway
-                if(Tree.IndexOf(e.Object) != -1)
+                {
                     try
                     {
-                        Tree.RefreshObject(e.Object);
+                        //parent isn't in tree, could be a root object? try to refresh the object anyway
+                        if (Tree.IndexOf(e.Object) != -1)
+                            Tree.RefreshObject(e.Object);
                     }
                     catch (IndexOutOfRangeException)
                     {
                         
                     }
+                }
             }
         }
 
