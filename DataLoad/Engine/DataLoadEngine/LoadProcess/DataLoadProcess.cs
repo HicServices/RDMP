@@ -53,7 +53,7 @@ namespace DataLoadEngine.LoadProcess
             JobProvider = new JobFactory(loadMetadata,logManager);
         }
 
-        public virtual ExitCodeType Run(GracefulCancellationToken loadCancellationToken)
+        public virtual ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null)
         {
             PerformPreExecutionChecks();
 
@@ -63,6 +63,8 @@ namespace DataLoadEngine.LoadProcess
             // if job is null, there are no more jobs to submit
             if (job == null)
                 return ExitCodeType.OperationNotRequired;
+
+            job.Payload = payload;
 
             return LoadExecution.Run(job, loadCancellationToken);
         }

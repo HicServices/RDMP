@@ -113,6 +113,8 @@ namespace DataLoadEngine.Job
                 DataLoadInfo.CloseAndMarkComplete();
         }
 
+        public object Payload { get; set; }
+
         public void LogInformation(string senderName, string message)
         {
             if (DataLoadInfo == null)
