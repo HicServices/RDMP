@@ -24,7 +24,7 @@ namespace Tests.OtherProviders
         [TestCase(DatabaseType.MYSQLServer)]
         public void TestTableCreation(DatabaseType type)
         {
-            GetCleanedServer(type, out server, out database);
+            database = GetCleanedServer(type,_dbName, out server, out database);
 
             var tbl = database.ExpectTable("CreatedTable");
             
@@ -83,48 +83,7 @@ namespace Tests.OtherProviders
             tbl.Drop();
         }
 
-        private void GetCleanedServer(DatabaseType type, out DiscoveredServer server, out DiscoveredDatabase database)
-        {
-            switch (type)
-            {
-                case DatabaseType.MicrosoftSQLServer:
-                    server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
-                    break;
-                case DatabaseType.MYSQLServer:
-                    server = DiscoveredMySqlServer;
-                    break;
-                case DatabaseType.Oracle:
-                    server = DiscoveredOracleServer;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
-
-            if(server == null)
-                Assert.Inconclusive();
-
-            if(!server.Exists())
-                Assert.Inconclusive();
-
-            server.TestConnection();
-            
-            database = server.ExpectDatabase(_dbName);
-
-            if (database.Exists())
-            {
-                foreach (DiscoveredTable discoveredTable in database.DiscoverTables(false))
-                    discoveredTable.Drop();
-
-                database.Drop();
-                Assert.IsFalse(database.Exists());
-            }
-
-            server.CreateDatabase(_dbName);
-
-            server.ChangeDatabase(_dbName);
-            
-            Assert.IsTrue(database.Exists());
-        }
+        
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(4,2)", "-23.00")]
@@ -137,7 +96,7 @@ namespace Tests.OtherProviders
         [TestCase(DatabaseType.MYSQLServer, "int", "0")]
         public void TypeConsensusBetweenDataTypeComputerAndDiscoveredTableTest(DatabaseType type, string datatType,string insertValue)
         {
-            GetCleanedServer(type, out server, out database);
+            database = GetCleanedServer(type,_dbName, out server, out database);
 
             var tbl = database.ExpectTable("TestTableCreationStrangeTypology");
 

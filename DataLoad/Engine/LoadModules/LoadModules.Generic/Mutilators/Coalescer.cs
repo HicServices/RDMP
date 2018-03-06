@@ -10,8 +10,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Job;
 using DataLoadEngine.Mutilators;
+using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators
@@ -25,6 +28,9 @@ namespace LoadModules.Generic.Mutilators
     {
         [DemandsInitialization("All tables in RAW matching this pattern which have a TableInfo defined in the load will be affected by this mutilation",Mandatory = true,DefaultValue = ".*")]
         public Regex TableRegexPattern { get; set; }
+
+        [DemandsInitialization("Pass true to create an index on the primary keys which are joined together (can improve performance)",DefaultValue=false)]
+        public bool CreateIndex { get; set; }
 
         public void Check(ICheckNotifier notifier)
         {
@@ -56,10 +62,17 @@ namespace LoadModules.Generic.Mutilators
                 {
                     job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"About to run Coalese on table " + tbl));
 
-                    var pks = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).Select(c => c.GetRuntimeName()).ToArray();
-                    var nonPks = tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Except(pks).ToArray();
+                    var allCols = tbl.DiscoverColumns();
+                    
+                    var pkColumnInfos = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).Select(c => c.GetRuntimeName()).ToArray();
+                    var nonPks = allCols.Where(c => !pkColumnInfos.Contains(c.GetRuntimeName())).ToArray();
+                    var pks = allCols.Except(nonPks).ToArray();
 
-                    if (!nonPks.Any())
+
+                    if (!pkColumnInfos.Any())
+                        throw new Exception("Table '" + tableInfo +"' has no IsPrimaryKey columns");
+
+                    if (allCols.Length == pkColumnInfos.Length)
                     {
                         job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Skipping Coalesce on table "+ tbl + " because it has no non primary key columns"));
                         continue;
@@ -68,8 +81,8 @@ namespace LoadModules.Generic.Mutilators
                     //Get an update command for each non primary key column
                     Dictionary<string,Task<int>> sqlCommands = new Dictionary<string, Task<int>>();
 
-                    foreach (string nonPk in nonPks)
-                        sqlCommands.Add(GetCommand(pks, nonPk, tblName),null);
+                    foreach (DiscoveredColumn nonPk in nonPks)
+                        sqlCommands.Add(GetCommand(tbl,pks, nonPk), null);
 
                     Stopwatch sw = new Stopwatch();
                     sw.Start();
@@ -80,6 +93,12 @@ namespace LoadModules.Generic.Mutilators
                     {
                         con.Open();
 
+                        if (CreateIndex)
+                        {
+                            var idxCmd = _dbInfo.Server.GetCommand(string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", tblName,string.Join(",", pks.Select(p => p.GetRuntimeName()))),con);
+                            idxCmd.ExecuteNonQuery();
+                        }
+                        
                         foreach (var sql in sqlCommands.Keys.ToArray())
                             sqlCommands[sql] = _dbInfo.Server.GetCommand(sql, con).ExecuteNonQueryAsync();
 
@@ -90,35 +109,26 @@ namespace LoadModules.Generic.Mutilators
 
                     sw.Stop();
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Coalesce on table '" + tbl + "' completed after " + sw.ElapsedMilliseconds.ToString("N0") + " ms (" + affectedRows + " rows affected)"));
-
-
                 }
-
             }
 
             return ExitCodeType.Success;
         }
 
-        private string GetCommand(string[] pks, string nonPk, string tblName)
+        private string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)
         {
 
-            string updateSql =  string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk);
-            string whereSql = string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk);
-            
-            var joinSql = string.Join(" AND " + Environment.NewLine,
-                pks
-                .Select(pk => string.Format("t1.{0} = t2.{0}", pk)));
+            List<CustomLine> sqlLines = new List<CustomLine>();
+            sqlLines.Add(new CustomLine(string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk.GetRuntimeName()), QueryComponent.WHERE));
+            sqlLines.Add(new CustomLine(string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk.GetRuntimeName()),QueryComponent.SET));
+            sqlLines.AddRange(pks.Select(p=>new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()),QueryComponent.JoinInfoJoin)));
 
-            return 
-                    string.Format(
-@"UPDATE t1
-  SET 
-    {0}
-  FROM {1} AS t1
-  INNER JOIN {1} AS t2
-  ON {2}
-WHERE
-{3}",updateSql, tblName, joinSql,whereSql);
+            var updateHelper = _dbInfo.Server.GetQuerySyntaxHelper().UpdateHelper;
+
+            return updateHelper.BuildUpdate(
+                table,
+                table,
+                sqlLines);
         }
     }
 }

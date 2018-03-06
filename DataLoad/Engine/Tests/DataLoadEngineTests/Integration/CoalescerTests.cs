@@ -11,6 +11,7 @@ using CatalogueLibrary.DataHelper;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Rhino.Mocks;
 using Tests.Common;
@@ -20,8 +21,12 @@ namespace DataLoadEngineTests.Integration
     public class CoalescerTests:DatabaseTests
     {
         [Test]
-        public void TestCoalescer_RampantNullness()
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void TestCoalescer_RampantNullness(DatabaseType type)
         {
+            var db = GetCleanedServer(type, "TestCoalescer");
+
             int batchCount = 1000;
 
             DataTable dt = new DataTable("TestCoalescer_RampantNullness");
@@ -69,7 +74,7 @@ namespace DataLoadEngineTests.Integration
                 }
             }
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable(dt.TableName, dt);
+            var tbl = db.CreateTable(dt.TableName, dt);
 
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
             TableInfo tableInfo;
@@ -83,7 +88,8 @@ namespace DataLoadEngineTests.Integration
 
             var coalescer = new Coalescer();
             coalescer.TableRegexPattern = new Regex(".*");
-            coalescer.Initialize(DiscoveredDatabaseICanCreateRandomTablesIn,LoadStage.AdjustRaw);
+            coalescer.CreateIndex = true;
+            coalescer.Initialize(db,LoadStage.AdjustRaw);
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
             job.Expect(p=>p.RegularTablesToLoad).Return(new List<TableInfo>(new []{tableInfo}));
@@ -99,6 +105,8 @@ namespace DataLoadEngineTests.Integration
                 Assert.AreNotEqual(DBNull.Value, row["f3"]);
                 Assert.AreNotEqual(DBNull.Value, row["f4"]);
             }
+
+            db.ForceDrop();
         }
 
     }

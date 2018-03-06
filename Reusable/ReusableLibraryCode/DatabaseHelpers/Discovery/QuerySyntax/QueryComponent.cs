@@ -5,6 +5,7 @@
         None = 0,
         VariableDeclaration,
         SELECT,
+        SET,
         QueryTimeColumn,
         FROM, //do not use for CustomLines - use only for WhatIsOnLine etc
         JoinInfoJoin,
