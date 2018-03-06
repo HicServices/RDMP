@@ -8,7 +8,6 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
@@ -18,6 +19,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
     {
         ITypeTranslater TypeTranslater { get; }
         IAggregateHelper AggregateHelper { get; }
+        IUpdateHelper UpdateHelper { get; set; }
 
         string GetRuntimeName(string s);
         string EnsureFullyQualified(string databaseName,string schemaName, string tableName);
@@ -29,6 +31,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         string GetParameterDeclaration(string proposedNewParameterName, string sqlType);
 
         string AliasPrefix { get; }
+        
         bool SplitLineIntoSelectSQLAndAlias(string lineToSplit, out string selectSQL, out string alias);
 
         string GetScalarFunctionSql(MandatoryScalarFunctions function);

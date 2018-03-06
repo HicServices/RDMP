@@ -338,7 +338,60 @@ delete from {1}..ExtractableDataSet
             return Regex.Replace(sql, @"\s+", " ").Trim();
         }
 
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName)
+        {
+            DiscoveredServer wc1;
+            DiscoveredDatabase wc2;
+            return GetCleanedServer(type, dbnName, out wc1, out wc2);
+        }
+
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type,string dbnName, out DiscoveredServer server, out DiscoveredDatabase database)
+        {
+            switch (type)
+            {
+                case DatabaseType.MicrosoftSQLServer:
+                    server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
+                    break;
+                case DatabaseType.MYSQLServer:
+                    server = DiscoveredMySqlServer;
+                    break;
+                case DatabaseType.Oracle:
+                    server = DiscoveredOracleServer;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
+
+            if (server == null)
+                Assert.Inconclusive();
+
+            if (!server.Exists())
+                Assert.Inconclusive();
+
+            server.TestConnection();
+
+            database = server.ExpectDatabase(dbnName);
+
+            if (database.Exists())
+            {
+                foreach (DiscoveredTable discoveredTable in database.DiscoverTables(false))
+                    discoveredTable.Drop();
+
+                database.Drop();
+                Assert.IsFalse(database.Exists());
+            }
+
+            server.CreateDatabase(dbnName);
+
+            server.ChangeDatabase(dbnName);
+
+            Assert.IsTrue(database.Exists());
+
+            return database;
+        }
     }
+
+        
 
     public static class TestDatabaseNames
     {

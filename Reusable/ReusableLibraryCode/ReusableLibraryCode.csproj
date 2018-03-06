@@ -384,6 +384,10 @@
     <Compile Include="DatabaseHelpers\Discovery\IMightNotExist.cs" />
     <Compile Include="DatabaseHelpers\Discovery\IDiscoveredColumnHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\Aggregation\MicrosoftSQLAggregateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\Microsoft\Update\MicrosoftSQLUpdateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\MySql\Update\MySqlUpdateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\Oracle\Update\OracleUpdateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Update\UpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\Aggregation\MySqlAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\Aggregation\OracleAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleTypeTranslater.cs" />
@@ -413,6 +417,7 @@
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleServerHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleTableHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntaxHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Update\IUpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QueryComponent.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QuerySyntaxHelperFactory.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\TopXResponse.cs" />

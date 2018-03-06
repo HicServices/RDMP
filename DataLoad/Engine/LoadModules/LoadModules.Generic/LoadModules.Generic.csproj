@@ -259,6 +259,7 @@
     <Compile Include="LoadProgressUpdating\UpdateProgressToResultOfDelegate.cs" />
     <Compile Include="LoadProgressUpdating\UpdateProgressToSpecificValueIfLoadsuccessful.cs" />
     <Compile Include="Mutilators\BackupDatabaseMutilation.cs" />
+    <Compile Include="Mutilators\Coalescer.cs" />
     <Compile Include="Mutilators\PrematureLoadEndCondition.cs" />
     <Compile Include="Mutilators\Dilution\Dilution.cs" />
     <Compile Include="Mutilators\Dilution\DilutionOperationFactory.cs" />

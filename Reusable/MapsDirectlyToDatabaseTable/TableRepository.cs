@@ -11,7 +11,6 @@ using System.Threading;
 using MapsDirectlyToDatabaseTable.RepositoryResultCaching;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
-using Microsoft.SqlServer.Management.Common;
 using MySql.Data.MySqlClient;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
