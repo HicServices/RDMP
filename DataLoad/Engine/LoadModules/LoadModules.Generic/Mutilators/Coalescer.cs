@@ -57,38 +57,60 @@ namespace LoadModules.Generic.Mutilators
                     job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"About to run Coalese on table " + tbl));
 
                     var pks = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).Select(c => c.GetRuntimeName()).ToArray();
+                    var nonPks = tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Except(pks).ToArray();
 
-                    string updateSql = "";
-                    string whereSql = "";
-
-                    //Non primary keys
-                    foreach (string col in tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Except(pks))
-                    {
-
-                        updateSql += string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})," + Environment.NewLine, col);
-
-                         //t1.Units is null AND t2.Units is not null
-                        whereSql += string.Format("(t1.{0} is null AND t2.{0} is not null) OR " + Environment.NewLine, col);
-                    }
-                    
-                    if (string.IsNullOrWhiteSpace(updateSql))
+                    if (!nonPks.Any())
                     {
                         job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Skipping Coalesce on table "+ tbl + " because it has no non primary key columns"));
                         continue;
                     }
 
-                    //trim last OR
-                    whereSql = whereSql.TrimEnd(' ', 'O', 'R','\r','\n');
-                    updateSql = updateSql.TrimEnd(',', '\r', '\n');
+                    //Get an update command for each non primary key column
+                    Dictionary<string,Task<int>> sqlCommands = new Dictionary<string, Task<int>>();
 
-                    var joinSql = string.Join(" AND " + Environment.NewLine, 
-                        pks
-                        .Select(pk => string.Format("t1.{0} = t2.{0}", pk)));
+                    foreach (string nonPk in nonPks)
+                        sqlCommands.Add(GetCommand(pks, nonPk, tblName),null);
 
-                    if(string.IsNullOrWhiteSpace(updateSql))
-                        throw new Exception("TableInfo " + tbl + " had no primary keys");
-                    
-                    var sql = string.Format(
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+
+                    _dbInfo.Server.EnableAsync();
+
+                    using (var con = _dbInfo.Server.GetConnection())
+                    {
+                        con.Open();
+
+                        foreach (var sql in sqlCommands.Keys.ToArray())
+                            sqlCommands[sql] = _dbInfo.Server.GetCommand(sql, con).ExecuteNonQueryAsync();
+
+                        Task.WaitAll(sqlCommands.Values.ToArray());
+                    }
+
+                    int affectedRows = sqlCommands.Values.Sum(t => t.Result);
+
+                    sw.Stop();
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Coalesce on table '" + tbl + "' completed after " + sw.ElapsedMilliseconds.ToString("N0") + " ms (" + affectedRows + " rows affected)"));
+
+
+                }
+
+            }
+
+            return ExitCodeType.Success;
+        }
+
+        private string GetCommand(string[] pks, string nonPk, string tblName)
+        {
+
+            string updateSql =  string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk);
+            string whereSql = string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk);
+            
+            var joinSql = string.Join(" AND " + Environment.NewLine,
+                pks
+                .Select(pk => string.Format("t1.{0} = t2.{0}", pk)));
+
+            return 
+                    string.Format(
 @"UPDATE t1
   SET 
     {0}
@@ -97,28 +119,6 @@ namespace LoadModules.Generic.Mutilators
   ON {2}
 WHERE
 {3}",updateSql, tblName, joinSql,whereSql);
-
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"Decided on the following Coalese Sql:" + Environment.NewLine + sql));
-
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
-                    int rowsAffected;
-
-                    using (var con = _dbInfo.Server.GetConnection())
-                    {
-                        con.Open();
-                        rowsAffected = _dbInfo.Server.GetCommand(sql, con).ExecuteNonQuery();
-                    }
-
-                    sw.Stop();
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"Coalesce on table '"+tbl+"' completed after " + sw.ElapsedMilliseconds.ToString("N0") + " ms (" + rowsAffected + " rows affected)"));
-
-
-                }
-
-            }
-
-            return ExitCodeType.Success;
         }
     }
 }
