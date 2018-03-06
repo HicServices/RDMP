@@ -162,6 +162,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "ToDatabase",
             "TEST_Logging",
 
+            //This is a legit verb
+            "ANDed",
+
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
