@@ -42,11 +42,11 @@ using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
-using ResearchDataManagementPlatform.WindowManagement.Settings;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.Menus
@@ -317,7 +317,7 @@ namespace ResearchDataManagementPlatform.Menus
 
             _windowManager.ContentManager.WindowFactory.TabChanged += WindowFactory_TabChanged;
 
-            var tracker = TutorialTracker.GetInstance(_activator);
+            var tracker = new TutorialTracker(_activator);
             foreach (Tutorial t in tracker.TutorialsAvailable)
                 tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem, _activator, t, tracker));
 

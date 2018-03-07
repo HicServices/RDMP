@@ -63,7 +63,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         private void BuildHelpWorkflow(ICommandExecution command)
         {
-            HelpWorkflow = new HelpWorkflow(this, command, TutorialTracker.GetInstance(_activator));
+            
+            HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(_activator));
 
             var _bio =
                 new HelpStage(gbBiochemistry,

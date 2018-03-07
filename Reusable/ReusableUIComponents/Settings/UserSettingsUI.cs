@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ResearchDataManagementPlatform.WindowManagement.Settings
+namespace ReusableUIComponents.Settings
 {
     /// <summary>
     /// Allows you to change settings in the application that are optional e.g. whether to load the Home screen on startup or to load the state of the application when you last closed it.

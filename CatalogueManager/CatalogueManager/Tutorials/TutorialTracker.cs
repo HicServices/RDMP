@@ -13,6 +13,7 @@ using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
+using ReusableUIComponents.Settings;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
@@ -21,161 +22,70 @@ namespace CatalogueManager.Tutorials
     public class TutorialTracker : IHelpWorkflowProgressProvider
     {
         private readonly IActivateItems _activator;
-
-        #region Instance Setup
-        private static TutorialTracker _instance;
-        private static object oInstance = new object();
-
-        public static TutorialTracker GetInstance(IActivateItems activator)
-        {
-            lock (oInstance)
-            {
-                if(_instance == null)
-                    _instance = new TutorialTracker(activator);
-            }
-
-            return _instance;
-        }
-        
-        #endregion
-
-        private FileInfo _progressFile;
-
-        private const string AllTutorialsText = "DisableAllTutorials";
-
-        private Dictionary<string, bool> TutorialSeen = new Dictionary<string, bool>();
         
         public List<Tutorial> TutorialsAvailable { get; private set; }
 
-        private TutorialTracker(IActivateItems activator)
+        public TutorialTracker(IActivateItems activator)
         {
             _activator = activator;
-
-            var root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP"));
-
-            if(!root.Exists)
-                root.Create();
-
-            _progressFile = new FileInfo(Path.Combine(root.FullName, "HelpProgress.txt"));
-
+            
             BuildTutorialList();
-
-            if (_progressFile.Exists)
-            {
-                var text = File.ReadAllText(_progressFile.FullName);
-
-                //if there is a setting file
-                if (!string.IsNullOrWhiteSpace(text))
-                {
-                    try
-                    {
-                        //read what they have seen so far
-                        PersistStringHelper helper = new PersistStringHelper();
-                        TutorialSeen = helper.LoadDictionaryFromString(text).ToDictionary(k=>k.Key,v=>Boolean.Parse(v.Value));
-                    }
-                    catch (Exception)
-                    {
-                        //user has corrupted his save file
-                        CreateNewDictionary();
-                    }
-                }
-                else
-                    CreateNewDictionary();
-                    
-            }
-            else
-                _progressFile.Create();
         }
 
         private void BuildTutorialList()
         {
             TutorialsAvailable = new List<Tutorial>();
-            TutorialsAvailable.Add(new Tutorial("1. Create Platform Databases", new ExecuteCommandChoosePlatformDatabase(_activator)));
-            TutorialsAvailable.Add(new Tutorial("2. Generate Test Data", new ExecuteCommandGenerateTestData(_activator)));
-            TutorialsAvailable.Add(new Tutorial("3. Import a file",new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)));
-        }
-
-        private void CreateNewDictionary()
-        {
-            TutorialSeen = new Dictionary<string, bool> { { AllTutorialsText, false } };
-        }
-
-        public void Save()
-        {
-            PersistStringHelper helper = new PersistStringHelper();
-            var s = helper.SaveDictionaryToString(TutorialSeen.ToDictionary(k=>k.Key,v=>v.Value.ToString()));
-            File.WriteAllText(_progressFile.FullName,s);
+            TutorialsAvailable.Add(new Tutorial("1. Create Platform Databases", new ExecuteCommandChoosePlatformDatabase(_activator), new Guid("6e08b525-073d-46bb-ae4f-f152603fb0af")));
+            TutorialsAvailable.Add(new Tutorial("2. Generate Test Data", new ExecuteCommandGenerateTestData(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")));
+            TutorialsAvailable.Add(new Tutorial("3. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b")));
         }
 
         public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
         {
             //all tutorials disabled
-            if (TutorialSeen.ContainsKey(AllTutorialsText) && TutorialSeen[AllTutorialsText])
+            if (UserSettings.DisableTutorials)
                 return false;
+            
+            var tutorial = GetTutorialFromWorkflow(workflow); 
 
-            string type = GetDictionaryKey(workflow);
-
-            //if user has seen the tutorial then don't show it to him
-            if (TutorialSeen.ContainsKey(type))
-                return !TutorialSeen[type];
-
-            return true;
+            return !UserSettings.GetTutorialDone(tutorial.Guid);
         }
 
-        private string GetDictionaryKey(HelpWorkflow workflow)
+        private Tutorial GetTutorialFromWorkflow(HelpWorkflow workflow)
         {
-            return GetDictionaryKey(workflow.Command);
+            var tutorial = TutorialsAvailable.FirstOrDefault(t => t.CommandType == workflow.Command.GetType());
+
+            if (tutorial == null)
+                throw new Exception("Unexpected HelpWorkflow encountered, it doesn't have a tutorial description in TutorialsAvailable");
+
+            return tutorial;
         }
 
-        private string GetDictionaryKey(ICommandExecution command)
-        {
-            return command.GetType().Name;
-        }
         public void Completed(HelpWorkflow helpWorkflow)
         {
-            string type = GetDictionaryKey(helpWorkflow);
-
-            if (TutorialSeen.ContainsKey(type))
-                TutorialSeen[type] = true;
-            else
-                TutorialSeen.Add(type,true);
-
-            Save();
+            UserSettings.SetTutorialDone(GetTutorialFromWorkflow(helpWorkflow).Guid,true);
         }
 
         public void ClearCompleted()
         {
-            TutorialSeen.Clear();
-            TutorialSeen.Add(AllTutorialsText,false);
+            foreach (Tutorial tutorial in TutorialsAvailable)
+                UserSettings.SetTutorialDone(tutorial.Guid, false);
         }
+
         public void ClearCompleted(Tutorial tutorial)
         {
-            var key = GetDictionaryKey(tutorial.CommandExecution);
-
-            if (TutorialSeen.ContainsKey(key))
-                TutorialSeen[key] = false;
-
-            //can't have global disable on either btw
-            TutorialSeen[AllTutorialsText] = false;
+            UserSettings.SetTutorialDone(tutorial.Guid, false);
+            UserSettings.DisableTutorials = false;
         }
 
         public void DisableAllTutorials()
         {
-            if (!TutorialSeen.ContainsKey(AllTutorialsText))
-                TutorialSeen.Add(AllTutorialsText, true);
-            else
-                TutorialSeen[AllTutorialsText] = true;
+            UserSettings.DisableTutorials = true;
         }
 
         public bool HasSeen(Tutorial tutorial)
         {
-            var key = GetDictionaryKey(tutorial.CommandExecution);
-            
-            //if user has seen the tutorial then don't show it to him
-            if (TutorialSeen.ContainsKey(key))
-                return TutorialSeen[key];
-
-            return false;
+            return UserSettings.GetTutorialDone(tutorial.Guid);
         }
 
         public void LaunchTutorial(Tutorial tutorial)
@@ -183,23 +93,10 @@ namespace CatalogueManager.Tutorials
             tutorial.CommandExecution.Execute();
         }
 
-        public bool IsDisableAllTutorialsOn()
-        {
-            if (!TutorialSeen.ContainsKey(AllTutorialsText))
-                TutorialSeen.Add(AllTutorialsText,false);
-
-            return TutorialSeen[AllTutorialsText];
-        }
-
         public bool IsClearable()
         {
-            //1 is AllTutorialsText 
-            if (TutorialSeen.Count == 1)
-                return false;
-
             //any that are true
-            return TutorialSeen.Any(kvp => kvp.Value);
-
+            return TutorialsAvailable.Any(t=>UserSettings.GetTutorialDone(t.Guid));
         }
     }
 }

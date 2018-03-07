@@ -115,16 +115,6 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Plugin.Settings, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugins.Settings.3.1.1\lib\net45\Plugin.Settings.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Plugin.Settings.Abstractions, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugins.Settings.3.1.1\lib\net45\Plugin.Settings.Abstractions.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -148,8 +138,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Helpers\Settings.cs" />
-	<Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
@@ -206,13 +195,6 @@
       <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
     </Compile>
     <Compile Include="WindowManagement\UIObjectConstructor.cs" />
-    <Compile Include="WindowManagement\Settings\UserSettings.cs" />
-    <Compile Include="WindowManagement\Settings\UserSettingsUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WindowManagement\Settings\UserSettingsUI.Designer.cs">
-      <DependentUpon>UserSettingsUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="WindowManagement\WindowArranging\WindowArranger.cs" />
     <Compile Include="WindowManagement\WindowFactory.cs" />
     <Compile Include="WindowManagement\ContentWindowTracking\ContentWindowTracker.cs" />
@@ -246,9 +228,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Menus\RDMPMenuStrip.resx">
       <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WindowManagement\Settings\UserSettingsUI.resx">
-      <DependentUpon>UserSettingsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\LICENSE">
       <Link>WindowManagement\Licenses\LICENSE</Link>

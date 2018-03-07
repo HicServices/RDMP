@@ -70,7 +70,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void BuildHelpFlow()
         {
-            var tracker = TutorialTracker.GetInstance(_activator);
+            var tracker = new TutorialTracker(_activator);
 
             HelpWorkflow = new HelpWorkflow(this, _command, tracker);
 

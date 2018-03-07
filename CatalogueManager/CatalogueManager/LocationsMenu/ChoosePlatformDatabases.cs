@@ -76,7 +76,7 @@ namespace CatalogueManager.LocationsMenu
 
         private void BuildHelpWorkflow(ICommandExecution command)
         {
-            var tracker = TutorialTracker.GetInstance(_activatorIfAny);
+            var tracker = new TutorialTracker(_activatorIfAny);
 
             HelpWorkflow = new HelpWorkflow(this, command, tracker);
             

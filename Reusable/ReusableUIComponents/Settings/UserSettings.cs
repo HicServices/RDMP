@@ -1,7 +1,8 @@
-﻿using Plugin.Settings;
+﻿using System;
+using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
-namespace ResearchDataManagementPlatform.WindowManagement.Settings
+namespace ReusableUIComponents.Settings
 {
     /// <summary>
     /// This is the Settings static class that can be used in your Core solution or in any
@@ -31,6 +32,21 @@ namespace ResearchDataManagementPlatform.WindowManagement.Settings
         {
             get { return AppSettings.GetValueOrDefault("EmphasiseOnTabChanged", false); }
             set { AppSettings.AddOrUpdateValue("EmphasiseOnTabChanged", value); }
+        }
+
+        public static bool DisableTutorials
+        {
+            get { return AppSettings.GetValueOrDefault("DisableTutorials", false); }
+            set { AppSettings.AddOrUpdateValue("DisableTutorials", value); }
+        }
+
+        public static bool GetTutorialDone(Guid tutorialGuid)
+        {
+            return AppSettings.GetValueOrDefault(tutorialGuid.ToString("N"), false); 
+        }
+        public static void SetTutorialDone(Guid tutorialGuid,bool value)
+        {
+            AppSettings.AddOrUpdateValue(tutorialGuid.ToString("N"), value);
         }
     }
 }

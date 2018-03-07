@@ -1,4 +1,4 @@
-﻿namespace ResearchDataManagementPlatform.WindowManagement.Settings
+﻿namespace ReusableUIComponents.Settings
 {
     partial class UserSettingsFileUI
     {
