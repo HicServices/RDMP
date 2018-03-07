@@ -42,7 +42,7 @@ using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
-using ResearchDataManagementPlatform.WindowManagement.UserSettings;
+using ResearchDataManagementPlatform.WindowManagement.Settings;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
@@ -376,7 +376,7 @@ namespace ResearchDataManagementPlatform.Menus
             var singleObject = singleObjectControlTab.GetControl() as IRDMPSingleDatabaseObjectControl;
 
             //if user wants to emphasise on tab change and theres an object we can emphasise associated with the control
-            if (singleObject != null && UserSettingsFile.GetInstance().EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
+            if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
 
             _saveToolStripMenuItem.Saveable = saveable;

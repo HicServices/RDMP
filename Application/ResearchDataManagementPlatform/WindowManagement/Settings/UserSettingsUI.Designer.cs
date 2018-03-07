@@ -1,4 +1,4 @@
-﻿namespace ResearchDataManagementPlatform.WindowManagement.UserSettings
+﻿namespace ResearchDataManagementPlatform.WindowManagement.Settings
 {
     partial class UserSettingsFileUI
     {
@@ -73,7 +73,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbShowHomeOnStartup);
             this.Name = "UserSettingsFileUI";
-            this.Text = "UserSettingsFileUI";
+            this.Text = "UserSettingsUI";
             this.ResumeLayout(false);
             this.PerformLayout();
 
