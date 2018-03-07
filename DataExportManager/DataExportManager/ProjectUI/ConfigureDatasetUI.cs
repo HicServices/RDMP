@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -61,12 +62,11 @@ namespace DataExportManager.ProjectUI
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
 
-            
-
             var dropSink = (SimpleDropSink) olvSelected.DropSink;
             
             dropSink.CanDropOnItem = false;
             dropSink.CanDropBetween = true;
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
         private void SortSelectedByOrder()

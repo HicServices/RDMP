@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
@@ -183,6 +184,8 @@ namespace CatalogueManager.Issues
             this.pSQL.Controls.Add(QueryPreview);
             #endregion
 
+
+            AssociatedCollection = RDMPCollection.Catalogue;
             
 
         }

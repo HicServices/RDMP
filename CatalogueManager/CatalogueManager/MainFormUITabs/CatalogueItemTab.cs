@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ExtractionUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -44,6 +45,7 @@ namespace CatalogueManager.MainFormUITabs
         {
             InitializeComponent();
             objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private CatalogueItem _catalogueItem;

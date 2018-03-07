@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -70,6 +71,8 @@ namespace CatalogueManager.Validation
 
             int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
             tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private bool isFirstTime = true;

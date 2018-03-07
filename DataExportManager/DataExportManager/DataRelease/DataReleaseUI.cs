@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.DataRelease.ReleasePipeline;
@@ -58,6 +59,8 @@ namespace DataExportManager.DataRelease
         public DataReleaseUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
         public DataReleaseUI(IActivateItems activator, Project project)
@@ -69,6 +72,7 @@ namespace DataExportManager.DataRelease
 
             //tell children controls about the project
             doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
         private void SetupUIForProject(Project project)

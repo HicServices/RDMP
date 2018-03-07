@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Remoting;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -28,6 +29,7 @@ namespace CatalogueManager.SimpleDialogs.Remoting
         public RemoteRDMPUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, RemoteRDMP databaseObject)

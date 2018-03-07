@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.AggregationUIs.Advanced.Options;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManagerLibrary.QueryBuilding;
@@ -28,6 +29,8 @@ namespace CohortManager.SubComponents
             var factory = new ScintillaTextEditorFactory();
             QueryEditor = factory.Create(new RDMPCommandFactory());
             this.Controls.Add(QueryEditor);
+
+            AssociatedCollection = RDMPCollection.Cohort;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)

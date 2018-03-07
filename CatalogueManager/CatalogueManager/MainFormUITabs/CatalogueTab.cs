@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -48,6 +49,8 @@ namespace CatalogueManager.MainFormUITabs
             InitializeComponent();
 
             ticketingControl1.TicketTextChanged += ticketingControl1_TicketTextChanged;
+            
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public Catalogue Catalogue { get; private set; }

@@ -63,6 +63,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             tlvTableInfoMigrations.CellEditFinishing += tlvTableInfoMigrations_CellEditFinishing;
 
             tlvTableInfoMigrations.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         #region Aspect Getters and Setters

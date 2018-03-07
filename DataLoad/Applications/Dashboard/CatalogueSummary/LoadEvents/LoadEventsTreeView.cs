@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
@@ -72,6 +73,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             //We will handle this ourselves because default behaviour is to limit the amount of text copied
             treeView1.CopySelectionOnControlC = false;
+
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         private object olvDescription_AspectGetter(object rowObject)

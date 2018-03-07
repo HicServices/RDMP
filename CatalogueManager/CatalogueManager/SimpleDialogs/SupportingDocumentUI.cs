@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
@@ -38,6 +39,7 @@ namespace CatalogueManager.SimpleDialogs
             InitializeComponent();
 
             ticketingControl1.TicketTextChanged += ticketingControl1_TicketTextChanged;
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, SupportingDocument databaseObject)

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -86,6 +87,8 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
             fk3.KeyType = JoinKeyType.ForeignKey;
             fk3.SelectedColumnChanged += UpdateValidityAssesment;
+
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         private void UpdateValidityAssesment()

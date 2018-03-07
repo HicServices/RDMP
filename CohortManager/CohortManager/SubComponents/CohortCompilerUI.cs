@@ -15,6 +15,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
@@ -117,6 +118,8 @@ namespace CohortManager.SubComponents
             _cohortUnionImage = CatalogueIcons.UNIONCohortAggregate;
             _cohortIntersectImage = CatalogueIcons.INTERSECTCohortAggregate;
             _cohortExceptImage = CatalogueIcons.EXCEPTCohortAggregate;
+
+            AssociatedCollection = RDMPCollection.Cohort;
         }
 
         #region Layout, Children Getting, Appearance etc

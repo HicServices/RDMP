@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueManager;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
@@ -115,6 +116,8 @@ namespace DataExportManager.ProjectUI
             
             tcMasterTicket.Title = "Master Ticket";
             tcMasterTicket.TicketTextChanged += tcMasterTicket_TicketTextChanged;
+
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
       

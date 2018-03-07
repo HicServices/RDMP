@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -149,7 +150,9 @@ namespace DataExportManager.CohortUI
             QueryPreview = new ScintillaTextEditorFactory().Create();
             QueryPreview.ReadOnly = true;
 
-            pSqlPreview.Controls.Add(QueryPreview);
+            pSqlPreview.Controls.Add(QueryPreview); 
+
+            AssociatedCollection = RDMPCollection.SavedCohorts;
         }
 
         private void AuditLogEditorOnTextChanged(object sender, EventArgs eventArgs)
@@ -173,6 +176,7 @@ namespace DataExportManager.CohortUI
         {
             base.SetDatabaseObject(activator,databaseObject);
             ExtractableCohort = databaseObject;
+            AssociatedCollection = RDMPCollection.SavedCohorts;
         }
 
         protected override bool ProcessKeyPreview(ref Message m)

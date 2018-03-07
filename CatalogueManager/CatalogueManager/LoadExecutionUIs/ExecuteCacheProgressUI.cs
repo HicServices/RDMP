@@ -17,6 +17,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using CatalogueManager.ItemActivation;
@@ -51,6 +52,7 @@ namespace CatalogueManager.LoadExecutionUIs
         public ExecuteCacheProgressUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)

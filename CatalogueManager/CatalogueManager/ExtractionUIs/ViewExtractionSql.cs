@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
+using CatalogueManager.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -53,6 +54,7 @@ namespace CatalogueManager.ExtractionUIs
 
             #endregion
 
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private void RowFormatter(OLVListItem olvItem)

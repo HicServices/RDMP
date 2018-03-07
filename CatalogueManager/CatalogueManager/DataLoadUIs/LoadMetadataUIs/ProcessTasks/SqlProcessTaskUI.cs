@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
@@ -41,6 +42,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         public SqlProcessTaskUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)

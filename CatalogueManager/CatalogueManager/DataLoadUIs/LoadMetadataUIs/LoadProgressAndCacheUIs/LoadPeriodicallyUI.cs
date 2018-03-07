@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -81,6 +82,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public LoadPeriodicallyUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         protected override void OnLoad(EventArgs e)

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -25,6 +26,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public PermissionWindowUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, PermissionWindow databaseObject)

@@ -14,6 +14,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Repositories;
 using CatalogueManager;
+using CatalogueManager.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.Icons.IconOverlays;
@@ -71,6 +72,7 @@ namespace DataExportManager.ProjectUI
             tcRelease.TicketTextChanged += tcRelease_TicketTextChanged;
 
             cbxCohortIdentificationConfiguration.PropertySelector = sel => sel.Cast<CohortIdentificationConfiguration>().Select(cic=> cic == null? "<<None>>":cic.Name);
+            AssociatedCollection = RDMPCollection.DataExport;
         }
         
         public ExtractionConfiguration ExtractionConfiguration

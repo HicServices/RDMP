@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
 using CatalogueManager.SimpleControls;
@@ -59,6 +60,7 @@ namespace CatalogueManager.SimpleDialogs
             #endregion
 
             tcTicket.TicketTextChanged += TcTicketOnTicketTextChanged;
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
 

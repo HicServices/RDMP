@@ -8,6 +8,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using CatalogueManager.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
@@ -47,6 +48,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         public TableInfoUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)

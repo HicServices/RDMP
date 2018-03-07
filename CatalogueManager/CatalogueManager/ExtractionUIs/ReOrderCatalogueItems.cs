@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -50,6 +51,7 @@ namespace CatalogueManager.ExtractionUIs
         {
             InitializeComponent();
             splitContainer1.Panel2Collapsed = true;
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

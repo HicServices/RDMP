@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
@@ -44,6 +45,7 @@ namespace CatalogueManager.SimpleDialogs.Automation
         {
             InitializeComponent();
             lockableUI1.Poll = true;
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, AutomationServiceSlot databaseObject)

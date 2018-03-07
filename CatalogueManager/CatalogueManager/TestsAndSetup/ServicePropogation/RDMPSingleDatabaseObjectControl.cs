@@ -1,12 +1,15 @@
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
+using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
 
@@ -22,15 +25,29 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     [TechnicalUI]
     public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
     {
+        private Control _colorIndicator;
         protected IActivateItems _activator;
         
         public DatabaseEntity DatabaseObject { get; private set; }
+        protected RDMPCollection AssociatedCollection = RDMPCollection.None;
 
         public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
         {
             _activator = activator;
             _activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
             DatabaseObject = databaseObject;
+            
+            if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
+            {
+                var colorProvider = new BackColorProvider();
+                _colorIndicator = new Control();
+                _colorIndicator.Dock = DockStyle.Top;
+                _colorIndicator.Location = new Point(0, 0);
+                _colorIndicator.Size = new Size(150, BackColorProvider.IndiciatorBarSuggestedHeight);
+                _colorIndicator.TabIndex = 0;
+                _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
+                this.Controls.Add(this._colorIndicator);
+            }
         }
 
         public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs.Advanced;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -49,6 +50,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         public PluginProcessTaskUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)

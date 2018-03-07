@@ -11,6 +11,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -120,6 +121,8 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
         public ColumnInfoToANOTableConverterUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ColumnInfo databaseObject)

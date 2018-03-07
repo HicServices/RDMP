@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -64,6 +65,7 @@ namespace CatalogueManager.LoadExecutionUIs
             helpIconAbortShouldCancel.SetHelpText("Abort Behaviour", "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
 
             btnUnlockAll.Image = FamFamFamIcons.lock_break;
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)

@@ -14,6 +14,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -69,6 +70,7 @@ namespace DataExportManager.ProjectUI
         public ExecuteExtractionUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
 

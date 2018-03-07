@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -58,6 +59,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
             olvLeftColumns.RowHeight = 19;
             olvRightColumns.RowHeight = 19;
+            AssociatedCollection = RDMPCollection.Tables;
         }
         
         public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)

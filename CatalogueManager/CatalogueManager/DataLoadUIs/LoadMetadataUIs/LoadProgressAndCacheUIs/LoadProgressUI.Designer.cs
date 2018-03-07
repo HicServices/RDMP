@@ -198,9 +198,9 @@
             this.loadProgressDiagram1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadProgressDiagram1.Location = new System.Drawing.Point(0, 0);
+            this.loadProgressDiagram1.Location = new System.Drawing.Point(0, 4);
             this.loadProgressDiagram1.Name = "loadProgressDiagram1";
-            this.loadProgressDiagram1.Size = new System.Drawing.Size(936, 713);
+            this.loadProgressDiagram1.Size = new System.Drawing.Size(936, 709);
             this.loadProgressDiagram1.TabIndex = 26;
             // 
             // objectSaverButton1

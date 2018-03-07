@@ -15,6 +15,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
@@ -88,6 +89,8 @@ namespace CatalogueManager.ExtractionUIs
             QueryEditor.TextChanged += QueryEditorOnTextChanged;
 
             objectSaverButton1.BeforeSave += BeforeSave;
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private bool BeforeSave(DatabaseEntity arg)

@@ -9,6 +9,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers.Copying;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
@@ -66,6 +67,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             tlvLoadedTables.UseCellFormatEvents = true;
             tlvLoadedTables.FormatCell += tlvLoadedTables_FormatCell;
             tlvLoadedTables.ItemActivate += tlvLoadedTables_ItemActivate;
+
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         void tlvLoadedTables_ItemActivate(object sender, EventArgs e)

@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AggregationUIs;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -31,6 +32,11 @@ namespace CohortManager.SubComponents.Graphs
     public class CohortSummaryAggregateGraph:AggregateGraph, IObjectCollectionControl
     {
         private CohortSummaryAggregateGraphObjectCollection _collection;
+
+        public CohortSummaryAggregateGraph()
+        {
+            AssociatedCollection = RDMPCollection.Cohort;
+        }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {

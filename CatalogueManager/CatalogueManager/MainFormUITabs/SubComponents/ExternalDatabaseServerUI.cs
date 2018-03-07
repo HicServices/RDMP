@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -32,6 +33,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         public ExternalDatabaseServerUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -31,6 +32,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             InitializeComponent();
             loadProgressDiagram1.LoadProgressChanged += ReloadUIFromDatabase;
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
         
         private void ReloadUIFromDatabase()

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.Migration;
@@ -44,6 +45,8 @@ namespace CatalogueManager.DataQualityUIs
 
                 Invoke(new MethodInvoker(AllChecksComplete));
             };
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private void ReloadUIFromDatabase()

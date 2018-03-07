@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataQualityEngine.Data;
@@ -32,6 +33,8 @@ namespace Dashboard.CatalogueSummary
             InitializeComponent();
 
             dqePivotCategorySelector1.PivotCategorySelectionChanged += dqePivotCategorySelector1_PivotCategorySelectionChanged;
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public Catalogue Catalogue

@@ -37,6 +37,8 @@ namespace Dashboard.Automation
         public AutomationServerMonitorUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
