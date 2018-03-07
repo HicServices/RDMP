@@ -21,10 +21,19 @@ namespace LoadModules.Generic.DataFlowOperations
         [DemandsInitialization("Renames the column to this name", Mandatory = true)]
         public string ReplacementName { get; set; }
 
+
+        [DemandsInitialization("In relaxed mode the pipeline will not be crashed if the column does not appear.  Default is false i.e. the column MUST appear.", Mandatory = true, DefaultValue = false)]
+        public bool RelaxedMode { get; set; }
+
+
+
         public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if (!toProcess.Columns.Contains(ColumnNameToFind))
-                throw new InvalidOperationException("The column to be renamed (" + ColumnNameToFind + ") does not exist in the supplied data table. Check that this component is configured correctly, or if any upstream components are removing this column unexpectedly.");
+                if (RelaxedMode)
+                    return toProcess;
+                else
+                    throw new InvalidOperationException("The column to be renamed (" + ColumnNameToFind + ") does not exist in the supplied data table and RelaxedMode is off. Check that this component is configured correctly, or if any upstream components are removing this column unexpectedly.");
 
             toProcess.Columns[ColumnNameToFind].ColumnName = ReplacementName;
 
