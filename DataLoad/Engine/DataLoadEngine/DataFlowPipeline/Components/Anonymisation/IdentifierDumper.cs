@@ -221,7 +221,6 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
             }
         }
         
-        
         public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
         {
             if(exitCode == ExitCodeType.Error)
@@ -229,9 +228,7 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 
             DropStaging();
         }
-
         
-
         public void Check(ICheckNotifier notifier)
         {
 
@@ -244,6 +241,30 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
                         "There are " + duplicate.Count() + " PreLoadDiscardedColumns called '" + duplicate.Key + "' for TableInfo '" +
                         TableInfo + "'", CheckResult.Fail));
                 
+            //columns that exist in live but are supposedly dropped during load
+            var liveColumns = TableInfo.ColumnInfos.ToArray();
+
+            
+            foreach (var preLoadDiscardedColumn in columnsToDump)
+            {
+                var match = liveColumns.FirstOrDefault(c => c.GetRuntimeName().Equals(preLoadDiscardedColumn.GetRuntimeName()));
+
+                if(match != null)
+                {
+                    if(preLoadDiscardedColumn.Destination != DiscardedColumnDestination.Dilute)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs("TableInfo "+TableInfo+" declares both a PreLoadDiscardedColumn '" + preLoadDiscardedColumn + "' and a ColumnInfo with the same name", CheckResult.Fail));
+                        return;
+                    }
+
+                    if (match.IsPrimaryKey && preLoadDiscardedColumn.Destination == DiscardedColumnDestination.Dilute)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + TableInfo + " declares a PreLoadDiscardedColumn '" + preLoadDiscardedColumn + "' but there is a matching ColumnInfo of the same name which IsPrimaryKey", CheckResult.Fail));
+                        return;
+                    }
+                }
+            }
+            
             if(!HasAtLeastOneColumnToStoreInDump)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("No columns require dumping from TableInfo " + _tableInfo + " so checking is not needed", CheckResult.Success, null));
