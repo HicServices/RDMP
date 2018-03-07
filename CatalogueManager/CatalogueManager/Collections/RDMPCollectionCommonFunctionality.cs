@@ -199,7 +199,11 @@ namespace CatalogueManager.Collections
 
         void Tree_FormatRow(object sender, FormatRowEventArgs e)
         {
-            e.Item.ForeColor = _activator.HasProblem(e.Model) ? Color.Red : Color.Black;
+            bool hasProblems = _activator.HasProblem(e.Model);
+
+            e.Item.ForeColor = hasProblems ? Color.Red : Color.Black;
+            e.Item.BackColor = hasProblems ? Color.FromArgb(255,220,220) : Color.White;
+
         }
 
         private TreeListView.Tree TreeFactoryGetter(TreeListView view)

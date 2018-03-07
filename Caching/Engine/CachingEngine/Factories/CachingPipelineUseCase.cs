@@ -77,10 +77,13 @@ namespace CachingEngine.Factories
             // Get the HICProjectDirectory for the engine initialization
             var lmd = _cacheProgress.GetLoadProgress().GetLoadMetadata();
 
-            if(string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
-                throw new Exception("LoadMetadata '" + lmd +"' does not have a Load Directory specified, cannot create ProcessingPipelineUseCase without one");
-
-            _hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
+            if (string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
+                if (throwIfNoPipeline)
+                    throw new Exception("LoadMetadata '" + lmd + "' does not have a Load Directory specified, cannot create ProcessingPipelineUseCase without one");
+                else
+                    _hicProjectDirectory = null;
+            else
+                _hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
             
         }
 
@@ -111,7 +114,7 @@ namespace CachingEngine.Factories
                 _permissionWindow,
                 _hicProjectDirectory,
                 _catalogueRepository
-            };
+            }.Where(o=>o != null).ToArray();
         }
 
         public override IDataFlowPipelineContext GetContext()
