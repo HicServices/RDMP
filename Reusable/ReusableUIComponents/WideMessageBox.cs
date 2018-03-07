@@ -48,7 +48,7 @@ namespace ReusableUIComponents
                 this.WindowState = FormWindowState.Maximized;
         }
 
-        public static void Show(string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null, string title = null, Bitmap icon=null)
+        public static void Show(string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null, string title = null, Bitmap icon=null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
             WideMessageBox wmb = new WideMessageBox(message, environmentDotStackTrace, keywordNotToAdd);
 
@@ -58,11 +58,27 @@ namespace ReusableUIComponents
             if(title != null)
                 wmb.Text = title;
 
+            ApplyTheme(wmb, theme);
+
             if (isModalDialog)
                 wmb.ShowDialog();
             else
                 wmb.Show();
             
+        }
+
+        private static void ApplyTheme(WideMessageBox wmb, WideMessageBoxTheme theme)
+        {
+            switch (theme)
+            {
+                case WideMessageBoxTheme.Exception:
+                    break;
+                case WideMessageBoxTheme.Help:
+                    wmb.richTextBox1.BackColor = Color.White;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("theme");
+            }
         }
 
         private void btnOk_Click(object sender, EventArgs e)

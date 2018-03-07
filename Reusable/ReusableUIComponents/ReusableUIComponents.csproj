@@ -425,6 +425,7 @@
     <Compile Include="WideMessageBox.Designer.cs">
       <DependentUpon>WideMessageBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="WideMessageBoxTheme.cs" />
     <Compile Include="YesNoYesToAllDialog.cs">
       <SubType>Form</SubType>
     </Compile>
