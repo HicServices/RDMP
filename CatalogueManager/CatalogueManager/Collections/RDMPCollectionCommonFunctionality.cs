@@ -29,6 +29,7 @@ using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Theme;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
@@ -117,6 +118,12 @@ namespace CatalogueManager.Collections
             iconColumn.ImageGetter += ImageGetter;
             Tree.RowHeight = 19;
 
+            //add colour indicator bar
+            Tree.Location = new Point(Tree.Location.X, tree.Location.Y+3);
+            Tree.Height -= 3;
+
+            CreateColorIndicator(Tree,collection);
+
             //what does this do to performance?
             Tree.UseNotifyPropertyChanged = true;
 
@@ -126,7 +133,7 @@ namespace CatalogueManager.Collections
                 _activator.CommandFactory,
                 _activator.CommandExecutionFactory,
                 tree);
-            
+
             if(renameableColumn != null)
             {
                 RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn);
@@ -165,7 +172,26 @@ namespace CatalogueManager.Collections
             Tree.FormatRow += Tree_FormatRow;
             Tree.CellToolTipGetter += Tree_CellToolTipGetter;
         }
-        
+
+        private void CreateColorIndicator(TreeListView tree, RDMPCollection collection)
+        {
+            var indicatorHeight = BackColorProvider.IndiciatorBarSuggestedHeight;
+
+            BackColorProvider p = new BackColorProvider();
+            var ctrl = new Control();
+            ctrl.BackColor = p.GetColor(collection);
+            ctrl.Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight);
+            ctrl.Height = indicatorHeight;
+            ctrl.Width = Tree.Width;
+
+            if (Tree.Dock != DockStyle.None)
+                ctrl.Dock = DockStyle.Top;
+            else
+                ctrl.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
+
+            Tree.Parent.Controls.Add(ctrl);
+        }
+
         private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
         {
             return  _activator.DescribeProblemIfAny(modelObject);

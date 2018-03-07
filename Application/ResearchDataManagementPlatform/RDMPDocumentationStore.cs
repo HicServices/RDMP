@@ -38,5 +38,26 @@ namespace ResearchDataManagementPlatform
             foreach (KeyValuePair<Type, string> kvp in TypeDocumentation)
                 KeywordHelpTextListbox.AddToHelpDictionaryIfNotExists(kvp.Key.Name, kvp.Value);
         }
+
+        /// <summary>
+        /// Returns documentation for the class specified up to maxLength characters (after which ... is appended).  Returns null if no documentation exists for the class
+        /// </summary>
+        /// <param name="maxLength"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public string GetTypeDocumentationIfExists(int maxLength, Type type)
+        {
+            if (!TypeDocumentation.ContainsKey(type))
+                return null;
+
+            maxLength = Math.Max(10, maxLength - 3);
+
+            string documentation = TypeDocumentation[type];
+
+            if (documentation.Length <= maxLength)
+                return documentation;
+
+            return documentation.Substring(0, maxLength) + "...";
+        }
     }
 }

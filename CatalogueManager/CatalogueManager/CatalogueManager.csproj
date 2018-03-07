@@ -1372,6 +1372,7 @@
     <Compile Include="TestsAndSetup\StartupUI\MEFStartupUI.Designer.cs">
       <DependentUpon>MEFStartupUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Theme\BackColorProvider.cs" />
     <Compile Include="ToolTips.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -35,8 +35,10 @@ namespace CatalogueManager.Collections
             this.cbShowInternal = new System.Windows.Forms.CheckBox();
             this.cbShowDeprecated = new System.Windows.Forms.CheckBox();
             this.cbShowColdStorage = new System.Windows.Forms.CheckBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).BeginInit();
             this.gbColdStorage.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlvCatalogues
@@ -44,18 +46,16 @@ namespace CatalogueManager.Collections
             this.tlvCatalogues.AllColumns.Add(this.olvColumn1);
             this.tlvCatalogues.AllColumns.Add(this.olvFilters);
             this.tlvCatalogues.AllColumns.Add(this.olvCheckResult);
-            this.tlvCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tlvCatalogues.CellEditUseWholeCell = false;
             this.tlvCatalogues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1,
             this.olvCheckResult});
             this.tlvCatalogues.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvCatalogues.Location = new System.Drawing.Point(3, 3);
+            this.tlvCatalogues.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlvCatalogues.Location = new System.Drawing.Point(0, 0);
             this.tlvCatalogues.Name = "tlvCatalogues";
             this.tlvCatalogues.ShowGroups = false;
-            this.tlvCatalogues.Size = new System.Drawing.Size(497, 402);
+            this.tlvCatalogues.Size = new System.Drawing.Size(500, 405);
             this.tlvCatalogues.TabIndex = 0;
             this.tlvCatalogues.Text = "label1";
             this.tlvCatalogues.UseCompatibleStateImageBehavior = false;
@@ -163,17 +163,30 @@ namespace CatalogueManager.Collections
             this.cbShowColdStorage.UseVisualStyleBackColor = true;
             this.cbShowColdStorage.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
             // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.tlvCatalogues);
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(500, 405);
+            this.panel1.TabIndex = 175;
+            // 
             // CatalogueCollectionUI
             // 
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnCheckCatalogues);
             this.Controls.Add(this.gbColdStorage);
-            this.Controls.Add(this.tlvCatalogues);
             this.Controls.Add(this.progressBar1);
             this.Name = "CatalogueCollectionUI";
             this.Size = new System.Drawing.Size(500, 479);
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).EndInit();
             this.gbColdStorage.ResumeLayout(false);
             this.gbColdStorage.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -191,5 +204,6 @@ namespace CatalogueManager.Collections
         private CheckBox cbShowInternal;
         private CheckBox cbShowDeprecated;
         private CheckBox cbShowColdStorage;
+        private Panel panel1;
     }
 }
