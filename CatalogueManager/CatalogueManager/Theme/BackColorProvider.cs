@@ -58,7 +58,7 @@ namespace CatalogueManager.Theme
             var bmp = new Bitmap(size.Width, size.Height);
 
             using (var g = Graphics.FromImage(bmp))
-                g.FillRectangle(new SolidBrush(GetColor(collection)), 5, size.Height - IndiciatorBarSuggestedHeight, size.Width - 10, IndiciatorBarSuggestedHeight);
+                g.FillRectangle(new SolidBrush(GetColor(collection)),2, size.Height - IndiciatorBarSuggestedHeight, size.Width - 4, IndiciatorBarSuggestedHeight);
 
             return bmp;
         }
