@@ -74,7 +74,7 @@ namespace CatalogueLibrary.ANOEngineering
                         {
                             var columnPlan = _planManager.GetPlanForColumnInfo(columnInfo);
 
-                            if (columnPlan != ForwardEngineerANOCataloguePlanManager.Plan.Drop)
+                            if (columnPlan.Plan != Plan.Drop)
                             {
                                 //add the column verbatim to the query builder because we know we have to read it from source
                                 querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(columnInfo));
@@ -82,12 +82,12 @@ namespace CatalogueLibrary.ANOEngineering
                                 string colName = columnInfo.GetRuntimeName();
                                 
                                 //if it is being ano tabled then give the table name ANO as a prefix
-                                if (columnPlan == ForwardEngineerANOCataloguePlanManager.Plan.ANO)
+                                if (columnPlan.Plan == Plan.ANO)
                                     colName = "ANO" + colName;
 
                                 migratedColumns.Add(colName.ToLower(), columnInfo);
 
-                                columnsToCreate.Add(new DatabaseColumnRequest(colName, _planManager.GetEndpointDataType(columnInfo), !columnInfo.IsPrimaryKey){IsPrimaryKey = columnInfo.IsPrimaryKey});
+                                columnsToCreate.Add(new DatabaseColumnRequest(colName, columnPlan.GetEndpointDataType(), !columnInfo.IsPrimaryKey){IsPrimaryKey = columnInfo.IsPrimaryKey});
                             }
                         }
 
@@ -109,18 +109,17 @@ namespace CatalogueLibrary.ANOEngineering
                         foreach (ColumnInfo newColumnInfo in newColumnInfos)
                         {
                             var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName().ToLower()];
+                            
+                            var columnPlan =_planManager.GetPlanForColumnInfo(oldColumnInfo);
 
-                            var anoTable = _planManager.GetPlannedANOTable(oldColumnInfo);
-                            var dilution = _planManager.GetPlannedDilution(oldColumnInfo);
-
-                            if (anoTable != null)
+                            if (columnPlan.Plan == Plan.ANO)
                             {
-                                newColumnInfo.ANOTable_ID = anoTable.ID;
+                                newColumnInfo.ANOTable_ID = columnPlan.ANOTable.ID;
                                 newColumnInfo.SaveToDatabase();
                             }
 
                             //if there was a dilution configured we need to setup a virtual DLE load only column of the input type (this ensures RAW has a valid datatype)
-                            if (dilution != null)
+                            if (columnPlan.Plan == Plan.Dilute)
                             {
                                 //Create a discarded (load only) column with name matching the new columninfo
                                 var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,newColumnInfo.GetRuntimeName());
@@ -130,7 +129,7 @@ namespace CatalogueLibrary.ANOEngineering
                                 discard.SqlDataType = oldColumnInfo.Data_type;
                                 discard.SaveToDatabase();
 
-                                DilutionOperationsForMigrations.Add(discard,dilution);
+                                DilutionOperationsForMigrations.Add(discard, columnPlan.Dilution);
                             }
 
                             AuditParenthood(oldColumnInfo, newColumnInfo);
@@ -159,8 +158,10 @@ namespace CatalogueLibrary.ANOEngineering
                         if(oldColumnInfo == null)
                             continue;
 
+                        var columnPlan = _planManager.GetPlanForColumnInfo(oldColumnInfo);
+
                         //we are not migrating it anyway
-                        if(_planManager.GetPlanForColumnInfo(oldColumnInfo) == ForwardEngineerANOCataloguePlanManager.Plan.Drop)
+                        if (columnPlan.Plan == Plan.Drop)
                             continue;
                         
                         ColumnInfo newColumnInfo = GetNewColumnInfoForOld(oldColumnInfo);
@@ -177,54 +178,52 @@ namespace CatalogueLibrary.ANOEngineering
 
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;
 
-                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
-                        
-                        var newExtractionCategory = _planManager.GetPlannedExtractionCategory(oldColumnInfo);
-                        
-                        if (newExtractionCategory == null)
-                            throw new Exception("PlanManager did not know the new ExtractionCategory for '" + oldColumnInfo + "'");
-
-                        newExtractionInformation.ExtractionCategory = newExtractionCategory.Value;
-                        newExtractionInformation.SaveToDatabase();
-
-                        //if it was previously extractable
-                        if (oldExtractionInformation != null)
+                        //if the plan is to make the ColumnInfo extractable
+                        if (columnPlan.ExtractionCategoryIfAny != null)
                         {
-                            var refactorer = new SelectSQLRefactorer();
+                            //Create a new ExtractionInformation for the new Catalogue
+                            var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
 
-                            //restore the old SQL as it existed in the origin table
-                            newExtractionInformation.SelectSQL = oldExtractionInformation.SelectSQL;
-                            
-                            //do a refactor on the old column name for the new column name
-                            refactorer.RefactorColumnName(newExtractionInformation,oldColumnInfo,newColumnInfo.Name,true);
-
-                            //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
-                            foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp=>kvp.Key is ColumnInfo))
-                            {
-                                //if it's one we have already done, dont do it again
-                                if(Equals(kvpOtherCols.Value, newColumnInfo))
-                                    continue;
-
-                                //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
-                                refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)(kvpOtherCols.Value)).Name,false);
-                                
-                            }
-                            
-                            
-                            
-                            //make the new one exactly as extractable
-                            newExtractionInformation.Order = oldExtractionInformation.Order;
-                            newExtractionInformation.Alias = oldExtractionInformation.Alias;
-                            newExtractionInformation.IsExtractionIdentifier = oldExtractionInformation.IsExtractionIdentifier;
-                            newExtractionInformation.HashOnDataRelease = oldExtractionInformation.HashOnDataRelease;
-                            newExtractionInformation.IsPrimaryKey = oldExtractionInformation.IsPrimaryKey;
+                            newExtractionInformation.ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value;
                             newExtractionInformation.SaveToDatabase();
-                        }
 
-                        AuditParenthood(oldCatalogueItem, newCatalogueItem);
-                        
-                        if(oldExtractionInformation != null)
-                            AuditParenthood(oldExtractionInformation, newExtractionInformation);
+                            //if it was previously extractable
+                            if (oldExtractionInformation != null)
+                            {
+                                var refactorer = new SelectSQLRefactorer();
+
+                                //restore the old SQL as it existed in the origin table
+                                newExtractionInformation.SelectSQL = oldExtractionInformation.SelectSQL;
+                            
+                                //do a refactor on the old column name for the new column name
+                                refactorer.RefactorColumnName(newExtractionInformation,oldColumnInfo,newColumnInfo.Name,true);
+
+                                //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
+                                foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp=>kvp.Key is ColumnInfo))
+                                {
+                                    //if it's one we have already done, dont do it again
+                                    if(Equals(kvpOtherCols.Value, newColumnInfo))
+                                        continue;
+
+                                    //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
+                                    refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)(kvpOtherCols.Value)).Name,false);
+                                
+                                }
+                            
+                                //make the new one exactly as extractable
+                                newExtractionInformation.Order = oldExtractionInformation.Order;
+                                newExtractionInformation.Alias = oldExtractionInformation.Alias;
+                                newExtractionInformation.IsExtractionIdentifier = oldExtractionInformation.IsExtractionIdentifier;
+                                newExtractionInformation.HashOnDataRelease = oldExtractionInformation.HashOnDataRelease;
+                                newExtractionInformation.IsPrimaryKey = oldExtractionInformation.IsPrimaryKey;
+                                newExtractionInformation.SaveToDatabase();
+                            }
+
+                            AuditParenthood(oldCatalogueItem, newCatalogueItem);
+
+                            if (oldExtractionInformation != null)
+                                AuditParenthood(oldExtractionInformation, newExtractionInformation);
+                        }
                     }
 
                     var existingJoinInfos = _catalogueRepository.JoinInfoFinder.GetAllJoinInfos();

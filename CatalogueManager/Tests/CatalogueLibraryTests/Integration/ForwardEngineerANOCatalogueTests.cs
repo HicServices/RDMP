@@ -68,6 +68,8 @@ namespace CatalogueLibraryTests.Integration
             var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
             planManager.TargetDatabase = db;
 
+            planManager.MakeSuggestions();
+
             //no operations are as yet configured
             Assert.DoesNotThrow(()=>planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
@@ -91,8 +93,8 @@ namespace CatalogueLibraryTests.Integration
             //rules should pass
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
-            var chi_num_of_curr_record = bulk.GetColumnInfo("chi_num_of_curr_record");
-            Assert.Throws<ArgumentException>(() => planManager.SetPlan(chi_num_of_curr_record, ForwardEngineerANOCataloguePlanManager.Plan.Drop));
+            var chi = bulk.GetColumnInfo("chi");
+            Assert.Throws<ArgumentException>(() => planManager.SetPlan(chi, ForwardEngineerANOCataloguePlanManager.Plan.Drop),"Should not be able to drop primary key column");
 
             db.ForceDrop();
         }
@@ -431,9 +433,10 @@ namespace CatalogueLibraryTests.Integration
 
         private void CreateMigrationRules(ForwardEngineerANOCataloguePlanManager planManager, BulkTestsData bulk)
         {
-            
-            var chi = bulk.GetColumnInfo("chi");
+            planManager.MakeSuggestions();
 
+            var chi = bulk.GetColumnInfo("chi");
+            
             var anoChi = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCHI", "C");
             anoChi.NumberOfIntegersToUseInAnonymousRepresentation = 9;
             anoChi.NumberOfCharactersToUseInAnonymousRepresentation = 1;

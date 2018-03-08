@@ -51,30 +51,39 @@ namespace CatalogueLibrary.Repositories.Construction
         }
         #endregion
 
-        public object Construct<T>(Type t, T o, bool allowBlank = true)
+        /// <summary>
+        /// Constructs an instance of object of Type 'typeToConstruct' which should have a compatible constructor taking an object or interface compatible with T
+        /// or a blank constructor (optionally)
+        /// </summary>
+        /// <typeparam name="T">The parameter type expected to be in the constructor</typeparam>
+        /// <param name="typeToConstruct">The type to construct an instance of</param>
+        /// <param name="constructorParameter1">a value to feed into the compatible constructor found for Type typeToConstruct in order to produce an instance</param>
+        /// <param name="allowBlank">true to allow calling the blank constructor if no matching constructor is found that takes a T</param>
+        /// <returns></returns>
+        public object Construct<T>(Type typeToConstruct, T constructorParameter1, bool allowBlank = true)
         {
-            List<ConstructorInfo> repositoryLocatorConstructorInfos = GetConstructors<T>(t);
+            List<ConstructorInfo> repositoryLocatorConstructorInfos = GetConstructors<T>(typeToConstruct);
 
             if (!repositoryLocatorConstructorInfos.Any())
                 if (allowBlank)
                     try
                     {
-                        return GetUsingBlankConstructor(t);
+                        return GetUsingBlankConstructor(typeToConstruct);
                     }
                     catch (ObjectLacksCompatibleConstructorException)
                     {
-                        throw new ObjectLacksCompatibleConstructorException("Type '" + t +
+                        throw new ObjectLacksCompatibleConstructorException("Type '" + typeToConstruct +
                                                                             "' does not have a constructor taking an " +
                                                                             typeof (T) +
                                                                             " - it doesn't even have a blank constructor!");
                     }
                 else
-                    throw new ObjectLacksCompatibleConstructorException("Type '" + t +
+                    throw new ObjectLacksCompatibleConstructorException("Type '" + typeToConstruct +
                                                                         "' does not have a constructor taking an " +
                                                                         typeof (T));
 
 
-            return InvokeBestConstructor(repositoryLocatorConstructorInfos, o);
+            return InvokeBestConstructor(repositoryLocatorConstructorInfos, constructorParameter1);
         }
         
         private List<ConstructorInfo> GetConstructors<T>(Type type)
