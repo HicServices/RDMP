@@ -52,7 +52,7 @@ namespace DataExportManager.ProjectUI
     /// Next you should select/create a new extraction pipeline (See 'A Brief Overview Of What A Pipeline Is' in UserManual.docx).  This will determine the format of the extracted data
     /// (e.g. .CSV or .MDB database file or any other file for which you have a plugin implemented for).
     /// </summary>
-    public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design, IConsultableBeforeClosing
+    public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     {
         private IPipelineSelectionUI _pipelineSelectionUI1;
             
@@ -61,7 +61,7 @@ namespace DataExportManager.ProjectUI
         private ExtractionConfiguration _configurationToExecute;
         private readonly IExtractableDataSet[] _toExtract;
         
-        private bool extractionInProgress = false;
+        private bool extractionInProgress;
         DataLoadInfo _dataLoadInfo;
 
         BiDictionary<TabPage, ExecuteDatasetExtractionHostUI> tabPagesDictionary = new BiDictionary<TabPage, ExecuteDatasetExtractionHostUI>();
@@ -384,7 +384,7 @@ namespace DataExportManager.ProjectUI
             }
         }
 
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (datasetsCurrentlyExecuting > 0)
             {

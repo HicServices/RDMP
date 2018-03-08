@@ -243,14 +243,14 @@ namespace CatalogueManager.ANOEngineeringUIs
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvANOTablesCommonFunctionality.SetUp(tlvANOTables,activator,olvANOTablesName,null,false,false);
+                tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables,activator,olvANOTablesName,null,false,false);
                 
                 tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
                 tlvANOTables.ExpandAll();
                 
                 //Setup tree view to show all TableInfos that you are trying to Migrate
                 tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvTableInfoMigrationsCommonFunctionality.SetUp(tlvTableInfoMigrations,activator,olvTableInfoName,null,false,false);
+                tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None,tlvTableInfoMigrations,activator,olvTableInfoName,null,false,false);
                 
                 //don't display anything below ColumnInfo
                 tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
@@ -279,7 +279,6 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             if (_planManager.TargetDatabase != null)
             {
-                Exception ex;
                 if (_planManager.TargetDatabase.Exists())
                 {
                     _planManager.SkippedTables.Clear();

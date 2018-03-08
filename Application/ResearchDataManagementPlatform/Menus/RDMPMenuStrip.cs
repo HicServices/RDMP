@@ -11,6 +11,7 @@ using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
@@ -30,7 +31,10 @@ using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
+using CohortManager.CommandExecution.AtomicCommands;
 using DataExportLibrary.Data.DataTables;
+using DataExportManager.CommandExecution.AtomicCommands;
+using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using DataQualityEngine;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
@@ -40,6 +44,7 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableLibraryCode;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using WeifenLuo.WinFormsUI.Docking;
@@ -78,6 +83,7 @@ namespace ResearchDataManagementPlatform.Menus
         private DockContent currentTab;
 
         private SaveMenuItem _saveToolStripMenuItem;
+        private AtomicCommandUIFactory _atomicCommandUIFactory;
 
         public RDMPTopMenuStrip()
         {
@@ -296,6 +302,8 @@ namespace ResearchDataManagementPlatform.Menus
         {
             _windowManager = windowManager;
             _activator = _windowManager.ContentManager;
+            _atomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+            
 
             //top menu strip setup / adjustment
             LocationsMenu.DropDownItems.Add(new DataExportMenu(_activator));
@@ -321,6 +329,34 @@ namespace ResearchDataManagementPlatform.Menus
             closeToolStripMenuItem.Enabled = false;
 
             rdmpTaskBar1.SetWindowManager(_windowManager);
+
+            //Catalogue commands
+            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
+            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
+            AddToNew(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
+            AddToNew(new ExecuteCommandCreateNewLoadMetadata(_activator));
+
+            //Saved cohorts database creation
+            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            AddToNew(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
+
+            //cohort creation
+            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            AddToNew(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
+            AddToNew(new ExecuteCommandImportFileAsNewCohort(_activator));
+            AddToNew(new ExecuteCommandImportFileAsCustomDataForCohort(_activator));
+            
+            //Data export commands
+            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(_activator));
+            AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
+            AddToNew(new ExecuteCommandReleaseProject(_activator));
+
+        }
+
+        private void AddToNew(IAtomicCommand cmd)
+        {
+            newToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(cmd));
         }
 
         void WindowFactory_TabChanged(object sender, DockContent newTab)

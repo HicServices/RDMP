@@ -1,4 +1,5 @@
-﻿using CatalogueManager.Refreshing;
+﻿using BrightIdeasSoftware;
+using CatalogueManager.Refreshing;
 
 namespace DataExportManager.ProjectUI
 {
@@ -32,40 +33,32 @@ namespace DataExportManager.ProjectUI
         {
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.lbSelectedColumns = new System.Windows.Forms.ListBox();
             this.btnExcludeAll = new System.Windows.Forms.Button();
             this.btnExclude = new System.Windows.Forms.Button();
             this.btnInclude = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.tbSearch = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.olvAvailable = new BrightIdeasSoftware.ObjectListView();
+            this.olvAvailableColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelectCore = new System.Windows.Forms.Button();
-            this.cbShowDeprecatedColumns = new System.Windows.Forms.CheckBox();
-            this.cbShowSpecialApproval = new System.Windows.Forms.CheckBox();
-            this.cbShowCohortColumns = new System.Windows.Forms.CheckBox();
-            this.cbShowSupplemental = new System.Windows.Forms.CheckBox();
-            this.lbAvailableColumns = new System.Windows.Forms.ListBox();
-            this.lblExtractionInformationDeletedColor = new System.Windows.Forms.Label();
-            this.lblExtractionInformationDeleted = new System.Windows.Forms.Label();
+            this.olvSelected = new BrightIdeasSoftware.ObjectListView();
+            this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvAvailable)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 16);
+            this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(96, 13);
             this.label1.TabIndex = 1;
@@ -79,25 +72,6 @@ namespace DataExportManager.ProjectUI
             this.label2.Size = new System.Drawing.Size(95, 13);
             this.label2.TabIndex = 3;
             this.label2.Text = "Selected Columns:";
-            // 
-            // lbSelectedColumns
-            // 
-            this.lbSelectedColumns.AllowDrop = true;
-            this.lbSelectedColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbSelectedColumns.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lbSelectedColumns.FormattingEnabled = true;
-            this.lbSelectedColumns.HorizontalScrollbar = true;
-            this.lbSelectedColumns.Location = new System.Drawing.Point(6, 16);
-            this.lbSelectedColumns.Name = "lbSelectedColumns";
-            this.lbSelectedColumns.Size = new System.Drawing.Size(317, 667);
-            this.lbSelectedColumns.TabIndex = 2;
-            this.lbSelectedColumns.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbSelectedColumns_DrawItem);
-            this.lbSelectedColumns.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSelectedColumns_DragDrop);
-            this.lbSelectedColumns.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSelectedColumns_DragOver);
-            this.lbSelectedColumns.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbSelectedColumns_KeyUp);
-            this.lbSelectedColumns.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lbSelectedColumns_MouseDown);
             // 
             // btnExcludeAll
             // 
@@ -132,16 +106,6 @@ namespace DataExportManager.ProjectUI
             this.btnInclude.UseVisualStyleBackColor = true;
             this.btnInclude.Click += new System.EventHandler(this.btnInclude_Click);
             // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(182, 688);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(134, 13);
-            this.label3.TabIndex = 47;
-            this.label3.Text = "(Ctrl+V to paste in headers)";
-            // 
             // splitContainer1
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -151,137 +115,81 @@ namespace DataExportManager.ProjectUI
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.label13);
-            this.splitContainer1.Panel1.Controls.Add(this.label12);
-            this.splitContainer1.Panel1.Controls.Add(this.label8);
-            this.splitContainer1.Panel1.Controls.Add(this.label9);
-            this.splitContainer1.Panel1.Controls.Add(this.label11);
-            this.splitContainer1.Panel1.Controls.Add(this.label10);
-            this.splitContainer1.Panel1.Controls.Add(this.label4);
-            this.splitContainer1.Panel1.Controls.Add(this.label5);
-            this.splitContainer1.Panel1.Controls.Add(this.label6);
-            this.splitContainer1.Panel1.Controls.Add(this.label7);
+            this.splitContainer1.Panel1.Controls.Add(this.tbSearch);
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
+            this.splitContainer1.Panel1.Controls.Add(this.olvAvailable);
             this.splitContainer1.Panel1.Controls.Add(this.btnSelectCore);
-            this.splitContainer1.Panel1.Controls.Add(this.cbShowDeprecatedColumns);
-            this.splitContainer1.Panel1.Controls.Add(this.cbShowSpecialApproval);
-            this.splitContainer1.Panel1.Controls.Add(this.cbShowCohortColumns);
-            this.splitContainer1.Panel1.Controls.Add(this.cbShowSupplemental);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
-            this.splitContainer1.Panel1.Controls.Add(this.lbAvailableColumns);
             this.splitContainer1.Panel1.Controls.Add(this.btnInclude);
             this.splitContainer1.Panel1.Controls.Add(this.btnExclude);
             this.splitContainer1.Panel1.Controls.Add(this.btnExcludeAll);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.lblExtractionInformationDeletedColor);
-            this.splitContainer1.Panel2.Controls.Add(this.lblExtractionInformationDeleted);
+            this.splitContainer1.Panel2.Controls.Add(this.olvSelected);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
-            this.splitContainer1.Panel2.Controls.Add(this.label3);
-            this.splitContainer1.Panel2.Controls.Add(this.lbSelectedColumns);
             this.splitContainer1.Size = new System.Drawing.Size(755, 738);
             this.splitContainer1.SplitterDistance = 421;
             this.splitContainer1.TabIndex = 52;
             // 
-            // label13
+            // tbSearch
             // 
-            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(37, 707);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(106, 13);
-            this.label13.TabIndex = 153;
-            this.label13.Text = "Deprecated Columns";
+            this.tbSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSearch.Location = new System.Drawing.Point(56, 711);
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(275, 20);
+            this.tbSearch.TabIndex = 156;
+            this.tbSearch.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
             // 
-            // label12
+            // label3
             // 
-            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label12.BackColor = System.Drawing.Color.Red;
-            this.label12.ForeColor = System.Drawing.Color.Red;
-            this.label12.Location = new System.Drawing.Point(21, 707);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(10, 10);
-            this.label12.TabIndex = 152;
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 714);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(44, 13);
+            this.label3.TabIndex = 155;
+            this.label3.Text = "Search:";
             // 
-            // label8
+            // olvAvailable
             // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(37, 721);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(81, 13);
-            this.label8.TabIndex = 153;
-            this.label8.Text = "Cohort Columns";
+            this.olvAvailable.AllColumns.Add(this.olvAvailableColumnName);
+            this.olvAvailable.AllColumns.Add(this.olvAvailableColumnCategory);
+            this.olvAvailable.AllColumns.Add(this.olvSelectedIsExtractionIdentifier);
+            this.olvAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.olvAvailable.CellEditUseWholeCell = false;
+            this.olvAvailable.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvAvailableColumnName,
+            this.olvSelectedIsExtractionIdentifier});
+            this.olvAvailable.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvAvailable.FullRowSelect = true;
+            this.olvAvailable.HideSelection = false;
+            this.olvAvailable.IsSimpleDragSource = true;
+            this.olvAvailable.Location = new System.Drawing.Point(6, 16);
+            this.olvAvailable.Name = "olvAvailable";
+            this.olvAvailable.RowHeight = 19;
+            this.olvAvailable.Size = new System.Drawing.Size(325, 689);
+            this.olvAvailable.TabIndex = 154;
+            this.olvAvailable.Text = "label14";
+            this.olvAvailable.UseCompatibleStateImageBehavior = false;
+            this.olvAvailable.View = System.Windows.Forms.View.Details;
+            this.olvAvailable.ItemActivate += new System.EventHandler(this.olvAvailable_ItemActivate);
             // 
-            // label9
+            // olvAvailableColumnName
             // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label9.BackColor = System.Drawing.Color.Blue;
-            this.label9.ForeColor = System.Drawing.Color.Blue;
-            this.label9.Location = new System.Drawing.Point(21, 721);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(10, 10);
-            this.label9.TabIndex = 152;
+            this.olvAvailableColumnName.AspectName = "ToString";
+            this.olvAvailableColumnName.FillsFreeSpace = true;
+            this.olvAvailableColumnName.Text = "Name";
+            this.olvAvailableColumnName.Width = 200;
             // 
-            // label11
+            // olvAvailableColumnCategory
             // 
-            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(38, 692);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(111, 13);
-            this.label11.TabIndex = 151;
-            this.label11.Text = "Special Approval Only";
-            // 
-            // label10
-            // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label10.BackColor = System.Drawing.Color.Tan;
-            this.label10.ForeColor = System.Drawing.Color.Blue;
-            this.label10.Location = new System.Drawing.Point(21, 693);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(10, 10);
-            this.label10.TabIndex = 150;
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(37, 679);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(121, 13);
-            this.label4.TabIndex = 151;
-            this.label4.Text = "Supplemental Extraction";
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.BackColor = System.Drawing.Color.Orange;
-            this.label5.ForeColor = System.Drawing.Color.Blue;
-            this.label5.Location = new System.Drawing.Point(21, 679);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(10, 10);
-            this.label5.TabIndex = 150;
-            // 
-            // label6
-            // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(37, 665);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 13);
-            this.label6.TabIndex = 149;
-            this.label6.Text = "Core Extraction";
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label7.BackColor = System.Drawing.Color.Green;
-            this.label7.ForeColor = System.Drawing.Color.Blue;
-            this.label7.Location = new System.Drawing.Point(21, 665);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(10, 10);
-            this.label7.TabIndex = 148;
+            this.olvAvailableColumnCategory.DisplayIndex = 1;
+            this.olvAvailableColumnCategory.IsVisible = false;
+            this.olvAvailableColumnCategory.Text = "Category";
             // 
             // btnSelectCore
             // 
@@ -294,90 +202,51 @@ namespace DataExportManager.ProjectUI
             this.btnSelectCore.UseVisualStyleBackColor = true;
             this.btnSelectCore.Click += new System.EventHandler(this.btnSelectCore_Click);
             // 
-            // cbShowDeprecatedColumns
+            // olvSelected
             // 
-            this.cbShowDeprecatedColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbShowDeprecatedColumns.AutoSize = true;
-            this.cbShowDeprecatedColumns.Location = new System.Drawing.Point(19, 648);
-            this.cbShowDeprecatedColumns.Name = "cbShowDeprecatedColumns";
-            this.cbShowDeprecatedColumns.Size = new System.Drawing.Size(142, 17);
-            this.cbShowDeprecatedColumns.TabIndex = 45;
-            this.cbShowDeprecatedColumns.Text = "Show Deprecated Fields";
-            this.cbShowDeprecatedColumns.UseVisualStyleBackColor = true;
-            this.cbShowDeprecatedColumns.CheckedChanged += new System.EventHandler(this.cbAnyShowFieldsRadioButton_CheckedChanged);
-            // 
-            // cbShowSpecialApproval
-            // 
-            this.cbShowSpecialApproval.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbShowSpecialApproval.AutoSize = true;
-            this.cbShowSpecialApproval.Location = new System.Drawing.Point(19, 632);
-            this.cbShowSpecialApproval.Name = "cbShowSpecialApproval";
-            this.cbShowSpecialApproval.Size = new System.Drawing.Size(194, 17);
-            this.cbShowSpecialApproval.TabIndex = 45;
-            this.cbShowSpecialApproval.Text = "Show \'Special Approval Only\' Fields";
-            this.cbShowSpecialApproval.UseVisualStyleBackColor = true;
-            this.cbShowSpecialApproval.CheckedChanged += new System.EventHandler(this.cbAnyShowFieldsRadioButton_CheckedChanged);
-            // 
-            // cbShowCohortColumns
-            // 
-            this.cbShowCohortColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbShowCohortColumns.AutoSize = true;
-            this.cbShowCohortColumns.Location = new System.Drawing.Point(19, 596);
-            this.cbShowCohortColumns.Name = "cbShowCohortColumns";
-            this.cbShowCohortColumns.Size = new System.Drawing.Size(168, 17);
-            this.cbShowCohortColumns.TabIndex = 45;
-            this.cbShowCohortColumns.Text = "Show Custom Cohort Columns";
-            this.cbShowCohortColumns.UseVisualStyleBackColor = true;
-            this.cbShowCohortColumns.CheckedChanged += new System.EventHandler(this.cbAnyShowFieldsRadioButton_CheckedChanged);
-            // 
-            // cbShowSupplemental
-            // 
-            this.cbShowSupplemental.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbShowSupplemental.AutoSize = true;
-            this.cbShowSupplemental.Checked = true;
-            this.cbShowSupplemental.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbShowSupplemental.Location = new System.Drawing.Point(19, 614);
-            this.cbShowSupplemental.Name = "cbShowSupplemental";
-            this.cbShowSupplemental.Size = new System.Drawing.Size(150, 17);
-            this.cbShowSupplemental.TabIndex = 45;
-            this.cbShowSupplemental.Text = "Show Supplemental Fields";
-            this.cbShowSupplemental.UseVisualStyleBackColor = true;
-            this.cbShowSupplemental.CheckedChanged += new System.EventHandler(this.cbAnyShowFieldsRadioButton_CheckedChanged);
-            // 
-            // lbAvailableColumns
-            // 
-            this.lbAvailableColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.olvSelected.AllColumns.Add(this.olvSelectedColumnName);
+            this.olvSelected.AllColumns.Add(this.olvSelectedColumnOrder);
+            this.olvSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbAvailableColumns.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lbAvailableColumns.FormattingEnabled = true;
-            this.lbAvailableColumns.HorizontalScrollbar = true;
-            this.lbAvailableColumns.Location = new System.Drawing.Point(16, 32);
-            this.lbAvailableColumns.Name = "lbAvailableColumns";
-            this.lbAvailableColumns.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbAvailableColumns.Size = new System.Drawing.Size(315, 550);
-            this.lbAvailableColumns.TabIndex = 0;
-            this.lbAvailableColumns.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbAvailableColumns_DrawItem);
+            this.olvSelected.CellEditUseWholeCell = false;
+            this.olvSelected.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvSelectedColumnName,
+            this.olvSelectedColumnOrder});
+            this.olvSelected.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvSelected.FullRowSelect = true;
+            this.olvSelected.HideSelection = false;
+            this.olvSelected.IsSimpleDragSource = true;
+            this.olvSelected.IsSimpleDropSink = true;
+            this.olvSelected.Location = new System.Drawing.Point(6, 16);
+            this.olvSelected.Name = "olvSelected";
+            this.olvSelected.RowHeight = 19;
+            this.olvSelected.ShowGroups = false;
+            this.olvSelected.Size = new System.Drawing.Size(317, 715);
+            this.olvSelected.TabIndex = 154;
+            this.olvSelected.Text = "label14";
+            this.olvSelected.UseCompatibleStateImageBehavior = false;
+            this.olvSelected.View = System.Windows.Forms.View.Details;
+            this.olvSelected.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelCanDrop);
+            this.olvSelected.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelDropped);
             // 
-            // lblExtractionInformationDeletedColor
+            // olvSelectedColumnName
             // 
-            this.lblExtractionInformationDeletedColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblExtractionInformationDeletedColor.BackColor = System.Drawing.Color.Red;
-            this.lblExtractionInformationDeletedColor.ForeColor = System.Drawing.Color.Red;
-            this.lblExtractionInformationDeletedColor.Location = new System.Drawing.Point(8, 691);
-            this.lblExtractionInformationDeletedColor.Name = "lblExtractionInformationDeletedColor";
-            this.lblExtractionInformationDeletedColor.Size = new System.Drawing.Size(10, 10);
-            this.lblExtractionInformationDeletedColor.TabIndex = 152;
+            this.olvSelectedColumnName.AspectName = "ToString";
+            this.olvSelectedColumnName.FillsFreeSpace = true;
+            this.olvSelectedColumnName.Sortable = false;
+            this.olvSelectedColumnName.Text = "Name";
             // 
-            // lblExtractionInformationDeleted
+            // olvSelectedColumnOrder
             // 
-            this.lblExtractionInformationDeleted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblExtractionInformationDeleted.AutoSize = true;
-            this.lblExtractionInformationDeleted.Location = new System.Drawing.Point(24, 690);
-            this.lblExtractionInformationDeleted.Name = "lblExtractionInformationDeleted";
-            this.lblExtractionInformationDeleted.Size = new System.Drawing.Size(122, 13);
-            this.lblExtractionInformationDeleted.TabIndex = 153;
-            this.lblExtractionInformationDeleted.Text = "Catalogue Entry Deleted";
+            this.olvSelectedColumnOrder.AspectName = "Order";
+            this.olvSelectedColumnOrder.Text = "Order";
+            // 
+            // olvSelectedIsExtractionIdentifier
+            // 
+            this.olvSelectedIsExtractionIdentifier.AspectName = "IsExtractionIdentifier";
+            this.olvSelectedIsExtractionIdentifier.Text = "IsExtractionIdentifier";
+            this.olvSelectedIsExtractionIdentifier.Width = 120;
             // 
             // ConfigureDatasetUI
             // 
@@ -392,6 +261,8 @@ namespace DataExportManager.ProjectUI
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.olvAvailable)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -400,29 +271,19 @@ namespace DataExportManager.ProjectUI
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox lbSelectedColumns;
         private System.Windows.Forms.Button btnExcludeAll;
         private System.Windows.Forms.Button btnExclude;
         private System.Windows.Forms.Button btnInclude;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.CheckBox cbShowSupplemental;
-        private System.Windows.Forms.ListBox lbAvailableColumns;
         private System.Windows.Forms.Button btnSelectCore;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.CheckBox cbShowSpecialApproval;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.CheckBox cbShowCohortColumns;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.CheckBox cbShowDeprecatedColumns;
-        private System.Windows.Forms.Label lblExtractionInformationDeleted;
-        private System.Windows.Forms.Label lblExtractionInformationDeletedColor;
+        private ObjectListView olvAvailable;
+        private ObjectListView olvSelected;
+        private OLVColumn olvAvailableColumnName;
+        private OLVColumn olvAvailableColumnCategory;
+        private OLVColumn olvSelectedColumnName;
+        private OLVColumn olvSelectedColumnOrder;
+        private System.Windows.Forms.TextBox tbSearch;
+        private System.Windows.Forms.Label label3;
+        private OLVColumn olvSelectedIsExtractionIdentifier;
     }
 }

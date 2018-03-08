@@ -31,7 +31,8 @@ namespace ReusableUIComponents.Progress
         DataTable progress = new DataTable();
 
         /// <summary>
-        /// See HandleThrottlingForJob, basically if the message in a progress event changes over time we don;t want to spam the datagrid so instead we just note that there is a flood of distinct messages coming from a specific source
+        /// See HandleFloodOfMessagesFromJob, basically if the message in a progress event changes over time we don't want to spam the datagrid so instead we just note that there is a
+        /// flood of distinct messages coming from a specific source component
         /// </summary>
         private const int MaxNumberOfJobsAcceptableFromSenderBeforeThrottlingKicksIn = 5000;
 
@@ -87,6 +88,11 @@ namespace ReusableUIComponents.Progress
             if(o != null)
                 switch (o.ProgressEventType)
                 {
+                    // TODO: draw a couple of new icons if required
+                    case ProgressEventType.Debug:
+                        return _information;
+                    case ProgressEventType.Trace:
+                        return _information;
                     case ProgressEventType.Information:
                         return _information;
                     case ProgressEventType.Warning:

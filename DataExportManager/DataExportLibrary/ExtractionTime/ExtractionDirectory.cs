@@ -18,7 +18,9 @@ namespace DataExportLibrary.ExtractionTime
         private readonly DirectoryInfo extractionDirectory;
         public const string CustomCohortDataFolderName = "CohortCustomData";
         public const string GlobalsDataFolderName = "Globals";
-
+        public const string ExtractionSubFolderName = "Extractions";
+        public const string StandardExtractionPrefix = "Extr_";
+        
         public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
         {
             if(string.IsNullOrWhiteSpace(rootExtractionDirectory ))
@@ -28,7 +30,9 @@ namespace DataExportLibrary.ExtractionTime
                 if (!Directory.Exists(rootExtractionDirectory))
                     throw new DirectoryNotFoundException("Root directory \"" + rootExtractionDirectory + "\" does not exist");
             
-            root = new DirectoryInfo(rootExtractionDirectory);
+            root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, ExtractionSubFolderName));
+            if (!root.Exists)
+                root.Create();
 
             string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + DateTime.Now.ToString("yyyyMMdd");
             
@@ -40,8 +44,9 @@ namespace DataExportLibrary.ExtractionTime
 
         public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
         {
-            return "Extraction_" + configuration.ID;
+            return StandardExtractionPrefix + configuration.ID;
         }
+
         public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
         {
             if(dataset.ToString().Equals(CustomCohortDataFolderName))
@@ -75,11 +80,11 @@ namespace DataExportLibrary.ExtractionTime
 
             //The configuration number matches but directory isn't the currently configured Project extraction directory
             IProject p = configuration.Project;
-            
-            if(!p.ExtractionDirectory.Equals(directory.Parent.FullName))
+
+            if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, ExtractionSubFolderName))
                 return false;
             
-            return directory.Name.StartsWith("Extraction_" + configuration.ID + "_");
+            return directory.Name.StartsWith(StandardExtractionPrefix + configuration.ID + "_");
         }
 
         public DirectoryInfo GetDirectoryForCohortCustomData()

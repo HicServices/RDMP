@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
 
@@ -13,7 +14,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)
     /// </summary>
-    public abstract class ConcreteColumn : VersionedDatabaseEntity, IColumn
+    public abstract class ConcreteColumn : VersionedDatabaseEntity, IColumn,IOrderable
     {
         #region Database Properties
  
@@ -30,9 +31,6 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _order, value); }
         }
 
-        /// <summary>
-        /// Do not use this in SELECT commands, instead use GetExtractionSelectSQL as this method will deal with cases where SelectSQL is null
-        /// </summary>
         public string SelectSQL
         {
             get { return _selectSql; }

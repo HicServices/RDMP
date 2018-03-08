@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -9,7 +9,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
     public class MySqlQuerySyntaxHelper : QuerySyntaxHelper
     {
-        public MySqlQuerySyntaxHelper() : base(new TypeTranslater(), new MySqlAggregateHelper())//no specific type translation required
+        public MySqlQuerySyntaxHelper() : base(new TypeTranslater(), new MySqlAggregateHelper(),new MySqlUpdateHelper())//no specific type translation required
         {
         }
 

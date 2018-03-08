@@ -24,7 +24,7 @@ namespace DataExportLibrary.DataRelease
     /// In order to DoRelease you will need to evaluate the environment and each ExtractionConfiguration to confirm they are in a releasable state (extracted files
     /// match current configuration, ticketing system says that the project has governance approval for release etc).  
     /// </summary>
-    public class ReleaseEngine : ICheckable
+    public class ReleaseEngine
     {
         protected readonly IDataLoadEventListener _listener;
         protected readonly IRepository _repository;
@@ -38,7 +38,7 @@ namespace DataExportLibrary.DataRelease
         public DirectoryInfo SourceGlobalFolder { get; set; }
         public DirectoryInfo ReleaseFolder { get; set; }
 
-        public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener)
+        public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener, DirectoryInfo releaseFolder)
         {
             _repository = project.Repository;
             Project = project;
@@ -47,6 +47,8 @@ namespace DataExportLibrary.DataRelease
 
             ReleaseSettings = settings ?? new ReleaseEngineSettings();
             _listener = listener ?? new ToMemoryDataLoadEventListener(false);
+
+            ReleaseFolder = releaseFolder;
         }
 
         public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
@@ -56,8 +58,7 @@ namespace DataExportLibrary.DataRelease
             VerifyReleasability(toRelease, environment);
 
             SourceGlobalFolder = PrepareAndVerifySourceGlobalFolder(toRelease);
-            ReleaseFolder = PrepareAndVerifyReleaseFolder();
-
+            
             StreamWriter sw = PrepareAuditFile();
 
             ReleaseGlobalFolder();
@@ -136,20 +137,6 @@ namespace DataExportLibrary.DataRelease
             }
 
             return null;
-        }
-
-        protected virtual DirectoryInfo PrepareAndVerifyReleaseFolder()
-        {
-            var folder = GetIntendedReleaseDirectory();
-            Check(new ThrowImmediatelyCheckNotifier());
-
-            if (ReleaseSettings.CreateReleaseDirectoryIfNotFound)
-                folder.Create();
-            else
-                throw new Exception("Intended release directory was not found and I was forbidden to create it: " +
-                                    folder.FullName);
-        
-            return folder;
         }
 
         protected virtual StreamWriter PrepareAuditFile()
@@ -236,7 +223,7 @@ namespace DataExportLibrary.DataRelease
 
         protected void CleanupExtractionFolders(string extractionDirectory)
         {
-            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(extractionDirectory);
+            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionDirectory.ExtractionSubFolderName));
             var directoriesToDelete = new List<DirectoryInfo>();
             var filesToDelete = new List<FileInfo>();
 
@@ -318,38 +305,6 @@ namespace DataExportLibrary.DataRelease
             }
 
             logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
-        }
-
-        protected DirectoryInfo GetIntendedReleaseDirectory()
-        {
-            if (ReleaseSettings.CustomReleaseFolder == null || String.IsNullOrWhiteSpace(ReleaseSettings.CustomReleaseFolder.FullName))
-            {
-                if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-                    return null;
-
-                var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd_");
-                string suffix = String.Empty;
-                if (ConfigurationsToRelease.Keys.Any())
-                {
-                    var releaseTicket = ConfigurationsToRelease.Keys.First().ReleaseTicket;
-                    if (ConfigurationsToRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
-                        suffix = releaseTicket;
-                    else
-                        throw new Exception("Multiple release tickets seen, this is not allowed!");
-                }
-
-                if (String.IsNullOrWhiteSpace(suffix))
-                {
-                    if (String.IsNullOrWhiteSpace(Project.MasterTicket))
-                        suffix = Project.ID + "_" + Project.Name;
-                    else
-                        suffix = Project.MasterTicket;
-                }
-
-                return new DirectoryInfo(Path.Combine(Project.ExtractionDirectory, prefix + "Release_" + suffix));
-            }
-
-            return ReleaseSettings.CustomReleaseFolder;
         }
 
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
@@ -453,30 +408,6 @@ namespace DataExportLibrary.DataRelease
 
             audit.WriteLine("+" + dir);
 
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            // we are in design mode and the DoRelease has not been called!
-            if (ConfigurationsToRelease == null || !ConfigurationsToRelease.Any())
-                return;
-
-            var folder = GetIntendedReleaseDirectory();
-            if (folder.Exists)
-            {
-                if (notifier.OnCheckPerformed(new CheckEventArgs("Release folder exists", CheckResult.Warning, null, "Delete it!")))
-                {
-                    folder.Delete(true);
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Cleaned non-empty existing release folder: " + folder.FullName));
-                }
-                else
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Intended release directory was existing and I was forbidden to delete it: " +
-                            folder.FullName, CheckResult.Fail));
-                }
-            }
         }
     }
 }

@@ -19,10 +19,10 @@ using ReusableUIComponents;
 namespace CohortManager.SubComponents
 {
     /// <summary>
-    /// Allows you to view/edit a CohortIdentificationConfiguration (See CohortManagerMainForm for a description of what one of these is).  This includes giving it a sensible name
-    /// e.g. 'Project 132 Cases - Deaths caused by diabetic medication' and AS FULL A DESCRIPTION AS POSSIBLE e.g. 'All patients in Tayside and Fife who are over 16 at the time of 
-    /// their first prescription of a diabetic medication (BNF chapter 6.1) and died within 6 months of the first prescribed date of the diabetic medication'.  The better the 
-    /// description the more likely it is that you and the researcher will be on the same page about what you are providing.
+    /// Allows you to view/edit a CohortIdentificationConfiguration (See CohortIdentificationConfiguration for a description of what one of these is).  This includes giving it a 
+    /// sensible name e.g. 'Project 132 Cases - Deaths caused by diabetic medication' and AS FULL A DESCRIPTION AS POSSIBLE e.g. 'All patients in Tayside and Fife who are over 16
+    /// at the time of their first prescription of a diabetic medication (BNF chapter 6.1) and died within 6 months of the first prescribed date of the diabetic medication'.  The
+    /// better the description the more likely it is that you and the researcher will be on the same page about what you are providing.
     /// 
     /// If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
     /// (See QueryCachingServerSelector) from the dropdown.
@@ -100,7 +100,7 @@ namespace CohortManager.SubComponents
             if (_commonFunctionality == null)
             {
                 _commonFunctionality = new RDMPCollectionCommonFunctionality();
-                _commonFunctionality.SetUp(tlvCic,activator,olvNameCol,olvNameCol,false,false);
+                _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic,activator,olvNameCol,olvNameCol,false,false);
                 tlvCic.AddObject(_configuration);
                 tlvCic.ExpandAll();
             }

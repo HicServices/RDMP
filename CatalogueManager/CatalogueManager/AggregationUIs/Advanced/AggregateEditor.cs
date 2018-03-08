@@ -35,31 +35,20 @@ namespace CatalogueManager.AggregationUIs.Advanced
 {
     /// <summary>
     /// Allows you to adjust an Aggregate.  This can either be a breakdown of your dataset by columns possibly including a graph (Basic Aggregate), a list of patient identifiers (Identifier 
-    /// List) or a patient index table (Patient Index Table).  Regardless of use case you will be able to see the SQL the system is generating for your query on the right.  On the left
-    /// you can adjust the SQL for each column, join to additional tables and configure filters / pivots / axis etc.  In some cases (e.g. Identifier List) you won't be able to configure some 
-    /// elements (like pivot since it is meaningless) in which case these controls will be disabled.
+    /// List) or a patient index table (See AggregateConfiguration). The image in the top left tells you what type of AggregateConfiguration it is.
+    ///  
+    /// Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue which will let you edit which SQL Parameters @startDate etc are available for use in filters on the 
+    /// AggregateConfiguration
     /// 
-    /// If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
-    /// configuration.  In addition the top left label will tell you what the use case for the particular Aggregate is.
-    /// 
-    /// Clicking the 'Toolbox' button will launch AggregateEditorToolbox which shows additional columns/tables you can add to this configuration.  
-    /// 
-    /// Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue  which will let you 
-    /// 
-    /// If you are editing a Basic Aggregate that does not include any patient identifier columns (IsExtractionIdentififer) then you can tick IsExtractable to make it available for use and
+    /// If you are editing a Basic Aggregate that does not include any patient identifier columns (IsExtractionIdentifier) then you can tick IsExtractable to make it available for use and
     /// extraction for researchers who use the underlying dataset and receive a data extraction (they will receive the 'master' aggregate run on the entire data repository and a 'personal'
-    /// version which is the same query run against their project extraction only).
+    /// version which is the same query run against their project extraction only) See ExtractionAggregateGraphObjectCollection.
     /// 
-    /// You can click in the SQL and Alias columns to rename columns or change their extraction SQL.  You can also click in the JoinDirection column to edit the direction (LEFT or RIGHT) of 
+    /// You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of 
     /// any supplemental JOINs.
     /// 
-    /// Clicking 'No Filters' will delete any currently configured filters on the aggregate (e.g. 'Morphine prescriptions only' AND 'records from 2005 onwards').  
-    /// 
-    /// Clicking 'Some Filters' and 'adjust Filters' will launch FilterTreeUI
-    /// 
-    /// Clicking 'Hijack Another Aggregate's Filters' will let you choose another Aggregate and soft link this Aggregate to it.  This will make the Query Builder use the WHERE block from that
-    /// other Aggregate (this is like a shortcut which means that if you make a change to the hijacked Aggregate's filter it will be automatically applied to the WHERE block of this Aggregate 
-    /// too).
+    /// If your Catalogue has multiple underlying TableInfos you can pick which ones to include in the query generated in the FROM section (any Columns included in the SELECT section
+    /// will be automatically included)
     /// 
     /// Typing into the HAVING block will make the Query Builder add the SQL into the HAVING section of a GROUP BY SQL statement
     /// 
@@ -317,7 +306,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             }
         }
  
-        private bool isRefreshing = false;
+        private bool isRefreshing;
         private bool _popupToolboxOnLoad;
        
         private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)

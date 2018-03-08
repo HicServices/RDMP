@@ -34,17 +34,24 @@ using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
 {
+    /// <summary>
+    /// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row 
+    /// height, child nodes etc.  Also centralises functionality like applying a CollectionPinFilterUI to an RDMPCollectionUI, keeping trees up to date during object
+    /// refreshes / deletes etc.
+    /// </summary>
     public class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
+        private RDMPCollection _collection;
+
         private IActivateItems _activator;
         public TreeListView Tree;
-        private TextBox _filterTextBox;
 
         public ICoreIconProvider CoreIconProvider { get; private set; }
         public ICoreChildProvider CoreChildProvider { get; set; }
@@ -53,7 +60,7 @@ namespace CatalogueManager.Collections
         public CopyPasteProvider CopyPasteProvider { get; private set; }
         public FavouriteColumnProvider FavouriteColumnProvider { get; private set; }
         public TreeNodeParentFinder ParentFinder { get; private set; }
-
+        
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         
         public OLVColumn FavouriteColumn { get; private set; }
@@ -64,6 +71,9 @@ namespace CatalogueManager.Collections
         
         private CollectionPinFilterUI _pinFilter;
         private object _currentlyPinned;
+
+        public IDColumnProvider IDColumnProvider { get; set; }
+        public OLVColumn IDColumn { get; set; }
 
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
@@ -80,14 +90,11 @@ namespace CatalogueManager.Collections
         /// </summary>
         /// <param name="tree">The main tree in the collection UI</param>
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
-        /// <param name="repositoryLocator">The object for finding the Catalogue/DataExport repository databases</param>
-        /// <param name="commandFactory">A command factory for starting commands in appropriate circumstances e.g. when the user starts a drag of a Catalogue a CatalogueCommand should be created.  Try using a new RDMPCommandFactory </param>
-        /// <param name="commandExecutionFactory">A command execution factory for completing a started ICommand in appropriate circumstances e.g. when the user completes a drop operation onto a second item.  Try using a new RDMPCommandExecutionFactory</param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
-        /// <param name="iconProvider">The class that supplies images for the iconColumn, must return an Image very fast and must have an image for every object added to tree</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(TreeListView tree, IActivateItems activator, OLVColumn iconColumn,OLVColumn renameableColumn, bool addFavouriteColumn = true,bool allowPinning = true)
+        public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn, bool addFavouriteColumn = true, bool allowPinning = true, bool addIDColumn = true)
         {
+            _collection = collection;
             IsSetup = true;
             _activator = activator;
             _activator.RefreshBus.Subscribe(this);
@@ -130,8 +137,17 @@ namespace CatalogueManager.Collections
             {
                 FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
                 FavouriteColumn = FavouriteColumnProvider.CreateColumn();
-                FavouriteColumn.Sortable = false;
             }
+
+            if (addIDColumn)
+            {
+                IDColumnProvider = new IDColumnProvider(tree);
+                IDColumn = IDColumnProvider.CreateColumn();
+
+                Tree.AllColumns.Add(IDColumn);
+                Tree.RebuildColumns();
+            }
+
             CoreIconProvider = activator.CoreIconProvider;
 
             CopyPasteProvider = new CopyPasteProvider();
@@ -142,14 +158,25 @@ namespace CatalogueManager.Collections
             _activator.Emphasise += _activator_Emphasise;
 
             AllowPinning = allowPinning;
-
             
-            Tree.TreeFactory = TreeFactory;
+            Tree.TreeFactory = TreeFactoryGetter;
             Tree.RebuildAll(true);
             
+            Tree.FormatRow += Tree_FormatRow;
+            Tree.CellToolTipGetter += Tree_CellToolTipGetter;
+        }
+        
+        private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
+        {
+            return  _activator.DescribeProblemIfAny(modelObject);
         }
 
-        private TreeListView.Tree TreeFactory(TreeListView view)
+        void Tree_FormatRow(object sender, FormatRowEventArgs e)
+        {
+            e.Item.ForeColor = _activator.HasProblem(e.Model) ? Color.Red : Color.Black;
+        }
+
+        private TreeListView.Tree TreeFactoryGetter(TreeListView view)
         {
             return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
         }
@@ -166,10 +193,12 @@ namespace CatalogueManager.Collections
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
         {
-            // unpin first if there is somthing pinned, so we find our object!
-            if (_pinFilter != null)
-                _pinFilter.UnApplyToTree();
+            var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
 
+            // unpin first if there is somthing pinned, so we find our object!
+            if (_pinFilter != null && _activator.IsRootObjectOfCollection(_collection,rootObject))
+                _pinFilter.UnApplyToTree();
+            
             //get the parental hierarchy
             var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
             
@@ -196,12 +225,16 @@ namespace CatalogueManager.Collections
             if (args.Request.ExpansionDepth > 0)
                 ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
 
+            if (args.Request.Pin && AllowPinning)
+                Pin(args.Request.ObjectToEmphasise, decendancyList);
+
+            //update index now pin filter is applied
+            index = Tree.IndexOf(args.Request.ObjectToEmphasise);
+
             //select the object and ensure it's visible
             Tree.SelectedObject = args.Request.ObjectToEmphasise;
             Tree.EnsureVisible(index);
 
-            if (args.Request.Pin && AllowPinning)
-                Pin(args.Request.ObjectToEmphasise,decendancyList);
             
             args.FormRequestingActivation = Tree.FindForm();
         }
@@ -253,7 +286,9 @@ namespace CatalogueManager.Collections
 
         private object ImageGetter(object rowObject)
         {
-            return CoreIconProvider.GetImage(rowObject);
+            bool hasProblems = _activator.HasProblem(rowObject);
+            
+            return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None);
         }
         
 
@@ -405,16 +440,18 @@ namespace CatalogueManager.Collections
                 if(parent != null && Tree.IndexOf(parent) != -1)
                     Tree.RefreshObject(parent);//refresh parent
                 else
-                //parent isn't in tree, could be a root object? try to refresh the object anyway
-                if(Tree.IndexOf(e.Object) != -1)
+                {
                     try
                     {
-                        Tree.RefreshObject(e.Object);
+                        //parent isn't in tree, could be a root object? try to refresh the object anyway
+                        if (Tree.IndexOf(e.Object) != -1)
+                            Tree.RefreshObject(e.Object);
                     }
                     catch (IndexOutOfRangeException)
                     {
                         
                     }
+                }
             }
         }
 
@@ -440,6 +477,8 @@ namespace CatalogueManager.Collections
 
         private bool expand = true;
         
+
+
         /// <summary>
         /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
         /// </summary>

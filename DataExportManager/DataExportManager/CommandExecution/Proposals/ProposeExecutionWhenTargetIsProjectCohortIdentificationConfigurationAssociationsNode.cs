@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;

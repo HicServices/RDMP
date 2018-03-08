@@ -45,7 +45,7 @@ namespace CohortManager.SubComponents
     /// sized pieces (Sets).
     /// 
     /// Start by identifying the first dataset you will need to interrogate (e.g. if they want to know about diabetic medications drag in 'Prescribing').  Next double click the set
-    /// and configure appropriate filters (See AggregateConfigurationUI) do not change the Dimension (this should already be the patient identifier).  Finally once you have configured
+    /// and configure appropriate filters (See AggregateEditor) do not change the Dimension (this should already be the patient identifier).  Finally once you have configured
     /// the correct filters you should rename your set (AggregateConfiguration) to have a name that reflects the filters (e.g. 'People who have been prescribed a diabetic medication).
     /// 
     /// Next identify the next dataset you need to interrogate (e.g. if they want to exclude patients who have a 'Biochemistry' test result of 'CREATANINE' > 100)  create this set as 
@@ -65,8 +65,7 @@ namespace CohortManager.SubComponents
     /// Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See QueryCachingServerSelector for how this is 
     /// implemented).
     /// 
-    /// You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.  Selecting a set will allow you to
-    /// see an extract of the rows that matched the filters (See CohortIdentificationExecutionResultsUI)
+    /// You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.
     /// 
     /// Ticking 'Include Cumulative Totals' will give you a second total for each set that is in a container with at least 1 other set, this is the number of unique identifiers after
     /// performing the set operation e.g.
@@ -88,7 +87,7 @@ namespace CohortManager.SubComponents
     /// 
     /// </summary>
     public partial class 
-        CohortCompilerUI : CohortCompilerUI_Design,IConsultableBeforeClosing, IRefreshBusSubscriber
+        CohortCompilerUI : CohortCompilerUI_Design, IRefreshBusSubscriber
     {
         private CohortAggregateContainer _root;
         private CohortIdentificationConfiguration _cic;
@@ -445,7 +444,7 @@ namespace CohortManager.SubComponents
             Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
         }
         
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (Compiler != null)
             {

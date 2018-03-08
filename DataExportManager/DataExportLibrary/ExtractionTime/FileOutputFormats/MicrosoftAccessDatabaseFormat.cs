@@ -15,8 +15,8 @@ namespace DataExportLibrary.ExtractionTime.FileOutputFormats
     public class MicrosoftAccessDatabaseFormat : FileOutputFormat
     {
         /// <summary>
-        /// Instruction if you get problem with the 64-bit Access Engine with Office 32-bit remember you need to install AccessDatabaseEngine
-        /// and convert Access 32 bit to Access 64 Bit AccessDatabaseEngine. Please follow the instruction
+        /// Instruction if you get problem with the 64-bit Access Engine with Office 32-bit remember you need to install Access Database Engine
+        /// and convert Access 32 bit to Access 64 Bit Access Database Engine. Please follow the instruction
         /// https://screencast.autodesk.com/Main/Details/7132d430-dc09-40bc-9148-94ff9db41c24
         /// http://techblog.aimms.com/2014/10/27/installing-32-bit-and-64-bit-microsoft-access-drivers-next-to-each-other/
         /// </summary>
@@ -27,8 +27,8 @@ namespace DataExportLibrary.ExtractionTime.FileOutputFormats
         private OleDbCommand _insertCommand;
 
         /// <summary>
-        /// list of the names of each of the fields found in the SQLDataReader, this becomes populated when WriteHeaders is called 
-        /// and is used to setup the Access table as well as to get values out of the SQLDataReader in AppendRows
+        /// list of the names of each of the fields found in the SqlDataReader, this becomes populated when WriteHeaders is called 
+        /// and is used to setup the Access table as well as to get values out of the SqlDataReader in Append(DataRow r)
         /// </summary>
         private List<string> _listField;
         private List<string> _listDataType;

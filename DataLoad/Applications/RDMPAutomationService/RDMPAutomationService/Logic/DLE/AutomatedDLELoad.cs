@@ -152,16 +152,12 @@ namespace RDMPAutomationService.Logic.DLE
             {
                 case ExitCodeType.Success:
                     return AutomationJobStatus.Running;//Notice that we pass back Running because there might be a chained load, we are not finished until we have checked for chained load
-                    break;
                 case ExitCodeType.Error:
                     return AutomationJobStatus.Crashed;
-                    break;
                 case ExitCodeType.Abort:
                     return AutomationJobStatus.Crashed;
-                    break;
                 case ExitCodeType.OperationNotRequired:
                     return AutomationJobStatus.Running;//Notice that we pass back Running because there might be a chained load, we are not finished until we have checked for chained load
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException("exitCode");
             }

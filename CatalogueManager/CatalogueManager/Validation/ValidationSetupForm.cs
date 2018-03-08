@@ -32,7 +32,7 @@ namespace CatalogueManager.Validation
     /// collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the datatype, only use a primary constraint if you have an insane
     /// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).
     /// </summary>
-    public partial class ValidationSetupForm : ValidationSetupForm_Design, IConsultableBeforeClosing, ISaveableUI
+    public partial class ValidationSetupForm : ValidationSetupForm_Design, ISaveableUI
     {
         private string _noPrimaryConstraintText = "No Primary Constraint Defined";
         
@@ -297,7 +297,7 @@ namespace CatalogueManager.Validation
             olvColumns.ModelFilter = new TextMatchFilter(olvColumns,tbFilter.Text,StringComparison.CurrentCultureIgnoreCase);
         }
 
-        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if(HasChanges())
             {

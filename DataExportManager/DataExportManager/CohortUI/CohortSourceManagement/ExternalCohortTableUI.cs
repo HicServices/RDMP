@@ -22,7 +22,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
     public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design
     {
         private ExternalCohortTable _externalCohortTable;
-        bool _bLoading = false;
+        bool _bLoading;
         
         public ExternalCohortTable ExternalCohortTable
         {

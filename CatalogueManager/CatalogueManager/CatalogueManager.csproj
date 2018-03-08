@@ -141,6 +141,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <NoWarn>1573,1584</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -489,6 +490,7 @@
     <Compile Include="Collections\OrderableComparer.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
+    <Compile Include="Collections\Providers\IDColumnProvider.cs" />
     <Compile Include="Collections\RDMPCollection.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
@@ -689,7 +691,6 @@
     </Compile>
     <Compile Include="Icons\IconProvision\EnumImageCollection.cs" />
     <Compile Include="Icons\IconProvision\Exceptions\IconProvisionException.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\HICProjectDirectoryStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\ICoreIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\AggregateConfigurationStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\CatalogueItemIssueStateBasedIconProvider.cs" />
@@ -1554,10 +1555,13 @@
     <None Include="Icons\AllObjectImportsNode.png" />
     <None Include="Icons\AllObjectExportsNode.png" />
     <None Include="Icons\AllObjectSharingNode.png" />
+    <None Include="Icons\CohortCustomColumn.png" />
+    <None Include="Icons\ExtractableColumn.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
     <None Include="Icons\GetFilesStage.png" />
+    <None Include="Icons\FrozenExtractionConfigurationsNode.png" />
     <Content Include="Icons\importFile.png" />
     <None Include="Icons\Parameter1.bmp" />
     <None Include="Icons\ParameterSet.png" />
@@ -1640,6 +1644,7 @@
     <None Include="Icons\ObjectExport.png" />
     <None Include="Icons\ObjectImport.png" />
     <None Include="Icons\ObjectSharingNode.png" />
+    <None Include="Icons\ProjectCohortsNode.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

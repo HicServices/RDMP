@@ -144,7 +144,7 @@ namespace CatalogueLibraryTests.Integration.DataAccess
 
 
         /// <summary>
-        /// Real life test case where TableInfo is the AccessPoint not just the test class
+        /// Real life test case where TableInfo is the IDataAccessPoint not just the test class
         /// </summary>
         [Test]
         public void TestGettingConnectionStrings()

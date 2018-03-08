@@ -30,26 +30,7 @@ namespace CatalogueLibrary.Data.EntityNaming
 
             return base.GetName(tableName, convention);
         }
-
-        public override bool IsNamedCorrectly(string tableName, LoadBubble convention)
-        {
-            if (convention == LoadBubble.Staging)
-                return tableName.StartsWith(_databaseName) && tableName.EndsWith(Suffixes[convention]);
-
-            return base.IsNamedCorrectly(tableName, convention);
-        }
-
-        public override string RetrieveTableName(string fullName, LoadBubble convention)
-        {
-            if (convention == LoadBubble.Staging)
-            {
-                var temp = fullName.Remove(0, _databaseName.Length);
-                return temp.Remove(temp.Length - Suffixes[convention].Length);
-            }
-
-            return base.RetrieveTableName(fullName, convention);
-        }
-
+        
         public override string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
         {
             if (stage == LoadBubble.Staging)

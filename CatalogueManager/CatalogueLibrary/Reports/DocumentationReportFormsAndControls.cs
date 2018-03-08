@@ -29,6 +29,9 @@ namespace CatalogueLibrary.Reports
             {
                 foreach (Type t in _formsAndControls)
                 {
+                    if(t.Name.EndsWith("_Design"))
+                        continue;
+
                     try
                     {
                         //spontaneous objects don't exist in the database.

@@ -7,7 +7,7 @@ namespace CachingEngine.Factories
 {
     /// <summary>
     /// Gets the next reasonable date range to fetch from an ICacheProgress.  This is usually CacheFillProgress + ChunkPeriod.  Does not take into account
-    /// LagPeriod / Permission Window Locking etc.
+    /// CacheLagPeriod / PermissionWindow Locking etc.
     /// </summary>
     public class CacheFetchRequestFactory
     {

@@ -14,48 +14,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
         private readonly DiscoveredColumn Column; 
 
-        private const string StringSizeRegexPattern = @"\(([0-9]+)\)";
-        private const string DecimalsBeforeAndAfterPattern = @"\(([0-9]+),([0-9]+)\)";
-
         public string SQLType { get; set; }
 
         public int GetLengthIfString()
         {
-            if (string.IsNullOrWhiteSpace(SQLType))
-                return -1;
-
-            if (SQLType.Contains("(max)") || SQLType.Equals("text"))
-                return int.MaxValue;
-
-            if (SQLType.Contains("char"))
-            {
-                Match match = Regex.Match(SQLType, StringSizeRegexPattern);
-                if (match.Success)
-                    return int.Parse(match.Groups[1].Value);
-            }
-
-            return -1;
+            return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.GetLengthIfString(SQLType);
         }
 
         public Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal()
         {
-            if (string.IsNullOrWhiteSpace(SQLType))
-                return null;
-
-            Match match = Regex.Match(SQLType, DecimalsBeforeAndAfterPattern);
-
-            if (match.Success)
-            {
-                int precision = int.Parse(match.Groups[1].Value);
-                int scale = int.Parse(match.Groups[2].Value);
-
-                return new Tuple<int, int>(precision - scale, scale);
-
-            }
-
-            return null;
+            return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.GetDigitsBeforeAndAfterDecimalPointIfDecimal(SQLType);
         }
-
+        
         public Dictionary<string,object> ProprietaryDatatype = new Dictionary<string, object>();
 
         /// <summary>

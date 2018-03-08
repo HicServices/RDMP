@@ -25,16 +25,11 @@ namespace CatalogueManager.ExtractionUIs
     /// Allows you to view the Extraction SQL that is built by the QueryBuilder when extracting or running data quality engine against a dataset (Catalogue).  Includes options for
     /// you to display only Core extraction fields or also supplemental / special approval.
     /// 
-    /// You can also drag and drop the columns on the left to reorder the columns in the dataset (This will not affect your underlying data repository, just the order of columns in
-    /// data extracts for researchers).  You must ensure that lookup description columns always come after their foreign key though (e.g. DrugCode must come immediately before
-    ///  DrugCode_Desc).
-    /// 
-    /// You can also tick any of the filters to view their SQL implementation.  Because these are master filters and this dialog is for previewing only, no AND/OR container trees
-    /// are included in the WHERE logic (See FilterTreeUI).
+    /// If you have an ExtractionFilters configured on your Catalogue then you can tick them to view their SQL implementation.  Because these are master filters and this dialog 
+    /// is for previewing only, no AND/OR container trees are included in the WHERE logic (See ExtractionFilterUI for more info about filters).
     /// 
     /// If for some reason you see an error instead of your extraction SQL then read the description and take the steps it suggests (e.g. if it is complaining about not knowing
-    /// how to JOIN two tables then configure an appropriate JoinInfo - See ConfigureJoins). 
-    /// 
+    /// how to JOIN two tables then configure an appropriate JoinInfo - See JoinConfiguration). 
     /// </summary>
     public partial class ViewExtractionSql : ViewExtractionSql_Design
     {

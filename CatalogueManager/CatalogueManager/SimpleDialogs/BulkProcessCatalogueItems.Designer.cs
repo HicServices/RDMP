@@ -43,13 +43,13 @@
             this.rbGuessNewAssociatedColumns = new System.Windows.Forms.RadioButton();
             this.rbDeleteExtrctionInformation = new System.Windows.Forms.RadioButton();
             this.rbDeleteAssociatedColumnInfos = new System.Windows.Forms.RadioButton();
-            this.label3 = new System.Windows.Forms.Label();
             this.rbDelete = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
             this.cbTableInfos = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbApplyToMatching = new System.Windows.Forms.RadioButton();
             this.rbApplyToAll = new System.Windows.Forms.RadioButton();
+            this.cbRecategorise = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -159,6 +159,7 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.cbRecategorise);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.ddExtractionCategory);
             this.groupBox2.Controls.Add(this.btnApplyTransform);
@@ -166,7 +167,6 @@
             this.groupBox2.Controls.Add(this.rbGuessNewAssociatedColumns);
             this.groupBox2.Controls.Add(this.rbDeleteExtrctionInformation);
             this.groupBox2.Controls.Add(this.rbDeleteAssociatedColumnInfos);
-            this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.rbDelete);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.cbTableInfos);
@@ -201,7 +201,7 @@
             // 
             this.btnApplyTransform.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplyTransform.Location = new System.Drawing.Point(144, 301);
+            this.btnApplyTransform.Location = new System.Drawing.Point(139, 251);
             this.btnApplyTransform.Name = "btnApplyTransform";
             this.btnApplyTransform.Size = new System.Drawing.Size(97, 23);
             this.btnApplyTransform.TabIndex = 4;
@@ -219,11 +219,12 @@
             this.rbMarkExtractable.TabStop = true;
             this.rbMarkExtractable.Text = "Mark Associated Columns Extractable";
             this.rbMarkExtractable.UseVisualStyleBackColor = true;
+            this.rbMarkExtractable.CheckedChanged += new System.EventHandler(this.rbMarkExtractable_CheckedChanged);
             // 
             // rbGuessNewAssociatedColumns
             // 
             this.rbGuessNewAssociatedColumns.AutoSize = true;
-            this.rbGuessNewAssociatedColumns.Location = new System.Drawing.Point(7, 114);
+            this.rbGuessNewAssociatedColumns.Location = new System.Drawing.Point(6, 93);
             this.rbGuessNewAssociatedColumns.Name = "rbGuessNewAssociatedColumns";
             this.rbGuessNewAssociatedColumns.Size = new System.Drawing.Size(178, 17);
             this.rbGuessNewAssociatedColumns.TabIndex = 0;
@@ -234,7 +235,7 @@
             // rbDeleteExtrctionInformation
             // 
             this.rbDeleteExtrctionInformation.AutoSize = true;
-            this.rbDeleteExtrctionInformation.Location = new System.Drawing.Point(7, 226);
+            this.rbDeleteExtrctionInformation.Location = new System.Drawing.Point(6, 205);
             this.rbDeleteExtrctionInformation.Name = "rbDeleteExtrctionInformation";
             this.rbDeleteExtrctionInformation.Size = new System.Drawing.Size(161, 17);
             this.rbDeleteExtrctionInformation.TabIndex = 3;
@@ -245,7 +246,7 @@
             // rbDeleteAssociatedColumnInfos
             // 
             this.rbDeleteAssociatedColumnInfos.AutoSize = true;
-            this.rbDeleteAssociatedColumnInfos.Location = new System.Drawing.Point(7, 249);
+            this.rbDeleteAssociatedColumnInfos.Location = new System.Drawing.Point(6, 228);
             this.rbDeleteAssociatedColumnInfos.Name = "rbDeleteAssociatedColumnInfos";
             this.rbDeleteAssociatedColumnInfos.Size = new System.Drawing.Size(352, 17);
             this.rbDeleteAssociatedColumnInfos.TabIndex = 3;
@@ -253,22 +254,10 @@
             this.rbDeleteAssociatedColumnInfos.Text = "Delete Associated ColumnInfos (will also delete extraction information)";
             this.rbDeleteAssociatedColumnInfos.UseVisualStyleBackColor = true;
             // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(29, 77);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(337, 34);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "(every matching CatalogueItem that has 1 (and 1 only) associated ColumnInfo will " +
-    "be enabled for extraction)";
-            // 
             // rbDelete
             // 
             this.rbDelete.AutoSize = true;
-            this.rbDelete.Location = new System.Drawing.Point(7, 203);
+            this.rbDelete.Location = new System.Drawing.Point(6, 182);
             this.rbDelete.Name = "rbDelete";
             this.rbDelete.Size = new System.Drawing.Size(135, 17);
             this.rbDelete.TabIndex = 3;
@@ -281,7 +270,7 @@
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(29, 166);
+            this.label4.Location = new System.Drawing.Point(28, 145);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(337, 34);
             this.label4.TabIndex = 1;
@@ -293,7 +282,7 @@
             this.cbTableInfos.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cbTableInfos.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbTableInfos.FormattingEnabled = true;
-            this.cbTableInfos.Location = new System.Drawing.Point(32, 138);
+            this.cbTableInfos.Location = new System.Drawing.Point(31, 117);
             this.cbTableInfos.Name = "cbTableInfos";
             this.cbTableInfos.Size = new System.Drawing.Size(315, 21);
             this.cbTableInfos.TabIndex = 2;
@@ -331,6 +320,16 @@
             this.rbApplyToAll.TabStop = true;
             this.rbApplyToAll.Text = "All CatalogueItems";
             this.rbApplyToAll.UseVisualStyleBackColor = true;
+            // 
+            // cbRecategorise
+            // 
+            this.cbRecategorise.AutoSize = true;
+            this.cbRecategorise.Location = new System.Drawing.Point(17, 70);
+            this.cbRecategorise.Name = "cbRecategorise";
+            this.cbRecategorise.Size = new System.Drawing.Size(349, 17);
+            this.cbRecategorise.TabIndex = 7;
+            this.cbRecategorise.Text = "Recategorise Matching CatalogueItems (that are already extractable)";
+            this.cbRecategorise.UseVisualStyleBackColor = true;
             // 
             // BulkProcessCatalogueItems
             // 
@@ -370,7 +369,6 @@
         private System.Windows.Forms.RadioButton rbDelete;
         private System.Windows.Forms.ComboBox cbTableInfos;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RadioButton rbGuessNewAssociatedColumns;
         private System.Windows.Forms.RadioButton rbMarkExtractable;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -382,5 +380,6 @@
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox ddExtractionCategory;
+        private System.Windows.Forms.CheckBox cbRecategorise;
     }
 }

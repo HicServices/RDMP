@@ -69,6 +69,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -290,8 +291,10 @@
     <Compile Include="Integration\Validation\ReferentialIntegrityConstraintTests.cs" />
     <Compile Include="Integration\Validation\StandardRegexTests.cs" />
     <Compile Include="Integration\VersioningTests.cs" />
+    <Compile Include="RefactoringTests\SelectSQLRefactorerTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />
+    <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\DocumentationCrossExaminationTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\ExplicitDatabaseNameChecker.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousRelationshipPropertyUse.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\UserInterfaceStandardisationChecker.cs" />

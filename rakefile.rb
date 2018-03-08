@@ -79,6 +79,49 @@ task :deployplugins, [:folder,:version] do |t, args|
     end
 end
 
+desc "Get the deploy and min-version for the app"    
+task :publishall, [:folder, :url] do |t, args|
+    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+\.\d+(\-\w+)+/]
+    
+    if (asminfoversion.nil?) then
+        asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+\.\d+/]
+    end
+    
+    major, minor, patch, build, suffix = asminfoversion.split(/[\.\-]/)
+        
+    basefolder = args.folder.chomp("/").chomp("\\")
+    baseurl = args.url.chomp("/").chomp("\\")
+    version = "#{major}.#{minor}.#{patch}.#{build}"
+    
+    if (suffix)
+        deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}-#{suffix}"
+        deployurl = "#{baseurl}/RC/"
+    else
+        deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}"
+        deployurl = "#{baseurl}/Stable/"
+    end
+    
+    minversion = "#{major}.#{minor}.#{patch}.0"
+    
+    #puts "version: #{version}"
+    #puts "minversion: #{minversion}"
+    #puts "folder: #{folder}"
+    #puts "url: #{url}"
+    
+    Dir.chdir('Application/ResearchDataManagementPlatform') do
+        sh "./publish.bat #{version} #{minversion} #{deployfolder}/ #{deployurl}"
+    end
+    
+    # reset symlinks, only if STABLE:
+    if (!suffix)
+        File.delete "#{basefolder}/ResearchDataManagementPlatform.application" if File.exists?("#{basefolder}/ResearchDataManagementPlatform.application")
+        sh "rd \"#{basefolder}/Application Files\"" if Dir.exists?("#{basefolder}/Application Files")
+        sh "call mklink \"#{basefolder}/ResearchDataManagementPlatform.application\" \"#{deployfolder}/ResearchDataManagementPlatform.application\""
+        sh "call mklink /J \"#{basefolder}/Application Files\" \"#{deployfolder}/Application Files\""
+    end
+end
+
+
 # task :link do
 # 	if File.exist?("DatabaseCreation.exe") 
 # 		File.delete("DatabaseCreation.exe")

@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Repositories
     }
 
     /// <summary>
-    /// Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabase classes because they are mostly just a m-m relationship
+    /// Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes because they are mostly just a m-m relationship
     /// table between ColumnInfos (with join direction / collation).
     /// </summary>
     public class JoinInfoFinder

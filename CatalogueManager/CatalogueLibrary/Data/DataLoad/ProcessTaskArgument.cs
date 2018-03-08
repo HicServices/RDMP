@@ -13,7 +13,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// 1 to 1 with [DemandsInitialization] flagged properties of a data class e.g. 'LoadModules.Generic.Attachers.AnySeparatorFileAttacher' would have
     /// a ProcessTaskArgument record for the property UnderReadBehaviour and one for IgnoreBlankLines and one for IgnoreQuotes etc. 
     /// 
-    /// This all happens transparently by reflection and is handled at design time through ProcessTaskUI seamlessly
+    /// This all happens transparently by reflection and is handled at design time through PluginProcessTaskUI seamlessly
     /// </summary>
     public class ProcessTaskArgument : Argument
     {

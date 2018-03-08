@@ -128,7 +128,6 @@ namespace CatalogueLibrary.Data
             if (Repository.GetAllObjects<LoadPeriodically>("WHERE OnSuccessLaunchLoadMetadata_ID=" + LoadMetadata_ID).Any()) //we are a link if there are any other load periodicals that target us on successful load
                 return false;
 
-
             //There must be catalogues associated with the dataset or it cannot be run and therefore is not due
             return WhenIsNextLoadDue() <= DateTime.Now;
         }

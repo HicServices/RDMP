@@ -20,7 +20,7 @@ using ReusableLibraryCode.Progress;
 namespace DataExportLibrary.CohortCreationPipeline.Sources
 {
     /// <summary>
-    /// Pipeline source component which executes an Aggregate Configuration query in a CohortIdentification Configuration which has the role of 
+    /// Pipeline source component which executes an AggregateConfiguration query in a CohortIdentificationConfiguration which has the role of 
     /// 'Patient Index Table' (JoinableCohortAggregateConfiguration).  A 'Patient Index Table' is what researchers call any table with information
     /// about patients (e.g. a table containing every prescription date for a given drug) in which the data (not patient identifiers) is directly 
     /// used to identify their cohort (e.g. cohort query is 'everyone who has been hospitalised with code X within 6 months of having a prescription

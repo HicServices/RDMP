@@ -33,7 +33,9 @@ namespace DataLoadEngineTests.Integration
         public void CloseLogging()
         {
         }
-        
+
+        public object Payload { get; set; }
+
         public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
         {
         }

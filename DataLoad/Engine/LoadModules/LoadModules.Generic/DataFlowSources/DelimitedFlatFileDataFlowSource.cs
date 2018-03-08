@@ -557,8 +557,8 @@ namespace LoadModules.Generic.DataFlowSources
         /// <summary>
         /// Takes the existing array of elements, and appends the next array list into them (but here's the catch, it merges the last cell and the first cell of the two arrays together (separating them with " ").  This is intended for when users put random newlines in the middle of files they are trying to load.
         /// </summary>
-        /// <param name="fields"></param>
-        /// <param name="currentRecord"></param>
+        /// <param name="line1"></param>
+        /// <param name="line2"></param>
         /// <returns></returns>
         private string[] AppendNextLineToCurrentRow(string[] line1, string[] line2)
         {
@@ -681,7 +681,7 @@ namespace LoadModules.Generic.DataFlowSources
         }
 
         /// <summary>
-        /// Override this if you want to mess with values as they are read from the source file in some freaky way (for an example see TSVAttacher_HackersEdition)
+        /// Override this if you want to mess with values as they are read from the source file in some freaky way.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>

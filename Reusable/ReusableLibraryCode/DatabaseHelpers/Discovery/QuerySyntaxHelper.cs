@@ -8,6 +8,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
@@ -18,6 +19,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public ITypeTranslater TypeTranslater { get; private set; }
         public IAggregateHelper AggregateHelper { get; private set; }
+        public IUpdateHelper UpdateHelper { get; set; }
 
 
         protected virtual Regex GetAliasRegex()
@@ -38,10 +40,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
         }
 
-        protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper)
+        protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper,IUpdateHelper updateHelper)
         {
             TypeTranslater = translater;
             AggregateHelper = aggregateHelper;
+            UpdateHelper = updateHelper;
         }
 
         public virtual string GetRuntimeName(string s)

@@ -53,7 +53,7 @@ namespace CohortManager.SubComponents.Graphs
         /// <summary>
         /// Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissable option)
         /// </summary>
-        /// <param name="cohort"></param>
+        /// <param name="container"></param>
         /// <param name="graph"></param>
         public CohortSummaryAggregateGraphObjectCollection(CohortAggregateContainer container, AggregateConfiguration graph)
             : this()

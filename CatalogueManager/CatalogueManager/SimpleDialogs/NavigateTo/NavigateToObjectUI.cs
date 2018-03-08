@@ -54,24 +54,25 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private const int MaxMatches = 30;
         private List<IMapsDirectlyToDatabaseTable> _matches;
+        private object oMatches = new object();
 
         //drawing
         private int keyboardSelectedIndex = 0;
         private int mouseSelectedIndex = 0;
 
-        Color keyboardSelectionColor = Color.FromArgb(210,230,255);
-        Color mouseSelectionColor = Color.FromArgb(230, 245, 251);
+        private Color keyboardSelectionColor = Color.FromArgb(210, 230, 255);
+        private Color mouseSelectionColor = Color.FromArgb(230, 245, 251);
 
         private const float DrawMatchesStartingAtY = 50;
         private const float RowHeight = 20;
-        
-        const int DiagramTabDistance = 20;
+
+        private const int DiagramTabDistance = 20;
 
         private Bitmap _magnifier;
         private int _diagramBottom;
 
 
-        Task _lastFetchTask = null;
+        private Task _lastFetchTask = null;
         private CancellationTokenSource _lastCancellationToken;
         private AutoCompleteProvider _autoCompleteProvider;
         private Type[] _types;
@@ -82,16 +83,16 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         /// </summary>
         private Type[] EasyFilterTypes = new[]
         {
-            typeof(Catalogue),
-            typeof(CatalogueItem),
-            typeof(SupportingDocument),
-            typeof(Project),
-            typeof(ExtractionConfiguration),
-            typeof(ExtractableCohort),
-            typeof(CohortIdentificationConfiguration),
-            typeof(TableInfo),
-            typeof(ColumnInfo),
-            typeof(LoadMetadata)
+            typeof (Catalogue),
+            typeof (CatalogueItem),
+            typeof (SupportingDocument),
+            typeof (Project),
+            typeof (ExtractionConfiguration),
+            typeof (ExtractableCohort),
+            typeof (CohortIdentificationConfiguration),
+            typeof (TableInfo),
+            typeof (ColumnInfo),
+            typeof (LoadMetadata)
         };
 
 
@@ -101,13 +102,14 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
             = new Dictionary<RDMPCollection, Type[]>()
             {
-                {RDMPCollection.Catalogue,new []{typeof(Catalogue)}},
-                {RDMPCollection.Cohort,new []{typeof(CohortIdentificationConfiguration)}},
-                {RDMPCollection.DataExport,new []{typeof(Project),typeof(ExtractionConfiguration)}},
-                {RDMPCollection.DataLoad,new []{typeof(LoadMetadata)}},
-                {RDMPCollection.SavedCohorts,new []{typeof(ExtractableCohort)}},
-                {RDMPCollection.Tables,new []{typeof(TableInfo)}}
-            };
+                {RDMPCollection.Catalogue, new[] {typeof (Catalogue)}},
+                {RDMPCollection.Cohort, new[] {typeof (CohortIdentificationConfiguration)}},
+                {RDMPCollection.DataExport, new[] {typeof (Project), typeof (ExtractionConfiguration)}},
+                {RDMPCollection.DataLoad, new[] {typeof (LoadMetadata)}},
+                {RDMPCollection.SavedCohorts, new[] {typeof (ExtractableCohort)}},
+                {RDMPCollection.Tables, new[] {typeof (TableInfo)}},
+                {RDMPCollection.None,new []{typeof(SupportingDocument),typeof(CatalogueItem)}} //Add all other Type checkboxes here so that they are recognised as Typenames
+};
 
         private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
             new []
@@ -128,6 +130,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private bool _skipEscape;
 
         private List<Type> showOnlyTypes = new List<Type>();
+        
 
         public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
         {
@@ -182,7 +185,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             Type[] startingFilters = null;
 
-            if (StartingEasyFilters.ContainsKey(focusedCollection))
+            if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
                 startingFilters = StartingEasyFilters[focusedCollection];
             
             foreach (Type t in EasyFilterTypes)
@@ -301,11 +304,15 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         
         private void EmphasiseAndClose(int indexToSelect)
         {
-            if (indexToSelect >= _matches.Count)
-                return;
+            lock (oMatches)
+            {
+                if (indexToSelect >= _matches.Count)
+                    return;
 
-            Close();
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], int.MaxValue) { Pin = true });
+                Close();
+                _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], int.MaxValue) { Pin = true });
+            }
+            
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -324,9 +331,16 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void AdjustHeight()
         {
-            SetClientSizeCore(ClientSize.Width, 
+            float newHeight;
+
+            lock (oMatches)
+            {
+                newHeight = _matches.Count*RowHeight;
+            }
+            SetClientSizeCore(ClientSize.Width,
                     Math.Max(_diagramBottom,
-                    (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY)));
+                        (int)((newHeight) + DrawMatchesStartingAtY)));
+            
         }
 
         private int RowIndexFromPoint(int x, int y)
@@ -338,17 +352,25 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void MoveSelectionDown()
         {
-            keyboardSelectedIndex = Math.Min(_matches.Count-1, //don't go above the number matches returned
-                Math.Min(MaxMatches - 1, //don't go above the max number of matches 
-                keyboardSelectedIndex + 1));
+            lock (oMatches)
+            {
+                keyboardSelectedIndex = Math.Min(_matches.Count-1, //don't go above the number matches returned
+                    Math.Min(MaxMatches - 1, //don't go above the max number of matches 
+                        keyboardSelectedIndex + 1));
+            }
+
             Invalidate();
         }
 
         private void MoveSelectionUp()
         {
-            keyboardSelectedIndex = Math.Min(_matches.Count-1,  //if text has been typed then selectedIndex could be higher than the number of matches so set that as a roof
-                Math.Max(0, //also don't go below 0
-                    keyboardSelectedIndex - 1)); 
+            lock (oMatches)
+            {
+                keyboardSelectedIndex = Math.Min(_matches.Count - 1,  //if text has been typed then selectedIndex could be higher than the number of matches so set that as a roof
+                   Math.Max(0, //also don't go below 0
+                       keyboardSelectedIndex - 1)); 
+            }
+            
             Invalidate();
         }
 
@@ -415,15 +437,17 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             if (scores == null)
                 return;
-
-            _matches =
-               scores
-                .Where(score => score.Value > 0)
-                .OrderByDescending(score => score.Value)
-                .ThenByDescending(id=>id.Key.Key.ID) //favour newer objects over ties
-                .Take(MaxMatches)
-                .Select(score => score.Key.Key)
-                .ToList();
+            lock (oMatches)
+            {
+                _matches =
+                    scores
+                        .Where(score => score.Value > 0)
+                        .OrderByDescending(score => score.Value)
+                        .ThenByDescending(id=>id.Key.Key.ID) //favour newer objects over ties
+                        .Take(MaxMatches)
+                        .Select(score => score.Key.Key)
+                        .ToList();
+            }
         }
 
         
@@ -439,95 +463,96 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             int diagramStartX = renderWidth + 10;
             int diagramStartY = panel1.Bottom;
             int diagramWidth = Right - diagramStartX;
-
-            //draw Form background
-            e.Graphics.FillRectangle(new SolidBrush(SystemColors.Control), 0, 0, renderWidth, (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY));
-
-            //draw the search icon
-            e.Graphics.DrawImage(_magnifier,0,0);
             
-            //the match diagram
-            if(_matches != null)
+            lock (oMatches)
             {
-                //draw the icon that represents the object being displayed and it's name on the right
-                for (int i = 0; i < _matches.Count; i++)
-                {
-                    bool isFavourite = _favouriteProvider.IsFavourite(_matches[i]);
-                    float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
+                //draw Form background
+                e.Graphics.FillRectangle(new SolidBrush(SystemColors.Control), 0, 0, renderWidth, (int)((_matches.Count * RowHeight) + DrawMatchesStartingAtY));
 
-                    var img = _coreIconProvider.GetImage(_matches[i],isFavourite?OverlayKind.FavouredItem:OverlayKind.None);
-
-                    SolidBrush fillColor;
-
-                    if (i == keyboardSelectedIndex)
-                        fillColor = new SolidBrush(keyboardSelectionColor);
-                    else if( i== mouseSelectedIndex)
-                        fillColor = new SolidBrush(mouseSelectionColor);
-                    else
-                        fillColor = new SolidBrush(Color.White);
-
-                    e.Graphics.FillRectangle(fillColor, 1, currentRowStartY, renderWidth, RowHeight);
-
-                    string text = _matches[i].ToString();
-
-                    //record how wide it is so we know how much space is left to draw parents
-                    maxWidthUsedDuringRender = Math.Max(maxWidthUsedDuringRender,e.Graphics.MeasureString(text, Font).Width + 20);
-
-                    e.Graphics.DrawImage(img,1,currentRowStartY);
-                    e.Graphics.DrawString(text,Font,Brushes.Black,20,currentRowStartY );
-                }
+                //draw the search icon
+                e.Graphics.DrawImage(_magnifier,0,0);
                 
-                //now draw parent string and icon on the right
-                for (int i = 0; i < _matches.Count; i++)
+                //the match diagram
+                if(_matches != null)
                 {
-                    //get first parent that isn't one of the explicitly useless parent types (I'd rather know the Catalogue of an AggregateGraph than to know it's an under an AggregatesGraphNode)                
-                    var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
-                
-                    object lastParent = null;
-                    int H = -1;
-
-                    if(descendancy != null)
+                    //draw the icon that represents the object being displayed and it's name on the right
+                    for (int i = 0; i < _matches.Count; i++)
                     {
+                        bool isFavourite = _favouriteProvider.IsFavourite(_matches[i]);
+                        float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
 
-                        lastParent = descendancy.Parents.LastOrDefault(parent => 
-                            !TypesThatAreNotUsefulParents.Contains(parent.GetType())
-                            &&
-                            !(parent is IContainer)
-                            );
+                        var img = _coreIconProvider.GetImage(_matches[i],isFavourite?OverlayKind.FavouredItem:OverlayKind.None);
 
-                        //if it is the selected node draw the parents diagram too
+                        SolidBrush fillColor;
+
                         if (i == keyboardSelectedIndex)
-                            DrawDescendancyDiagram(e, _matches[i], descendancy, diagramStartX, diagramStartY,diagramWidth);
+                            fillColor = new SolidBrush(keyboardSelectionColor);
+                        else if( i== mouseSelectedIndex)
+                            fillColor = new SolidBrush(mouseSelectionColor);
+                        else
+                            fillColor = new SolidBrush(Color.White);
+
+                        e.Graphics.FillRectangle(fillColor, 1, currentRowStartY, renderWidth, RowHeight);
+
+                        string text = _matches[i].ToString();
+
+                        //record how wide it is so we know how much space is left to draw parents
+                        maxWidthUsedDuringRender = Math.Max(maxWidthUsedDuringRender,e.Graphics.MeasureString(text, Font).Width + 20);
+
+                        e.Graphics.DrawImage(img,1,currentRowStartY);
+                        e.Graphics.DrawString(text,Font,Brushes.Black,20,currentRowStartY );
                     }
-
-                    float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
-                    
-                    if (lastParent != null)
+                
+                    //now draw parent string and icon on the right
+                    for (int i = 0; i < _matches.Count; i++)
                     {
+                        //get first parent that isn't one of the explicitly useless parent types (I'd rather know the Catalogue of an AggregateGraph than to know it's an under an AggregatesGraphNode)                
+                        var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
+                
+                        object lastParent = null;
 
-                        ColorMatrix cm = new ColorMatrix();
-                        cm.Matrix33 = 0.55f;
-                        ImageAttributes ia = new ImageAttributes();
-                        ia.SetColorMatrix(cm);
+                        if(descendancy != null)
+                        {
 
-                        var rect = new Rectangle(renderWidth - 20, (int)currentRowStartY, 19, 19);
-                        var img = _coreIconProvider.GetImage(lastParent);
+                            lastParent = descendancy.Parents.LastOrDefault(parent => 
+                                !TypesThatAreNotUsefulParents.Contains(parent.GetType())
+                                &&
+                                !(parent is IContainer)
+                                );
 
-                        //draw the parents image on the right
-                        e.Graphics.DrawImage(img, rect, 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia);
+                            //if it is the selected node draw the parents diagram too
+                            if (i == keyboardSelectedIndex)
+                                DrawDescendancyDiagram(e, _matches[i], descendancy, diagramStartX, diagramStartY,diagramWidth);
+                        }
 
-                        var horizontalSpaceAvailableToDrawTextInto = renderWidth - (maxWidthUsedDuringRender + 20); 
+                        float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
+                    
+                        if (lastParent != null)
+                        {
 
-                        string text = ShrinkTextToFitWidth(lastParent.ToString(),horizontalSpaceAvailableToDrawTextInto,e.Graphics);
-                        var spaceRequiredForCurrentText = e.Graphics.MeasureString(text, Font).Width;
+                            ColorMatrix cm = new ColorMatrix();
+                            cm.Matrix33 = 0.55f;
+                            ImageAttributes ia = new ImageAttributes();
+                            ia.SetColorMatrix(cm);
 
-                        e.Graphics.DrawString(text, Font, Brushes.DarkGray, renderWidth - (spaceRequiredForCurrentText + 20), currentRowStartY);
+                            var rect = new Rectangle(renderWidth - 20, (int)currentRowStartY, 19, 19);
+                            var img = _coreIconProvider.GetImage(lastParent);
+
+                            //draw the parents image on the right
+                            e.Graphics.DrawImage(img, rect, 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia);
+
+                            var horizontalSpaceAvailableToDrawTextInto = renderWidth - (maxWidthUsedDuringRender + 20); 
+
+                            string text = ShrinkTextToFitWidth(lastParent.ToString(),horizontalSpaceAvailableToDrawTextInto,e.Graphics);
+                            var spaceRequiredForCurrentText = e.Graphics.MeasureString(text, Font).Width;
+
+                            e.Graphics.DrawString(text, Font, Brushes.DarkGray, renderWidth - (spaceRequiredForCurrentText + 20), currentRowStartY);
+                        }
                     }
                 }
             }
         }
         
-
         private void DrawDescendancyDiagram(PaintEventArgs e, IMapsDirectlyToDatabaseTable match, DescendancyList descendancy, int diagramStartX, int diagramStartY, int diagramWidth)
         {
             

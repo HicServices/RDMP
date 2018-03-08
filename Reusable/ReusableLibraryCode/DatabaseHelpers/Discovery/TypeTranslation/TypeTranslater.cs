@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
@@ -11,13 +12,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     /// </summary>
     public class TypeTranslater:ITypeTranslater
     {
+        protected const string StringSizeRegexPattern = @"\(([0-9]+)\)";
+        protected const string DecimalsBeforeAndAfterPattern = @"\(([0-9]+),([0-9]+)\)";
+
         public string GetSQLDBTypeForCSharpType(DatabaseTypeRequest request)
         {
             var t = request.CSharpType;
 
-            if (t == typeof(int) || t == typeof(Int64) || t == typeof(Int32) || t == typeof(Int16) || t == typeof(int?))
+            if (t == typeof(int) || t == typeof(Int32)  || t == typeof(uint) || t == typeof(int?) || t == typeof(uint?))
                 return GetIntDataType();
-            
+
+            if (t == typeof (short) || t == typeof (Int16) || t == typeof (ushort) || t == typeof (short?) || t == typeof (ushort?))
+                return GetSmallIntDataType();
+
+            if (t == typeof (long) || t == typeof(ulong) || t == typeof(long?) || t == typeof(ulong?))
+                return GetBigIntDataType();
+
             if (t == typeof(bool) || t == typeof(bool?)) 
                 return GetBoolDataType();
             
@@ -45,8 +55,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             throw new NotSupportedException("Unsure what SQL Database type to use for Property Type " + t.Name);
 
         }
-
-
         protected virtual string GetByteArrayDataType()
         {
             return "varbinary(max)";
@@ -91,11 +99,21 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return "bit";
         }
 
+        protected string GetSmallIntDataType()
+        {
+            return "smallint";
+        }
+
         protected virtual string GetIntDataType()
         {
             return "int";
         }
         
+        protected virtual string GetBigIntDataType()
+        {
+            return "bigint";
+        }
+
         public Type GetCSharpTypeForSQLDBType(string sqlType)
         {
             if (IsFloatingPoint(sqlType))
@@ -122,22 +140,81 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (IsByteArray(sqlType))
                 return typeof (byte[]);
 
-                        throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
+            throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
         }
 
-        public DataTypeComputer GetDataTypeComputerFor(DiscoveredColumn discoveredColumn)
+        public virtual DatabaseTypeRequest GetDataTypeRequestForSQLDBType(string sqlType)
         {
-            var cSharpType = GetCSharpTypeForSQLDBType(discoveredColumn.DataType.SQLType);
-            Tuple<int, int> digits = discoveredColumn.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal();
-            int lengthIfString = discoveredColumn.DataType.GetLengthIfString();
+            var cSharpType = GetCSharpTypeForSQLDBType(sqlType);
 
-            if (cSharpType == typeof (DateTime))
+            Tuple<int, int> digits = GetDigitsBeforeAndAfterDecimalPointIfDecimal(sqlType);
+
+            int lengthIfString = GetLengthIfString(sqlType);
+
+            //lengthIfString should still be populated even for digits etc because it might be that we have to fallback from "1.2" which is decimal(2,1) to varchar(3) if we see "F" appearing
+            if (digits != null)
+                lengthIfString = Math.Max(lengthIfString, digits.Item1 + digits.Item2 + 1);
+
+            if (cSharpType == typeof(DateTime))
                 lengthIfString = GetStringLengthForDateTime();
 
             if (cSharpType == typeof(TimeSpan))
                 lengthIfString = GetStringLengthForTimeSpan();
+            
+            return new DatabaseTypeRequest(cSharpType,lengthIfString,digits);
+        }
 
-            return new DataTypeComputer(cSharpType,digits,lengthIfString);
+        public virtual DataTypeComputer GetDataTypeComputerFor(DiscoveredColumn discoveredColumn)
+        {
+            var reqType = GetDataTypeRequestForSQLDBType(discoveredColumn.DataType.SQLType);
+
+            return new DataTypeComputer(reqType.CSharpType, reqType.DecimalPlacesBeforeAndAfter, reqType.MaxWidthForStrings??-1);
+        }
+
+        public virtual int GetLengthIfString(string sqlType)
+        {
+            if (string.IsNullOrWhiteSpace(sqlType))
+                return -1;
+
+            if (sqlType.ToLower().Contains("(max)") || sqlType.ToLower().Equals("text"))
+                return int.MaxValue;
+
+            if (sqlType.ToLower().Contains("char"))
+            {
+                Match match = Regex.Match(sqlType, StringSizeRegexPattern);
+                if (match.Success)
+                    return int.Parse(match.Groups[1].Value);
+            }
+
+            return -1;
+        }
+
+        public Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType)
+        {
+            if (string.IsNullOrWhiteSpace(sqlType))
+                return null;
+
+            Match match = Regex.Match(sqlType, DecimalsBeforeAndAfterPattern);
+
+            if (match.Success)
+            {
+                int precision = int.Parse(match.Groups[1].Value);
+                int scale = int.Parse(match.Groups[2].Value);
+
+                return new Tuple<int, int>(precision - scale, scale);
+
+            }
+
+            return null;
+        }
+
+        public string TranslateSQLDBType(string sqlType, ITypeTranslater destinationTypeTranslater)
+        {
+            //e.g. data_type is datetime2 (i.e. Sql Server), this returns System.DateTime
+            DatabaseTypeRequest requested = GetDataTypeRequestForSQLDBType(sqlType);
+
+            //this then returns datetime (e.g. mysql)
+            return destinationTypeTranslater.GetSQLDBTypeForCSharpType(requested);
         }
 
 

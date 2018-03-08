@@ -40,33 +40,8 @@ namespace CatalogueManager.Collections
     /// The control shows the RDMP's table reference (TableInfo), this is a pointer to the specific database/tables/credentials used to access the data in the dataset at query
     /// time (e.g. when doing a project extraction).
     /// 
-    /// TableInfos are not just cached schema data, they are also the launch point for configuring Lookup relationships (See ConfigureLookups), Join logic (See ConfigureJoins),
+    /// TableInfos are not just cached schema data, they are also the launch point for configuring Lookup relationships (See LookupConfiguration), Join logic (See JoinConfiguration),
     /// Anonymisation etc.  
-    /// 
-    /// Right clicking on a TableInfo lets you:
-    /// 
-    /// DeleteTableInfo - This will delete the RDMP record of the table, this will result in MISSING columnInfo relationships if there is a Catalogue (dataset) which draws on this table.
-    ///   This is done so that you don't lose descriptive data and transforms / filters etc just because you deleted the reference to the underlying table).
-    /// 
-    /// Synchronize - Checks for differences between the RDMP's knowledge of the table schema and the actual table schema in your live data repository.  This will handle when you add 
-    /// new columns to your data repository.  Synchronization automatically happens at certain points e.g. before data is loaded.
-    ///  
-    /// View Extract - Lets you view the data in the underlying table in your repository
-    /// 
-    /// Create Shadow _Archive Table - Mirrors the functionality of Data Load Engine (See SHADOW ARCHIVE TABLES in UserManual.docx) but without having to build a full load on the table
-    /// 
-    /// Configure Primary Key Collision Resolution - Launches ConfigurePrimaryKeyCollisionResolution
-    /// 
-    /// Configure Discarded Columns - Launches ConfigurePreLoadDiscardedColumns
-    /// 
-    /// Configure ANOTables - Launches ConfigureANOForTableInfo
-    /// 
-    /// Configure Credentials - Launches ConfigureCredentialsForTableInfos
-    /// 
-    /// View Dependencies - Lists in graphical format all the RDMP objects (database records) that relate to this TableInfo all the way up to datasets (Catalogues), Loads etc in a huge
-    /// network diagram.
-    /// 
-    ///  Right Clicking a ColumnInfo also lets you View Extract, Delete and View Dependencies but also lets you launch the ConfigureLookups and ConfigureJoins dialogs
     /// </summary>
     public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
@@ -142,6 +117,7 @@ namespace CatalogueManager.Collections
         {
             _activator = activator;
             CommonFunctionality.SetUp(
+                RDMPCollection.Tables, 
                 tlvTableInfos,
                 activator,
                 olvColumn1,

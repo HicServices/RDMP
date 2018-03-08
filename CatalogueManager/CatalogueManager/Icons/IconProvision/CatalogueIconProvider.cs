@@ -61,7 +61,6 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new ExternalDatabaseServerStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new LoadStageNodeStateBasedIconProvider(this));
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
-            StateBasedIconProviders.Add(new HICProjectDirectoryStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
             
             _catalogueItemStateBasedIconProvider = new CatalogueItemStateBasedIconProvider(OverlayProvider);
@@ -204,7 +203,7 @@ namespace CatalogueManager.Icons.IconProvision
         /// <summary>
         /// Returns an image list dictionary with string keys that correspond to the names of all the RDMPConcept Enums.
         /// </summary>
-        /// <param name="addFavouritesOverlayKeysToo">Pass true to also generate Images for every concept with a star overlay with the key being EnumNameFavourite (where EnumName is the RDMPConcept name)</param>
+        /// <param name="addFavouritesOverlayKeysToo">Pass true to also generate Images for every concept with a star overlay with the key being EnumNameFavourite (where EnumName is the RDMPConcept name e.g. CatalogueFavourite for the icon RDMPConcept.Catalogue and the favourite star)</param>
         /// <returns></returns>
         public ImageList GetImageList(bool addFavouritesOverlayKeysToo)
         {

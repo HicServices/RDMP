@@ -40,52 +40,7 @@ namespace CatalogueManager.Collections
     /// 
     /// Pressing the Del key will prompt you to delete the selected item.
     /// 
-    /// The Right click menu for empty space includes:
-    /// 
-    ///     Create New Catalogue (creates an empty header record for a dataset - NOT ADVISED)
-    /// 
-    ///     Create New Catalogue by importing a flat file (Recommended method if you don't have a table already loaded in your database)
-    /// 
-    /// Right clicking a dataset lets you:
-    /// 
-    ///     View Extraction SQL - based on the CatalogueItems / ExtractionInformation configured the QueryBuilder will show you how it would execute SELECT queries against the dataset
-    /// 
-    ///     View Checks - Checks the integrity of the catalogue (does the extraction SQL actually work, is at least 1 row returned etc)
-    /// 
-    ///     Configure Lookups - Launches AdvancedLookupConfiguration
-    /// 
-    ///     ViewSupportingSQL - Launches SupportingSQLTableViewer
-    /// 
-    ///     View Supporting Documents - Launches SupportingDocumentsViewer
-    /// 
-    ///     View Issues - Launches ViewAllIssues
-    /// 
-    ///     View Issues All Catalogues - Same as above but for all issues in all datasets, not just the one right clicked
-    /// 
-    ///     Choose Time Cover Column - Lets you select a single extractable CatalogueItem (column/transform) as the time indicator for the dataset e.g. DatePrescriptionCollected
-    /// 
-    ///     Choose Pivot Category Column - Lets you select a single extractable CatalogueItem (column/transform) as a category indicator for the dataset e.g. Healthboard (make sure it doesn't
-    ///  have too many values!)
-    /// 
-    ///     Configure Aggregates - Launches AggregateManagement
-    /// 
-    ///     Configure Validation - Launches ValidationSetupForm
-    /// 
-    ///     Import Validation - Launches ImportValidationFromUnderlyingColumnInfos
-    /// 
-    ///     Configure Load Metadata - Launches SelectLoadMetadataOrCreateNewUI
-    /// 
-    ///     Disassociate Catalogue From Load Metadata - Unregisters the Catalogue from it's load logic (used if you no longer wish to load the underlying tables as part of that load)
-    /// 
-    ///     Configure Logging - Launches ChooseLoggingTaskDialog
-    /// 
-    ///     Clone Catalogue - Creates an exact copy of the (metadata only!) of a Catalogue... not sure why you would want to do this tbh
-    /// 
-    ///     Set Deprecated, Internal, Cold Storage status of the dataset
-    /// 
-    ///     Delete the Catalogue
-    /// 
-    ///     View Dependencies of the Catalogue - Launches DependencyGraph
+    /// By default Deprecated, Internal and ColdStorage Catalogues do not appear, you can turn visibility of these on by selecting the relevant tick boxes.
     /// 
     /// Finally you can launch 'Checking' for every dataset, this will attempt to verify the extraction SQL you
     /// have configured for each dataset and to ensure that it runs and that at least 1 row of data is returned.  Checking all the datasets can take a while so runs asynchronously.
@@ -310,6 +265,7 @@ namespace CatalogueManager.Collections
 
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonFunctionality.SetUp(
+                RDMPCollection.Catalogue,
                 tlvCatalogues,
                 _activator,
                 olvColumn1, //the icon column

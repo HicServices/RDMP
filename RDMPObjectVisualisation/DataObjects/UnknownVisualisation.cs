@@ -15,7 +15,7 @@ namespace RDMPObjectVisualisation.DataObjects
     /// 
     /// Double click the file to open it with your default application (e.g. xlsx would open in microsoft office).  Do not double click gigantic (1GB+) files as it is likely that your 
     /// default application (E.g. word/notepad) will struggle to open it.
-    //
+    ///
     /// </summary>
     public partial class UnknownObjectVisualisation : UserControl
     {

@@ -67,7 +67,7 @@ namespace CatalogueLibrary
         }
 
         /// <summary>
-        /// Encrypts using its PublicKey then returns a the encrypted byte[] as a string by using BitConverter.ToString()
+        /// Encrypts using its Public Key then returns a the encrypted byte[] as a string by using BitConverter.ToString()
         /// </summary>
         /// <returns></returns>
         public string Encrypt(string toEncrypt)
@@ -92,7 +92,6 @@ namespace CatalogueLibrary
         /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
         /// </summary>
         /// <param name="toDecrypt"></param>
-        /// <param name="encoding"></param>
         /// <returns></returns>
         public string Decrypt(string toDecrypt)
         {

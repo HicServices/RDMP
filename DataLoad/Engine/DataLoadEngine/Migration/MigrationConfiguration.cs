@@ -14,15 +14,15 @@ namespace DataLoadEngine.Migration
     public class MigrationConfiguration
     {
         private readonly DiscoveredDatabase _fromDatabaseInfo;
-        private readonly LoadBubble _fromDatabaseTableNamingConvention;
-        private readonly LoadBubble _toDatabaseTableNamingConvention;
+        private readonly LoadBubble _fromBubble;
+        private readonly LoadBubble _toBubble;
         private readonly INameDatabasesAndTablesDuringLoads _namer;
 
-        public MigrationConfiguration(DiscoveredDatabase fromDatabaseInfo, LoadBubble fromDatabaseTableNamingConvention, LoadBubble toDatabaseTableNamingConvention, INameDatabasesAndTablesDuringLoads namer)
+        public MigrationConfiguration(DiscoveredDatabase fromDatabaseInfo, LoadBubble fromBubble, LoadBubble toBubble, INameDatabasesAndTablesDuringLoads namer)
         {
             _fromDatabaseInfo = fromDatabaseInfo;
-            _fromDatabaseTableNamingConvention = fromDatabaseTableNamingConvention;
-            _toDatabaseTableNamingConvention = toDatabaseTableNamingConvention;
+            _fromBubble = fromBubble;
+            _toBubble = toBubble;
             _namer = namer;
         }
 
@@ -36,8 +36,8 @@ namespace DataLoadEngine.Migration
 
             foreach (var tableInfo in tableInfos.Union(lookupTableInfos))
             {
-                var fromTableName = tableInfo.GetRuntimeNameFor(_namer, _fromDatabaseTableNamingConvention);
-                var toTableName = tableInfo.GetRuntimeNameFor(_namer, _toDatabaseTableNamingConvention);
+                var fromTableName = tableInfo.GetRuntimeName(_fromBubble, _namer);
+                var toTableName = tableInfo.GetRuntimeName(_toBubble, _namer);
 
                 DiscoveredTable fromTable = _fromDatabaseInfo.ExpectTable(fromTableName);
                 DiscoveredTable toTable = DataAccessPortal.GetInstance()

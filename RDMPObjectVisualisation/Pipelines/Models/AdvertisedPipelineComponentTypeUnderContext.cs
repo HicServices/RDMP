@@ -11,7 +11,7 @@ using RDMPObjectVisualisation.DataObjects;
 namespace RDMPObjectVisualisation.Pipelines.Models
 {
     /// <summary>
-    /// Describes an IDataFlowComonent which may or may not be compatible with a specific DataFlowPipelineContext.  It describes how/if it's requirements conflict with the context
+    /// Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It describes how/if it's requirements conflict with the context
     /// e.g. a DelimitedDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is not available.
     /// </summary>
     /// <typeparam name="T"></typeparam>

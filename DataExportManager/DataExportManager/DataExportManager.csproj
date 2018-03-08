@@ -163,6 +163,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -323,8 +324,10 @@
     </Compile>
     <Compile Include="Collections\Nodes\AllCohortsNode.cs" />
     <Compile Include="Collections\Nodes\ExtractionConfigurationsNode.cs" />
-    <Compile Include="Collections\Nodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
-    <Compile Include="Collections\Nodes\ProjectSavedCohortsNode.cs" />
+    <Compile Include="Collections\Nodes\FrozenExtractionConfigurationsNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
+    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
     <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
@@ -370,10 +373,8 @@
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />
-    <Compile Include="Collections\Providers\DataExportTextFormatProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableDataSetStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractionConfigurationStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ProjectStateBasedIconProvider.cs" />
     <Compile Include="DataRelease\CleanupConfirmationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -409,6 +410,7 @@
     <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
     <Compile Include="Menus\CustomDataTableNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportPatientIndexTableAsCustomData.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />

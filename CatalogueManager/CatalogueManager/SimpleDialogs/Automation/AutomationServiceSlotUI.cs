@@ -29,8 +29,8 @@ namespace CatalogueManager.SimpleDialogs.Automation
     /// prevent new jobs starting.
     /// 
     /// Changing the 'Failure Strategy' controls how the automation service reacts to one of the async jobs crashing, if it is TryNext then it will leave the job in a crashed state and start the
-    /// next job (if less than the 'Maximum Concurrent Jobs' for that category).  Crashed jobs have to be manually resolved and deleted via AutomationJobUI in the Dashboard, until this time they
-    /// still count towards the number of 'currently executing jobs'.  
+    /// next job (if less than the 'Maximum Concurrent Jobs' for that category).  Crashed jobs have to be manually resolved and deleted via AutomationServerMonitorUI in the Dashboard, until this
+    /// time they still count towards the number of 'currently executing jobs'.  
     /// 
     /// If the strategy is 'Stop' then no new jobs will be started while there is at least 1 outstanding crashed job in a category (e.g. DQE).
     /// </summary>

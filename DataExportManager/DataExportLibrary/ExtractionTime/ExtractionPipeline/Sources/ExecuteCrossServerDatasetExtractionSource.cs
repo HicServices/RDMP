@@ -10,6 +10,7 @@ using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -128,7 +129,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         {
             if(_server == null)
             {
-                _server = Request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+                //it's a legit dataset being extracted?
+                if (Request != null)
+                    _server = Request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+                else
+                    //no... assume it's custom data!
+                    _server = DataAccessPortal.GetInstance().ExpectServer(_customTableRequest.ExtractableCohort.ExternalCohortTable, DataAccessContext.DataExport, false);
 
                 //expect a database called called tempdb
                 _tempDb = _server.ExpectDatabase(TemporaryDatabaseName);
@@ -147,7 +153,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             try
             {
-               cohortDataTable = Request.ExtractableCohort.FetchEntireCohort();
+                IExtractableCohort cohort = Request != null
+                    ? Request.ExtractableCohort
+                    : _customTableRequest.ExtractableCohort;
+
+                cohortDataTable = cohort.FetchEntireCohort();
             }
             catch (Exception e)
             {

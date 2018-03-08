@@ -33,7 +33,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         public  ExtractDatasetCommand Request { get; protected set; }
 
         //or one of these
-        private ExtractCohortCustomTableCommand _customTablePair;
+        protected ExtractCohortCustomTableCommand _customTableRequest;
         private bool _customTablePairDataSent = false;
 
         public const string AuditTaskName = "DataExtraction";
@@ -124,7 +124,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (_customTablePair != null)
+            if (_customTableRequest != null)
                 return _customTablePairDataSent ? null : SendCustomTableData(listener);
             
             if (Request == null)
@@ -276,22 +276,22 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             _customTablePairDataSent = true;
             try
             {
-                var sql = _customTablePair.ExtractableCohort.GetCustomTableExtractionSQL(_customTablePair.TableName);
+                var sql = _customTableRequest.ExtractableCohort.GetCustomTableExtractionSQL(_customTableRequest.TableName);
 
-                using (var con = _customTablePair.ExtractableCohort.GetDatabaseServer().Server.GetConnection())
+                using (var con = _customTableRequest.ExtractableCohort.GetDatabaseServer().Server.GetConnection())
                 {
                     con.Open();
                     var dt = new DataTable();
                     var cmd = DatabaseCommandHelper.GetCommand(sql, con);
                     DatabaseCommandHelper.GetDataAdapter(cmd).Fill(dt);
 
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Read "+dt.Rows.Count+" rows from custom table " + _customTablePair.TableName));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Read "+dt.Rows.Count+" rows from custom table " + _customTableRequest.TableName));
                     return dt;
                 }
             }
             catch (Exception e)
             {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,"Failed to extract custom table " + _customTablePair.TableName,e));
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,"Failed to extract custom table " + _customTableRequest.TableName,e));
                 throw;
             }
         }
@@ -420,7 +420,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             if (value is ExtractDatasetCommand)
                 Initialize(value as ExtractDatasetCommand);
             else
-                _customTablePair = value as ExtractCohortCustomTableCommand;
+                _customTableRequest = value as ExtractCohortCustomTableCommand;
         }
         
         public virtual void Check(ICheckNotifier notifier)

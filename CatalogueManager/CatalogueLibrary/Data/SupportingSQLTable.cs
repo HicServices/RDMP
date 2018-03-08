@@ -127,7 +127,7 @@ namespace CatalogueLibrary.Data
         
         /// <summary>
         /// Returns the decrypted connection string you can use to access the data (fetched from ExternalDatabaseServer_ID - which can be null).  If there is no 
-        /// ExternalDatabaseServer_ID associated with the SupportingSqlTable then a NotSupportedException will be thrown
+        /// ExternalDatabaseServer_ID associated with the SupportingSQLTable then a NotSupportedException will be thrown
         /// </summary>
         /// <returns></returns>
         public DiscoveredServer GetServer()

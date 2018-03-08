@@ -9,7 +9,7 @@ using CatalogueLibrary.Data.Aggregation;
 namespace CatalogueLibrary.Nodes
 {
     /// <summary>
-    /// Container tree node for all the AggregateConfigurations in a Catalogue that are involved in CohortCreation.
+    /// Container tree node for all the AggregateConfigurations in a Catalogue that ARE involved in cohort creation (IsCohortIdentificationAggregate).
     /// </summary>
     public class CohortSetsNode
     {

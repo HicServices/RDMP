@@ -26,6 +26,7 @@ using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Repositories;
 using DataExportManager.Collections.Nodes;
+using DataExportManager.Collections.Nodes.ProjectCohortNodes;
 using DataExportManager.Collections.Nodes.UsedByProject;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -81,35 +82,14 @@ namespace DataExportManager.Collections
     public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         private IActivateItems _activator;
-        private DataExportProblemProvider _problemProvider;
-        private DataExportChildProvider _childProvider;
-        
+
         public DataExportCollectionUI()
         {
             InitializeComponent();
             
-            tlvDataExport.CellToolTipGetter = CellToolTipGetter;
             olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
         }
-
-
-        private string CellToolTipGetter(OLVColumn column, object modelObject)
-        {
-            if (_problemProvider == null)
-                return null;
-
-            var project = modelObject as Project;
-            var config = modelObject as ExtractionConfiguration;
-
-            if (project != null && _problemProvider.HasProblems(project))
-                return  _problemProvider.DescribeProblem(project);
-
-            if (config != null && _problemProvider.HasProblems(config))
-                return _problemProvider.DescribeProblem(config);
-
-            return null;
-        }
-
+        
         private object ProjectNumberAspectGetter(object rowObject)
         {
             var p = rowObject as Project;
@@ -125,56 +105,48 @@ namespace DataExportManager.Collections
             _activator = activator;
 
             CommonFunctionality.SetUp(
+                RDMPCollection.DataExport, 
                 tlvDataExport,
                 _activator,
                 olvName,
                 olvName
                 );
+
             CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewDataExtractionProject(activator),
                 new ExecuteCommandCreateNewExtractableDataSetPackage(activator)
             };
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-            RefreshProviders();
+            _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             CommonFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};
 
-            tlvDataExport.AddObjects(_childProvider.AllPackages);
-            tlvDataExport.AddObjects(_childProvider.Projects);
+            var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
+
+            if(dataExportChildProvider != null)
+            {
+                tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
+                tlvDataExport.AddObjects(dataExportChildProvider.Projects);
+            }
             
             NavigateToObjectUI.RecordThatTypeIsNotAUsefulParentToShow(typeof(ProjectCohortIdentificationConfigurationAssociationsNode));
-
         }
         
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            //always update the child providers etc
-            RefreshProviders();
+            var dataExportChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
 
             //Objects can appear multiple times in this tree view but thats not allowed by ObjectListView (for good reasons!).  So instead we wrap the duplicate object
             //with a UsedByProjectNode class which encapsulates the object being used (e.g. the cohort) but also the Project.  Now that solves the HashCode problem but
             //it doesn't solve the refresh problem where we get told to refresh the ExtractableCohort but we miss out the project users.  So let's refresh them now.
-            if(_childProvider != null)
+            if (dataExportChildProvider != null)
             {
-                foreach (IObjectUsedByProjectNode user in _childProvider.DuplicateObjectsButUsedByProjects.Where(d => d.ObjectBeingUsed.Equals(e.Object)).ToArray())
+                foreach (IObjectUsedByProjectNode user in dataExportChildProvider.DuplicateObjectsButUsedByProjects.Where(d => d.ObjectBeingUsed.Equals(e.Object)).ToArray())
                     tlvDataExport.RefreshObject(user.Project);//refresh the entire Project
 
-                foreach (ProjectCohortIdentificationConfigurationAssociation assoc in _childProvider.AllProjectAssociatedCics.Where(d => d.GetCohortIdentificationConfigurationCached().Equals(e.Object)).ToArray())
+                foreach (ProjectCohortIdentificationConfigurationAssociation assoc in dataExportChildProvider.AllProjectAssociatedCics.Where(d => d.GetCohortIdentificationConfigurationCached().Equals(e.Object)).ToArray())
                     tlvDataExport.RefreshObject(assoc.Project);//refresh linked cic
-            }
-        }
-
-
-        private void RefreshProviders()
-        {
-            _childProvider = _activator.CoreChildProvider as DataExportChildProvider;
-
-            if (_childProvider != null)
-            {
-                _problemProvider = new DataExportProblemProvider(_childProvider);
-                _problemProvider.FindProblems();
             }
         }
 
@@ -189,8 +161,9 @@ namespace DataExportManager.Collections
                 if (linkedCohortNode != null)
                     linkedCohortNode.DeleteWithConfirmation(_activator);
 
+                
                 if (packageContentNode != null)
-                    packageContentNode.DeleteWithConfirmation(_activator,_childProvider);
+                    packageContentNode.DeleteWithConfirmation(_activator, (DataExportChildProvider)_activator.CoreChildProvider);
             }
         }
 

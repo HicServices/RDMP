@@ -75,7 +75,7 @@ namespace DataExportLibrary.CohortDescribing
             {
                 ReleaseIdentifier = cohort.GetReleaseIdentifier();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ReleaseIdentifier = "Unknown";
             }
@@ -86,7 +86,7 @@ namespace DataExportLibrary.CohortDescribing
             {
                 PrivateIdentifier = cohort.GetPrivateIdentifier();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 PrivateIdentifier = "Unknown";
             }
@@ -123,7 +123,7 @@ namespace DataExportLibrary.CohortDescribing
             {
                 ReleaseIdentifier = cohort.GetReleaseIdentifier(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ReleaseIdentifier = "Unknown";
             }
@@ -134,7 +134,7 @@ namespace DataExportLibrary.CohortDescribing
             {
                 PrivateIdentifier = cohort.GetPrivateIdentifier(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 PrivateIdentifier = "Unknown";
             }

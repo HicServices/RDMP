@@ -33,11 +33,14 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         IExternalCohortDefinitionData GetExternalData();
         void DeleteCustomData(string tableName);
         string GetPrivateIdentifierDataType();
+        string GetReleaseIdentifierDataType();
+
         void RecordNewCustomTable(DiscoveredServer server, string tableName, DbConnection con, DbTransaction transaction);
         IEnumerable<string> GetCustomTableNames();
         IEnumerable<string> GetCustomTableExtractionSQLs();
         string GetCustomTableExtractionSQL(string customTable,bool top100 =false);
         DiscoveredDatabase GetDatabaseServer();
         void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener, bool allowCaching);
+        
     }
 }

@@ -423,6 +423,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CohortCustomColumn {
+            get {
+                object obj = ResourceManager.GetObject("CohortCustomColumn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CohortIdentificationConfiguration {
             get {
                 object obj = ResourceManager.GetObject("CohortIdentificationConfiguration", resourceCulture);
@@ -713,6 +723,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ExtractableColumn {
+            get {
+                object obj = ResourceManager.GetObject("ExtractableColumn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap ExtractableDataSet {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSet", resourceCulture);
@@ -886,6 +906,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap FrozenExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("FrozenExtractionConfiguration", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap FrozenExtractionConfigurationsNode {
+            get {
+                object obj = ResourceManager.GetObject("FrozenExtractionConfigurationsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1246,6 +1276,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap ProjectCohortIdentificationConfigurationAssociationsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectCohortsNode {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCohortsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

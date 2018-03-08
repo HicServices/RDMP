@@ -70,6 +70,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <NoWarn>1591,1573,1570,1587,1584</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -357,6 +358,7 @@
     <Compile Include="CommandExecution\ICommand.cs" />
     <Compile Include="CommandExecution\ICommandExecution.cs" />
     <Compile Include="CommandExecution\ICommandSource.cs" />
+    <Compile Include="CommandExecution\ImpossibleCommand.cs" />
     <Compile Include="DataAccess\DataAccessContext.cs" />
     <Compile Include="DataAccess\DataAccessPortal.cs" />
     <Compile Include="DataAccess\IDataAccessCredentials.cs" />
@@ -382,6 +384,10 @@
     <Compile Include="DatabaseHelpers\Discovery\IMightNotExist.cs" />
     <Compile Include="DatabaseHelpers\Discovery\IDiscoveredColumnHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\Aggregation\MicrosoftSQLAggregateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\Microsoft\Update\MicrosoftSQLUpdateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\MySql\Update\MySqlUpdateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\Oracle\Update\OracleUpdateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Update\UpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\Aggregation\MySqlAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\Aggregation\OracleAggregateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleTypeTranslater.cs" />
@@ -411,6 +417,7 @@
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleServerHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleTableHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntaxHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\Update\IUpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QueryComponent.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QuerySyntaxHelperFactory.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\TopXResponse.cs" />
@@ -451,6 +458,7 @@
     <Compile Include="Progress\ForkDataLoadEventListener.cs" />
     <Compile Include="Progress\FromDataLoadEventListenerToCheckNotifier.cs" />
     <Compile Include="Progress\FromDataLoadEventListenerToILog.cs" />
+    <Compile Include="Progress\FromILogToDataLoadEventListener.cs" />
     <Compile Include="Progress\ToMemoryDataLoadEventListener.cs" />
     <Compile Include="Progress\FromCheckNotifierToDataLoadEventListener.cs" />
     <Compile Include="Progress\ThrowImmediatelyDataLoadEventListener.cs" />

@@ -3,8 +3,8 @@ using ReusableLibraryCode.Progress;
 namespace CatalogueLibrary.DataFlowPipeline.Requirements
 {
     /// <summary>
-    /// Used to model Runtime initialization.  IDataFlowComponents which implement this interface (you can implement for multiple T) will be Initialized with a compatible InitializationObject
-    /// available in the IPipelineUseCase.
+    /// Used to model Runtime initialization.  IDataFlowComponents which implement this interface (you can implement for multiple T) will be Initialized with a compatible Initialization
+    ///  Object available in the IPipelineUseCase.
     /// 
     /// It specifies that an IDataFlowComponent or IDataFlowSource requires a particular object at execution time to function properly e.g.  a source which extractes linked data
     /// for a cohort might require an ExtractionRequest object (which must be provided by the hosting environment).  You can only currently have 1 object of each type.  
@@ -17,8 +17,8 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
     public interface IPipelineRequirement<in T>
     {
         /// <summary>
-        /// Initializes your object with some object of type T that corresponds to the usage context you are about to be executed under.  You can implement multiple copies of this interface
-        /// if you need for example an ExtractionRequest and an AuditObject and a EmailAddressOfAuthorizor or something.
+        /// Initializes your object with some object of type T that corresponds to the usage context you are about to be executed under.  You can implement multiple copies of this 
+        /// interface if you need for example an ExtractionRequest and an AuditObject and a EmailAddressOfAuthorizor or something.
         /// 
         /// IMPORTANT: You might be being checked and not actually run so when implementing this method you should not make any system changes or advanced auditing stuff.
         /// </summary>

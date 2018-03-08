@@ -87,6 +87,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -376,6 +377,7 @@
     <Compile Include="Integration\Cache\TestDataInventor.cs" />
     <Compile Include="Integration\Cache\TestDataWriterChunk.cs" />
     <Compile Include="Integration\CheckingTests\ProcessTaskCheckingTests.cs" />
+    <Compile Include="Integration\CoalescerTests.cs" />
     <Compile Include="Integration\DatabaseClonerTests.cs" />
     <Compile Include="Integration\DataLoadProgressUpdateInfoTests.cs" />
     <Compile Include="Integration\DataTableUploadDestinationTests.cs" />
@@ -387,6 +389,7 @@
     <Compile Include="Integration\ImportFilesDataProviderTests.cs" />
     <Compile Include="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
     <Compile Include="Integration\KVPAttacherTest.cs" />
+    <Compile Include="Integration\PayloadTest.cs" />
     <Compile Include="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\TransposerTests.cs" />

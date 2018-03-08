@@ -14,7 +14,7 @@ using MapsDirectlyToDatabaseTable;
 namespace CatalogueManager.LocationsMenu.LocationAdjustment
 {
     /// <summary>
-    /// Used in LocationAdjuster which is a tool for performing mass find/replace on file paths in the RDMP database across all tables.  For full details see LocationAdjuster documentation.
+    /// Used in LocationsAdjuster which is a tool for performing mass find/replace on file paths in the RDMP database across all tables.  For full details see LocationsAdjuster documentation.
     /// This component is a collection of all the cells in a given column which has been marked as adjustable (that means it is likely to contain lots of file paths the user may wish to 
     /// do Find/Replace on).  For each object/row which has a value in this column, a LocationAdjustableObjectUI control will appear (See LocationAdjustableObjectUI) for documentation.
     /// 

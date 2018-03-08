@@ -20,7 +20,6 @@ namespace RDMPAutomationService
         private RDMPAutomationLoop host;
 
         private readonly Action<EventLogEntryType, string> logAction;
-        private readonly Timer timer;
         private bool hostStarted;
 
         public AutoRDMP()

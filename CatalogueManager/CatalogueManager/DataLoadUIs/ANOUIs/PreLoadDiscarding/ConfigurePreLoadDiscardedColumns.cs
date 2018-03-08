@@ -41,7 +41,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
     /// USING WINDOW:
     /// Before using the form, make sure you have configured at least one IdentifierDump server.  This can be done through ManageExternalServers.  Select the Identifier Dump Server. 
     /// Next create some PreLoadDiscardedColumn(s) that correspond to supplied fields you do not want to go through to your live database during data load.  Each column must have a
-    /// name and SQLDataType that matches what you are trying to load.  
+    /// name and SqlDataType that matches what you are trying to load.  
     /// 
     /// If you already have a data table and you want to drop some of the columns from it then you can paste in a list of column names and any that match known columns will automatically 
     /// get created as the appropriate datatype/name.  After doing that you will have to manually drop the columns yourself on your server though.

@@ -36,6 +36,9 @@ namespace CatalogueLibrary.Data.Aggregation
     /// 
     /// The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
     /// AggregateConfiguration is. 
+    /// 
+    /// If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
+    /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).
     /// </summary>
     public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters,INamed,IHasDependencies
     {
@@ -48,7 +51,6 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _pivotOnDimensionID;
         private bool _isExtractable;
         private string _havingSQL;
-        private int? _topX_ID;
 
 
         public string CountSQL
@@ -382,7 +384,7 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _overrideFiltersByUsingParentAggregateConfigurationInsteadID;
         private int? _rootFilterContainerID;
         
-        private bool orderFetchAttempted = false;
+        private bool orderFetchAttempted;
         
 
 
@@ -530,8 +532,8 @@ namespace CatalogueLibrary.Data.Aggregation
             return dependers.ToArray();
         }
 
-        private JoinableCohortAggregateConfiguration _cachedJoinable = null;
-        private bool _databaseLookupPerformed = false;
+        private JoinableCohortAggregateConfiguration _cachedJoinable;
+        private bool _databaseLookupPerformed;
         /// <summary>
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
         /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 

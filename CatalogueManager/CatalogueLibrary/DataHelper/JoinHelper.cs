@@ -16,9 +16,6 @@ namespace CatalogueLibrary.DataHelper
         /// create one ( note that this method will not let you view Supplemental joins, these require 
         /// GetJoinSQL(IJoin) to be used instead
         /// </summary>
-        /// <param name="ForeignKey"></param>
-        /// <param name="JoinKey2"></param>
-        /// <param name="type"></param>
         /// <returns></returns>
         public static string GetJoinSQL(ColumnInfo ForeignKey, ColumnInfo PrimaryKey, ExtractionJoinType? type, string Collation)
         {

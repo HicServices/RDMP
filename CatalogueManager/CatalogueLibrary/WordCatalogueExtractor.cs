@@ -76,7 +76,6 @@ namespace CatalogueLibrary
         /// 
         /// </summary>
         /// <param name="cataItems">The CatalogueItems you want to write out ( should all belong to the same Catalogue) but may be a subset of the whole Catalogue e.g. those columns that were actualy extracted</param>
-        /// <param name="tableStyle">A word style for the table format</param>
         /// <param name="supplementalData">A bunch of key value pairs (Tuple actually) that accompany a CatalogueItem and should be rammed into the table as it is written out, this could contain information only determined at runtime e.g. not part of the Catalogue</param>
         public void AddMetaDataForColumns(CatalogueItem[] cataItems, Dictionary<CatalogueItem, Tuple<string, string>[]> supplementalData = null)
         {

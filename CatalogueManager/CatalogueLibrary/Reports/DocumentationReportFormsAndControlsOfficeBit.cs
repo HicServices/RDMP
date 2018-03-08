@@ -8,6 +8,8 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
+using System.Xml.Linq;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 using Xceed.Words.NET;
@@ -26,7 +28,7 @@ namespace CatalogueLibrary.Reports
     {
         private Dictionary<string, Bitmap> _wordImageDictionary;
 
-        public void GenerateReport(ICheckNotifier notifier, Dictionary<string, List<Type>> formsAndControlsByApplication, RequestTypeImagesHandler imageFetcher, Dictionary<string, Bitmap> wordImageDictionary)
+        public void GenerateReport(ICheckNotifier notifier, Dictionary<string, List<Type>> formsAndControlsByApplication, RequestTypeImagesHandler imageFetcher, Dictionary<string, Bitmap> wordImageDictionary, Dictionary<string, Bitmap> icons)
         {
             _wordImageDictionary = wordImageDictionary;
             try
@@ -37,6 +39,9 @@ namespace CatalogueLibrary.Reports
                 {
                     InsertHeader(document,"User Interfaces");
 
+                    //all type names
+                    var headers = new HashSet<string>(formsAndControlsByApplication.SelectMany(v => v.Value).Select(t => t.Name));
+                    
                     foreach (var kvp in formsAndControlsByApplication)
                     {
                         if (!kvp.Value.Any())
@@ -58,7 +63,7 @@ namespace CatalogueLibrary.Reports
                             if (img != null)
                                 InsertPicture(document, img);
 
-                            InsertParagraph(document,report.Summaries[keys[i]]);
+                            InsertBodyText(document, headers, report.Summaries[keys[i]], icons);
                         }
                     }
 
@@ -66,6 +71,7 @@ namespace CatalogueLibrary.Reports
 
                     document.Save();
                     ShowFile(f);
+
                 }
             }
             catch (Exception e)
@@ -74,84 +80,76 @@ namespace CatalogueLibrary.Reports
             }
         }
 
+        private void InsertBodyText(DocX document,HashSet<string> headers, string s, Dictionary<string, Bitmap> icons)
+        {
+            var p = document.InsertParagraph();
+            
+            foreach (var word in s.Split(' '))
+            {
+                if (headers.Contains(word))
+                {
+                    var hyper = p.Append("");
+                    AddCrossReference(document, hyper, word);
+                    hyper.StyleName = "Strong";
+                }
+                else
+                    p.Append(word);
+
+                p.Append(" ");
+
+                if (GetIconKeyForWordIfAny(word, icons) != null)
+                    AddImage(document,p,icons,word);
+            }
+        }
+
+        private string GetIconKeyForWordIfAny(string word, Dictionary<string, Bitmap> icons)
+        {
+            var exactMatch = icons.Keys.SingleOrDefault(k => k.Equals(word, StringComparison.CurrentCultureIgnoreCase));
+
+            if (exactMatch != null)
+                return exactMatch;
+
+            if(word.Length > 1 && word.EndsWith("s"))
+            {
+                var nonPlural = word.Substring(0, word.Length - 1);
+                return icons.Keys.SingleOrDefault(k => k.Equals(nonPlural, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            //no compatible icon
+            return null;
+        }
+
+        private void AddImage(DocX document, Paragraph p, Dictionary<string, Bitmap> icons, string word)
+        {
+            p.Append("(");
+            var pict = GetPicture(document, icons[GetIconKeyForWordIfAny(word, icons)]);
+            p.AppendPicture(pict);
+            p.Append(") ");
+        }
+
 
         private void AddBookmarks(DocX doc)
         {
-            /*
-            object headers_r = doc.GetCrossReferenceItems(WdReferenceType.wdRefTypeHeading);
-            Array headers = ((Array)(headers_r));
+            var headers = doc.Paragraphs.Where(p => p.StyleName != null && p.StyleName.StartsWith("Heading")).ToArray();
             
-            string text = doc.Content.Text;
-
-            string[] lines = text.Split('\r');
-
-            int lineStart = 0;
-            
-            Regex splitByWord = new Regex("\\b");
-            
-            WordHelper helper = new WordHelper(wrdApp);
-
-            //find all references to headers
-            foreach (string line in lines)
+            //make each header a bookmark
+            foreach (var header in headers)
             {
-                string[] words = splitByWord.Split(line);
+                string h = header.Text;
+                header.AppendBookmark(h);
+            }
+        }
 
-                int wordStart = 0;
-
-                foreach (string word in words)
-                {
-                    bool imageAdded = false;
-                    Bitmap img = null;
-
-                    if (_wordImageDictionary.ContainsKey(word))
-                        img = _wordImageDictionary[word];
-                    else if (_wordImageDictionary.ContainsKey(word.TrimEnd(new[] {'s'})))
-                        img = _wordImageDictionary[word.TrimEnd(new[] {'s'})];
-
-                    if (img != null && 
-                        
-                        //not
-                        !(
-                        //things we don't want to highlight
-                        string.Equals(word, "sql", StringComparison.CurrentCultureIgnoreCase) ||
-                        string.Equals(word, "AggregateGraph", StringComparison.CurrentCultureIgnoreCase)))
-                    {
-                        Range range = doc.Range(lineStart + wordStart + word.Length , lineStart + wordStart + word.Length);
-
-                        helper.WriteImage(img,doc,false,range);
-                        imageAdded = true;
-                    }
-
-                    //word is a reference to another class
-                    for(int i=1;i<=headers.Length;i++)
-                    {
-                        string s = (string)headers.GetValue(i);
-
-                        //if one word in the paragraph matches a header (but it is not a header itself i.e. the entire line doesnt match)
-                        if(s.Trim().Equals(word) && !s.Trim().Equals(line))
-                        {
-                            //select the word
-                            Range range = doc.Range(lineStart + wordStart, lineStart + wordStart + word.Length);
-                            range.Select();
-                            range.InsertCrossReference(WdReferenceType.wdRefTypeHeading, WdReferenceKind.wdContentText,i,true);
-
-                            lineStart += @" { REF _Ref123456789 \h } ".Length;
-
-                            var range2 = doc.Range(lineStart + wordStart-1, lineStart + wordStart + word.Length);
-                            range2.Select();
-                            range2.Font.Color = WdColor.wdColorBlue;
-                        }
-                    }
-
-                    if(imageAdded)
-                        lineStart += 1;
-                    
-                    wordStart += word.Length;   
-                }
-
-                //adjust start
-                lineStart += line.Length + 1;//+1 for the \r we stripped out
-            }*/
+        internal void AddCrossReference(DocX doc, Paragraph p, string destination)
+        {
+            XNamespace ns = doc.Xml.Name.NamespaceName;
+            XNamespace xmlSpace = doc.Xml.GetNamespaceOfPrefix("xml");
+            p = p.Append("");
+            p.Xml.Add(new XElement(ns + "r", new XElement(ns + "fldChar", new XAttribute(ns + "fldCharType", "begin"))));
+            p.Xml.Add(new XElement(ns + "r", new XElement(ns + "instrText", new XAttribute(xmlSpace + "space", "preserve"), String.Format(" PAGEREF {0} \\h ", destination))));
+            p.Xml.Add(new XElement(ns + "r", new XElement(ns + "fldChar", new XAttribute(ns + "fldCharType", "separate"))));
+            p.Xml.Add(new XElement(ns + "r", new XElement(ns + "rPr", new XElement(ns + "noProof")), new XElement(ns + "t", destination)));
+            p.Xml.Add(new XElement(ns + "r", new XElement(ns + "fldChar", new XAttribute(ns + "fldCharType", "end"))));
         }
     }
 }

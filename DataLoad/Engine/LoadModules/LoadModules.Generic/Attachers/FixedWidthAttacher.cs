@@ -21,7 +21,7 @@ namespace LoadModules.Generic.Attachers
     /// such a file all lines should be equal length and whitespace should be included in field values to ensure this.  Fixed width files are common in ancient
     /// lab systems and places where large volumes of data are outputted.
     /// 
-    /// To use this attacher you will need a FormatFile which describes the length/type of each field (See FixedWidthFormatFile).
+    /// To use this attacher you will need a 'FormatFile' which describes the length/type of each field (See FixedWidthFormatFile).
     /// </summary>
     [Description(
         "Populates a data table using the given flat file.  The flat file will have columns of fixed width.  The width of the file MUST match exactly the width of the data table being loaded - although the table may contain varchar columns in which case the max width specified on the varchar will be assumed as the width of the flat file column e.g. varchar(5) will be mapped to column width of 5"
@@ -56,14 +56,13 @@ namespace LoadModules.Generic.Attachers
                             string.Join(",", loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName)) + ")")); 
         }
 
-        private bool bHaveAlreadySubmittedData = false;
+        private bool bHaveAlreadySubmittedData;
         
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="destination"></param>
-        /// <param name="reader"></param>
         /// <param name="maxBatchSize"></param>
         /// <returns></returns>
         protected override int IterativelyBatchLoadDataIntoDataTable(DataTable destination, int maxBatchSize)

@@ -73,6 +73,26 @@ namespace ReusableUIComponents {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap KeyboardKey {
+            get {
+                object obj = ResourceManager.GetObject("KeyboardKey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap KeyboardKeySpace {
+            get {
+                object obj = ResourceManager.GetObject("KeyboardKeySpace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap LoadIcon {
             get {
                 object obj = ResourceManager.GetObject("LoadIcon", resourceCulture);

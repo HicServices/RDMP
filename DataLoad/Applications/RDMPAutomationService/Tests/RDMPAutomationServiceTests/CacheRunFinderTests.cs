@@ -16,6 +16,7 @@ using DataLoadEngineTests.Integration.PipelineTests;
 using NUnit.Framework;
 using RDMPAutomationService.Logic.Cache;
 using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace RDMPAutomationServiceTests
@@ -101,7 +102,7 @@ namespace RDMPAutomationServiceTests
             _cp.DeleteInDatabase();
             _cp = null;//tell teardown not to delete it
 
-            Assert.IsNull(new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+            Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
 
         }
 
@@ -109,7 +110,7 @@ namespace RDMPAutomationServiceTests
         public void SuggestCache_NoCatalogues()
         {
             //Shouldn't suggest anything because although there is a cache there aren't any catalogues associated with it
-            Assert.IsNull(new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+            Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
 
         [Test]
@@ -120,7 +121,7 @@ namespace RDMPAutomationServiceTests
             _cata.SaveToDatabase();
 
             //Catalogue exists and origin is known for dataset and no cache progress has yet been made
-            Assert.AreEqual(_cp,new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+            Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
 
 
@@ -136,7 +137,7 @@ namespace RDMPAutomationServiceTests
             _lp.SaveToDatabase();
 
             //shouldn't get suggested because we don't know the dates to cache from
-            Assert.IsNull(new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+            Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
 
         [Test]
@@ -147,12 +148,12 @@ namespace RDMPAutomationServiceTests
             _cata.SaveToDatabase();
 
             //Catalogue is not locked so should be suggesting this cache
-            Assert.AreEqual(_cp,new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+            Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
                 
             _job.LockCatalogues(new[] {_cata});
 
             //Catalogue is locked so shouldn't be suggesting this cache
-            Assert.IsNull(new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+            Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
 
         [Test]
@@ -166,7 +167,7 @@ namespace RDMPAutomationServiceTests
             _cp.SaveToDatabase();
 
             //There is no pipleline configured so caching cannot run
-            Assert.IsNull(new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+            Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
 
         [Test]
@@ -203,9 +204,9 @@ namespace RDMPAutomationServiceTests
                 _cp.SaveToDatabase();
 
                 if(windowEncompasesNow && !windowIsLocked)
-                    Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+                    Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
                 else
-                    Assert.IsNull(new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+                    Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
             }
             finally
             {
@@ -242,9 +243,9 @@ namespace RDMPAutomationServiceTests
 
             //shouldn't be recommending we execute this surely!
             if (expectLegal)
-                Assert.AreEqual(_cp,new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+                Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
             else
-                Assert.IsNull(new CacheRunFinder(CatalogueRepository).SuggestCacheProgress());
+                Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
 
     }

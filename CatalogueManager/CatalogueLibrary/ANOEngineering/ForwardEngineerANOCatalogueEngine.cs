@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Refactoring;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
@@ -50,8 +51,17 @@ namespace CatalogueLibrary.ANOEngineering
             {
                 try
                 {
+                    //for each skipped table
+                    foreach (var skippedTable in _planManager.SkippedTables)
+                    {
+                        //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
+                        foreach (ColumnInfo columnInfo in skippedTable.ColumnInfos)
+                            GetNewColumnInfoForOld(columnInfo);
+                    }
+
+
                     //for each table that isn't being skipped
-                    foreach (var t in _planManager.TableInfos.Except(_planManager.SkippedTables))
+                    foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
                     {
                         List<DatabaseColumnRequest> columnsToCreate = new List<DatabaseColumnRequest>();
 
@@ -60,7 +70,7 @@ namespace CatalogueLibrary.ANOEngineering
                         var querybuilderForMigratingTable = new QueryBuilder(null, null);
 
                         //for each column we are not skipping (Drop) work out the endpoint datatype (planner knows this)
-                        foreach (ColumnInfo columnInfo in t.ColumnInfos)
+                        foreach (ColumnInfo columnInfo in oldTableInfo.ColumnInfos)
                         {
                             var columnPlan = _planManager.GetPlanForColumnInfo(columnInfo);
 
@@ -75,16 +85,16 @@ namespace CatalogueLibrary.ANOEngineering
                                 if (columnPlan == ForwardEngineerANOCataloguePlanManager.Plan.ANO)
                                     colName = "ANO" + colName;
 
-                                migratedColumns.Add(colName, columnInfo);
+                                migratedColumns.Add(colName.ToLower(), columnInfo);
 
                                 columnsToCreate.Add(new DatabaseColumnRequest(colName, _planManager.GetEndpointDataType(columnInfo), !columnInfo.IsPrimaryKey){IsPrimaryKey = columnInfo.IsPrimaryKey});
                             }
                         }
 
-                        SelectSQLForMigrations.Add(t, querybuilderForMigratingTable);
+                        SelectSQLForMigrations.Add(oldTableInfo, querybuilderForMigratingTable);
 
                         //Create the actual table
-                        var tbl = _planManager.TargetDatabase.CreateTable(t.GetRuntimeName(), columnsToCreate.ToArray());
+                        var tbl = _planManager.TargetDatabase.CreateTable(oldTableInfo.GetRuntimeName(), columnsToCreate.ToArray());
 
                         TableInfo newTableInfo;
                         ColumnInfo[] newColumnInfos;
@@ -94,11 +104,11 @@ namespace CatalogueLibrary.ANOEngineering
                         importer.DoImport(out newTableInfo, out newColumnInfos);
 
                         //Audit the parenthood of the TableInfo/ColumnInfos
-                        AuditParenthood(t, newTableInfo);
+                        AuditParenthood(oldTableInfo, newTableInfo);
 
                         foreach (ColumnInfo newColumnInfo in newColumnInfos)
                         {
-                            var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
+                            var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName().ToLower()];
 
                             var anoTable = _planManager.GetPlannedANOTable(oldColumnInfo);
                             var dilution = _planManager.GetPlannedDilution(oldColumnInfo);
@@ -140,19 +150,20 @@ namespace CatalogueLibrary.ANOEngineering
 
                     AuditParenthood(_planManager.Catalogue, NewCatalogue);
                     
+                    //For each of the old ExtractionInformations (95% of the time that's just a reference to a ColumnInfo e.g. '[People].[Height]' but 5% of the time it's some horrible aliased transform e.g. 'dbo.RunMyCoolFunction([People].[Height]) as BigHeight'
                     foreach (CatalogueItem oldCatalogueItem in _planManager.Catalogue.CatalogueItems)
                     {
-                        var col = oldCatalogueItem.ColumnInfo;
+                        var oldColumnInfo = oldCatalogueItem.ColumnInfo;
 
                         //catalogue item is not connected to any ColumnInfo
-                        if(col == null)
+                        if(oldColumnInfo == null)
                             continue;
 
                         //we are not migrating it anyway
-                        if(_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.Drop)
+                        if(_planManager.GetPlanForColumnInfo(oldColumnInfo) == ForwardEngineerANOCataloguePlanManager.Plan.Drop)
                             continue;
                         
-                        ColumnInfo newColumnInfo = GetNewColumnInfoForOld(col);
+                        ColumnInfo newColumnInfo = GetNewColumnInfoForOld(oldColumnInfo);
 
                         var newCatalogueItem = _catalogueRepository.CloneObjectInTable(oldCatalogueItem);
                         
@@ -168,10 +179,36 @@ namespace CatalogueLibrary.ANOEngineering
 
                         var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
 
-                        //if it was previously extractable (and as an extraction identifier)
-                        if (oldExtractionInformation != null && oldExtractionInformation.IsExtractionIdentifier)
+                        //if it was previously extractable
+                        if (oldExtractionInformation != null)
                         {
-                            newExtractionInformation.IsExtractionIdentifier = true;
+                            var refactorer = new SelectSQLRefactorer();
+
+                            //restore the old SQL as it existed in the origin table
+                            newExtractionInformation.SelectSQL = oldExtractionInformation.SelectSQL;
+                            
+                            //do a refactor on the old column name for the new column name
+                            refactorer.RefactorColumnName(newExtractionInformation,oldColumnInfo,newColumnInfo.Name,true);
+
+                            //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
+                            foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp=>kvp.Key is ColumnInfo))
+                            {
+                                //if it's one we have already done, dont do it again
+                                if(Equals(kvpOtherCols.Value, newColumnInfo))
+                                    continue;
+
+                                //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
+                                refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)(kvpOtherCols.Value)).Name,false);
+                                
+                            }
+
+                            //make the new one exactly as extractable
+                            newExtractionInformation.Order = oldExtractionInformation.Order;
+                            newExtractionInformation.ExtractionCategory = oldExtractionInformation.ExtractionCategory;
+                            newExtractionInformation.Alias = oldExtractionInformation.Alias;
+                            newExtractionInformation.IsExtractionIdentifier = oldExtractionInformation.IsExtractionIdentifier;
+                            newExtractionInformation.HashOnDataRelease = oldExtractionInformation.HashOnDataRelease;
+                            newExtractionInformation.IsPrimaryKey = oldExtractionInformation.IsPrimaryKey;
                             newExtractionInformation.SaveToDatabase();
                         }
 
@@ -182,6 +219,8 @@ namespace CatalogueLibrary.ANOEngineering
                     }
 
                     var existingJoinInfos = _catalogueRepository.JoinInfoFinder.GetAllJoinInfos();
+                    var existingLookups = _catalogueRepository.GetAllObjects<Lookup>();
+                    var existingLookupComposites = _catalogueRepository.GetAllObjects<LookupCompositeJoinInfo>();
 
                     //migrate join infos
                     foreach (JoinInfo joinInfo in _planManager.GetJoinInfosRequiredCatalogue())
@@ -192,6 +231,32 @@ namespace CatalogueLibrary.ANOEngineering
                         //already exists
                         if(!existingJoinInfos.Any(ej=>ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
                             _catalogueRepository.JoinInfoFinder.AddJoinInfo(newFk,newPk,joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
+                    }
+
+                    //migrate Lookups
+                    foreach (Lookup lookup in _planManager.GetLookupsRequiredCatalogue())
+                    {
+                        //Find the new columns in the ANO table that match the old lookup columns
+                        var newDesc = GetNewColumnInfoForOld(lookup.Description);
+                        var newFk = GetNewColumnInfoForOld(lookup.ForeignKey);
+                        var newPk = GetNewColumnInfoForOld(lookup.PrimaryKey);
+
+                        //see if we already have a Lookup declared for the NEW columns (unlikely)
+                        Lookup newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID);
+                         
+                        //create new Lookup that mirrors the old but references the ANO columns instead
+                        if(newLookup == null)
+                            newLookup = new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
+
+                        //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard) 
+                        foreach (LookupCompositeJoinInfo compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
+                        {
+                            var newCompositeFk = GetNewColumnInfoForOld(compositeJoin.ForeignKey);
+                            var newCompositePk = GetNewColumnInfoForOld(compositeJoin.PrimaryKey);
+
+                            if (!existingLookupComposites.Any(c => c.ForeignKey_ID == newCompositeFk.ID && c.PrimaryKey_ID == newCompositePk.ID))
+                                new LookupCompositeJoinInfo(_catalogueRepository, newLookup, newCompositeFk,newCompositePk, compositeJoin.Collation);
+                        }
                     }
 
                     //create new data load confguration
@@ -261,6 +326,8 @@ namespace CatalogueLibrary.ANOEngineering
 
                 if(toReturn == null)
                     throw new Exception("Catalogue '" + _planManager.Catalogue + "' contained a CatalogueItem referencing Column '" + col + "' the ColumnInfo was not migrated (which is fine) but we then could not find ColumnInfo in the new ANO dataset (if it was part of SkippedTables why doesn't the Catalogue have a reference to the new location?)");
+
+                _parenthoodDictionary.Add(col,toReturn);
 
                 return toReturn;
             }

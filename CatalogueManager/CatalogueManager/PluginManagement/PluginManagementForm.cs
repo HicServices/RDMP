@@ -342,7 +342,7 @@ namespace CatalogueManager.PluginManagement
 
         }
 
-        private async void btnSaveToRemote_Click(object sender, EventArgs e)
+        private void btnSaveToRemote_Click(object sender, EventArgs e)
         {
             if (!plugins.Any())
             {

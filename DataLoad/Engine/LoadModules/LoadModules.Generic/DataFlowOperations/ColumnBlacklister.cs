@@ -28,14 +28,12 @@ namespace LoadModules.Generic.DataFlowOperations
         [DemandsInitialization("Crash message (if any) to explain why columns matching the Regex are a problem e.g. 'Patient telephone numbers should never be extracted!'")]
         public string Rationale { get; set; }
 
-        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-            GracefulCancellationToken cancellationToken)
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-
-            CrashIfAnyColumnMatches = new Regex(GetPattern(), RegexOptions.IgnoreCase);
+            var checkPattern = new Regex(GetPattern(), RegexOptions.IgnoreCase);
 
             foreach (var c in toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))
-                if (CrashIfAnyColumnMatches.IsMatch(c))
+                if (checkPattern.IsMatch(c))
                     if(string.IsNullOrWhiteSpace(Rationale))
                         throw new Exception("Column " + c + " matches blacklist regex");
                     else
@@ -65,8 +63,6 @@ namespace LoadModules.Generic.DataFlowOperations
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Problem occurred getting Regex pattern for blacklist",CheckResult.Fail, e));
             }
-            
-
         }
 
         private string GetPattern()

@@ -83,7 +83,7 @@ namespace CatalogueManager.AutoComplete
             {
                 runtimeName = column.GetRuntimeName();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
             }
@@ -104,7 +104,9 @@ namespace CatalogueManager.AutoComplete
 
             if(_activator == null)
                 throw new Exception("You cannot add items to AutoCompleteProvider until it has an ItemActivator");
-            
+
+            snip.ToolTipTitle = "Code Snip";
+            snip.ToolTipText = snip.Text;
             
             items.Add(snip);
 
@@ -138,13 +140,11 @@ namespace CatalogueManager.AutoComplete
 
             foreach (KeyValuePair<string, string> kvp in ScintillaTextEditorFactory.SQLFunctionsDictionary)
             {
-                var snip = new SnippetAutocompleteItem(kvp.Key);
+                var snip = new SubstringAutocompleteItem(kvp.Key);
                 snip.MenuText = kvp.Key;
                 snip.Text = kvp.Value;
                 snip.Tag = kvp;
                 snip.ImageIndex = GetIndexFor(null, RDMPConcept.SQL.ToString());//sql icon
-
-                snip.ToolTipText = kvp.Value;
 
                 AddUnlessDuplicate(snip);
             }
@@ -157,7 +157,10 @@ namespace CatalogueManager.AutoComplete
 
             var snip = new SubstringAutocompleteItem(name);
             snip.Tag = name;
+            snip.Text = parameter.ParameterName;
             snip.ImageIndex = GetIndexFor(parameter, RDMPConcept.ParametersNode.ToString());//parameter icon
+
+            snip.ToolTipText = snip.ToString();
 
             AddUnlessDuplicate(snip);
         }
@@ -178,7 +181,7 @@ namespace CatalogueManager.AutoComplete
             snip.Text = fullSql;//full SQL
             snip.Tag = tableInfo; //record object for future reference
             snip.ImageIndex = GetIndexFor(tableInfo,RDMPConcept.TableInfo.ToString());
-            items.Add(snip);
+            
 
             foreach (IHasStageSpecificRuntimeName o in tableInfo.GetColumnsAtStage(loadStage))
             {

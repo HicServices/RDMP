@@ -49,7 +49,7 @@ namespace DataLoadEngine.LoadExecution.Components
 
         private bool MustCreateRawDatabase()
         {
-            var attachingProcesses = _components.OfType<AttacherRuntimeTask>().ToArray();
+            var attachingProcesses = Components.OfType<AttacherRuntimeTask>().ToArray();
 
             //we do not have any attaching processes ... magically the data must appear somehow in our RAW database so better create it -- maybe an executable is going to populate it or something
             if (attachingProcesses.Length == 0)

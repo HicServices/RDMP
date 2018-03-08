@@ -34,10 +34,6 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
                 //it's extractable
                 if (_classifications[ci.ID].ExtractionInformation_ID != null)
                     toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
-
-                //it has no ColumnInfo but an ExtractionInformation!
-                if (_classifications[ci.ID].IsExtractionInformationOrphan())
-                    return _overlayProvider.GetOverlay(toReturn, OverlayKind.Problem);
             }
 
             return toReturn;

@@ -65,7 +65,7 @@ namespace CatalogueLibrary.Data
                 {
                     PluginVersion = new Version(o.ToString());
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException)
                 {
                     PluginVersion = new Version("0.0.0.0");//user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
                 }

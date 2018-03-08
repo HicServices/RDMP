@@ -21,7 +21,7 @@ namespace DataLoadEngine.DatabaseManagement
 {
     
     /// <summary>
-    /// SMO (Microsoft.SqlServer.Management.Smo) powered class for scripting tables, checking specific facts about tables databases (AreEmpty etc).  This is
+    /// SMO (Microsoft.SqlServer.Management.Smo) powered class for scripting tables, creating constraint free copies (e.g. RAW bubble) etc.  This is
     /// Microsoft only stuff (as opposed to the ReusableLibraryCode.DatabaseHelpers.Discovery namespace).  The class powers the data load engine.
     /// </summary>
     [Obsolete("This functionality should be ported to ReusableLibraryCode.DatabaseHelpers.Discovery namespace and made non Microsoft / SMO specific")]

@@ -13,7 +13,7 @@ using ReusableLibraryCode.Progress;
 namespace DataLoadEngine.DatabaseManagement.Operations
 {
     /// <summary>
-    /// Clones databases and tables using CatalogueInfos, and records operations so the cloning can be undone.
+    /// Clones databases and tables using ColumnInfos, and records operations so the cloning can be undone.
     /// </summary>
     public class DatabaseCloner : IDisposeAfterDataLoad
     {
@@ -48,7 +48,6 @@ namespace DataLoadEngine.DatabaseManagement.Operations
         /// <param name="Catalogues"></param>
         /// <param name="copyToStage"></param>
         /// <param name="tableNamingScheme"></param>
-        /// <param name="copyTableNamingConvention"></param>
         /// <param name="includeLookupTables"></param>
         public void CreateTablesInDatabaseFromCatalogueInfo(IEnumerable<ICatalogue> Catalogues, LoadBubble copyToStage, INameDatabasesAndTablesDuringLoads tableNamingScheme, bool includeLookupTables)
         {
@@ -81,7 +80,7 @@ namespace DataLoadEngine.DatabaseManagement.Operations
             
             if (copyToStage == LoadBubble.Raw)
             {
-                var tableName = tableInfo.GetRuntimeNameFor(_hicDatabaseConfiguration.DatabaseNamer, copyToStage);
+                var tableName = tableInfo.GetRuntimeName(copyToStage, _hicDatabaseConfiguration.DatabaseNamer);
 
                 string[] existingColumns = tableInfo.ColumnInfos.Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray();
 

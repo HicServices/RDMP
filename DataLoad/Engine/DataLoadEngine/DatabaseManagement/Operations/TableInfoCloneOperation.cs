@@ -24,7 +24,7 @@ namespace DataLoadEngine.DatabaseManagement.Operations
     {
         private readonly HICDatabaseConfiguration _hicDatabaseConfiguration;
         private readonly TableInfo _tableInfo;
-        private readonly LoadBubble _copyToStage;
+        private readonly LoadBubble _copyToBubble;
         
         public bool DropHICColumns { get; set; }
         public bool DropIdentityColumns { get; set; }
@@ -34,11 +34,11 @@ namespace DataLoadEngine.DatabaseManagement.Operations
 
         private bool _operationSucceeded = false;
 
-        public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo, LoadBubble copyToStage)
+        public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo, LoadBubble copyToBubble)
         {
             _hicDatabaseConfiguration = hicDatabaseConfiguration;
             _tableInfo = tableInfo;
-            _copyToStage = copyToStage;
+            _copyToBubble = copyToBubble;
             
             DropIdentityColumns = true;
         }
@@ -50,14 +50,14 @@ namespace DataLoadEngine.DatabaseManagement.Operations
                 throw new Exception("Operation already executed once");
 
             var liveDb = DataAccessPortal.GetInstance().ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
-            var destTableName = _tableInfo.GetRuntimeNameFor(_hicDatabaseConfiguration.DatabaseNamer, _copyToStage);
+            var destTableName = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
 
             var smoTypeLookup = new SMOTypeLookup();
 
             Dictionary<string, DataType> dilutionDictionary = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination == DiscardedColumnDestination.Dilute)
                 .ToDictionary(c => c.RuntimeColumnName, v =>smoTypeLookup.GetSMODataTypeForSqlStringDataType(v.SqlDataType));
 
-            DatabaseOperations.CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToStage],  _tableInfo.GetRuntimeName(), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, ScriptingOptions,dilutionDictionary);
+            DatabaseOperations.CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble],  _tableInfo.GetRuntimeName(), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, ScriptingOptions,dilutionDictionary);
 
             
             _operationSucceeded = true;
@@ -69,8 +69,8 @@ namespace DataLoadEngine.DatabaseManagement.Operations
             if(!_operationSucceeded)
                 throw new Exception("Cannot undo operation because it has not yet been executed");
 
-            var tableToRemove = _tableInfo.GetRuntimeNameFor(_hicDatabaseConfiguration.DatabaseNamer,_copyToStage);
-            DatabaseOperations.RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToStage]);
+            var tableToRemove = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
+            DatabaseOperations.RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToBubble]);
         }
     }
 }

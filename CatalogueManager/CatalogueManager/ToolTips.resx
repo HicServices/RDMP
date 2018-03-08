@@ -140,7 +140,7 @@ Catalogues which do not have any Extraciton SQL configured appear in black.</val
 
 A typical use case would be where you have two tables which are joined on a single primary/foreign key.  Each table would be selected in turn, the first would be used to generate a new Catalogue and the second would be added to the same Catalogue.  You would then configure a Lookup join and mark some of the CatalogueItems as extractable.
 
-TableInfos and CatalogueInfos exist in the Catalogue database and must by synchronized regularly (any time there is a change to the underlying database architecture).  To synchronize a TableInfo right click it and choose 'Synchronize TableInfo'.  Most applications that use TableInfos will automatically attempt to synchronize them.
+TableInfos and ColumnInfos exist in the Catalogue database and must by synchronized regularly (any time there is a change to the underlying database architecture).  To synchronize a TableInfo right click it and choose 'Synchronize TableInfo'.  Most applications that use TableInfos will automatically attempt to synchronize them.
 
 It is important that the user account doing the importing has the rights to interrogate column types/collations etc</value>
   </data>

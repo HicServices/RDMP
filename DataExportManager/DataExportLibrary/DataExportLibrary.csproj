@@ -71,6 +71,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <NoWarn>1591,1573,1584</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -164,10 +165,6 @@
     <Reference Include="CsvHelper">
       <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
     </Reference>
-    <Reference Include="DataExportLibrary, Version=2.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Diagnostics\bin\Debug\DataExportLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
@@ -224,10 +221,12 @@
     <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
     <Compile Include="DataRelease\ReleaseEngine.cs" />
+    <Compile Include="DataRelease\ReleaseFolderSettings.cs" />
     <Compile Include="DataRelease\ReleaseEngineSettings.cs" />
     <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
-    <Compile Include="DataRelease\ReleasePipeline\FixedDataReleaseSource.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\ReleaseAudit.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\ReleaseFolderProvider.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />

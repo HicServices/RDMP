@@ -25,7 +25,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// 
     /// The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other 
     /// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
-    /// If you choose this option you must configure the JoinInfo logic (See ConfigureJoins)
+    /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)
     /// </summary>
     public partial class ForwardEngineerCatalogueUI : Form
     {

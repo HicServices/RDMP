@@ -336,8 +336,8 @@ namespace ReusableUIComponents.Heatmapping
         }
 
         /// <summary>
-        /// Gets a suitable size to render each heat line respecting the controls Height and the number of dimensions in the DataTable.  Bounded by min and max PixelHeights (see consts)
-        /// 
+        /// Gets a suitable size to render each heat line respecting the controls Height and the number of dimensions in the DataTable.  Bounded by MinPixelHeight and MaxPixelHeight
+        /// (see consts)
         /// </summary>
         /// <returns></returns>
         private double GetHeatPixelHeight()

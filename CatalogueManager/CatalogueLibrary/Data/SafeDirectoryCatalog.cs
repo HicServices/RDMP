@@ -15,8 +15,8 @@ namespace CatalogueLibrary.Data
 {
     /// <summary>
     /// Managed Extensibility Framework (MEF) Catalog of Class Types that are exposed via [InheritedExport(typeof(X))].  Constructing this class will process the directories
-    /// provided (usually the current directory and the %appdata%\MEF directory).  Each dll (Assembly) is classed as either a 'BadAssembly' (could not be loaded) or a
-    /// 'GoodAssembly' (was loaded).  GoodAssemblies are exposed as AssemblyCatalogs (MEF) which area  collection of ComposablePartDefinition (Parts).
+    /// provided (usually the current directory and the %appdata%\MEF directory).  Each dll (Assembly) is classed as either a 'Bad Assembly' (could not be loaded) or a
+    /// 'Good Assembly' (was loaded).  GoodAssemblies are exposed as AssemblyCatalogs (MEF) which area  collection of ComposablePartDefinition (Parts).
     /// 
     /// These can then be constructed/queried like you normally do with MEF (See MEF.LocateExportInContainerByTypeName).
     /// </summary>

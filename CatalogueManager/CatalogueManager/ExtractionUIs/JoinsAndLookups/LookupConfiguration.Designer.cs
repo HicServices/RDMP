@@ -60,6 +60,8 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.pk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.pk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.pk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.tbFilter = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvSelectedDescriptionColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvLookupColumns)).BeginInit();
@@ -80,13 +82,15 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             this.olvExtractionInformations.AllColumns.Add(this.olvExtractionInformationsNameColumn);
             this.olvExtractionInformations.AllowDrop = true;
+            this.olvExtractionInformations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.olvExtractionInformations.CellEditUseWholeCell = false;
             this.olvExtractionInformations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvExtractionInformationsNameColumn});
             this.olvExtractionInformations.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvExtractionInformations.Location = new System.Drawing.Point(9, 370);
             this.olvExtractionInformations.Name = "olvExtractionInformations";
-            this.olvExtractionInformations.Size = new System.Drawing.Size(476, 368);
+            this.olvExtractionInformations.Size = new System.Drawing.Size(476, 369);
             this.olvExtractionInformations.TabIndex = 1;
             this.olvExtractionInformations.UseCompatibleStateImageBehavior = false;
             this.olvExtractionInformations.View = System.Windows.Forms.View.Details;
@@ -358,11 +362,32 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.pk1.Size = new System.Drawing.Size(226, 35);
             this.pk1.TabIndex = 156;
             // 
-            // AdvancedLookupConfiguration
+            // tbFilter
+            // 
+            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbFilter.Location = new System.Drawing.Point(43, 745);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(442, 20);
+            this.tbFilter.TabIndex = 164;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 748);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.TabIndex = 165;
+            this.label5.Text = "Filter:";
+            // 
+            // LookupConfiguration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.btnCreateLookup);
             this.Controls.Add(this.fk3);
@@ -384,9 +409,9 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.Controls.Add(this.olvSelectedDescriptionColumns);
             this.Controls.Add(this.olvExtractionInformations);
             this.Controls.Add(this.label1);
-            this.Name = "AdvancedLookupConfiguration";
-            this.Size = new System.Drawing.Size(1103, 752);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.AdvancedLookupConfiguration_Paint);
+            this.Name = "LookupConfiguration";
+            this.Size = new System.Drawing.Size(1103, 772);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.LookupConfiguration_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvSelectedDescriptionColumns)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvLookupColumns)).EndInit();
@@ -430,5 +455,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         private OLVColumn olvDescriptionsColumn;
         private System.Windows.Forms.Button btnCreateLookup;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private System.Windows.Forms.TextBox tbFilter;
+        private System.Windows.Forms.Label label5;
     }
 }

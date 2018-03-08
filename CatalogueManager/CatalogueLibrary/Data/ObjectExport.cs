@@ -74,7 +74,6 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// Returns true if this ObjectExport is an export declaration for the passed parameter
         /// </summary>
-        /// <param name="parent"></param>
         /// <returns></returns>
         public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
         {

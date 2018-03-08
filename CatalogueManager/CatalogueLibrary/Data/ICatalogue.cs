@@ -42,7 +42,7 @@ namespace CatalogueLibrary.Data
         TableInfo[] GetTableInfoList(bool includeLookupTables);
         TableInfo[] GetLookupTableInfoList();
         ILoadMetadata GetLoadMetadata();
-        Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destinationNamingConvention, INameDatabasesAndTablesDuringLoads namer);
+        Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destination, INameDatabasesAndTablesDuringLoads namer);
         string GetRawDatabaseName();
         IDataAccessPoint GetLoggingServer(bool isTest);
         DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase);

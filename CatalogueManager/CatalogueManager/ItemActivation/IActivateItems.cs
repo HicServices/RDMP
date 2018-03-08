@@ -140,7 +140,6 @@ namespace CatalogueManager.ItemActivation
         /// <summary>
         /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
         /// </summary>
-        /// <param name="o"></param>
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
         
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
@@ -161,5 +160,8 @@ namespace CatalogueManager.ItemActivation
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
         void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
+        bool HasProblem(object model);
+        string DescribeProblemIfAny(object model);
+        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
     }
 }

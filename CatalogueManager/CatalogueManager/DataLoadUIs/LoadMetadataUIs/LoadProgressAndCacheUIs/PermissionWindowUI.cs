@@ -14,7 +14,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 {
     /// <summary>
     /// Restricts the times of day in which caching can take place (e.g. from midnight-4am only).  For a description of what caching is see CacheProgressUI or the RDMP user manual.  Format is
-    /// in standard TimeSpan.TryParase format (see https://msdn.microsoft.com/en-us/library/3z48198e(v=vs.110).aspx or search online for 'TimeSpan.TryParse c#') each TimeSpan can be followed by
+    /// in standard TimeSpan.TryParse format (see https://msdn.microsoft.com/en-us/library/3z48198e(v=vs.110).aspx or search online for 'TimeSpan.TryParse c#') each TimeSpan can be followed by
     /// a comma and then another TimeSpan format e.g.  '10:20:00-10:40:00,11:20:00-11:40:00' would create a permission window that could download from the cache between 10:20 AM and 10:40 AM then
     /// caching wouldn't be allowed again until 11:20am to 11:40am.
     /// </summary>

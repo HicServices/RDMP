@@ -15,10 +15,10 @@ using ReusableUIComponents;
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 {
     /// <summary>
-    /// Part of LoadProgressManagement, let's you configure the settings of a LoadProgress (see LoadProgressManagement for a description of what a LoadProgress is).
+    /// Let's you configure the settings of a LoadProgress (see LoadProgress) including how many days to ideally load in each data load, what date has currently been loaded up to etc.
     /// 
     /// Each LoadProgress can be tied to a Cache progress.  If you are using a LoadProgress without a cache then it is up to your load implementation to respect the time period being loaded 
-    /// (e.g. when using RemoteSQLTableAttacher you should make use of the @startDate and @endDate parameters in your fetch query).  See CacheProgressUI for a description of caching and 
+    /// (e.g. when using RemoteTableAttacher you should make use of the @startDate and @endDate parameters are in your fetch query).  See CacheProgressUI for a description of caching and 
     /// permission windows.
     /// </summary>
     public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI

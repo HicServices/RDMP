@@ -82,9 +82,6 @@ namespace LoadModules.Generic.Mutilators.Dilution
             _loadStage = loadStage;
         }
 
-        public string DatabaseServer { get; private set; }
-        public string DatabaseName { get; private set; }
-
         public ExitCodeType Mutilate(IDataLoadEventListener job)
         {
             var con =_dbInfo.Server.GetConnection();

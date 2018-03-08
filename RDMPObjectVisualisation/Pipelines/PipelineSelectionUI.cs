@@ -19,7 +19,7 @@ namespace RDMPObjectVisualisation.Pipelines
     /// for a description of what a pipeline is.  
     /// 
     /// If you cannot see the pipeline you expected to see then it is possible that the pipeline is broken or somehow otherwise incompatible with the current context.  If this is the case
-    /// then you can untick ShowOnlyCompatiblePipelines which will show all Pipelines of the type T (usually DataTable).  You should only use this feature to edit Pipelines as there is zero
+    /// then you can untick 'Only Show Compatible Pipelines' which will show all Pipelines of the type T (usually DataTable).  You should only use this feature to edit Pipelines as there is zero
     /// chance they will execute Successfully if they are not compatible with the DataFlowPipelineContext.
     /// </summary>
     /// <typeparam name="T"></typeparam>

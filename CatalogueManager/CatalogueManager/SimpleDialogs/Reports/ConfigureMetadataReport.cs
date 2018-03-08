@@ -26,7 +26,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// 
     /// - Complete extract of the lookup tables configured for the dataset (See ConfigureLookups)
     /// 
-    /// - Graphs of each IsExtractable aggregate on the dataset (See AggregateManagement)
+    /// - Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)
     /// 
     /// You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an 
     /// Aggregate run faster) or just increase the Query Timeout (default is 30s).

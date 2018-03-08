@@ -12,7 +12,7 @@ namespace ReusableUIComponents
 {
     /// <summary>
     /// Used by the RDMP to tell you about something that went wrong.  You can select bits of the message text and copy them with Ctrl+C or select 'Copy to Clipboard' to copy all the
-    /// message text in one go.  Clicking ViewException will launch a ExceptionViewerStackTraceWithHyperlinks for viewing the location of the error in the codebase (including viewing
+    /// message text in one go.  Clicking 'View Exception' will launch a ExceptionViewerStackTraceWithHyperlinks for viewing the location of the error in the codebase (including viewing
     /// the source code at the point of the error).
     /// </summary>
     public partial class ExceptionViewer : Form

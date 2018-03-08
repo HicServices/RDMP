@@ -10,7 +10,7 @@ namespace CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
     /// Each AggregateFilter can have 1 or more AggregateFilterParameters, these allows you to specify an SQL parameter that the user can adjust at runtime to change
-    /// how a given filter works.  E.g. if you have a filter 'Prescribed after @startDate' you would have an AggregateFilterParamater called @startDate with an appropriate
+    /// how a given filter works.  E.g. if you have a filter 'Prescribed after @startDate' you would have an AggregateFilterParameter called @startDate with an appropriate
     /// user friendly description.
     /// </summary>
     public class AggregateFilterParameter : VersionedDatabaseEntity, ISqlParameter

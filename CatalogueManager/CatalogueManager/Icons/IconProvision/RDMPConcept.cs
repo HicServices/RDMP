@@ -131,6 +131,11 @@ namespace CatalogueManager.Icons.IconProvision
 
         AllObjectSharingNode,
         AllObjectImportsNode,
-        AllObjectExportsNode
+        AllObjectExportsNode,
+
+        CohortCustomColumn,
+        ExtractableColumn,
+        ProjectCohortsNode,
+        FrozenExtractionConfigurationsNode
     }
 }

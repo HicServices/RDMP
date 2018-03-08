@@ -28,14 +28,13 @@ using ReusableUIComponents;
 namespace CatalogueManager.MainFormUITabs
 {
     /// <summary>
-    /// Allows you to modify the descriptive data stored in the RDMP database about the selected Catalogue (dataset).  Pressing Ctrl+S will save any changes.  If you change the Folder then
-    /// a reload of the CatalogueCollection tree will occur (See CatalogueCollectionHost).  You should make sure that you provide as much background about your datasets as possible since 
-    /// this is the information that will be given to researchers when you extract the dataset (as well as being a great reference for when you find a dataset and you're not quite sure abouta
-    /// what it contains or how it got there or who supplied it etc).
+    /// Allows you to modify the descriptive data stored in the RDMP database about the selected Catalogue (dataset).  Pressing Ctrl+S will save any changes.  You should make sure that you
+    /// provide as much background about your datasets as possible since this is the information that will be given to researchers when you extract the dataset (as well as being a great 
+    /// reference for when you find a dataset and you're not quite sure about what it contains or how it got there or who supplied it etc).
     /// 
-    /// The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.  Realistically though just banging all the information into 'Resource Description'
-    /// is probably a more realistic goal.  Documentation may be boring but it is absolutely vital for handling providence of research datasets especially if you frequently get given small 
-    /// datasets from researchers (e.g. questionnaire data they have collected) for use in cohort generation etc).
+    /// The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.  Realistically though just entering all the information into 'Resource 
+    /// Description' is probably a more realistic goal.  Documentation may be boring but it is absolutely vital for handling providence of research datasets especially if you frequently
+    /// get given small datasets from researchers (e.g. questionnaire data they have collected) for use in cohort generation etc).
     /// 
     /// There is also a box for storing a ticket number, this will let you reference a ticket in your ticketing system (e.g. Jira, Fogbugz etc).  This requires selecting/writing a compatible
     /// plugin for your ticketing system and configuring it (see TicketingSystemConfigurationUI)

@@ -96,7 +96,8 @@ namespace CatalogueManager {
         /// <summary>
         ///   Looks up a localized string similar to This Tab lets you edit the descriptive metadata for your Catalogues (datasets).  Right clicking a Catalogue will bring up a menu with a list of Catalogue level operations e.g. choosing which of the CatalogueItems in the catalogue is most indicative of record time periodicity (e.g. admission date of a hostpital admissions record).
         ///
-        ///GETTING STARTED: If this is your first time launching the software it is likely that you do not yet have any Catalogues (datasets) available.  Your first step should be either:        /// [rest of string was truncated]&quot;;.
+        ///GETTING STARTED: If this is your first time launching the software it is likely that you do not yet have any Catalogues (datasets) available.  Your first step should be either:
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CatalogueTabListbox {
             get {

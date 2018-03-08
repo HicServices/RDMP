@@ -56,7 +56,7 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
             //where we are coming from (source)
             var sourceConvention = LoadBubble.Raw;
             DiscoveredDatabase sourceDatabase = _databaseConfiguration.DeployInfo[sourceConvention];
-            var sourceTableName = _tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, sourceConvention);
+            var sourceTableName = _tableInfo.GetRuntimeName(sourceConvention, _databaseConfiguration.DatabaseNamer);
 
             //What to do if where we are coming from does not have the table existing on it
             if (!sourceDatabase.ExpectTable(sourceTableName).Exists())
@@ -78,7 +78,7 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
             // ignore any columns that are marked for discard
             var destinationConvention = LoadBubble.Staging;
             DiscoveredDatabase destinationDatabase = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-            var destinationTableName = _tableInfo.GetRuntimeNameFor(_databaseConfiguration.DatabaseNamer, destinationConvention);
+            var destinationTableName = _tableInfo.GetRuntimeName(destinationConvention, _databaseConfiguration.DatabaseNamer);
         
             DeleteFullyNullRecords(sourceTableName, sourceDatabase,job);
 
