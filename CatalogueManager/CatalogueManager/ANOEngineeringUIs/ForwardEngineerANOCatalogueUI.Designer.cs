@@ -33,12 +33,18 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForwardEngineerANOCatalogueUI));
             this.gbTables = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tbFilter = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.tbStartDate = new System.Windows.Forms.TextBox();
+            this.lblMandatory = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.ddDateColumn = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.cbDateBasedLoad = new System.Windows.Forms.CheckBox();
             this.lblPlanIsSuggestion = new System.Windows.Forms.Label();
-            this.lblMandatory = new System.Windows.Forms.Label();
             this.tlvTableInfoMigrations = new BrightIdeasSoftware.TreeListView();
             this.olvTableInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvMigrationPlan = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -46,35 +52,30 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvDilution = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDestinationType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.label5 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.btnRefreshChecks = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.gbANOTransforms = new System.Windows.Forms.GroupBox();
             this.tlvANOTables = new BrightIdeasSoftware.TreeListView();
             this.olvANOTablesName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSuffix = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumberOfDigits = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumberOfCharacters = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
-            this.btnRefreshChecks = new System.Windows.Forms.Button();
-            this.btnExecute = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.tbFilter = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.olvDestinationExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.gbTables.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.gbANOTransforms.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvANOTables)).BeginInit();
-            this.groupBox2.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbTables
@@ -90,6 +91,49 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbTables.TabStop = false;
             this.gbTables.Text = "Table Migration";
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label6);
+            this.panel2.Controls.Add(this.tbFilter);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(3, 248);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(962, 27);
+            this.panel2.TabIndex = 2;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(5, 6);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(32, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Filter:";
+            // 
+            // tbFilter
+            // 
+            this.tbFilter.Location = new System.Drawing.Point(43, 3);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(351, 20);
+            this.tbFilter.TabIndex = 0;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbStartDate);
+            this.panel1.Controls.Add(this.lblMandatory);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.ddDateColumn);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.cbDateBasedLoad);
+            this.panel1.Controls.Add(this.lblPlanIsSuggestion);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(3, 275);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(962, 32);
+            this.panel1.TabIndex = 1;
+            // 
             // tbStartDate
             // 
             this.tbStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -101,6 +145,17 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tbStartDate.Text = "2001-01-01";
             this.tbStartDate.TextChanged += new System.EventHandler(this.tbStartDate_TextChanged);
             // 
+            // lblMandatory
+            // 
+            this.lblMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblMandatory.BackColor = System.Drawing.Color.Turquoise;
+            this.lblMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblMandatory.Location = new System.Drawing.Point(3, 6);
+            this.lblMandatory.Name = "lblMandatory";
+            this.lblMandatory.Size = new System.Drawing.Size(20, 20);
+            this.lblMandatory.TabIndex = 1;
+            // 
             // label4
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -110,6 +165,16 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 5;
             this.label4.Text = "Starting At";
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(24, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(57, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Mandatory";
             // 
             // ddDateColumn
             // 
@@ -123,6 +188,16 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.ddDateColumn.Size = new System.Drawing.Size(401, 21);
             this.ddDateColumn.TabIndex = 4;
             this.ddDateColumn.SelectedIndexChanged += new System.EventHandler(this.ddDateColumn_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(104, 10);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(95, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Plan Is Suggestion";
             // 
             // cbDateBasedLoad
             // 
@@ -147,20 +222,10 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.lblPlanIsSuggestion.Size = new System.Drawing.Size(20, 20);
             this.lblPlanIsSuggestion.TabIndex = 1;
             // 
-            // lblMandatory
-            // 
-            this.lblMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblMandatory.BackColor = System.Drawing.Color.Turquoise;
-            this.lblMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblMandatory.Location = new System.Drawing.Point(3, 6);
-            this.lblMandatory.Name = "lblMandatory";
-            this.lblMandatory.Size = new System.Drawing.Size(20, 20);
-            this.lblMandatory.TabIndex = 1;
-            // 
             // tlvTableInfoMigrations
             // 
             this.tlvTableInfoMigrations.AllColumns.Add(this.olvTableInfoName);
+            this.tlvTableInfoMigrations.AllColumns.Add(this.olvDestinationExtractionCategory);
             this.tlvTableInfoMigrations.AllColumns.Add(this.olvMigrationPlan);
             this.tlvTableInfoMigrations.AllColumns.Add(this.olvPickedANOTable);
             this.tlvTableInfoMigrations.AllColumns.Add(this.olvDilution);
@@ -168,6 +233,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.CellEditUseWholeCell = false;
             this.tlvTableInfoMigrations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvTableInfoName,
+            this.olvDestinationExtractionCategory,
             this.olvMigrationPlan,
             this.olvPickedANOTable,
             this.olvDilution,
@@ -190,7 +256,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             this.olvTableInfoName.AspectName = "ToString";
             this.olvTableInfoName.Text = "Name";
-            this.olvTableInfoName.Width = 400;
+            this.olvTableInfoName.Width = 327;
             // 
             // olvMigrationPlan
             // 
@@ -222,26 +288,6 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.imageList1.Images.SetKeyName(0, "ANOTable");
             this.imageList1.Images.SetKeyName(1, "PreLoadDiscardedColumn");
             // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(104, 10);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Plan Is Suggestion";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(57, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Mandatory";
-            // 
             // serverDatabaseTableSelector1
             // 
             this.serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = false;
@@ -268,6 +314,68 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Destination Server";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.btnExecute);
+            this.groupBox2.Controls.Add(this.ragSmiley1);
+            this.groupBox2.Controls.Add(this.btnRefreshChecks);
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Location = new System.Drawing.Point(604, 73);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(347, 65);
+            this.groupBox2.TabIndex = 70;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Execute ANO Configuration";
+            // 
+            // btnExecute
+            // 
+            this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
+            this.btnExecute.Location = new System.Drawing.Point(169, 19);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(86, 23);
+            this.btnExecute.TabIndex = 5;
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragSmiley1.Location = new System.Drawing.Point(94, 17);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 3;
+            // 
+            // btnRefreshChecks
+            // 
+            this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
+            this.btnRefreshChecks.Location = new System.Drawing.Point(125, 18);
+            this.btnRefreshChecks.Name = "btnRefreshChecks";
+            this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
+            this.btnRefreshChecks.TabIndex = 4;
+            this.btnRefreshChecks.UseVisualStyleBackColor = true;
+            this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(188, 46);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 67;
+            this.label2.Text = "Execute";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(103, 46);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(38, 13);
+            this.label3.TabIndex = 69;
+            this.label3.Text = "Check";
             // 
             // gbANOTransforms
             // 
@@ -327,84 +435,6 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvNumberOfCharacters.Text = "Number of characters";
             this.olvNumberOfCharacters.Width = 120;
             // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(94, 17);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 3;
-            // 
-            // btnRefreshChecks
-            // 
-            this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
-            this.btnRefreshChecks.Location = new System.Drawing.Point(125, 18);
-            this.btnRefreshChecks.Name = "btnRefreshChecks";
-            this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
-            this.btnRefreshChecks.TabIndex = 4;
-            this.btnRefreshChecks.UseVisualStyleBackColor = true;
-            this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
-            // 
-            // btnExecute
-            // 
-            this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
-            this.btnExecute.Location = new System.Drawing.Point(169, 19);
-            this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(86, 23);
-            this.btnExecute.TabIndex = 5;
-            this.btnExecute.UseVisualStyleBackColor = true;
-            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(188, 46);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(46, 13);
-            this.label2.TabIndex = 67;
-            this.label2.Text = "Execute";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(103, 46);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(38, 13);
-            this.label3.TabIndex = 69;
-            this.label3.Text = "Check";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.btnExecute);
-            this.groupBox2.Controls.Add(this.ragSmiley1);
-            this.groupBox2.Controls.Add(this.btnRefreshChecks);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(604, 73);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(347, 65);
-            this.groupBox2.TabIndex = 70;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Execute ANO Configuration";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.tbStartDate);
-            this.panel1.Controls.Add(this.lblMandatory);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.ddDateColumn);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.cbDateBasedLoad);
-            this.panel1.Controls.Add(this.lblPlanIsSuggestion);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 275);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(962, 32);
-            this.panel1.TabIndex = 1;
-            // 
             // rdmpObjectsRibbonUI1
             // 
             this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -414,32 +444,10 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(968, 22);
             this.rdmpObjectsRibbonUI1.TabIndex = 0;
             // 
-            // panel2
+            // olvDestinationExtractionCategory
             // 
-            this.panel2.Controls.Add(this.label6);
-            this.panel2.Controls.Add(this.tbFilter);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(3, 248);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(962, 27);
-            this.panel2.TabIndex = 2;
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Location = new System.Drawing.Point(43, 3);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(351, 20);
-            this.tbFilter.TabIndex = 0;
-            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 6);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(32, 13);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Filter:";
+            this.olvDestinationExtractionCategory.Text = "Category";
+            this.olvDestinationExtractionCategory.Width = 102;
             // 
             // ForwardEngineerANOCatalogueUI
             // 
@@ -452,17 +460,17 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.Name = "ForwardEngineerANOCatalogueUI";
             this.Size = new System.Drawing.Size(968, 720);
             this.gbTables.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.gbANOTransforms.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvANOTables)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.gbANOTransforms.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tlvANOTables)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -504,5 +512,6 @@ namespace CatalogueManager.ANOEngineeringUIs
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tbFilter;
+        private OLVColumn olvDestinationExtractionCategory;
     }
 }

@@ -58,6 +58,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             olvDilution.ImageGetter += Dilution_ImageGetter;
             
             olvDestinationType.AspectGetter += DestinationTypeAspectGetter;
+
+            olvDestinationExtractionCategory.AspectGetter += DestinationExtractionCategoryAspectGetter;
             
             tlvTableInfoMigrations.CellEditStarting += tlvTableInfoMigrations_CellEditStarting;
             tlvTableInfoMigrations.CellEditFinishing += tlvTableInfoMigrations_CellEditFinishing;
@@ -156,6 +158,32 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             return null;
         }
+
+
+        private object DestinationExtractionCategoryAspectGetter(object rowobject)
+        {
+            var ci = rowobject as ColumnInfo;
+            try
+            {
+                if (ci != null)
+                {
+                    var plan = _planManager.GetPlannedExtractionCategory(ci);
+
+                    if (plan.HasValue)
+                        return plan.Value;
+
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                return "Error";
+            }
+
+            return null;
+        }
+
+
         #endregion
 
         void tlvTableInfoMigrations_CellEditStarting(object sender, BrightIdeasSoftware.CellEditEventArgs e)
@@ -210,6 +238,23 @@ namespace CatalogueManager.ANOEngineeringUIs
                 cbx.Items.AddRange(_planManager.DilutionOperations.ToArray());
                 e.Control = cbx;
             }
+
+            if (col != null && e.Column == olvDestinationExtractionCategory)
+            {
+                //if the plan is to drop
+                if (_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.Drop)
+                {
+                    //don't let them edit it
+                    e.Cancel = true;
+                    return;
+                }
+
+                var cbx = new ComboBox();
+                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbx.Bounds = e.CellBounds;
+                cbx.DataSource = Enum.GetValues(typeof (ExtractionCategory));
+                e.Control = cbx;
+            }
         }
         
         void tlvTableInfoMigrations_CellEditFinishing(object sender, BrightIdeasSoftware.CellEditEventArgs e)
@@ -225,6 +270,12 @@ namespace CatalogueManager.ANOEngineeringUIs
                 {
                     var cbx = (ComboBox)e.Control;
                     _planManager.SetPlannedDilution(col,(IDilutionOperation)cbx.SelectedItem);
+                }
+                
+                if (e.Column == olvDestinationExtractionCategory)
+                {
+                    var cbx = (ComboBox)e.Control;
+                    _planManager.SetPlannedExtractionCategory(col, (ExtractionCategory)cbx.SelectedItem);
                 }
             }
             catch (Exception exception)

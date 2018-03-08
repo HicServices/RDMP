@@ -178,6 +178,14 @@ namespace CatalogueLibrary.ANOEngineering
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;
 
                         var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
+                        
+                        var newExtractionCategory = _planManager.GetPlannedExtractionCategory(oldColumnInfo);
+                        
+                        if (newExtractionCategory == null)
+                            throw new Exception("PlanManager did not know the new ExtractionCategory for '" + oldColumnInfo + "'");
+
+                        newExtractionInformation.ExtractionCategory = newExtractionCategory.Value;
+                        newExtractionInformation.SaveToDatabase();
 
                         //if it was previously extractable
                         if (oldExtractionInformation != null)
@@ -201,10 +209,11 @@ namespace CatalogueLibrary.ANOEngineering
                                 refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)(kvpOtherCols.Value)).Name,false);
                                 
                             }
-
+                            
+                            
+                            
                             //make the new one exactly as extractable
                             newExtractionInformation.Order = oldExtractionInformation.Order;
-                            newExtractionInformation.ExtractionCategory = oldExtractionInformation.ExtractionCategory;
                             newExtractionInformation.Alias = oldExtractionInformation.Alias;
                             newExtractionInformation.IsExtractionIdentifier = oldExtractionInformation.IsExtractionIdentifier;
                             newExtractionInformation.HashOnDataRelease = oldExtractionInformation.HashOnDataRelease;

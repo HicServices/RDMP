@@ -33,6 +33,8 @@ namespace CatalogueLibrary.ANOEngineering
         private readonly Dictionary<ColumnInfo,Plan> Plans = new Dictionary<ColumnInfo, Plan>();
         private readonly Dictionary<ColumnInfo, ANOTable> PlannedANOTables = new Dictionary<ColumnInfo, ANOTable>();
         private readonly Dictionary<ColumnInfo, IDilutionOperation> PlannedDilution = new Dictionary<ColumnInfo, IDilutionOperation>();
+        private readonly Dictionary<ColumnInfo,ExtractionCategory> PlannedExtractionCategories = new Dictionary<ColumnInfo, ExtractionCategory>();
+        
         private IQuerySyntaxHelper _querySyntaxHelper;
 
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
@@ -306,6 +308,19 @@ namespace CatalogueLibrary.ANOEngineering
             foreach (ExtractionInformation e in _allExtractionInformations)
                 if (!refactorer.IsRefactorable(e))
                     notifier.OnCheckPerformed(new CheckEventArgs("ExtractionInformation '" + e +"' is a not refactorable due to reason:"+ refactorer.GetReasonNotRefactorable(e), CheckResult.Fail));
+
+            //don't let user select ExtractionCategory.Any
+            foreach (var kvp in PlannedExtractionCategories)
+                if (kvp.Value == ExtractionCategory.Any)
+                    notifier.OnCheckPerformed(new CheckEventArgs("Extraction Category '" + kvp.Value + "' is not valid (on ColumnInfo " +kvp.Key + ")",CheckResult.Fail));
+
+
+            foreach (KeyValuePair<ColumnInfo, Plan> kvp in Plans)
+            {
+                if(kvp.Value != Plan.Drop)
+                    if (GetPlannedExtractionCategory(kvp.Key) == null)
+                        notifier.OnCheckPerformed(new CheckEventArgs("There is no ExtractionCategory configured for ColumnInfo '" + kvp.Key + "' despite it's Plan being '" + kvp.Value + "'",CheckResult.Fail));
+            }
         }
 
         private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier,T m) where T:IMapsDirectlyToDatabaseTable
@@ -419,6 +434,25 @@ namespace CatalogueLibrary.ANOEngineering
                     toReturn.Add(col);
                 }
 
+                //setup the planned extraction category based on what CatalogueItem(s) exist for it (1 to many)
+                foreach (var catalogueItem in _allCatalogueItems.Where(ci => ci.ColumnInfo_ID == col.ID).ToArray())
+                {
+                    //that are extractable
+                    var extractionInformation = _allExtractionInformations.SingleOrDefault(ei => ei.CatalogueItem_ID == catalogueItem.ID);
+
+                    //The ColumnInfo is extractable
+                    if (extractionInformation != null)
+                    {
+                        //it's novel so make the plan be to extract it with the same ExtractionCategory
+                        if(!PlannedExtractionCategories.ContainsKey(col))
+                            PlannedExtractionCategories.Add(col,extractionInformation.ExtractionCategory);
+                        else
+                            //there are multiple, if the new one is more restrictive then use the more restrictive category instead
+                            PlannedExtractionCategories[col] = extractionInformation.ExtractionCategory > PlannedExtractionCategories[col] ? extractionInformation.ExtractionCategory : PlannedExtractionCategories[col];
+                    }
+
+                }
+
             }
             
             return toReturn.ToArray();
@@ -427,6 +461,22 @@ namespace CatalogueLibrary.ANOEngineering
         private bool IsStillNeeded(ColumnInfo columnInfo)
         {
             return TableInfos.Any(t => t.ID == columnInfo.TableInfo_ID);
+        }
+
+        public void SetPlannedExtractionCategory(ColumnInfo col,ExtractionCategory newCategory)
+        {
+            if (!PlannedExtractionCategories.ContainsKey(col))
+                PlannedExtractionCategories.Add(col, newCategory);
+            else
+                PlannedExtractionCategories[col] = newCategory;
+        }
+
+        public ExtractionCategory? GetPlannedExtractionCategory(ColumnInfo col)
+        {
+            if(!PlannedExtractionCategories.ContainsKey(col))
+                return null;
+            
+            return PlannedExtractionCategories[col];
         }
     }
 }
