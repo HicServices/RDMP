@@ -47,7 +47,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblTier1 = new System.Windows.Forms.Label();
-            this.registryRepositoryFinderUI1 = new CatalogueManager.TestsAndSetup.StartupUI.RepositoryFinderUI();
+            this.repositoryFinderUI1 = new CatalogueManager.TestsAndSetup.StartupUI.RepositoryFinderUI();
             this.flpTier1Databases = new System.Windows.Forms.FlowLayoutPanel();
             this.Catalogue = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
             this.mefStartupUI1 = new CatalogueManager.TestsAndSetup.StartupUI.MEFStartupUI();
@@ -219,7 +219,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.tpTechnical.Controls.Add(this.label3);
             this.tpTechnical.Controls.Add(this.label2);
             this.tpTechnical.Controls.Add(this.lblTier1);
-            this.tpTechnical.Controls.Add(this.registryRepositoryFinderUI1);
+            this.tpTechnical.Controls.Add(this.repositoryFinderUI1);
             this.tpTechnical.Controls.Add(this.flpTier1Databases);
             this.tpTechnical.Controls.Add(this.pbPluginPatchersArrow);
             this.tpTechnical.Controls.Add(this.lblStartupComplete2);
@@ -264,15 +264,15 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.lblTier1.TabIndex = 1;
             this.lblTier1.Text = "Tier 1";
             // 
-            // registryRepositoryFinderUI1
+            // repositoryFinderUI1
             // 
-            this.registryRepositoryFinderUI1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.repositoryFinderUI1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.registryRepositoryFinderUI1.BackColor = System.Drawing.Color.OldLace;
-            this.registryRepositoryFinderUI1.Location = new System.Drawing.Point(0, 628);
-            this.registryRepositoryFinderUI1.Name = "registryRepositoryFinderUI1";
-            this.registryRepositoryFinderUI1.Size = new System.Drawing.Size(997, 75);
-            this.registryRepositoryFinderUI1.TabIndex = 0;
+            this.repositoryFinderUI1.BackColor = System.Drawing.Color.OldLace;
+            this.repositoryFinderUI1.Location = new System.Drawing.Point(0, 628);
+            this.repositoryFinderUI1.Name = "repositoryFinderUI1";
+            this.repositoryFinderUI1.Size = new System.Drawing.Size(997, 75);
+            this.repositoryFinderUI1.TabIndex = 0;
             // 
             // flpTier1Databases
             // 
@@ -438,7 +438,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         private System.Windows.Forms.LinkLabel llChoosePlatformDatabases;
         private System.Windows.Forms.PictureBox pbWhereIsDatabase;
         private System.Windows.Forms.FlowLayoutPanel flpTier1Databases;
-        private RepositoryFinderUI registryRepositoryFinderUI1;
+        private RepositoryFinderUI repositoryFinderUI1;
 
     }
 }

@@ -283,12 +283,12 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             llException.Visible = false;
             llChoosePlatformDatabases.Visible = false;
 
-            registryRepositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
+            repositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
 
             lblStartupComplete1.Visible = false;
             lblStartupComplete2.Visible = false;
 
-            //10% progress because we connected to registry
+            //10% progress because we connected to user settings
             pbLoadProgress.Value = 100;
 
             lblProgress.Text = "Awaiting Platform Database Discovery...";

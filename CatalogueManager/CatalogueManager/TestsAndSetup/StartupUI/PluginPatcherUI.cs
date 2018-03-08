@@ -15,7 +15,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
     /// <summary>
     /// There are 3 'tiers' of platform database in the RDMP:
     ///  
-    /// Tier 1 - Catalogue Manager database and Data Export Manager database (optionally).  These are configured through the Registry (See ChoosePlatformDatabases)
+    /// Tier 1 - Catalogue Manager database and Data Export Manager database (optionally).  These are stored in user settings and configured through ChoosePlatformDatabases
     /// 
     /// Tier 2 - Databases created and referenced in the Catalogue Manager database such as Logging databases, ANO databases, Data Quality Engine Reporting databases etc (See ManageExternalServers)
     /// 

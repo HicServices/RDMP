@@ -27,8 +27,7 @@ namespace CatalogueManager.TestsAndSetup
     {
         private T _mainForm;
 
-        private IRDMPPlatformRepositoryServiceLocator _registry;
-
+        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
         public void Show(bool requiresDataExportDatabaseToo)
         {
@@ -47,16 +46,16 @@ namespace CatalogueManager.TestsAndSetup
                 var startupUI = new StartupUIMainForm(startup);
                 startupUI.ShowDialog();
 
-                _registry = startup.RepositoryLocator;
+                _repositoryLocator = startup.RepositoryLocator;
                 
                 //launch the main application form T
                 _mainForm = new T();
-                _mainForm.RepositoryLocator = _registry;
+                _mainForm.RepositoryLocator = _repositoryLocator;
                 Application.Run(_mainForm);
             }
             catch (Exception e)
             {
-                DiagnosticsScreen.OfferLaunchingDiagnosticsScreenOrEnvironmentExit(_registry,null, e);
+                DiagnosticsScreen.OfferLaunchingDiagnosticsScreenOrEnvironmentExit(_repositoryLocator, null, e);
                 MessageBox.Show("Diagnostics has been closed, application will now exit");
             }
         }

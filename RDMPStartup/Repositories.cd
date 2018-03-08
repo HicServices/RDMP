@@ -10,21 +10,10 @@
       <FileName>Startup.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="RDMPStartup.RegistryRepositoryFinder">
-    <Position X="10" Y="1.75" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAADAAMAAAAEAAAEICAAAAAAEAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>RegistryRepositoryFinder.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_linkedRepositoryProvider" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="RDMPStartup.LinkedRepositoryProvider">
-    <Position X="14.5" Y="1.75" Width="2.25" />
+    <Position X="11.5" Y="2.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EAACCAAAAABAAAAAEAAAAAAAAAgAAAAAAAAAAAABAgA=</HashCode>
+      <HashCode>MAACCAAAAABAAAAAEAAAAAAAAAgABAAAAAAAAAABAgA=</HashCode>
       <FileName>LinkedRepositoryProvider.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -68,6 +57,17 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="RDMPStartup.UserSettingsRepositoryFinder">
+    <Position X="7.5" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAEKAAAAAAAAAABAAAAAAAAAABAAA=</HashCode>
+      <FileName>UserSettingsRepositoryFinder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_linkedRepositoryProvider" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="MapsDirectlyToDatabaseTable.IObscureDependencyFinder" Collapsed="true">
     <Position X="7.5" Y="5" Width="2.25" />
     <TypeIdentifier />
@@ -76,12 +76,5 @@
     <Position X="6.25" Y="0.75" Width="3.25" />
     <TypeIdentifier />
   </Interface>
-  <Enum Name="RDMPStartup.RegistrySetting">
-    <Position X="7.75" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAIAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>RegistryRepositoryFinder.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

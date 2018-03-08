@@ -64,7 +64,7 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
             var ex = Assert.Throws<Exception>(() => obscura1.ThrowIfDeleteDisallowed(cata));
             Assert.IsTrue(ex.Message.Contains("Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
 
-            //the second finder simulates when the registry doesn't have a record of the data export repository so it is unable to check it so it will let you delete it just fine
+            //the second finder simulates when the repository locator doesn't have a record of the data export repository so it is unable to check it so it will let you delete it just fine
             Assert.DoesNotThrow(() => obscura2.ThrowIfDeleteDisallowed(cata));
 
             //now delete them in the correct order

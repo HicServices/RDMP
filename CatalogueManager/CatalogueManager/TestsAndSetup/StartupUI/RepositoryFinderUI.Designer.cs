@@ -45,7 +45,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(92, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Windows Registry";
+            this.label1.Text = "Connection Strings";
             // 
             // lblExport
             // 
@@ -76,7 +76,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.btnChange.UseVisualStyleBackColor = true;
             this.btnChange.Click += new System.EventHandler(this.btnChange_Click);
             // 
-            // RegistryRepositoryFinderUI
+            // RepositoryFinderUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -84,7 +84,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.Controls.Add(this.lblCatalogue);
             this.Controls.Add(this.lblExport);
             this.Controls.Add(this.label1);
-            this.Name = "RegistryRepositoryFinderUI";
+            this.Name = "RepositoryFinderUI";
             this.Size = new System.Drawing.Size(523, 75);
             this.ResumeLayout(false);
             this.PerformLayout();

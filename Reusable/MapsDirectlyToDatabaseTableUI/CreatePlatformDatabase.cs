@@ -18,7 +18,7 @@ namespace MapsDirectlyToDatabaseTableUI
     /// <summary>
     /// Allows you to create a new managed database (e.g. Logging database, Catalogue Manager database etc).
     /// 
-    /// Enter a server and a database (and optionally a username and password).  If you specify a username / password these will be stored either in the registry 
+    /// Enter a server and a database (and optionally a username and password).  If you specify a username / password these will be stored either in a user settings file 
     /// for tier 1 databases (Catalogue Manager / Data Export Manager) or as encrypted strings in the catalogue database for Tier 2-3 databases (See 
     /// PasswordEncryptionKeyLocationUI).  For a description of each tier of databases See PluginPatcherUI.
     /// 
