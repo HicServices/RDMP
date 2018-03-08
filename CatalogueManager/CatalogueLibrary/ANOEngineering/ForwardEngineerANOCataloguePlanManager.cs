@@ -173,15 +173,9 @@ namespace CatalogueLibrary.ANOEngineering
         
         public bool IsMandatoryForMigration(ColumnInfo col)
         {
-            return 
+            return
                 //ColumnInfo is part of the table primary key
-                col.IsPrimaryKey ||
-
-                //there are CatalogueItems that reference the ColumnInfo and those CatalogueItems are extractable (have associated ExtractionInformation)
-                   _allCatalogueItems.Any(
-                       ci =>
-                           ci.ColumnInfo_ID == col.ID && 
-                           _allExtractionInformations.Any(ei => ei.CatalogueItem_ID == ci.ID));
+                col.IsPrimaryKey;
         }
 
         public enum Plan
@@ -393,10 +387,13 @@ namespace CatalogueLibrary.ANOEngineering
 
             var allColumnInfos = Catalogue.Repository.GetAllObjects<ColumnInfo>();
 
+            //for each column info we know about
             foreach (var col in Plans.Keys.ToArray())
             {
+                //if there is a ColumnInfo with the same name (or that has ANO prefix)
                 var matchingOnName = allColumnInfos.Where(a =>a.GetRuntimeName() == col.GetRuntimeName() || a.GetRuntimeName() == "ANO" + col.GetRuntimeName()).ToArray();
 
+                //and if the same named ColumnInfo(s) have a shared ANOTable (e.g. ANOCHI)
                 var agreedAnoTableID = matchingOnName.Where(c=>c.ANOTable_ID != null).Select(c=>c.ANOTable_ID).Distinct().ToArray();
 
                 //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables 
@@ -405,8 +402,25 @@ namespace CatalogueLibrary.ANOEngineering
                     SetPlannedANOTable(col,Catalogue.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value));
                     toReturn.Add(col);
                 }
-            }
+                //suggest dropping hic_ fields
+                else if(col.GetRuntimeName().StartsWith("hic_"))
+                {
+                    SetPlan(col,Plan.Drop);
+                    toReturn.Add(col);
+                }
+                //suggest that if there are CatalogueItems that reference the ColumnInfo and those CatalogueItems are extractable (have associated ExtractionInformation) that it goes through
+                else
+                    if(_allCatalogueItems.Any(
+                        ci =>
+                            ci.ColumnInfo_ID == col.ID &&
+                            _allExtractionInformations.Any(ei => ei.CatalogueItem_ID == ci.ID)))
+                {
+                    SetPlan(col, Plan.PassThroughUnchanged);
+                    toReturn.Add(col);
+                }
 
+            }
+            
             return toReturn.ToArray();
         }
         

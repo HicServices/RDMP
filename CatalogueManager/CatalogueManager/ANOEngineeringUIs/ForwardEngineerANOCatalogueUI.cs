@@ -301,20 +301,18 @@ namespace CatalogueManager.ANOEngineeringUIs
             DisableObjects();
         }
 
-        private void tlvTableInfoMigrations_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
-        {
-            var ci = e.Model as ColumnInfo;
-
-            if (ci != null )
-                if (_suggestions != null && _suggestions.Contains(ci))
-                    e.Item.BackColor = lblPlanIsSuggestion.BackColor;
-                else
-                if( _planManager.IsMandatoryForMigration(ci))
-                    e.Item.BackColor = lblMandatory.BackColor;
-        }
-
         private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)
         {
+            
+            var ci = e.Model as ColumnInfo;
+
+            if (ci != null)
+                if (_planManager.IsMandatoryForMigration(ci))
+                    e.SubItem.BackColor = lblMandatory.BackColor;
+                else
+                if (_suggestions != null && _suggestions.Contains(ci))
+                    e.SubItem.BackColor = lblPlanIsSuggestion.BackColor;
+
             if(e.Column == olvMigrationPlan)
                 if(e.Model is ColumnInfo)
                     e.SubItem.Font = new Font(e.Item.Font, FontStyle.Underline);
@@ -465,6 +463,12 @@ namespace CatalogueManager.ANOEngineeringUIs
             }
 
             return null;
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            tlvTableInfoMigrations.UseFiltering = true;
+            tlvTableInfoMigrations.ModelFilter = new TextMatchFilter(tlvTableInfoMigrations,tbFilter.Text);
         }
     }
 
