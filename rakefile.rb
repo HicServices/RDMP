@@ -95,10 +95,10 @@ task :publishall, [:folder, :url] do |t, args|
     
     if (suffix)
         deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}-#{suffix}"
-        deployurl = "#{baseurl}/RC/"
+        deployurl = "#{baseurl}/#{major}.#{minor}.#{patch}.#{build}-#{suffix}/"
     else
         deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}"
-        deployurl = "#{baseurl}/Stable/"
+        deployurl = "#{baseurl}/"
     end
     
     minversion = "#{major}.#{minor}.#{patch}.0"
