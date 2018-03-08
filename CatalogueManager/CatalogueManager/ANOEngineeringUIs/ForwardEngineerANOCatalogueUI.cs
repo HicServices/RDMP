@@ -382,6 +382,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void btnRefreshChecks_Click(object sender, EventArgs e)
         {
+            _planManager.TargetDatabase = serverDatabaseTableSelector1.GetDiscoveredDatabase();
             Check();
         }
 

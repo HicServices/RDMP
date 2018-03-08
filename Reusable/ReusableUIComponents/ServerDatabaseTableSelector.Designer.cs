@@ -91,7 +91,7 @@
             // 
             this.cbxDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbxDatabase.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
+            this.cbxDatabase.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cbxDatabase.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxDatabase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.cbxDatabase.FormattingEnabled = true;
@@ -117,7 +117,7 @@
             // 
             this.cbxServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbxServer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
+            this.cbxServer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cbxServer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.cbxServer.FormattingEnabled = true;
