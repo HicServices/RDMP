@@ -96,7 +96,8 @@ namespace CatalogueManager {
         /// <summary>
         ///   Looks up a localized string similar to This Tab lets you edit the descriptive metadata for your Catalogues (datasets).  Right clicking a Catalogue will bring up a menu with a list of Catalogue level operations e.g. choosing which of the CatalogueItems in the catalogue is most indicative of record time periodicity (e.g. admission date of a hostpital admissions record).
         ///
-        ///GETTING STARTED: If this is your first time launching the software it is likely that you do not yet have any Catalogues (datasets) available.  Your first step should be either:        /// [rest of string was truncated]&quot;;.
+        ///GETTING STARTED: If this is your first time launching the software it is likely that you do not yet have any Catalogues (datasets) available.  Your first step should be either:
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CatalogueTabListbox {
             get {
@@ -176,7 +177,7 @@ namespace CatalogueManager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This dialog lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data generated is completely fictional.  Test data is generated randomly usually around a distribution (e.g. there are more prescsriptions for Paracetamol/Aspirin than Morphine) but complex relationships are not modelled (e.g. theres no concept of someone being diabetic so just because someone is on INSULIN doesn&apos;t mean they will hav [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to This dialog lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data generated is completely fictional.  Test data is generated randomly usually around a distribution (e.g. there are more prescriptions for Paracetamol/Aspirin than Morphine) but complex relationships are not modelled (e.g. theres no concept of someone being diabetic so just because someone is on INSULIN doesn&apos;t mean they will have [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ExerciseData {
             get {
