@@ -38,9 +38,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
         {
             InitializeComponent();
             serverDatabaseTableSelector1.HideTableComponents();
-
-            RecentHistoryOfControls.GetInstance().HostControl(serverDatabaseTableSelector1.cbxServer);
-            RecentHistoryOfControls.GetInstance().AddHistoryAsItemsToComboBox(serverDatabaseTableSelector1.cbxServer);
         }
 
         private void btnDisplayPrerequisites_Click(object sender, EventArgs e)

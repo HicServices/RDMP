@@ -49,6 +49,9 @@ namespace MapsDirectlyToDatabaseTableUI
             _initialVersionNumber = initialVersionNumber;
             _patches = patches;
             InitializeComponent();
+
+            new RecentHistoryOfControls(tbServer, new Guid("8c32e04c-f3c4-465d-8dbb-f180264b87f8"));
+            new RecentHistoryOfControls(tbDatabase, new Guid("dee8d99f-625b-4e20-b63c-63613302e1bc"));
         }
         
         /// <summary>

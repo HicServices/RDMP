@@ -33,6 +33,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
+using ReusableUIComponents.Settings;
 
 namespace DataExportManager.Collections.Providers
 {
@@ -376,7 +377,9 @@ namespace DataExportManager.Collections.Providers
                             BlackListedSources.AddRange(CohortSources);
                             return;
                         case BlacklistResponse.UnsetDataExport:
-                            ((RegistryRepositoryFinder)_repositoryLocator).SetRegistryValue(RegistrySetting.DataExportManager, "");
+
+                            UserSettings.DataExportConnectionString = "";
+                            ((UserSettingsRepositoryFinder)_repositoryLocator).RefreshRepositoriesFromUserSettings();
                             throw new Exception("User has unset Data Export Manager Location");
                         default:
                             throw new ArgumentOutOfRangeException();

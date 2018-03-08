@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
+using ReusableUIComponents.Settings;
 
 
 namespace MapsDirectlyToDatabaseTableUI
@@ -75,34 +76,10 @@ namespace MapsDirectlyToDatabaseTableUI
 
             AddUsefulPropertiesIfHomogeneousTypes(o);
             listBox1.CustomSorter += CustomSorter;
-            listBox1.AfterSorting += listBox1_AfterSorting;
 
             try
             {
-
-                var previousSetting = RecentHistoryOfControls.GetInstance().GetList("SelectIMapsSortOrder");
-
-                if (previousSetting != null && previousSetting.Count == 1)
-                {
-                    string[] split = previousSetting[0].Split('|');
-
-                    if(split.Length != 2)
-                        return;
-
-                    if(string.IsNullOrWhiteSpace(split[0]))
-                        return;
-
-                    if (string.IsNullOrWhiteSpace(split[1]))
-                        return;
-
-                    OLVColumn sortCol = listBox1.GetColumn(split[0]);
-                    SortOrder sortOrder;
-                        
-                    if(!SortOrder.TryParse(split[1],out sortOrder))
-                        return;
-                
-                    listBox1.Sort(sortCol,sortOrder);
-                }
+                listBox1.Sort(olvID,SortOrder.Descending);
             }
             catch (Exception e)
             {
@@ -155,15 +132,6 @@ namespace MapsDirectlyToDatabaseTableUI
         private object TypeAspectGetter(object rowObject)
         {
             return rowObject.GetType().Name;
-        }
-
-
-        void listBox1_AfterSorting(object sender, AfterSortingEventArgs e)
-        {
-            RecentHistoryOfControls.GetInstance().Clear("SelectIMapsSortOrder");
-
-            if (listBox1.LastSortColumn != null)
-                RecentHistoryOfControls.GetInstance().AddResults("SelectIMapsSortOrder", listBox1.LastSortColumn.Text + "|" + listBox1.LastSortOrder);
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> MultiSelected { get; set; }

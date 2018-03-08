@@ -47,7 +47,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblTier1 = new System.Windows.Forms.Label();
-            this.registryRepositoryFinderUI1 = new CatalogueManager.TestsAndSetup.StartupUI.RegistryRepositoryFinderUI();
+            this.registryRepositoryFinderUI1 = new CatalogueManager.TestsAndSetup.StartupUI.RepositoryFinderUI();
             this.flpTier1Databases = new System.Windows.Forms.FlowLayoutPanel();
             this.Catalogue = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
             this.mefStartupUI1 = new CatalogueManager.TestsAndSetup.StartupUI.MEFStartupUI();
@@ -438,7 +438,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         private System.Windows.Forms.LinkLabel llChoosePlatformDatabases;
         private System.Windows.Forms.PictureBox pbWhereIsDatabase;
         private System.Windows.Forms.FlowLayoutPanel flpTier1Databases;
-        private RegistryRepositoryFinderUI registryRepositoryFinderUI1;
+        private RepositoryFinderUI registryRepositoryFinderUI1;
 
     }
 }

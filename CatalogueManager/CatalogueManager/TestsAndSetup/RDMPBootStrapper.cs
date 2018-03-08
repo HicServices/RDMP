@@ -40,9 +40,6 @@ namespace CatalogueManager.TestsAndSetup
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += (sender, args) => ExceptionViewer.Show((Exception)args.ExceptionObject,false);
 
-            // for now, while this remains a singleton (public mutable static is awful but allows removal of dependency on CatMan)
-            RecentHistoryOfControls.RDMPRegistryRootKey = RegistryRepositoryFinder.RDMPRegistryRoot;
-            
             try
             {
                 //show the startup dialog

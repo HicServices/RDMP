@@ -30,6 +30,7 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +59,6 @@
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showPerformanceCounterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearAllAutocompleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mi_CatalogueDatabaseIndexRebuild = new System.Windows.Forms.ToolStripMenuItem();
             this.mi_DataExportDatabaseIndexRebuild = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +71,6 @@
             this.tutorialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBar();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -104,6 +103,12 @@
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Text = "New";
             // 
             // runToolStripMenuItem
             // 
@@ -225,7 +230,7 @@
             this.serverSpecReportToolStripMenuItem,
             this.dITAExtractionToolStripMenuItem});
             this.generateReportToolStripMenuItem.Name = "generateReportToolStripMenuItem";
-            this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.generateReportToolStripMenuItem.Text = "Generate...";
             // 
             // databaseAccessComplexToolStripMenuItem
@@ -271,7 +276,6 @@
             this.pluginsToolStripMenuItem,
             this.toolStripSeparator1,
             this.showPerformanceCounterToolStripMenuItem,
-            this.clearAllAutocompleteToolStripMenuItem,
             this.indexesToolStripMenuItem,
             this.openExeDirectoryToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
@@ -329,13 +333,6 @@
             this.showPerformanceCounterToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
             this.showPerformanceCounterToolStripMenuItem.Text = "Show Performance Counter...";
             this.showPerformanceCounterToolStripMenuItem.Click += new System.EventHandler(this.showPerformanceCounterToolStripMenuItem_Click);
-            // 
-            // clearAllAutocompleteToolStripMenuItem
-            // 
-            this.clearAllAutocompleteToolStripMenuItem.Name = "clearAllAutocompleteToolStripMenuItem";
-            this.clearAllAutocompleteToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
-            this.clearAllAutocompleteToolStripMenuItem.Text = "Clear All Autocomplete";
-            this.clearAllAutocompleteToolStripMenuItem.Click += new System.EventHandler(this.clearAllAutocompleteToolStripMenuItem_Click);
             // 
             // indexesToolStripMenuItem
             // 
@@ -431,12 +428,6 @@
             this.rdmpTaskBar1.Size = new System.Drawing.Size(1157, 25);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // newToolStripMenuItem
-            // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.newToolStripMenuItem.Text = "New";
-            // 
             // RDMPTopMenuStrip
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -475,7 +466,6 @@
         private System.Windows.Forms.ToolStripMenuItem generateTestDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem showPerformanceCounterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem clearAllAutocompleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indexesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mi_CatalogueDatabaseIndexRebuild;
         private System.Windows.Forms.ToolStripMenuItem mi_DataExportDatabaseIndexRebuild;

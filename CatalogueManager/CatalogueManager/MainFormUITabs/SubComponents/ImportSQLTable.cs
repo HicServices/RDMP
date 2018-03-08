@@ -51,17 +51,6 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
             ddContext.DataSource = Enum.GetValues(typeof (DataAccessContext));
             ddContext.SelectedItem = DataAccessContext.Any;//default to any!
-
-            
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            RecentHistoryOfControls.GetInstance().HostControl(serverDatabaseTableSelector1.cbxServer);
-            RecentHistoryOfControls.GetInstance().AddHistoryAsItemsToComboBox(serverDatabaseTableSelector1.cbxServer);
-
         }
 
         void serverDatabaseTableSelector1_SelectionChanged()

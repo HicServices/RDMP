@@ -1354,11 +1354,11 @@
     <Compile Include="TestsAndSetup\StartupUI\PluginPatcherUI.Designer.cs">
       <DependentUpon>PluginPatcherUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\RegistryRepositoryFinderUI.cs">
+    <Compile Include="TestsAndSetup\StartupUI\RepositoryFinderUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\RegistryRepositoryFinderUI.Designer.cs">
-      <DependentUpon>RegistryRepositoryFinderUI.cs</DependentUpon>
+    <Compile Include="TestsAndSetup\StartupUI\RepositoryFinderUI.Designer.cs">
+      <DependentUpon>RepositoryFinderUI.cs</DependentUpon>
     </Compile>
     <Compile Include="TestsAndSetup\StartupUI\StartupUIMainForm.cs">
       <SubType>Form</SubType>
@@ -2005,8 +2005,8 @@
     <EmbeddedResource Include="TestsAndSetup\StartupUI\PluginPatcherUI.resx">
       <DependentUpon>PluginPatcherUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\StartupUI\RegistryRepositoryFinderUI.resx">
-      <DependentUpon>RegistryRepositoryFinderUI.cs</DependentUpon>
+    <EmbeddedResource Include="TestsAndSetup\StartupUI\RepositoryFinderUI.resx">
+      <DependentUpon>RepositoryFinderUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TestsAndSetup\StartupUI\StartupUIMainForm.resx">
       <DependentUpon>StartupUIMainForm.cs</DependentUpon>

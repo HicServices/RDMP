@@ -18,7 +18,7 @@ namespace RDMPStartup
     /// Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information (what datasets there are, what extraction
     /// projects there are, what IFilters are available etc - literally everything, just look at who inherits from IMapsDirectlyToDatabaseTable!).
     /// 
-    /// See also RegistryRepositoryFinder
+    /// See also UserSettingsRepositoryFinder
     /// </summary>
     public class LinkedRepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {

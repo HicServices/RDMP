@@ -2,7 +2,7 @@
 
 namespace CatalogueManager.TestsAndSetup.StartupUI
 {
-    partial class RegistryRepositoryFinderUI 
+    partial class RepositoryFinderUI 
     {
         /// <summary> 
         /// Required designer variable.

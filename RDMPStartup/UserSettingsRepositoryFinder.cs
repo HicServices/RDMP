@@ -8,6 +8,7 @@ using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.Win32;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.Settings;
 
 namespace RDMPStartup
 {
@@ -17,7 +18,7 @@ namespace RDMPStartup
     /// 
     /// Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those databases (and to create new ones).
     /// </summary>
-    public class RegistryRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
+    public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
     {
         private LinkedRepositoryProvider _linkedRepositoryProvider;
 
@@ -26,7 +27,10 @@ namespace RDMPStartup
             get
             {
                 if(_linkedRepositoryProvider == null)
-                    _linkedRepositoryProvider = RefreshRepositoriesFromRegistry();
+                    RefreshRepositoriesFromUserSettings();
+
+                if (_linkedRepositoryProvider == null)
+                    throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
 
                 return _linkedRepositoryProvider.CatalogueRepository;
             }
@@ -37,7 +41,10 @@ namespace RDMPStartup
             get
             {
                 if (_linkedRepositoryProvider == null)
-                    _linkedRepositoryProvider = RefreshRepositoriesFromRegistry();
+                    RefreshRepositoriesFromUserSettings();
+
+                if (_linkedRepositoryProvider == null)
+                    throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
 
                 return _linkedRepositoryProvider.DataExportRepository; 
             }
@@ -53,20 +60,7 @@ namespace RDMPStartup
             return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
         }
 
-        public const string RDMPRegistryRoot = @"HKEY_CURRENT_USER\Software\HICDataManagementPlatform";
-
-        public bool KeyExists
-        {
-            get { return Registry.GetValue(RDMPRegistryRoot, "CatalogueConnectionString", null) != null; }
-        }
-
-        private static readonly Dictionary<RegistrySetting, string> _registryConnectionStrings = new Dictionary<RegistrySetting, string>
-        {
-            {RegistrySetting.Catalogue, "CatalogueConnectionString"},
-            {RegistrySetting.DataExportManager, "DataExportManagerConnectionString"}
-        };
-        
-        private LinkedRepositoryProvider RefreshRepositoriesFromRegistry()
+        public void RefreshRepositoriesFromUserSettings()
         {
             //we have mef?
             MEF mef = null;
@@ -77,43 +71,28 @@ namespace RDMPStartup
                 mef = _linkedRepositoryProvider.CatalogueRepository.MEF;
 
             //user must have a Catalogue
-            string catalogueString = GetRegistryValue(RegistrySetting.Catalogue);
+            string catalogueString = UserSettings.CatalogueConnectionString;
             
             //user may have a DataExportManager
-            string dataExportManagerConnectionString = GetRegistryValue(RegistrySetting.DataExportManager);
+            string dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
 
             var newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
 
             //preserve the currently loaded MEF assemblies
-            if (newrepo.CatalogueRepository != null && newrepo.CatalogueRepository.MEF == null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies)
+            if (
+                //if we have a new repo
+                newrepo.CatalogueRepository != null &&
+                
+                //and the new repo doesn't have MEF loaded
+                newrepo.CatalogueRepository.MEF != null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies 
+                
+                //but the old one did
+                && mef != null && mef.HaveDownloadedAllAssemblies) 
+
+                //use the old MEF    
                 newrepo.CatalogueRepository.MEF = mef;
 
-            return newrepo;
-
+            _linkedRepositoryProvider = newrepo;
         }
-
-        private string GetRegistryValue(RegistrySetting registrySetting)
-        {
-            //There are no configuration settings yet available, fetch some from the registry!
-            object valueRead = Registry.GetValue(RDMPRegistryRoot, _registryConnectionStrings[registrySetting], null);
-
-            if (valueRead == null)
-                return null;
-
-            return valueRead.ToString();
-        }
-
-        public void SetRegistryValue(RegistrySetting registrySetting, string value)
-        {
-            //There are no configuration settings yet available, fetch some from the registry!
-            Registry.SetValue(RDMPRegistryRoot, _registryConnectionStrings[registrySetting], value, RegistryValueKind.String);
-            _linkedRepositoryProvider = RefreshRepositoriesFromRegistry();
-        }
-    }
-
-    public enum RegistrySetting
-    {
-        Catalogue,
-        DataExportManager
     }
 }

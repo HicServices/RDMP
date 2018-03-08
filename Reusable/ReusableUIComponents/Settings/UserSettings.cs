@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows.Documents;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
@@ -40,13 +42,32 @@ namespace ReusableUIComponents.Settings
             set { AppSettings.AddOrUpdateValue("DisableTutorials", value); }
         }
 
+        public static string CatalogueConnectionString
+        {
+            get { return AppSettings.GetValueOrDefault("CatalogueConnectionString", ""); }
+            set { AppSettings.AddOrUpdateValue("CatalogueConnectionString", value); }
+        }
+        public static string DataExportConnectionString
+        {
+            get { return AppSettings.GetValueOrDefault("DataExportConnectionString", ""); }
+            set { AppSettings.AddOrUpdateValue("DataExportConnectionString", value); }
+        }
         public static bool GetTutorialDone(Guid tutorialGuid)
         {
-            return AppSettings.GetValueOrDefault(tutorialGuid.ToString("N"), false); 
+            return AppSettings.GetValueOrDefault("T_" + tutorialGuid.ToString("N"), false); 
         }
         public static void SetTutorialDone(Guid tutorialGuid,bool value)
         {
-            AppSettings.AddOrUpdateValue(tutorialGuid.ToString("N"), value);
+            AppSettings.AddOrUpdateValue("T_" + tutorialGuid.ToString("N"), value);
+        }
+
+        public static string[] GetHistoryForControl(Guid controlGuid)
+        {
+            return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.RemoveEmptyEntries);
+        }
+        public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
+        {
+            AppSettings.AddOrUpdateValue("A_" + controlGuid.ToString("N"), string.Join("#!#", history));
         }
     }
 }

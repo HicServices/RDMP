@@ -26,7 +26,7 @@ namespace CatalogueWebService
             base.ConfigureApplicationContainer(container);
 
             container.Register<ICacheProvider<ChartData>, KeyValueCache<ChartData>>();
-            container.Register<IRDMPPlatformRepositoryServiceLocator, RegistryRepositoryFinder>();
+            container.Register<IRDMPPlatformRepositoryServiceLocator, UserSettingsRepositoryFinder>();
         }
     }
 }

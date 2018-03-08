@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Data;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,22 +19,22 @@ using ReusableLibraryCode.Checks;
 namespace CatalogueManager.TestsAndSetup.StartupUI
 {
     /// <summary>
-    /// Part of StartupUIMainForm, this control is visible only in the 'Technical' view.  It describes the state of the users Windows Registry key for RDMP.  This is how the software finds
+    /// Part of StartupUIMainForm, this control is visible only in the 'Technical' view.  It describes the state of the users connection strings for RDMP.  This is how the software finds
     /// the connection strings for tier 1 databases (Data Catalogue and optionally Data Export Manager).  Clicking 'Change...' will launch a dialog that lets you change the connection strings
     /// or create new catalogue / data export manager databases
     /// 
     /// Clicking 'Change...' will launch ChoosePlatformDatabases.
     /// </summary>
-    public partial class RegistryRepositoryFinderUI : UserControl
+    public partial class RepositoryFinderUI : UserControl
     {
-        private RegistryRepositoryFinder _finder;
+        private UserSettingsRepositoryFinder _finder;
         
-        public RegistryRepositoryFinderUI()
+        public RepositoryFinderUI()
         {
             InitializeComponent();
         }
 
-        public void SetRegistryRepositoryFinder(RegistryRepositoryFinder finder)
+        public void SetRepositoryFinder(UserSettingsRepositoryFinder finder)
         {
             _finder = finder;
 

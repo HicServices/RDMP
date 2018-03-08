@@ -246,19 +246,19 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             {
                 try
                 {
-                    lblProgress.Text = "Constructing RegistryRepositoryFinder";
-                    RegistryRepositoryFinder finder = new RegistryRepositoryFinder();
+                    lblProgress.Text = "Constructing UserSettingsRepositoryFinder";
+                    UserSettingsRepositoryFinder finder = new UserSettingsRepositoryFinder();
                     _startup.RepositoryLocator = finder;
                 }
                 catch (Exception ex)
                 {
-                    lblProgress.Text = "Constructing RegistryRepositoryFinder Failed";
+                    lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
                     Fatal(ex);
                 }
             }
             else
-                if(!(_startup.RepositoryLocator is RegistryRepositoryFinder))
-                    throw new NotSupportedException("You created Startup with an existing repository finder so we were going to reuse that one but it wasn't a RegistryRepositoryFinder (it was a " + _startup.RepositoryLocator.GetType().Name + "!)");
+                if(!(_startup.RepositoryLocator is UserSettingsRepositoryFinder))
+                    throw new NotSupportedException("You created Startup with an existing repository finder so we were going to reuse that one but it wasn't a UserSettingsRepositoryFinder (it was a " + _startup.RepositoryLocator.GetType().Name + "!)");
             
 
             Catalogue.Visible = false;
@@ -283,7 +283,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             llException.Visible = false;
             llChoosePlatformDatabases.Visible = false;
 
-            registryRepositoryFinderUI1.SetRegistryRepositoryFinder((RegistryRepositoryFinder)_startup.RepositoryLocator);
+            registryRepositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
 
             lblStartupComplete1.Visible = false;
             lblStartupComplete2.Visible = false;
@@ -467,7 +467,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
 
         private void llChoosePlatformDatabases_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var cmd = new ExecuteCommandChoosePlatformDatabase(new RegistryRepositoryFinder());
+            var cmd = new ExecuteCommandChoosePlatformDatabase(new UserSettingsRepositoryFinder());
             cmd.Execute();
             StartOrRestart(true);
         }

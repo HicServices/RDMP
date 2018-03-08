@@ -26,6 +26,7 @@ using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Settings;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
@@ -35,7 +36,7 @@ namespace CatalogueManager.LocationsMenu
     /// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about 
     /// your datasets (including where they are stored etc).  The Data Export Manager database stores all the extraction configurations you have created for releasing to researchers.
     /// 
-    /// This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new ones.  These connection strings are recorded in each users Registry.
+    /// This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new ones.  These connection strings are recorded in each users settings file.
     /// It is strongly advised that you use Integrated Security (Windows Security) for connecting rather than a username/password as this is the only case where Passwords are not encrypted
     /// (Since the encryption certificate location is stored in the Catalogue! - see PasswordEncryptionKeyLocationUI).
     /// 
@@ -58,16 +59,16 @@ namespace CatalogueManager.LocationsMenu
         }
 
         private HelpStage _lookAtChecksToSeeWhyItAllFailed;
-        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        private UserSettingsRepositoryFinder _repositoryLocator;
 
         public ChoosePlatformDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICommandExecution command)
         {
-            _repositoryLocator = repositoryLocator;
+            _repositoryLocator = (UserSettingsRepositoryFinder)repositoryLocator;
             
             InitializeComponent();
 
-            RecentHistoryOfControls.GetInstance().HostControl(tbCatalogueConnectionString);
-            RecentHistoryOfControls.GetInstance().HostControl(tbDataExportManagerConnectionString);
+            new RecentHistoryOfControls(tbCatalogueConnectionString, new Guid("75e6b0a3-03f2-49fc-9446-ebc1dae9f123"));
+            new RecentHistoryOfControls(tbDataExportManagerConnectionString, new Guid("9ce952d8-d629-454a-ab9b-a1af97548be6"));
 
             gbSqlServer.Enabled = true;
 
@@ -118,19 +119,19 @@ namespace CatalogueManager.LocationsMenu
             HelpWorkflow.Start();
         }
 
-        private bool SaveConnectionStringsToRegistry()
+        private bool SaveConnectionStrings()
         {
             try
             {
-                var regRepo = (RegistryRepositoryFinder)_repositoryLocator;
                 // save all the settings
-                regRepo.SetRegistryValue(RegistrySetting.Catalogue, tbCatalogueConnectionString.Text);
-                regRepo.SetRegistryValue(RegistrySetting.DataExportManager, tbDataExportManagerConnectionString.Text);
+                UserSettings.CatalogueConnectionString = tbCatalogueConnectionString.Text;
+                UserSettings.DataExportConnectionString = tbDataExportManagerConnectionString.Text;
+                _repositoryLocator.RefreshRepositoriesFromUserSettings();
                 return true;
             }
             catch (Exception exception)
             {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to save connection settings into registry",CheckResult.Fail,exception));
+                checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to save connection settings",CheckResult.Fail,exception));
                 return false;
             }
             
@@ -163,7 +164,6 @@ namespace CatalogueManager.LocationsMenu
                         tbCatalogueConnectionString.Text = toPasteArray[0];
                         tbDataExportManagerConnectionString.Text = toPasteArray[1];
                         e.SuppressKeyPress = true;
-                        return;
                     }
                 }
             }
@@ -183,8 +183,7 @@ namespace CatalogueManager.LocationsMenu
                 ExceptionViewer.Show(exception);
             }
         }
-
-
+        
         private void btnCreateNewDataExportManagerDatabase_Click(object sender, EventArgs e)
         {
             try
@@ -209,7 +208,7 @@ namespace CatalogueManager.LocationsMenu
         private void btnSaveAndClose_Click(object sender, EventArgs e)
         {
             //if save is successful
-            if(SaveConnectionStringsToRegistry())
+            if(SaveConnectionStrings())
             {
                 try
                 {
@@ -269,7 +268,7 @@ namespace CatalogueManager.LocationsMenu
             try
             {
                 //save the settings
-                SaveConnectionStringsToRegistry();
+                SaveConnectionStrings();
 
                 checksUI1.StartChecking(CreateMissingFieldsChecker(repositoryToCheck));
                 checksUI1.AllChecksComplete += ShowNextStageOnChecksComplete;
@@ -289,30 +288,6 @@ namespace CatalogueManager.LocationsMenu
                 HelpWorkflow.ShowNextStageOrClose();
 
             ((ChecksUI) sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
-        }
-
-        private void btnShowRegistry_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Registry.SetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Applets\Regedit", "Lastkey", @"Computer\" + RegistryRepositoryFinder.RDMPRegistryRoot);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show("Could not set LastKey (makes regedit open at the correct registry key)",exception);
-            }
-
-            //give it time to take effect (windows be slow)
-            Thread.Sleep(500);
-
-            try
-            {
-                Process.Start("regedit.exe");
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show("Regedit.exe crashed or could not be launched",exception);
-            }
         }
 
         private void btnCreateSuite_Click(object sender, EventArgs e)

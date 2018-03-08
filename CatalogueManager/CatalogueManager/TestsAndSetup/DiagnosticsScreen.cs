@@ -468,17 +468,7 @@ namespace CatalogueManager.TestsAndSetup
             tbANOConnectionString.Text = defaultConnectionString;
             tbDumpConnectionString.Text = defaultConnectionString;
             tbTestDatasetServer.Text = defaultConnectionString;
-
-            RecentHistoryOfControls.GetInstance().HostControl(tbANOConnectionString);
-            RecentHistoryOfControls.GetInstance().HostControl(tbDumpConnectionString);
-            RecentHistoryOfControls.GetInstance().HostControl(tbTestDatasetServer);
-            RecentHistoryOfControls.GetInstance().HostControl(tbLoggingConnectionString);
-
-            RecentHistoryOfControls.GetInstance().SetValueToMostRecentlySavedValue(tbANOConnectionString);
-            RecentHistoryOfControls.GetInstance().SetValueToMostRecentlySavedValue(tbDumpConnectionString);
-            RecentHistoryOfControls.GetInstance().SetValueToMostRecentlySavedValue(tbTestDatasetServer);
-            RecentHistoryOfControls.GetInstance().SetValueToMostRecentlySavedValue(tbLoggingConnectionString);
-
+            
             setupComplete = true;
 
             //only allow them to add data export if they have imported the dataset

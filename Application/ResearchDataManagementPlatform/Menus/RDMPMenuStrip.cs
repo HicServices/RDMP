@@ -205,11 +205,6 @@ namespace ResearchDataManagementPlatform.Menus
             new PerformanceCounterUI().Show();
         }
 
-        private void clearAllAutocompleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RecentHistoryOfControls.GetInstance().Clear();
-        }
-        
         private void openExeDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
