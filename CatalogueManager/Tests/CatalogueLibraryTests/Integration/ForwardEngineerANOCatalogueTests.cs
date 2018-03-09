@@ -12,6 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Triggers;
 using Diagnostics.TestData;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;
@@ -92,7 +93,7 @@ namespace CatalogueLibraryTests.Integration
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
             var chi = bulk.GetColumnInfo("chi");
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<Exception>(() =>
             {
                 planManager.GetPlanForColumnInfo(chi).Plan = Plan.Drop;
                 planManager.GetPlanForColumnInfo(chi).Check(new ThrowImmediatelyCheckNotifier());
@@ -329,6 +330,10 @@ namespace CatalogueLibraryTests.Integration
             eiComboCol.Alias = "ComboColumn";
             eiComboCol.SaveToDatabase();
 
+            var eiDataLoadRunId = bulk.extractionInformations.Single(ei => ei.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID));
+            eiDataLoadRunId.DeleteInDatabase();
+            
+
             var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
             
             //now lets make it worse, lets assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
@@ -338,7 +343,7 @@ namespace CatalogueLibraryTests.Integration
             int orderToInsertDescriptionFieldAt = ciSex.ExtractionInformation.Order;
 
             //bump everyone down 1
-            foreach (var toBumpDown in bulk.catalogue.CatalogueItems.Select(ci=>ci.ExtractionInformation).Where(e => e.Order > orderToInsertDescriptionFieldAt))
+            foreach (var toBumpDown in bulk.catalogue.CatalogueItems.Select(ci=>ci.ExtractionInformation).Where(e =>e != null && e.Order > orderToInsertDescriptionFieldAt))
             {
                 toBumpDown.Order++;
                 toBumpDown.SaveToDatabase();
@@ -370,7 +375,7 @@ namespace CatalogueLibraryTests.Integration
 
             //setup test rules for migrator
             CreateMigrationRules(planManager, bulk);
-
+            
             //rules should pass checks
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
