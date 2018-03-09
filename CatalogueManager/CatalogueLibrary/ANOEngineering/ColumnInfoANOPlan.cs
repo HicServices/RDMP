@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
@@ -24,12 +25,41 @@ namespace CatalogueLibrary.ANOEngineering
         private readonly ColumnInfo[] _allColumnInfosSystemWide;
         private IQuerySyntaxHelper _querySyntaxHelper;
         private readonly ForwardEngineerANOCataloguePlanManager _planManager;
+        private Plan _plan;
 
         public ANOTable ANOTable {get;set;}
         public IDilutionOperation Dilution { get; set; }
         public ExtractionCategory? ExtractionCategoryIfAny { get; set; }
 
-        public Plan Plan { get; set; }
+        public Plan Plan
+        {
+            get { return _plan; }
+            set
+            {
+                _plan = value;
+
+                switch (value)
+                {
+                    case Plan.Drop:
+                        ANOTable = null;
+                        Dilution = null;
+                        ExtractionCategoryIfAny = null;
+                        break;
+                    case Plan.ANO:
+                        Dilution = null;
+                        break;
+                    case Plan.Dilute:
+                        ANOTable = null;
+                        break;
+                    case Plan.PassThroughUnchanged:
+                        ANOTable = null;
+                        Dilution = null;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("value");
+                }
+            }
+        }
 
         public bool IsMandatory
         {

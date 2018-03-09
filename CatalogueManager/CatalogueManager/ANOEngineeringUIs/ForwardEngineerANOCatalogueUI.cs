@@ -244,7 +244,6 @@ namespace CatalogueManager.ANOEngineeringUIs
                     cbx.Items.AddRange(_planManager.DilutionOperations.ToArray());
                     e.Control = cbx;
                 }
-
                 if (e.Column == olvDestinationExtractionCategory)
                 {
                     //if the plan is to drop
@@ -258,14 +257,14 @@ namespace CatalogueManager.ANOEngineeringUIs
                     var cbx = new ComboBox();
                     cbx.DropDownStyle = ComboBoxStyle.DropDownList;
                     cbx.Bounds = e.CellBounds;
-                    var list = new List<object>();
-                    
-                    list.AddRange(new[] {Enum.GetValues(typeof(ExtractionCategory))});
-                    list.Add("Clear");
 
+                    var list = Enum.GetValues(typeof (ExtractionCategory)).Cast<object>().ToList();
+                    list.Add("Clear");
+                    
                     cbx.DataSource = list;
                     e.Control = cbx;
                 }
+
             }
         }
         
