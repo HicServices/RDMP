@@ -12,6 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Triggers;
 using Diagnostics.TestData;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;
@@ -58,10 +59,10 @@ namespace CatalogueLibraryTests.Integration
             var dbName = TestDatabaseNames.GetConsistentName("PlanManagementTests");
 
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
-            
+
             db.Create(true);
-            
-            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn,100);
+
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
@@ -69,7 +70,7 @@ namespace CatalogueLibraryTests.Integration
             planManager.TargetDatabase = db;
 
             //no operations are as yet configured
-            Assert.DoesNotThrow(()=>planManager.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
             //create a table with the same name in the endpoint database to confirm that that's a problem
             db.CreateTable(bulk.tableInfo.GetRuntimeName(), new DatabaseColumnRequest[]
@@ -86,13 +87,20 @@ namespace CatalogueLibraryTests.Integration
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
             //setup test rules for migrator
-            CreateMigrationRules(planManager,bulk);
+            CreateMigrationRules(planManager, bulk);
 
             //rules should pass
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
-            var chi_num_of_curr_record = bulk.GetColumnInfo("chi_num_of_curr_record");
-            Assert.Throws<ArgumentException>(() => planManager.SetPlan(chi_num_of_curr_record, ForwardEngineerANOCataloguePlanManager.Plan.Drop));
+            var chi = bulk.GetColumnInfo("chi");
+            Assert.Throws<Exception>(() =>
+            {
+                planManager.GetPlanForColumnInfo(chi).Plan = Plan.Drop;
+                planManager.GetPlanForColumnInfo(chi).Check(new ThrowImmediatelyCheckNotifier());
+
+            }
+
+    ,"Should not be able to drop primary key column");
 
             db.ForceDrop();
         }
@@ -211,14 +219,17 @@ namespace CatalogueLibraryTests.Integration
                 anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
              
                 //////////////////The actual test!/////////////////
-                var plan = new ForwardEngineerANOCataloguePlanManager(cata);
+                var planManager = new ForwardEngineerANOCataloguePlanManager(cata);
                 
                 //ano the table SkullColor
-                plan.SetPlannedANOTable(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")), anoTable);
-                plan.TargetDatabase = dbTo;
-                plan.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
+                var scPlan = planManager.GetPlanForColumnInfo(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")));
+                scPlan.ANOTable = anoTable;
+                scPlan.Plan = Plan.ANO;
 
-                var engine =  new ForwardEngineerANOCatalogueEngine(CatalogueRepository, plan);
+                planManager.TargetDatabase = dbTo;
+                planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
+
+                var engine =  new ForwardEngineerANOCatalogueEngine(CatalogueRepository, planManager);
 
                 if (!tableInfoAlreadyExistsForSkippedTable)
                 {
@@ -319,6 +330,10 @@ namespace CatalogueLibraryTests.Integration
             eiComboCol.Alias = "ComboColumn";
             eiComboCol.SaveToDatabase();
 
+            var eiDataLoadRunId = bulk.extractionInformations.Single(ei => ei.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID));
+            eiDataLoadRunId.DeleteInDatabase();
+            
+
             var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
             
             //now lets make it worse, lets assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
@@ -328,7 +343,7 @@ namespace CatalogueLibraryTests.Integration
             int orderToInsertDescriptionFieldAt = ciSex.ExtractionInformation.Order;
 
             //bump everyone down 1
-            foreach (var toBumpDown in bulk.catalogue.CatalogueItems.Select(ci=>ci.ExtractionInformation).Where(e => e.Order > orderToInsertDescriptionFieldAt))
+            foreach (var toBumpDown in bulk.catalogue.CatalogueItems.Select(ci=>ci.ExtractionInformation).Where(e =>e != null && e.Order > orderToInsertDescriptionFieldAt))
             {
                 toBumpDown.Order++;
                 toBumpDown.SaveToDatabase();
@@ -360,7 +375,7 @@ namespace CatalogueLibraryTests.Integration
 
             //setup test rules for migrator
             CreateMigrationRules(planManager, bulk);
-
+            
             //rules should pass checks
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
@@ -431,25 +446,24 @@ namespace CatalogueLibraryTests.Integration
 
         private void CreateMigrationRules(ForwardEngineerANOCataloguePlanManager planManager, BulkTestsData bulk)
         {
-            
             var chi = bulk.GetColumnInfo("chi");
-
+            
             var anoChi = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCHI", "C");
             anoChi.NumberOfIntegersToUseInAnonymousRepresentation = 9;
             anoChi.NumberOfCharactersToUseInAnonymousRepresentation = 1;
             anoChi.SaveToDatabase();
             anoChi.PushToANOServerAsNewTable(chi.Data_type,new ThrowImmediatelyCheckNotifier());
-            
-            planManager.SetPlan(chi,ForwardEngineerANOCataloguePlanManager.Plan.ANO);
-            planManager.SetPlannedANOTable(chi,anoChi);
+
+            planManager.GetPlanForColumnInfo(chi).Plan = Plan.ANO;
+            planManager.GetPlanForColumnInfo(chi).ANOTable = anoChi;
 
             var dob = bulk.GetColumnInfo("date_of_birth");
-            planManager.SetPlan(dob, ForwardEngineerANOCataloguePlanManager.Plan.Dilute);
-            planManager.SetPlannedDilution(dob,new RoundDateToMiddleOfQuarter());
+            planManager.GetPlanForColumnInfo(dob).Plan = Plan.Dilute;
+            planManager.GetPlanForColumnInfo(dob).Dilution = new RoundDateToMiddleOfQuarter();
 
             var postcode = bulk.GetColumnInfo("current_postcode");
-            planManager.SetPlan(postcode, ForwardEngineerANOCataloguePlanManager.Plan.Dilute);
-            planManager.SetPlannedDilution(postcode,new ExcludeRight3OfUKPostcodes());
+            planManager.GetPlanForColumnInfo(postcode).Plan = Plan.Dilute;
+            planManager.GetPlanForColumnInfo(postcode).Dilution = new ExcludeRight3OfUKPostcodes();
         }
     }
 }
