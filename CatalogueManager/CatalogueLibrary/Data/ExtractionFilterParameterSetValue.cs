@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -126,5 +127,9 @@ namespace CatalogueLibrary.Data
             });
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return ExtractionFilterParameter.GetQuerySyntaxHelper();
+        }
     }
 }

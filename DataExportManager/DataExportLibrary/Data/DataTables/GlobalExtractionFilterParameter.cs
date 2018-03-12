@@ -6,6 +6,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -86,7 +87,12 @@ namespace DataExportLibrary.Data.DataTables
         {
             return ParameterName;
         }
-        
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
+        }
+
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {

@@ -481,7 +481,7 @@ namespace CatalogueLibrary.QueryBuilding
             return GetParameterDeclarationSQL(constantParameter, out whoCares);
         }
 
-        public static ConstantParameter DeconstructStringIntoParameter(string sql)
+        public static ConstantParameter DeconstructStringIntoParameter(string sql, IQuerySyntaxHelper syntaxHelper)
         {
             string[] lines = sql.Split(new[] {'\n'},StringSplitOptions.RemoveEmptyEntries);
 
@@ -504,7 +504,7 @@ namespace CatalogueLibrary.QueryBuilding
             var value = valueLineSplit[1].TrimEnd(new[] {';','\r'});
 
 
-            return new ConstantParameter(declaration.Trim(), value.Trim(), comment);
+            return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
         }
 
         public static string GetParameterDeclarationSQL(ISqlParameter sqlParameter, out int newlinesTaken)

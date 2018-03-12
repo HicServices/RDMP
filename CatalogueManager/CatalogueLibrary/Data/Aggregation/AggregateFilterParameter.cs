@@ -5,6 +5,7 @@ using System.Linq;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -49,6 +50,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         #endregion
+
         #region Relationships
         [NoMappingToDatabase]
         public AggregateFilter AggregateFilter{ get { return Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID); }}
@@ -90,6 +92,11 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             //return the name of the variable
             return ParameterName;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return AggregateFilter.GetQuerySyntaxHelper();
         }
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()

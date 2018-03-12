@@ -12,6 +12,8 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Cohort
 {
@@ -97,6 +99,16 @@ namespace CatalogueLibrary.Data.Cohort
         public override string ToString()
         {
             return ParameterName;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
+
+            if (parentWithQuerySyntaxHelper == null)
+                throw new Exception("Could not figure out what the query syntax helper is for " + this);
+
+            return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
         }
 
         public static bool IsSupportedType(Type type)

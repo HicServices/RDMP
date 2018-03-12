@@ -31,6 +31,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             return " AS ";
         }
+
+        /// <summary>
+        /// Regex for identifying parameters in blocks of SQL
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Regex GetParameterNameRegex()
+        {
+            return new Regex("(@[A-Za-z0-9_]*)\\s?",RegexOptions.IgnoreCase);
+        }
         
         public string AliasPrefix
         {
@@ -38,6 +47,21 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             {
                 return ValidateAlias(GetAliasConst());
             }
+        }
+        
+        /// <summary>
+        /// Looks for @something within the line of SQL and returns @something (including the @ symbol)
+        /// </summary>
+        /// <param name="parameterSQL"></param>
+        /// <returns></returns>
+        public string GetParameterNameFromDeclarationSQL(string parameterSQL)
+        {
+            var regex = GetParameterNameRegex();
+
+            if (!regex.IsMatch(parameterSQL))
+                throw new Exception("ParameterSQL does not match regex pattern:" + regex);
+
+            return regex.Match(parameterSQL).Value.Trim();
         }
 
         protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper,IUpdateHelper updateHelper)

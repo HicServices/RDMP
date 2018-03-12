@@ -1,6 +1,8 @@
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -11,13 +13,15 @@ namespace CatalogueLibrary.Spontaneous
     /// </summary>
     public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParameter
     {
+        private readonly IQuerySyntaxHelper _syntaxHelper;
         public string ParameterSQL { get; set; }
         public string Value { get; set; }
         
         public string Comment { get; set; }
 
-        public SpontaneouslyInventedSqlParameter(string declarationSql,string value, string comment)
+        public SpontaneouslyInventedSqlParameter(string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper)
         {
+            _syntaxHelper = syntaxHelper;
             ParameterSQL = declarationSql;
             Value = value;
             Comment = comment;
@@ -25,13 +29,18 @@ namespace CatalogueLibrary.Spontaneous
 
         public string ParameterName { get
         {
-            return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+            return _syntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
         }}
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             //I am my own owner! mwahahaha
             return this;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return _syntaxHelper;
         }
     }
 }

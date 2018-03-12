@@ -6,6 +6,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -93,6 +94,12 @@ namespace CatalogueLibrary.Data
             //return the name of the variable
             return ParameterName;
         }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return ExtractionFilter.GetQuerySyntaxHelper();
+        }
+
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {ExtractionFilter};
