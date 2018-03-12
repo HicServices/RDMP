@@ -47,14 +47,14 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         public DeployedExtractionFilterParameter(IDataExportRepository repository, string parameterSQL, IFilter parent)
         {
             Repository = repository;
 
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
+            if (!GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
                 throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
 
             Repository.InsertAndHydrate(this, new Dictionary<string, object>

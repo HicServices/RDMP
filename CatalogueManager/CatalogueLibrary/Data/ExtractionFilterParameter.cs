@@ -56,7 +56,7 @@ namespace CatalogueLibrary.Data
         /// </summary>
         [NoMappingToDatabase]
         public string ParameterName {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         #region Relationships
@@ -69,7 +69,7 @@ namespace CatalogueLibrary.Data
 
         public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
         {
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
+            if (!GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
                 throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>

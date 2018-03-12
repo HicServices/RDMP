@@ -1,4 +1,5 @@
 ﻿using System;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
@@ -80,11 +81,11 @@ namespace CatalogueLibraryTests.Unit
             TestColumn tc = new TestColumn();
             
             tc.Alias = "[bob smith]";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            CheckableSyntaxHelper.CheckSyntax(tc);
             tc.Alias = "`bob smith`";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            CheckableSyntaxHelper.CheckSyntax(tc);
             tc.Alias = "`[bob smith]`";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            CheckableSyntaxHelper.CheckSyntax(tc);
 
         }
 
@@ -95,7 +96,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob smith";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            CheckableSyntaxHelper.CheckSyntax(tc);
 
         }
 
@@ -105,7 +106,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "`bob";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            CheckableSyntaxHelper.CheckSyntax(tc);
            
         }
         [Test]
@@ -114,7 +115,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob]";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            CheckableSyntaxHelper.CheckSyntax(tc);
         }
 
         [Test] 
@@ -124,7 +125,7 @@ namespace CatalogueLibraryTests.Unit
             TestColumn tc = new TestColumn();
             tc.Alias = "bob";
             tc.SelectSQL = "GetSomething('here'";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            CheckableSyntaxHelper.CheckSyntax(tc);
         }
     }
 }

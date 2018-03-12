@@ -63,12 +63,12 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         public AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, IFilter parent)
         {
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
+            if (!GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
                 throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>

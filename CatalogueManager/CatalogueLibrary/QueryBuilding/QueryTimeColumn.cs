@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
@@ -221,7 +222,7 @@ namespace CatalogueLibrary.QueryBuilding
                 //make sure to only throw SyntaxErrorException errors in here
                 try
                 {
-                    RDMPQuerySyntaxHelper.CheckSyntax(IColumn);
+                    CheckableSyntaxHelper.CheckSyntax(IColumn);
                     string runtimeName = IColumn.GetRuntimeName();
 
                     if (string.IsNullOrWhiteSpace(runtimeName))

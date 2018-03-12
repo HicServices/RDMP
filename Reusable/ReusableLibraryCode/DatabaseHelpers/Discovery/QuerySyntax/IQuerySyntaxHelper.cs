@@ -31,6 +31,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         string GetParameterDeclaration(string proposedNewParameterName, string sqlType);
         string GetParameterNameFromDeclarationSQL(string parameterSQL);
 
+        bool IsValidParameterName(string parameterSQL);
+
         string AliasPrefix { get; }
         
         bool SplitLineIntoSelectSQLAndAlias(string lineToSplit, out string selectSQL, out string alias);

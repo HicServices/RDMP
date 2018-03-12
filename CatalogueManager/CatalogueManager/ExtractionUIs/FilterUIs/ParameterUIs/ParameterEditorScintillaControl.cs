@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
@@ -150,7 +151,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
                     try
                     {
-                        RDMPQuerySyntaxHelper.CheckSyntax(parameter);
+                        CheckableSyntaxHelper.CheckSyntax(parameter);
                     }
                     catch (SyntaxErrorException errorException)
                     {

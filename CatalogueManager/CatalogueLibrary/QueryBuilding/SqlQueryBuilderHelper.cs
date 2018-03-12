@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
@@ -479,7 +480,7 @@ namespace CatalogueLibrary.QueryBuilding
             for (int i = 0; i < filtersInContainer.Count(); i++)
             {
                 if (qb.CheckSyntax)
-                    RDMPQuerySyntaxHelper.CheckSyntax(filtersInContainer[i]);
+                    CheckableSyntaxHelper.CheckSyntax(filtersInContainer[i]);
 
                 toReturn += tabs + @"/*" + filtersInContainer[i].Name + @"*/" + qb.TakeNewLine();
 

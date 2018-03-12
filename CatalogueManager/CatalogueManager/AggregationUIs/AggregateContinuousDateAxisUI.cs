@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataHelper;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
@@ -130,7 +131,7 @@ namespace CatalogueManager.AggregationUIs
 
             try
             {
-                RDMPQuerySyntaxHelper.ParityCheckCharacterPairs(new[] {'(', '\''}, new[] {')', '\''}, s.Text);
+                CheckableSyntaxHelper.ParityCheckCharacterPairs(new[] {'(', '\''}, new[] {')', '\''}, s.Text);
                 s.ForeColor = Color.Black;
 
                 _axis.SaveToDatabase();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
@@ -383,7 +384,7 @@ namespace CatalogueLibrary.QueryBuilding
             foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
             {
                 if(CheckSyntax)
-                    RDMPQuerySyntaxHelper.CheckSyntax(parameter);
+                    CheckableSyntaxHelper.CheckSyntax(parameter);
 
                 int newlinesTaken;
                 toReturn += GetParameterDeclarationSQL(parameter, out newlinesTaken);

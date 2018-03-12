@@ -64,6 +64,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return regex.Match(parameterSQL).Value.Trim();
         }
 
+        public bool IsValidParameterName(string parameterSQL)
+        {
+            var regex = GetParameterNameRegex();
+
+            return regex.IsMatch(parameterSQL);
+        }
+
         protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper,IUpdateHelper updateHelper)
         {
             TypeTranslater = translater;

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
@@ -125,7 +126,7 @@ namespace CatalogueManager.ExtractionUIs
                 ExtractionInformation.SelectSQL = sql;
                 ExtractionInformation.Alias = alias;
 
-                RDMPQuerySyntaxHelper.CheckSyntax(ExtractionInformation);
+                CheckableSyntaxHelper.CheckSyntax(ExtractionInformation);
                 ExtractionInformation.GetRuntimeName();
                 ragSmiley1.Reset();
             }
