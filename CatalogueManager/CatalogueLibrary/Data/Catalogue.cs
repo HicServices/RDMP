@@ -18,6 +18,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -1162,5 +1163,15 @@ namespace CatalogueLibrary.Data
             _isExtractable = isExtractable;
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var f = new QuerySyntaxHelperFactory();
+            var type = GetDistinctLiveDatabaseServerType();
+
+            if(type == null)
+                throw new Exception("Catalogue '" + this +"' does not have a single Distinct Live Database Type");
+            
+            return f.Create(type.Value);
+        }
     }
 }

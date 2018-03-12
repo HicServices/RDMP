@@ -17,6 +17,8 @@ using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -40,7 +42,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters,INamed,IHasDependencies
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper
     {
         #region Database Properties
         private string _countSQL;
@@ -291,6 +293,11 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             //strip the cic section from the front
             return Regex.Replace(Name, @"cic_\d+_?", "");
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return Catalogue.GetQuerySyntaxHelper();
         }
 
 
