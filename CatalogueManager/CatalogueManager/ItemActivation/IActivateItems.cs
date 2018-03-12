@@ -153,7 +153,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);
         void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
 
-        void ActivateLoadProgress(object sender, LoadProgress loadProgress);
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
         void ActivateTableInfo(object sender, TableInfo tableInfo);

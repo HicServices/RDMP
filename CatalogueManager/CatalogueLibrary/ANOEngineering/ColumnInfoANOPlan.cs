@@ -15,6 +15,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.ANOEngineering
 {
+    /// <summary>
+    /// Records all ANO descisions made about a single ColumnInfo (e.g. whether to ANO it, Drop it, Dillute it etc)
+    /// </summary>
     public class ColumnInfoANOPlan:ICheckable
     {
         private readonly ColumnInfo _columnInfo;

@@ -33,6 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var lp = new LoadProgress((ICatalogueRepository) _loadMetadata.Repository, _loadMetadata);
             Publish(_loadMetadata);
+            Emphasise(lp);
         }
 
         public Image GetImage(IIconProvider iconProvider)

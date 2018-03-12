@@ -365,11 +365,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             log.ShowDataLoadRunID(dataLoadRunID);
         }
 
-        public void ActivateLoadProgress(object sender, LoadProgress loadProgress)
-        {
-            Activate<LoadProgressUI, LoadProgress>(loadProgress);
-        }
-
         public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
         {
             return Activate<LoadDiagram, LoadMetadata>(loadMetadata);

@@ -79,12 +79,8 @@ namespace CatalogueManager.Collections
         private void otvLoadMetadata_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvLoadMetadata.SelectedObject;
-            var loadProgress = o as LoadProgress;
             
             var permissionWindow = o as PermissionWindow;
-            
-            if (loadProgress != null)
-                _activator.ActivateLoadProgress(this, loadProgress);
             
             if (permissionWindow != null)
                 _activator.ActivatePermissionWindow(this, permissionWindow);
