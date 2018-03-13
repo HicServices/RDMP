@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.ExtractionTime
 {
@@ -98,6 +100,11 @@ namespace DataExportLibrary.ExtractionTime
         public string GetRuntimeName()
         {
             return RDMPQuerySyntaxHelper.GetRuntimeName(this);
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
         }
     }
 }

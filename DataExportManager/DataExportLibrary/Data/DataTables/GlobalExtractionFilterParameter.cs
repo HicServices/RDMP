@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
@@ -86,6 +88,11 @@ namespace DataExportLibrary.Data.DataTables
         public override string ToString()
         {
             return ParameterName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
         }
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()

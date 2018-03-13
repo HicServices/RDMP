@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -131,7 +133,12 @@ namespace CatalogueLibrary.Data.Aggregation
                 return "Unamed AggregateDimension ID " + ID;
             }
         }
-        
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
+        }
+
         private void CacheExtractionInformation()
         {
             if (_extractionInformation == null)

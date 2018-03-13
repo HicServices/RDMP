@@ -1,37 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Checks
+namespace CatalogueLibrary.Checks.SyntaxChecking
 {
-    public class CheckableSyntaxHelper
+    public abstract class SyntaxChecker : ICheckable
     {
-        public static void CheckSyntax(IColumn col)
-        {
-            string regexIsWrapped = @"^[\[`].*[\]`]$";
-            char[] invalidColumnValues = new[] { ',', '[', ']', '`', '.' };
-            char[] whiteSpace = new[] { ' ', '\t', '\n', '\r' };
-
-            char[] openingCharacters = new[] { '[', '(' };
-            char[] closingCharacters = new[] { ']', ')' };
-
-            //it has an alias
-            if (!String.IsNullOrWhiteSpace(col.Alias))
-                if (!Regex.IsMatch(col.Alias, regexIsWrapped)) //alias is NOT wrapped
-                    if (col.Alias.Any(invalidColumnValues.Contains)) //there are invalid characters
-                        throw new SyntaxErrorException("Invalid characters found in Alias \"" + col.Alias + "\"");
-                    else
-                        if (col.Alias.Any(whiteSpace.Contains))
-                            throw new SyntaxErrorException("Whitespace found in unwrapped Alias \"" + col.Alias + "\"");
-
-            ParityCheckCharacterPairs(openingCharacters, closingCharacters, col.SelectSQL);
-        }
-
         /// <summary>
         /// Checks to see if there is a closing bracket for every opening bracket (or any other characters that come in open/close pairs.  Throws SyntaxErrorException if there
         /// is a mismatch in the number of opening/closing of any of the character pairs passed into the method.
@@ -55,22 +32,7 @@ namespace CatalogueLibrary.Checks
                             throw new SyntaxErrorException("Mismatch in the number of opening '" + openingCharacters[i] + "' and closing '" + closingCharacters[i] + "'");
         }
 
-        public static void CheckSyntax(IFilter filter)
-        {
-            try
-            {
-                ParityCheckCharacterPairs(new[] { '(', '[' }, new[] { ')', ']' }, filter.WhereSQL);
-            }
-            catch (SyntaxErrorException exception)
-            {
-                throw new SyntaxErrorException("Failed to validate the bracket parity of filter " + filter, exception);
-            }
-
-            foreach (ISqlParameter parameter in filter.GetAllParameters())
-                CheckSyntax(parameter);
-        }
-
-        public static void CheckSyntax(ISqlParameter parameter)
+        public void CheckSyntax(ISqlParameter parameter)
         {
             if (string.IsNullOrWhiteSpace(parameter.Value))
                 throw new SyntaxErrorException("Parameter " + parameter.ParameterName + " does not have a value");
@@ -105,5 +67,7 @@ namespace CatalogueLibrary.Checks
                 throw new SyntaxErrorException("Failed to validate the bracket parity of parameter " + parameter, exception);
             }
         }
+
+        public abstract void Check(ICheckNotifier notifier);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -37,5 +39,9 @@ namespace CatalogueLibrary.QueryBuilding
         public bool HashOnDataRelease { get; private set; }
         public bool IsExtractionIdentifier { get; private set; }
         public bool IsPrimaryKey { get; private set; }
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
+        }
     }
 }

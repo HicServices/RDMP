@@ -1,7 +1,9 @@
 ﻿using System;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
@@ -37,6 +39,11 @@ namespace CatalogueLibrary.QueryBuilding
         public override string ToString()
         {
             return ParameterName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
         }
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()

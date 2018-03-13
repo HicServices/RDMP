@@ -1,6 +1,8 @@
 ﻿using System;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
@@ -58,5 +60,9 @@ namespace CatalogueLibrary.QueryBuilding
         public bool HashOnDataRelease { get { return false; }}
         public bool IsExtractionIdentifier { get { return false; } }
         public bool IsPrimaryKey { get { return false; } }
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
+        }
     }
 }

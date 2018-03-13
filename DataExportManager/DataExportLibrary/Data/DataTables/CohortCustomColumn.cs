@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -83,6 +85,11 @@ namespace DataExportLibrary.Data.DataTables
         public override string ToString()
         {
             return SelectSQL;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
         }
 
         public string GetRuntimeName()

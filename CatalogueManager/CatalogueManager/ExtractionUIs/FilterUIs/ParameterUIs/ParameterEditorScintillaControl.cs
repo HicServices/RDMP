@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Checks;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
@@ -17,6 +18,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
@@ -151,7 +153,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
                     try
                     {
-                        CheckableSyntaxHelper.CheckSyntax(parameter);
+                        parameter.Check(new ThrowImmediatelyCheckNotifier());
                     }
                     catch (SyntaxErrorException errorException)
                     {

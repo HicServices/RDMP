@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
@@ -93,6 +95,11 @@ namespace CatalogueLibrary.Data
         {
             //return the name of the variable
             return ParameterName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
         }
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()

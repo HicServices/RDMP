@@ -378,7 +378,10 @@
     <Compile Include="ANOEngineering\ForwardEngineerANOCataloguePlanManager.cs" />
     <Compile Include="ANOEngineering\ForwardEngineerANOCatalogueEngine.cs" />
     <Compile Include="ANOEngineering\IDilutionOperation.cs" />
-    <Compile Include="Checks\CheckableSyntaxHelper.cs" />
+    <Compile Include="Checks\SyntaxChecking\ColumnSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\FilterSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\ParameterSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\SyntaxChecker.cs" />
     <Compile Include="Cloning\MissingTableException.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />

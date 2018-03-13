@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
@@ -65,6 +67,11 @@ namespace CatalogueLibrary.Spontaneous
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             throw new NotImplementedException();
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new FilterSyntaxChecker(this).Check(notifier);
         }
     }
 }

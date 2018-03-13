@@ -4,9 +4,11 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Checks;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
@@ -333,6 +335,8 @@ namespace CatalogueLibrary.QueryBuilding
         /// </summary>
         public void RegenerateSQL()
         {
+            var checkNotifier = new ThrowImmediatelyCheckNotifier();
+
             _sql = "";
             currentLine = 0;
 
@@ -384,7 +388,7 @@ namespace CatalogueLibrary.QueryBuilding
             foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
             {
                 if(CheckSyntax)
-                    CheckableSyntaxHelper.CheckSyntax(parameter);
+                    parameter.Check(checkNotifier);
 
                 int newlinesTaken;
                 toReturn += GetParameterDeclarationSQL(parameter, out newlinesTaken);

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary.Checks;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
@@ -27,6 +28,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
@@ -126,7 +128,7 @@ namespace CatalogueManager.ExtractionUIs
                 ExtractionInformation.SelectSQL = sql;
                 ExtractionInformation.Alias = alias;
 
-                CheckableSyntaxHelper.CheckSyntax(ExtractionInformation);
+                ExtractionInformation.Check(new ThrowImmediatelyCheckNotifier());
                 ExtractionInformation.GetRuntimeName();
                 ragSmiley1.Reset();
             }

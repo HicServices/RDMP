@@ -1,7 +1,9 @@
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Spontaneous
@@ -41,6 +43,11 @@ namespace CatalogueLibrary.Spontaneous
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return _syntaxHelper;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
         }
     }
 }
