@@ -75,7 +75,12 @@ namespace CatalogueLibrary.Data.Cohort
 
         public AnyTableSqlParameter(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable parent, string parameterSQL)
         {
-            if (!GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
+            var p = parent as IHasQuerySyntaxHelper;
+
+            if(p == null)
+                throw new NotSupportedException("Parents must be IHasQuerySyntaxHelper to be used with AnyTableSqlParameter");
+
+            if (!p.GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
                 throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>
