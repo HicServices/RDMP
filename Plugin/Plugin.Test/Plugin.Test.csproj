@@ -79,10 +79,6 @@
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DatabaseCreation\DatabaseCreation.csproj">
-      <Project>{3abb76cf-1be8-4eef-9a57-c925c3c98abe}</Project>
-      <Name>DatabaseCreation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>

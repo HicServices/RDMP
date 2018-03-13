@@ -2071,10 +2071,6 @@
       <Project>{AA8B053B-3CF6-42EF-B5E6-2F9EE97F822F}</Project>
       <Name>CohortManagerLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DatabaseCreation\DatabaseCreation.csproj">
-      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
-      <Name>DatabaseCreation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
@@ -2158,6 +2154,10 @@
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
       <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
       <Name>ReusableUIComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj">
+      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
+      <Name>DatabaseCreation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>

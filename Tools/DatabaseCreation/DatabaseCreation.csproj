@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CataloguePipelinesAndReferencesCreation.cs" />
@@ -65,51 +65,51 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CatalogueManager\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
       <Project>{6FA17AD8-35B3-480B-808E-F8C46D79FA20}</Project>
       <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
       <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
       <Name>DataExportLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
+    <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
       <Name>DataLoadEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
       <Project>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</Project>
       <Name>LoadModules.Generic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
+    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
       <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
       <Name>DataQualityEngine.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
+    <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
       <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>
       <Name>HIC.Logging.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RDMPStartup\RDMPStartup.csproj">
+    <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
       <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
       <Name>RDMPStartup</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
       <Name>MapsDirectlyToDatabaseTable</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
