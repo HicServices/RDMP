@@ -2083,10 +2083,6 @@
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Applications\RDMPAutomationService\RDMPAutomationService\RDMPAutomationService.csproj">
-      <Project>{04aebb47-fdd6-4bdf-8fef-572b947afeff}</Project>
-      <Name>RDMPAutomationService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
       <Name>DataLoadEngine</Name>
@@ -2106,10 +2102,6 @@
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Developer\PluginPackager\PluginPackager.csproj">
-      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
-      <Name>PluginPackager</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
@@ -2158,6 +2150,14 @@
     <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj">
       <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
       <Name>DatabaseCreation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
+      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
+      <Name>PluginPackager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
+      <Name>RDMPAutomationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
