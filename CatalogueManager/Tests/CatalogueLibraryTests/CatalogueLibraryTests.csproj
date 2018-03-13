@@ -446,7 +446,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
+    <Content Include="..\..\..\Tools\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
       <Link>SourceCodeForSelfAwareness.zip</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
