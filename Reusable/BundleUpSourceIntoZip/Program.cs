@@ -2,8 +2,9 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using ReusableLibraryCode;
+using System.Threading;
 
 namespace BundleUpSourceIntoZip
 {
@@ -68,13 +69,14 @@ namespace BundleUpSourceIntoZip
             }
             else
                 ZipFile.CreateFromDirectory(workingDirectory.FullName, plannedZipFileName);
+
             workingDirectory.Delete(true);
 
             return 0;
       
         }
     }
-
+    
     internal class DiffZipArchives
     {
         public static bool AreSame(string zipFilename1, string zipFilename2)
@@ -101,8 +103,8 @@ namespace BundleUpSourceIntoZip
                         e1.ExtractToFile(tempFileName1);
                         e2.ExtractToFile(tempFileName2);
                         
-                        var md51 = UsefulStuff.MD5File(tempFileName1);
-                        var md52 = UsefulStuff.MD5File(tempFileName2);
+                        var md51 = MD5File(tempFileName1);
+                        var md52 = MD5File(tempFileName2);
 
                         File.Delete(tempFileName1);
                         File.Delete(tempFileName2);
@@ -112,8 +114,31 @@ namespace BundleUpSourceIntoZip
                     }
                 }
             }
-
+            
             return true;
+        }
+        public static string MD5File(string filename, int retryCount = 6)
+        {
+            try
+            {
+                using (var md5 = MD5.Create())
+                {
+                    using (var stream = File.OpenRead(filename))
+                    {
+                        return BitConverter.ToString(md5.ComputeHash(stream));
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                //couldn't access the file so wait 5 seconds then try again
+                Thread.Sleep(1000);
+
+                if (retryCount-- > 0)
+                    return MD5File(filename, retryCount);//try it again (recursively)
+                else
+                    throw ex;
+            }
         }
     }
 }

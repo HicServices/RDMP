@@ -53,12 +53,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(SolutionDir) $(ProjectDir)output\</PostBuildEvent>
