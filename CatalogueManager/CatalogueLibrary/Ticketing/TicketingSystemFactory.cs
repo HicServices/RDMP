@@ -2,10 +2,9 @@
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 
-namespace Ticketing
+namespace CatalogueLibrary.Ticketing
 {
     /// <summary>
     /// RDMP can have a single ITicketingSystem configured (optional).  This factory creates the ITicketingSystem instance based on the 

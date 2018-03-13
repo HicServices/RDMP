@@ -3,11 +3,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Ticketing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-
-using Ticketing;
 using Color = System.Drawing.Color;
 
 namespace CatalogueManager.LocationsMenu.Ticketing

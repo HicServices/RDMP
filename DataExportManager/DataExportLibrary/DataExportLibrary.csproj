@@ -303,10 +303,6 @@
       <Name>CatalogueLibrary</Name>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
-    <ProjectReference Include="..\..\CatalogueManager\TicketingModules\Ticketing\Ticketing.csproj">
-      <Project>{048E1478-E4A7-4AD1-95AB-C40C604A4F60}</Project>
-      <Name>Ticketing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj">
       <Project>{AA8B053B-3CF6-42EF-B5E6-2F9EE97F822F}</Project>
       <Name>CohortManagerLibrary</Name>

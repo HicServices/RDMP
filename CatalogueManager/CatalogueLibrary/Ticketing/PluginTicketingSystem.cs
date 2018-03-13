@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace Ticketing
+namespace CatalogueLibrary.Ticketing
 {
 
     [InheritedExport(typeof(ICheckable))]

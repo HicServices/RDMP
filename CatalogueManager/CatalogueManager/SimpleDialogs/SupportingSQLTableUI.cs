@@ -16,7 +16,6 @@ using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
-using Ticketing;
 using Color = System.Drawing.Color;
 
 namespace CatalogueManager.SimpleDialogs

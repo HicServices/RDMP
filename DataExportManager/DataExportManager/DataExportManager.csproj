@@ -691,10 +691,6 @@
       <Project>{FDF08240-2AFC-48A4-8F48-37CC7EA3000B}</Project>
       <Name>CatalogueManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CatalogueManager\TicketingModules\Ticketing\Ticketing.csproj">
-      <Project>{048E1478-E4A7-4AD1-95AB-C40C604A4F60}</Project>
-      <Name>Ticketing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
       <Name>DataLoadEngine</Name>

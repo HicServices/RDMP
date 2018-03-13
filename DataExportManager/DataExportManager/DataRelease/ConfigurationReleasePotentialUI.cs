@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Ticketing;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -25,7 +26,6 @@ using DataExportLibrary.DataRelease;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
-using Ticketing;
 
 namespace DataExportManager.DataRelease
 {

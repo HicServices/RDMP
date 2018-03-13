@@ -103,10 +103,6 @@
       <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
       <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CatalogueManager\TicketingModules\Ticketing\Ticketing.csproj">
-      <Project>{048e1478-e4a7-4ad1-95ab-c40c604a4f60}</Project>
-      <Name>Ticketing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
