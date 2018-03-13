@@ -45,10 +45,11 @@ namespace CatalogueLibrary.Refactoring.Gathering
                     //The filters belonging to extraction informations
                     foreach (ExtractionFilter extractionFilter in ei.ExtractionFilters)
                         foundSoFar.Add(new GatheredObject(extractionFilter));
+
+                    //ExtractableDataset columns
                 }
             }
 
-            //ExtractableDataset columns
             
             //deployed extraction filters
 

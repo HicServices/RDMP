@@ -72,6 +72,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="PluginManifestChecker.cs" />
     <Compile Include="PluginPackagerProgramOptions.cs" />
     <Compile Include="Packager.cs" />
     <Compile Include="Program.cs" />

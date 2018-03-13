@@ -8,6 +8,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Refactoring.Gathering
 {
+    /// <summary>
+    /// Describes an RDMP object that is related to another e.g. a ColumnInfo can have 0+ CatalogueItems associated with it.  This differs from IHasDependencies by the fact that
+    /// it is a more constrained set rather than just spider webbing out everywhere.
+    /// </summary>
     public class GatheredObject
     {
         public GatheredObject(IMapsDirectlyToDatabaseTable o)
