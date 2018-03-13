@@ -148,7 +148,7 @@
       <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
       <Name>Tests.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CachingEngine\CachingEngine.csproj">
+    <ProjectReference Include="..\..\CachingEngine\CachingEngine.csproj">
       <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
       <Name>CachingEngine</Name>
     </ProjectReference>
