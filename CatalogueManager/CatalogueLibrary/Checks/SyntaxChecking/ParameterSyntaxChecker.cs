@@ -3,6 +3,9 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Checks.SyntaxChecking
 {
+    /// <summary>
+    /// Checks syntax validity of ISqlParameter
+    /// </summary>
     public class ParameterSyntaxChecker : SyntaxChecker
     {
         private readonly ISqlParameter _parameter;
@@ -12,6 +15,10 @@ namespace CatalogueLibrary.Checks.SyntaxChecking
             _parameter = parameter;
         }
 
+        /// <summary>
+        /// Checks to see if the syntax of char based parameters is valid (see CheckSyntax for more details)
+        /// </summary>
+        /// <param name="notifier"></param>
         public override void Check(ICheckNotifier notifier)
         {
             CheckSyntax(_parameter);
