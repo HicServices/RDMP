@@ -45,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Dependency\ObjectSharingObscureDependencyFinder.cs" />
     <Compile Include="Dependency\SharedPluginImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

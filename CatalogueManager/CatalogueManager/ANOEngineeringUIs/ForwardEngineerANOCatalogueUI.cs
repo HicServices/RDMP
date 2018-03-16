@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ANOStore.ANOEngineering;
 using BrightIdeasSoftware;
-using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
