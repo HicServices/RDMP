@@ -6,8 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AnonymisationTests;
+using ANOStore.ANOEngineering;
 using CatalogueLibrary;
-using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
@@ -18,6 +18,7 @@ using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -66,7 +67,7 @@ namespace CatalogueLibraryTests.Integration
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
-            var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator), bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //no operations are as yet configured
@@ -119,7 +120,7 @@ namespace CatalogueLibraryTests.Integration
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
-            var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //setup test rules for migrator
@@ -128,7 +129,7 @@ namespace CatalogueLibraryTests.Integration
             //rules should pass checks
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
-            var engine = new ForwardEngineerANOCatalogueEngine(CatalogueRepository, planManager);
+            var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
             engine.Execute();
 
             var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
@@ -219,7 +220,7 @@ namespace CatalogueLibraryTests.Integration
                 anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
              
                 //////////////////The actual test!/////////////////
-                var planManager = new ForwardEngineerANOCataloguePlanManager(cata);
+                var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),cata);
                 
                 //ano the table SkullColor
                 var scPlan = planManager.GetPlanForColumnInfo(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")));
@@ -229,7 +230,7 @@ namespace CatalogueLibraryTests.Integration
                 planManager.TargetDatabase = dbTo;
                 planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
 
-                var engine =  new ForwardEngineerANOCatalogueEngine(CatalogueRepository, planManager);
+                var engine =  new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
 
                 if (!tableInfoAlreadyExistsForSkippedTable)
                 {
@@ -370,7 +371,7 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
             
             //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
-            var planManager = new ForwardEngineerANOCataloguePlanManager(bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //setup test rules for migrator
@@ -379,7 +380,7 @@ namespace CatalogueLibraryTests.Integration
             //rules should pass checks
             Assert.DoesNotThrow(() => planManager.Check(new ThrowImmediatelyCheckNotifier()));
 
-            var engine = new ForwardEngineerANOCatalogueEngine(CatalogueRepository, planManager);
+            var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
             engine.Execute();
             //////////////////////////////////////////////////////////////////////////////////////End The Actual Bit Being Tested////////////////////////////////////////////////////
 

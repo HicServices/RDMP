@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ANOStore.ANOEngineering;
 using BrightIdeasSoftware;
 using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
@@ -21,6 +22,7 @@ using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using Sharing.Sharing;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
@@ -311,7 +313,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (!_setup)
             {
-                _planManager = new ForwardEngineerANOCataloguePlanManager(databaseObject);
+                _planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(activator.RepositoryLocator),databaseObject);
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
@@ -421,7 +423,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             try
             {
-                var engine = new ForwardEngineerANOCatalogueEngine(_activator.RepositoryLocator.CatalogueRepository, _planManager);
+                var engine = new ForwardEngineerANOCatalogueEngine(_activator.RepositoryLocator, _planManager);
                 engine.Execute();
 
                 if(engine.NewCatalogue != null && engine.LoadMetadata != null)

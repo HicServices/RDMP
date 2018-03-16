@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Repositories.Sharing
+namespace Sharing.Sharing
 {
     [Serializable]
     public class MapsDirectlyToDatabaseTableStatelessDefinition

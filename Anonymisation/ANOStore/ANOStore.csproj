@@ -131,13 +131,29 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ANOEngineering\ColumnInfoANOPlan.cs" />
+    <Compile Include="ANOEngineering\ForwardEngineerANOCatalogueEngine.cs" />
+    <Compile Include="ANOEngineering\ForwardEngineerANOCataloguePlanManager.cs" />
+    <Compile Include="ANOEngineering\IDilutionOperation.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
+      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
+      <Name>CatalogueLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
       <Name>MapsDirectlyToDatabaseTable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
+      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
+      <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
     </ProjectReference>
     <ProjectReference Include="..\ANOStore.Database\ANOStore.Database.csproj">
       <Project>{9de66727-51cf-44f8-adf3-00ddb262dc1c}</Project>

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Remoting;
-using CatalogueLibrary.Remoting;
 using CatalogueManager.ItemActivation;
 using Newtonsoft.Json;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -19,6 +18,7 @@ using ReusableLibraryCode.Serialization;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
+using Sharing.Transmission;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

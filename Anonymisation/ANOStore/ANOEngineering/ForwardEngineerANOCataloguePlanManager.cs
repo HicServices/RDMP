@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Refactoring;
 using CatalogueLibrary.Repositories;
@@ -14,9 +11,9 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using Sharing.Sharing;
 
-namespace CatalogueLibrary.ANOEngineering
+namespace ANOStore.ANOEngineering
 {
     /// <summary>
     /// Configuration class for ForwardEngineerANOCatalogueEngine (See ForwardEngineerANOCatalogueEngine).  This class stores which anonymisation transforms/dilutions
@@ -26,13 +23,12 @@ namespace CatalogueLibrary.ANOEngineering
     /// </summary>
     public class ForwardEngineerANOCataloguePlanManager : ICheckable
     {
+        private readonly ShareManager _shareManager;
         public Catalogue Catalogue { get; private set; }
         private ExtractionInformation[] _allExtractionInformations;
         private CatalogueItem[] _allCatalogueItems;
 
         private readonly Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new Dictionary<ColumnInfo, ColumnInfoANOPlan>();
-
-        private IQuerySyntaxHelper _querySyntaxHelper;
 
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
@@ -44,8 +40,9 @@ namespace CatalogueLibrary.ANOEngineering
 
         public HashSet<TableInfo> SkippedTables = new HashSet<TableInfo>();
 
-        public ForwardEngineerANOCataloguePlanManager(Catalogue catalogue)
+        public ForwardEngineerANOCataloguePlanManager(ShareManager shareManager, Catalogue catalogue)
         {
+            _shareManager = shareManager;
             Catalogue = catalogue;
 
             RefreshTableInfos();
@@ -56,11 +53,7 @@ namespace CatalogueLibrary.ANOEngineering
 
             foreach (var operationType in ((CatalogueRepository) catalogue.Repository).MEF.GetTypes<IDilutionOperation>())
                 DilutionOperations.Add((IDilutionOperation) constructor.Construct(operationType));
-            
-            _querySyntaxHelper = TableInfos.Select(t => t.GetQuerySyntaxHelper()).FirstOrDefault();
         }
-
-        
 
         public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
         {
@@ -91,7 +84,6 @@ namespace CatalogueLibrary.ANOEngineering
 
             try
             {
-                
                 var joinInfos = GetJoinInfosRequiredCatalogue();
                 notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL succesfully", CheckResult.Success));
 
@@ -174,12 +166,10 @@ namespace CatalogueLibrary.ANOEngineering
 
         private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier,T m) where T:IMapsDirectlyToDatabaseTable
         {
-            var shareManager = ((CatalogueRepository)m.Repository).ShareManager;
-
-            if (shareManager.IsExportedObject(m))
+            if (_shareManager.IsExportedObject(m))
             {
-                var existingExport = shareManager.GetExportFor(m);
-                var existingImportReference = shareManager.GetExistingImport(existingExport.SharingUID);
+                var existingExport = _shareManager.GetExportFor(m);
+                var existingImportReference = _shareManager.GetExistingImport(existingExport.SharingUID);
 
                 if (existingImportReference != null)
                 {

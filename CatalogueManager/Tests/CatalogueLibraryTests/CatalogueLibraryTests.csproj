@@ -344,6 +344,10 @@
     <Compile Include="Unit\TestAcronymGeneration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj">
+      <Project>{63E1D23E-F82C-4325-B0F7-9638C3753A46}</Project>
+      <Name>ANOStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj">
       <Project>{2CDD82D5-3E34-46C5-9679-ADEAB49B170C}</Project>
       <Name>AnonymisationTests</Name>
@@ -419,6 +423,10 @@
     <ProjectReference Include="..\..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
       <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
       <Name>ReusableUIComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj">
       <Project>{ca13a431-7fb6-4bce-8521-42d130934311}</Project>

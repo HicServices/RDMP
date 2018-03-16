@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
-namespace CatalogueLibrary.Repositories.Sharing
+namespace Sharing.Sharing
 {
     /// <summary>
     /// Handles querying/updating the ObjectExport and ObjectImport tables (See ObjectExport and ObjectImport classes).  These tables record which objects have
@@ -16,11 +18,13 @@ namespace CatalogueLibrary.Repositories.Sharing
     /// </summary>
     public class ShareManager
     {
+        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly ICatalogueRepository _catalogueRepository;
 
-        public ShareManager(ICatalogueRepository catalogueRepository)
+        public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            _catalogueRepository = catalogueRepository;
+            _repositoryLocator = repositoryLocator;
+            _catalogueRepository = _repositoryLocator.CatalogueRepository;
         }
 
         public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
@@ -89,5 +93,23 @@ namespace CatalogueLibrary.Repositories.Sharing
             }
         }
 
+        /// <summary>
+        /// Gets all import definitions (ObjectImport) defined in the Catalogue database
+        /// </summary>
+        /// <returns></returns>
+        public ObjectImport[] GetAllImports()
+        {
+            return _catalogueRepository.GetAllObjects<ObjectImport>();
+        }
+
+        /// <summary>
+        /// Deletes all import definitions (ObjectImport) for which the referenced object (IMapsDirectlyToDatabaseTable) no longer exists (has been deleted)
+        /// </summary>
+        public void DeleteAllOrphanImportDefinitions()
+        {
+            foreach (var import in GetAllImports())
+                if (!import.LocalObjectStillExists(_repositoryLocator))
+                    import.DeleteInDatabase();
+        }
     }
 }

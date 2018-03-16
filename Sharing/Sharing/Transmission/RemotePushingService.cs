@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,15 +8,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Sharing;
 using Newtonsoft.Json;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Serialization;
+using Sharing.Sharing;
 
-namespace CatalogueLibrary.Remoting
+namespace Sharing.Transmission
 {
     /// <summary>
     /// Serializes collections of RDMP objects into BINARY Json and streams to a RemoteRDMP endpoint.

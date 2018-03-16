@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Remoting.Proxies;
 using System.Runtime.Serialization.Formatters.Binary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Sharing;
-using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
+using Sharing.Sharing;
 
-namespace CatalogueLibrary.ObjectSharing
+namespace Sharing.Dependency
 {
     /// <summary>
     /// Facilitiates importing plugins from a remote contributor (as a MapsDirectlyToDatabaseTableStatelessDefinition) and creating the local copies of the Plugin dlls
@@ -35,11 +31,6 @@ namespace CatalogueLibrary.ObjectSharing
             _lma = loadModuleAssemblies.ToList();
         }
 
-        public SharedPluginImporter(string jsonPluginTree)
-        {
-            
-        }
-
         public SharedPluginImporter(string plugin, string loadModuleAssemblies)
         {
             var received = Convert.FromBase64String(plugin);
@@ -57,9 +48,12 @@ namespace CatalogueLibrary.ObjectSharing
             }
         }
 
-        public Plugin Import(CatalogueRepository targetRepository, ICheckNotifier collisionsAndSuggestions)
+        public Plugin Import(IRDMPPlatformRepositoryServiceLocator targetRepositoryLocator, ICheckNotifier collisionsAndSuggestions)
         {
-            var collision = targetRepository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(_plugin.Properties["Name"]));
+            var catalogueRepository = targetRepositoryLocator.CatalogueRepository;
+            var shareManager = new ShareManager(targetRepositoryLocator);
+
+            var collision = catalogueRepository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(_plugin.Properties["Name"]));
 
             if (collision != null)
             {
@@ -98,7 +92,7 @@ namespace CatalogueLibrary.ObjectSharing
                     foreach (var newNotArrivedYet in _lma)
                     {
                         newNotArrivedYet.Properties["Plugin_ID"] = collision.ID;
-                        targetRepository.ShareManager.ImportObject(newNotArrivedYet,null);
+                        shareManager.ImportObject(newNotArrivedYet,null);
                     }
 
                     //it was an update to an existing one so return the existing one
@@ -110,13 +104,13 @@ namespace CatalogueLibrary.ObjectSharing
             }
             
             //import the plugin (now that it has a unique name or never collided in the first place)
-            var newPlugin = (Plugin)targetRepository.ShareManager.ImportObject(_plugin,null);
+            var newPlugin = (Plugin)shareManager.ImportObject(_plugin, null);
             var newPluginID = newPlugin.ID;
 
             foreach (var definition in _lma)
             {
                 definition.Properties["Plugin_ID"] = newPluginID;
-                targetRepository.ShareManager.ImportObject(definition,null);
+                shareManager.ImportObject(definition,null);
             }
 
             return newPlugin;

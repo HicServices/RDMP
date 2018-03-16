@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Configuration;
+using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Refactoring;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
-namespace CatalogueLibrary.ANOEngineering
+namespace ANOStore.ANOEngineering
 {
     /// <summary>
     /// Records all ANO descisions made about a single ColumnInfo (e.g. whether to ANO it, Drop it, Dillute it etc)

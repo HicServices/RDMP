@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Security;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
@@ -13,11 +10,11 @@ using CatalogueLibrary.Refactoring;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using Sharing.Sharing;
 
-namespace CatalogueLibrary.ANOEngineering
+namespace ANOStore.ANOEngineering
 {
     /// <summary>
     /// Creates a new 'anonymous' version of a Catalogue based on a configuration the user has set up in a ForwardEngineerANOCataloguePlanManager.  This involves creating
@@ -36,15 +33,17 @@ namespace CatalogueLibrary.ANOEngineering
         public LoadProgress LoadProgressIfAny { get; set; }
 
         public Dictionary<TableInfo, QueryBuilder> SelectSQLForMigrations = new Dictionary<TableInfo, QueryBuilder>();
-        public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new Dictionary<PreLoadDiscardedColumn, IDilutionOperation>(); 
+        public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new Dictionary<PreLoadDiscardedColumn, IDilutionOperation>();
 
-        public ForwardEngineerANOCatalogueEngine(ICatalogueRepository catalogueRepository,ForwardEngineerANOCataloguePlanManager planManager)
+        private ShareManager _shareManager;
+
+        public ForwardEngineerANOCatalogueEngine(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ForwardEngineerANOCataloguePlanManager planManager)
         {
-            _catalogueRepository = catalogueRepository;
+            _catalogueRepository = repositoryLocator.CatalogueRepository;
+            _shareManager = new ShareManager(repositoryLocator);
             _planManager = planManager;
         }
-
-
+        
         public void Execute()
         {
             using (_catalogueRepository.BeginNewTransactedConnection())
@@ -58,8 +57,7 @@ namespace CatalogueLibrary.ANOEngineering
                         foreach (ColumnInfo columnInfo in skippedTable.ColumnInfos)
                             GetNewColumnInfoForOld(columnInfo);
                     }
-
-
+                    
                     //for each table that isn't being skipped
                     foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
                     {
@@ -369,7 +367,7 @@ namespace CatalogueLibrary.ANOEngineering
             if (columnsFromCorrectServer.Length == 1)
                 return columnsFromCorrectServer[0];
 
-            var columnsFromCorrectServerThatAreaAlsoLocalImports = columnsFromCorrectServer.Where(_catalogueRepository.ShareManager.IsImportedObject).ToArray();
+            var columnsFromCorrectServerThatAreaAlsoLocalImports = columnsFromCorrectServer.Where(_shareManager.IsImportedObject).ToArray();
 
             if (columnsFromCorrectServerThatAreaAlsoLocalImports.Length == 1)
                 return columnsFromCorrectServerThatAreaAlsoLocalImports[0];
@@ -378,14 +376,15 @@ namespace CatalogueLibrary.ANOEngineering
         }
 
         Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();
+        
 
         private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
         {
             //make it shareable
-            var export = _catalogueRepository.ShareManager.GetExportFor(parent);
+            var export = _shareManager.GetExportFor(parent);
 
             //share it to yourself where the child is the realisation of the share (this creates relationship in database)
-            var import = _catalogueRepository.ShareManager.GetImportAs(export.SharingUID, child);
+            var import = _shareManager.GetImportAs(export.SharingUID, child);
 
             //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);
