@@ -26,7 +26,7 @@ namespace DataExportLibrary.Data.DataTables
         private int _extractionConfiguration_ID;
         private int _extractableDataSet_ID;
         private DateTime _dateOfExtraction;
-        private int _destinationType;
+        private string _destinationType;
         private string _destinationDescription;
         private int _recordsExtracted;
         private int _distinctReleaseIdentifiersEncountered;
@@ -50,10 +50,10 @@ namespace DataExportLibrary.Data.DataTables
             get { return _dateOfExtraction; }
             set { SetField(ref _dateOfExtraction, value); }
         }
-        public DestinationType DestinationType
+        public Type DestinationType
         {
-            get { return (DestinationType)_destinationType; }
-            set { SetField(ref _destinationType, (int)value); }
+            get { return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType); }
+            set { SetField(ref _destinationType, value.ToString()); }
         }
         public string DestinationDescription
         {
@@ -127,7 +127,7 @@ namespace DataExportLibrary.Data.DataTables
             DistinctReleaseIdentifiersEncountered = int.Parse(r["DistinctReleaseIdentifiersEncountered"].ToString());
             Exception = r["Exception"] as string;
             FiltersUsed = r["FiltersUsed"] as string;
-            DestinationType = (DestinationType)int.Parse(r["DestinationType"].ToString());
+            DestinationType = ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(r["DestinationType"].ToString());
             DestinationDescription = r["DestinationDescription"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
             CohortExtracted = int.Parse(r["CohortExtracted"].ToString());
@@ -135,7 +135,6 @@ namespace DataExportLibrary.Data.DataTables
 
         public IReleaseLogEntry GetReleaseLogEntryIfAny()
         {
-
             var repo = (DataExportRepository)Repository;
             using (var con = repo.GetConnection())
             {

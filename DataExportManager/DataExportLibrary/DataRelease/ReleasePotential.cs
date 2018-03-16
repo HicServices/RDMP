@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -26,9 +28,9 @@ namespace DataExportLibrary.DataRelease
     /// in the database matches the extracted flat files that are destined for release.  It also checks that the user hasn't snuck some additional files into
     /// the extract directory etc.
     /// </summary>
-    public class ReleasePotential
+    public abstract class ReleasePotential
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        protected readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly IRepository _repository;
         private List<IColumn> _columnsToExtract;
         public IExtractionConfiguration Configuration { get; set; }
@@ -37,18 +39,30 @@ namespace DataExportLibrary.DataRelease
         public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue { get; private set; }
 
         public Exception Exception { get; private set; }
+        public Releaseability Assesment { get; protected set; }
+        public DateTime? DateOfExtraction { get; private set; }
+
+        /// <summary>
+        /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
+        /// </summary>
+        public string SqlExtracted { get; private set; }
+
+        /// <summary>
+        /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
+        /// </summary>
+        public string SqlCurrentConfiguration { get; private set; }
+
+        /// <summary>
+        /// The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made this will be NULL
+        /// </summary>
+        public DirectoryInfo ExtractDirectory { get; protected set; }
 
         /// <summary>
         /// The file that contains the dataset data e.g. biochemistry.csv (will be null if no extract files were found)
         /// </summary>
         public FileInfo ExtractFile { get; set; }
 
-        /// <summary>
-        /// The file that contains metadata for the dataset e.g. biochemistry.docx (will be null if no extract files were found)
-        /// </summary>
-        public FileInfo MetadataFile { get; set; }
-
-        public ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet)
+        protected ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet)
         {
             _repositoryLocator = repositoryLocator;
             _repository = configuration.Repository;
@@ -59,7 +73,6 @@ namespace DataExportLibrary.DataRelease
             ExtractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
 
             MakeAssesment();
-
         }
 
         private void MakeAssesment()
@@ -71,7 +84,7 @@ namespace DataExportLibrary.DataRelease
 
                 if (ExtractionResults == null || ExtractionResults.DestinationDescription == null)
                 {
-                    Assesment = Releaseability.NeverBeensuccessfullyExecuted;
+                    Assesment = Releaseability.NeverBeenSuccessfullyExecuted;
                     return;
                 }
 
@@ -92,46 +105,51 @@ namespace DataExportLibrary.DataRelease
                     return;
                 }
 
-                if (ExtractionResults.DestinationType == DestinationType.FileSystem)
-                {
-                    ExtractDirectory = new FileInfo(ExtractionResults.DestinationDescription).Directory;
-                    if (FilesAreMissing())
-                        Assesment = Releaseability.ExtractFilesMissing;
-                    else
-                    {
-                        ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
-                        Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
-                    }
-                    return;
-                }
+                Assesment = GetSpecificAssessment();
 
-                if (ExtractionResults.DestinationType == DestinationType.Database)
-                {
-                    var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
-                    var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
-                    var tblName = ExtractionResults.DestinationDescription.Split('|')[1];
-                    var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport);
-                    using (DbConnection con = server.GetConnection())
-                    {
-                        con.Open();
-                        var database = server.ExpectDatabase(externalServer.Database);
-                        if (!database.Exists())
-                        {
-                            Assesment = Releaseability.ExtractFilesMissing;
-                            return;
-                        }
-                        
-                        var foundTable = database.ExpectTable(tblName);
-                        if (!foundTable.Exists())
-                        {
-                            Assesment = Releaseability.ExtractFilesMissing;
-                            return;
-                        }
-                    }
-
-                    // TODO: Table can be polluted, how to check?? CHECK FOR SPURIOUS TABLES
+                if (Assesment == Releaseability.Undefined)
                     Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
-                }
+
+                //if (ExtractionResults.DestinationType == DestinationType.FileSystem)
+                //{
+                //    ExtractDirectory = new FileInfo(ExtractionResults.DestinationDescription).Directory;
+                //    if (FilesAreMissing())
+                //        Assesment = Releaseability.ExtractFilesMissing;
+                //    else
+                //    {
+                //        ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
+                //        Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+                //    }
+                //    return;
+                //}
+
+                //if (ExtractionResults.DestinationType == DestinationType.Database)
+                //{
+                //    var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
+                //    var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+                //    var tblName = ExtractionResults.DestinationDescription.Split('|')[1];
+                //    var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport);
+                //    using (DbConnection con = server.GetConnection())
+                //    {
+                //        con.Open();
+                //        var database = server.ExpectDatabase(externalServer.Database);
+                //        if (!database.Exists())
+                //        {
+                //            Assesment = Releaseability.ExtractFilesMissing;
+                //            return;
+                //        }
+
+                //        var foundTable = database.ExpectTable(tblName);
+                //        if (!foundTable.Exists())
+                //        {
+                //            Assesment = Releaseability.ExtractFilesMissing;
+                //            return;
+                //        }
+                //    }
+
+                //    // TODO: Table can be polluted, how to check?? CHECK FOR SPURIOUS TABLES
+                //    Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+                //}
             }
             catch (Exception e)
             {
@@ -139,6 +157,8 @@ namespace DataExportLibrary.DataRelease
                 Assesment = Releaseability.ExceptionOccurredWhileEvaluatingReleaseability;
             }
         }
+
+        protected abstract Releaseability GetSpecificAssessment();
 
         private bool SqlDifferencesVsLiveCatalogue()
         {
@@ -159,14 +179,6 @@ namespace DataExportLibrary.DataRelease
             }
 
             return ColumnsThatAreDifferentFromCatalogue.Any();
-        }
-
-        private void ThrowIfPollutionFoundInConfigurationRootExtractionFolder()
-        {
-            Debug.Assert(ExtractDirectory.Parent != null, "Dont call this method until you have determined that an extracted file was actually produced!");
-
-            if(ExtractDirectory.Parent.GetFiles().Any())
-                throw new Exception("The following pollutants were found in the extraction directory\" " + ExtractDirectory.Parent.FullName + "\" pollutants were:" + ExtractDirectory.Parent.GetFiles().Aggregate("",(s,n)=>s + "\""+n+"\""));
         }
 
         private string GetCurrentConfigurationSQL()
@@ -192,38 +204,7 @@ namespace DataExportLibrary.DataRelease
 
             return resultLive.SQL;
         }
-
-        private bool FilesAreMissing()
-        {
-            ExtractFile = new FileInfo(ExtractionResults.DestinationDescription);
-            MetadataFile = new FileInfo(ExtractionResults.DestinationDescription.Replace(".csv", ".docx"));
-
-            if (!ExtractFile.Exists)
-                return true;//extract is missing
-
-            if (!ExtractFile.Extension.Equals(".csv"))
-                throw new Exception("Extraction file had extension '" + ExtractFile.Extension + "' (expected .csv)");
-
-            if (!MetadataFile.Exists)
-                return true;
-            
-            //see if there is any other polution in the extract directory
-            FileInfo unexpectedFile = ExtractFile.Directory.EnumerateFiles().FirstOrDefault(f=>
-                !(f.Name.Equals(ExtractFile.Name) || f.Name.Equals(MetadataFile.Name)));
-
-            if(unexpectedFile != null)
-                throw new Exception("Unexpected file found in extract directory " + unexpectedFile.FullName + " (pollution of extract directory is not permitted)");
-
-            DirectoryInfo unexpectedDirectory = ExtractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
-                !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") || d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
-
-            if(unexpectedDirectory != null)
-                throw new Exception("Unexpected directory found in extraction directory " + unexpectedDirectory.FullName + " (pollution of extract directory is not permitted)");
-
-            return false;
-        }
         
-
         private bool SqlOutOfSyncWithDataExportManagerConfiguration()
         {
 
@@ -234,24 +215,6 @@ namespace DataExportLibrary.DataRelease
             return !SqlCurrentConfiguration.Equals(ExtractionResults.SQLExecuted);
         }
         
-        public Releaseability Assesment { get; private set; }
-        public DateTime? DateOfExtraction { get; private set; }
-
-        /// <summary>
-        /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
-        /// </summary>
-        public string SqlExtracted { get; private set; }
-
-        /// <summary>
-        /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
-        /// </summary>
-        public string SqlCurrentConfiguration { get; private set; }
-
-        /// <summary>
-        /// The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made this will be NULL
-        /// </summary>
-        public DirectoryInfo ExtractDirectory { get; private set; }
-
         public override string ToString()
         {
             switch (Assesment)
@@ -269,11 +232,11 @@ namespace DataExportLibrary.DataRelease
         }
     }
 
-
     public enum Releaseability
     {
+        Undefined = 0,
         ExceptionOccurredWhileEvaluatingReleaseability,
-        NeverBeensuccessfullyExecuted,
+        NeverBeenSuccessfullyExecuted,
         ExtractFilesMissing,
         ExtractionSQLDesynchronisation,
         CohortDesynchronisation,

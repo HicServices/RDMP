@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -14,6 +15,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -178,9 +180,7 @@ namespace DataExportManager.DataRelease
 
                     message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n.ExtractableDataSet);
 
-                    if (
-                        MessageBox.Show(message, "Delete expired CumulativeExtractionResults for configuration", MessageBoxButtons.YesNo) ==
-                        DialogResult.Yes)
+                    if (MessageBox.Show(message, "Delete expired CumulativeExtractionResults for configuration", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         foreach (var result in oldResults)
                             result.DeleteInDatabase();
@@ -189,7 +189,17 @@ namespace DataExportManager.DataRelease
                 
                 //create new ReleaseAssesments
                 foreach (ExtractableDataSet dataSet in currentlyConfiguredDatasets)
-                    ReleasePotentials.Add(new ReleasePotential(RepositoryLocator,Configuration, dataSet));
+                {
+                    var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == dataSet.ID);
+                    if (extractionResults == null || extractionResults.DestinationDescription == null)
+                        ReleasePotentials.Add(new NullReleasePotential(RepositoryLocator, Configuration, dataSet));
+                    else
+                    {
+                        var releasePotential = ((IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(extractionResults.DestinationType))
+                                                    .GetReleasePotential(RepositoryLocator, Configuration, dataSet);
+                        ReleasePotentials.Add(releasePotential);
+                    }
+                }
 
                 if (IsDisposed)
                     return;
@@ -298,7 +308,7 @@ namespace DataExportManager.DataRelease
 
                 switch (releasePotential.Assesment)
                 {
-                    case Releaseability.NeverBeensuccessfullyExecuted:
+                    case Releaseability.NeverBeenSuccessfullyExecuted:
                         i.ImageKey = "NeverBeenGenerated";
                         break;
 

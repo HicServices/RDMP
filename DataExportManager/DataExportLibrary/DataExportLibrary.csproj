@@ -185,6 +185,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -220,6 +221,7 @@
     <Compile Include="CohortDescribing\ExtractableCohortDescription.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
+    <Compile Include="DataRelease\NullReleasePotential.cs" />
     <Compile Include="DataRelease\ReleaseEngine.cs" />
     <Compile Include="DataRelease\ReleaseFolderSettings.cs" />
     <Compile Include="DataRelease\ReleaseEngineSettings.cs" />
@@ -242,6 +244,8 @@
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollectionFactory.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs" />
+    <Compile Include="DataRelease\FlatFileReleasePotential.cs" />
+    <Compile Include="DataRelease\MsSqlExtractionReleasePotential.cs" />
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />

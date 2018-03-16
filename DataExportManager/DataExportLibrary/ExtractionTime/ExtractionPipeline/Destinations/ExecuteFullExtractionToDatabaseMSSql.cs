@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.DataRelease;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -255,6 +257,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
         }
         
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+            ExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        {
+            return new MsSqlExtractionReleasePotential(repositoryLocator, configuration, dataSet);
+        }
+
         private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener)
         {
             try

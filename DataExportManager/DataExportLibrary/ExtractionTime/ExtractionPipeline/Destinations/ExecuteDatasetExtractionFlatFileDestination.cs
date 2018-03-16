@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
@@ -268,6 +269,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 globals.States[sql] = TryExtractSupportingSQLTable(globalsDirectory, configuration, sql, listener, dataLoadInfo)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
+        }
+        
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+            ExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        {
+            return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
         }
 
         private bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)

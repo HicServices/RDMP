@@ -106,7 +106,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 if (successAudit == null)
                     return;
 
-                successAudit.DestinationType = Destination.GetDestinationType();
+                successAudit.DestinationType = Destination.GetType();
                 successAudit.DestinationDescription = Destination.GetDestinationDescription();
                 successAudit.DistinctReleaseIdentifiersEncountered = Source.UniqueReleaseIdentifiersEncountered.Count;
                 successAudit.RecordsExtracted = Destination.TableLoadInfo.Inserts;
