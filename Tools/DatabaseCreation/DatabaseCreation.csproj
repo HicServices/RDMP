@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8D65BDE0-BD55-4625-960A-F5CC22958B05}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plugin.Test</RootNamespace>
-    <AssemblyName>HIC.RDMP.Plugin.Test</AssemblyName>
+    <RootNamespace>DatabaseCreation</RootNamespace>
+    <AssemblyName>DatabaseCreation</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +25,7 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,7 +33,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,37 +52,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
+      <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="PluginTest.cs" />
+    <Compile Include="CataloguePipelinesAndReferencesCreation.cs" />
+    <Compile Include="DatabaseCreationProgramOptions.cs" />
+    <Compile Include="DatabaseCreationRepositoryFinder.cs" />
+    <Compile Include="DatabaseCreationProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Plugin.Test.nuspec" />
-    <None Include="PluginTest.build">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj">
-      <Project>{9de66727-51cf-44f8-adf3-00ddb262dc1c}</Project>
-      <Name>ANOStore.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Anonymisation\ANOStore\ANOStore.csproj">
-      <Project>{63e1d23e-f82c-4325-b0f7-9638c3753a46}</Project>
-      <Name>ANOStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Anonymisation\IdentifierDump.Database\IdentifierDump.Database.csproj">
-      <Project>{93be8c03-da4a-4299-8add-7d6893df4860}</Project>
-      <Name>IdentifierDump.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Anonymisation\IdentifierDump\IdentifierDump.csproj">
-      <Project>{01028615-752e-470a-90a7-d809af2ee09f}</Project>
-      <Name>IdentifierDump</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
-      <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
+      <Project>{6FA17AD8-35B3-480B-808E-F8C46D79FA20}</Project>
       <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
@@ -91,33 +85,21 @@
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\Tests\DataExportLibrary.Tests\DataExportLibrary.Tests.csproj">
-      <Project>{c37254b9-2224-4ddc-b2b2-4e3e8cb963b7}</Project>
-      <Name>DataExportLibrary.Tests</Name>
+    <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
+      <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
+      <Name>DataLoadEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\Tests\DataLoadEngineTests\DataLoadEngineTests.csproj">
-      <Project>{066c4228-210d-4f22-a7fd-ca6304d5ffb5}</Project>
-      <Name>DataLoadEngineTests</Name>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+      <Project>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</Project>
+      <Name>LoadModules.Generic</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
       <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
       <Name>DataQualityEngine.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
-      <Project>{141d0499-2b1f-4997-8bf3-19c895484093}</Project>
-      <Name>DataQualityEngine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
       <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>
       <Name>HIC.Logging.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj">
-      <Project>{3fd82ca1-5f5a-4142-957a-13b29d729ec8}</Project>
-      <Name>QueryCaching.Database</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
       <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
@@ -130,14 +112,6 @@
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Tests.Common\Tests.Common.csproj">
-      <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
-      <Name>Tests.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
-      <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
-      <Name>HIC.Common.Validation</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

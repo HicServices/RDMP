@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C851DC25-DD31-4742-87CF-D09F2F8EEAF4}</ProjectGuid>
+    <ProjectGuid>{08276B11-7FFE-427C-823B-2AB03B853679}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plugin</RootNamespace>
-    <AssemblyName>HIC.RDMP.Plugin</AssemblyName>
+    <RootNamespace>CachingEngineTests</RootNamespace>
+    <AssemblyName>CachingEngineTests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
@@ -22,15 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
     <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
@@ -73,9 +65,25 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -84,79 +92,73 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SharedAssemblyInfo.cs">
+    <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="PluginNugetClass.cs" />
+    <Compile Include="Integration\CustomDateCachingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Integration\CachingHostTests.cs" />
+    <Compile Include="Unit\TestIFileDataFlowComponents.cs" />
+    <Compile Include="Unit\IFileDataFlowSource.cs" />
+    <Compile Include="Unit\PipelineExecutionTests.cs" />
+    <Compile Include="Unit\WebServiceConfigurationTest.cs" />
+    <Compile Include="Unit\WebServiceDataFlowSource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj">
-      <Project>{9de66727-51cf-44f8-adf3-00ddb262dc1c}</Project>
-      <Name>ANOStore.Database</Name>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
+      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
+      <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Anonymisation\IdentifierDump.Database\IdentifierDump.Database.csproj">
-      <Project>{93be8c03-da4a-4299-8add-7d6893df4860}</Project>
-      <Name>IdentifierDump.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
-      <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
-      <Name>CatalogueLibrary.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
+    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76d185e2-2b48-45b6-a2a9-74ff71d46c15}</Project>
+    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
+      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
       <Name>DataExportLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
-      <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
-      <Name>LoadModules.Generic</Name>
+    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
+      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
+      <Name>DataExportLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
-      <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
-      <Name>DataQualityEngine.Database</Name>
+    <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
+      <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
+      <Name>DataLoadEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
-      <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>
-      <Name>HIC.Logging.Database</Name>
+    <ProjectReference Include="..\..\..\RDMPStartup\RDMPStartup.csproj">
+      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
+      <Name>RDMPStartup</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj">
-      <Project>{3fd82ca1-5f5a-4142-957a-13b29d729ec8}</Project>
-      <Name>QueryCaching.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
+    <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
       <Name>MapsDirectlyToDatabaseTable</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
+    <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
-      <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
-      <Name>HIC.Common.Validation</Name>
+    <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj">
+      <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
+      <Name>Tests.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CachingEngine\CachingEngine.csproj">
+      <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
+      <Name>CachingEngine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="nuget-dev-push.config" />
-    <None Include="Plugin.build">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Plugin.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
+  -->
 </Project>

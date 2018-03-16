@@ -667,6 +667,10 @@
     <Compile Include="Spontaneous\SpontaneouslyInventedSqlParameter.cs" />
     <Compile Include="Spontaneous\SpontaneousObject.cs" />
     <Compile Include="SupportingDocumentsFetcher.cs" />
+    <Compile Include="Ticketing\ITicketingSystem.cs" />
+    <Compile Include="Ticketing\PluginTicketingSystem.cs" />
+    <Compile Include="Ticketing\TicketingSystemConstructorParameters.cs" />
+    <Compile Include="Ticketing\TicketingSystemFactory.cs" />
     <Compile Include="Triggers\DiffDatabaseDataFetcher.cs" />
     <Compile Include="Triggers\Exceptions\IrreconcilableColumnDifferencesInArchiveException.cs" />
     <Compile Include="Triggers\SpecialFieldNames.cs" />

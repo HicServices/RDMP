@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Ticketing;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -17,7 +18,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 
 using ReusableUIComponents;
-using Ticketing;
 
 namespace DataExportManager.DataRelease
 {

@@ -12,6 +12,9 @@ namespace CatalogueLibrary.Refactoring.Gathering
     /// The described Object is only tenously related to the original object and you shouldn't worry too much if during refactoring you don't find any references. 
     /// An example of this would be all Filters in a Catalogue where a single ColumnInfo is being renamed.  Any filter in the catalogue could contain a reference to
     /// the ColumnInfo but most won't.
+
+    /// Describes an RDMP object that is related to another e.g. a ColumnInfo can have 0+ CatalogueItems associated with it.  This differs from IHasDependencies by the fact that
+    /// it is a more constrained set rather than just spider webbing out everywhere.
     /// </summary>
     public class GatheredObject
     {
