@@ -50,10 +50,10 @@ namespace DataExportLibrary.Data.DataTables
             get { return _dateOfExtraction; }
             set { SetField(ref _dateOfExtraction, value); }
         }
-        public Type DestinationType
+        public string DestinationType
         {
-            get { return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType); }
-            set { SetField(ref _destinationType, value.ToString()); }
+            get { return _destinationType; }
+            set { SetField(ref _destinationType, value); }
         }
         public string DestinationDescription
         {
@@ -127,7 +127,7 @@ namespace DataExportLibrary.Data.DataTables
             DistinctReleaseIdentifiersEncountered = int.Parse(r["DistinctReleaseIdentifiersEncountered"].ToString());
             Exception = r["Exception"] as string;
             FiltersUsed = r["FiltersUsed"] as string;
-            DestinationType = ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(r["DestinationType"].ToString());
+            DestinationType = r["DestinationType"] as string;
             DestinationDescription = r["DestinationDescription"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
             CohortExtracted = int.Parse(r["CohortExtracted"].ToString());
@@ -150,6 +150,11 @@ namespace DataExportLibrary.Data.DataTables
 
                 return null;
             }
+        }
+
+        public Type GetDestinationType()
+        {
+            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType);
         }
     }
 }

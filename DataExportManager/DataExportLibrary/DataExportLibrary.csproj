@@ -221,7 +221,7 @@
     <Compile Include="CohortDescribing\ExtractableCohortDescription.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
-    <Compile Include="DataRelease\NullReleasePotential.cs" />
+    <Compile Include="DataRelease\NoReleasePotential.cs" />
     <Compile Include="DataRelease\ReleaseEngine.cs" />
     <Compile Include="DataRelease\ReleaseFolderSettings.cs" />
     <Compile Include="DataRelease\ReleaseEngineSettings.cs" />

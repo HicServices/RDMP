@@ -192,10 +192,10 @@ namespace DataExportManager.DataRelease
                 {
                     var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == dataSet.ID);
                     if (extractionResults == null || extractionResults.DestinationDescription == null)
-                        ReleasePotentials.Add(new NullReleasePotential(RepositoryLocator, Configuration, dataSet));
+                        ReleasePotentials.Add(new NoReleasePotential(RepositoryLocator, Configuration, dataSet));
                     else
                     {
-                        var releasePotential = ((IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(extractionResults.DestinationType))
+                        var releasePotential = ((IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(extractionResults.GetDestinationType()))
                                                     .GetReleasePotential(RepositoryLocator, Configuration, dataSet);
                         ReleasePotentials.Add(releasePotential);
                     }

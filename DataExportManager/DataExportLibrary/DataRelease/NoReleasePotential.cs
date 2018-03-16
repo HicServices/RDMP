@@ -3,9 +3,9 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.DataRelease
 {
-    public class NullReleasePotential : ReleasePotential
+    public class NoReleasePotential : ReleasePotential
     {
-        public NullReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration, ExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
+        public NoReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration, ExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
         {
         }
 

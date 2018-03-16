@@ -14,7 +14,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         DateTime DateOfExtraction { get; set; }
         string DestinationDescription { get; set; }
-        Type DestinationType { get; }
+        string DestinationType { get; }
         int RecordsExtracted { get; set; }
         int DistinctReleaseIdentifiersEncountered { get; set; }
         string FiltersUsed { get; set; }
@@ -23,5 +23,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int CohortExtracted { get; set; }
         IExtractableDataSet ExtractableDataSet { get;}
         IReleaseLogEntry GetReleaseLogEntryIfAny();
+
+        Type GetDestinationType();
     }
 }

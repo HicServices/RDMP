@@ -109,47 +109,6 @@ namespace DataExportLibrary.DataRelease
 
                 if (Assesment == Releaseability.Undefined)
                     Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
-
-                //if (ExtractionResults.DestinationType == DestinationType.FileSystem)
-                //{
-                //    ExtractDirectory = new FileInfo(ExtractionResults.DestinationDescription).Directory;
-                //    if (FilesAreMissing())
-                //        Assesment = Releaseability.ExtractFilesMissing;
-                //    else
-                //    {
-                //        ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
-                //        Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
-                //    }
-                //    return;
-                //}
-
-                //if (ExtractionResults.DestinationType == DestinationType.Database)
-                //{
-                //    var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
-                //    var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
-                //    var tblName = ExtractionResults.DestinationDescription.Split('|')[1];
-                //    var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport);
-                //    using (DbConnection con = server.GetConnection())
-                //    {
-                //        con.Open();
-                //        var database = server.ExpectDatabase(externalServer.Database);
-                //        if (!database.Exists())
-                //        {
-                //            Assesment = Releaseability.ExtractFilesMissing;
-                //            return;
-                //        }
-
-                //        var foundTable = database.ExpectTable(tblName);
-                //        if (!foundTable.Exists())
-                //        {
-                //            Assesment = Releaseability.ExtractFilesMissing;
-                //            return;
-                //        }
-                //    }
-
-                //    // TODO: Table can be polluted, how to check?? CHECK FOR SPURIOUS TABLES
-                //    Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
-                //}
             }
             catch (Exception e)
             {
@@ -207,7 +166,6 @@ namespace DataExportLibrary.DataRelease
         
         private bool SqlOutOfSyncWithDataExportManagerConfiguration()
         {
-
             if (ExtractionResults.SQLExecuted == null)
                 throw new Exception("Cumulative Extraction Results for the extraction in which this dataset was involved in does not have any SQLExecuted recorded for it.");
             
