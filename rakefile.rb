@@ -98,7 +98,7 @@ task :publishall, [:folder, :url] do |t, args|
         deployurl = "#{baseurl}/#{major}.#{minor}.#{patch}.#{build}-#{suffix}/"
     else
         deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}"
-        deployurl = "#{baseurl}/"
+        deployurl = "#{baseurl}/Stable/"
     end
     
     minversion = "#{major}.#{minor}.#{patch}.0"
@@ -114,10 +114,18 @@ task :publishall, [:folder, :url] do |t, args|
     
     # reset symlinks, only if STABLE:
     if (!suffix)
-        File.delete "#{basefolder}/ResearchDataManagementPlatform.application" if File.exists?("#{basefolder}/ResearchDataManagementPlatform.application")
-        sh "rd \"#{basefolder}/Application Files\"" if Dir.exists?("#{basefolder}/Application Files")
-        sh "call mklink \"#{basefolder}/ResearchDataManagementPlatform.application\" \"#{deployfolder}/ResearchDataManagementPlatform.application\""
-        sh "call mklink /J \"#{basefolder}/Application Files\" \"#{deployfolder}/Application Files\""
+        # delete old files
+        File.delete "#{basefolder}/Stable/RDMPAutomationService.exe" if File.exists?("#{basefolder}/Stable/RDMPAutomationService.exe")
+        File.delete "#{basefolder}/Stable/ResearchDataManagementPlatform.application" if File.exists?("#{basefolder}/Stable/ResearchDataManagementPlatform.application")
+        File.delete "#{basefolder}/Stable/ResearchDataManagementPlatform.exe" if File.exists?("#{basefolder}/Stable/ResearchDataManagementPlatform.exe")
+        File.delete "#{basefolder}/Stable/setup.exe" if File.exists?("#{basefolder}/Stable/setup.exe")
+        sh "rd \"#{basefolder}/Stable/Application Files\"" if Dir.exists?("#{basefolder}/Stable/Application Files")
+        # recreate symlinks
+        sh "call mklink \"#{basefolder}/Stable/RDMPAutomationService.exe\" \"#{deployfolder}/RDMPAutomationService.exe\""
+        sh "call mklink \"#{basefolder}/Stable/ResearchDataManagementPlatform.application\" \"#{deployfolder}/ResearchDataManagementPlatform.application\""
+        sh "call mklink \"#{basefolder}/Stable/ResearchDataManagementPlatform.exe\" \"#{deployfolder}/ResearchDataManagementPlatform.exe\""
+        sh "call mklink \"#{basefolder}/Stable/setup.exe\" \"#{deployfolder}/setup.exe\""        
+        sh "call mklink /J \"#{basefolder}/Stable/Application Files\" \"#{deployfolder}/Application Files\""
     end
 end
 
