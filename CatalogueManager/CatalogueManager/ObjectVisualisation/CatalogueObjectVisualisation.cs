@@ -31,12 +31,8 @@ namespace CatalogueManager.ObjectVisualisation
 
         public string[] GetNameAndType(object toRender)
         {
-            var gatheredObject = toRender as GatheredObject;
-
-            //don't render the gathered object
-            if (gatheredObject != null)
-                toRender = gatheredObject.Object;
-
+            toRender = CollapseObjectIfNessesary(toRender);
+            
             var idPropertyInfo = toRender.GetType().GetProperty("ID");
             string idAsString = null;
             if (idPropertyInfo != null)
@@ -50,15 +46,18 @@ namespace CatalogueManager.ObjectVisualisation
 
         }
 
+        private object CollapseObjectIfNessesary(object toRender)
+        {
+            var masquerade = toRender as IMasqueradeAs;
+            
+            return masquerade!= null? masquerade.MasqueradingAs():toRender;
+        }
+
         //The dictionary has space for 3 segments of information. The first entry in the dictionary
         //is placed in the Rich Textbox (hence why description is almost always the first entry)
         public OrderedDictionary EntityInformation(object toRender)
         {
-            var gatheredObject = toRender as GatheredObject;
-
-            //don't render the gathered object
-            if (gatheredObject != null)
-                toRender = gatheredObject.Object;
+            toRender = CollapseObjectIfNessesary(toRender);
             
             OrderedDictionary informationToReturn = new OrderedDictionary();
 
@@ -121,11 +120,7 @@ namespace CatalogueManager.ObjectVisualisation
 
         public ColorResponse GetColor(object toRender, ColorRequest request)
         {
-            var gatheredObject = toRender as GatheredObject;
-
-            //don't render the gathered object
-            if (gatheredObject != null)
-                toRender = gatheredObject.Object;
+            toRender = CollapseObjectIfNessesary(toRender);
 
             if (request.IsHighlighted)
                 return new ColorResponse(KnownColor.LightPink, KnownColor.White);
@@ -140,11 +135,7 @@ namespace CatalogueManager.ObjectVisualisation
 
         public Bitmap GetImage(object toRender)
         {
-            var gatheredObject = toRender as GatheredObject;
-
-            //don't render the gathered object
-            if (gatheredObject != null)
-                toRender = gatheredObject.Object;
+            toRender = CollapseObjectIfNessesary(toRender);
 
             var img = (Bitmap)_coreIconProvider.GetImage(toRender);
             

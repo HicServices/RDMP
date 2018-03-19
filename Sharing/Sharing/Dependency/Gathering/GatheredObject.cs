@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
@@ -13,14 +15,25 @@ namespace Sharing.Dependency.Gathering
     /// Describes an RDMP object that is related to another e.g. a ColumnInfo can have 0+ CatalogueItems associated with it.  This differs from IHasDependencies by the fact that
     /// it is a more constrained set rather than just spider webbing out everywhere.
     /// </summary>
-    public class GatheredObject:IHasDependencies
+    public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
         public List<GatheredObject> Dependencies { get; private set; }
+        public Dictionary<Type,GatheredType> DependencyTypes { get; private set; }
 
         public GatheredObject(IMapsDirectlyToDatabaseTable o)
         {
             Object = o;
             Dependencies = new List<GatheredObject>();
+            DependencyTypes = new Dictionary<Type, GatheredType>();
+        }
+
+        public bool Contains(Type t)
+        {
+            return DependencyTypes.ContainsKey(t);
+        }
+        public void Add(GatheredType gatheredType)
+        {
+            DependencyTypes.Add(gatheredType.Type, gatheredType);
         }
 
         public IMapsDirectlyToDatabaseTable Object { get; set; }
@@ -52,6 +65,11 @@ namespace Sharing.Dependency.Gathering
             return (Object != null ? Object.GetHashCode() : 0);
         }
 
+        public object MasqueradingAs()
+        {
+            return Object;
+        }
+
         public static bool operator ==(GatheredObject left, GatheredObject right)
         {
             return Equals(left, right);
@@ -70,7 +88,8 @@ namespace Sharing.Dependency.Gathering
 
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return Dependencies.ToArray();
+            return Dependencies.Cast<IHasDependencies>().Union(DependencyTypes.Values).ToArray();
         }
+
     }
 }

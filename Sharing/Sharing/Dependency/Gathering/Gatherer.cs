@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Repositories;
+using MapsDirectlyToDatabaseTable;
 
 namespace Sharing.Dependency.Gathering
 {
@@ -15,19 +19,59 @@ namespace Sharing.Dependency.Gathering
         
         private Dictionary<int, ExtractionConfiguration> _allExtractionConfigurations;
         private ExtractableColumn[] _allExtractionColumns;
-
+        
         public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
-            
-            _allExtractionConfigurations = _repositoryLocator.DataExportRepository.GetAllObjects<ExtractionConfiguration>().ToDictionary(k => k.ID, v => v);
-            _allExtractionColumns = _repositoryLocator.DataExportRepository.GetAllObjects<ExtractableColumn>();
         }
 
+        /// <summary>
+        /// Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue databases
+        /// which references the fully qualified name of the ColumnInfo as well as it's immediate network friends that should share it's
+        /// runtime name e.g. CatalogueItem and ExtractionInformation.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         public GatheredObject GatherDependencies(ColumnInfo c)
         {
-            var root = new GatheredObject(c);
+            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetEverySingleObjectInEntireDatabase();
+            var allDataExportObjects = ((DataExportRepository)_repositoryLocator.DataExportRepository).GetEverySingleObjectInEntireDatabase();
 
+            var allObjects = allCatalogueObjects.Union(allDataExportObjects).ToArray();
+
+            SqlPropertyFinder propertyFinder = new SqlPropertyFinder(allObjects);
+
+            var root = new GatheredObject(c);
+            
+            foreach (var o in allObjects)
+            {
+                //don't add a reference to the thing we are gathering dependencies on!
+                if(Equals(o,c))
+                    continue;
+                
+                bool foundReference = false;
+
+                    foreach (var propertyInfo in propertyFinder.GetSqlProperties(o))
+                    {
+                        var sql = (string)propertyInfo.GetValue(o);
+
+                        if (sql.Contains(c.Name))
+                            foundReference = true;
+                    }
+
+                if(foundReference)
+                {
+                    var type = o.GetType();
+
+                    if(!root.Contains(type))
+                        root.Add(new GatheredType(type));
+
+                    root.DependencyTypes[type].Add(o);
+                }
+            }
+            /*
+            
+            
             HashSet<GatheredObject> foundSoFar = new HashSet<GatheredObject>();
 
             HashSet<Catalogue> catalogues = new HashSet<Catalogue>();
@@ -85,7 +129,7 @@ namespace Sharing.Dependency.Gathering
                 //
             }
 
-            root.Dependencies.AddRange(foundSoFar);
+            root.Dependencies.AddRange(foundSoFar);*/
             return root;
         }
 
