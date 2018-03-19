@@ -34,7 +34,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         bool IsValidParameterName(string parameterSQL);
 
         string AliasPrefix { get; }
-        
         bool SplitLineIntoSelectSQLAndAlias(string lineToSplit, out string selectSQL, out string alias);
 
         string GetScalarFunctionSql(MandatoryScalarFunctions function);

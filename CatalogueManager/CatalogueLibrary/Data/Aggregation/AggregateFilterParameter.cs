@@ -33,12 +33,14 @@ namespace CatalogueLibrary.Data.Aggregation
             set { SetField(ref  _aggregateFilterID, value); }
         } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref  _parameterSQL, value); }
         }
-
+        
+        [Sql]
         public string Value
         {
             get { return _value; }

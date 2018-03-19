@@ -11,6 +11,7 @@ using CatalogueManager.Icons.IconProvision;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.Dependencies.Models;
+using Sharing.Dependency.Gathering;
 
 namespace CatalogueManager.ObjectVisualisation
 {
@@ -30,6 +31,12 @@ namespace CatalogueManager.ObjectVisualisation
 
         public string[] GetNameAndType(object toRender)
         {
+            var gatheredObject = toRender as GatheredObject;
+
+            //don't render the gathered object
+            if (gatheredObject != null)
+                toRender = gatheredObject.Object;
+
             var idPropertyInfo = toRender.GetType().GetProperty("ID");
             string idAsString = null;
             if (idPropertyInfo != null)
@@ -47,6 +54,12 @@ namespace CatalogueManager.ObjectVisualisation
         //is placed in the Rich Textbox (hence why description is almost always the first entry)
         public OrderedDictionary EntityInformation(object toRender)
         {
+            var gatheredObject = toRender as GatheredObject;
+
+            //don't render the gathered object
+            if (gatheredObject != null)
+                toRender = gatheredObject.Object;
+            
             OrderedDictionary informationToReturn = new OrderedDictionary();
 
             if (_summaries != null && _summaries.ContainsKey(toRender.GetType()))
@@ -108,6 +121,12 @@ namespace CatalogueManager.ObjectVisualisation
 
         public ColorResponse GetColor(object toRender, ColorRequest request)
         {
+            var gatheredObject = toRender as GatheredObject;
+
+            //don't render the gathered object
+            if (gatheredObject != null)
+                toRender = gatheredObject.Object;
+
             if (request.IsHighlighted)
                 return new ColorResponse(KnownColor.LightPink, KnownColor.White);
 
@@ -121,6 +140,12 @@ namespace CatalogueManager.ObjectVisualisation
 
         public Bitmap GetImage(object toRender)
         {
+            var gatheredObject = toRender as GatheredObject;
+
+            //don't render the gathered object
+            if (gatheredObject != null)
+                toRender = gatheredObject.Object;
+
             var img = (Bitmap)_coreIconProvider.GetImage(toRender);
             
             if (img == null)

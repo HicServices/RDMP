@@ -51,6 +51,10 @@
     <Compile Include="Dependency\ObjectSharingObscureDependencyFinder.cs" />
     <Compile Include="Dependency\SharedPluginImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Refactoring\Exceptions\RefactoringException.cs" />
+    <Compile Include="Dependency\Gathering\GatheredObject.cs" />
+    <Compile Include="Dependency\Gathering\Gatherer.cs" />
+    <Compile Include="Refactoring\SelectSQLRefactorer.cs" />
     <Compile Include="Sharing\MapsDirectlyToDatabaseTableStatelessDefinition.cs" />
     <Compile Include="Sharing\ShareManager.cs" />
     <Compile Include="Transmission\RemotePushingService.cs" />
@@ -59,6 +63,14 @@
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
+      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
+      <Name>DataExportLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
+      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
+      <Name>DataExportLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>

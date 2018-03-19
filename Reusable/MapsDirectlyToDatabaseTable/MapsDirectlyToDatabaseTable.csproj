@@ -160,6 +160,7 @@
     <Compile Include="RepositoryResultCaching\SuperCachingDisposalToken.cs" />
     <Compile Include="RepositoryResultCaching\SuperCachingModeIsOnException.cs" />
     <Compile Include="RepositoryResultCaching\SuperResultCache.cs" />
+    <Compile Include="SqlAttribute.cs" />
     <Compile Include="TableRepository.cs" />
     <Compile Include="IObscureDependencyFinder.cs" />
     <Compile Include="Relationships\Relationship.cs" />

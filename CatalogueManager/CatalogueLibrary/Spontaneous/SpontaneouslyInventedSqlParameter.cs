@@ -16,7 +16,11 @@ namespace CatalogueLibrary.Spontaneous
     public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParameter
     {
         private readonly IQuerySyntaxHelper _syntaxHelper;
+
+        [Sql]
         public string ParameterSQL { get; set; }
+
+        [Sql]
         public string Value { get; set; }
         
         public string Comment { get; set; }

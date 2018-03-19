@@ -454,10 +454,6 @@
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
-    <Compile Include="Refactoring\Gathering\GatheredObject.cs" />
-    <Compile Include="Refactoring\Gathering\Gatherer.cs" />
-    <Compile Include="Refactoring\SelectSQLRefactorer.cs" />
-    <Compile Include="Refactoring\Exceptions\RefactoringException.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />

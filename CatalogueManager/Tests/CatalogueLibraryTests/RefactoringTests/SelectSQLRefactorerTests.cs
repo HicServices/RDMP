@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Refactoring;
 using CatalogueLibrary.Refactoring.Exceptions;
 using NUnit.Framework;
+using Sharing.Refactoring;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.RefactoringTests

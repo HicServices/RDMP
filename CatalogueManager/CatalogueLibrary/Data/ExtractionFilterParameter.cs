@@ -28,6 +28,7 @@ namespace CatalogueLibrary.Data
         private string _parameterSQL;
         private int _extractionFilterID;
 
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -38,6 +39,7 @@ namespace CatalogueLibrary.Data
             get { return _comment; }
             set { SetField(ref _comment, value); }
         }
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }

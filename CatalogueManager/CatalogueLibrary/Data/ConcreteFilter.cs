@@ -30,13 +30,12 @@ namespace CatalogueLibrary.Data
 
         #region Database Properties
 
-        
         private string _whereSQL;
         private string _name;
         private string _description;
         private bool _isMandatory;
 
-
+        [Sql]
         public string WhereSQL
         {
             get { return _whereSQL; }

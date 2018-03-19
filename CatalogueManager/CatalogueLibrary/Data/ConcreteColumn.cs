@@ -33,6 +33,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _order, value); }
         }
 
+        [Sql]
         public string SelectSQL
         {
             get { return _selectSql; }

@@ -15,6 +15,7 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,ICheckable
     {
+        [Sql]
         string WhereSQL { get; set; }
         string Description { get; set; }
         

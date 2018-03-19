@@ -47,12 +47,14 @@ namespace CatalogueLibrary.Data.Cohort
             set { SetField(ref  _parentTable, value); }
         }
 
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref  _parameterSQL, value); }
         }
 
+        [Sql]
         public string Value
         {
             get { return _value; }

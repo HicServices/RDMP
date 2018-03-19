@@ -33,6 +33,7 @@ namespace DataExportLibrary.Data.DataTables
         private string _comment;
         private int _extractionConfiguration_ID;
 
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }

@@ -44,7 +44,7 @@ namespace CatalogueLibrary.Data.Aggregation
             get { return _alias; }
             set { SetField(ref  _alias, value); }
         }
-
+        [Sql]
         public string SelectSQL
         {
             get { return _selectSQL; }

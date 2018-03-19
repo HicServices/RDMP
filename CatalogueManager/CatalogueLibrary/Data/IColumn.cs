@@ -1,4 +1,5 @@
-﻿using ReusableLibraryCode;
+﻿using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data
@@ -14,6 +15,8 @@ namespace CatalogueLibrary.Data
         ColumnInfo ColumnInfo { get; }
 
         int Order { get; set; }
+        
+        [Sql]
         string SelectSQL { get; set; }
         int ID { get;}
         string Alias { get; }

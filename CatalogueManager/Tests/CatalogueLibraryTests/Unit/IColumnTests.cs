@@ -24,6 +24,8 @@ namespace CatalogueLibraryTests.Unit
 
             public ColumnInfo ColumnInfo { get; private set; }
             public int Order { get; set; }
+
+            [Sql]
             public string SelectSQL { get; set; }
             public int ID { get; private set; }
             public string Alias { get; set; }

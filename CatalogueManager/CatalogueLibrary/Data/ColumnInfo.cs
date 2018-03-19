@@ -65,6 +65,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _anoTableID, value); }
         }
 
+        [Sql]
         public string Name
         {
             get { return _name; }

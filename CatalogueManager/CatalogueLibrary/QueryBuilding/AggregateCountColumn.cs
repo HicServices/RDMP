@@ -2,6 +2,7 @@
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -52,7 +53,8 @@ namespace CatalogueLibrary.QueryBuilding
 
         public ColumnInfo ColumnInfo { get { return null; } }
         public int Order { get; set; }
-        
+
+        [Sql]
         public string SelectSQL { get; set; }
         public int ID { get { return -1; }}
 

@@ -12,7 +12,11 @@ namespace CatalogueLibrary.Data
     public interface ISqlParameter : ISaveable, IHasQuerySyntaxHelper,ICheckable
     {
         string ParameterName { get; }
+
+        [Sql]
         string ParameterSQL { get; set; }
+
+        [Sql]
         string Value { get; set; }
         string Comment { get; set; }
 

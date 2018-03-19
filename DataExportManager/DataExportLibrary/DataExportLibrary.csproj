@@ -311,10 +311,6 @@
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
       <Name>DataLoadEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
-      <Project>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</Project>
-      <Name>LoadModules.Generic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
       <Name>HIC.Logging</Name>

@@ -25,6 +25,7 @@ namespace DataExportLibrary.Data.DataTables
         private string _selectSQL;
         private int _extractableCohort_ID;
 
+        [Sql]
         public string SelectSQL
         {
             get { return _selectSQL; }

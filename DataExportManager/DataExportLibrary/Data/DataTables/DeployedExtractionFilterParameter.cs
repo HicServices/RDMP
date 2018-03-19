@@ -28,11 +28,13 @@ namespace DataExportLibrary.Data.DataTables
             get { return _extractionFilter_ID; }
             set { SetField(ref _extractionFilter_ID, value); }
         }
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref _parameterSQL, value); }
         }
+        [Sql]
         public string Value
         {
             get { return _value; }

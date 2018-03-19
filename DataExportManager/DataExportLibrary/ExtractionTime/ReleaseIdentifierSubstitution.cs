@@ -4,6 +4,7 @@ using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -20,7 +21,10 @@ namespace DataExportLibrary.ExtractionTime
     {
         public string JoinSQL { get; private set; }
         public IColumn OriginalDatasetColumn;
+
+        [Sql]
         public string SelectSQL { get; set; }
+
         public string Alias { get; private set; }
         
         //all these are hard coded to null or false really

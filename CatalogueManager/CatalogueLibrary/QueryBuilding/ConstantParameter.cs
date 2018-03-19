@@ -52,7 +52,11 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
         public string ParameterName { get { return _syntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); } }
+
+        [Sql]
         public string ParameterSQL { get; set; }
+
+        [Sql]
         public string Value { get; set; }
         public string Comment { get; set; }
 

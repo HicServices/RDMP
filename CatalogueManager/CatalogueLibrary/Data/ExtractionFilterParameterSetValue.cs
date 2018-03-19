@@ -31,6 +31,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _extractionFilterParameterID , value); }
         }
 
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -55,6 +56,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        [Sql]
         [NoMappingToDatabase]
         public string ParameterSQL
         {

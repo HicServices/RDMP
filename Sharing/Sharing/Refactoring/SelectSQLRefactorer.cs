@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Refactoring.Exceptions;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Refactoring
+namespace Sharing.Refactoring
 {
     /// <summary>
     /// Handles making changes to SelectSQL properties that revolve around changing which underlying table/column drives the SQL.  For example when a user
