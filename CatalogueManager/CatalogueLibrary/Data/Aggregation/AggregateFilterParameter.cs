@@ -7,6 +7,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Aggregation
@@ -72,7 +73,12 @@ namespace CatalogueLibrary.Data.Aggregation
 
         public AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, IFilter parent)
         {
-            if (!GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
+            var p = parent as IHasQuerySyntaxHelper;
+
+            if (p == null)
+                throw new NotSupportedException("Parents must be IHasQuerySyntaxHelper to be used with AnyTableSqlParameter");
+
+            if (!p.GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
                 throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>
