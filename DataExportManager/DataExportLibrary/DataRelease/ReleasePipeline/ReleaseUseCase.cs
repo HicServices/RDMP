@@ -24,7 +24,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public ReleaseUseCase(Project project, ReleaseData releaseData)
         {
-            ExplicitSource = new FixedSource<ReleaseAudit>(CheckRelease);
+            ExplicitSource = new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));
             ExplicitDestination = null;
 
             _project = project;
