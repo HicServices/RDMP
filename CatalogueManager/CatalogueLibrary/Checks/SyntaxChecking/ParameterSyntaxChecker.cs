@@ -10,6 +10,10 @@ namespace CatalogueLibrary.Checks.SyntaxChecking
     {
         private readonly ISqlParameter _parameter;
 
+        /// <summary>
+        /// Prepares the checker to check the ISqlParameter supplied
+        /// </summary>
+        /// <param name="parameter"></param>
         public ParameterSyntaxChecker(ISqlParameter parameter)
         {
             _parameter = parameter;

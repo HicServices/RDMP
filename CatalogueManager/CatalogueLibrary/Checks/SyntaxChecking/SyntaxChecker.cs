@@ -7,6 +7,9 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Checks.SyntaxChecking
 {
+    /// <summary>
+    /// Base class for all Checkers which check the Sql Syntax of an object e.g. an IFilter's WhereSql
+    /// </summary>
     public abstract class SyntaxChecker : ICheckable
     {
         /// <summary>
@@ -72,6 +75,10 @@ namespace CatalogueLibrary.Checks.SyntaxChecking
             }
         }
 
+        /// <summary>
+        /// Override in child classes to check the currently configured Sql of the object
+        /// </summary>
+        /// <param name="notifier"></param>
         public abstract void Check(ICheckNotifier notifier);
     }
 }

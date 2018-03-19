@@ -18,6 +18,7 @@ namespace CatalogueLibrary.Cloning
     /// <summary>
     /// Creates a new copy of an existing Catalogue in a remote repository (or within the same repository).  Allows several CloneDepths (See CloneDepth) e.g. CatalogueItems only or full tree.
     /// </summary>
+    [Obsolete("Why would we want to do this?")]
     public class CatalogueCloner
     {
         private readonly CatalogueRepository _sourceRepository;
@@ -35,6 +36,14 @@ namespace CatalogueLibrary.Cloning
         }
 
         #region Catalogue into same database (with new ID)
+        
+        /// <summary>
+        /// Creates a complete copy of the Catalogue named _DUPLICATE in the same CatalogueRepository metadata database as the original.  The Catalogue will have
+        /// it's own set of CatalogueItems with the same names as the original.  The CatalogueItems of the clone will be orphans (not tied to any ColumnInfo) and
+        /// therefore will also not be extractable.
+        /// </summary>
+        /// <param name="toClone"></param>
+        /// <returns></returns>
         public Catalogue CreateDuplicateInSameDatabase(Catalogue toClone)
         {
             var repo = (ICatalogueRepository)toClone.Repository;
@@ -80,6 +89,12 @@ namespace CatalogueLibrary.Cloning
             }
         }
 
+        /// <summary>
+        /// Copies all properties (Description etc) from one CatalogueItem into another (except ID properties).
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="skipNameProperty"></param>
         public static void CopyValuesFromCatalogueItemIntoCatalogueItem(CatalogueItem from, CatalogueItem to, bool skipNameProperty = false)
         {
             foreach (var propertyInfo in typeof(CatalogueItem).GetProperties())
@@ -126,6 +141,14 @@ namespace CatalogueLibrary.Cloning
 
         #region Catalogue into different database (with SAME ID)
 
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        /// <param name="toClone"></param>
+        /// <param name="depth"></param>
+        /// <param name="cloneOnlyTheseCatalogueItems"></param>
+        /// <param name="alsoCloneLoadMetadata"></param>
+        [Obsolete("We are very unlikely to have a destination catalogue we can make")]
         public void CloneIntoNewDatabase(Catalogue toClone, CloneDepth depth, List<CatalogueItem> cloneOnlyTheseCatalogueItems=null,bool alsoCloneLoadMetadata=false)
         {
             if (_destinationRepository == toClone.Repository)

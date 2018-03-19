@@ -11,6 +11,10 @@ namespace CatalogueLibrary.Checks.SyntaxChecking
     {
         private readonly IFilter _filter;
 
+        /// <summary>
+        /// Prepares the checker to check the IFilter supplied
+        /// </summary>
+        /// <param name="filter"></param>
         public FilterSyntaxChecker(IFilter filter)
         {
             _filter = filter;

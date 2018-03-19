@@ -14,6 +14,10 @@ namespace CatalogueLibrary.Checks.SyntaxChecking
     {
         private readonly IColumn _column;
 
+        /// <summary>
+        /// Prepares the checker to check the IColumn supplied
+        /// </summary>
+        /// <param name="column"></param>
         public  ColumnSyntaxChecker(IColumn column)
         {
             _column = column;
