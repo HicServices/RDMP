@@ -24,6 +24,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public ReleaseUseCase(Project project, ReleaseData releaseData)
         {
+            var releaseType = releaseData.ConfigurationsForRelease.Values.SelectMany(x => x).Distinct();
             ExplicitSource = new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));
             ExplicitDestination = null;
 
