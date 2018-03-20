@@ -245,6 +245,13 @@ namespace CatalogueLibrary.Data.Aggregation
             get { return Name.StartsWith(CohortIdentificationConfiguration.CICPrefix); }
         }
 
+        /// <summary>
+        /// Creates a new AggregateConfiguration (graph, cohort set or patient index table) in the ICatalogueRepository
+        /// . database associated with the provided Catalogue (dataset).
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="catalogue"></param>
+        /// <param name="name"></param>
         public AggregateConfiguration(ICatalogueRepository repository, ICatalogue catalogue, string name)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -254,7 +261,7 @@ namespace CatalogueLibrary.Data.Aggregation
             });
         }
         
-        public AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+        internal AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
             Name = r["Name"] as string;
             Description = r["Description"] as string;

@@ -162,7 +162,7 @@ namespace CatalogueLibrary.Data
             
         }
 
-        public ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             SelectSQL = r["SelectSQL"].ToString();
 

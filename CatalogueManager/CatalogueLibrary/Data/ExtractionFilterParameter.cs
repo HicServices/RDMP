@@ -84,7 +84,7 @@ namespace CatalogueLibrary.Data
         }
 
 
-        public ExtractionFilterParameter(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilterParameter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());

@@ -70,7 +70,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public LookupCompositeJoinInfo(ICatalogueRepository repository, DbDataReader r)
+        internal LookupCompositeJoinInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Collation = r["Collation"] as string;

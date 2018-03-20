@@ -96,7 +96,7 @@ namespace DataExportLibrary.Data.DataTables
             LookupCatalogueStuff();
         }
 
-        public ExtractableColumn(IDataExportRepository repository, DbDataReader r)
+        internal ExtractableColumn(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractableDataSet_ID = int.Parse(r["ExtractableDataSet_ID"].ToString());

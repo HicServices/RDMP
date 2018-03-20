@@ -68,7 +68,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
+        internal DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());

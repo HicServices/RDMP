@@ -95,7 +95,7 @@ namespace CatalogueLibrary.Data.Cohort
             });
         }
 
-        public AnyTableSqlParameter(ICatalogueRepository repository, DbDataReader r)
+        internal AnyTableSqlParameter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Value = r["Value"] as string;

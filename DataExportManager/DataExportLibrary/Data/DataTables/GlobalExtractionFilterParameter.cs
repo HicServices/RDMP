@@ -77,7 +77,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
+        internal GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Value = r["Value"] as string;

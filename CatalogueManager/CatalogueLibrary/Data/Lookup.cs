@@ -140,7 +140,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public Lookup(ICatalogueRepository repository, DbDataReader r)
+        internal Lookup(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Description_ID = int.Parse(r["Description_ID"].ToString());

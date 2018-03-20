@@ -124,7 +124,7 @@ namespace CatalogueLibrary.Data
             repository.InsertAndHydrate(this, parameters);
         }
 
-        public ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             Name = r["Name"] as string;
             CreatedByAssembly = r["CreatedByAssembly"] as string;

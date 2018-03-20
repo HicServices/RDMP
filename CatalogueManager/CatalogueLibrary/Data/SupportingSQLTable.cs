@@ -102,7 +102,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public SupportingSQLTable(ICatalogueRepository repository, DbDataReader r)
+        internal SupportingSQLTable(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString());

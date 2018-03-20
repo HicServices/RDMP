@@ -187,7 +187,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public ColumnInfo(ICatalogueRepository repository, DbDataReader r)
+        internal ColumnInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());

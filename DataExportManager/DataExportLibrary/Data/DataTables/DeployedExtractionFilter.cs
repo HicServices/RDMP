@@ -116,7 +116,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public DeployedExtractionFilter(IDataExportRepository repository, DbDataReader r)
+        internal DeployedExtractionFilter(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             WhereSQL = r["WhereSQL"] as string;

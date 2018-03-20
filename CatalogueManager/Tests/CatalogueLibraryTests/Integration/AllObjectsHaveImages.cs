@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -36,6 +37,10 @@ namespace CatalogueLibraryTests.Integration
             List<Exception> whoCares;
             foreach (Type type in RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => typeof (IHasDependencies).IsAssignableFrom(t) && !t.IsInterface))
             {
+                //skip masqueraders
+                if(typeof(IMasqueradeAs).IsAssignableFrom(type))
+                    continue;
+
                 var typeName = type.Name;
                 if (ExceptionsAllowed.Any(s=>s.Equals(typeName)))
                     continue;

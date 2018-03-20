@@ -100,7 +100,7 @@ namespace CatalogueLibrary.Data.DataLoad
             });
         }
 
-        public ANOTable(ICatalogueRepository repository, DbDataReader r)
+        internal ANOTable(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Server_ID = Convert.ToInt32(r["Server_ID"]);

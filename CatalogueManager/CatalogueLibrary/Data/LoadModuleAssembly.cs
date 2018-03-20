@@ -245,7 +245,7 @@ namespace CatalogueLibrary.Data
             Repository.InsertAndHydrate(this,dictionaryParameters);
         }
 
-        public LoadModuleAssembly(ICatalogueRepository repository, DbDataReader r)
+        internal LoadModuleAssembly(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Dll = r["Dll"] as byte[];

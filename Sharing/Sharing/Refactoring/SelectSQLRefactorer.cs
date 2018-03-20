@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Refactoring.Exceptions;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using Sharing.Refactoring.Exceptions;
 
 namespace Sharing.Refactoring
 {

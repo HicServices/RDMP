@@ -48,7 +48,7 @@ namespace CatalogueLibrary.Data.Cohort
 
         #endregion
 
-        public CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
+        internal CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Order = int.Parse(r["Order"].ToString());

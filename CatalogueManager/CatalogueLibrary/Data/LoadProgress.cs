@@ -104,7 +104,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public LoadProgress(ICatalogueRepository repository, DbDataReader r)
+        internal LoadProgress(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"] as string;

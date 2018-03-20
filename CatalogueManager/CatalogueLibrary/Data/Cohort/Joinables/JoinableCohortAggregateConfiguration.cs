@@ -59,7 +59,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         }
         #endregion
 
-        public JoinableCohortAggregateConfiguration(ICatalogueRepository repository, DbDataReader r)
+        internal JoinableCohortAggregateConfiguration(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             CohortIdentificationConfiguration_ID = Convert.ToInt32(r["CohortIdentificationConfiguration_ID"]);

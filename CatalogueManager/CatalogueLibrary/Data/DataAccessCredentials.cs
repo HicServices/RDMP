@@ -61,7 +61,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public DataAccessCredentials(ICatalogueRepository repository, DbDataReader r)
+        internal DataAccessCredentials(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             _encryptedPasswordHost = new EncryptedPasswordHost(repository);

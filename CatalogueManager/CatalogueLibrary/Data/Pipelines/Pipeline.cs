@@ -104,7 +104,7 @@ namespace CatalogueLibrary.Data.Pipelines
             });
         }
 
-        public Pipeline(ICatalogueRepository repository, DbDataReader r)
+        internal Pipeline(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"].ToString();

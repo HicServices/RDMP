@@ -5,7 +5,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Refactoring;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;

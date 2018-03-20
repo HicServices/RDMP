@@ -125,7 +125,7 @@ namespace CatalogueLibrary.Data.DataLoad
             });
         }
 
-        public ProcessTask(ICatalogueRepository repository, DbDataReader r)
+        internal ProcessTask(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             LoadMetadata_ID = int.Parse(r["LoadMetaData_ID"].ToString());

@@ -525,7 +525,7 @@ namespace CatalogueLibrary.Data
         /// Creates a single runtime instance of the Catalogue based on the current state of the row read from the DbDataReader (does not advance the reader)
         /// </summary>
         /// <param name="r"></param>
-        public Catalogue(ICatalogueRepository repository, DbDataReader r)
+        internal Catalogue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             if(r["LoadMetadata_ID"] != DBNull.Value)

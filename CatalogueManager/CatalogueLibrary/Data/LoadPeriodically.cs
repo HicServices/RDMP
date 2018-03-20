@@ -83,7 +83,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public LoadPeriodically(ICatalogueRepository repository, DbDataReader r)
+        internal LoadPeriodically(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             LoadMetadata_ID = Convert.ToInt32(r["LoadMetadata_ID"]);

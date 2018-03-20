@@ -38,7 +38,7 @@ namespace CatalogueLibrary.Data.DataLoad
             });
         }
 
-        public ProcessTaskArgument(ICatalogueRepository repository, DbDataReader r)
+        internal ProcessTaskArgument(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ProcessTask_ID = int.Parse(r["ProcessTask_ID"].ToString());

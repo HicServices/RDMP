@@ -5,8 +5,10 @@ using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace Sharing.Dependency.Gathering
 {
@@ -130,8 +132,8 @@ namespace Sharing.Dependency.Gathering
             }
 
             root.Dependencies.AddRange(foundSoFar);*/
+            
             return root;
         }
-
     }
 }

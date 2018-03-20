@@ -82,7 +82,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public SupportingDocument(ICatalogueRepository repository, DbDataReader r)
+        internal SupportingDocument(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString()); //gets around decimals and other random crud number field types that sql returns

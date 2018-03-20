@@ -114,7 +114,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
 
-        public ExtractionFilterParameterSetValue(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilterParameterSetValue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionFilterParameterSet_ID =   Convert.ToInt32(r["ExtractionFilterParameterSet_ID"]);

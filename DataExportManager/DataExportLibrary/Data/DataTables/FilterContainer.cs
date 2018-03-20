@@ -39,7 +39,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+        internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository, r)
         {
             FilterContainerOperation op;
 

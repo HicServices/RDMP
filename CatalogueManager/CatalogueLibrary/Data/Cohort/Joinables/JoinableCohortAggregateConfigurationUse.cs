@@ -60,7 +60,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         }
         #endregion
 
-        public JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
+        internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionJoinType joinType;

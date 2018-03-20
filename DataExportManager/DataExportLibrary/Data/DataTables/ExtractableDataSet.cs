@@ -78,7 +78,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public ExtractableDataSet(IDataExportRepository repository, DbDataReader r)
+        internal ExtractableDataSet(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Catalogue_ID = Convert.ToInt32(r["Catalogue_ID"]);

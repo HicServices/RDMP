@@ -37,7 +37,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public IssueSystemUser(ICatalogueRepository repository, DbDataReader r)
+        internal IssueSystemUser(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"] as string;

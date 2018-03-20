@@ -122,7 +122,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
-        public Project(IDataExportRepository repository, DbDataReader r)
+        internal Project(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             MasterTicket = r["MasterTicket"].ToString();

@@ -19,6 +19,8 @@ namespace CatalogueLibrary.Repositories.Construction
     /// </summary>
     public class ObjectConstructor
     {
+        private readonly static BindingFlags BindingFlags = BindingFlags.Instance  | BindingFlags.Public| BindingFlags.NonPublic;
+
         public object Construct(Type t)
         {
             return GetUsingBlankConstructor(t);
@@ -91,7 +93,7 @@ namespace CatalogueLibrary.Repositories.Construction
             var toReturn = new List<ConstructorInfo>();
             ConstructorInfo exactMatch = null;
 
-            foreach (ConstructorInfo constructor in type.GetConstructors())
+            foreach (ConstructorInfo constructor in type.GetConstructors(BindingFlags))
             {
                 var p = constructor.GetParameters();
 
@@ -113,7 +115,7 @@ namespace CatalogueLibrary.Repositories.Construction
             var toReturn = new List<ConstructorInfo>();
             ConstructorInfo exactMatch = null;
 
-            foreach (ConstructorInfo constructor in type.GetConstructors())
+            foreach (ConstructorInfo constructor in type.GetConstructors(BindingFlags))
             {
                 var p = constructor.GetParameters();
 
@@ -164,7 +166,7 @@ namespace CatalogueLibrary.Repositories.Construction
         {
             List<ConstructorInfo> compatible = new List<ConstructorInfo>();
 
-            foreach (var constructor in typeToConstruct.GetConstructors())
+            foreach (var constructor in typeToConstruct.GetConstructors(BindingFlags))
             {
                 var p = constructor.GetParameters();
 

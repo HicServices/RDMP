@@ -57,7 +57,7 @@ namespace DataExportLibrary.Data
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
         }
-        public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, DbDataReader r)
+        internal ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Project_ID = Convert.ToInt32(r["Project_ID"]);

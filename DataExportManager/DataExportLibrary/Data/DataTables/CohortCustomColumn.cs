@@ -65,7 +65,7 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public bool IsPrimaryKey { get { return false; } }
 
-        public CohortCustomColumn(IDataExportRepository repository, DbDataReader r)
+        internal CohortCustomColumn(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             SelectSQL = r["SelectSQL"] as string;
