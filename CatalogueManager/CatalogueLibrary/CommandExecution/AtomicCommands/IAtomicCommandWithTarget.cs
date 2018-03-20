@@ -8,6 +8,11 @@ namespace CatalogueLibrary.CommandExecution.AtomicCommands
     /// </summary>
     public interface IAtomicCommandWithTarget : IAtomicCommand
     {
+        /// <summary>
+        /// Defines the object which this command should operate on
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
         IAtomicCommandWithTarget SetTarget(DatabaseEntity target);
     }
 }

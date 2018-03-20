@@ -27,24 +27,37 @@ namespace CatalogueLibrary.Data
 
         #region Database Properties
 
+        /// <summary>
+        /// ID of the aggregate graph that this topX applies to
+        /// </summary>
         public int AggregateConfiguration_ID
         {
             get { return _aggregateConfigurationID; }
             set { SetField(ref _aggregateConfigurationID , value); }
         }
 
+        /// <summary>
+        /// The number of records to return from the TopX e.g. Top 10
+        /// </summary>
         public int TopX
         {
             get { return _topX; }
             set { SetField(ref _topX, value); }
         }
 
+        /// <summary>
+        /// The dimension which the top X applies to, if null it will be the count / sum etc column (The AggregateCountColumn)
+        /// </summary>
         public int? OrderByDimensionIfAny_ID
         {
             get { return _orderByDimensionIfAny_ID; }
             set { SetField(ref _orderByDimensionIfAny_ID, value); }
         }
 
+        /// <summary>
+        /// When applying a TopX to an aggregate, this is the direction (Ascending/Descending) for the ORDER BY statement.  Descending means pick top X where
+        /// count / sum etc is highest.
+        /// </summary>
         public AggregateTopXOrderByDirection OrderByDirection
         {
             get { return _orderByDirection; }
