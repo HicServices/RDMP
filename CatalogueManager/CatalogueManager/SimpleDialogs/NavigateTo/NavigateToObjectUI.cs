@@ -406,27 +406,23 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                         if (_isClosed)
                             return;
                         
-                        Invoke(new MethodInvoker(() =>
+                        try
                         {
-                            try
-                            {
-                                if(_isClosed)
-                                    return;
+                            if(_isClosed)
+                                return;
 
-                                AdjustHeight();
+                            AdjustHeight();
 
-                                if (_isClosed)
-                                    return;
+                            if (_isClosed)
+                                return;
 
-                                Invalidate();
-                            }
-                            catch (ObjectDisposedException)
-                            {
+                            Invalidate();
+                        }
+                        catch (ObjectDisposedException)
+                        {
                                 
-                            }
-                        }));
-                        
-                    });
+                        }
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void FetchMatches(string text, CancellationToken cancellationToken)
