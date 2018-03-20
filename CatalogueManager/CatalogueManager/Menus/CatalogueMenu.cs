@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using CatalogueLibrary.Cloning;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
@@ -36,9 +35,7 @@ namespace CatalogueManager.Menus
             Items.Add(addItem);
 
             Items.Add(new ToolStripSeparator());
-
-            Items.Add("Clone Catalogue", null, (s, e) => CloneCatalogue(catalogue));
-
+            
             Add(new ExecuteCommandCreateANOVersion(_activator, catalogue));
 
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////
@@ -55,39 +52,7 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandCreateNewEmptyCatalogue(_activator));
         }
 
-
-        private void CloneCatalogue(Catalogue c)
-        {
-
-            if (c != null)
-            {
-                if (DialogResult.Yes ==
-                    MessageBox.Show("Confirm creating a duplicate of Catalogue \"" + c.Name + "\"?",
-                                    "Create Duplicate?", MessageBoxButtons.YesNo))
-                {
-
-                    try
-                    {
-                        CatalogueCloner cloner = new CatalogueCloner(RepositoryLocator.CatalogueRepository, RepositoryLocator.CatalogueRepository);
-                        cloner.CreateDuplicateInSameDatabase(c);
-
-                    }
-                    catch (Exception exception)
-                    {
-                        if (exception.Message.Contains("runcated"))
-                            //skip the t because unsure what capitalisation it will be
-                            MessageBox.Show(
-                                "The name of the Catalogue to clone was too long, when we tried to put _DUPLICATE on the end it resulted in error:" +
-                                exception.Message);
-                        else
-                            MessageBox.Show(exception.Message);
-                    }
-                }
-            }
-            else
-                MessageBox.Show("Select a Catalogue first (on the left)");
-        }
-
+        
         public void PopupChecks(ICheckable checkable)
         {
             var popupChecksUI = new PopupChecksUI("Checking " + checkable, false);

@@ -378,7 +378,6 @@
     <Compile Include="Checks\SyntaxChecking\FilterSyntaxChecker.cs" />
     <Compile Include="Checks\SyntaxChecking\ParameterSyntaxChecker.cs" />
     <Compile Include="Checks\SyntaxChecking\SyntaxChecker.cs" />
-    <Compile Include="Cloning\MissingTableException.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
@@ -578,7 +577,6 @@
     <Compile Include="Data\SafeDirectoryCatalog.cs" />
     <Compile Include="Data\ServerDefaults.cs" />
     <Compile Include="Data\DataLoad\ANOTable.cs" />
-    <Compile Include="Cloning\CatalogueCloner.cs" />
     <Compile Include="DataHelper\JoinHelper.cs" />
     <Compile Include="DataHelper\TableInfoImporter.cs" />
     <Compile Include="DataHelper\TableValuedFunctionImporter.cs" />

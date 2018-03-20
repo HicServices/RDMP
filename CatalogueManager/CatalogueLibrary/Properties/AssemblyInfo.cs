@@ -19,3 +19,4 @@ using System.Runtime.InteropServices;
 
 
 [assembly: InternalsVisibleTo("Sharing")]
+[assembly: InternalsVisibleTo("CatalogueLibraryTests")]
