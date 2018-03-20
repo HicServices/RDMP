@@ -36,10 +36,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// Regex for identifying parameters in blocks of SQL
         /// </summary>
         /// <returns></returns>
-        protected virtual Regex GetParameterNameRegex()
-        {
-            return new Regex("(@[A-Za-z0-9_]*)\\s?",RegexOptions.IgnoreCase);
-        }
+        private static Regex _parameterNamesRegex = new Regex("(@[A-Za-z0-9_]*)\\s?", RegexOptions.IgnoreCase);
         
         public string AliasPrefix
         {
@@ -54,21 +51,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// </summary>
         /// <param name="parameterSQL"></param>
         /// <returns></returns>
-        public string GetParameterNameFromDeclarationSQL(string parameterSQL)
+        public static string GetParameterNameFromDeclarationSQL(string parameterSQL)
         {
-            var regex = GetParameterNameRegex();
+            if (!_parameterNamesRegex.IsMatch(parameterSQL))
+                throw new Exception("ParameterSQL does not match regex pattern:" + _parameterNamesRegex);
 
-            if (!regex.IsMatch(parameterSQL))
-                throw new Exception("ParameterSQL does not match regex pattern:" + regex);
-
-            return regex.Match(parameterSQL).Value.Trim();
+            return _parameterNamesRegex.Match(parameterSQL).Value.Trim();
         }
 
         public bool IsValidParameterName(string parameterSQL)
         {
-            var regex = GetParameterNameRegex();
-
-            return regex.IsMatch(parameterSQL);
+            return _parameterNamesRegex.IsMatch(parameterSQL);
         }
 
         protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper,IUpdateHelper updateHelper)

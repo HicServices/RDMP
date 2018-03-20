@@ -29,8 +29,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         TopXResponse HowDoWeAchieveTopX(int x);
         string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request);
         string GetParameterDeclaration(string proposedNewParameterName, string sqlType);
-        string GetParameterNameFromDeclarationSQL(string parameterSQL);
-
+        
         bool IsValidParameterName(string parameterSQL);
 
         string AliasPrefix { get; }

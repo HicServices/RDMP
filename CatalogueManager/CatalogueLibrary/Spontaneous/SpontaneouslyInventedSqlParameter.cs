@@ -4,6 +4,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Spontaneous
@@ -35,7 +36,7 @@ namespace CatalogueLibrary.Spontaneous
 
         public string ParameterName { get
         {
-            return _syntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+            return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
         }}
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
