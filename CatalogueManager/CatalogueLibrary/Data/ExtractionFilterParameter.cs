@@ -73,9 +73,6 @@ namespace CatalogueLibrary.Data
 
         public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
         {
-            if (!parent.GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},

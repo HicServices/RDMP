@@ -67,9 +67,6 @@ namespace DataExportLibrary.Data.DataTables
         {
             Repository = repository;
 
-            if (!GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},

@@ -83,10 +83,7 @@ namespace CatalogueLibrary.Data.Cohort
 
             if(p == null)
                 throw new NotSupportedException("Parents must be IHasQuerySyntaxHelper to be used with AnyTableSqlParameter");
-
-            if (!p.GetQuerySyntaxHelper().IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
+            
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},

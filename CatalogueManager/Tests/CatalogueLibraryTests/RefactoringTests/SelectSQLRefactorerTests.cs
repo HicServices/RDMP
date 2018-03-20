@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Refactoring;
 using NUnit.Framework;
 using Sharing.Refactoring;
 using Sharing.Refactoring.Exceptions;

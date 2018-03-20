@@ -41,6 +41,7 @@ namespace CatalogueLibrary.Checks.SyntaxChecking
         /// <param name="parameter"></param>
         public void CheckSyntax(ISqlParameter parameter)
         {
+
             if (string.IsNullOrWhiteSpace(parameter.Value))
                 throw new SyntaxErrorException("Parameter " + parameter.ParameterName + " does not have a value");
 
@@ -73,6 +74,11 @@ namespace CatalogueLibrary.Checks.SyntaxChecking
             {
                 throw new SyntaxErrorException("Failed to validate the bracket parity of parameter " + parameter, exception);
             }
+
+
+            if (!parameter.GetQuerySyntaxHelper().IsValidParameterName(parameter.ParameterSQL))
+                throw new SyntaxErrorException("parameterSQL is not valid \"" + parameter.ParameterSQL + "\"");
+
         }
 
         /// <summary>
