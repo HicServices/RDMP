@@ -250,7 +250,7 @@ namespace DataExportManager.DataRelease
                 var releaseData = GetReleaseData();
                 releaseData.IsDesignTime = true;
                 var context = new ReleaseUseCase(_project, releaseData);
-                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release",DockStyle.Fill,pnlPipeline);
+                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
             }
         }
 

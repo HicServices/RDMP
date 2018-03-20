@@ -9,6 +9,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -261,6 +262,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             ExtractionConfiguration configuration, ExtractableDataSet dataSet)
         {
             return new MsSqlExtractionReleasePotential(repositoryLocator, configuration, dataSet);
+        }
+
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource()
+        {
+            return new FlatFileReleaseSource<ReleaseAudit>();
         }
 
         private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener)

@@ -38,7 +38,6 @@ namespace RDMPObjectVisualisation.Pipelines.PluginPipelineUsers
 
             //setup getter as an event handler for the selection ui
             
-
             var pipelineSelectionUIType = typeof(PipelineSelectionUI<>).MakeGenericType(context.GetFlowType());
             var uiConstructor = pipelineSelectionUIType.GetConstructors().Single();
 

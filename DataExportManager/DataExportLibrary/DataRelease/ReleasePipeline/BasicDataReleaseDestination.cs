@@ -55,11 +55,11 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
             }
 
-            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit.ReleaseFolder);
+            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit);
 
             _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotential, isPatch: _releaseData.ReleaseState == ReleaseState.DoingPatch);
 
-            _destinationFolder = _engine.ReleaseFolder;
+            _destinationFolder = _engine.ReleaseAudit.ReleaseFolder;
 
             return null;
         }

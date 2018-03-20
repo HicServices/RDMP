@@ -227,6 +227,8 @@
     <Compile Include="DataRelease\ReleaseEngineSettings.cs" />
     <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\FixedReleaseSource.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\NullReleaseSource.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseAudit.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseFolderProvider.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs" />
     <Compile Include="DataRelease\FlatFileReleasePotential.cs" />
     <Compile Include="DataRelease\MsSqlExtractionReleasePotential.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\FlatFileReleaseSource.cs" />
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />

@@ -8,5 +8,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     public class ReleaseAudit
     {
         public DirectoryInfo ReleaseFolder { get; set; }
+        public DirectoryInfo SourceGlobalFolder { get; set; }
     }
 }

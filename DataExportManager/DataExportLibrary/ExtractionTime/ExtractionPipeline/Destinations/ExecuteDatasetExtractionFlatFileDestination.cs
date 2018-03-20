@@ -12,6 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
@@ -50,7 +51,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public string OutputFile { get; private set; }
         public int LinesWritten { get; private set; }
         Stopwatch stopwatch = new Stopwatch();
-
 
         [DemandsInitialization("The date format to output all datetime fields in e.g. dd/MM/yyyy for uk format yyyy-MM-dd for something more machine processable, see https://msdn.microsoft.com/en-us/library/8kb3ddd4(v=vs.110).aspx", DemandType.Unspecified, "yyyy-MM-dd", Mandatory = true)]
         public string DateFormat { get; set; }
@@ -151,8 +151,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
             haveWrittenBundleContents = true;
         }
-
-
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
@@ -275,6 +273,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             ExtractionConfiguration configuration, ExtractableDataSet dataSet)
         {
             return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
+        }
+
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource()
+        {
+            return new FlatFileReleaseSource<ReleaseAudit>();
         }
 
         private bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
