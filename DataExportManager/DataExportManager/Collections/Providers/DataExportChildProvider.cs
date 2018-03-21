@@ -92,6 +92,14 @@ namespace DataExportManager.Collections.Providers
             //record all extractable columns in each ExtractionConfiguration for fast reference later
             foreach (var c in dataExportRepository.GetAllObjects<ExtractableColumn>())
             {
+                if(c.CatalogueExtractionInformation_ID == null)
+                    c.InjectKnownCatalogueItemAndColumnInfo(null,null);
+                else
+                {
+                    var extractionInformation = AllExtractionInformationsDictionary[c.CatalogueExtractionInformation_ID.Value];
+                    c.InjectKnownCatalogueItemAndColumnInfo(extractionInformation.CatalogueItem, extractionInformation.ColumnInfo);
+                }
+
                 if(!ExtractionConfigurationToExtractableColumnsDictionary.ContainsKey(c.ExtractionConfiguration_ID))
                     ExtractionConfigurationToExtractableColumnsDictionary.Add(c.ExtractionConfiguration_ID,new List<ExtractableColumn>());   
                 
