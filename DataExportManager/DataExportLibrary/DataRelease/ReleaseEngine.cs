@@ -73,12 +73,6 @@ namespace DataExportLibrary.DataRelease
             sw.Flush();
             sw.Close();
             ReleaseSuccessful = true;
-
-            if (ReleaseSettings.DeleteFilesOnSuccess)
-            {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
-                CleanupExtractionFolders(this.Project.ExtractionDirectory);
-            }
         }
         
         protected virtual StreamWriter PrepareAuditFile()
@@ -129,7 +123,6 @@ namespace DataExportLibrary.DataRelease
                 generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
                 AuditFileCreation("ReleaseDocument_" + extractionIdentifier + ".docx", sw, 1);
 
-
                 //only copy across directories that are explicitly validated with a ReleasePotential
                 foreach (ReleasePotential rp in kvp.Value)
                 {
@@ -138,13 +131,6 @@ namespace DataExportLibrary.DataRelease
 
                     CutTreeRecursive(rp.ExtractDirectory, rpDirectory, sw, 2);
                     AuditProperRelease(rp, environment, rpDirectory, isPatch);
-                }
-
-                //mark configuration as released
-                if (ReleaseSettings.FreezeReleasedConfigurations)
-                {
-                    kvp.Key.IsReleased = true;
-                    kvp.Key.SaveToDatabase();
                 }
 
                 ConfigurationsReleased.Add(kvp.Key);
@@ -161,61 +147,6 @@ namespace DataExportLibrary.DataRelease
                 fromCustomData.CopyAll(destination);
             }
             return fromCustomData;
-        }
-
-        protected void CleanupExtractionFolders(string extractionDirectory)
-        {
-            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionDirectory.ExtractionSubFolderName));
-            var directoriesToDelete = new List<DirectoryInfo>();
-            var filesToDelete = new List<FileInfo>();
-
-            foreach (var extractionConfiguration in this.ConfigurationsReleased)
-            {
-                var config = extractionConfiguration;
-                var directoryInfos = projectExtractionDirectory.GetDirectories().Where(d => ExtractionDirectory.IsOwnerOf(config, d));
-
-                foreach (DirectoryInfo toCleanup in directoryInfos)
-                    AddDirectoryToCleanupList(toCleanup, true, directoriesToDelete, filesToDelete);
-            }
-
-            foreach (var fileInfo in filesToDelete)
-            {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting: " + fileInfo.FullName));
-                try
-                {
-                    fileInfo.Delete();
-                }
-                catch (Exception e)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + fileInfo.FullName, e));
-                }
-            }
-
-            foreach (var directoryInfo in directoriesToDelete)
-            {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Recursively deleting folder: " + directoryInfo.FullName));
-                try
-                {
-                    directoryInfo.Delete(true);
-                }
-                catch (Exception e)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + directoryInfo.FullName, e));
-                }
-            }
-        }
-
-        private void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot, List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
-        {
-            //only add root folders to the delete queue
-            if (isRoot)
-                if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //dont add the same folder twice
-                    directoriesToDelete.Add(toCleanup);
-
-            filesToDelete.AddRange(toCleanup.EnumerateFiles());
-
-            foreach (var dir in toCleanup.EnumerateDirectories())
-                AddDirectoryToCleanupList(dir, false, directoriesToDelete, filesToDelete);
         }
 
         protected virtual void AuditExtractionConfigurationDetails(StreamWriter sw, DirectoryInfo configurationSubDirectory, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -6,6 +7,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
+using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -24,7 +26,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private Project _project;
         private DirectoryInfo _destinationFolder;
         private ReleaseEngine _engine;
-        
+        private List<IExtractionConfiguration> _configurationReleased;
+
         public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if (releaseAudit == null)
@@ -60,6 +63,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotential, isPatch: _releaseData.ReleaseState == ReleaseState.DoingPatch);
 
             _destinationFolder = _engine.ReleaseAudit.ReleaseFolder;
+            _configurationReleased = _engine.ConfigurationsReleased;
 
             return null;
         }
@@ -89,7 +93,25 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             if(pipelineFailureExceptionIfAny == null && _destinationFolder != null)
+            {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
+                //mark configuration as released
+                if (ReleaseSettings.FreezeReleasedConfigurations)
+                {
+                    foreach (var config in _configurationReleased)
+                    {
+                        config.IsReleased = true;
+                        config.SaveToDatabase();
+                    }
+                } 
+                if (ReleaseSettings.DeleteFilesOnSuccess)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
+                    CleanupExtractionFolders(_project.ExtractionDirectory, listener);
+                }
+
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "All done!"));
+            }
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -110,6 +132,61 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
         {
             this._releaseData = value;
+        }
+
+        protected void CleanupExtractionFolders(string extractionDirectory, IDataLoadEventListener listener)
+        {
+            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionDirectory.ExtractionSubFolderName));
+            var directoriesToDelete = new List<DirectoryInfo>();
+            var filesToDelete = new List<FileInfo>();
+
+            foreach (var extractionConfiguration in _configurationReleased)
+            {
+                var config = extractionConfiguration;
+                var directoryInfos = projectExtractionDirectory.GetDirectories().Where(d => ExtractionDirectory.IsOwnerOf(config, d));
+
+                foreach (DirectoryInfo toCleanup in directoryInfos)
+                    AddDirectoryToCleanupList(toCleanup, true, directoriesToDelete, filesToDelete);
+            }
+
+            foreach (var fileInfo in filesToDelete)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting: " + fileInfo.FullName));
+                try
+                {
+                    fileInfo.Delete();
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + fileInfo.FullName, e));
+                }
+            }
+
+            foreach (var directoryInfo in directoriesToDelete)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Recursively deleting folder: " + directoryInfo.FullName));
+                try
+                {
+                    directoryInfo.Delete(true);
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + directoryInfo.FullName, e));
+                }
+            }
+        }
+
+        private void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot, List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
+        {
+            //only add root folders to the delete queue
+            if (isRoot)
+                if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //dont add the same folder twice
+                    directoriesToDelete.Add(toCleanup);
+
+            filesToDelete.AddRange(toCleanup.EnumerateFiles());
+
+            foreach (var dir in toCleanup.EnumerateDirectories())
+                AddDirectoryToCleanupList(dir, false, directoriesToDelete, filesToDelete);
         }
     }
 }
