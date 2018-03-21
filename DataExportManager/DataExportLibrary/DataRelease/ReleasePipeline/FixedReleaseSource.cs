@@ -13,9 +13,10 @@ using Ticketing;
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
     /// <summary>
-    /// Use this every time you need a Fixed Source that has no pipeline initialization requirements.
+    /// Release pipeline must start with a Fixed Source that will run checks and prepare the source folder.
+    /// Extraction Destinations will return an implementation of this class based on the extraction method used.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type which is passed around in the pipeline</typeparam>
     public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<ReleaseData>, IDataFlowSource<T> where T : class, new()
     {
         private readonly Action<ICheckNotifier> checkAction;

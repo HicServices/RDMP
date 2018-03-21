@@ -15,6 +15,10 @@ using Ticketing;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
+    /// <summary>
+    /// Prepares the Source Global Folder for the ReleaseEngine.
+    /// </summary>
+    /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
     public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
         private bool firstTime = true;

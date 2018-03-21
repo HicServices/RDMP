@@ -24,9 +24,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 namespace DataExportLibrary.DataRelease
 {
     /// <summary>
-    /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.  This includes making sure that the current configuration
-    /// in the database matches the extracted flat files that are destined for release.  It also checks that the user hasn't snuck some additional files into
-    /// the extract directory etc.
+    /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release. 
+    /// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
+    /// based on the extraction method used.
     /// </summary>
     public abstract class ReleasePotential
     {
