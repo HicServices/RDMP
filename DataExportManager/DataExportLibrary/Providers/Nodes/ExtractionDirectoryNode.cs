@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing.Text;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using DataExportLibrary.Data.DataTables;
-using ReusableUIComponents;
 
-namespace DataExportManager.Collections.Nodes
+namespace DataExportLibrary.Providers.Nodes
 {
     public class ExtractionDirectoryNode : IDirectoryInfoNode, IOrderable
     {

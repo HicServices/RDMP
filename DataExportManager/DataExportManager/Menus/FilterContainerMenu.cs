@@ -12,7 +12,6 @@ using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
 using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;

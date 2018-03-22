@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using DataExportManager.Collections.Nodes;
+using DataExportLibrary.Providers.Nodes;
 using DataExportManager.Collections.Providers;
 
 namespace DataExportManager.Collections

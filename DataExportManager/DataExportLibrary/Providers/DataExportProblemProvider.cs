@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.UsedByProject;
 
 namespace DataExportManager.Collections.Providers
 {

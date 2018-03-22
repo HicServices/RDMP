@@ -1,23 +1,22 @@
-﻿using CatalogueLibrary.Data.Cohort;
-using DataExportLibrary.Data.DataTables;
+﻿using DataExportLibrary.Data.DataTables;
 
-namespace DataExportManager.Collections.Nodes.ProjectCohortNodes
+namespace DataExportLibrary.Providers.Nodes
 {
-    public class ProjectSavedCohortsNode:IOrderable
+    class FrozenExtractionConfigurationsNode
     {
         public Project Project { get; set; }
 
-        public ProjectSavedCohortsNode(Project project)
+        public FrozenExtractionConfigurationsNode(Project project)
         {
             Project = project;
         }
 
         public override string ToString()
         {
-            return "Saved Cohorts";
+            return "Frozen Extraction Configurations";
         }
 
-        protected bool Equals(ProjectSavedCohortsNode other)
+        protected bool Equals(FrozenExtractionConfigurationsNode other)
         {
             return Equals(Project, other.Project);
         }
@@ -27,14 +26,12 @@ namespace DataExportManager.Collections.Nodes.ProjectCohortNodes
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ProjectSavedCohortsNode) obj);
+            return Equals((FrozenExtractionConfigurationsNode) obj);
         }
 
         public override int GetHashCode()
         {
             return (Project != null ? Project.GetHashCode() : 0);
         }
-
-        public int Order { get { return 2; } set{}}
     }
 }

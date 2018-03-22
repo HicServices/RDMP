@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.Icons.IconProvision;
 using DataExportLibrary.Data.DataTables;
 
-namespace DataExportManager.Collections.Nodes.UsedByProject
+namespace DataExportLibrary.Providers.Nodes.UsedByProject
 {
     public class ExtractableCohortUsedByProjectNode:IObjectUsedByProjectNode
     {
         public Project Project { get; set; }
-        public RDMPConcept UnderlyingObjectConceptualType { get { return RDMPConcept.ExtractableCohort; }}
         public object ObjectBeingUsed { get { return Cohort; }}
 
         public ExtractableCohort Cohort { get; set; }

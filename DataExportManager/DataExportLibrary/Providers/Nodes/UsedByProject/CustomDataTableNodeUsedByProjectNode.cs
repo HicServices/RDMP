@@ -1,12 +1,10 @@
-﻿using CatalogueManager.Icons.IconProvision;
-using DataExportLibrary.Data.DataTables;
+﻿using DataExportLibrary.Data.DataTables;
 
-namespace DataExportManager.Collections.Nodes.UsedByProject
+namespace DataExportLibrary.Providers.Nodes.UsedByProject
 {
     public class CustomDataTableNodeUsedByProjectNode:IObjectUsedByProjectNode
     {
         public Project Project { get; set; }
-        public RDMPConcept UnderlyingObjectConceptualType { get { return RDMPConcept.CustomDataTableNode; }}
         public object ObjectBeingUsed { get { return CustomTable; }}
 
         public CustomDataTableNode CustomTable { get; set; }

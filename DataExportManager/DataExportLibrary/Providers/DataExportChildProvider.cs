@@ -1,39 +1,23 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Security.Cryptography;
-using System.ServiceModel.Description;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.ItemActivation;
-using DataExportLibrary.CohortDescribing;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.Hierarchy;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Repositories;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.ProjectCohortNodes;
-using DataExportManager.Collections.Nodes.UsedByProject;
-using DataExportManager.SimpleDialogs;
-using HIC.Common.Validation.Constraints.Primary;
+using DataExportLibrary.Providers.Nodes;
+using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
+using DataExportLibrary.Providers.Nodes.UsedByProject;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableUIComponents;
-using ReusableUIComponents.Settings;
 
 namespace DataExportManager.Collections.Providers
 {
@@ -78,6 +62,8 @@ namespace DataExportManager.Collections.Providers
         /// All columns extracted in any dataset extracted in any ExtractionConfiguration.  Use GetColumnsIn to interrogate this in a more manageable way
         /// </summary>
         public Dictionary<int,List<ExtractableColumn>> ExtractionConfigurationToExtractableColumnsDictionary = new Dictionary<int, List<ExtractableColumn>>();
+
+        public IEnumerable<ExtractableColumn> AllExtractableColumns {get { return ExtractionConfigurationToExtractableColumnsDictionary.SelectMany(kvp => kvp.Value); }}
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
@@ -156,7 +142,7 @@ namespace DataExportManager.Collections.Providers
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)
         {
             var children = new HashSet<object>(PackageContents.GetAllDataSets(package, ExtractableDataSets)
-                .Select(ds => new PackageContentNode(package, ds)));
+                .Select(ds => new PackageContentNode(package, ds,PackageContents)));
 
             AddToDictionaries(children, descendancy);
 
@@ -369,29 +355,8 @@ namespace DataExportManager.Collections.Providers
                 
                 if(server == null || !server.RespondsWithinTime(10, out ex))
                 {
-                    ExceptionViewer.Show("Could not list custom tables in CohortSource " + source.Name ,ex);
-
-                    var dialog = new BlacklistOptions("CohortSource '" + source.Name + "' is not responding");
-                    dialog.ShowDialog();
-
-                    switch (dialog.Response)
-                    {
-                        case BlacklistResponse.Ignore:
-                            continue;
-                        case BlacklistResponse.BlacklistSource:
-                            BlackListedSources.Add(source);
-                            continue;
-                        case BlacklistResponse.BlacklistAll:
-                            BlackListedSources.AddRange(CohortSources);
-                            return;
-                        case BlacklistResponse.UnsetDataExport:
-
-                            UserSettings.DataExportConnectionString = "";
-                            ((UserSettingsRepositoryFinder)_repositoryLocator).RefreshRepositoriesFromUserSettings();
-                            throw new Exception("User has unset Data Export Manager Location");
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    BlackListedSources.Add(source);
+                    throw new Exception("Blacklisted source '" + source +"' due to error " + ex);
                 }
                
                 using (var con = server.GetConnection())

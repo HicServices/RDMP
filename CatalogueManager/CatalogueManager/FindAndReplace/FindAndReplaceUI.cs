@@ -14,6 +14,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using DataExportManager.Collections.Providers;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
 using Sharing.Dependency.Gathering;
@@ -23,7 +24,7 @@ namespace CatalogueManager.FindAndReplace
     public partial class FindAndReplaceUI : UserControl
     {
         private readonly IActivateItems _activator;
-        private IMapsDirectlyToDatabaseTable[] _allObjects;
+        private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new HashSet<IMapsDirectlyToDatabaseTable>();
 
         private IAttributePropertyFinder _adjustableLocationPropertyFinder;
         private List<FindAndReplaceNode> _locationNodes = new List<FindAndReplaceNode>(); 
@@ -36,8 +37,7 @@ namespace CatalogueManager.FindAndReplace
         {
             _activator = activator;
 
-            Gatherer g = new Gatherer(activator.RepositoryLocator);
-            _allObjects = g.GetAllObjectsInAllDatabases();
+            GetAllObjects(activator);
 
             _adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
             _sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
@@ -63,6 +63,29 @@ namespace CatalogueManager.FindAndReplace
                     _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
             tlvAllObjects.AddObjects(_locationNodes);
+        }
+
+        private void GetAllObjects(IActivateItems activator)
+        {
+
+            Gatherer g = new Gatherer(activator.RepositoryLocator);
+
+            //We get these from the child provider because some objects (those below go off looking stuff up if you get them
+            //and do not inject known good values first)
+            foreach (var o in _activator.CoreChildProvider.AllExtractionInformations)
+                _allObjects.Add(o);
+
+            foreach (var o in _activator.CoreChildProvider.AllCatalogueItems)
+                _allObjects.Add(o);
+
+            var dxmChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
+
+            if (dxmChildProvider != null)
+                foreach (var o in dxmChildProvider.AllExtractableColumns)
+                    _allObjects.Add(o);
+
+            foreach (var o in g.GetAllObjectsInAllDatabases())
+                _allObjects.Add(o);
         }
 
         void tlvAllObjects_CellEditFinished(object sender, CellEditEventArgs e)

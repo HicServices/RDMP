@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CatalogueLibrary.Data;
-using CatalogueManager.Icons.IconProvision;
 using DataExportLibrary.Data.DataTables;
+using MapsDirectlyToDatabaseTable;
 
-namespace DataExportManager.Collections.Nodes.UsedByProject
+namespace DataExportLibrary.Providers.Nodes.UsedByProject
 {
     public class CohortSourceUsedByProjectNode : IObjectUsedByProjectNode
     {
         public Project Project { get; set; }
-        public RDMPConcept UnderlyingObjectConceptualType { get { return RDMPConcept.ExternalCohortTable; }}
         public object ObjectBeingUsed { get { return Source; }}
 
         public ExternalCohortTable Source { get; set; }

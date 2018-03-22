@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.Cohort;
+﻿using CatalogueLibrary.Data.Cohort;
 using DataExportLibrary.Data.DataTables;
 
-namespace DataExportManager.Collections.Nodes.ProjectCohortNodes
+namespace DataExportLibrary.Providers.Nodes.ProjectCohortNodes
 {
     /// <summary>
     /// Container folder immediately under a Project which contains subnodes 'ProjectSavedCohortsNode' and 'ProjectCohortIdentificationConfigurationAssociationsNode'

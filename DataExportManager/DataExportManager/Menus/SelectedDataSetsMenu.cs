@@ -12,7 +12,6 @@ using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.Collections.Nodes;
 using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
