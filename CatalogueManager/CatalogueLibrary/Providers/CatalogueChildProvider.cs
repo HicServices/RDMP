@@ -59,7 +59,9 @@ namespace CatalogueLibrary.Providers
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
         private Dictionary<object, DescendancyList> _descendancyDictionary = new Dictionary<object, DescendancyList>();
 
-        public CatalogueItem[] AllCatalogueItems { get; private set; }
+        public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
+        public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
+
         private Dictionary<int,ColumnInfo> _allColumnInfos;
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         
@@ -103,13 +105,12 @@ namespace CatalogueLibrary.Providers
         public AnyTableSqlParameter[] AllAnyTableParameters;
 
         //Filter / extraction side of things
-
         public IEnumerable<ExtractionInformation> AllExtractionInformations { get
         {
-            return _allExtractionInformations.Values;
+            return AllExtractionInformationsDictionary.Values;
         } }
 
-        private Dictionary<int,ExtractionInformation> _allExtractionInformations;
+        protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
 
         private readonly CatalogueFilterHierarchy _filterChildProvider;
 
@@ -162,9 +163,28 @@ namespace CatalogueLibrary.Providers
 
             AllCohortIdentificationConfigurations = repository.GetAllObjects<CohortIdentificationConfiguration>();
             
-            AllCatalogueItems = repository.GetAllObjects<CatalogueItem>();
+            AllCatalogueItemsDictionary = repository.GetAllObjects<CatalogueItem>().ToDictionary(i=>i.ID,o=>o);
             _allColumnInfos = repository.GetAllObjects<ColumnInfo>().ToDictionary(i=>i.ID,o=>o);
-            _allExtractionInformations = repository.GetAllObjects<ExtractionInformation>().ToDictionary(i => i.ID, o => o);
+
+            //Inject known ColumnInfos into CatalogueItems
+            foreach (CatalogueItem ci in AllCatalogueItems)
+            {
+                ColumnInfo col = null;
+
+                if (ci.ColumnInfo_ID != null && _allColumnInfos.ContainsKey(ci.ColumnInfo_ID.Value))
+                    col = _allColumnInfos[ci.ColumnInfo_ID.Value];
+
+                ci.InjectKnownColumnInfo(col);
+            }
+
+            AllExtractionInformationsDictionary = repository.GetAllObjects<ExtractionInformation>().ToDictionary(i => i.ID, o => o);
+
+            //Inject known CatalogueItems into ExtractionInformations
+            foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
+            {
+                CatalogueItem ci = AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
+                ei.InjectKnownColumnInfoAndCatalogueItems(ci.ColumnInfo,ci);
+            }
 
             _allCatalogueItemIssues = repository.GetAllObjects<CatalogueItemIssue>();
 
@@ -581,7 +601,7 @@ namespace CatalogueLibrary.Providers
 
                 if(extractionInformationIfAnyId != null)
                 {
-                    var extractionInformation = _allExtractionInformations[extractionInformationIfAnyId.Value];
+                    var extractionInformation = AllExtractionInformationsDictionary[extractionInformationIfAnyId.Value];
                     childObjects.Add(extractionInformation);
                     AddChildren(extractionInformation,descendancy.Add(extractionInformation));
                 }
