@@ -8,11 +8,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Sharing.Dependency.Gathering
 {
-    internal class SqlPropertyFinder
+    public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Attribute
     {
-        readonly Dictionary<Type, HashSet<PropertyInfo>> _properties = new Dictionary<Type, HashSet<PropertyInfo>>();
+       readonly Dictionary<Type, HashSet<PropertyInfo>> _properties = new Dictionary<Type, HashSet<PropertyInfo>>();
 
-        public SqlPropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects)
+        public AttributePropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects) 
         {
             foreach (Type type in objects.Select(o => o.GetType()).Distinct())
             {
@@ -21,7 +21,7 @@ namespace Sharing.Dependency.Gathering
                 foreach (PropertyInfo property in propertyInfos)
                 {
                     //if property has sql flag
-                    if(property.GetCustomAttributes(typeof(SqlAttribute), true).Any())
+                    if (property.GetCustomAttributes(typeof(T), true).Any())
                     {
                         if(!_properties.ContainsKey(type))
                             _properties.Add(type, new HashSet<PropertyInfo>());
@@ -33,7 +33,7 @@ namespace Sharing.Dependency.Gathering
             }
         }
 
-        public IEnumerable<PropertyInfo> GetSqlProperties(IMapsDirectlyToDatabaseTable o)
+        public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o)
         {
             var t = o.GetType();
 
@@ -41,6 +41,16 @@ namespace Sharing.Dependency.Gathering
                 return _properties[t];
 
             return new PropertyInfo[0];
+        }
+
+        /// <summary>
+        /// Returns true if the provided object has a property that matches the expected attribute
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        public bool ObjectContainsProperty(IMapsDirectlyToDatabaseTable arg)
+        {
+            return _properties.ContainsKey(arg.GetType());
         }
     }
 }

@@ -12,11 +12,11 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
+using CatalogueManager.FindAndReplace;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.LocationsMenu;
-using CatalogueManager.LocationsMenu.LocationAdjustment;
 using CatalogueManager.LocationsMenu.Ticketing;
 using CatalogueManager.LogViewer;
 using CatalogueManager.MainFormUITabs;
@@ -114,13 +114,6 @@ namespace ResearchDataManagementPlatform.Menus
             _activator.ShowWindow(ui,true);
         }
 
-        private void adjustFileLocationsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LocationsAdjuster adjuster = new LocationsAdjuster();
-            adjuster.RepositoryLocator = RepositoryLocator;
-            adjuster.ShowDialog(this);
-        }
-        
         private void governanceManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GovernanceUI dialog = new GovernanceUI();
@@ -434,6 +427,11 @@ namespace ResearchDataManagementPlatform.Menus
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentTab.Close();
+        }
+
+        private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _activator.ShowWindow(new FindAndReplaceUI(_activator),true);
         }
     }
 }

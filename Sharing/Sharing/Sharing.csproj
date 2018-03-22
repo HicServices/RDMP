@@ -49,7 +49,8 @@
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Dependency\Gathering\GatheredType.cs" />
-    <Compile Include="Dependency\Gathering\SqlPropertyFinder.cs" />
+    <Compile Include="Dependency\Gathering\AttributePropertyFinder.cs" />
+    <Compile Include="Dependency\Gathering\IAttributePropertyFinder.cs" />
     <Compile Include="Dependency\ObjectSharingObscureDependencyFinder.cs" />
     <Compile Include="Dependency\SharedPluginImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

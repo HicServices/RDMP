@@ -27,6 +27,13 @@ namespace Sharing.Dependency.Gathering
             _repositoryLocator = repositoryLocator;
         }
 
+        public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
+        {
+            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetEverySingleObjectInEntireDatabase();
+            var allDataExportObjects = ((DataExportRepository)_repositoryLocator.DataExportRepository).GetEverySingleObjectInEntireDatabase();
+            return allCatalogueObjects.Union(allDataExportObjects).ToArray();
+        }
+
         /// <summary>
         /// Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue databases
         /// which references the fully qualified name of the ColumnInfo as well as it's immediate network friends that should share it's
@@ -36,12 +43,10 @@ namespace Sharing.Dependency.Gathering
         /// <returns></returns>
         public GatheredObject GatherDependencies(ColumnInfo c)
         {
-            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetEverySingleObjectInEntireDatabase();
-            var allDataExportObjects = ((DataExportRepository)_repositoryLocator.DataExportRepository).GetEverySingleObjectInEntireDatabase();
+            
+            var allObjects = GetAllObjectsInAllDatabases();
 
-            var allObjects = allCatalogueObjects.Union(allDataExportObjects).ToArray();
-
-            SqlPropertyFinder propertyFinder = new SqlPropertyFinder(allObjects);
+            var propertyFinder = new AttributePropertyFinder<SqlAttribute>(allObjects);
 
             var root = new GatheredObject(c);
             
@@ -53,7 +58,7 @@ namespace Sharing.Dependency.Gathering
                 
                 bool foundReference = false;
 
-                    foreach (var propertyInfo in propertyFinder.GetSqlProperties(o))
+                    foreach (var propertyInfo in propertyFinder.GetProperties(o))
                     {
                         var sql = (string)propertyInfo.GetValue(o);
 

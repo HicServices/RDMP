@@ -147,7 +147,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AdjustableLocation.cs" />
+    <Compile Include="AdjustableLocationAttribute.cs" />
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeleteable.cs" />
     <Compile Include="INamed.cs" />

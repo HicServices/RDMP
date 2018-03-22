@@ -526,6 +526,13 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionFilterParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
+    <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
+    <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FindAndReplace\FindAndReplaceUI.Designer.cs">
+      <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
@@ -951,18 +958,6 @@
     <Compile Include="Refreshing\ILifetimeSubscriber.cs" />
     <Compile Include="Refreshing\IRefreshBusSubscriber.cs" />
     <Compile Include="Refreshing\RefreshBus.cs" />
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.Designer.cs">
-      <DependentUpon>LocationAdjustableObjectUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.Designer.cs">
-      <DependentUpon>LocationAdjustablePropertyUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1152,12 +1147,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\Governance\GovernanceUI.Designer.cs">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.Designer.cs">
-      <DependentUpon>LocationsAdjuster.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.cs">
       <SubType>Form</SubType>
@@ -1648,6 +1637,9 @@
     <None Include="Icons\ObjectImport.png" />
     <None Include="Icons\ObjectSharingNode.png" />
     <None Include="Icons\ProjectCohortsNode.png" />
+    <None Include="Icons\TinyYellow.png" />
+    <None Include="Icons\TinyGreen.png" />
+    <None Include="Icons\TinyRed.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1707,6 +1699,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
+      <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
@@ -1800,12 +1795,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Images.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.resx">
-      <DependentUpon>LocationAdjustableObjectUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.resx">
-      <DependentUpon>LocationAdjustablePropertyUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
@@ -1902,9 +1891,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceUI.resx">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.resx">
-      <DependentUpon>LocationsAdjuster.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.resx">
       <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
