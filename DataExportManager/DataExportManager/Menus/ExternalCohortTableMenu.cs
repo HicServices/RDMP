@@ -20,7 +20,6 @@ using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CohortUI.ImportCustomData;
-using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using DataExportManager.SimpleDialogs;

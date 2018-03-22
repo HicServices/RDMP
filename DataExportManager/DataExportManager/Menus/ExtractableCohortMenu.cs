@@ -11,7 +11,6 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
-using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.DataViewing.Collections;
 using RDMPStartup;

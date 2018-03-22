@@ -1,6 +1,5 @@
 ﻿using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
-using DataExportManager.Collections.Providers;
 using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Providers.Nodes

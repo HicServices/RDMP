@@ -13,7 +13,6 @@ using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers.Nodes;
 using DataExportManager.CohortUI;
-using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;

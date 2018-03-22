@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 
-namespace DataExportManager.Collections.Providers
+namespace DataExportLibrary.Providers
 {
+    /// <summary>
+    /// Identifies all rapidly detectable problems with the configurations of Data Export items
+    /// </summary>
     public class DataExportProblemProvider:IProblemProvider
     {
         public Dictionary<object, string>  _problems = new Dictionary<object, string>();

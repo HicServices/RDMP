@@ -14,7 +14,7 @@ using CatalogueManager.LocationsMenu;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using DataQualityEngine.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;

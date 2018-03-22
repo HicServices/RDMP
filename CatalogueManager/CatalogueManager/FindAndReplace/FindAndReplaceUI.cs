@@ -14,7 +14,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.SqlServer.Management.Smo;
 using Sharing.Dependency.Gathering;

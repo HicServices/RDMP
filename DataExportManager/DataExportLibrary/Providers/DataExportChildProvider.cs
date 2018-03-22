@@ -19,8 +19,13 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
-namespace DataExportManager.Collections.Providers
+namespace DataExportLibrary.Providers
 {
+    /// <summary>
+    /// Finds the all the objects required for data export tree rendering including which objects are children of others 
+    /// and the descendancy for each object etc.  This class inherits from CatalogueChildProvider because you cannot have
+    /// one without the other and one Data Export database always maps to one (and only one) Catalogue database.
+    /// </summary>
     public class DataExportChildProvider : CatalogueChildProvider
     {
         //root objects

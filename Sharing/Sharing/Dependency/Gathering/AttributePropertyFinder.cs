@@ -8,6 +8,11 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Sharing.Dependency.Gathering
 {
+    /// <summary>
+    /// Implementation of <see cref="IAttributePropertyFinder"/> in which a specific Attribute only is looked for.  The
+    /// Attribute is specified by the generic T
+    /// </summary>
+    /// <typeparam name="T">The specific attribute you are looking for e.g. SqlAttribute</typeparam>
     public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Attribute
     {
        readonly Dictionary<Type, HashSet<PropertyInfo>> _properties = new Dictionary<Type, HashSet<PropertyInfo>>();

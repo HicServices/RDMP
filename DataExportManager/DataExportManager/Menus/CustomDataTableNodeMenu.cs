@@ -14,7 +14,6 @@ using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
-using DataExportManager.Collections.Providers;
 using DataExportManager.DataViewing.Collections;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;

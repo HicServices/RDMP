@@ -11,7 +11,7 @@ using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;

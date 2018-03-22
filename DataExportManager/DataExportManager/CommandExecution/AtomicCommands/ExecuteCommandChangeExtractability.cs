@@ -9,7 +9,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution.AtomicCommands;

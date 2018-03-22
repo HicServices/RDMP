@@ -9,7 +9,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.CohortUI;
-using DataExportManager.Collections.Providers;
 using RDMPStartup;
 
 namespace DataExportManager.Menus

@@ -7,7 +7,7 @@ using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using DataExportManager.ProjectUI;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;

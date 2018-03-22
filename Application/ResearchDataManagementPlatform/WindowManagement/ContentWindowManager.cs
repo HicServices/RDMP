@@ -41,7 +41,7 @@ using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
 using Dashboard.Automation;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;

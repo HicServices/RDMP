@@ -9,6 +9,10 @@ using ReusableLibraryCode;
 
 namespace Sharing.Dependency.Gathering
 {
+    /// <summary>
+    /// Describes a collection of GatheredObjects that share the same Type.  This can be useful for clustering otherwise
+    /// unrelated GatheredObjects and making the resultant IHasDependencies graph more readable
+    /// </summary>
     public class GatheredType :IHasDependencies,IMasqueradeAs
     {
         public Type Type { get; set; }
