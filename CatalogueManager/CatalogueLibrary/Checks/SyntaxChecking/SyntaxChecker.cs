@@ -8,7 +8,7 @@ using ReusableLibraryCode.Checks;
 namespace CatalogueLibrary.Checks.SyntaxChecking
 {
     /// <summary>
-    /// Base class for all Checkers which check the Sql Syntax of an object e.g. an IFilter's WhereSql
+    /// Base class for all Checkers which check the Sql Syntax of an object e.g. an IFilter's WhereSQL
     /// </summary>
     public abstract class SyntaxChecker : ICheckable
     {
