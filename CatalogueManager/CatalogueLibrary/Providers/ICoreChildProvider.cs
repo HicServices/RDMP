@@ -34,7 +34,7 @@ namespace CatalogueLibrary.Providers
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
         PermissionWindow[] AllPermissionWindows { get;}
-        CatalogueItem[] AllCatalogueItems { get; }
+        IEnumerable<CatalogueItem> AllCatalogueItems { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }

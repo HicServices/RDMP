@@ -203,7 +203,13 @@ namespace CatalogueLibrary.Data
         {
             return ID.GetHashCode();
         }
-        
+
+        public void InjectKnownColumnInfoAndCatalogueItems(ColumnInfo col, CatalogueItem ci)
+        {
+            _columnInfo = col;
+            _catalogueItem = ci;
+        }
+
         public int CompareTo(object obj)
         {
             if(obj is ExtractionInformation)

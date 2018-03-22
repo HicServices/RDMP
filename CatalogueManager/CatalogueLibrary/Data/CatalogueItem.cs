@@ -49,6 +49,7 @@ namespace CatalogueLibrary.Data
         private int _catalogueID;
         private int? _columnInfoID;
         private Catalogue.CataloguePeriodicity _periodicity;
+        
 
         [DoNotExtractProperty]
         public int Catalogue_ID
@@ -109,7 +110,11 @@ namespace CatalogueLibrary.Data
         public int? ColumnInfo_ID
         {
             get { return _columnInfoID; }
-            set { SetField(ref _columnInfoID , value); }
+            set
+            {
+                SetField(ref _columnInfoID , value);
+                _haveCachedColumnInfo = false;
+            }
         }
 
         public Catalogue.CataloguePeriodicity Periodicity
@@ -143,7 +148,9 @@ namespace CatalogueLibrary.Data
             {
                 try
                 {
-                    return ColumnInfo_ID == null ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
+                    CacheColumnInfoIfRequired();
+
+                    return _columnInfoCached;
                 }
                 catch (KeyNotFoundException) //The ColumnInfo has been deleted elsewhere in the program? but this local object in memory doesn't know that
                 {
@@ -158,6 +165,8 @@ namespace CatalogueLibrary.Data
                 }
             }
         }
+
+        
 
         [NoMappingToDatabase]
         public IEnumerable<CatalogueItemIssue> CatalogueItemIssues
@@ -297,6 +306,25 @@ namespace CatalogueLibrary.Data
         public void SetColumnInfo(ColumnInfo columnInfo)
         {
             ((CatalogueRepository)Repository).SaveSpecificPropertyOnlyToDatabase(this,"ColumnInfo_ID",columnInfo != null? (object) columnInfo.ID:null);
+            InjectKnownColumnInfo(columnInfo);
+        }
+
+        private ColumnInfo _columnInfoCached;
+        private bool _haveCachedColumnInfo;
+
+        private void CacheColumnInfoIfRequired()
+        {
+            if(_haveCachedColumnInfo)
+                return;
+
+            _columnInfoCached = ColumnInfo_ID == null ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
+            _haveCachedColumnInfo = true;
+        }
+
+        public void InjectKnownColumnInfo(ColumnInfo col)
+        {
+            _columnInfoCached = col;
+            _haveCachedColumnInfo = true;
         }
     }
 }

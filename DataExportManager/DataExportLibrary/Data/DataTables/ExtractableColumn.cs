@@ -47,13 +47,15 @@ namespace DataExportLibrary.Data.DataTables
         public int? CatalogueExtractionInformation_ID
         {
             get { return _catalogueExtractionInformation_ID; }
-            set { SetField(ref _catalogueExtractionInformation_ID, value); }
+            set
+            {
+                SetField(ref _catalogueExtractionInformation_ID, value);
+                _haveCachedCatalogueItem = false;
+            }
         }
 
         #endregion
         
-        private ColumnInfo _columnInfo = null;
-
         #region Relationships
         
         [NoMappingToDatabase]
@@ -73,13 +75,14 @@ namespace DataExportLibrary.Data.DataTables
         {
             get
             {
-                return _columnInfo;
+                CacheCatalogueStuffIfRequired();
+                return _columnInfoCached;
             }
         }
 
         #endregion
         
-        private string _catalogueItemName;
+        
 
         public ExtractableColumn(IDataExportRepository repository, IExtractableDataSet dataset, ExtractionConfiguration configuration, ExtractionInformation extractionInformation, int order, string selectSQL)
         {
@@ -92,8 +95,6 @@ namespace DataExportLibrary.Data.DataTables
                 {"Order", order},
                 {"SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? DBNull.Value : (object)selectSQL}
             });
-
-            LookupCatalogueStuff();
         }
 
         internal ExtractableColumn(IDataExportRepository repository, DbDataReader r)
@@ -113,50 +114,22 @@ namespace DataExportLibrary.Data.DataTables
             HashOnDataRelease = (bool)r["HashOnDataRelease"];
             IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
             IsPrimaryKey = (bool) r["IsPrimaryKey"];
-
-            LookupCatalogueStuff();
-
         }
 
-        private void LookupCatalogueStuff()
-        {
-            CatalogueItem catalogueItem = null;
-
-            if (CatalogueExtractionInformation_ID != null)
-            {
-                bool exists = ((DataExportRepository)Repository).CatalogueRepository.StillExists<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
-
-                //We have been orphaned! we have an CatalogueExtractionInformation_ID which should point to the Catalogue object but the Catalogue object has been deleted
-                if (!exists)
-                    CatalogueExtractionInformation_ID = null;
-                else
-                    catalogueItem = CatalogueExtractionInformation.CatalogueItem;
-            }
-
-            //the ExtractionInformation has been deleted in the Catalogue!
-            if (catalogueItem == null)
-                _catalogueItemName = null;
-            else
-                _catalogueItemName = catalogueItem.Name;//it hasn't, copy down the name of it
-
-            LookupColumnInfo();
-        }
-
-        private void LookupColumnInfo()
-        {
-            if (_columnInfo == null && CatalogueExtractionInformation_ID != null)
-                _columnInfo = CatalogueExtractionInformation.CatalogueItem.ColumnInfo;
-        }
         
         public override string ToString()
         {
             if(!string.IsNullOrWhiteSpace(Alias))
                 return Alias;
 
-            if (_catalogueItemName == null)
+            CacheCatalogueStuffIfRequired();
+            
+            //the ExtractionInformation has been deleted in the Catalogue!
+            if (_catalogueItemCached == null)
                 return SelectSQL;
 
-            return _catalogueItemName;
+            //it hasn't, copy down the name of it
+            return _catalogueItemCached.Name;
         }
 
         public int CompareTo(object obj)
@@ -169,8 +142,46 @@ namespace DataExportLibrary.Data.DataTables
         
         public bool HasOriginalExtractionInformationVanished()
         {
-            LookupCatalogueStuff();
-            return _columnInfo == null;
+            CacheCatalogueStuffIfRequired();
+            return _columnInfoCached == null;
         }
+
+        private ColumnInfo _columnInfoCached = null;
+        private CatalogueItem _catalogueItemCached;
+        private bool _haveCachedCatalogueItem;
+
+        public void InjectKnownCatalogueItemAndColumnInfo(CatalogueItem ci, ColumnInfo co)
+        {
+            _catalogueItemCached = ci;
+            _columnInfoCached = co;
+            _haveCachedCatalogueItem = true;
+        }
+
+
+        private void CacheCatalogueStuffIfRequired()
+        {
+            //if we already know either
+            if(_haveCachedCatalogueItem)
+                return; //dont bother hitting up the database
+
+            if (CatalogueExtractionInformation_ID != null)
+            {
+                bool exists = ((DataExportRepository)Repository).CatalogueRepository.StillExists<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
+
+                //We have been orphaned! we have an CatalogueExtractionInformation_ID which should point to the Catalogue object but the Catalogue object has been deleted
+                if (!exists)
+                    CatalogueExtractionInformation_ID = null;
+                else
+                    _catalogueItemCached = CatalogueExtractionInformation.CatalogueItem;
+            }
+
+            if (_columnInfoCached == null && CatalogueExtractionInformation_ID != null)
+                _columnInfoCached = CatalogueExtractionInformation.CatalogueItem.ColumnInfo;
+
+            _haveCachedCatalogueItem = true;
+        }
+
+
+
     }
 }
