@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
@@ -17,6 +18,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
+using DataExportLibrary.Spontaneous;
 using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -45,7 +47,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
 
         public ExtractionPipelineUseCase() : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
         {
-            
+
+        }
+
+        public ExtractionPipelineUseCase(Project project) : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
+        {
+            ExtractCommand.Configuration = new SpontaneouslyInventedExtractionConfiguration(project);
         }
 
         public ExtractionPipelineUseCase(IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)

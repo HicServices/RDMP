@@ -208,7 +208,7 @@ namespace DataExportManager.ProjectUI
 
             //create the UI for this situation
             var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
-            _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline",DockStyle.Fill,pChooseExtractionPipeline);
+            _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
             _extractionPipelineSelectionUI.CollapseToSingleLineMode();
         }
         
