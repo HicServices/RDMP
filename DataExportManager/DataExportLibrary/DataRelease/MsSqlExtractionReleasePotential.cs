@@ -2,6 +2,7 @@ using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.DataRelease
@@ -12,7 +13,7 @@ namespace DataExportLibrary.DataRelease
     /// </summary>
     public class MsSqlExtractionReleasePotential : ReleasePotential
     {
-        public MsSqlExtractionReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration, ExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
+        public MsSqlExtractionReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
         {
             
         }
