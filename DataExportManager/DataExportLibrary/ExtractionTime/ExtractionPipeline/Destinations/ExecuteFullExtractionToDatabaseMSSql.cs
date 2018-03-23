@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
@@ -29,10 +30,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
     /// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an Sql Server database
     /// </summary>
     [Description("The Extraction target for DataExportManager into a Microsoft SQL Database, this should only be used by ExtractionPipelineHost as it is the only class that knows how to correctly call PreInitialize ")]
-    public class ExecuteFullExtractionToDatabaseMSSql : IExecuteDatasetExtractionDestination
+    public class ExecuteFullExtractionToDatabaseMSSql : IExecuteDatasetExtractionDestination, IPipelineRequirement<IProject>
     {
-        private IExtractCommand _request;
-
         [DemandsInitialization("External server to create the extraction into, a new database will be created for the project based on the naming pattern provided",Mandatory = true)]
         public IExternalDatabaseServer TargetDatabaseServer { get; set; }
 
@@ -67,6 +66,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private bool _tableDidNotExistAtStartOfLoad;
         private string _cachedGetTableNameAnswer;
+        private IExtractCommand _request;
+        private IProject _project;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -341,11 +342,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private string GetDatabaseName()
         {
             string dbName = DatabaseNamingPattern;
-            var project = _request.Configuration.Project;
 
-            dbName = dbName.Replace("$p", project.Name)
-                           .Replace("$n", project.ProjectNumber.ToString())
-                           .Replace("$t", project.MasterTicket);
+            dbName = dbName.Replace("$p", _project.Name)
+                           .Replace("$n", _project.ProjectNumber.ToString())
+                           .Replace("$t", _project.MasterTicket);
 
             return dbName;
         }
@@ -414,6 +414,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Could not connect to TargetDatabaseServer '" + TargetDatabaseServer  +"'", CheckResult.Fail, e));
             }
+        }
+
+        public void PreInitialize(IProject value, IDataLoadEventListener listener)
+        {
+            this._project = value;
         }
     }
 }

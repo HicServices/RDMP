@@ -18,7 +18,6 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
-using DataExportLibrary.Spontaneous;
 using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -29,36 +28,36 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
     /// <summary>
     /// Use case for linking and extracting Project Extraction Configuration datasets and custom data (See IExtractCommand).
     /// </summary>
-    public class ExtractionPipelineUseCase:PipelineUseCase
+    public class ExtractionPipelineUseCase : PipelineUseCase
     {
+        private CancellationTokenSource _cancelToken;
+        private readonly IProject _project;
         private readonly IPipeline _pipeline;
+        DataLoadInfo _dataLoadInfo;
+        private DataFlowPipelineContext<DataTable> _context;
+        
+        public bool Crashed = false;
+        
         public IExtractCommand ExtractCommand { get; set; }
         public ExecuteDatasetExtractionSource Source { get; private set; }
-
-        private DataFlowPipelineContext<DataTable> _context;
         
         /// <summary>
         /// If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly 
         /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissable destination for an ExtractionPipeline
         /// </summary>
         public IExecuteDatasetExtractionDestination Destination { get; private set; }
-        
-        DataLoadInfo _dataLoadInfo;
-
-        public ExtractionPipelineUseCase() : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
+      
+        public ExtractionPipelineUseCase(IProject project) : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
         {
-
-        }
-
-        public ExtractionPipelineUseCase(Project project) : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
-        {
-            ExtractCommand.Configuration = new SpontaneouslyInventedExtractionConfiguration(project);
+            _project = project;
         }
 
         public ExtractionPipelineUseCase(IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
         {
             _dataLoadInfo = dataLoadInfo;
             ExtractCommand = extractCommand;
+            if (ExtractCommand != ExtractDatasetCommand.EmptyCommand)
+                _project = ExtractCommand.Configuration.Project;
             _pipeline = pipeline;
 
             //create the context using the standard context factory
@@ -70,9 +69,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             _context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
         }
         
-        public bool Crashed = false;
-        private CancellationTokenSource _cancelToken;
-
         public void Execute(IDataLoadEventListener listener)
         {
             try
@@ -178,9 +174,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         {
             //initialize it with the extraction configuration request object and the audit object (this will initialize all objects in pipeline which implement IPipelineRequirement<ExtractionRequest> and IPipelineRequirement<TableLoadInfo>
             if (_pipeline != null)
-                return new object[] { ExtractCommand, _dataLoadInfo, _pipeline.Repository};
+                return new object[] { ExtractCommand, _dataLoadInfo, _project, _pipeline.Repository };
 
-            return new object[] { ExtractCommand, _dataLoadInfo};
+            return new object[] { ExtractCommand, _dataLoadInfo, _project };
         }
 
         public override IDataFlowPipelineContext GetContext()
@@ -188,6 +184,5 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             return _context;
         }
     }
-
 }
 
