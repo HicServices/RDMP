@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -17,7 +18,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public IDiscoveredDatabaseHelper Helper { get; private set; }
         public DiscoveredServer Server { get; private set; }
         
-
         public DiscoveredDatabase(DiscoveredServer server, string database, IQuerySyntaxHelper querySyntaxHelper)
         {
             Server = server;
@@ -101,7 +101,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Helper.DropDatabase(new DiscoveredDatabase(Server, _database, _querySyntaxHelper));
         }
     
-
         public Dictionary<string,string> DescribeDatabase()
         {
             return Helper.DescribeDatabase(Server.Builder, GetRuntimeName());
@@ -123,6 +122,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public DiscoveredTable CreateTable(string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
         {
             return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions,createEmpty);
+        }
+
+        public void Detach(DirectoryInfo outputFolder)
+        {
+            Helper.Detach(this, outputFolder);
         }
     }
 }

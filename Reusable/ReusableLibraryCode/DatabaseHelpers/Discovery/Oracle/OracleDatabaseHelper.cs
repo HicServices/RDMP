@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using Oracle.ManagedDataAccess.Client;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -27,6 +28,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         }
 
         public override Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Detach(DiscoveredDatabase database, DirectoryInfo outputFolder)
         {
             throw new NotImplementedException();
         }

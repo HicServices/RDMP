@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -37,6 +38,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         }
 
         public override Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Detach(DiscoveredDatabase database, DirectoryInfo outputFolder)
         {
             throw new NotImplementedException();
         }

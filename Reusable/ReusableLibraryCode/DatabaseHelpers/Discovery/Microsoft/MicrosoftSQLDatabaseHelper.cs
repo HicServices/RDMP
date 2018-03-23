@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.IO;
 using System.Threading;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
@@ -128,6 +129,51 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
 
                 return toReturn;
             }
+        }
+
+        public override void Detach(DiscoveredDatabase database, DirectoryInfo outputFolder)
+        {
+            const string GetDefaultSQLServerDatabaseDirectory = @"SELECT LEFT(physical_name,LEN(physical_name)-CHARINDEX('\',REVERSE(physical_name))+1) 
+                        FROM sys.master_files mf   
+                        INNER JOIN sys.[databases] d   
+                        ON mf.[database_id] = d.[database_id]   
+                        WHERE d.[name] = 'master' AND type = 0";
+
+            string dataFolder;
+
+            // Create a new server so we don't mutate database.Server and cause a whole lot of side-effects in other code, e.g. attachers
+            var server = database.Server;
+            var databaseToDetach = database.GetRuntimeName();
+
+            string sql = "ALTER DATABASE [" + databaseToDetach + "] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
+            
+            using (var con = (SqlConnection)server.GetConnection())
+            {
+                con.Open();
+                var cmd = new SqlCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            sql = @"EXEC sys.sp_detach_db '" + databaseToDetach + "';";
+            using (var con = (SqlConnection)server.GetConnection())
+            {
+                con.Open();
+                var cmd = new SqlCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            //connect to master to run the data directory discovery SQL
+            var builder = new SqlConnectionStringBuilder(server.Builder.ConnectionString);
+            builder.InitialCatalog = "master";
+
+            using (var connection = new SqlConnection(builder.ConnectionString))
+            {
+                connection.Open();
+                dataFolder = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
+            }
+
+            File.Copy(Path.Combine(dataFolder, databaseToDetach + ".mdf"), Path.Combine(outputFolder.FullName, databaseToDetach + ".mdf"));
+            File.Copy(Path.Combine(dataFolder, databaseToDetach + ".ldf"), Path.Combine(outputFolder.FullName, databaseToDetach + ".ldf"));
         }
     }
 }

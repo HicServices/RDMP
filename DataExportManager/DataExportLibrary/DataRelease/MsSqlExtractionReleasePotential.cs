@@ -22,25 +22,21 @@ namespace DataExportLibrary.DataRelease
         {
             var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
             var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
-            var tblName = ExtractionResults.DestinationDescription.Split('|')[1];
-            var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport);
-            using (DbConnection con = server.GetConnection())
+            var dbName = ExtractionResults.DestinationDescription.Split('|')[1];
+            var tblName = ExtractionResults.DestinationDescription.Split('|')[2];
+            var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
+            var database = server.ExpectDatabase(dbName);
+            if (!database.Exists())
             {
-                con.Open();
-                var database = server.ExpectDatabase(externalServer.Database);
-                if (!database.Exists())
-                {
-                    return Releaseability.ExtractFilesMissing;
-                }
-
-                var foundTable = database.ExpectTable(tblName);
-                if (!foundTable.Exists())
-                {
-                    return Releaseability.ExtractFilesMissing;
-                }
+                return Releaseability.ExtractFilesMissing;
+            }
+            var foundTable = database.ExpectTable(tblName);
+            if (!foundTable.Exists())
+            {
+                return Releaseability.ExtractFilesMissing;
             }
 
-            // TODO: Table can be polluted, how to check?? CHECK FOR SPURIOUS TABLES
+            // TODO: Table can be polluted, how to check?? CHECK FOR SPURIOUS TABLES?
             
             return Releaseability.Undefined;
         }

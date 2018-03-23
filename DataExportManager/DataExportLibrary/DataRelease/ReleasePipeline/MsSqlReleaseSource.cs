@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
@@ -19,16 +20,23 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
     public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
-        private readonly CatalogueRepository catalogueRepository;
+        private readonly CatalogueRepository _catalogueRepository;
+        private DiscoveredDatabase _database;
 
         public MsSqlReleaseSource(CatalogueRepository catalogueRepository) : base()
         {
-            this.catalogueRepository = catalogueRepository;
+            _catalogueRepository = catalogueRepository;
         }
 
         public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var sourceFolder = new DirectoryInfo(_releaseData.EnvironmentPotential.Configuration.Project.ExtractionDirectory);
+            if (_database != null)
+                _database.Detach(sourceFolder);
+            return new ReleaseAudit()
+            {
+                SourceGlobalFolder = sourceFolder
+            };
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -43,36 +51,39 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
-            var servers = new Dictionary<ExternalDatabaseServer, List<string>>();
-            foreach (var config in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Value))
+            var foundConnection = String.Empty;
+            var tables = new List<string>();
+            foreach (var configs in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
             {
-                var externalServerId = int.Parse(config.ExtractionResults.DestinationDescription.Split('|')[0]);
-                var externalServer = catalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
-                var tblName = config.ExtractionResults.DestinationDescription.Split('|')[1];
-                if (!servers.ContainsKey(externalServer))
-                    servers.Add(externalServer, new List<string>());
-                servers[externalServer].Add(tblName);
-            }
-            foreach (var foundServer in servers)
-            {
-                var server = DataAccessPortal.GetInstance().ExpectServer(foundServer.Key, DataAccessContext.DataExport);
-                using (DbConnection con = server.GetConnection())
-                {
-                    con.Open();
-                    var database = server.ExpectDatabase(foundServer.Key.Database);
-                    if (!database.Exists())
-                    {
-                        throw new Exception("Database does not exist!");
-                    }
+                var candidate = configs.DestinationDescription.Split('|')[0] + "|" +
+                                configs.DestinationDescription.Split('|')[1];
 
-                    foreach (var table in foundServer.Value)
-                    {
-                        var foundTable = database.ExpectTable(table);
-                        if (!foundTable.Exists())
-                        {
-                            throw new Exception("Table does not exist!");
-                        }   
-                    }
+                tables.Add(configs.DestinationDescription.Split('|')[2]);
+
+                if (String.IsNullOrEmpty(foundConnection))
+                    foundConnection = candidate;
+                if (foundConnection != candidate)
+                    throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
+                                        "Please re-run the extracts against the same database.");
+            }
+
+            var externalServerId = int.Parse(foundConnection.Split('|')[0]);
+            var dbName = foundConnection.Split('|')[1];
+
+            var externalServer = _catalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+            var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
+            _database = server.ExpectDatabase(dbName);
+
+            if (!_database.Exists())
+            {
+                throw new Exception("Database does not exist!");
+            }
+            foreach (var table in tables)
+            {
+                var foundTable = _database.ExpectTable(table);
+                if (!foundTable.Exists())
+                {
+                    throw new Exception("Table does not exist!");
                 }
             }
         }
