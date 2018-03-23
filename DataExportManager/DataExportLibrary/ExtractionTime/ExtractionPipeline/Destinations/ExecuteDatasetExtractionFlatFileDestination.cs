@@ -275,7 +275,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
         }
 
-        public FixedReleaseSource<ReleaseAudit> GetReleaseSource()
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
         {
             return new FlatFileReleaseSource<ReleaseAudit>();
         }

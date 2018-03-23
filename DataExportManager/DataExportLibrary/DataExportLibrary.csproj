@@ -228,6 +228,7 @@
     <Compile Include="DataRelease\ReleaseEnvironmentPotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FixedReleaseSource.cs" />
+    <Compile Include="DataRelease\ReleasePipeline\MsSqlReleaseSource.cs" />
     <Compile Include="DataRelease\ReleasePipeline\NullReleaseSource.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseAudit.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseFolderProvider.cs" />
@@ -292,6 +293,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataRelease\ReleasePotential.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedExtractionConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

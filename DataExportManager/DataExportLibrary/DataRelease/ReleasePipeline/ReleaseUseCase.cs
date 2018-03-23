@@ -52,7 +52,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
                 var destinationUsedAtExtraction = (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, _catalogueRepository);
 
-                FixedReleaseSource<ReleaseAudit> fixedReleaseSource = destinationUsedAtExtraction.GetReleaseSource();
+                FixedReleaseSource<ReleaseAudit> fixedReleaseSource = destinationUsedAtExtraction.GetReleaseSource(_catalogueRepository);
 
                 ExplicitSource = fixedReleaseSource;// destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));    
             }

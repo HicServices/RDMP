@@ -33,11 +33,18 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
     {
         private IExtractCommand _request;
 
-        [DemandsInitialization("External server to create the extraction into, a new table will be created for each dataset extracted with datatypes and column names appropriate to the anonymised extracted datasets",Mandatory = true)]
+        [DemandsInitialization("External server to create the extraction into, a new database will be created for the project based on the naming pattern provided",Mandatory = true)]
         public IExternalDatabaseServer TargetDatabaseServer { get; set; }
-        
+
         [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
-         $p - Project Name ('e.g. My Project'
+         $p - Project Name ('e.g. My Project')
+         $n - Project Number (e.g. 234)
+         $t - Master Ticket (e.g. 'LINK-1234')
+         ", Mandatory = true, DefaultValue = "Proj_$n_$t")]
+        public string DatabaseNamingPattern { get; set; }
+
+        [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
+         $p - Project Name ('e.g. My Project')
          $n - Project Number (e.g. 234)
          $c - Configuration Name (e.g. 'Cases')
          $d - Dataset name (e.g. 'Prescribing')
@@ -52,7 +59,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public TableLoadInfo TableLoadInfo { get; private set; }
 
-        private DiscoveredDatabase _server;
+        private DiscoveredDatabase _destinationDatabase;
         private DataTableUploadDestination _destination;
         
         private DataLoadInfo _dataLoadInfo;
@@ -81,17 +88,18 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 if (TargetDatabaseServer == null)
                     throw new Exception("TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
                 
-                _server = GetDestinationServer(listener);
+                _destinationDatabase = GetDestinationDatabase(listener);
                 
                 try
                 {
-                    if (!_server.Exists())
-                        throw new Exception("Could not connect to server " + TargetDatabaseServer.Server);
+                    if (!_destinationDatabase.Exists())
+                        _destinationDatabase.Create();
+                        //throw new Exception("Could not connect to server " + TargetDatabaseServer.Server);
                     
                     var tblName = GetTableName();
 
                     //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
-                    if (_server.ExpectTable(tblName).Exists())
+                    if (_destinationDatabase.ExpectTable(tblName).Exists())
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Warning,
                                 "A table called " + tblName + " already exists on server " + TargetDatabaseServer +
@@ -111,10 +119,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                 PrimeDestinationTypesBasedOnCatalogueTypes();
 
-                _destination.AllowResizingColumnsAtUploadTime = true;
-                _destination.PreInitialize(_server, listener);
+                _destination.AllowResizingColumnsAtUploadTime = false;
+                _destination.PreInitialize(_destinationDatabase, listener);
                 
-                //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it
+                //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it)
                 TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + GetTableName(), GetTableName(), new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
             }
 
@@ -182,11 +190,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 tblName = tblName.Replace("$a", _request.ToString());
             }
 
-            if (_server == null)
+            if (_destinationDatabase == null)
                 throw new Exception("Cannot pick a TableName until we know what type of server it is going to, _server is null");
 
             //otherwise, fetch and cache answer
-            _cachedGetTableNameAnswer = _server.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
+            _cachedGetTableNameAnswer = _destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
 
             if(string.IsNullOrWhiteSpace(_cachedGetTableNameAnswer) )
                 throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" +_request +"'");
@@ -203,9 +211,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 //if the extraction failed, the table didn't exist in the destination (i.e. the table was created during the extraction) and we are to DropTableIfLoadFails
                 if (pipelineFailureExceptionIfAny != null && _tableDidNotExistAtStartOfLoad && DropTableIfLoadFails)
                 {
-                    if(_server != null)
+                    if(_destinationDatabase != null)
                     {
-                        var tbl = _server.ExpectTable(GetTableName());
+                        var tbl = _destinationDatabase.ExpectTable(GetTableName());
                         
                         if(tbl.Exists())
                         {
@@ -258,15 +266,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
         }
         
-        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-            ExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration, ExtractableDataSet dataSet)
         {
             return new MsSqlExtractionReleasePotential(repositoryLocator, configuration, dataSet);
         }
 
-        public FixedReleaseSource<ReleaseAudit> GetReleaseSource()
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
         {
-            return new FlatFileReleaseSource<ReleaseAudit>();
+            return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
         }
 
         private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener)
@@ -289,13 +296,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     
-                    dt.TableName = _server.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sql.Name);
+                    dt.TableName = _destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sql.Name);
 
                     listener.OnProgress(this, new ProgressEventArgs("Reading from SupportingSQL " + sql.Name, new ProgressMeasurement(dt.Rows.Count, ProgressType.Records), sw.Elapsed));
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Decided on the following destination table name for SupportingSQL:" + dt.TableName));
 
                     tempDestination.AllowResizingColumnsAtUploadTime = true;
-                    tempDestination.PreInitialize(GetDestinationServer(listener), listener);
+                    tempDestination.PreInitialize(GetDestinationDatabase(listener), listener);
                     tempDestination.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
                     tempDestination.Dispose(listener, null);
                 }
@@ -319,22 +326,37 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return ExtractCommandState.Warning;
         }
         
-        private DiscoveredDatabase GetDestinationServer(IDataLoadEventListener listener)
+        private DiscoveredDatabase GetDestinationDatabase(IDataLoadEventListener listener)
         {
             //tell user we are about to inspect it
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open connection to " + TargetDatabaseServer));
 
-            return DataAccessPortal.GetInstance().ExpectDatabase(TargetDatabaseServer, DataAccessContext.DataExport);
+            var databaseName = GetDatabaseName();
+
+            var discoveredServer = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+            
+            return discoveredServer.ExpectDatabase(databaseName);
+        }
+
+        private string GetDatabaseName()
+        {
+            string dbName = DatabaseNamingPattern;
+            var project = _request.Configuration.Project;
+
+            dbName = dbName.Replace("$p", project.Name)
+                           .Replace("$n", project.ProjectNumber.ToString())
+                           .Replace("$t", project.MasterTicket);
+
+            return dbName;
         }
 
         public void Check(ICheckNotifier notifier)
         {
             if (TargetDatabaseServer == null)
             {
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "Target database server property has not been set (This component does not know where to extract data to!), to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)",
-                        CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("Target database server property has not been set (This component does not know where to extract data to!), " +
+                                                             "to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)", 
+                                                             CheckResult.Fail));
                 return;
             }
 
@@ -344,10 +366,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
-            if(string.IsNullOrWhiteSpace(TargetDatabaseServer.Database))
+            if(!string.IsNullOrWhiteSpace(TargetDatabaseServer.Database))
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabaseServer does not have a .Database specified", CheckResult.Fail));
-                return;
+                notifier.OnCheckPerformed(new CheckEventArgs("TargetDatabaseServer has .Database specified but this will be ignored!", CheckResult.Warning));
             }
 
             if(string.IsNullOrWhiteSpace(TableNamingPattern))
@@ -356,29 +377,28 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(DatabaseNamingPattern))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("You must specify DatabaseNamingPattern, this will tell the component what database to create or use in the remote destination", CheckResult.Fail));
+                return;
+            }
+
+            if (!DatabaseNamingPattern.Contains("$p") && !DatabaseNamingPattern.Contains("$n") && !DatabaseNamingPattern.Contains("$t"))
+                notifier.OnCheckPerformed(new CheckEventArgs("DatabaseNamingPattern does not contain any token. The tables may be created alongside existing tables and Release would be impossible.", CheckResult.Warning));
+
             if (!TableNamingPattern.Contains("$d") && !TableNamingPattern.Contains("$a"))
                 notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain either $d or $a, the name/acronym of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once",CheckResult.Warning));
 
             try
             {
-                var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport);
-                DbConnection con = server.GetConnection();
-                con.Open();
-                con.Close();
+                var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+                var database = server.ExpectDatabase(GetDatabaseName());
 
-                notifier.OnCheckPerformed(new CheckEventArgs("successfully connected to " + TargetDatabaseServer + ")",CheckResult.Success));
-
-                var database = server.ExpectDatabase(TargetDatabaseServer.Database);
                 if (database.Exists())
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("Confirmed database " + database + " exists",
-                            CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Confirmed database " + database + " exists", CheckResult.Success));
                 else
                 {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Database " + database +
-                            " does not exist on server... how were we even able to connect?!", CheckResult.Fail));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Database " + database + " does not exist on server... how were we even able to connect?!", CheckResult.Fail));
                     return;
                 }
                 
@@ -387,18 +407,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 if (tables.Any())
                     notifier.OnCheckPerformed(new CheckEventArgs("The following preexisting tables were found in the database " + string.Join(",",tables.Select(t=>t.ToString())),CheckResult.Warning));
                 else
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("Confirmed that database " + database + " is empty of tables",
-                            CheckResult.Success));
-
+                    notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that database " + database + " is empty of tables", CheckResult.Success));
             }
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Could not connect to TargetDatabaseServer '" + TargetDatabaseServer  +"'", CheckResult.Fail, e));
             }
-
-
         }
     }
 }
