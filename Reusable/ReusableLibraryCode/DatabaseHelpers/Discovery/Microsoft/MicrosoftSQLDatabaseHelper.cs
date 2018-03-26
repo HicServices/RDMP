@@ -143,6 +143,8 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
 
             // Create a new server so we don't mutate database.Server and cause a whole lot of side-effects in other code, e.g. attachers
             var server = database.Server;
+            server.ChangeDatabase("master");
+            
             var databaseToDetach = database.GetRuntimeName();
 
             string sql = "ALTER DATABASE [" + databaseToDetach + "] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
@@ -162,18 +164,14 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
                 cmd.ExecuteNonQuery();
             }
 
-            //connect to master to run the data directory discovery SQL
-            var builder = new SqlConnectionStringBuilder(server.Builder.ConnectionString);
-            builder.InitialCatalog = "master";
-
-            using (var connection = new SqlConnection(builder.ConnectionString))
+            using (var connection = (SqlConnection)server.GetConnection())
             {
                 connection.Open();
                 dataFolder = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
             }
 
             File.Copy(Path.Combine(dataFolder, databaseToDetach + ".mdf"), Path.Combine(outputFolder.FullName, databaseToDetach + ".mdf"));
-            File.Copy(Path.Combine(dataFolder, databaseToDetach + ".ldf"), Path.Combine(outputFolder.FullName, databaseToDetach + ".ldf"));
+            File.Copy(Path.Combine(dataFolder, databaseToDetach + "_log.ldf"), Path.Combine(outputFolder.FullName, databaseToDetach + "_log.ldf"));
         }
     }
 }
