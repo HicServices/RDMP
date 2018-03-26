@@ -190,7 +190,9 @@ namespace DataExportLibrary.DataRelease
         {
             foreach (ReleasePotential releasePotential in toRelease.Value)
             {
-                Debug.Assert(releasePotential.ExtractDirectory.Parent != null, "releasePotential.ExtractDirectory.Parent != null");
+                if (releasePotential.ExtractDirectory == null)
+                    continue;
+
                 DirectoryInfo globalFolderForThisExtract = releasePotential.ExtractDirectory.Parent.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).SingleOrDefault();
 
                 if (globalFolderForThisExtract == null) //this particualar release didn't include globals/custom data at all

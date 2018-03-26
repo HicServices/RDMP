@@ -143,16 +143,14 @@ namespace DataExportLibrary.ExtractionTime
             SetTableCell(table,tableLine, 4, "Unique Patient Counts");
             tableLine++;
 
-            foreach (CumulativeExtractionResults result in ExtractionResults)
+            foreach (var result in ExtractionResults)
             {
-
                 string filename = "";
-
-                if (!string.IsNullOrWhiteSpace(result.DestinationDescription))
+                
+                if (IsValidFilename(result.DestinationDescription))
                     filename = new FileInfo(result.DestinationDescription).Name;
                 else
                     filename = "N/A";
-
 
                 SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
                 SetTableCell(table,tableLine, 1,result.FiltersUsed);
@@ -164,5 +162,11 @@ namespace DataExportLibrary.ExtractionTime
            
         }
 
+        private bool IsValidFilename(string candidateFilename)
+        {
+            return !string.IsNullOrEmpty(candidateFilename) &&
+                   candidateFilename.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 &&
+                   !File.Exists(candidateFilename);
+        }
     }
 }

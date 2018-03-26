@@ -143,12 +143,11 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
 
             // Create a new server so we don't mutate database.Server and cause a whole lot of side-effects in other code, e.g. attachers
             var server = database.Server;
-            server.ChangeDatabase("master");
-            
             var databaseToDetach = database.GetRuntimeName();
 
-            string sql = "ALTER DATABASE [" + databaseToDetach + "] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
-            
+            // set in simple recovery and truncate all logs!
+            string sql = "ALTER DATABASE [" + databaseToDetach + "] SET RECOVERY SIMPLE; " + Environment.NewLine + 
+                         "DBCC SHRINKFILE ([" + databaseToDetach + "], 1)";
             using (var con = (SqlConnection)server.GetConnection())
             {
                 con.Open();
@@ -156,6 +155,19 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
                 cmd.ExecuteNonQuery();
             }
 
+            // other operations must be done on master
+            server.ChangeDatabase("master");
+            
+            // set single user before detaching
+            sql = "ALTER DATABASE [" + databaseToDetach + "] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
+            using (var con = (SqlConnection)server.GetConnection())
+            {
+                con.Open();
+                var cmd = new SqlCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            // detach!
             sql = @"EXEC sys.sp_detach_db '" + databaseToDetach + "';";
             using (var con = (SqlConnection)server.GetConnection())
             {
@@ -164,12 +176,14 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
                 cmd.ExecuteNonQuery();
             }
 
+            // get data-files path from SQL Server
             using (var connection = (SqlConnection)server.GetConnection())
             {
                 connection.Open();
                 dataFolder = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
             }
 
+            // copy detached files from data path to the desired destination.
             File.Copy(Path.Combine(dataFolder, databaseToDetach + ".mdf"), Path.Combine(outputFolder.FullName, databaseToDetach + ".mdf"));
             File.Copy(Path.Combine(dataFolder, databaseToDetach + "_log.ldf"), Path.Combine(outputFolder.FullName, databaseToDetach + "_log.ldf"));
         }

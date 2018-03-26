@@ -31,11 +31,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             var sourceFolder = new DirectoryInfo(_releaseData.EnvironmentPotential.Configuration.Project.ExtractionDirectory);
+            var tempStorage = sourceFolder.CreateSubdirectory(Guid.NewGuid().ToString("N"));
             if (_database != null)
-                _database.Detach(sourceFolder);
+                _database.Detach(tempStorage);
             return new ReleaseAudit()
             {
-                SourceGlobalFolder = sourceFolder
+                SourceGlobalFolder = tempStorage
             };
         }
 
