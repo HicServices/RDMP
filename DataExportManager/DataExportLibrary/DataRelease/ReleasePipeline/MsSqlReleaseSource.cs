@@ -22,6 +22,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     {
         private readonly CatalogueRepository _catalogueRepository;
         private DiscoveredDatabase _database;
+        private bool firstTime = true;
 
         public MsSqlReleaseSource(CatalogueRepository catalogueRepository) : base()
         {
@@ -30,24 +31,29 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            var sourceFolder = new DirectoryInfo(_releaseData.EnvironmentPotential.Configuration.Project.ExtractionDirectory);
-            var tempStorage = sourceFolder.CreateSubdirectory(Guid.NewGuid().ToString("N"));
-            if (_database != null)
-                _database.Detach(tempStorage);
-            return new ReleaseAudit()
+            if (firstTime)
             {
-                SourceGlobalFolder = tempStorage
-            };
+                firstTime = false;
+                var sourceFolder = new DirectoryInfo(_releaseData.EnvironmentPotential.Configuration.Project.ExtractionDirectory);
+                var tempStorage = sourceFolder.CreateSubdirectory(Guid.NewGuid().ToString("N"));
+                if (_database != null)
+                    _database.Detach(tempStorage);
+                return new ReleaseAudit()
+                {
+                    SourceGlobalFolder = tempStorage
+                };
+            }
+            return null;
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            throw new NotImplementedException();
+            firstTime = true;
         }
 
         public override void Abort(IDataLoadEventListener listener)
         {
-            throw new NotImplementedException();
+            firstTime = true;
         }
 
         protected override void RunSpecificChecks(ICheckNotifier notifier)

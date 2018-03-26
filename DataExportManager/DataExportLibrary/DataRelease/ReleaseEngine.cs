@@ -173,11 +173,16 @@ namespace DataExportLibrary.DataRelease
         {
             ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
 
-            var expectedFilename = rp.ExtractFile.Name;
-            var datasetFile = rpDirectory.EnumerateFiles().SingleOrDefault(f => f.Name.Equals(expectedFilename));
-            if (datasetFile == null)
+            FileInfo datasetFile = null;
+            
+            if (rp.ExtractFile != null)
             {
-                throw new Exception("Expected to find file called " + expectedFilename + " in directory " + rpDirectory.FullName + ", but could not");
+                var expectedFilename = rp.ExtractFile.Name;
+                datasetFile = rpDirectory.EnumerateFiles().SingleOrDefault(f => f.Name.Equals(expectedFilename));
+                if (datasetFile == null)
+                {
+                    throw new Exception("Expected to find file called " + expectedFilename + " in directory " + rpDirectory.FullName + ", but could not");
+                }
             }
 
             logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);

@@ -126,8 +126,6 @@ namespace DataExportLibrary.ExtractionTime
                         t.Rows[rownum].Cells[1].Paragraphs.First().Append(_destination.DateFormat);
                         rownum++;
                     }
-                    document.InsertTable(t);
-                    
 
                     if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
                     {

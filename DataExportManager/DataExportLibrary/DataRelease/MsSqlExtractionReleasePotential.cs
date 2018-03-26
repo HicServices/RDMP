@@ -1,7 +1,9 @@
 using System.Data.Common;
+using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.DataAccess;
 
@@ -15,11 +17,13 @@ namespace DataExportLibrary.DataRelease
     {
         public MsSqlExtractionReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
         {
-            
         }
 
         protected override Releaseability GetSpecificAssessment()
         {
+            var _extractDir = Configuration.GetProject().ExtractionDirectory;
+            ExtractDirectory = new ExtractionDirectory(_extractDir, Configuration).GetDirectoryForDataset(DataSet);
+
             var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
             var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
             var dbName = ExtractionResults.DestinationDescription.Split('|')[1];

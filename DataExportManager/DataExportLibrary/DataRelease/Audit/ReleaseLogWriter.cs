@@ -53,7 +53,7 @@ VALUES
                                    {"CumulativeExtractionResults_ID", _dataset.ExtractionResults.ID},
                                    {"Username", Environment.UserName},
                                    {"DateOfRelease", DateTime.Now},
-                                   {"MD5OfDatasetFile", UsefulStuff.MD5File(datasetFileBeingReleased.FullName)},
+                                   {"MD5OfDatasetFile", datasetFileBeingReleased == null ? "X" : UsefulStuff.MD5File(datasetFileBeingReleased.FullName)},
                                    {"DatasetState", _dataset.Assesment.ToString()},
                                    {"EnvironmentState", _environment.Assesment.ToString()},
                                    {"IsPatch", isPatch},
