@@ -38,14 +38,14 @@ namespace DataExportLibrary.ExtractionTime
             
             Executer = executer;
 
-            _destination = Executer.Destination as ExecuteDatasetExtractionFlatFileDestination;
+            _destination = Executer.Destination;
 
             if(_destination == null)
                 throw new NotSupportedException(GetType().FullName + " only supports destinations which are " + typeof(ExecuteDatasetExtractionFlatFileDestination).FullName);
         }
         
         private static object oLockOnWordUsage = new object();
-        private ExecuteDatasetExtractionFlatFileDestination _destination;
+        private IExecuteDatasetExtractionDestination _destination;
 
         /// <summary>
         /// Generates a new meta data word file in the extraction directory and populates it with information about the extraction.
@@ -66,39 +66,66 @@ namespace DataExportLibrary.ExtractionTime
 
                     InsertHeader(document,"File Data");
 
-                    var t = InsertTable(document,10, 2,TableDesign.TableGrid);
+                    int rowCount;
+                    if (_destination.GeneratesFiles)
+                        rowCount = 10;
+                    else
+                        rowCount = 5;
+
+                    var t = InsertTable(document, rowCount, 2, TableDesign.TableGrid);
                     t.Design = TableDesign.LightList;
-                    t.Rows[0].Cells[0].Paragraphs.First().Append("File Name");
-                    t.Rows[0].Cells[1].Paragraphs.First().Append(new FileInfo(_destination.OutputFile).Name);
+                    int rownum = 0;
+                    if (_destination.GeneratesFiles)
+                    {
+                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("File Name");
+                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(new FileInfo(_destination.OutputFile).Name);
+                        rownum++;
+                    }
 
-                    t.Rows[1].Cells[0].Paragraphs.First().Append("Cohort Size (Distinct)");
-                    t.Rows[1].Cells[1].Paragraphs.First().Append(Executer.Source.Request.ExtractableCohort.CountDistinct.ToString());
+                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Cohort Size (Distinct)");
+                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Source.Request.ExtractableCohort.CountDistinct.ToString());
+                    rownum++;
 
-                    t.Rows[2].Cells[0].Paragraphs.First().Append("Cohorts Found In Dataset");
-                    t.Rows[2].Cells[1].Paragraphs.First().Append(Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Cohorts Found In Dataset");
+                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+                    rownum++;
+
+                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Dataset Line Count");
+                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.Inserts.ToString());
+                    rownum++;
+
+                    if (_destination.GeneratesFiles)
+                    {
+                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("MD5");
+                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(UsefulStuff.MD5File(_destination.OutputFile));
+                        rownum++;
                     
-                    t.Rows[3].Cells[0].Paragraphs.First().Append("Dataset Line Count");
-                    t.Rows[3].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.Inserts.ToString());
+                        FileInfo f = new FileInfo(_destination.OutputFile);
+                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("File Size");
+                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(f.Length + "bytes (" + (f.Length / 1024) + "KB)");
+                        rownum++;
+                    }
 
-                    t.Rows[4].Cells[0].Paragraphs.First().Append("MD5");
-                    t.Rows[4].Cells[1].Paragraphs.First().Append(UsefulStuff.MD5File(_destination.OutputFile));
-                    
-                    FileInfo f = new FileInfo(_destination.OutputFile);
-                    t.Rows[5].Cells[0].Paragraphs.First().Append("File Size");
-                    t.Rows[5].Cells[1].Paragraphs.First().Append(f.Length + "bytes (" + (f.Length / 1024) + "KB)");
+                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Extraction Date");
+                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.EndTime.ToString());
+                    rownum++;
 
-                    t.Rows[6].Cells[0].Paragraphs.First().Append("Extraction Date");
-                    t.Rows[6].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.EndTime.ToString());
+                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Table Load ID (for HIC)");
+                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.ID.ToString());
+                    rownum++;
 
-                    t.Rows[7].Cells[0].Paragraphs.First().Append("Table Load ID (for HIC)");
-                    t.Rows[7].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.ID.ToString());
+                    if (_destination.GeneratesFiles)
+                    {
+                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("Separator");
+                        t.Rows[rownum].Cells[1].Paragraphs.First()
+                            .Append(Executer.Source.Request.Configuration.Separator + "\t(" +
+                                    _destination.SeparatorsStrippedOut + " values stripped from data)");
+                        rownum++;
 
-                    t.Rows[8].Cells[0].Paragraphs.First().Append("Separator");
-                    t.Rows[8].Cells[1].Paragraphs.First().Append(Executer.Source.Request.Configuration.Separator + "\t(" + _destination.SeparatorsStrippedOut + " values stripped from data)");
-
-                    t.Rows[9].Cells[0].Paragraphs.First().Append("Date Format");
-                    t.Rows[9].Cells[1].Paragraphs.First().Append( _destination.DateFormat);
-
+                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("Date Format");
+                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(_destination.DateFormat);
+                        rownum++;
+                    }
                     document.InsertTable(t);
                     
 

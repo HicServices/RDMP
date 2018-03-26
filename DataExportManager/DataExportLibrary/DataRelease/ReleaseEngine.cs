@@ -126,6 +126,9 @@ namespace DataExportLibrary.DataRelease
                 //only copy across directories that are explicitly validated with a ReleasePotential
                 foreach (ReleasePotential rp in kvp.Value)
                 {
+                    if (rp.ExtractDirectory == null)
+                        continue;
+
                     DirectoryInfo rpDirectory = configurationSubDirectory.CreateSubdirectory(rp.ExtractDirectory.Name);
                     AuditDirectoryCreation(rpDirectory.Name, sw, 1);
 

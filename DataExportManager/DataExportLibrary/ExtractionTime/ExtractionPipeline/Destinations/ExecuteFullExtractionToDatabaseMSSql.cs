@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -57,6 +59,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public bool DropTableIfLoadFails { get; set; }
 
         public TableLoadInfo TableLoadInfo { get; private set; }
+        public DirectoryInfo DirectoryPopulated { get; private set; }
+        public bool GeneratesFiles { get { return false; } }
+        public string OutputFile { get { return String.Empty; } }
+        public int SeparatorsStrippedOut { get { return 0; } }
+        public string DateFormat { get { return String.Empty; } }
 
         private DiscoveredDatabase _destinationDatabase;
         private DataTableUploadDestination _destination;
@@ -78,7 +85,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     bundle.States[sql] = ExtractSupportingSql(sql, listener);
 
                 foreach (var document in ((ExtractDatasetCommand) _request).DatasetBundle.Documents)
-                    bundle.States[document] = ExtractSupportingDocument(document, listener);
+                    bundle.States[document] = ExtractSupportingDocument(_request.GetExtractionDirectory(), document, listener);
 
                 haveExtractedBundledContent = true;
             }
@@ -237,11 +244,18 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
         {
             _request = value;
+
+            DirectoryPopulated = _request.GetExtractionDirectory();
         }
 
         public void PreInitialize(DataLoadInfo value, IDataLoadEventListener listener)
         {
             _dataLoadInfo = value;
+        }
+
+        public string GetFilename()
+        {
+            return _request.Name;
         }
 
         public string GetDestinationDescription()
@@ -258,13 +272,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globalsToExtract, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
+            ExtractionDirectory targetDirectory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
+            DirectoryInfo globalsDirectory = targetDirectory.GetGlobalsDirectory();
+
             if (globalsToExtract.Any())
             {
                 foreach (var sql in globalsToExtract.SupportingSQL)
                     ExtractSupportingSql(sql, listener);
 
                 foreach (var doc in globalsToExtract.Documents)
-                    ExtractSupportingDocument(doc, listener);
+                    ExtractSupportingDocument(globalsDirectory, doc, listener);
             }
         }
         
@@ -318,14 +335,21 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return ExtractCommandState.Completed;
         }
 
-        private ExtractCommandState ExtractSupportingDocument(SupportingDocument doc, IDataLoadEventListener listener)
+        private ExtractCommandState ExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
         {
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning,
-                    "Ignored SupportingDocument " + doc.Name +
-                    " because destination is an SQL database.  File path is " + doc.URL));
+            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(null);
 
-            return ExtractCommandState.Warning;
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to copy " + doc + " to directory " + directory.FullName));
+            try
+            {
+                fetcher.ExtractToDirectory(directory, doc);
+                return ExtractCommandState.Completed;
+            }
+            catch (Exception e)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to copy file " + doc + " to directory " + directory.FullName, e));
+                return ExtractCommandState.Crashed;
+            }
         }
         
         private DiscoveredDatabase GetDestinationDatabase(IDataLoadEventListener listener)

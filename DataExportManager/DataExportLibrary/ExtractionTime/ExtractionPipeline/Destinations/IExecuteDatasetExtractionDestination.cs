@@ -26,6 +26,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
     public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<DataLoadInfo>
     {
         TableLoadInfo TableLoadInfo { get; }
+        DirectoryInfo DirectoryPopulated { get; }
+        bool GeneratesFiles { get; }
+        string OutputFile { get; }
+        int SeparatorsStrippedOut { get; }
+        string DateFormat { get; }
+        string GetFilename();
         string GetDestinationDescription();
         DestinationType GetDestinationType();
 

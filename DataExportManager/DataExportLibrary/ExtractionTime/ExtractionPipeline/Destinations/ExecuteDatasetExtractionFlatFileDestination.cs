@@ -46,7 +46,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public TableLoadInfo TableLoadInfo { get; private set; }
         
         public DirectoryInfo DirectoryPopulated { get; private set; }
-        
+        public bool GeneratesFiles { get { return true; } }
+
         public int SeparatorsStrippedOut { get; set; }
         public string OutputFile { get; private set; }
         public int LinesWritten { get; private set; }

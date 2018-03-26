@@ -150,7 +150,7 @@ namespace DataExportLibrary.ExtractionTime
                 if (IsValidFilename(result.DestinationDescription))
                     filename = new FileInfo(result.DestinationDescription).Name;
                 else
-                    filename = "N/A";
+                    filename = result.DestinationDescription;
 
                 SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
                 SetTableCell(table,tableLine, 1,result.FiltersUsed);

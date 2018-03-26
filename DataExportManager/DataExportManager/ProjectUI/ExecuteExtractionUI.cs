@@ -155,24 +155,23 @@ namespace DataExportManager.ProjectUI
                     var globalExtractor = new ExtractionPipelineUseCase(ExtractDatasetCommand.EmptyCommand,_pipelineSelectionUI1.Pipeline,_dataLoadInfo);
 
                     Thread t = new Thread(() =>
-                    {
-                        try
                         {
-                            progressUI.ShowRunning(true);
+                            try
+                            {
+                                progressUI.ShowRunning(true);
 
-                            globalExtractor.ExtractGlobalsForDestination(Project,
-                                _configurationToExecute,
-                                globals,
-                                progressUI,
-                                _dataLoadInfo);
-                        }
-                        finally
-                        {
-                            progressUI.ShowRunning(false);
-                        }
-                    }
-                        
-                        );
+                                globalExtractor.ExtractGlobalsForDestination(Project,
+                                    _configurationToExecute,
+                                    globals,
+                                    progressUI,
+                                    _dataLoadInfo);
+                            }
+                            finally
+                            {
+                                progressUI.ShowRunning(false);
+                            }
+                        }   
+                    );
 
                     t.Start();
                 }

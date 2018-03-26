@@ -186,6 +186,8 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
             // copy detached files from data path to the desired destination.
             File.Copy(Path.Combine(dataFolder, databaseToDetach + ".mdf"), Path.Combine(outputFolder.FullName, databaseToDetach + ".mdf"));
             File.Copy(Path.Combine(dataFolder, databaseToDetach + "_log.ldf"), Path.Combine(outputFolder.FullName, databaseToDetach + "_log.ldf"));
+            File.Delete(Path.Combine(dataFolder, databaseToDetach + ".mdf"));
+            File.Delete(Path.Combine(dataFolder, databaseToDetach + "_log.mdf"));
         }
     }
 }
