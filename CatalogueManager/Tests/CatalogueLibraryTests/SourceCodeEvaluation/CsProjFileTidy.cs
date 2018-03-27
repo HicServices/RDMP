@@ -31,7 +31,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             //e.g. <Compile Include="Overview\OverviewScreen.Designer.cs"
             string allText = File.ReadAllText(csProjFile.FullName);
 
-            
+            if (allText.Contains("<CopyToOutputDirectory>Always</CopyToOutputDirectory>"))
+                Console.WriteLine("WARNING:Csproj '" + csProjFile + "' contains CopyAlways");
+
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(allText);
 

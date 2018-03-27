@@ -604,10 +604,6 @@
     <EmbeddedResource Include="SimpleDialogs\SelectWhichCohortToImport.resx">
       <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="..\..\Tools\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="Wizard\CreateNewDataExtractionProjectUI.resx">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
     </EmbeddedResource>

@@ -318,10 +318,6 @@
     <EmbeddedResource Include="Overview\GovernanceSummary.resx">
       <DependentUpon>GovernanceSummary.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="..\..\..\Tools\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="Raceway\RacewayRenderAreaUI.resx">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </EmbeddedResource>

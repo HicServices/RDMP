@@ -2010,10 +2010,6 @@
       <LastGenOutput>ToolTips.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="..\..\Tools\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="..\..\Documentation\UserManual.docx">
       <Link>UserManual.docx</Link>
     </EmbeddedResource>

@@ -439,10 +439,6 @@
       <Project>{8e14721e-2e82-4ec5-87f0-0b32f54911b5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Developer\CommitAssembly\CommitAssembly.csproj">
-      <Project>{2a23083b-c198-4f99-9621-c0bd44f671c4}</Project>
-      <Name>CommitAssembly</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\CatalogueManager\CatalogueManager.csproj">
       <Project>{fdf08240-2afc-48a4-8f48-37cc7ea3000b}</Project>
       <Name>CatalogueManager</Name>
@@ -453,10 +449,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\Tools\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Integration\CommitAssemblyTest.cd" />
     <None Include="Resources\InvalidPlugin.dll" />
     <None Include="Resources\DummyPlugin.dll" />
