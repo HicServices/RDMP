@@ -17,6 +17,8 @@ using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -40,7 +42,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters,INamed,IHasDependencies
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper
     {
         #region Database Properties
         private string _countSQL;
@@ -243,6 +245,13 @@ namespace CatalogueLibrary.Data.Aggregation
             get { return Name.StartsWith(CohortIdentificationConfiguration.CICPrefix); }
         }
 
+        /// <summary>
+        /// Creates a new AggregateConfiguration (graph, cohort set or patient index table) in the ICatalogueRepository
+        /// . database associated with the provided Catalogue (dataset).
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="catalogue"></param>
+        /// <param name="name"></param>
         public AggregateConfiguration(ICatalogueRepository repository, ICatalogue catalogue, string name)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -252,7 +261,7 @@ namespace CatalogueLibrary.Data.Aggregation
             });
         }
         
-        public AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+        internal AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
             Name = r["Name"] as string;
             Description = r["Description"] as string;
@@ -291,6 +300,11 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             //strip the cic section from the front
             return Regex.Replace(Name, @"cic_\d+_?", "");
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return Catalogue.GetQuerySyntaxHelper();
         }
 
 

@@ -7,10 +7,8 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
+using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.CohortUI;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.UsedByProject;
-using DataExportManager.Collections.Providers;
 using RDMPStartup;
 
 namespace DataExportManager.Menus
@@ -21,14 +19,13 @@ namespace DataExportManager.Menus
         private readonly CohortSourceUsedByProjectNode _cohortSourceUsedByProjectNode;
 
         public CohortSourceUsedByProjectNodeMenu(RDMPContextMenuStripArgs args, CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode)
-            : base( args,cohortSourceUsedByProjectNode.Project)
+            : base( args,cohortSourceUsedByProjectNode.Source)
         {
             _cohortSourceUsedByProjectNode = cohortSourceUsedByProjectNode;
             
             var viewDetail = new ToolStripMenuItem("Show Detailed Summary of Project Cohorts", CatalogueIcons.AllCohortsNode, (s, e) => ShowDetailedSummaryOfCohorts());
             viewDetail.Enabled = !_cohortSourceUsedByProjectNode.IsEmptyNode;
             Items.Add(viewDetail);
-
         }
 
         private void ShowDetailedSummaryOfCohorts()

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Sharing;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
+using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
@@ -19,7 +19,7 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
         [SetUp]
         public void StoreShareManager()
         {
-            _share = RepositoryLocator.CatalogueRepository.ShareManager;
+            _share = new ShareManager(RepositoryLocator);
         }
 
         [Test]

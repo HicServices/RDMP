@@ -78,7 +78,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r)
+        internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             IsActive = (bool) r["IsActive"];

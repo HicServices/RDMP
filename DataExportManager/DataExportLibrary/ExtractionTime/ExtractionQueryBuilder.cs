@@ -152,8 +152,8 @@ namespace DataExportLibrary.ExtractionTime
             var declarationSqlCohortId = syntaxHelper.GetParameterDeclaration("@CohortDefinitionID", new DatabaseTypeRequest(typeof (int)));
             var declarationSqlProjectNumber = syntaxHelper.GetParameterDeclaration("@ProjectNumber", new DatabaseTypeRequest(typeof(int)));
 
-            toReturn.Add(new ConstantParameter(declarationSqlCohortId, extractableCohort.OriginID.ToString(), "The ID of the cohort in " + externalCohortTable.TableName));
-            toReturn.Add(new ConstantParameter(declarationSqlProjectNumber, project.ProjectNumber.ToString(), "The project number of project " + project.Name));
+            toReturn.Add(new ConstantParameter(declarationSqlCohortId, extractableCohort.OriginID.ToString(), "The ID of the cohort in " + externalCohortTable.TableName, syntaxHelper));
+            toReturn.Add(new ConstantParameter(declarationSqlProjectNumber, project.ProjectNumber.ToString(), "The project number of project " + project.Name, syntaxHelper));
 
             return toReturn;
         }

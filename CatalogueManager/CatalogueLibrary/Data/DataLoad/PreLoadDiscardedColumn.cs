@@ -115,7 +115,7 @@ namespace CatalogueLibrary.Data.DataLoad
             });
         }
 
-        public PreLoadDiscardedColumn(ICatalogueRepository repository, DbDataReader r)
+        internal PreLoadDiscardedColumn(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());

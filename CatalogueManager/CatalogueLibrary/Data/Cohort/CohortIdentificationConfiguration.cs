@@ -122,7 +122,7 @@ namespace CatalogueLibrary.Data.Cohort
             });
         }
 
-        public CohortIdentificationConfiguration(ICatalogueRepository repository, DbDataReader r)
+        internal CohortIdentificationConfiguration(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"].ToString();

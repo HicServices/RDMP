@@ -14,9 +14,9 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 
         public CheckResultStateBasedIconProvider()
         {
-            _exception = FamFamFamIcons.flag_red;
-            _warning = CatalogueIcons.Warning;
-            _tick = CatalogueIcons.Tick;
+            _exception = CatalogueIcons.TinyRed;
+            _warning = CatalogueIcons.TinyYellow;
+            _tick = CatalogueIcons.TinyGreen;
         }
         
         public Bitmap GetImageIfSupportedObject(object o)

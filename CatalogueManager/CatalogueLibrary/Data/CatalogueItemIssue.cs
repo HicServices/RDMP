@@ -208,7 +208,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public CatalogueItemIssue(ICatalogueRepository repository, DbDataReader r)
+        internal CatalogueItemIssue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             CatalogueItem_ID = int.Parse(r["CatalogueItem_ID"].ToString());

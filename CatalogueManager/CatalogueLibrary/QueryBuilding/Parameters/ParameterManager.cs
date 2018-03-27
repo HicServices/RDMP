@@ -279,7 +279,8 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
                     var spont = new SpontaneouslyInventedSqlParameter(
                         parameterToImport.ParameterSQL.Replace(toImportParameterName,parameterToImport + "_" + newSuffix),
                         parameterToImport.Value,
-                        parameterToImport.Comment
+                        parameterToImport.Comment,
+                        parameterToImport.GetQuerySyntaxHelper()
                         );
                     
                     //now make it a composite query level parameter used by us

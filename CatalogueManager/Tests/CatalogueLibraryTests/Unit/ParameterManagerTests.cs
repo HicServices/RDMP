@@ -2,6 +2,7 @@
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using NUnit.Framework;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibraryTests.Unit
 {
@@ -14,8 +15,8 @@ namespace CatalogueLibraryTests.Unit
         [TestCase(ParameterLevel.TableInfo,ParameterLevel.QueryLevel)]
         public void FindOverridenParameters_OneOnlyTest(ParameterLevel addAt, ParameterLevel overridingLevel)
         {
-            var myParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here");
-            var overridingParameter = new ConstantParameter("DECLARE @fish as int", "999", "overriding value");
+            var myParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
+            var overridingParameter = new ConstantParameter("DECLARE @fish as int", "999", "overriding value",new MicrosoftQuerySyntaxHelper());
 
             var pm = new ParameterManager();
             pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter);
@@ -39,10 +40,10 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void FindOverridenParameters_TwoTest()
         {
-            var myParameter1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here");
-            var myParameter2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here");
+            var myParameter1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
+            var myParameter2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",new MicrosoftQuerySyntaxHelper());
 
-            var overridingParameter = new ConstantParameter("DECLARE @fish as int", "3", "overriding value");
+            var overridingParameter = new ConstantParameter("DECLARE @fish as int", "3", "overriding value",new MicrosoftQuerySyntaxHelper());
 
             var pm = new ParameterManager();
             pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter1);
@@ -72,7 +73,7 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void ParameterDeclarationAndDeconstruction()
         {
-            var param = new ConstantParameter("DECLARE @Fish as int;","3","I've got a lovely bunch of coconuts");
+            var param = new ConstantParameter("DECLARE @Fish as int;","3","I've got a lovely bunch of coconuts",new MicrosoftQuerySyntaxHelper());
             var sql = QueryBuilder.GetParameterDeclarationSQL(param);
 
             Assert.AreEqual(@"/*I've got a lovely bunch of coconuts*/
@@ -80,7 +81,7 @@ DECLARE @Fish as int;
 SET @Fish=3;
 ", sql);
 
-            var after = QueryBuilder.DeconstructStringIntoParameter(sql);
+            var after = QueryBuilder.DeconstructStringIntoParameter(sql, new MicrosoftQuerySyntaxHelper());
 
             Assert.AreEqual(param.ParameterSQL,after.ParameterSQL);
             Assert.AreEqual(param.Value, after.Value);

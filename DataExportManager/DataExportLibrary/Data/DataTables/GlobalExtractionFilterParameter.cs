@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -21,7 +25,7 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         #region Database Properties
@@ -30,6 +34,7 @@ namespace DataExportLibrary.Data.DataTables
         private string _comment;
         private int _extractionConfiguration_ID;
 
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
@@ -63,9 +68,6 @@ namespace DataExportLibrary.Data.DataTables
         {
             Repository = repository;
 
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},
@@ -73,7 +75,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
+        internal GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Value = r["Value"] as string;
@@ -86,7 +88,17 @@ namespace DataExportLibrary.Data.DataTables
         {
             return ParameterName;
         }
-        
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
+        }
+
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {

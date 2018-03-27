@@ -14,6 +14,10 @@ namespace CatalogueLibrary.Checks
     {
         private readonly MEF _mefPlugins;
 
+        /// <summary>
+        /// Prepares to check the currently loaded assemblies defined in the MEF (Call CatalogueRepository.MEF to get the MEF), call Check to start the checking process
+        /// </summary>
+        /// <param name="mefPlugins"></param>
         public BadAssembliesChecker(MEF mefPlugins)
         {
             _mefPlugins = mefPlugins;

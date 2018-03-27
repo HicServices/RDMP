@@ -175,7 +175,7 @@ namespace CatalogueLibrary.Data.Cache
             });
         }
 
-        public CacheProgress(ICatalogueRepository repository, DbDataReader r)
+        internal CacheProgress(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             LoadProgress_ID = int.Parse(r["LoadProgress_ID"].ToString());

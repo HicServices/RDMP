@@ -18,6 +18,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -524,7 +525,7 @@ namespace CatalogueLibrary.Data
         /// Creates a single runtime instance of the Catalogue based on the current state of the row read from the DbDataReader (does not advance the reader)
         /// </summary>
         /// <param name="r"></param>
-        public Catalogue(ICatalogueRepository repository, DbDataReader r)
+        internal Catalogue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             if(r["LoadMetadata_ID"] != DBNull.Value)
@@ -1162,5 +1163,15 @@ namespace CatalogueLibrary.Data
             _isExtractable = isExtractable;
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var f = new QuerySyntaxHelperFactory();
+            var type = GetDistinctLiveDatabaseServerType();
+
+            if(type == null)
+                throw new Exception("Catalogue '" + this +"' does not have a single Distinct Live Database Type");
+            
+            return f.Create(type.Value);
+        }
     }
 }

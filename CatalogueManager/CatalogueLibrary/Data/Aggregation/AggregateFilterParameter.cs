@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -30,12 +35,14 @@ namespace CatalogueLibrary.Data.Aggregation
             set { SetField(ref  _aggregateFilterID, value); }
         } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref  _parameterSQL, value); }
         }
-
+        
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -49,6 +56,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         #endregion
+
         #region Relationships
         [NoMappingToDatabase]
         public AggregateFilter AggregateFilter{ get { return Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID); }}
@@ -61,14 +69,11 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         public AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, IFilter parent)
         {
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},
@@ -90,6 +95,16 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             //return the name of the variable
             return ParameterName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return AggregateFilter.GetQuerySyntaxHelper();
         }
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()

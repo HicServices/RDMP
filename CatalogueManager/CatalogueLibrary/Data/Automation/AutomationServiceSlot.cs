@@ -127,7 +127,7 @@ namespace CatalogueLibrary.Data.Automation
         
         #endregion
 
-        public AutomationServiceSlot(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal AutomationServiceSlot(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             Name = r["Name"].ToString();
             LockedBecauseRunning = Convert.ToBoolean(r["LockedBecauseRunning"]);

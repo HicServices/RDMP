@@ -20,5 +20,4 @@
         /// <returns></returns>
         IHasDependencies[] GetObjectsDependingOnThis();
     }
-
 }

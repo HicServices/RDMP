@@ -3,12 +3,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Ticketing;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using Ticketing;
 
 namespace CatalogueManager.LocationsMenu.Ticketing
 {

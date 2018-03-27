@@ -74,7 +74,7 @@ namespace CatalogueLibrary.Data.Cache
             });
         }
 
-        public CacheFetchFailure(ICatalogueRepository repository, DbDataReader r)
+        internal CacheFetchFailure(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             CacheProgress_ID = int.Parse(r["CacheProgress_ID"].ToString());

@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data
 {
@@ -31,6 +33,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _order, value); }
         }
 
+        [Sql]
         public string SelectSQL
         {
             get { return _selectSql; }
@@ -93,6 +96,9 @@ namespace CatalogueLibrary.Data
         }
 
 
-        
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
+        }
     }
 }

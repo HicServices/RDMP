@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
+using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
@@ -28,7 +31,8 @@ namespace CatalogueLibrary.Spontaneous
             Name = name;
             Description = description;
         }
-      
+
+        [Sql]
         public string WhereSQL { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -65,6 +69,11 @@ namespace CatalogueLibrary.Spontaneous
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             throw new NotImplementedException();
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new FilterSyntaxChecker(this).Check(notifier);
         }
     }
 }

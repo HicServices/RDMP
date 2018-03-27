@@ -84,7 +84,7 @@ namespace CatalogueLibrary.Data.Aggregation
             });
         }
 
-        public AggregateFilter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal AggregateFilter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             WhereSQL = r["WhereSQL"] as string;
             Description = r["Description"] as string;

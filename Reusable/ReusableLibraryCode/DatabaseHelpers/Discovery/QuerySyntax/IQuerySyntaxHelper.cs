@@ -29,9 +29,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         TopXResponse HowDoWeAchieveTopX(int x);
         string GetParameterDeclaration(string proposedNewParameterName, DatabaseTypeRequest request);
         string GetParameterDeclaration(string proposedNewParameterName, string sqlType);
+        
+        bool IsValidParameterName(string parameterSQL);
 
         string AliasPrefix { get; }
-        
         bool SplitLineIntoSelectSQLAndAlias(string lineToSplit, out string selectSQL, out string alias);
 
         string GetScalarFunctionSql(MandatoryScalarFunctions function);

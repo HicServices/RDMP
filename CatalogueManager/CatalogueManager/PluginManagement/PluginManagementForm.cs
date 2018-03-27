@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
-using CatalogueLibrary.Remoting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
@@ -30,6 +29,7 @@ using ReusableLibraryCode.Serialization;
 using ReusableUIComponents;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
+using Sharing.Transmission;
 
 namespace CatalogueManager.PluginManagement
 {
@@ -355,7 +355,7 @@ namespace CatalogueManager.PluginManagement
             var f = new SingleControlForm(barsUI);
             f.Show();
             
-            service.SendPluginsToAllRemotes(plugins, () => barsUI.Done());
+            service.SendPluginsToAllRemotes(plugins, barsUI.Done);
         }
     }
 }

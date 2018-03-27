@@ -109,7 +109,6 @@
     <Compile Include="Execution\Joinables\JoinableTask.cs" />
     <Compile Include="FreeText\FreeTextCompiler.cs" />
     <Compile Include="FreeText\Paragraphing\ParagraphSection.cs" />
-    <Compile Include="FreeText\SyntaxCalculator.cs" />
     <Compile Include="ICompileable.cs" />
     <Compile Include="QueryBuilding\CohortQueryBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -3,6 +3,8 @@ using CatalogueLibrary.FilterImporting.Construction;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Microsoft.SqlServer.Management.Smo;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
@@ -11,8 +13,9 @@ namespace CatalogueLibrary.Data
     /// A line of WHERE sql which can be combined in IContainers.  IFilters can be either ConcreteFilter (there is persisted user defined database object that makes 
     /// up the IFilter) or SpontaneouslyInventedFilter.
     /// </summary>
-    public interface IFilter : ICollectSqlParameters, INamed
+    public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,ICheckable
     {
+        [Sql]
         string WhereSQL { get; set; }
         string Description { get; set; }
         
@@ -28,7 +31,6 @@ namespace CatalogueLibrary.Data
         ColumnInfo GetColumnInfoIfExists();
         IFilterFactory GetFilterFactory();
         Catalogue GetCatalogue();
-
-        IQuerySyntaxHelper GetQuerySyntaxHelper();
+        
     }
 }

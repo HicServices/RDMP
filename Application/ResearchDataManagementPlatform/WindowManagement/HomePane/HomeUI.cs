@@ -19,7 +19,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Tutorials;
 using CohortManager.CommandExecution.AtomicCommands;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using MapsDirectlyToDatabaseTable;

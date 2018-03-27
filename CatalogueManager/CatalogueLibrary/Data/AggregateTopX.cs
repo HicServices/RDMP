@@ -65,6 +65,7 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
+        /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
         #region Relationships
         [NoMappingToDatabase]
         public AggregateDimension OrderByDimensionIfAny
@@ -80,11 +81,16 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
-        //interface 
+        /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
         [NoMappingToDatabase]
         public IColumn OrderByColumn { get { return OrderByDimensionIfAny; } }
 
-        public AggregateTopX(ICatalogueRepository repository, DbDataReader r)
+        /// <summary>
+        /// Creates an instance by reading it out of the database for the provided reader
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
+        internal AggregateTopX(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             AggregateConfiguration_ID = (int)r["AggregateConfiguration_ID"];

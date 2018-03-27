@@ -89,7 +89,7 @@ namespace CatalogueLibrary.Data.Governance
             });
         }
 
-        public GovernancePeriod(ICatalogueRepository repository, DbDataReader r)
+        internal GovernancePeriod(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             //cannot be null

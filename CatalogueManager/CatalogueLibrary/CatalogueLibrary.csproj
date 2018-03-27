@@ -374,11 +374,10 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ANOEngineering\ColumnInfoANOPlan.cs" />
-    <Compile Include="ANOEngineering\ForwardEngineerANOCataloguePlanManager.cs" />
-    <Compile Include="ANOEngineering\ForwardEngineerANOCatalogueEngine.cs" />
-    <Compile Include="ANOEngineering\IDilutionOperation.cs" />
-    <Compile Include="Cloning\MissingTableException.cs" />
+    <Compile Include="Checks\SyntaxChecking\ColumnSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\FilterSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\ParameterSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\SyntaxChecker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
@@ -454,14 +453,10 @@
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
-    <Compile Include="Refactoring\SelectSQLRefactorer.cs" />
-    <Compile Include="Refactoring\Exceptions\RefactoringException.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
-    <Compile Include="ObjectSharing\ObjectSharingObscureDependencyFinder.cs" />
-    <Compile Include="ObjectSharing\SharedPluginImporter.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
     <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
@@ -498,7 +493,6 @@
     <Compile Include="Providers\DescendancyList.cs" />
     <Compile Include="Providers\IChildProvider.cs" />
     <Compile Include="Providers\ICoreChildProvider.cs" />
-    <Compile Include="Remoting\RemotePushingService.cs" />
     <Compile Include="Reports\DocumentationReportFormsAndControlsOfficeBit.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabase.cs" />
     <Compile Include="Reports\Exceptions\SourceCodeNotFoundException.cs" />
@@ -583,7 +577,6 @@
     <Compile Include="Data\SafeDirectoryCatalog.cs" />
     <Compile Include="Data\ServerDefaults.cs" />
     <Compile Include="Data\DataLoad\ANOTable.cs" />
-    <Compile Include="Cloning\CatalogueCloner.cs" />
     <Compile Include="DataHelper\JoinHelper.cs" />
     <Compile Include="DataHelper\TableInfoImporter.cs" />
     <Compile Include="DataHelper\TableValuedFunctionImporter.cs" />
@@ -650,9 +643,7 @@
     <Compile Include="Reports\MetadataReport.cs" />
     <Compile Include="Reports\RequiresMicrosoftOffice.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabaseOfficeBit.cs" />
-    <Compile Include="Repositories\Sharing\MapsDirectlyToDatabaseTableStatelessDefinition.cs" />
     <Compile Include="Repositories\MEF.cs" />
-    <Compile Include="Repositories\Sharing\ShareManager.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedAggregateTopX.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedArgument.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedFilter.cs" />
@@ -661,6 +652,10 @@
     <Compile Include="Spontaneous\SpontaneouslyInventedSqlParameter.cs" />
     <Compile Include="Spontaneous\SpontaneousObject.cs" />
     <Compile Include="SupportingDocumentsFetcher.cs" />
+    <Compile Include="Ticketing\ITicketingSystem.cs" />
+    <Compile Include="Ticketing\PluginTicketingSystem.cs" />
+    <Compile Include="Ticketing\TicketingSystemConstructorParameters.cs" />
+    <Compile Include="Ticketing\TicketingSystemFactory.cs" />
     <Compile Include="Triggers\DiffDatabaseDataFetcher.cs" />
     <Compile Include="Triggers\Exceptions\IrreconcilableColumnDifferencesInArchiveException.cs" />
     <Compile Include="Triggers\SpecialFieldNames.cs" />
@@ -700,6 +695,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
+    <Folder Include="Remoting\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

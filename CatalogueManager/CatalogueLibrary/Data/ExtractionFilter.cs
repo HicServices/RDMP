@@ -107,7 +107,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public ExtractionFilter(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionInformation_ID = int.Parse(r["ExtractionInformation_ID"].ToString());

@@ -133,7 +133,7 @@ namespace DataExportLibrary.Data.DataTables
 
 
 
-        public ExtractableCohort(IDataExportRepository repository, DbDataReader r)
+        internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             OverrideReleaseIdentifierSQL = r["OverrideReleaseIdentifierSQL"] as string;

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -28,6 +31,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _extractionFilterParameterID , value); }
         }
 
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -52,6 +56,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        [Sql]
         [NoMappingToDatabase]
         public string ParameterSQL
         {
@@ -109,7 +114,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
 
-        public ExtractionFilterParameterSetValue(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilterParameterSetValue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionFilterParameterSet_ID =   Convert.ToInt32(r["ExtractionFilterParameterSet_ID"]);
@@ -126,5 +131,14 @@ namespace CatalogueLibrary.Data
             });
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return ExtractionFilterParameter.GetQuerySyntaxHelper();
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
+        }
     }
 }

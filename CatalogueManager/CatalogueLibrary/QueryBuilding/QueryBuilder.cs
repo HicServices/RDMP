@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CatalogueLibrary.Checks;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
@@ -332,6 +335,8 @@ namespace CatalogueLibrary.QueryBuilding
         /// </summary>
         public void RegenerateSQL()
         {
+            var checkNotifier = new ThrowImmediatelyCheckNotifier();
+
             _sql = "";
             currentLine = 0;
 
@@ -383,7 +388,7 @@ namespace CatalogueLibrary.QueryBuilding
             foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
             {
                 if(CheckSyntax)
-                    RDMPQuerySyntaxHelper.CheckSyntax(parameter);
+                    parameter.Check(checkNotifier);
 
                 int newlinesTaken;
                 toReturn += GetParameterDeclarationSQL(parameter, out newlinesTaken);
@@ -481,7 +486,7 @@ namespace CatalogueLibrary.QueryBuilding
             return GetParameterDeclarationSQL(constantParameter, out whoCares);
         }
 
-        public static ConstantParameter DeconstructStringIntoParameter(string sql)
+        public static ConstantParameter DeconstructStringIntoParameter(string sql, IQuerySyntaxHelper syntaxHelper)
         {
             string[] lines = sql.Split(new[] {'\n'},StringSplitOptions.RemoveEmptyEntries);
 
@@ -504,7 +509,7 @@ namespace CatalogueLibrary.QueryBuilding
             var value = valueLineSplit[1].TrimEnd(new[] {';','\r'});
 
 
-            return new ConstantParameter(declaration.Trim(), value.Trim(), comment);
+            return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
         }
 
         public static string GetParameterDeclarationSQL(ISqlParameter sqlParameter, out int newlinesTaken)

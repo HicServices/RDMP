@@ -36,7 +36,8 @@ namespace CatalogueLibrary.Data.Aggregation
             repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
         }
 
-        public AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+
+        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             FilterContainerOperation op;
             FilterContainerOperation.TryParse(r["Operation"].ToString(), out op);

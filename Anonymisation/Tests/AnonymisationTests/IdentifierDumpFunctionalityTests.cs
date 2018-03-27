@@ -55,6 +55,10 @@ namespace AnonymisationTests
 
             Console.WriteLine("CHI is primary key? (expecting true):" + chi.IsPrimaryKey);
             Assert.IsTrue(chi.IsPrimaryKey);
+
+
+            tableInfoCreated.ColumnInfos.Single(c => c.GetRuntimeName().Equals("surname")).DeleteInDatabase();
+            tableInfoCreated.ColumnInfos.Single(c => c.GetRuntimeName().Equals("forename")).DeleteInDatabase();
         }
 
 

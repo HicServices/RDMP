@@ -65,6 +65,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _anoTableID, value); }
         }
 
+        [Sql]
         public string Name
         {
             get { return _name; }
@@ -186,7 +187,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public ColumnInfo(ICatalogueRepository repository, DbDataReader r)
+        internal ColumnInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());

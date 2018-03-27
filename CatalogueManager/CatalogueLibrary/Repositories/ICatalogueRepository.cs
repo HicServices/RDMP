@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Repositories.Sharing;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
@@ -20,7 +18,6 @@ namespace CatalogueLibrary.Repositories
         PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
         JoinInfoFinder JoinInfoFinder { get; set; }
         MEF MEF { get; set; }
-        ShareManager ShareManager { get; set; }
         IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase);
 
         /// <summary>

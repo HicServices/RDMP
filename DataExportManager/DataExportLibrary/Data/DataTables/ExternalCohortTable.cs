@@ -129,7 +129,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public ExternalCohortTable(IDataExportRepository repository, DbDataReader r)
+        internal ExternalCohortTable(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             SoftwareVersion = r["SoftwareVersion"].ToString();

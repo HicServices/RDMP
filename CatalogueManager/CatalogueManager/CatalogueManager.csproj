@@ -506,6 +506,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
@@ -525,6 +526,13 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionFilterParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
+    <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
+    <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FindAndReplace\FindAndReplaceUI.Designer.cs">
+      <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
@@ -950,18 +958,6 @@
     <Compile Include="Refreshing\ILifetimeSubscriber.cs" />
     <Compile Include="Refreshing\IRefreshBusSubscriber.cs" />
     <Compile Include="Refreshing\RefreshBus.cs" />
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.Designer.cs">
-      <DependentUpon>LocationAdjustableObjectUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.Designer.cs">
-      <DependentUpon>LocationAdjustablePropertyUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1151,12 +1147,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\Governance\GovernanceUI.Designer.cs">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.Designer.cs">
-      <DependentUpon>LocationsAdjuster.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.cs">
       <SubType>Form</SubType>
@@ -1559,6 +1549,8 @@
     <None Include="Icons\AllObjectSharingNode.png" />
     <None Include="Icons\CohortCustomColumn.png" />
     <None Include="Icons\ExtractableColumn.png" />
+    <None Include="Icons\famfamfam\page_white_get.png" />
+    <None Include="Icons\famfamfam\page_white_put.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1647,6 +1639,9 @@
     <None Include="Icons\ObjectImport.png" />
     <None Include="Icons\ObjectSharingNode.png" />
     <None Include="Icons\ProjectCohortsNode.png" />
+    <None Include="Icons\TinyYellow.png" />
+    <None Include="Icons\TinyGreen.png" />
+    <None Include="Icons\TinyRed.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1706,6 +1701,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
+      <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
@@ -1799,12 +1797,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Images.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.resx">
-      <DependentUpon>LocationAdjustableObjectUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.resx">
-      <DependentUpon>LocationAdjustablePropertyUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
@@ -1901,9 +1893,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceUI.resx">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.resx">
-      <DependentUpon>LocationsAdjuster.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.resx">
       <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
@@ -2021,10 +2010,6 @@
       <LastGenOutput>ToolTips.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="..\..\Documentation\UserManual.docx">
       <Link>UserManual.docx</Link>
     </EmbeddedResource>
@@ -2063,17 +2048,13 @@
       <Project>{01028615-752e-470a-90a7-d809af2ee09f}</Project>
       <Name>IdentifierDump</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Caching\Engine\CachingEngine\CachingEngine.csproj">
+    <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj">
       <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
       <Name>CachingEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj">
       <Project>{AA8B053B-3CF6-42EF-B5E6-2F9EE97F822F}</Project>
       <Name>CohortManagerLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DatabaseCreation\DatabaseCreation.csproj">
-      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
-      <Name>DatabaseCreation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
@@ -2086,10 +2067,6 @@
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Applications\RDMPAutomationService\RDMPAutomationService\RDMPAutomationService.csproj">
-      <Project>{04aebb47-fdd6-4bdf-8fef-572b947afeff}</Project>
-      <Name>RDMPAutomationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
@@ -2110,10 +2087,6 @@
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Developer\PluginPackager\PluginPackager.csproj">
-      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
-      <Name>PluginPackager</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
@@ -2159,6 +2132,22 @@
       <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
       <Name>ReusableUIComponents</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj">
+      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
+      <Name>DatabaseCreation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
+      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
+      <Name>PluginPackager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
+      <Name>RDMPAutomationService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
       <Name>HIC.Common.Validation</Name>
@@ -2170,10 +2159,6 @@
     <ProjectReference Include="..\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TicketingModules\Ticketing\Ticketing.csproj">
-      <Project>{048E1478-E4A7-4AD1-95AB-C40C604A4F60}</Project>
-      <Name>Ticketing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

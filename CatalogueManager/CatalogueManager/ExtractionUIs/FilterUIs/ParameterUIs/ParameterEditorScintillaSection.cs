@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ScintillaNET;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
@@ -13,6 +14,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
     public class ParameterEditorScintillaSection
     {
         private readonly ParameterRefactorer _refactorer;
+        private IQuerySyntaxHelper _querySyntaxHelper;
 
         public ParameterEditorScintillaSection( ParameterRefactorer refactorer, int lineStart, int lineEnd, ISqlParameter parameter, bool editable, string originalText)
         {
@@ -21,8 +23,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             LineEnd = lineEnd;
             Parameter = parameter;
             Editable = editable;
+            _querySyntaxHelper = parameter.GetQuerySyntaxHelper();
 
-            var prototype = QueryBuilder.DeconstructStringIntoParameter(originalText);
+            var prototype = QueryBuilder.DeconstructStringIntoParameter(originalText, _querySyntaxHelper);
             if(prototype.Value != parameter.Value)
                 throw new ArgumentException("Parameter " + parameter + " was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Values");
 
@@ -52,7 +55,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
                 string oldName = Parameter.ParameterName;
                 
                 ConstantParameter newPrototype;
-                newPrototype = QueryBuilder.DeconstructStringIntoParameter(sql);
+                newPrototype = QueryBuilder.DeconstructStringIntoParameter(sql, _querySyntaxHelper);
 
                 if (string.Equals(newPrototype.Comment, Parameter.Comment)//can be null you see
                     &&

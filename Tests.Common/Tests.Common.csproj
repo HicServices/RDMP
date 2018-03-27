@@ -184,10 +184,6 @@
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DatabaseCreation\DatabaseCreation.csproj">
-      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
-      <Name>DatabaseCreation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
@@ -239,6 +235,10 @@
     <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
       <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tools\DatabaseCreation\DatabaseCreation.csproj">
+      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
+      <Name>DatabaseCreation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

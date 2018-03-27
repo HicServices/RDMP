@@ -7,11 +7,16 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI.WebControls;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Cohort
 {
@@ -43,12 +48,14 @@ namespace CatalogueLibrary.Data.Cohort
             set { SetField(ref  _parentTable, value); }
         }
 
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref  _parameterSQL, value); }
         }
 
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -68,14 +75,11 @@ namespace CatalogueLibrary.Data.Cohort
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         public AnyTableSqlParameter(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable parent, string parameterSQL)
         {
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},
@@ -84,7 +88,7 @@ namespace CatalogueLibrary.Data.Cohort
             });
         }
 
-        public AnyTableSqlParameter(ICatalogueRepository repository, DbDataReader r)
+        internal AnyTableSqlParameter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Value = r["Value"] as string;
@@ -97,6 +101,21 @@ namespace CatalogueLibrary.Data.Cohort
         public override string ToString()
         {
             return ParameterName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
+
+            if (parentWithQuerySyntaxHelper == null)
+                throw new Exception("Could not figure out what the query syntax helper is for " + this);
+
+            return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
         }
 
         public static bool IsSupportedType(Type type)

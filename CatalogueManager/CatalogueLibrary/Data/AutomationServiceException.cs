@@ -57,7 +57,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public AutomationServiceException(ICatalogueRepository repository, DbDataReader r)
+        internal AutomationServiceException(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             MachineName = r["MachineName"].ToString();

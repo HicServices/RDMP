@@ -87,14 +87,6 @@ namespace CatalogueLibraryTests.Integration
 
 
         [Test]
-        public void UploadWithPattern()
-        {
-            Uri codeBase = new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-            FileInfo fileInfo = new FileInfo(codeBase.LocalPath);
-            Assert.AreEqual(0,CommitAssembly.Program.Main(new string[] {fileInfo.DirectoryName + "\\*.dll"}));
-         }
-
-        [Test]
         public void GetExportsDirectFromDatabase()
         {
             

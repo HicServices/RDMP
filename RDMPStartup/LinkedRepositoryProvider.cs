@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.ObjectSharing;
 using CatalogueLibrary.Reports.Exceptions;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
@@ -11,6 +10,7 @@ using DataExportLibrary;
 using DataExportLibrary.Repositories;
 using HIC.Common.Validation.Dependency;
 using MapsDirectlyToDatabaseTable;
+using Sharing.Dependency;
 
 namespace RDMPStartup
 {

@@ -1,4 +1,6 @@
-﻿using ReusableLibraryCode;
+﻿using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data
 {
@@ -8,16 +10,19 @@ namespace CatalogueLibrary.Data
     /// 
     /// Note that many properties can be null including ColumnInfo and Alias etc.
     /// </summary>
-    public interface IColumn : IHasRuntimeName
+    public interface IColumn : IHasRuntimeName,ICheckable
     {
         ColumnInfo ColumnInfo { get; }
 
         int Order { get; set; }
+        
+        [Sql]
         string SelectSQL { get; set; }
         int ID { get;}
         string Alias { get; }
         bool HashOnDataRelease { get; }
         bool IsExtractionIdentifier { get; }
         bool IsPrimaryKey { get; }
+        
     }
 }

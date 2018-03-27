@@ -14,7 +14,6 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Properties;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories.Construction;
-using CatalogueLibrary.Repositories.Sharing;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -38,8 +37,7 @@ namespace CatalogueLibrary.Repositories
         public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
         public JoinInfoFinder JoinInfoFinder { get; set; }
         public MEF MEF { get; set; }
-        public ShareManager ShareManager { get; set; }
-
+        
         readonly ObjectConstructor _constructor = new ObjectConstructor();
         
         /// <summary>
@@ -58,7 +56,6 @@ namespace CatalogueLibrary.Repositories
             PasswordEncryptionKeyLocation = new PasswordEncryptionKeyLocation(this);
             JoinInfoFinder = new JoinInfoFinder(this);
             MEF = new MEF(this);
-            ShareManager = new ShareManager(this);
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
 

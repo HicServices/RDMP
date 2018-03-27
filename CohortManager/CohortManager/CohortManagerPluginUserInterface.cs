@@ -15,8 +15,7 @@ using CatalogueManager.PluginChildProvision;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.ProjectCohortNodes;
+using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 
 namespace CohortManager
 {

@@ -24,11 +24,11 @@ using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.Providers;
+using DataExportLibrary.Providers.Nodes;
+using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
+using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportLibrary.Repositories;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.ProjectCohortNodes;
-using DataExportManager.Collections.Nodes.UsedByProject;
-using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.Icons.IconProvision;
 using DataExportManager.Menus;
@@ -117,23 +117,6 @@ namespace DataExportManager.Collections
 
                 foreach (ProjectCohortIdentificationConfigurationAssociation assoc in dataExportChildProvider.AllProjectAssociatedCics.Where(d => d.GetCohortIdentificationConfigurationCached().Equals(e.Object)).ToArray())
                     tlvDataExport.RefreshObject(assoc.Project);//refresh linked cic
-            }
-        }
-
-        private void tlvDataExport_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                var o = tlvDataExport.SelectedObject;
-                var linkedCohortNode = o as LinkedCohortNode;
-                var packageContentNode = o as PackageContentNode;
-                
-                if (linkedCohortNode != null)
-                    linkedCohortNode.DeleteWithConfirmation(_activator);
-
-                
-                if (packageContentNode != null)
-                    packageContentNode.DeleteWithConfirmation(_activator, (DataExportChildProvider)_activator.CoreChildProvider);
             }
         }
 

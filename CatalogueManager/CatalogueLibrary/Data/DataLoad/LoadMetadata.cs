@@ -119,7 +119,7 @@ namespace CatalogueLibrary.Data.DataLoad
             });
         }
 
-        public LoadMetadata(ICatalogueRepository repository, DbDataReader r)
+        internal LoadMetadata(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             LocationOfFlatFiles = r["LocationOfFlatFiles"].ToString();

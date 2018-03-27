@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -25,6 +29,7 @@ namespace CatalogueLibrary.Data
         private string _parameterSQL;
         private int _extractionFilterID;
 
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -35,6 +40,7 @@ namespace CatalogueLibrary.Data
             get { return _comment; }
             set { SetField(ref _comment, value); }
         }
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
@@ -55,7 +61,7 @@ namespace CatalogueLibrary.Data
         /// </summary>
         [NoMappingToDatabase]
         public string ParameterName {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         #region Relationships
@@ -68,9 +74,6 @@ namespace CatalogueLibrary.Data
 
         public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
         {
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},
@@ -79,7 +82,7 @@ namespace CatalogueLibrary.Data
         }
 
 
-        public ExtractionFilterParameter(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilterParameter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());
@@ -93,6 +96,17 @@ namespace CatalogueLibrary.Data
             //return the name of the variable
             return ParameterName;
         }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return ExtractionFilter.GetQuerySyntaxHelper();
+        }
+
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {ExtractionFilter};

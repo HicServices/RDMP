@@ -16,6 +16,7 @@ using DataLoadEngine.Job;
 using DataLoadEngine.Job.Scheduling;
 using HIC.Logging;
 using LoadModules.Generic.LoadProgressUpdating;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -45,6 +46,7 @@ namespace LoadModules.Generic.Attachers
         [DemandsInitialization("The table on the remote host from which data will be read.")]
         public string RemoteTableName { get; set; }
 
+        [Sql]
         [DemandsInitialization("When provided this OVERIDES RemoteTableName and is intended for running a complicated query on the remote machine in order to pull data in a suitable format.",DemandType.SQL)]
         public string RemoteSelectSQL { get; set; }
 

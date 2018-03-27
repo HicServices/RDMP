@@ -54,7 +54,7 @@ namespace CatalogueLibrary.Data.Automation
         }
         #endregion
 
-        public AutomateablePipeline(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal AutomateablePipeline(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             AutomationServiceSlot_ID = Convert.ToInt32(r["AutomationServiceSlot_ID"]);
             Pipeline_ID = Convert.ToInt32(r["Pipeline_ID"]);

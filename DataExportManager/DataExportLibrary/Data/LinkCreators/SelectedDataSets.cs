@@ -74,7 +74,7 @@ namespace DataExportLibrary.Data.LinkCreators
 
         #endregion
 
-        public SelectedDataSets(IDataExportRepository repository, DbDataReader r)
+        internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionConfiguration_ID = Convert.ToInt32(r["ExtractionConfiguration_ID"]);

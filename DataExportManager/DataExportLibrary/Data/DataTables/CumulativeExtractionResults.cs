@@ -111,7 +111,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public CumulativeExtractionResults(IDataExportRepository repository, DbDataReader r)
+        internal CumulativeExtractionResults(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionConfiguration_ID = int.Parse(r["ExtractionConfiguration_ID"].ToString());

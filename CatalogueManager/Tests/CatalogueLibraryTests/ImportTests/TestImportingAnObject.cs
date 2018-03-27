@@ -7,8 +7,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.ObjectSharing;
-using CatalogueLibrary.Repositories.Sharing;
 using CatalogueLibraryTests.Integration;
 using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
@@ -18,6 +16,8 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Serialization;
 using Rhino.Mocks;
 using Rhino.Mocks.Utilities;
+using Sharing.Dependency;
+using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.ImportTests
@@ -30,7 +30,9 @@ namespace CatalogueLibraryTests.ImportTests
             var c = new Catalogue(CatalogueRepository, "omg cata");
             Assert.AreEqual(CatalogueRepository.GetAllCatalogues().Count(), 1);
 
-            var c2 = (Catalogue)CatalogueRepository.ShareManager.ImportObject(new MapsDirectlyToDatabaseTableStatelessDefinition<Catalogue>(c),null);
+            var shareManager = new ShareManager(RepositoryLocator);
+
+            var c2 = (Catalogue)shareManager.ImportObject(new MapsDirectlyToDatabaseTableStatelessDefinition<Catalogue>(c), null);
 
             Assert.AreEqual(c.Name, c2.Name);
             Assert.AreNotEqual(c.ID,c2.ID);
@@ -54,7 +56,7 @@ namespace CatalogueLibraryTests.ImportTests
             var n = new SharedPluginImporter(p);
             
             //reject the reuse of an existing one
-            var p2 = n.Import(CatalogueRepository, new ThrowImmediatelyCheckNotifier());
+            var p2 = n.Import(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
 
             Assert.AreEqual(p.LoadModuleAssemblies.Count(),p2.LoadModuleAssemblies.Count());
             Assert.AreEqual(p.LoadModuleAssemblies.First().Dll,p2.LoadModuleAssemblies.First().Dll);
@@ -89,7 +91,7 @@ namespace CatalogueLibraryTests.ImportTests
             var n = new SharedPluginImporter(new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(p), new[] { new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(newDll) });
             
             //accept that it is an update
-            var p2 = n.Import(CatalogueRepository, new AcceptAllCheckNotifier());
+            var p2 = n.Import(RepositoryLocator, new AcceptAllCheckNotifier());
 
             Assert.IsFalse(lma.Exists());
             Assert.AreEqual(p,p2);
@@ -126,7 +128,7 @@ namespace CatalogueLibraryTests.ImportTests
             var n = new SharedPluginImporter(pStateless,new []{lmaStateless});
             
             //accept that it is an update
-            var p2 = n.Import(CatalogueRepository, new AcceptAllCheckNotifier());
+            var p2 = n.Import(RepositoryLocator, new AcceptAllCheckNotifier());
 
             Assert.AreEqual(p, p2);
             Assert.AreEqual(new byte[] { 0, 1, 0, 1 }, p2.LoadModuleAssemblies.Single().Dll);
@@ -166,7 +168,7 @@ namespace CatalogueLibraryTests.ImportTests
 
             var import = new SharedPluginImporter(s, sa);
 
-            var p2 = import.Import(CatalogueRepository, new AcceptAllCheckNotifier());
+            var p2 = import.Import(RepositoryLocator, new AcceptAllCheckNotifier());
 
             Assert.AreEqual(p.LoadModuleAssemblies.Count(),p2.LoadModuleAssemblies.Count());
             Assert.AreEqual(p.LoadModuleAssemblies.First().Dll,p2.LoadModuleAssemblies.First().Dll);

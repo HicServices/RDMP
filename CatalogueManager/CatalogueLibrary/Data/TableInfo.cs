@@ -137,7 +137,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public TableInfo(ICatalogueRepository repository, DbDataReader r)
+        internal TableInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             _catalogueRepository = repository;

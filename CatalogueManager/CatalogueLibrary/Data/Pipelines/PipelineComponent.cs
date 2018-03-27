@@ -90,7 +90,7 @@ namespace CatalogueLibrary.Data.Pipelines
             });   
         }
 
-        public PipelineComponent(ICatalogueRepository repository, DbDataReader r)
+        internal PipelineComponent(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Order = int.Parse(r["Order"].ToString());

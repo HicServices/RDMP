@@ -271,7 +271,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public ExtractionConfiguration(IDataExportRepository repository, DbDataReader r)
+        internal ExtractionConfiguration(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Project_ID = int.Parse(r["Project_ID"].ToString());

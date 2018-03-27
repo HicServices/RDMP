@@ -248,7 +248,6 @@
     <Compile Include="Integration\AllObjectsHaveImages.cs" />
     <Compile Include="Integration\ArgumentTests\TestArgumentedClass.cs" />
     <Compile Include="Integration\CatalogueCheckTests.cs" />
-    <Compile Include="Integration\CatalogueClonerTests.cs" />
     <Compile Include="Integration\CatalogueItemTests.cs" />
     <Compile Include="Integration\CatalogueTests.cs" />
     <Compile Include="Integration\ColumnInfoTests.cs" />
@@ -344,6 +343,10 @@
     <Compile Include="Unit\TestAcronymGeneration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj">
+      <Project>{63E1D23E-F82C-4325-B0F7-9638C3753A46}</Project>
+      <Name>ANOStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj">
       <Project>{2CDD82D5-3E34-46C5-9679-ADEAB49B170C}</Project>
       <Name>AnonymisationTests</Name>
@@ -352,7 +355,7 @@
       <Project>{550988FD-F1FA-41D8-BE0F-00B4DE47D320}</Project>
       <Name>ResearchDataManagementPlatform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Caching\Engine\CachingEngine\CachingEngine.csproj">
+    <ProjectReference Include="..\..\..\Caching\CachingEngine\CachingEngine.csproj">
       <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
       <Name>CachingEngine</Name>
     </ProjectReference>
@@ -420,6 +423,10 @@
       <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
       <Name>ReusableUIComponents</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj">
       <Project>{ca13a431-7fb6-4bce-8521-42d130934311}</Project>
       <Name>Tests.Common</Name>
@@ -432,10 +439,6 @@
       <Project>{8e14721e-2e82-4ec5-87f0-0b32f54911b5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Developer\CommitAssembly\CommitAssembly.csproj">
-      <Project>{2a23083b-c198-4f99-9621-c0bd44f671c4}</Project>
-      <Name>CommitAssembly</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\CatalogueManager\CatalogueManager.csproj">
       <Project>{fdf08240-2afc-48a4-8f48-37cc7ea3000b}</Project>
       <Name>CatalogueManager</Name>
@@ -446,10 +449,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Integration\CommitAssemblyTest.cd" />
     <None Include="Resources\InvalidPlugin.dll" />
     <None Include="Resources\DummyPlugin.dll" />

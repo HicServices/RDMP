@@ -51,7 +51,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public DataUser(IDataExportRepository repository, DbDataReader r)
+        internal DataUser(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Forename = r["Forename"] as string;

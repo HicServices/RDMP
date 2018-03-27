@@ -1,9 +1,12 @@
 ﻿using System;
+using CatalogueLibrary.Checks;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibraryTests.Unit
@@ -21,12 +24,18 @@ namespace CatalogueLibraryTests.Unit
 
             public ColumnInfo ColumnInfo { get; private set; }
             public int Order { get; set; }
+
+            [Sql]
             public string SelectSQL { get; set; }
             public int ID { get; private set; }
             public string Alias { get; set; }
             public bool HashOnDataRelease { get; private set; }
             public bool IsExtractionIdentifier { get; private set; }
             public bool IsPrimaryKey { get; private set; }
+            public void Check(ICheckNotifier notifier)
+            {
+                new ColumnSyntaxChecker(this).Check(notifier);
+            }
         }
 
         [Test]
@@ -80,11 +89,11 @@ namespace CatalogueLibraryTests.Unit
             TestColumn tc = new TestColumn();
             
             tc.Alias = "[bob smith]";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            tc.Check(new ThrowImmediatelyCheckNotifier());
             tc.Alias = "`bob smith`";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            tc.Check(new ThrowImmediatelyCheckNotifier());
             tc.Alias = "`[bob smith]`";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            tc.Check(new ThrowImmediatelyCheckNotifier());
 
         }
 
@@ -95,7 +104,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob smith";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            tc.Check(new ThrowImmediatelyCheckNotifier());
 
         }
 
@@ -105,7 +114,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "`bob";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            tc.Check(new ThrowImmediatelyCheckNotifier());
            
         }
         [Test]
@@ -114,7 +123,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob]";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            tc.Check(new ThrowImmediatelyCheckNotifier());
         }
 
         [Test] 
@@ -124,7 +133,7 @@ namespace CatalogueLibraryTests.Unit
             TestColumn tc = new TestColumn();
             tc.Alias = "bob";
             tc.SelectSQL = "GetSomething('here'";
-            RDMPQuerySyntaxHelper.CheckSyntax(tc);
+            tc.Check(new ThrowImmediatelyCheckNotifier());
         }
     }
 }

@@ -11,11 +11,20 @@ namespace CatalogueLibrary.Checks
     {
         private readonly IPipeline _pipeline;
 
+        /// <summary>
+        /// Sets up the checker to check the supplied pipeline
+        /// </summary>
+        /// <param name="pipeline"></param>
         public PipelineChecker(IPipeline pipeline)
         {
             _pipeline = pipeline;
         }
         
+        /// <summary>
+        /// Checks that all the components defined in the pipeline are found using a MEFChecker.  This will also handle classes changing namespaces by updating
+        /// class name reference.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             var mef = ((CatalogueRepository) _pipeline.Repository).MEF;

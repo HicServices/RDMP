@@ -46,7 +46,7 @@ namespace CatalogueLibrary.Data.Pipelines
                 {"Type", typeof (string).ToString()} });
         }
 
-        public PipelineComponentArgument(ICatalogueRepository repository, DbDataReader r)
+        internal PipelineComponentArgument(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
            PipelineComponent_ID = int.Parse(r["PipelineComponent_ID"].ToString());

@@ -52,7 +52,7 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
-        public ExtractionFilterParameterSet(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilterParameterSet(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"].ToString();
