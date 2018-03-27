@@ -177,6 +177,8 @@ namespace ANOStore.ANOEngineering
                 }
             }
             
+            
+
             //don't let user select ExtractionCategory.Any
             if (ExtractionCategoryIfAny == ExtractionCategory.Any)
                 notifier.OnCheckPerformed(new CheckEventArgs("Extraction Category '" + ExtractionCategoryIfAny + "' is not valid (on ColumnInfo " + _columnInfo + ")", CheckResult.Fail));
@@ -186,6 +188,14 @@ namespace ANOStore.ANOEngineering
                 if (_allCatalogueItems.All(ci => ci.ColumnInfo_ID != _columnInfo.ID))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs("There are no CatalogueItems configured for ColumnInfo '" + _columnInfo + "' but it's PlannedExtractionCategory is '" + ExtractionCategoryIfAny + "'", CheckResult.Fail));
+
+            //Will there be conflicts on name?
+            if (_planManager.TargetDatabase != null && Plan != Plan.Drop)
+            {
+                //don't let them extract to the same database
+                if(_planManager.TargetDatabase.GetRuntimeName() == _columnInfo.TableInfo.Database)
+                    notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo " + _columnInfo + " is already in " + _planManager.TargetDatabase.GetRuntimeName() +" you cannot create an ANO version in the same database",CheckResult.Fail));
+            }
         }
 
         public string GetEndpointDataType()
