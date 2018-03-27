@@ -14,6 +14,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using LoadModules.Generic.Attachers;
@@ -67,6 +68,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             tlvTableInfoMigrations.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            btnLoadPlan.Image = FamFamFamIcons.page_white_get;
+            btnSavePlan.Image = FamFamFamIcons.page_white_put;
         }
 
         #region Aspect Getters and Setters

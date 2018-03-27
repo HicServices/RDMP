@@ -10,9 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataExportManager", "DataExportManager", "{1C4A08C5-C2DB-4D4C-A5E3-7B8352801421}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataExportManager", "DataExportManager\DataExportManager\DataExportManager.csproj", "{7665AFDE-002D-4A53-B3B8-AE17BC8F2BBA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F00EF92F-A683-4D43-A2A1-C237C23ADE8D} = {F00EF92F-A683-4D43-A2A1-C237C23ADE8D}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataExportLibrary", "DataExportManager\DataExportLibrary\DataExportLibrary.csproj", "{146B6739-8541-42D3-A390-4917E6F3BCC2}"
 EndProject
@@ -109,6 +106,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Anonymisation", "Anonymisation", "{EE25E922-F77C-4CA2-BBD7-727BB549C95E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ANOStore", "Anonymisation\ANOStore\ANOStore.csproj", "{63E1D23E-F82C-4325-B0F7-9638C3753A46}"
+	ProjectSection(ProjectDependencies) = postProject
+		{146B6739-8541-42D3-A390-4917E6F3BCC2} = {146B6739-8541-42D3-A390-4917E6F3BCC2}
+		{76D185E2-2B48-45B6-A2A9-74FF71D46C15} = {76D185E2-2B48-45B6-A2A9-74FF71D46C15}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentifierDump", "Anonymisation\IdentifierDump\IdentifierDump.csproj", "{01028615-752E-470A-90A7-D809AF2EE09F}"
 EndProject
@@ -177,6 +178,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{28A15609-73F6-4840-94AF-9BD7E1B06B22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResearchDataManagementPlatform", "Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj", "{550988FD-F1FA-41D8-BE0F-00B4DE47D320}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F00EF92F-A683-4D43-A2A1-C237C23ADE8D} = {F00EF92F-A683-4D43-A2A1-C237C23ADE8D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.UI", "Plugin\Plugin.UI\Plugin.UI.csproj", "{5ACF495B-C5E9-4D1C-BB12-158BB673BB03}"
 EndProject
@@ -201,6 +205,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sharing", "Sharing", "{338BC389-377A-4C13-9AC1-CEC1289EFE13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharing", "Sharing\Sharing\Sharing.csproj", "{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}"
+	ProjectSection(ProjectDependencies) = postProject
+		{146B6739-8541-42D3-A390-4917E6F3BCC2} = {146B6739-8541-42D3-A390-4917E6F3BCC2}
+		{76D185E2-2B48-45B6-A2A9-74FF71D46C15} = {76D185E2-2B48-45B6-A2A9-74FF71D46C15}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

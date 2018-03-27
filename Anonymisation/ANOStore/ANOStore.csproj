@@ -152,7 +152,7 @@
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj">
-      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Project>{5f04a8ff-f5cd-4276-8bf1-28a8f7c58f28}</Project>
       <Name>Sharing</Name>
     </ProjectReference>
     <ProjectReference Include="..\ANOStore.Database\ANOStore.Database.csproj">

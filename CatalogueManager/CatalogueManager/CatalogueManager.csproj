@@ -1549,6 +1549,8 @@
     <None Include="Icons\AllObjectSharingNode.png" />
     <None Include="Icons\CohortCustomColumn.png" />
     <None Include="Icons\ExtractableColumn.png" />
+    <None Include="Icons\famfamfam\page_white_get.png" />
+    <None Include="Icons\famfamfam\page_white_put.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

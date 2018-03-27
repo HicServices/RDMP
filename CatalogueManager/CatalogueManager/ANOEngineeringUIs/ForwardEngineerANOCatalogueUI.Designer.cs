@@ -47,6 +47,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.lblPlanIsSuggestion = new System.Windows.Forms.Label();
             this.tlvTableInfoMigrations = new BrightIdeasSoftware.TreeListView();
             this.olvTableInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvDestinationExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvMigrationPlan = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvPickedANOTable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDilution = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -54,6 +55,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnLoadPlan = new System.Windows.Forms.Button();
+            this.btnSavePlan = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnExecute = new System.Windows.Forms.Button();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
@@ -67,7 +70,6 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvNumberOfDigits = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumberOfCharacters = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
-            this.olvDestinationExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.gbTables.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -258,6 +260,11 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvTableInfoName.Text = "Name";
             this.olvTableInfoName.Width = 327;
             // 
+            // olvDestinationExtractionCategory
+            // 
+            this.olvDestinationExtractionCategory.Text = "Category";
+            this.olvDestinationExtractionCategory.Width = 102;
+            // 
             // olvMigrationPlan
             // 
             this.olvMigrationPlan.CellEditUseWholeCell = true;
@@ -305,6 +312,8 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnLoadPlan);
+            this.groupBox1.Controls.Add(this.btnSavePlan);
             this.groupBox1.Controls.Add(this.serverDatabaseTableSelector1);
             this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -315,6 +324,22 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Destination Server";
             // 
+            // btnLoadPlan
+            // 
+            this.btnLoadPlan.Location = new System.Drawing.Point(623, 132);
+            this.btnLoadPlan.Name = "btnLoadPlan";
+            this.btnLoadPlan.Size = new System.Drawing.Size(27, 27);
+            this.btnLoadPlan.TabIndex = 71;
+            this.btnLoadPlan.UseVisualStyleBackColor = true;
+            // 
+            // btnSavePlan
+            // 
+            this.btnSavePlan.Location = new System.Drawing.Point(593, 132);
+            this.btnSavePlan.Name = "btnSavePlan";
+            this.btnSavePlan.Size = new System.Drawing.Size(27, 27);
+            this.btnSavePlan.TabIndex = 71;
+            this.btnSavePlan.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btnExecute);
@@ -322,7 +347,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.groupBox2.Controls.Add(this.btnRefreshChecks);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(604, 73);
+            this.groupBox2.Location = new System.Drawing.Point(593, 61);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(347, 65);
             this.groupBox2.TabIndex = 70;
@@ -444,11 +469,6 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(968, 22);
             this.rdmpObjectsRibbonUI1.TabIndex = 0;
             // 
-            // olvDestinationExtractionCategory
-            // 
-            this.olvDestinationExtractionCategory.Text = "Category";
-            this.olvDestinationExtractionCategory.Width = 102;
-            // 
             // ForwardEngineerANOCatalogueUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -513,5 +533,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tbFilter;
         private OLVColumn olvDestinationExtractionCategory;
+        private System.Windows.Forms.Button btnLoadPlan;
+        private System.Windows.Forms.Button btnSavePlan;
     }
 }

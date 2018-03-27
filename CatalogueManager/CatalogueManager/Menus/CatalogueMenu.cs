@@ -21,7 +21,7 @@ namespace CatalogueManager.Menus
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
-            Items.Add("View Checks", CatalogueIcons.TinyRed, (s, e) => PopupChecks(catalogue));
+            Items.Add("View Checks", CatalogueIcons.TinyYellow, (s, e) => PopupChecks(catalogue));
 
             Items.Add(new ToolStripSeparator());
 
