@@ -232,15 +232,16 @@ namespace CatalogueLibraryTests.Integration
                 scPlan.ANOTable = anoTable;
                 scPlan.Plan = Plan.ANO;
 
-                planManager.TargetDatabase = dbTo;
-                planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
-
                 if (putPlanThroughSerialization)
                 {
                     var asString = JsonConvertExtensions.SerializeObject(planManager, RepositoryLocator);
 
                     planManager = (ForwardEngineerANOCataloguePlanManager)JsonConvertExtensions.DeserializeObject( asString, typeof(ForwardEngineerANOCataloguePlanManager), RepositoryLocator);
                 }
+                
+                //not part of serialization
+                planManager.TargetDatabase = dbTo;
+                planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
 
                 var engine =  new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
 

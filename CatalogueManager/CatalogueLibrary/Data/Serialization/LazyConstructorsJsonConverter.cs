@@ -46,7 +46,11 @@ namespace CatalogueLibrary.Data.Serialization
             var instance = constructor.Key.Invoke(constructor.Value.ToArray());
 
             serializer.Populate(reader,instance);
-            
+
+            var callback = instance as ILazyConstructorFinishedCallback;
+            if(callback != null)
+                callback.LazyConstructorFinished();
+
             return instance;
         }
 

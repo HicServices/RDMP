@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -14,15 +16,26 @@ namespace ANOStore.ANOEngineering
     /// </summary>
     public class ColumnInfoANOPlan:ICheckable
     {
-        private readonly ColumnInfo _columnInfo;
-        private readonly ExtractionInformation[] _allExtractionInformations;
-        private readonly CatalogueItem[] _allCatalogueItems;
-        private readonly List<JoinInfo> _joins;
-        private readonly List<Lookup> _lookups;
-        private readonly ColumnInfo[] _allColumnInfosSystemWide;
-        private IQuerySyntaxHelper _querySyntaxHelper;
-        private readonly ForwardEngineerANOCataloguePlanManager _planManager;
+        public ColumnInfo ColumnInfo
+        {
+            get { return _columnInfo; }
+            set
+            {
+                _columnInfo = value;
+                if (value != null)
+                    _querySyntaxHelper = _columnInfo.GetQuerySyntaxHelper();
+            }
+        }
+
+        private ExtractionInformation[] _allExtractionInformations;
+        private CatalogueItem[] _allCatalogueItems;
+        private List<JoinInfo> _joins;
+        private List<Lookup> _lookups;
+        private ColumnInfo[] _allColumnInfosSystemWide;
+        private ForwardEngineerANOCataloguePlanManager _planManager;
         private Plan _plan;
+        private ColumnInfo _columnInfo;
+        private IQuerySyntaxHelper _querySyntaxHelper;
 
         public ANOTable ANOTable {get;set;}
         public IDilutionOperation Dilution { get; set; }
@@ -63,8 +76,16 @@ namespace ANOStore.ANOEngineering
             get
             {
                 //ColumnInfo is part of the table primary key
-                return _columnInfo.IsPrimaryKey;
+                return ColumnInfo.IsPrimaryKey;
             }
+        }
+
+        /// <summary>
+        /// Json deserialization constructor <see cref="LazyConstructorsJsonConverter"/>
+        /// </summary>
+        public ColumnInfoANOPlan(ColumnInfo  columnInfo)
+        {
+            ColumnInfo = columnInfo;
         }
 
         /// <summary>
@@ -72,33 +93,34 @@ namespace ANOStore.ANOEngineering
         /// called chi or ANOchi already existing (probably from another table) then we should suggest using ANOTable ANOchi.
         /// </summary>
         /// <returns></returns>
-        public ColumnInfoANOPlan(ColumnInfo columnInfo, ExtractionInformation[] allExtractionInformations, CatalogueItem[] allCatalogueItems, List<JoinInfo> joins, List<Lookup> lookups, ColumnInfo[] allColumnInfosSystemWide, IQuerySyntaxHelper querySyntaxHelper,ForwardEngineerANOCataloguePlanManager planManager)
+        internal void Initialize(ExtractionInformation[] allExtractionInformations, CatalogueItem[] allCatalogueItems, List<JoinInfo> joins, List<Lookup> lookups, ColumnInfo[] allColumnInfosSystemWide,ForwardEngineerANOCataloguePlanManager planManager)
         {
-            _columnInfo = columnInfo;
             _allExtractionInformations = allExtractionInformations;
             _allCatalogueItems = allCatalogueItems;
             _joins = joins;
             _lookups = lookups;
             _allColumnInfosSystemWide = allColumnInfosSystemWide;
-            _querySyntaxHelper = querySyntaxHelper;
             _planManager = planManager;
 
             //get an extraction category based on it's current extractability
             ExtractionCategoryIfAny = GetMaxExtractionCategoryIfAny();
-
-            if (_columnInfo.GetRuntimeName().StartsWith("hic_"))
-                Plan = Plan.Drop;//suggest dropping hic_ fields
-            else
-            if(_columnInfo.IsPrimaryKey || IsInvolvedInLookups() || IsInvolvedInJoins())
-                Plan = Plan.PassThroughUnchanged; //if it's involved in lookups, joins or is a primary key
-            else
-            if(ExtractionCategoryIfAny == null) //if it isn't extractable
-                Plan = Plan.Drop;
-            else
-                Plan = Plan.PassThroughUnchanged; //it is extractable but not special
-
+            
             //if theres an associated ANOTable with a different ColumnInfo with the same name e.g. chi=>ANOChi in another dataset that was already anonymised
             MakeANOTableSuggestionIfApplicable();
+        }
+
+        public void SetToRecommendedPlan()
+        {
+            if (ColumnInfo.GetRuntimeName().StartsWith("hic_"))
+                Plan = Plan.Drop;//suggest dropping hic_ fields
+            else
+                if (ColumnInfo.IsPrimaryKey || IsInvolvedInLookups() || IsInvolvedInJoins())
+                    Plan = Plan.PassThroughUnchanged; //if it's involved in lookups, joins or is a primary key
+                else
+                    if (ExtractionCategoryIfAny == null) //if it isn't extractable
+                        Plan = Plan.Drop;
+                    else
+                        Plan = Plan.PassThroughUnchanged; //it is extractable but not special
         }
 
 
@@ -108,7 +130,7 @@ namespace ANOStore.ANOEngineering
 
             //Decide on an ExtractionCategory
             //setup the planned extraction category based on what CatalogueItem(s) exist for it (1 to many)
-            foreach (var catalogueItem in _allCatalogueItems.Where(ci => ci.ColumnInfo_ID == _columnInfo.ID).ToArray())
+            foreach (var catalogueItem in _allCatalogueItems.Where(ci => ci.ColumnInfo_ID == ColumnInfo.ID).ToArray())
             {
                 //that are extractable
                 var extractionInformation = _allExtractionInformations.SingleOrDefault(ei => ei.CatalogueItem_ID == catalogueItem.ID);
@@ -130,7 +152,7 @@ namespace ANOStore.ANOEngineering
         private void MakeANOTableSuggestionIfApplicable()
         {
             //if there is a ColumnInfo with the same name (or that has ANO prefix)
-            var matchingOnName = _allColumnInfosSystemWide.Where(a => a.GetRuntimeName() == _columnInfo.GetRuntimeName() || a.GetRuntimeName() == "ANO" + _columnInfo.GetRuntimeName()).ToArray();
+            var matchingOnName = _allColumnInfosSystemWide.Where(a => a.GetRuntimeName() == ColumnInfo.GetRuntimeName() || a.GetRuntimeName() == "ANO" + ColumnInfo.GetRuntimeName()).ToArray();
 
             //and if the same named ColumnInfo(s) have a shared ANOTable (e.g. ANOCHI)
             var agreedAnoTableID = matchingOnName.Where(c => c.ANOTable_ID != null).Select(c => c.ANOTable_ID).Distinct().ToArray();
@@ -138,63 +160,61 @@ namespace ANOStore.ANOEngineering
             //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables 
             if (agreedAnoTableID.Count() == 1)
             {
-                ANOTable = _columnInfo.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value);
+                ANOTable = ColumnInfo.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value);
                 Plan = Plan.ANO;
             }
         }
 
         public bool IsInvolvedInLookups()
         {
-            return _lookups.Any(l=>l.Description_ID == _columnInfo.ID || l.ForeignKey_ID == _columnInfo.ID || l.PrimaryKey_ID == l.ID);
+            return _lookups.Any(l => l.Description_ID == ColumnInfo.ID || l.ForeignKey_ID == ColumnInfo.ID || l.PrimaryKey_ID == l.ID);
         }
         private bool IsInvolvedInJoins()
         {
-            return _joins.Any(j => j.PrimaryKey_ID == _columnInfo.ID || j.ForeignKey_ID == _columnInfo.ID);
+            return _joins.Any(j => j.PrimaryKey_ID == ColumnInfo.ID || j.ForeignKey_ID == ColumnInfo.ID);
         }
 
         public void Check(ICheckNotifier notifier)
         {
             if(IsMandatory && Plan == Plan.Drop)
-                notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo '" + _columnInfo + "' is mandatory and cannot be dropped",CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo '" + ColumnInfo + "' is mandatory and cannot be dropped",CheckResult.Fail));
 
             if(Plan == Plan.ANO && ANOTable == null)
-                notifier.OnCheckPerformed(new CheckEventArgs("No ANOTable has been picked for ColumnInfo '" + _columnInfo + "'", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("No ANOTable has been picked for ColumnInfo '" + ColumnInfo + "'", CheckResult.Fail));
 
             if(Plan == Plan.Dilute && Dilution == null)
-                notifier.OnCheckPerformed(new CheckEventArgs("No Dilution Operation has been picked for ColumnInfo '" + _columnInfo + "'", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("No Dilution Operation has been picked for ColumnInfo '" + ColumnInfo + "'", CheckResult.Fail));
             
             if (Plan != Plan.Drop)
             {
                 try
                 {
                     var datatype = GetEndpointDataType();
-                    notifier.OnCheckPerformed(new CheckEventArgs("Determined endpoint data type '" + datatype + "' for ColumnInfo '" + _columnInfo + "'", CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Determined endpoint data type '" + datatype + "' for ColumnInfo '" + ColumnInfo + "'", CheckResult.Success));
 
                 }
                 catch (Exception e)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not determine endpoint data type for ColumnInfo '" + _columnInfo + "'", CheckResult.Fail, e));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not determine endpoint data type for ColumnInfo '" + ColumnInfo + "'", CheckResult.Fail, e));
                 }
             }
             
-            
-
             //don't let user select ExtractionCategory.Any
             if (ExtractionCategoryIfAny == ExtractionCategory.Any)
-                notifier.OnCheckPerformed(new CheckEventArgs("Extraction Category '" + ExtractionCategoryIfAny + "' is not valid (on ColumnInfo " + _columnInfo + ")", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("Extraction Category '" + ExtractionCategoryIfAny + "' is not valid (on ColumnInfo " + ColumnInfo + ")", CheckResult.Fail));
 
             //for each column we are not planning on dropping but are planning on making extractable, there must be a CatalogueItem in the source Catalogue
             if (ExtractionCategoryIfAny != null && Plan != Plan.Drop)
-                if (_allCatalogueItems.All(ci => ci.ColumnInfo_ID != _columnInfo.ID))
+                if (_allCatalogueItems.All(ci => ci.ColumnInfo_ID != ColumnInfo.ID))
                     notifier.OnCheckPerformed(
-                        new CheckEventArgs("There are no CatalogueItems configured for ColumnInfo '" + _columnInfo + "' but it's PlannedExtractionCategory is '" + ExtractionCategoryIfAny + "'", CheckResult.Fail));
+                        new CheckEventArgs("There are no CatalogueItems configured for ColumnInfo '" + ColumnInfo + "' but it's PlannedExtractionCategory is '" + ExtractionCategoryIfAny + "'", CheckResult.Fail));
 
             //Will there be conflicts on name?
             if (_planManager.TargetDatabase != null && Plan != Plan.Drop)
             {
                 //don't let them extract to the same database
-                if(_planManager.TargetDatabase.GetRuntimeName() == _columnInfo.TableInfo.Database)
-                    notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo " + _columnInfo + " is already in " + _planManager.TargetDatabase.GetRuntimeName() +" you cannot create an ANO version in the same database",CheckResult.Fail));
+                if(_planManager.TargetDatabase.GetRuntimeName() == ColumnInfo.TableInfo.Database)
+                    notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo " + ColumnInfo + " is already in " + _planManager.TargetDatabase.GetRuntimeName() +" you cannot create an ANO version in the same database",CheckResult.Fail));
             }
         }
 
@@ -226,7 +246,7 @@ namespace ANOStore.ANOEngineering
 
                 case Plan.PassThroughUnchanged:
 
-                    return sourceTypeTranslater.TranslateSQLDBType(_columnInfo.Data_type, destinationTypeTranslater);
+                    return sourceTypeTranslater.TranslateSQLDBType(ColumnInfo.Data_type, destinationTypeTranslater);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -13,8 +13,15 @@ namespace CatalogueLibrary.Data.Serialization
         public static string SerializeObject(object value, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             var databaseEntityJsonConverter = new DatabaseEntityJsonConverter(repositoryLocator);
-
-            return JsonConvert.SerializeObject(value, new JsonConverter[] {databaseEntityJsonConverter});
+            
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+                Converters = new JsonConverter[] {databaseEntityJsonConverter}
+            };
+            
+            return JsonConvert.SerializeObject(value, settings);
         }
 
         public static object DeserializeObject(string value, Type type,IRDMPPlatformRepositoryServiceLocator repositoryLocator, params object[] objectsForConstructingStuffWith)
@@ -22,7 +29,14 @@ namespace CatalogueLibrary.Data.Serialization
             var databaseEntityJsonConverter = new DatabaseEntityJsonConverter(repositoryLocator);
             var lazyJsonConverter = new LazyConstructorsJsonConverter(new[] {repositoryLocator}.Union(objectsForConstructingStuffWith).ToArray());
 
-            return JsonConvert.DeserializeObject(value, type, new JsonConverter[] {databaseEntityJsonConverter, lazyJsonConverter});
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+                Converters = new JsonConverter[] {databaseEntityJsonConverter, lazyJsonConverter}
+            };
+            
+            return JsonConvert.DeserializeObject(value, type, settings);
         }
     }
 }

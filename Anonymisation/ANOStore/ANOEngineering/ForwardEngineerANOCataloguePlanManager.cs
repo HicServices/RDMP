@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
+using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -21,7 +23,7 @@ namespace ANOStore.ANOEngineering
     /// load or should load in date based batches (e.g. 1 year at a time - use this option if you have too much data in the source table to be migrated in one go - e.g.
     /// tens of millions of records). 
     /// </summary>
-    public class ForwardEngineerANOCataloguePlanManager : ICheckable
+    public class ForwardEngineerANOCataloguePlanManager : ICheckable, ILazyConstructorFinishedCallback
     {
         private readonly ShareManager _shareManager;
 
@@ -39,15 +41,19 @@ namespace ANOStore.ANOEngineering
         private CatalogueItem[] _allCatalogueItems;
 
         public JsonCompatibleDictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new JsonCompatibleDictionary<ColumnInfo, ColumnInfoANOPlan>();
-
+        
+        [JsonIgnore]
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
         public TableInfo[] TableInfos { get; private set; }
 
+        [JsonIgnore]
         public DiscoveredDatabase TargetDatabase { get; set; }
+
         public ColumnInfo DateColumn { get; set; }
         public DateTime? StartDate { get; set; }
 
+        [JsonIgnore]
         public HashSet<TableInfo> SkippedTables = new HashSet<TableInfo>();
         private Catalogue _catalogue;
 
@@ -70,6 +76,9 @@ namespace ANOStore.ANOEngineering
         public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Catalogue catalogue): this(repositoryLocator)
         {
             Catalogue = catalogue;
+
+            foreach (var plan in Plans.Values)
+                plan.SetToRecommendedPlan();
         }
 
         public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
@@ -201,30 +210,34 @@ namespace ANOStore.ANOEngineering
         /// </summary>
         public void RefreshTableInfos()
         {
-            var allColumnInfosSystemWide = Catalogue.Repository.GetAllObjects<ColumnInfo>();
-
-            _allExtractionInformations = Catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
-            _allCatalogueItems = Catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
-            var joins = GetJoinInfosRequiredCatalogue();
-            var lookups = GetLookupsRequiredCatalogue();
-
             TableInfos = Catalogue.GetTableInfoList(true);
 
             //generate plans for novel ColumnInfos
             foreach (TableInfo tableInfo in TableInfos)
-            {
-                var syntaxHelper = tableInfo.GetQuerySyntaxHelper();
-                
                 foreach (ColumnInfo columnInfo in tableInfo.ColumnInfos)
                     if (!Plans.ContainsKey(columnInfo))
-                        Plans.Add(columnInfo, new ColumnInfoANOPlan(columnInfo, _allExtractionInformations, _allCatalogueItems, joins, lookups, allColumnInfosSystemWide, syntaxHelper,this));
-            }
-            
+                        Plans.Add(columnInfo, new ColumnInfoANOPlan(columnInfo));
+
 
             //Remove unplanned columns
             foreach (var col in Plans.Keys.ToArray())
                 if (!IsStillNeeded(col))
                     Plans.Remove(col);
+
+            InitializePlans();
+        }
+
+        private void InitializePlans()
+        {
+                        
+            _allExtractionInformations = Catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+            _allCatalogueItems = Catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
+            var allColumnInfosSystemWide = Catalogue.Repository.GetAllObjects<ColumnInfo>();
+            var joins = GetJoinInfosRequiredCatalogue();
+            var lookups = GetLookupsRequiredCatalogue();
+
+            foreach (var plan in Plans.Values)
+                plan.Initialize(_allExtractionInformations, _allCatalogueItems, joins, lookups, allColumnInfosSystemWide,this);
         }
 
         public List<JoinInfo> GetJoinInfosRequiredCatalogue()
@@ -247,6 +260,11 @@ namespace ANOStore.ANOEngineering
         private bool IsStillNeeded(ColumnInfo columnInfo)
         {
             return TableInfos.Any(t => t.ID == columnInfo.TableInfo_ID);
+        }
+
+        public void LazyConstructorFinished()
+        {
+            InitializePlans();
         }
     }
 }
