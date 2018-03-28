@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;

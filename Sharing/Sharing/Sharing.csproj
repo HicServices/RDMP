@@ -60,7 +60,6 @@
     <Compile Include="Refactoring\SelectSQLRefactorer.cs" />
     <Compile Include="Sharing\MapsDirectlyToDatabaseTableStatelessDefinition.cs" />
     <Compile Include="Sharing\PropertyPopulater.cs" />
-    <Compile Include="Sharing\ShareManager.cs" />
     <Compile Include="Transmission\RemotePushingService.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -405,8 +405,9 @@
     <Compile Include="Data\IAggregateTopX.cs" />
     <Compile Include="Data\IColumnInfo.cs" />
     <Compile Include="Data\IMasqueradeAs.cs" />
-    <Compile Include="Data\ObjectExport.cs" />
-    <Compile Include="Data\ObjectImport.cs" />
+    <Compile Include="Data\ImportExport\ShareManager.cs" />
+    <Compile Include="Data\ImportExport\ObjectExport.cs" />
+    <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
@@ -414,6 +415,8 @@
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
+    <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
+    <Compile Include="Data\Serialization\LazyConstructorsJsonConverter.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />

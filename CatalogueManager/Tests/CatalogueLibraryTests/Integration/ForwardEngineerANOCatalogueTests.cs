@@ -10,11 +10,14 @@ using ANOStore.ANOEngineering;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Triggers;
 using Diagnostics.TestData;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -145,9 +148,11 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
-        public void CreateANOVersion_TestSkippingTables(bool tableInfoAlreadyExistsForSkippedTable)
+        [TestCase(false,false)]
+        [TestCase(false, true)]
+        [TestCase(true,false)]
+        [TestCase(true,true)]
+        public void CreateANOVersion_TestSkippingTables(bool tableInfoAlreadyExistsForSkippedTable,bool putPlanThroughSerialization)
         {
             var dbFrom = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.GetConsistentName("CreateANOVersion_TestSkippingTables_From"));
             var dbTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.GetConsistentName("CreateANOVersion_TestSkippingTables_To"));
@@ -229,6 +234,16 @@ namespace CatalogueLibraryTests.Integration
 
                 planManager.TargetDatabase = dbTo;
                 planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
+
+                if (putPlanThroughSerialization)
+                {
+                    var ser = new DatabaseEntityJsonConverter(RepositoryLocator);
+
+                    var settings = new JsonSerializerSettings { Converters = new[] { ser } };
+
+                    var asString = JsonConvert.SerializeObject(planManager, settings);
+                    planManager = (ForwardEngineerANOCataloguePlanManager)JsonConvert.DeserializeObject(asString, settings);
+                }
 
                 var engine =  new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
 

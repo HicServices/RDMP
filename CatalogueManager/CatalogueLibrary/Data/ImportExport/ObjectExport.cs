@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data
+namespace CatalogueLibrary.Data.ImportExport
 {
     /// <summary>
     /// Identifies an object in the local Catalogue database (or DataExport database) which has been shared externally (via it's SharingUID).  The use of a SharingUID

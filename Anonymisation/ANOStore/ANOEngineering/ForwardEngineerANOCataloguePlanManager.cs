@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
+using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -27,7 +29,7 @@ namespace ANOStore.ANOEngineering
         private ExtractionInformation[] _allExtractionInformations;
         private CatalogueItem[] _allCatalogueItems;
 
-        private readonly Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new Dictionary<ColumnInfo, ColumnInfoANOPlan>();
+        public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new Dictionary<ColumnInfo, ColumnInfoANOPlan>();
 
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
 

@@ -12,6 +12,7 @@ using ANOStore.ANOEngineering;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;

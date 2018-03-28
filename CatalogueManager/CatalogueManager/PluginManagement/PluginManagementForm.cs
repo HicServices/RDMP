@@ -351,7 +351,7 @@ namespace CatalogueManager.PluginManagement
             }
 
             var barsUI = new ProgressBarsUI("Pushing to remotes", true);
-            var service = new RemotePushingService(RepositoryLocator.CatalogueRepository, barsUI);
+            var service = new RemotePushingService(RepositoryLocator, barsUI);
             var f = new SingleControlForm(barsUI);
             f.Show();
             

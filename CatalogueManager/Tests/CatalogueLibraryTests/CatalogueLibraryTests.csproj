@@ -290,6 +290,7 @@
     <Compile Include="Integration\Validation\ReferentialIntegrityConstraintTests.cs" />
     <Compile Include="Integration\Validation\StandardRegexTests.cs" />
     <Compile Include="Integration\VersioningTests.cs" />
+    <Compile Include="JsonSerializationTests\JsonSerializationTests.cs" />
     <Compile Include="RefactoringTests\SelectSQLRefactorerTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />
