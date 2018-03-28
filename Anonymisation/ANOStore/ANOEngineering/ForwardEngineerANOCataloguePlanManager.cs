@@ -38,7 +38,7 @@ namespace ANOStore.ANOEngineering
         private ExtractionInformation[] _allExtractionInformations;
         private CatalogueItem[] _allCatalogueItems;
 
-        public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new Dictionary<ColumnInfo, ColumnInfoANOPlan>();
+        public JsonCompatibleDictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new JsonCompatibleDictionary<ColumnInfo, ColumnInfoANOPlan>();
 
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
