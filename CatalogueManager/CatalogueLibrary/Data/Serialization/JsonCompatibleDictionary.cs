@@ -1,10 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
 using Newtonsoft.Json;
 
-namespace ANOStore.ANOEngineering
+namespace CatalogueLibrary.Data.Serialization
 {
+    /// <summary>
+    /// Allows Json serialization of complex key Types.
+    /// 
+    /// Out of the box Json serializes Dictionary keys using ToString and seems to ignore any custom JsonConverter specified on the key class.  This class works around that behaviour
+    /// by only serializing an array of keys and an array of values.  Once both are populated then the underlying Dictionary Key/Values are created.
+    /// </summary>
+    /// <typeparam name="TK"></typeparam>
+    /// <typeparam name="TV"></typeparam>
     [JsonObject(MemberSerialization.OptIn)]
     public class JsonCompatibleDictionary<TK, TV> : Dictionary<TK, TV>
     {
