@@ -70,7 +70,7 @@ namespace CatalogueLibraryTests.Integration
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
-            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator), bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //no operations are as yet configured
@@ -123,7 +123,7 @@ namespace CatalogueLibraryTests.Integration
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
-            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //setup test rules for migrator
@@ -225,7 +225,7 @@ namespace CatalogueLibraryTests.Integration
                 anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
              
                 //////////////////The actual test!/////////////////
-                var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),cata);
+                var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,cata);
                 
                 //ano the table SkullColor
                 var scPlan = planManager.GetPlanForColumnInfo(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")));
@@ -237,12 +237,9 @@ namespace CatalogueLibraryTests.Integration
 
                 if (putPlanThroughSerialization)
                 {
-                    var ser = new DatabaseEntityJsonConverter(RepositoryLocator);
+                    var asString = JsonConvertExtensions.SerializeObject(planManager, RepositoryLocator);
 
-                    var settings = new JsonSerializerSettings { Converters = new[] { ser } };
-
-                    var asString = JsonConvert.SerializeObject(planManager, settings);
-                    planManager = (ForwardEngineerANOCataloguePlanManager)JsonConvert.DeserializeObject(asString, settings);
+                    planManager = (ForwardEngineerANOCataloguePlanManager)JsonConvertExtensions.DeserializeObject( asString, typeof(ForwardEngineerANOCataloguePlanManager), RepositoryLocator);
                 }
 
                 var engine =  new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
@@ -386,7 +383,7 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
             
             //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
-            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //setup test rules for migrator

@@ -7,7 +7,6 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
-using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -25,7 +24,17 @@ namespace ANOStore.ANOEngineering
     public class ForwardEngineerANOCataloguePlanManager : ICheckable
     {
         private readonly ShareManager _shareManager;
-        public Catalogue Catalogue { get; private set; }
+
+        public Catalogue Catalogue
+        {
+            get { return _catalogue; }
+            set
+            {
+                _catalogue = value;
+                RefreshTableInfos();
+            }
+        }
+
         private ExtractionInformation[] _allExtractionInformations;
         private CatalogueItem[] _allCatalogueItems;
 
@@ -40,20 +49,27 @@ namespace ANOStore.ANOEngineering
         public DateTime? StartDate { get; set; }
 
         public HashSet<TableInfo> SkippedTables = new HashSet<TableInfo>();
+        private Catalogue _catalogue;
 
-        public ForwardEngineerANOCataloguePlanManager(ShareManager shareManager, Catalogue catalogue)
+        /// <summary>
+        /// Constructor for deserialization via LazyConstructorsJsonConverter
+        /// </summary>
+        /// <param name="shareManager"></param>
+        public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            _shareManager = shareManager;
-            Catalogue = catalogue;
-
-            RefreshTableInfos();
-
-            DilutionOperations = new List<IDilutionOperation>();
+            _shareManager = new ShareManager(repositoryLocator);
             
+            DilutionOperations = new List<IDilutionOperation>();
+
             ObjectConstructor constructor = new ObjectConstructor();
 
-            foreach (var operationType in ((CatalogueRepository) catalogue.Repository).MEF.GetTypes<IDilutionOperation>())
-                DilutionOperations.Add((IDilutionOperation) constructor.Construct(operationType));
+            foreach (var operationType in repositoryLocator.CatalogueRepository.MEF.GetTypes<IDilutionOperation>())
+                DilutionOperations.Add((IDilutionOperation)constructor.Construct(operationType));
+        }
+
+        public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Catalogue catalogue): this(repositoryLocator)
+        {
+            Catalogue = catalogue;
         }
 
         public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)

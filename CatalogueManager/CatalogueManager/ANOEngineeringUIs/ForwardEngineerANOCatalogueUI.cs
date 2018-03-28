@@ -317,7 +317,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (!_setup)
             {
-                _planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(activator.RepositoryLocator),databaseObject);
+                _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator,databaseObject);
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
