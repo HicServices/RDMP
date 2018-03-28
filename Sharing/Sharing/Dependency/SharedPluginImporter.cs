@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 using Sharing.Sharing;
@@ -51,8 +52,7 @@ namespace Sharing.Dependency
         public Plugin Import(IRDMPPlatformRepositoryServiceLocator targetRepositoryLocator, ICheckNotifier collisionsAndSuggestions)
         {
             var catalogueRepository = targetRepositoryLocator.CatalogueRepository;
-            var shareManager = new ShareManager(targetRepositoryLocator);
-
+            
             var collision = catalogueRepository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(_plugin.Properties["Name"]));
 
             if (collision != null)
@@ -92,7 +92,7 @@ namespace Sharing.Dependency
                     foreach (var newNotArrivedYet in _lma)
                     {
                         newNotArrivedYet.Properties["Plugin_ID"] = collision.ID;
-                        shareManager.ImportObject(newNotArrivedYet,null);
+                        newNotArrivedYet.ImportObject(targetRepositoryLocator);
                     }
 
                     //it was an update to an existing one so return the existing one
@@ -104,15 +104,14 @@ namespace Sharing.Dependency
             }
             
             //import the plugin (now that it has a unique name or never collided in the first place)
-            var newPlugin = (Plugin)shareManager.ImportObject(_plugin, null);
+            var newPlugin = (Plugin)_plugin.ImportObject(targetRepositoryLocator);
             var newPluginID = newPlugin.ID;
 
             foreach (var definition in _lma)
             {
                 definition.Properties["Plugin_ID"] = newPluginID;
-                shareManager.ImportObject(definition,null);
+                definition.ImportObject(targetRepositoryLocator);
             }
-
             return newPlugin;
         }
     }

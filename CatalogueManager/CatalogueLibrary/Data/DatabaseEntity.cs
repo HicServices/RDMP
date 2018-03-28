@@ -6,8 +6,10 @@ using System.Data.Common;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using CatalogueLibrary.Data.Serialization;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Newtonsoft.Json;
 using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
@@ -22,7 +24,6 @@ namespace CatalogueLibrary.Data
     /// 
     /// A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
     /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]
-    /// 
     /// </summary>
     public abstract class DatabaseEntity : IRevertable, IDeleteable, INotifyPropertyChanged
     {

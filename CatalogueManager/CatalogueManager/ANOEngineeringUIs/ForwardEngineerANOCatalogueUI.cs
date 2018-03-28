@@ -12,6 +12,8 @@ using ANOStore.ANOEngineering;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
@@ -21,6 +23,7 @@ using LoadModules.Generic.Attachers;
 using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
+using Newtonsoft.Json;
 using ReusableUIComponents;
 using Sharing.Sharing;
 
@@ -263,11 +266,14 @@ namespace CatalogueManager.ANOEngineeringUIs
                     cbx.DropDownStyle = ComboBoxStyle.DropDownList;
                     cbx.Bounds = e.CellBounds;
 
-                    var list = Enum.GetValues(typeof (ExtractionCategory)).Cast<object>().ToList();
+                    var list = Enum.GetValues(typeof (ExtractionCategory)).Cast<object>().Select(s=>s.ToString()).ToList();
                     list.Add("Clear");
                     
-                    cbx.DataSource = list;
+                    cbx.Items.AddRange(list.ToArray());
                     e.Control = cbx;
+
+                    if(plan.ExtractionCategoryIfAny.HasValue)
+                        cbx.SelectedItem = plan.ExtractionCategoryIfAny.Value.ToString();
                 }
 
             }
@@ -299,7 +305,12 @@ namespace CatalogueManager.ANOEngineeringUIs
                     if (cbx.SelectedItem == "Clear")
                         plan.ExtractionCategoryIfAny = null;
                     else
-                        plan.ExtractionCategoryIfAny = (ExtractionCategory) cbx.SelectedItem;
+                    {
+                        ExtractionCategory c;
+                        ExtractionCategory.TryParse((string) cbx.SelectedItem, out c);
+                        plan.ExtractionCategoryIfAny = c;
+                    }
+                        
                 }
             }
             catch (Exception exception)
@@ -316,7 +327,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (!_setup)
             {
-                _planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(activator.RepositoryLocator),databaseObject);
+                _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator,databaseObject);
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
@@ -540,6 +551,32 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             tlvTableInfoMigrations.UseFiltering = true;
             tlvTableInfoMigrations.ModelFilter = new TextMatchFilter(tlvTableInfoMigrations,tbFilter.Text);
+        }
+
+        private void btnSavePlan_Click(object sender, EventArgs e)
+        {
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Plans (*.plan)|*.plan";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                var fi = new FileInfo(sfd.FileName);
+                var json = JsonConvertExtensions.SerializeObject(_planManager, _activator.RepositoryLocator);
+                File.WriteAllText(fi.FullName,json);
+            }
+        }
+
+        private void btnLoadPlan_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Plans (*.plan)|*.plan";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                var fi = new FileInfo(ofd.FileName);
+                var json = File.ReadAllText(fi.FullName);
+                _planManager = (ForwardEngineerANOCataloguePlanManager)
+                                    JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), _activator.RepositoryLocator);
+            }
         }
     }
 

@@ -10,11 +10,14 @@ using ANOStore.ANOEngineering;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Triggers;
 using Diagnostics.TestData;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -67,7 +70,7 @@ namespace CatalogueLibraryTests.Integration
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
-            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator), bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //no operations are as yet configured
@@ -120,7 +123,7 @@ namespace CatalogueLibraryTests.Integration
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
-            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //setup test rules for migrator
@@ -145,9 +148,11 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
-        public void CreateANOVersion_TestSkippingTables(bool tableInfoAlreadyExistsForSkippedTable)
+        [TestCase(false,false)]
+        [TestCase(false, true)]
+        [TestCase(true,false)]
+        [TestCase(true,true)]
+        public void CreateANOVersion_TestSkippingTables(bool tableInfoAlreadyExistsForSkippedTable,bool putPlanThroughSerialization)
         {
             var dbFrom = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.GetConsistentName("CreateANOVersion_TestSkippingTables_From"));
             var dbTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.GetConsistentName("CreateANOVersion_TestSkippingTables_To"));
@@ -220,13 +225,21 @@ namespace CatalogueLibraryTests.Integration
                 anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
              
                 //////////////////The actual test!/////////////////
-                var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),cata);
+                var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,cata);
                 
                 //ano the table SkullColor
                 var scPlan = planManager.GetPlanForColumnInfo(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")));
                 scPlan.ANOTable = anoTable;
                 scPlan.Plan = Plan.ANO;
 
+                if (putPlanThroughSerialization)
+                {
+                    var asString = JsonConvertExtensions.SerializeObject(planManager, RepositoryLocator);
+
+                    planManager = (ForwardEngineerANOCataloguePlanManager)JsonConvertExtensions.DeserializeObject( asString, typeof(ForwardEngineerANOCataloguePlanManager), RepositoryLocator);
+                }
+                
+                //not part of serialization
                 planManager.TargetDatabase = dbTo;
                 planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
 
@@ -371,7 +384,7 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
             
             //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
-            var planManager = new ForwardEngineerANOCataloguePlanManager(new ShareManager(RepositoryLocator),bulk.catalogue);
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue);
             planManager.TargetDatabase = db;
 
             //setup test rules for migrator

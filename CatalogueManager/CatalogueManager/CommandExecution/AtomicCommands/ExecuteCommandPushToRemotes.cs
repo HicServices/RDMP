@@ -39,7 +39,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var barsUI = new ProgressBarsUI("Pushing to remotes",true);
 
-            var service = new RemotePushingService(Activator.RepositoryLocator.CatalogueRepository, barsUI);
+            var service = new RemotePushingService(Activator.RepositoryLocator, barsUI);
             var f = new SingleControlForm(barsUI);
             f.Show();
 

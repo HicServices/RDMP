@@ -343,9 +343,9 @@
     <Reference Include="MySql.Data">
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -405,8 +405,9 @@
     <Compile Include="Data\IAggregateTopX.cs" />
     <Compile Include="Data\IColumnInfo.cs" />
     <Compile Include="Data\IMasqueradeAs.cs" />
-    <Compile Include="Data\ObjectExport.cs" />
-    <Compile Include="Data\ObjectImport.cs" />
+    <Compile Include="Data\ImportExport\ShareManager.cs" />
+    <Compile Include="Data\ImportExport\ObjectExport.cs" />
+    <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
@@ -414,6 +415,11 @@
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
+    <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
+    <Compile Include="Data\Serialization\ILazyConstructorFinishedCallback.cs" />
+    <Compile Include="Data\Serialization\JsonCompatibleDictionary.cs" />
+    <Compile Include="Data\Serialization\JsonConvertExtensions.cs" />
+    <Compile Include="Data\Serialization\LazyConstructorsJsonConverter.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />

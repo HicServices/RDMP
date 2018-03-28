@@ -331,6 +331,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.btnLoadPlan.Size = new System.Drawing.Size(27, 27);
             this.btnLoadPlan.TabIndex = 71;
             this.btnLoadPlan.UseVisualStyleBackColor = true;
+            this.btnLoadPlan.Click += new System.EventHandler(this.btnLoadPlan_Click);
             // 
             // btnSavePlan
             // 
@@ -339,6 +340,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.btnSavePlan.Size = new System.Drawing.Size(27, 27);
             this.btnSavePlan.TabIndex = 71;
             this.btnSavePlan.UseVisualStyleBackColor = true;
+            this.btnSavePlan.Click += new System.EventHandler(this.btnSavePlan_Click);
             // 
             // groupBox2
             // 

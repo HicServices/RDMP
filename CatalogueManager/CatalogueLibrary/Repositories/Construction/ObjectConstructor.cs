@@ -110,6 +110,15 @@ namespace CatalogueLibrary.Repositories.Construction
 
             return toReturn;
         }
+
+
+        /// <summary>
+        /// Returns all constructors defined for class 'type' that are compatible with the parameters T and T2
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private List<ConstructorInfo> GetConstructors<T,T2>(Type type)
         {
             var toReturn = new List<ConstructorInfo>();
@@ -132,7 +141,90 @@ namespace CatalogueLibrary.Repositories.Construction
 
             return toReturn;
         }
+        /// <summary>
+        /// Returns all constructors defined for class 'type' which are compatible with any set or subset of the provided parameters.  The return value is a dictionary
+        /// of all compatible constructors with the objects needed to invoke them.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)
+        {
+            Dictionary<ConstructorInfo,List<object>> toReturn = new Dictionary<ConstructorInfo, List<object>>();
 
+            foreach (ConstructorInfo constructor in type.GetConstructors(BindingFlags))
+            {
+                if(constructor.IsPrivate && !allowPrivate)
+                    continue;
+
+                var p = constructor.GetParameters();
+
+                //if it is a blank constructor
+                if(!p.Any())
+                    if (!allowBlankConstructor) //if we do not allow blank constructors ignore it
+                        continue;
+                    else
+                        toReturn.Add(constructor, new List<object>()); //otherwise add it to the return list with no objects for invoking (because it's blank duh!)
+                else
+                {
+                    //ok we found a constructor that takes some arguments
+
+                    //do we have clear 1 to 1 winners on what object to drop into which parameter of the constructor?
+                    bool canInvoke = true;
+                    List<object> invokeWithObjects = new List<object>();
+
+                    //for each object in the constructor
+                    foreach (var arg in p)
+                    {
+                        //what object could we populate it with?
+                        var o = GetBestObjectForPopulating(arg.ParameterType, parameterObjects);
+
+                        //no matching ones sadly
+                        if (o == null)
+                            canInvoke = false;
+                        else
+                            invokeWithObjects.Add(o);
+                    }
+
+                    if(canInvoke)
+                        toReturn.Add(constructor,invokeWithObjects);
+                }
+            }
+
+            return toReturn;
+        }
+
+        /// <summary>
+        /// Returns the best object from parameterObjects for populating an argument of the provided Type.  This is done by looking for an exact Type match first
+        /// then if none of those exist, it will look for a single object assignable to the parameter type.  If at any point there is two or more matching parameterObjects
+        /// then an <seealso cref="ObjectLacksCompatibleConstructorException"/> will be thrown.
+        /// 
+        /// If there are no objects provided that match any of the provided parameterObjects then null gets returned.
+        /// </summary>
+        /// <param name="parameterType"></param>
+        /// <param name="parameterObjects"></param>
+        /// <returns></returns>
+        private object GetBestObjectForPopulating(Type parameterType, params object[] parameterObjects)
+        {
+            var matches = parameterObjects.Where(p => p.GetType() == parameterType).ToArray();
+
+            //if there are no exact matches look for an assignable one
+            if (matches.Length == 0)
+            {
+                //look for an assignable one instead
+                matches = parameterObjects.Where(parameterType.IsInstanceOfType).ToArray();
+            }
+            
+            //if there is one exact match on Type, use that to hydrate it
+            if (matches.Length == 1)
+                return matches[0];
+
+            if (matches.Length == 0)
+                return null;
+
+            throw new ObjectLacksCompatibleConstructorException("Could not pick a suitable parameterObject for populating " + parameterType + " (found " + matches.Length + " compatible parameter objects)");
+
+        }
 
         private object InvokeBestConstructor(List<ConstructorInfo> constructors, params object[] parameters)
         {
@@ -191,5 +283,6 @@ namespace CatalogueLibrary.Repositories.Construction
 
             return null;
         }
+
     }
 }

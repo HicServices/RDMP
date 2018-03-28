@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibraryTests.Integration;
 using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ namespace CatalogueLibraryTests.ImportTests
 
             var shareManager = new ShareManager(RepositoryLocator);
 
-            var c2 = (Catalogue)shareManager.ImportObject(new MapsDirectlyToDatabaseTableStatelessDefinition<Catalogue>(c), null);
+            var c2 = (Catalogue)new MapsDirectlyToDatabaseTableStatelessDefinition<Catalogue>(c).ImportObject(RepositoryLocator);
 
             Assert.AreEqual(c.Name, c2.Name);
             Assert.AreNotEqual(c.ID,c2.ID);

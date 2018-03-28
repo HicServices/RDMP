@@ -22,15 +22,15 @@ namespace Sharing.Transmission
     /// </summary>
     public class RemotePushingService
     {
-        private readonly ICatalogueRepository _repository;
+        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly IDataLoadEventListener listener;
         private readonly IEnumerable<RemoteRDMP> remotes;
 
-        public RemotePushingService(ICatalogueRepository repository, IDataLoadEventListener listener)
+        public RemotePushingService(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener)
         {
-            _repository = repository;
+            _repositoryLocator = repositoryLocator;
             this.listener = listener;
-            remotes = repository.GetAllObjects<RemoteRDMP>();
+            remotes = _repositoryLocator.CatalogueRepository.GetAllObjects<RemoteRDMP>();
         }
 
         public async void SendCollectionToAllRemotes<T>(T[] collection, Action callback = null)
@@ -113,6 +113,7 @@ namespace Sharing.Transmission
                     
                 foreach (var plugin in plugins)
                 {
+
                     var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(plugin);
                     var lmaStatelessArray =
                         plugin.LoadModuleAssemblies.Select(
