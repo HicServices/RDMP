@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.gbMarkAllExtractable = new System.Windows.Forms.GroupBox();
+            this.btnClear = new System.Windows.Forms.Button();
             this.ddExtractionIdentifier = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cbMakeAllColumnsExtractable = new System.Windows.Forms.CheckBox();
-            this.btnClear = new System.Windows.Forms.Button();
             this.gbMarkAllExtractable.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,11 +50,23 @@
             this.gbMarkAllExtractable.TabStop = false;
             this.gbMarkAllExtractable.Text = "Extractability";
             // 
+            // btnClear
+            // 
+            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClear.Location = new System.Drawing.Point(668, 16);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(40, 23);
+            this.btnClear.TabIndex = 3;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
             // ddExtractionIdentifier
             // 
             this.ddExtractionIdentifier.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddExtractionIdentifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddExtractionIdentifier.Enabled = false;
             this.ddExtractionIdentifier.FormattingEnabled = true;
             this.ddExtractionIdentifier.Location = new System.Drawing.Point(280, 17);
             this.ddExtractionIdentifier.Name = "ddExtractionIdentifier";
@@ -73,8 +85,6 @@
             // cbMakeAllColumnsExtractable
             // 
             this.cbMakeAllColumnsExtractable.AutoSize = true;
-            this.cbMakeAllColumnsExtractable.Checked = true;
-            this.cbMakeAllColumnsExtractable.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbMakeAllColumnsExtractable.Location = new System.Drawing.Point(7, 20);
             this.cbMakeAllColumnsExtractable.Name = "cbMakeAllColumnsExtractable";
             this.cbMakeAllColumnsExtractable.Size = new System.Drawing.Size(163, 17);
@@ -82,17 +92,6 @@
             this.cbMakeAllColumnsExtractable.Text = "Make all columns extractable";
             this.cbMakeAllColumnsExtractable.UseVisualStyleBackColor = true;
             this.cbMakeAllColumnsExtractable.CheckedChanged += new System.EventHandler(this.cbMakeAllColumnsExtractable_CheckedChanged);
-            // 
-            // btnClear
-            // 
-            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClear.Location = new System.Drawing.Point(668, 16);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(40, 23);
-            this.btnClear.TabIndex = 3;
-            this.btnClear.Text = "Clear";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // ConfigureCatalogueExtractabilityUI
             // 
