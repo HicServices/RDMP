@@ -55,54 +55,90 @@ namespace CatalogueLibrary.Data.Aggregation
         private string _havingSQL;
 
 
+        /// <summary>
+        /// The count(*) or sum(*) or count(distinct chi) etc column of an AggregateConfiguration group by 
+        /// </summary>
         public string CountSQL
         {
             get { return _countSQL; }
             set { SetField(ref  _countSQL, value); }
         }
 
+        /// <summary>
+        /// The ID of the Catalogue (dataset) that the AggregateConfiguration belongs to.  This determines which tables/server it will be run on in addition to what filters/columns are 
+        /// importable etc.
+        /// </summary>
         public int Catalogue_ID
         {
             get { return _catalogueID; }
             set { SetField(ref  _catalogueID, value); }
         }
 
+        /// <summary>
+        /// The unique name of the aggregate e.g. 'Biochemistry records by year divided by healthboard'
+        /// </summary>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// A human readable description of what the AggregateConfiguration is trying to depict or represent
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <summary>
+        /// Automatically populated field indicating when the AggregateConfiguration was created in the database (you really shouldn't change this field)
+        /// </summary>
         public DateTime dtCreated
         {
             get { return _dtCreated; }
             set { SetField(ref  _dtCreated, value); }
         }
 
+        /// <summary>
+        /// Indicates the AggregateDimension (if any) that will result in a pivot graph being generated.  E.g. if your AggregateConfiguration is a graph of records by year between
+        /// 2001 and 2018 then specifying a pivot on healthboard would result in 1 line in the graph per healthboard instead of a single line for the count of all (the default).
+        /// 
+        /// If an AggregateConfiguration is a Cohort or Patient index table then it cannot have a Pivot
+        /// </summary>
         public int? PivotOnDimensionID
         {
             get { return _pivotOnDimensionID; }
             set { SetField(ref  _pivotOnDimensionID, value); }
         }
 
+        /// <summary>
+        /// Flag that indicates whether an AggregateConfiguration which is functioning as a graph can be exposed to users without worrying about governance.  This manifests as whether
+        /// you can use the aggregate graph to supply information about an extraction etc.
+        /// </summary>
         public bool IsExtractable
         {
             get { return _isExtractable; }
             set { SetField(ref  _isExtractable, value); }
         }
 
+
+        /// <summary>
+        /// Specifies that HAVING section of the GROUP BY statement represented by this AggregateConfiguration.  For example you could specify patients on drug X HAVING count(*) > 2 to
+        /// indicate that they must have had 2+ of the drug (ever or in the month being looked at if it is a graph).  This can have unexpected consequences if you have a pivot and axis
+        /// etc since the having will apply only to the specific bucket (date section and pivot value) being evaluated at each step.
+        /// </summary>
         public string HavingSQL
         {
             get { return _havingSQL; }
             set { SetField(ref  _havingSQL, value); }
         }
         
+        /// <summary>
+        /// ID of the AND/OR container of filters (which might be empty) that will restrict the records matched by the AggregateConfiguration GROUP by.  All filters/containers will
+        /// be processed recursively and built up into appropriate WHERE sql at query building time.
+        /// </summary>
         public int? RootFilterContainer_ID
         {
             get { return _rootFilterContainerID; }
@@ -118,6 +154,11 @@ namespace CatalogueLibrary.Data.Aggregation
             }
         }
 
+        /// <summary>
+        /// Specify instead of RootFilterContainer_ID to indicate that this AggregateConfiguration should instead use the filters of a different AggregateConfiguration.  This is 
+        /// generally only useful if you have an AggregateConfiguration which you are using in cohort generation (e.g. prescriptions for drug x) and you want to generate another 
+        /// AggregateConfiguration which is a graph of those results by year and you don't want to duplicate the filter configuration.  
+        /// </summary>
         public int? OverrideFiltersByUsingParentAggregateConfigurationInstead_ID
         {
             get { return _overrideFiltersByUsingParentAggregateConfigurationInsteadID; }
@@ -135,6 +176,9 @@ namespace CatalogueLibrary.Data.Aggregation
 
         #region Relationships
 
+        /// <summary>
+        /// Fetches the Catalogue referenced by Catalogue_ID
+        /// </summary>
         [NoMappingToDatabase]
         public Catalogue Catalogue
         {

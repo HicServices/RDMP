@@ -99,6 +99,13 @@ namespace CatalogueLibrary.Data
             OrderByDirection = (AggregateTopXOrderByDirection) Enum.Parse(typeof (AggregateTopXOrderByDirection), r["OrderByDirection"].ToString());
         }
 
+        /// <summary>
+        /// Defines that the given AggregateConfiguration should only return the top X records / pivot categories.  You can only have a single AggregateTopX declared
+        /// for a given AggregateConfiguration (enforced with database constraints).
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="forConfiguration"></param>
+        /// <param name="topX"></param>
         public AggregateTopX(ICatalogueRepository repository, AggregateConfiguration forConfiguration, int topX)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
