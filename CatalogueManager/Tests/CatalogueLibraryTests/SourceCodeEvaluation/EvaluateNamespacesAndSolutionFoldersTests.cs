@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
 {
-    public class EvaluateNamespacesAndSolutionFoldersTests:DatabaseTests
+    public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
     {
         private const string SolutionName = "HIC.DataManagementPlatform.sln";
         public List<string> csFilesFound = new List<string>();
@@ -49,7 +49,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
                 slndir = slndir.Parent;
             }
-            Assert.IsNotNull(slndir,"Failed to find " + SolutionName + " in any parent directories");
+            Assert.IsNotNull(slndir, "Failed to find " + SolutionName + " in any parent directories");
 
             Console.WriteLine("Found solution folder in directory:" + slndir.FullName);
 
@@ -70,13 +70,13 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             foreach (KeyValuePair<VisualStudioProjectReference, List<string>> kvp in foundProjects)
             {
                 if (kvp.Value.Count == 0)
-                    Error("FAIL: Did not find project " + kvp.Key.Name +" while traversing solution directories and subdirectories");
+                    Error("FAIL: Did not find project " + kvp.Key.Name + " while traversing solution directories and subdirectories");
 
                 if (kvp.Value.Count > 1)
-                    Error("FAIL: Found 2+ copies of project " + kvp.Key.Name + " while traversing solution directories and subdirectories:" + Environment.NewLine + string.Join(Environment.NewLine,kvp.Value));
+                    Error("FAIL: Found 2+ copies of project " + kvp.Key.Name + " while traversing solution directories and subdirectories:" + Environment.NewLine + string.Join(Environment.NewLine, kvp.Value));
             }
 
-            Assert.AreEqual(0,errors.Count);
+            Assert.AreEqual(0, errors.Count);
 
             InterfaceDeclarationsCorrect interfaces = new InterfaceDeclarationsCorrect();
             interfaces.FindProblems(CatalogueRepository.MEF);
@@ -88,7 +88,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             crossExamination.FindProblems(csFilesFound);
 
             var uiStandardisationTest = new UserInterfaceStandardisationChecker();
-            uiStandardisationTest.FindProblems(csFilesFound,RepositoryLocator.CatalogueRepository.MEF);
+            uiStandardisationTest.FindProblems(csFilesFound, RepositoryLocator.CatalogueRepository.MEF);
 
             //Assuming all files are present and correct we can now evaluate the RDMP specific stuff:
             var otherTestRunner = new RDMPFormInitializationTests();
@@ -107,20 +107,20 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             singlePropertyUIs.FindProblems(csFilesFound);
 
             var noMappingToDatabaseComments = new NoMappingToDatabaseCommentsEvaluator();
-            noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF,csFilesFound);
+            noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, csFilesFound);
 
         }
 
         private void FindUnreferencedProjectsRescursively(Dictionary<VisualStudioProjectReference, List<string>> projects, DirectoryInfo dir)
         {
             foreach (var subdir in dir.EnumerateDirectories())
-                FindUnreferencedProjectsRescursively(projects,subdir);
+                FindUnreferencedProjectsRescursively(projects, subdir);
 
             var projFiles = dir.EnumerateFiles("*.csproj");
 
             foreach (FileInfo projFile in projFiles)
             {
-                if(projFile.Directory.FullName.Contains("CodeTutorials"))
+                if (projFile.Directory.FullName.Contains("CodeTutorials"))
                     continue;
 
                 var key = projects.Keys.SingleOrDefault(p => (p.Name + ".csproj").Equals(projFile.Name));
@@ -133,13 +133,13 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
         private void ProcessFolderRecursive(IEnumerable<VisualStudioSolutionFolder> folders, DirectoryInfo currentPhysicalDirectory)
         {
-            
+
             //Process root folders
             foreach (VisualStudioSolutionFolder solutionFolder in folders)
             {
                 var physicalSolutionFolder = currentPhysicalDirectory.EnumerateDirectories().SingleOrDefault(d => d.Name.Equals(solutionFolder.Name));
 
-                if(physicalSolutionFolder == null)
+                if (physicalSolutionFolder == null)
                 {
                     Error("FAIL: Solution Folder exists called " + solutionFolder.Name + " but there is no corresponding physical folder in " + currentPhysicalDirectory.FullName);
                     continue;
@@ -148,15 +148,15 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 foreach (VisualStudioProjectReference p in solutionFolder.ChildrenProjects)
                     FindProjectInFolder(p, physicalSolutionFolder);
 
-                if(solutionFolder.ChildrenFolders.Any())
-                    ProcessFolderRecursive(solutionFolder.ChildrenFolders,physicalSolutionFolder);
+                if (solutionFolder.ChildrenFolders.Any())
+                    ProcessFolderRecursive(solutionFolder.ChildrenFolders, physicalSolutionFolder);
             }
         }
 
         private void FindProjectInFolder(VisualStudioProjectReference p, DirectoryInfo physicalSolutionFolder)
         {
             var physicalProjectFolder = physicalSolutionFolder.EnumerateDirectories().SingleOrDefault(f => f.Name.Equals(p.Name));
-            
+
             if (physicalProjectFolder == null)
                 Error("FAIL: Physical folder " + p.Name + " does not exist in directory " + physicalSolutionFolder.FullName);
             else
@@ -167,7 +167,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 else
                 {
                     var tidy = new CsProjFileTidy(csProjFile);
-                    
+
                     foreach (string str in tidy.UntidyMessages)
                         Error(str);
 
@@ -191,9 +191,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
     public class NoMappingToDatabaseCommentsEvaluator
     {
-        public void FindProblems(MEF mef,List<string> csFilesFound)
+        public void FindProblems(MEF mef, List<string> csFilesFound)
         {
-            Dictionary<string,string> suggestedNewFileContents = new Dictionary<string, string>();
+            Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>();
 
             foreach (var f in csFilesFound)
             {
@@ -202,50 +202,42 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 StringBuilder sbSuggestedText = new StringBuilder();
 
                 var text = File.ReadAllLines(f);
-                
+
                 for (int i = 0; i < text.Length; i++)
                 {
                     if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                     {
                         var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
-                        
+
                         Type t = mef.GetTypeByNameFromAnyLoadedAssembly(currentClassName);
 
                         //if the previous line isn't a summary comment
-                        if (!text[i - 1].Equals("/// </summary>"))
+                        if (!text[i - 1].Trim().StartsWith("///"))
                         {
                             string next = text[i + 1];
 
-                            var m = Regex.Match(next,@"(.*)public\b(.*)\s+(.*)\b");
+                            var m = Regex.Match(next, @"(.*)public\b(.*)\s+(.*)\b");
                             if (m.Success)
                             {
-                                changes = true;
+                                
                                 var whitespace = m.Groups[1].Value;
                                 var type = m.Groups[2].Value;
                                 var member = m.Groups[3].Value;
 
                                 Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
                                 Assert.IsNotNull(t);
-                                
-                                
 
-                                if (type.Contains("[]"))
+                                if (t.GetProperty(member + "_ID") != null)
                                 {
-                                    var classTypeWhichThisIsAnArrayOf = type.TrimEnd(' ','[', ']');
-                                    sbSuggestedText.AppendLine(whitespace + "/// <summary>");
-                                    sbSuggestedText.AppendLine(whitespace + "/// Fetches all the " + classTypeWhichThisIsAnArrayOf.Trim() + "s associated with this " + Path.GetFileNameWithoutExtension(f) + " (This is refreshed every time you call this property)");
-                                    sbSuggestedText.AppendLine(whitespace + "/// <see cref=\"" + classTypeWhichThisIsAnArrayOf.Trim() + "_ID\"/>");
-                                }
-                                else if (t.GetProperty(member + "_ID") != null)
-                                {
-                                    sbSuggestedText.AppendLine(whitespace + "/// <summary>");
-                                    sbSuggestedText.AppendLine(whitespace + "/// Fetches the " + type.Trim() + " referenced by " + member.Trim() + "_ID (This is refreshed every time you call this property)");
-                                    sbSuggestedText.AppendLine(whitespace + "/// <see cref=\"" + member.Trim() + "_ID\"/>");
+                                    changes = true;
+                                    sbSuggestedText.AppendLine(whitespace + string.Format("/// <inheritdoc cref=\"{0}\"/>",member + "_ID"));
                                 }
                                 else
+                                {
+                                    sbSuggestedText.AppendLine(text[i]);
                                     continue;
+                                }
 
-                                sbSuggestedText.AppendLine(whitespace + "/// </summary>");
                             }
                         }
                     }
@@ -253,10 +245,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                     sbSuggestedText.AppendLine(text[i]);
                 }
 
-                if(changes)
-                    suggestedNewFileContents.Add(f,sbSuggestedText.ToString());
+                if (changes)
+                    suggestedNewFileContents.Add(f, sbSuggestedText.ToString());
             }
-                
+
             Assert.IsEmpty(suggestedNewFileContents);
 
             //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
