@@ -127,6 +127,7 @@ namespace CatalogueLibrary.Data
 
 
         #region Relationships
+        /// <inheritdoc cref="Catalogue_ID"/>
         [NoMappingToDatabase]
         public Catalogue Catalogue {
             get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
@@ -141,6 +142,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="ColumnInfo_ID"/>
         [NoMappingToDatabase]
         public ColumnInfo ColumnInfo
         {

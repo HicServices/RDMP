@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -61,6 +61,7 @@ namespace CatalogueLibrary.Data.Pipelines
             get { return Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this); }
         }
 
+        /// <inheritdoc cref="Pipeline_ID"/>
         [NoMappingToDatabase]
         public IHasDependencies Pipeline {
             get { return Repository.GetObjectByID<Pipeline>(Pipeline_ID); }

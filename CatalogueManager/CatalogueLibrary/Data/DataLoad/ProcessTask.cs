@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -92,6 +92,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
         #region Relationships
+        /// <inheritdoc cref="LoadMetadata_ID"/>
         [NoMappingToDatabase]
         public LoadMetadata LoadMetadata {
             get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }
@@ -100,6 +101,7 @@ namespace CatalogueLibrary.Data.DataLoad
         [NoMappingToDatabase]
         public IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get { return Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);} }
 
+        /// <inheritdoc cref="RelatesSolelyToCatalogue_ID"/>
         [NoMappingToDatabase]
         public Catalogue RelatesSolelyToCatalogue {
             get

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -65,6 +65,7 @@ namespace CatalogueLibrary.Data
         }
 
         #region Relationships
+        /// <inheritdoc cref="ExtractionFilter_ID"/>
         [NoMappingToDatabase]
         public ExtractionFilter ExtractionFilter
         {

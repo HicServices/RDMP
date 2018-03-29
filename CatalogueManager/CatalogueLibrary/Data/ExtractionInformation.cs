@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -101,6 +101,7 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
         //These fields are fetched (cached version) from lookup link table - ExtractionInformation can only exist where there is a relationship between a CatalogueItem and a ColumnInfo
+        /// <inheritdoc cref="CatalogueItem_ID"/>
         [NoMappingToDatabase]
         public CatalogueItem CatalogueItem
         {

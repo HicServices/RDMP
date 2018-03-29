@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
@@ -88,6 +88,7 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="ExtractableDataSet_ID"/>
         [NoMappingToDatabase]
         public IExtractableDataSet ExtractableDataSet
         {

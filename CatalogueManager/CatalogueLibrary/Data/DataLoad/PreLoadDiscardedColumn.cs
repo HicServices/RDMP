@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
@@ -88,6 +88,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
         #region Relationships
+        /// <inheritdoc cref="TableInfo_ID"/>
         [NoMappingToDatabase]
         public ITableInfo TableInfo
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -47,6 +47,7 @@ namespace DataExportLibrary.Data.LinkCreators
 
         #region Relationships
 
+        /// <inheritdoc cref="RootFilterContainer_ID"/>
         [NoMappingToDatabase]
         public IContainer RootFilterContainer
         {
@@ -64,6 +65,7 @@ namespace DataExportLibrary.Data.LinkCreators
             return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
         } }
 
+        /// <inheritdoc cref="ExtractableDataSet_ID"/>
         [NoMappingToDatabase]
         public ExtractableDataSet ExtractableDataSet {
             get

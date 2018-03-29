@@ -53,6 +53,7 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
+        /// <inheritdoc cref="LoadMetadata_ID"/>
         [NoMappingToDatabase]
         public LoadMetadata LoadMetadata {
             get

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -67,6 +67,7 @@ namespace CatalogueLibrary.Data
 
         /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
         #region Relationships
+        /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
         [NoMappingToDatabase]
         public AggregateDimension OrderByDimensionIfAny
         {

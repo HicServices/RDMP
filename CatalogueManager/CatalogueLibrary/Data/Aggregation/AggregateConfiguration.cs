@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -186,6 +186,7 @@ namespace CatalogueLibrary.Data.Aggregation
             get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
         }
 
+        /// <inheritdoc cref="RootFilterContainer_ID"/>
         [NoMappingToDatabase]
         public AggregateFilterContainer RootFilterContainer
         {
@@ -243,6 +244,7 @@ namespace CatalogueLibrary.Data.Aggregation
             }
         }
 
+        /// <inheritdoc cref="OverrideFiltersByUsingParentAggregateConfigurationInstead_ID"/>
         [NoMappingToDatabase]
         public AggregateConfiguration OverrideFiltersByUsingParentAggregateConfigurationInstead
         {

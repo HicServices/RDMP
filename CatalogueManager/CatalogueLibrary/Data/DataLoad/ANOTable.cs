@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -85,6 +85,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #region Relationships
 
+        /// <inheritdoc cref="Server_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer Server {
             get { return Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID); }

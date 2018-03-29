@@ -101,18 +101,21 @@ namespace CatalogueLibrary.Data.Cache
             get { return Repository.GetAllObjectsWithParent<CacheFetchFailure>(this); }
         }
 
+        /// <inheritdoc cref="LoadProgress_ID"/>
         [NoMappingToDatabase]
         public LoadProgress LoadProgress
         {
             get { return Repository.GetObjectByID<LoadProgress>(LoadProgress_ID); }
         }
 
+        /// <inheritdoc cref="Pipeline_ID"/>
         [NoMappingToDatabase]
         public IPipeline Pipeline
         {
             get { return Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID); }
         }
 
+        /// <inheritdoc cref="PermissionWindow_ID"/>
         [NoMappingToDatabase]
         public PermissionWindow PermissionWindow
         {

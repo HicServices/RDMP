@@ -142,6 +142,7 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
+        /// <inheritdoc cref="TableInfo_ID"/>
         [NoMappingToDatabase]
         public TableInfo TableInfo
         {
@@ -151,6 +152,7 @@ namespace CatalogueLibrary.Data
             }
         }
         
+        /// <inheritdoc cref="ANOTable_ID"/>
         [NoMappingToDatabase]
         public ANOTable ANOTable {
             get { return ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int) ANOTable_ID); }

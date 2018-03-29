@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -48,12 +48,14 @@ namespace CatalogueLibrary.Data.Automation
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="AutomationServiceSlot_ID"/>
         [NoMappingToDatabase]
         public AutomationServiceSlot AutomationServiceSlot
         {
             get{return Repository.GetObjectByID<AutomationServiceSlot>(AutomationServiceSlot_ID);}
         }
 
+        /// <inheritdoc cref="Pipeline_ID"/>
         [NoMappingToDatabase]
         public Pipeline Pipeline
         {

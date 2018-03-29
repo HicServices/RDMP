@@ -120,7 +120,8 @@ namespace CatalogueLibrary.Data
         {
             return Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
         }}
-
+        
+        /// <inheritdoc cref="IdentifierDumpServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer IdentifierDumpServer { get
         {

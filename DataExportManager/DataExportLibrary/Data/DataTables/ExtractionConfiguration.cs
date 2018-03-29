@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -136,6 +136,7 @@ namespace DataExportLibrary.Data.DataTables
 
         #region Relationships
         
+        /// <inheritdoc cref="Project_ID"/>
         [NoMappingToDatabase]
         public IProject Project
         {
@@ -162,6 +163,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
+        /// <inheritdoc cref="Cohort_ID"/>
         [NoMappingToDatabase]
         public IExtractableCohort Cohort
         {
@@ -209,6 +211,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc cref="DefaultPipeline_ID"/>
         [NoMappingToDatabase]
         public IPipeline DefaultPipeline {
             get
@@ -221,6 +224,7 @@ namespace DataExportLibrary.Data.DataTables
             }}
 
 
+        /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
         [NoMappingToDatabase]
         public CohortIdentificationConfiguration CohortIdentificationConfiguration
         {
@@ -234,6 +238,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc cref="CohortRefreshPipeline_ID"/>
         [NoMappingToDatabase]
         public IPipeline CohortRefreshPipeline
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text.RegularExpressions;
@@ -178,6 +178,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="CatalogueItem_ID"/>
         [NoMappingToDatabase]
         public CatalogueItem CatalogueItem
         {
@@ -186,11 +187,13 @@ namespace CatalogueLibrary.Data
                 return Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID);
             }
         }
+        /// <inheritdoc cref="ReportedBy_ID"/>
         [NoMappingToDatabase]
         public IssueSystemUser ReportedBy {
             get { return ReportedBy_ID == null? null: Repository.GetObjectByID<IssueSystemUser>((int) ReportedBy_ID); }
         }
 
+        /// <inheritdoc cref="Owner_ID"/>
         [NoMappingToDatabase]
         public IssueSystemUser Owner {
             get { return Owner_ID == null ? null : Repository.GetObjectByID<IssueSystemUser>((int) Owner_ID); }

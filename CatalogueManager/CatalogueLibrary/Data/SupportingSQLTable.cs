@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -80,12 +80,14 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="Catalogue_ID"/>
         [NoMappingToDatabase]
         public Catalogue Catalogue
         {
             get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
         }
 
+        /// <inheritdoc cref="ExternalDatabaseServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer ExternalDatabaseServer {
             get { return ExternalDatabaseServer_ID == null ? null : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID); }

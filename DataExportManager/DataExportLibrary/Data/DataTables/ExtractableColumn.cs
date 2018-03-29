@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.Contracts;
@@ -58,6 +58,7 @@ namespace DataExportLibrary.Data.DataTables
         
         #region Relationships
         
+        /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation CatalogueExtractionInformation
         {

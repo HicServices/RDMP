@@ -415,6 +415,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="LoadMetadata_ID"/>
         [NoMappingToDatabase]
         public LoadMetadata LoadMetadata
         {
@@ -433,6 +434,7 @@ namespace CatalogueLibrary.Data
             get { return Repository.GetAllObjectsWithParent<AggregateConfiguration>(this); }
         }
 
+        /// <inheritdoc cref="LiveLoggingServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer LiveLoggingServer
         {
@@ -444,6 +446,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="TestLoggingServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer TestLoggingServer
         {
@@ -455,6 +458,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="TimeCoverage_ExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation TimeCoverage_ExtractionInformation {
             get
@@ -465,6 +469,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="PivotCategory_ExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation PivotCategory_ExtractionInformation
         {
