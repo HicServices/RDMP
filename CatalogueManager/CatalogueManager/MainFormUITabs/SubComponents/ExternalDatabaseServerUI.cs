@@ -49,6 +49,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                 tbID.Text = _server.ID.ToString();
                 tbName.Text = _server.Name;
                 tbServerName.Text = _server.Server;
+                tbMappedDataPath.Text = _server.MappedDataPath;
                 tbDatabaseName.Text = _server.Database;
                 tbUsername.Text = _server.Username;
                 tbPassword.Text = _server.GetDecryptedPassword();
@@ -80,6 +81,11 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         private void tbServerName_TextChanged(object sender, EventArgs e)
         {
             _server.Server = tbServerName.Text;
+        }
+
+        private void tbMappedDataPath_TextChanged(object sender, EventArgs e)
+        {
+            _server.MappedDataPath = tbMappedDataPath.Text;
         }
 
         private void tbDatabaseName_TextChanged(object sender, EventArgs e)

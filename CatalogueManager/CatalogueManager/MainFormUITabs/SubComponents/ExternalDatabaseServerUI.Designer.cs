@@ -52,12 +52,14 @@
             this.tbServerName = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.tbMappedDataPath = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbServer)).BeginInit();
             this.SuspendLayout();
             // 
             // pbServer
             // 
-            this.pbServer.Location = new System.Drawing.Point(525, 164);
+            this.pbServer.Location = new System.Drawing.Point(525, 190);
             this.pbServer.Name = "pbServer";
             this.pbServer.Size = new System.Drawing.Size(22, 22);
             this.pbServer.TabIndex = 47;
@@ -68,7 +70,7 @@
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(17, 226);
+            this.ragSmiley1.Location = new System.Drawing.Point(17, 252);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 46;
@@ -76,7 +78,7 @@
             // 
             // btnClearKnownType
             // 
-            this.btnClearKnownType.Location = new System.Drawing.Point(553, 164);
+            this.btnClearKnownType.Location = new System.Drawing.Point(553, 190);
             this.btnClearKnownType.Name = "btnClearKnownType";
             this.btnClearKnownType.Size = new System.Drawing.Size(65, 23);
             this.btnClearKnownType.TabIndex = 45;
@@ -87,7 +89,7 @@
             // ddSetKnownType
             // 
             this.ddSetKnownType.FormattingEnabled = true;
-            this.ddSetKnownType.Location = new System.Drawing.Point(96, 163);
+            this.ddSetKnownType.Location = new System.Drawing.Point(96, 189);
             this.ddSetKnownType.Name = "ddSetKnownType";
             this.ddSetKnownType.Size = new System.Drawing.Size(423, 21);
             this.ddSetKnownType.TabIndex = 44;
@@ -97,7 +99,7 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(7, 187);
+            this.label15.Location = new System.Drawing.Point(7, 213);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(617, 13);
             this.label15.TabIndex = 43;
@@ -107,7 +109,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(1, 166);
+            this.label14.Location = new System.Drawing.Point(1, 192);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(96, 13);
             this.label14.TabIndex = 42;
@@ -116,7 +118,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(626, 163);
+            this.label8.Location = new System.Drawing.Point(626, 189);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(130, 13);
             this.label8.TabIndex = 41;
@@ -126,7 +128,7 @@
             // 
             this.lblPasswordError.AutoSize = true;
             this.lblPasswordError.BackColor = System.Drawing.Color.Red;
-            this.lblPasswordError.Location = new System.Drawing.Point(495, 140);
+            this.lblPasswordError.Location = new System.Drawing.Point(495, 166);
             this.lblPasswordError.Name = "lblPasswordError";
             this.lblPasswordError.Size = new System.Drawing.Size(0, 13);
             this.lblPasswordError.TabIndex = 40;
@@ -135,7 +137,7 @@
             // 
             this.lblUsernameError.AutoSize = true;
             this.lblUsernameError.BackColor = System.Drawing.Color.Red;
-            this.lblUsernameError.Location = new System.Drawing.Point(495, 114);
+            this.lblUsernameError.Location = new System.Drawing.Point(495, 140);
             this.lblUsernameError.Name = "lblUsernameError";
             this.lblUsernameError.Size = new System.Drawing.Size(0, 13);
             this.lblUsernameError.TabIndex = 39;
@@ -143,7 +145,7 @@
             // lblState
             // 
             this.lblState.AutoSize = true;
-            this.lblState.Location = new System.Drawing.Point(48, 236);
+            this.lblState.Location = new System.Drawing.Point(48, 262);
             this.lblState.Name = "lblState";
             this.lblState.Size = new System.Drawing.Size(35, 13);
             this.lblState.TabIndex = 38;
@@ -151,7 +153,7 @@
             // 
             // btnCheckState
             // 
-            this.btnCheckState.Location = new System.Drawing.Point(176, 205);
+            this.btnCheckState.Location = new System.Drawing.Point(176, 231);
             this.btnCheckState.Name = "btnCheckState";
             this.btnCheckState.Size = new System.Drawing.Size(82, 23);
             this.btnCheckState.TabIndex = 31;
@@ -161,7 +163,7 @@
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(96, 137);
+            this.tbPassword.Location = new System.Drawing.Point(96, 163);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(660, 20);
@@ -171,7 +173,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(37, 140);
+            this.label2.Location = new System.Drawing.Point(37, 166);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 32;
@@ -179,7 +181,7 @@
             // 
             // tbUsername
             // 
-            this.tbUsername.Location = new System.Drawing.Point(96, 111);
+            this.tbUsername.Location = new System.Drawing.Point(96, 137);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(660, 20);
             this.tbUsername.TabIndex = 28;
@@ -188,7 +190,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(37, 114);
+            this.label1.Location = new System.Drawing.Point(37, 140);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(58, 13);
             this.label1.TabIndex = 33;
@@ -196,7 +198,7 @@
             // 
             // tbDatabaseName
             // 
-            this.tbDatabaseName.Location = new System.Drawing.Point(96, 85);
+            this.tbDatabaseName.Location = new System.Drawing.Point(96, 111);
             this.tbDatabaseName.Name = "tbDatabaseName";
             this.tbDatabaseName.Size = new System.Drawing.Size(660, 20);
             this.tbDatabaseName.TabIndex = 27;
@@ -205,7 +207,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(37, 88);
+            this.label4.Location = new System.Drawing.Point(37, 114);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 34;
@@ -264,16 +266,35 @@
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(96, 202);
+            this.objectSaverButton1.Location = new System.Drawing.Point(96, 228);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(57, 28);
             this.objectSaverButton1.TabIndex = 48;
             // 
+            // tbMappedDataPath
+            // 
+            this.tbMappedDataPath.Location = new System.Drawing.Point(96, 85);
+            this.tbMappedDataPath.Name = "tbMappedDataPath";
+            this.tbMappedDataPath.Size = new System.Drawing.Size(660, 20);
+            this.tbMappedDataPath.TabIndex = 49;
+            this.tbMappedDataPath.TextChanged += new System.EventHandler(this.tbMappedDataPath_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(14, 88);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(82, 13);
+            this.label6.TabIndex = 50;
+            this.label6.Text = "Data Path Map:";
+            // 
             // ExternalDatabaseServerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.tbMappedDataPath);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.pbServer);
             this.Controls.Add(this.ragSmiley1);
@@ -332,5 +353,7 @@
         private System.Windows.Forms.TextBox tbServerName;
         private System.Windows.Forms.Label label3;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.TextBox tbMappedDataPath;
+        private System.Windows.Forms.Label label6;
     }
 }
