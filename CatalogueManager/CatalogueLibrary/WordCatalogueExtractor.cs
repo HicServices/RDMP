@@ -191,7 +191,6 @@ namespace CatalogueLibrary
                 }
 
             table.AutoFit = AutoFit.Contents;
-            _document.InsertTable(table);
         }
         
         
