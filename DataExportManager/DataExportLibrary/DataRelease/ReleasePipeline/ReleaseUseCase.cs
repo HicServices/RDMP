@@ -41,13 +41,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
             else
             {
-                var releaseTypes = releaseData.ConfigurationsForRelease.Values.SelectMany(x => x).Distinct().ToList();
+                var releasePotentials = releaseData.ConfigurationsForRelease.Values.SelectMany(x => x).ToList();
+                var releaseTypes = releasePotentials.Select(rp => rp.GetType().FullName).Distinct().ToList();
                 if (releaseTypes.Count() != 1)
                     throw new Exception("How did you manage to have multiple (or zero) types in the extraction?");
 
-                var releaseType = releaseTypes.First();
+                var releasePotential = releasePotentials.First();
 
-                var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(releaseType.ExtractionResults.DestinationType, typeof(IExecuteDatasetExtractionDestination));
+                var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(releasePotential.ExtractionResults.DestinationType, typeof(IExecuteDatasetExtractionDestination));
                 ObjectConstructor constructor = new ObjectConstructor();
 
                 var destinationUsedAtExtraction = (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, _catalogueRepository);

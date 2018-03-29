@@ -131,7 +131,7 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
             }
         }
 
-        public override void Detach(DiscoveredDatabase database, DirectoryInfo outputFolder)
+        public override DirectoryInfo Detach(DiscoveredDatabase database)
         {
             const string GetDefaultSQLServerDatabaseDirectory = @"SELECT LEFT(physical_name,LEN(physical_name)-CHARINDEX('\',REVERSE(physical_name))+1) 
                         FROM sys.master_files mf   
@@ -183,11 +183,7 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
                 dataFolder = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
             }
 
-            // copy detached files from data path to the desired destination.
-            File.Copy(Path.Combine(dataFolder, databaseToDetach + ".mdf"), Path.Combine(outputFolder.FullName, databaseToDetach + ".mdf"));
-            File.Copy(Path.Combine(dataFolder, databaseToDetach + "_log.ldf"), Path.Combine(outputFolder.FullName, databaseToDetach + "_log.ldf"));
-            File.Delete(Path.Combine(dataFolder, databaseToDetach + ".mdf"));
-            File.Delete(Path.Combine(dataFolder, databaseToDetach + "_log.mdf"));
+            return new DirectoryInfo(dataFolder);
         }
     }
 }

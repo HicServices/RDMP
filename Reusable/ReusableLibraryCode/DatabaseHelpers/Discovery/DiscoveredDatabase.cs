@@ -124,9 +124,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions,createEmpty);
         }
 
-        public void Detach(DirectoryInfo outputFolder)
+        /// <summary>
+        /// Detach this DiscoveredDatabase and returns the data path where the files are stored.
+        /// NOTE: you must know how to map this data path to a shared path you can access!
+        /// </summary>
+        /// <returns>Local drive data path where the files are stored</returns>
+        public DirectoryInfo Detach()
         {
-            Helper.Detach(this, outputFolder);
+            return Helper.Detach(this);
         }
     }
 }

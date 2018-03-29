@@ -118,6 +118,10 @@ namespace DataExportLibrary.DataRelease
                 if (customDataFolder != null)
                     AuditDirectoryCreation(customDataFolder.FullName, sw, 1);
 
+                var otherDataFolder = ReleaseOtherData(kvp, configurationSubDirectory);
+                if (otherDataFolder != null)
+                    AuditDirectoryCreation(otherDataFolder.FullName, sw, 1);
+
                 //generate release document
                 var generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
                 generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
@@ -150,6 +154,18 @@ namespace DataExportLibrary.DataRelease
                 fromCustomData.CopyAll(destination);
             }
             return fromCustomData;
+        }
+
+        protected virtual DirectoryInfo ReleaseOtherData(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
+        {
+            //if there is custom data copy that across for the specific cohort
+            DirectoryInfo fromOtherData = ThrowIfOtherDataConflictElseReturnFirstOtherDataFolder(kvp);
+            if (fromOtherData != null)
+            {
+                var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.Parent.FullName, fromOtherData.Name));
+                fromOtherData.CopyAll(destination);
+            }
+            return fromOtherData;
         }
 
         protected virtual void AuditExtractionConfigurationDetails(StreamWriter sw, DirectoryInfo configurationSubDirectory, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
@@ -192,6 +208,12 @@ namespace DataExportLibrary.DataRelease
         {
             var customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CustomCohortDataFolderName, toRelease);
             return GetUniqueDirectoryFrom(customDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
+        }
+
+        protected DirectoryInfo ThrowIfOtherDataConflictElseReturnFirstOtherDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+        {
+            var otherDataDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.OtherDataFolderName, toRelease);
+            return GetUniqueDirectoryFrom(otherDataDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
         }
 
         protected IEnumerable<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)

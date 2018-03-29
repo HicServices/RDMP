@@ -16,10 +16,12 @@ namespace DataExportLibrary.ExtractionTime
     {
         private readonly DirectoryInfo root;
         private readonly DirectoryInfo extractionDirectory;
-        public const string CustomCohortDataFolderName = "CohortCustomData";
-        public const string GlobalsDataFolderName = "Globals";
+        
         public const string ExtractionSubFolderName = "Extractions";
         public const string StandardExtractionPrefix = "Extr_";
+        public const string GlobalsDataFolderName = "Globals";
+        public const string CustomCohortDataFolderName = "CohortCustomData";
+        public const string OtherDataFolderName = "OtherData";
         
         public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
         {
@@ -90,6 +92,11 @@ namespace DataExportLibrary.ExtractionTime
         public DirectoryInfo GetDirectoryForCohortCustomData()
         {
             return extractionDirectory.CreateSubdirectory(CustomCohortDataFolderName);
+        }
+
+        public DirectoryInfo GetDirectoryForOtherData()
+        {
+            return extractionDirectory.CreateSubdirectory(OtherDataFolderName);
         }
     }
 }

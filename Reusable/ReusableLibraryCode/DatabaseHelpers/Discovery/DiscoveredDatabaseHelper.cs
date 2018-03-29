@@ -91,7 +91,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return database.ExpectTable(tableName);
         }
 
-        public abstract void Detach(DiscoveredDatabase database, DirectoryInfo outputFolder);
+        public abstract DirectoryInfo Detach(DiscoveredDatabase database);
 
         protected virtual string GetPrimaryKeyDeclarationSql(string tableName, DatabaseColumnRequest[] pks)
         {

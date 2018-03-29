@@ -32,7 +32,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             throw new NotImplementedException();
         }
 
-        public override void Detach(DiscoveredDatabase database, DirectoryInfo outputFolder)
+        public override DirectoryInfo Detach(DiscoveredDatabase database)
         {
             throw new NotImplementedException();
         }

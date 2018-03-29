@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.ExtractionTime;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -34,14 +37,37 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             if (firstTime)
             {
                 firstTime = false;
-                var sourceFolder = new DirectoryInfo(_releaseData.EnvironmentPotential.Configuration.Project.ExtractionDirectory);
-                var tempStorage = sourceFolder.CreateSubdirectory(Guid.NewGuid().ToString("N"));
+                DirectoryInfo sourceFolder = GetSourceFolder();
+                Debug.Assert(sourceFolder != null, "sourceFolder != null");
+                var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.OtherDataFolderName);
+                
                 if (_database != null)
-                    _database.Detach(tempStorage);
+                {
+                    var dataFolder = _database.Detach().FullName;
+                    var databaseName = _database.GetRuntimeName();
+                    // TODO: Discover mapping between Server DATA folder and this machine!
+                    File.Copy(Path.Combine(dataFolder, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
+                    File.Copy(Path.Combine(dataFolder, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
+                    File.Delete(Path.Combine(dataFolder, databaseName + ".mdf"));
+                    File.Delete(Path.Combine(dataFolder, databaseName + "_log.mdf"));
+                }
+
                 return new ReleaseAudit()
                 {
-                    SourceGlobalFolder = tempStorage
+                    SourceGlobalFolder = PrepareSourceGlobalFolder()
                 };
+            }
+            return null;
+        }
+
+        private DirectoryInfo GetSourceFolder()
+        {
+            foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> releasePotentials in _releaseData.ConfigurationsForRelease)
+            {
+                foreach (ReleasePotential releasePotential in releasePotentials.Value)
+                {
+                    return releasePotential.ExtractDirectory.Parent;
+                }
             }
             return null;
         }

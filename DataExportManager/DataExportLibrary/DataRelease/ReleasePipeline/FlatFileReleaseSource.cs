@@ -37,28 +37,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             return null;
         }
 
-        private DirectoryInfo PrepareSourceGlobalFolder()
-        {
-            var globalDirectoriesFound = new List<DirectoryInfo>();
-
-            foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> releasePotentials in _releaseData.ConfigurationsForRelease)
-                globalDirectoriesFound.AddRange(GetAllGlobalFolders(releasePotentials));
-
-            if (globalDirectoriesFound.Any())
-            {
-                var firstGlobal = globalDirectoriesFound.First();
-
-                foreach (var directoryInfo in globalDirectoriesFound.Distinct(new DirectoryInfoComparer()))
-                {
-                    UsefulStuff.GetInstance().ConfirmContentsOfDirectoryAreTheSame(firstGlobal, directoryInfo);
-                }
-
-                return firstGlobal;
-            }
-
-            return null;
-        }
-
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             firstTime = true;
@@ -72,22 +50,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
             
-        }
-
-        private IEnumerable<DirectoryInfo> GetAllGlobalFolders(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
-        {
-            const string folderName = ExtractionDirectory.GlobalsDataFolderName;
-
-            foreach (ReleasePotential releasePotential in toRelease.Value)
-            {
-                Debug.Assert(releasePotential.ExtractDirectory.Parent != null, "releasePotential.ExtractDirectory.Parent != null");
-                DirectoryInfo globalFolderForThisExtract = releasePotential.ExtractDirectory.Parent.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).SingleOrDefault();
-
-                if (globalFolderForThisExtract == null) //this particualar release didn't include globals/custom data at all
-                    continue;
-
-                yield return (globalFolderForThisExtract);
-            }
         }
     }
 }
