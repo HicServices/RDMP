@@ -33,6 +33,7 @@ namespace CatalogueLibrary.Data
 
         private string _name;
         private string _createdByAssembly;
+        private string _mappedDataPath;
         private readonly SelfCertifyingDataAccessPoint _selfCertifyingDataAccessPoint;
 
         public string Name
@@ -47,6 +48,11 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _createdByAssembly, value); }
         }
 
+        public string MappedDataPath
+        {
+            get { return _mappedDataPath; }
+            set { SetField(ref _mappedDataPath, value); }
+        }
 
         public string Server
         {
@@ -128,6 +134,7 @@ namespace CatalogueLibrary.Data
         {
             Name = r["Name"] as string;
             CreatedByAssembly = r["CreatedByAssembly"] as string;
+            MappedDataPath = r["MappedDataPath"] as string;
 
             _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)repository,DatabaseType.MicrosoftSQLServer)
             {

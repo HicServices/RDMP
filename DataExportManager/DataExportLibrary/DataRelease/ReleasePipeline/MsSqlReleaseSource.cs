@@ -25,6 +25,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     {
         private readonly CatalogueRepository _catalogueRepository;
         private DiscoveredDatabase _database;
+        private DirectoryInfo _dataPathMap;
         private bool firstTime = true;
 
         public MsSqlReleaseSource(CatalogueRepository catalogueRepository) : base()
@@ -43,13 +44,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 
                 if (_database != null)
                 {
-                    var dataFolder = _database.Detach().FullName;
+                    _database.Detach();
                     var databaseName = _database.GetRuntimeName();
+
                     // TODO: Discover mapping between Server DATA folder and this machine!
-                    File.Copy(Path.Combine(dataFolder, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
-                    File.Copy(Path.Combine(dataFolder, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
-                    File.Delete(Path.Combine(dataFolder, databaseName + ".mdf"));
-                    File.Delete(Path.Combine(dataFolder, databaseName + "_log.mdf"));
+                    File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
+                    File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
+                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"));
+                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.mdf"));
                 }
 
                 return new ReleaseAudit()
@@ -104,6 +106,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             var dbName = foundConnection.Split('|')[1];
 
             var externalServer = _catalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+            if (!String.IsNullOrWhiteSpace(externalServer.MappedDataPath))
+                _dataPathMap = new DirectoryInfo(externalServer.MappedDataPath);
+
             var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
             _database = server.ExpectDatabase(dbName);
 
