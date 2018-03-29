@@ -63,6 +63,10 @@ namespace CatalogueLibrary.Data.DataLoad
             get { return _numberOfCharactersToUseInAnonymousRepresentation; }
             set { SetField(ref  _numberOfCharactersToUseInAnonymousRepresentation, value); }
         }
+
+        /// <summary>
+        /// The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This should have been created by the ANOStoreDatabasePatcher
+        /// </summary>
         public int Server_ID
         {
             get { return _serverID; }

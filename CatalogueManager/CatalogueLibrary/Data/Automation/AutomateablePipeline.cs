@@ -27,12 +27,19 @@ namespace CatalogueLibrary.Data.Automation
         private int _automationServiceSlotID;
         private int _pipelineID;
 
+
+        /// <summary>
+        /// The ID of AutomationServiceSlot that this pipeline will execute on.
+        /// </summary>
         public int AutomationServiceSlot_ID
         {
             get { return _automationServiceSlotID; }
             set { SetField(ref _automationServiceSlotID , value); }
         }
 
+        /// <summary>
+        /// The ID pipeline that will be run.  This must be compatible with the <see cref="AutomationPipelineContext"/>
+        /// </summary>
         public int Pipeline_ID
         {
             get { return _pipelineID; }

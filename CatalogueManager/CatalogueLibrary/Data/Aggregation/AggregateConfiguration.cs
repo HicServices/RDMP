@@ -204,6 +204,9 @@ namespace CatalogueLibrary.Data.Aggregation
             }
         }
 
+        /// <summary>
+        /// Gets all parameters (e.g. @studyStartDate ) associated with this AggregateConfiguration (there might not be any).
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<AnyTableSqlParameter> Parameters
         {

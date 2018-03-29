@@ -117,11 +117,18 @@ namespace CatalogueLibrary.Data.Automation
         #endregion
       
         #region Relationships
+        /// <summary>
+        /// Fetches all the AutomationJobs currently underway/crashed on the AutomationServiceSlot (This is refreshed every time you call this property)
+        /// </summary>
         [NoMappingToDatabase]
         public AutomationJob[] AutomationJobs
         {
             get { return Repository.GetAllObjectsWithParent<AutomationJob>(this).ToArray(); }
         }
+
+        /// <summary>
+        /// Fetches all the AutomateablePipelines that are associated with this AutomationServiceSlot
+        /// </summary>
         [NoMappingToDatabase]
         public AutomateablePipeline[] AutomateablePipelines { get { return Repository.GetAllObjectsWithParent<AutomateablePipeline>(this); } }
         

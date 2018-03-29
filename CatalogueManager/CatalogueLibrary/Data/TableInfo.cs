@@ -106,6 +106,9 @@ namespace CatalogueLibrary.Data
         private readonly ICatalogueRepository _catalogueRepository;
 
         #region Relationships
+        /// <summary>
+        /// Fetches all the ColumnInfos associated with this TableInfo (This is refreshed every time you call this property)
+        /// </summary>
         [NoMappingToDatabase]
         public ColumnInfo[] ColumnInfos { get
         {
