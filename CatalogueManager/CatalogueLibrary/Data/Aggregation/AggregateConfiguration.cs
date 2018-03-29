@@ -178,7 +178,8 @@ namespace CatalogueLibrary.Data.Aggregation
 
         /// <summary>
         /// Fetches the Catalogue referenced by Catalogue_ID
-        /// </summary>
+        /// <see cref="Catalogue_ID"/>
+        ///  </summary>
         [NoMappingToDatabase]
         public Catalogue Catalogue
         {

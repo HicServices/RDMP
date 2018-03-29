@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Reports;
+using CatalogueLibrary.Repositories;
 using CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation;
 using CatalogueManager.SimpleDialogs.Reports;
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
@@ -102,6 +105,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             var singlePropertyUIs = new SinglePropertyUISourceCodeEvaluator();
             singlePropertyUIs.FindProblems(csFilesFound);
+
+            var noMappingToDatabaseComments = new NoMappingToDatabaseCommentsEvaluator();
+            noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF,csFilesFound);
+
         }
 
         private void FindUnreferencedProjectsRescursively(Dictionary<VisualStudioProjectReference, List<string>> projects, DirectoryInfo dir)
@@ -179,6 +186,93 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         {
             Console.WriteLine(s);
             errors.Add(s);
+        }
+    }
+
+    public class NoMappingToDatabaseCommentsEvaluator
+    {
+        public void FindProblems(MEF mef,List<string> csFilesFound)
+        {
+            Dictionary<string,string> suggestedNewFileContents = new Dictionary<string, string>();
+
+            foreach (var f in csFilesFound)
+            {
+                bool changes = false;
+
+                StringBuilder sbSuggestedText = new StringBuilder();
+
+                var text = File.ReadAllLines(f);
+                
+                for (int i = 0; i < text.Length; i++)
+                {
+                    if (text[i].Trim().Equals("[NoMappingToDatabase]"))
+                    {
+                        var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
+                        
+                        Type t = mef.GetTypeByNameFromAnyLoadedAssembly(currentClassName);
+
+                        //if the previous line isn't a summary comment
+                        if (!text[i - 1].Equals("/// </summary>"))
+                        {
+                            string next = text[i + 1];
+
+                            var m = Regex.Match(next,@"(.*)public\b(.*)\s+(.*)\b");
+                            if (m.Success)
+                            {
+                                changes = true;
+                                var whitespace = m.Groups[1].Value;
+                                var type = m.Groups[2].Value;
+                                var member = m.Groups[3].Value;
+
+                                Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
+                                Assert.IsNotNull(t);
+                                
+                                
+
+                                if (type.Contains("[]"))
+                                {
+                                    var classTypeWhichThisIsAnArrayOf = type.TrimEnd(' ','[', ']');
+                                    sbSuggestedText.AppendLine(whitespace + "/// <summary>");
+                                    sbSuggestedText.AppendLine(whitespace + "/// Fetches all the " + classTypeWhichThisIsAnArrayOf.Trim() + "s associated with this " + Path.GetFileNameWithoutExtension(f) + " (This is refreshed every time you call this property)");
+                                    sbSuggestedText.AppendLine(whitespace + "/// <see cref=\"" + classTypeWhichThisIsAnArrayOf.Trim() + "_ID\"/>");
+                                }
+                                else if (t.GetProperty(member + "_ID") != null)
+                                {
+                                    sbSuggestedText.AppendLine(whitespace + "/// <summary>");
+                                    sbSuggestedText.AppendLine(whitespace + "/// Fetches the " + type.Trim() + " referenced by " + member.Trim() + "_ID (This is refreshed every time you call this property)");
+                                    sbSuggestedText.AppendLine(whitespace + "/// <see cref=\"" + member.Trim() + "_ID\"/>");
+                                }
+                                else
+                                    continue;
+
+                                sbSuggestedText.AppendLine(whitespace + "/// </summary>");
+                            }
+                        }
+                    }
+
+                    sbSuggestedText.AppendLine(text[i]);
+                }
+
+                if(changes)
+                    suggestedNewFileContents.Add(f,sbSuggestedText.ToString());
+            }
+                
+            Assert.IsEmpty(suggestedNewFileContents);
+
+            //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
+            foreach (KeyValuePair<string, string> suggestedNewFileContent in suggestedNewFileContents)
+                File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
+        }
+
+        private string GetUniqueTypeName(string typename)
+        {
+            switch (typename)
+            {
+                case "ColumnInfo": return "CatalogueLibrary.Data.ColumnInfo";
+                case "IFilter": return "CatalogueLibrary.Data.IFilter";
+            }
+
+            return typename;
         }
     }
 }
