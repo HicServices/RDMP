@@ -41,23 +41,26 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 DirectoryInfo sourceFolder = GetSourceFolder();
                 Debug.Assert(sourceFolder != null, "sourceFolder != null");
                 var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.OtherDataFolderName);
-                
+
+                var releaseAudit = new ReleaseAudit()
+                {
+                    SourceGlobalFolder = PrepareSourceGlobalFolder()
+                };
+
                 if (_database != null)
                 {
                     _database.Detach();
                     var databaseName = _database.GetRuntimeName();
 
-                    // TODO: Discover mapping between Server DATA folder and this machine!
                     File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
                     File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
+
+                    // TODO: This does not delete the LOG files...
                     File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"));
                     File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.mdf"));
                 }
 
-                return new ReleaseAudit()
-                {
-                    SourceGlobalFolder = PrepareSourceGlobalFolder()
-                };
+                return releaseAudit;
             }
             return null;
         }
