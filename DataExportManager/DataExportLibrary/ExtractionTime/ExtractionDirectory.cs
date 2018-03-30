@@ -22,22 +22,27 @@ namespace DataExportLibrary.ExtractionTime
         public const string GlobalsDataFolderName = "Globals";
         public const string CustomCohortDataFolderName = "CohortCustomData";
         public const string OtherDataFolderName = "OtherData";
-        
+
         public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
+            : this(rootExtractionDirectory, configuration, DateTime.Now)
         {
-            if(string.IsNullOrWhiteSpace(rootExtractionDirectory ))
+        }
+
+        private ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration, DateTime extractionDate)
+        {
+            if (string.IsNullOrWhiteSpace(rootExtractionDirectory))
                 throw new NullReferenceException("Extraction Directory not set");
 
             if (!rootExtractionDirectory.StartsWith("\\"))
                 if (!Directory.Exists(rootExtractionDirectory))
                     throw new DirectoryNotFoundException("Root directory \"" + rootExtractionDirectory + "\" does not exist");
-            
+
             root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, ExtractionSubFolderName));
             if (!root.Exists)
                 root.Create();
 
-            string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + DateTime.Now.ToString("yyyyMMdd");
-            
+            string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + extractionDate.ToString("yyyyMMdd");
+
             if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
                 extractionDirectory = root.CreateSubdirectory(subdirectoryName);
             else
@@ -47,6 +52,11 @@ namespace DataExportLibrary.ExtractionTime
         public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
         {
             return StandardExtractionPrefix + configuration.ID;
+        }
+
+        public static ExtractionDirectory GetForDifferentDate(string rootExtractionDirectory, IExtractionConfiguration configuration, DateTime extractDate)
+        {
+            return new ExtractionDirectory(rootExtractionDirectory, configuration, extractDate);
         }
 
         public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)

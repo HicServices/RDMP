@@ -40,7 +40,7 @@ namespace DataExportLibrary.DataRelease
 
         public Exception Exception { get; private set; }
         public Releaseability Assesment { get; protected set; }
-        public DateTime? DateOfExtraction { get; private set; }
+        public DateTime DateOfExtraction { get; private set; }
 
         /// <summary>
         /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
@@ -181,8 +181,7 @@ namespace DataExportLibrary.DataRelease
                     return Exception.ToString();
                 default:
                     string toReturn = "Dataset:" + DataSet;
-                    if (DateOfExtraction != null)
-                        toReturn += " DateOfExtraction:" + ((DateTime) DateOfExtraction);
+                    toReturn += " DateOfExtraction:" + DateOfExtraction;
                     toReturn += " Status:" + Assesment;
 
                     return toReturn;

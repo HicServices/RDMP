@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Diagnostics;
 using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
@@ -22,7 +23,8 @@ namespace DataExportLibrary.DataRelease
         protected override Releaseability GetSpecificAssessment()
         {
             var _extractDir = Configuration.GetProject().ExtractionDirectory;
-            ExtractDirectory = new ExtractionDirectory(_extractDir, Configuration).GetDirectoryForDataset(DataSet);
+
+            ExtractDirectory = ExtractionDirectory.GetForDifferentDate(_extractDir, Configuration, DateOfExtraction).GetDirectoryForDataset(DataSet);
 
             var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
             var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);

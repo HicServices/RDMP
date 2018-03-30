@@ -314,27 +314,27 @@ namespace DataExportManager.DataRelease
 
                     case Releaseability.ExtractFilesMissing:
                         i.ImageKey = "FileMissing";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.ExtractionSQLDesynchronisation:
                         i.ImageKey = "OutOfSync";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.CohortDesynchronisation:
                         i.ImageKey = "WrongCohort";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.Releaseable:
                         i.ImageKey = "Releaseable";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.ColumnDifferencesVsCatalogue:
                         i.ImageKey = "DifferentFromCatalogue";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability :

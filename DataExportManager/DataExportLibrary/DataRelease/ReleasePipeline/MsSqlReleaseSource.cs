@@ -54,10 +54,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
                     File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
                     File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
-
-                    // TODO: This does not delete the LOG files...
                     File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"));
-                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.mdf"));
+                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"));
                 }
 
                 return releaseAudit;
