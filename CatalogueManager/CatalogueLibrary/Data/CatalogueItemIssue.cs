@@ -317,7 +317,7 @@ namespace CatalogueLibrary.Data
         }
         
         /// <summary>
-        /// Returns the Name of the CatalogueItemIssueUser referenced by <see cref="ReportedBy_ID"/> or Unknown if there isn't one.
+        /// Returns the Name of the IssueSystemUser referenced by <see cref="ReportedBy_ID"/> or Unknown if there isn't one.
         /// </summary>
         /// <returns></returns>
         public string GetReportedByName()
@@ -329,7 +329,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Returns the Name of the CatalogueItemIssueUser referenced by <see cref="Owner_ID"/> or Unknown if there isn't one.
+        /// Returns the Name of the IssueSystemUser referenced by <see cref="Owner_ID"/> or Unknown if there isn't one.
         /// </summary>
         /// <returns></returns>
         public string GetOwnerByName()
