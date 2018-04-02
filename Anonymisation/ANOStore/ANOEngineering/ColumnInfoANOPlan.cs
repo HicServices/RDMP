@@ -105,6 +105,9 @@ namespace ANOStore.ANOEngineering
 
         public void SetToRecommendedPlan()
         {
+            //get an extraction category based on it's current extractability
+            ExtractionCategoryIfAny = GetMaxExtractionCategoryIfAny();
+            
             if (ColumnInfo.GetRuntimeName().StartsWith("hic_"))
                 Plan = Plan.Drop;//suggest dropping hic_ fields
             else
@@ -116,12 +119,9 @@ namespace ANOStore.ANOEngineering
                     else
                         Plan = Plan.PassThroughUnchanged; //it is extractable but not special
 
-            //get an extraction category based on it's current extractability
-            ExtractionCategoryIfAny = GetMaxExtractionCategoryIfAny();
 
             //if theres an associated ANOTable with a different ColumnInfo with the same name e.g. chi=>ANOChi in another dataset that was already anonymised
             MakeANOTableSuggestionIfApplicable();
-
         }
 
 
