@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -214,18 +214,39 @@ namespace CatalogueLibrary.Data.Aggregation
             get { return ((CatalogueRepository) Repository).GetAllParametersForParentTable(this); }
         }
 
-        //Satisfies interface
+        /// <inheritdoc cref="Parameters"/>
         public ISqlParameter[] GetAllParameters()
         {
             return Parameters.ToArray();
         }
 
+        /// <summary>
+        /// An AggregateConfiguration is a Group By statement.  This will involve using at least one Table in the FROM section of the query.  The descision on which tables
+        /// to join is made by the AggregateBuilder based on the AggregateDimensions (columns).  If there are no column mapped AggregateDimensions (e.g. there is only a count(*))
+        /// or there are other tables you want joined in addition the user can specify them in this property Populated via <see cref="AggregateForcedJoin"/>
+        /// </summary>
         [NoMappingToDatabase]
         public TableInfo[] ForcedJoins
         {
             get { return ((CatalogueRepository) Repository).AggregateForcedJoiner.GetAllForcedJoinsFor(this); }
         }
 
+        /// <summary>
+        /// When an AggregateConfiguration is used in a cohort identification capacity it can have one or more 'patient index tables' defined e.g. 
+        /// 'Give me all prescriptions for morphine' (Prescribing) 'within 6 months of patient being discharged from hospital' (SMR01).  In this case
+        /// a join is done against the secondary dataset. 
+        /// 
+        /// This property returns all such 'patient index table' AggregateConfigurations which are currently being used by this AggregateConfiguration
+        /// for building it's join.
+        /// </summary>
+        [NoMappingToDatabase]
+        public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed {
+            get { return Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray(); }
+        }
+
+        /// <summary>
+        /// An AggregateConfiguration is a Group By statement.  This will return all the SELECT columns for the query (including any count(*) / sum(*) etc columns).
+        /// </summary>
         [NoMappingToDatabase]
         public AggregateDimension[] AggregateDimensions
         {
@@ -233,6 +254,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
 
+        /// <inheritdoc cref="PivotOnDimensionID"/>
         [NoMappingToDatabase]
         public AggregateDimension PivotDimension
         {
@@ -256,14 +278,16 @@ namespace CatalogueLibrary.Data.Aggregation
                         (int) _overrideFiltersByUsingParentAggregateConfigurationInsteadID);
             }
         }
-         
-        [NoMappingToDatabase]
-        public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed {
-            get { return Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray(); }
-        }
 
         #endregion
 
+        /// <summary>
+        /// Only relevant for AggregateConfigurations that are being used in a cohort identification capacity (See <see cref="IsCohortIdentificationAggregate"/>).
+        /// 
+        /// The order location of an AggregateConfiguration within it's parent <see cref="CohortAggregateContainer"/> (if it has one).  This is mostly irrelevant for UNION /
+        /// INTERSECT operations (other than helping the user viewing the system) but is vital for EXCEPT containers where the first AggregateConfiguration in the container is
+        /// run producing a dataset and all subsequent AggregateConfigurations are then removed from that patient set.
+        /// </summary>
         [NoMappingToDatabase]
         public int Order
         {
@@ -289,6 +313,10 @@ namespace CatalogueLibrary.Data.Aggregation
             }
         }
 
+        /// <summary>
+        /// True if the AggregateConfiguration is part of a <see cref="CohortIdentificationConfiguration"/> and is intended to produce list of patient identifiers (optionally
+        /// with other data if it is a 'patient index table'.
+        /// </summary>
         [NoMappingToDatabase]
         public bool IsCohortIdentificationAggregate
         {
@@ -341,28 +369,54 @@ namespace CatalogueLibrary.Data.Aggregation
             
         }
 
+
+        /// <summary>
+        /// Updates <see cref="Order"/> from the database
+        /// </summary>
         public void ReFetchOrder()
         {
             _orderWithinKnownContainer = ((CatalogueRepository) Repository).GetOrderIfExistsFor(this);
         }
 
+        /// <summary>
+        /// Returns the Name.  If the AggregateConfiguration is a cohort identification aggregate (distinguished by <see cref="CohortIdentificationConfiguration.CICPrefix"/>)
+        /// then the prefix is removed from the return value.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             //strip the cic section from the front
-            return Regex.Replace(Name, @"cic_\d+_?", "");
+            return Regex.Replace(Name, CohortIdentificationConfiguration.CICPrefix + @"\d+_?", "");
         }
 
+        /// <summary>
+        /// Gets an IQuerySyntaxHelper from the Catalogue powering this AggregateConfiguration (<see cref="Catalogue.GetQuerySyntaxHelper"/>)
+        /// </summary>
+        /// <returns></returns>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return Catalogue.GetQuerySyntaxHelper();
         }
 
-
-        public void AddDimension(ExtractionInformation basedOnColumn)
+        /// <summary>
+        /// Specifies that that given <see cref="ExtractionInformation"/> should become a new SELECT column in the GROUP BY of this AggregateConfiguration.  This
+        /// column will also appear in the ORDER BY and GROUP BY sections of the query when built by <see cref="AggregateBuilder"/>.  Finally if the column comes 
+        /// from a novel underlying TableInfo then that new table will also be included in the FROM section of the query (e.g. with a join).
+        /// </summary>
+        /// <param name="basedOnColumn"></param>
+        public AggregateDimension AddDimension(ExtractionInformation basedOnColumn)
         {
-            new AggregateDimension((ICatalogueRepository) basedOnColumn.Repository, basedOnColumn, this);
+            return new AggregateDimension((ICatalogueRepository) basedOnColumn.Repository, basedOnColumn, this);
         }
 
+
+        /// <summary>
+        /// Sets up a new <see cref="AggregateBuilder"/> with all the columns (See <see cref="AggregateDimensions"/>), WHERE logic (See <see cref="RootFilterContainer"/>, Pivot
+        /// etc.
+        /// </summary>
+        /// <remarks>Note that some elements e.g. axis are automatically handles at query generation time and therefore do not have to be injected into the <see cref="AggregateBuilder"/></remarks>
+        /// <param name="topX">Maximum number of rows to return, the proper way to do this is via <see cref="AggregateTopX"/></param>
+        /// <returns></returns>
         public AggregateBuilder GetQueryBuilder(int? topX = null)
         {
             if(string.IsNullOrWhiteSpace(CountSQL))
@@ -383,11 +437,15 @@ namespace CatalogueLibrary.Data.Aggregation
 
             if (PivotOnDimensionID != null)
                 builder.SetPivotToDimensionID(PivotDimension);
-
+            
             return builder;
         }
 
-
+        /// <summary>
+        /// If an AggregateConfiguration is set up as a graph (i.e. it isn't a cohort identification set) then it can have a single <see cref="AggregateDimension"/> defined
+        /// as an axis dimension (e.g. DatePrescribed).  This method returns the  <see cref="AggregateContinuousDateAxis"/> if there is one or null if there isn't one.
+        /// </summary>
+        /// <returns></returns>
         public AggregateContinuousDateAxis GetAxisIfAny()
         {
             //for each dimension
@@ -403,10 +461,22 @@ namespace CatalogueLibrary.Data.Aggregation
             return null;
         }
 
+        /// <summary>
+        /// Returns the AggregateTopX defined for limiting the number of rows returned by the AggregateConfiguration or null if there isn't one defined.  This is only applicable
+        /// on non cohort identification AggregateConfigurations
+        /// </summary>
+        /// <returns></returns>
         public AggregateTopX GetTopXIfAny()
         {
             return Repository.GetAllObjectsWithParent<AggregateTopX>(this).SingleOrDefault();
         }
+
+        /// <summary>
+        /// Determines whether the AggregateConfiguration could be used in a <see cref="CohortIdentificationConfiguration"/> to identify a list of patients.  This will be true
+        /// if there are no pivot/axis dimensions and one of the <see cref="AggregateDimensions"/> is marked <see cref="AggregateDimension.IsExtractionIdentifier"/>
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns></returns>
         public bool IsAcceptableAsCohortGenerationSource(out string reason)
         {
             reason = null;
@@ -425,7 +495,10 @@ namespace CatalogueLibrary.Data.Aggregation
             return reason == null;
         }
 
-
+        /// <summary>
+        /// Checks that the AggregateConfiguration can be resolved into a runnable SQL quer <see cref="GetQueryBuilder"/>
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             //these are not checkable since they are intended for use by CohortQueryBuilder instead
@@ -450,8 +523,11 @@ namespace CatalogueLibrary.Data.Aggregation
         
         private bool orderFetchAttempted;
         
-
-
+        /// <summary>
+        /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
+        /// (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a <see cref="CohortAggregateContainer"/>.
+        /// </summary>
+        /// <returns></returns>
         public CohortAggregateContainer GetCohortAggregateContainerIfAny()
         {
             return
@@ -468,7 +544,8 @@ namespace CatalogueLibrary.Data.Aggregation
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method returns
         /// true if there is an associated JoinableCohortAggregateConfiguration that would make an ordinary AggregateConfiguration into a 'Patient Index Table'.
         /// </summary>
-        /// <returns>true if the AggregateConfiguration is part of a cic fulfilling the role of 'Patient Index Table' as defined by the existence of a JoinableCohortAggregateConfiguration object</returns>
+        /// <returns>true if the AggregateConfiguration is part of a cic fulfilling the role of 'Patient Index Table' as defined by the existence of a 
+        ///  JoinableCohortAggregateConfiguration object</returns>
         public bool IsJoinablePatientIndexTable()
         {
             if (!_databaseLookupPerformed)
@@ -480,6 +557,11 @@ namespace CatalogueLibrary.Data.Aggregation
             return _cachedJoinable != null;
         }
 
+        /// <summary>
+        /// If the AggregateConfiguration is set up as a cohort identification set or patient index table then this method will return the associated 
+        /// <see cref="CohortIdentificationConfiguration"/> that it is a part of.
+        /// </summary>
+        /// <returns></returns>
         public CohortIdentificationConfiguration GetCohortIdentificationConfigurationIfAny()
         {
             //see if there is a container for this Aggregate
@@ -499,6 +581,11 @@ namespace CatalogueLibrary.Data.Aggregation
             return null;
         }
 
+        /// <summary>
+        /// Creates a complete clone copy of the current AggregateConfiguration.  The clone will include all new AggregateDimensions, IFilters, IContainers etc.
+        /// IMPORTANT: This method is designed for cohort identifying AggregateConfigurations only and therefore does not support Axis / TopX / Pivot.
+        /// </summary>
+        /// <returns></returns>
         public AggregateConfiguration CreateClone()
         {
             var cataRepo = (CatalogueRepository) Repository;
@@ -555,6 +642,11 @@ namespace CatalogueLibrary.Data.Aggregation
             _orderWithinKnownContainer = currentOrder;
         }
 
+        /// <summary>
+        /// Deletes the AggregateConfiguration.  This includes removing it from it's <see cref="CohortAggregateContainer"/> if it is part of one.  Also includes deleting it's 
+        /// <see cref="JoinableCohortAggregateConfiguration"/> if it is a 'patient index table'.
+        /// </summary>
+        /// <exception cref="NotSupportedException">Thrown if the AggregateConfiguration is a patient index table that is being used by other AggregateConfigurations</exception>
         public override void DeleteInDatabase()
         {
             var container = GetCohortAggregateContainerIfAny();
@@ -572,8 +664,8 @@ namespace CatalogueLibrary.Data.Aggregation
             base.DeleteInDatabase();
         }
 
-        
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             List<IHasDependencies> dependencies = new List<IHasDependencies>();
@@ -585,6 +677,7 @@ namespace CatalogueLibrary.Data.Aggregation
             return dependencies.ToArray();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             List<IHasDependencies> dependers = new List<IHasDependencies>();
@@ -598,6 +691,7 @@ namespace CatalogueLibrary.Data.Aggregation
 
         private JoinableCohortAggregateConfiguration _cachedJoinable;
         private bool _databaseLookupPerformed;
+
         /// <summary>
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
         /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
