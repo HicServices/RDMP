@@ -37,7 +37,10 @@ namespace CatalogueLibrary.Data
         private DateTime? _reportedOnDate;
         private int? _ownerID;
         private string _pathToExcelSheetWithAdditionalInformation;
-
+        
+        /// <summary>
+        /// User provided description of the issue.  This will be externally visible in extractions metadata documents
+        /// </summary>
         public string Description
         {
             get { return _description; }
@@ -62,6 +65,9 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// The specific column or transform that this issue affects (CatalogueItem)
+        /// </summary>
         [DoNotExtractProperty]
         public int CatalogueItem_ID
         {
@@ -69,12 +75,18 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _catalogueItemID, value); }
         }
 
+        /// <summary>
+        /// A name for refering to the current issue 
+        /// </summary>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// The action underway to resolve the issue
+        /// </summary>
         [DoNotExtractProperty]
         public string Action
         {
@@ -82,6 +94,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _action, value); }
         }
 
+        /// <summary>
+        /// Guidlines for how to handle the issue e.g. which records are likely to be affected, whether they should be ignored or if there is a workaround etc
+        /// </summary>
         public string NotesToResearcher
         {
             get { return _notesToResearcher; }
@@ -90,6 +105,9 @@ namespace CatalogueLibrary.Data
 
 
         //do not remove this attribute because SQL often contains ANOCHI or PROCHIs
+        /// <summary>
+        /// Sql you can run to reproduce the issue e.g. select * from mytable where LEN(chi) = 0
+        /// </summary>
         [DoNotExtractProperty]
         public string SQL
         {
@@ -97,6 +115,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _sql, value); }
         }
 
+        /// <summary>
+        /// A ticketing system issue number for where this issue is documented more fully in a tracking system (if any)
+        /// </summary>
         [DoNotExtractProperty]
         public string Ticket
         {
@@ -104,7 +125,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _ticket, value); }
         }
 
-
+        /// <summary>
+        /// The current status of the issue (e.g. outstanding or resolved)
+        /// </summary>
         [DoNotExtractProperty]
         public IssueStatus Status
         {
@@ -112,7 +135,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _status, value); }
         }
 
-
+        /// <summary>
+        /// Automatically populated date at which the issue was created
+        /// </summary>
         [DoNotExtractProperty]
         public DateTime DateCreated
         {
@@ -120,12 +145,18 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _dateCreated, value); }
         }
 
+        /// <summary>
+        /// The date the ticket entered it's current Status
+        /// </summary>
         public DateTime? DateOfLastStatusChange
         {
             get { return _dateOfLastStatusChange; }
             set { SetField(ref  _dateOfLastStatusChange, value); }
         }
 
+        /// <summary>
+        /// The windows username of the person who created the issue
+        /// </summary>
         [DoNotExtractProperty]
         public string UserWhoCreated
         {
@@ -133,6 +164,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _userWhoCreated, value); }
         }
 
+
+        /// <summary>
+        /// Windows username of the person who changed the issue to it's current status
+        /// </summary>
         [DoNotExtractProperty]
         public string UserWhoLastChangedStatus
         {
@@ -140,12 +175,20 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _userWhoLastChangedStatus, value); }
         }
 
+
+        /// <summary>
+        /// How serious is the issue (red amber or green)
+        /// </summary>
         public IssueSeverity Severity
         {
             get { return _severity; }
             set { SetField(ref  _severity, value); }
         }
 
+        /// <summary>
+        /// ID of the IssueSystemUser who reported the issue
+        /// </summary>
+        [Obsolete("This should be merged with DataUser")]
         [DoNotExtractProperty]
         public int? ReportedBy_ID
         {
@@ -153,6 +196,11 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _reportedByID, value); }
         }
 
+
+        /// <summary>
+        /// Date the ReportedBy_ID reported the issue (could be different from DateCreated if the report was provided by email and there was a delay
+        /// entering it into the system).
+        /// </summary>
         [DoNotExtractProperty]
         public DateTime? ReportedOnDate
         {
@@ -160,6 +208,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _reportedOnDate, value); }
         }
 
+        /// <summary>
+        /// ID of the IssueSystemUser who is responsible for resolving this issue
+        /// </summary>
+        [Obsolete("This should be merged with DataUser")]
         [DoNotExtractProperty]
         public int? Owner_ID
         {
@@ -167,6 +219,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _ownerID, value); }
         }
 
+        /// <summary>
+        /// Optional file path to an excel spreadsheet which provides more information e.g. graphs etc for the issue
+        /// </summary>
         [DoNotExtractProperty]
         [AdjustableLocation]
         public string PathToExcelSheetWithAdditionalInformation
@@ -200,6 +255,11 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
+        /// <summary>
+        /// Defines a new problematic issue associated with the specified column/transform (CatalogueItem).
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="item"></param>
         public CatalogueItemIssue(ICatalogueRepository repository, CatalogueItem item)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -256,19 +316,10 @@ namespace CatalogueLibrary.Data
             PathToExcelSheetWithAdditionalInformation = r["PathToExcelSheetWithAdditionalInformation"] as string;
         }
         
-        
-        public string GetNameIncludingTicketIfExists()
-        {
-
-            string issueBit =
-                "(" +
-                (string.IsNullOrWhiteSpace(Ticket) ? "No JIRA Ticket" : Ticket)
-                +
-                " ID=" + ID
-                 + ")";
-           return Name + issueBit;
-        }
-
+        /// <summary>
+        /// Returns the Name of the CatalogueItemIssueUser referenced by <see cref="ReportedBy_ID"/> or Unknown if there isn't one.
+        /// </summary>
+        /// <returns></returns>
         public string GetReportedByName()
         {
             if (this.ReportedBy_ID == null)
@@ -277,6 +328,10 @@ namespace CatalogueLibrary.Data
             return ReportedBy.Name;
         }
 
+        /// <summary>
+        /// Returns the Name of the CatalogueItemIssueUser referenced by <see cref="Owner_ID"/> or Unknown if there isn't one.
+        /// </summary>
+        /// <returns></returns>
         public string GetOwnerByName()
         {
             if (this.Owner_ID == null)
@@ -285,24 +340,57 @@ namespace CatalogueLibrary.Data
             return Owner.Name;
         }
 
+        /// <inheritdoc cref="ToString"/>
         public override string ToString()
         {
             return Name;
         }
     }
 
+    /// <summary>
+    /// The severity of a CatalogueItemIssue
+    /// </summary>
     public enum IssueSeverity
     {
+        /// <summary>
+        /// Very serious
+        /// </summary>
         Red,
+
+        /// <summary>
+        /// Not so serious
+        /// </summary>
         Amber,
+
+        /// <summary>
+        /// Not serious at all
+        /// </summary>
         Green
     }
 
+    /// <summary>
+    /// The current development stage a CatalogueItemIssue is at
+    /// </summary>
     public enum IssueStatus
     {
+        /// <summary>
+        /// Issue has not been evaluated/no fix is being prepared
+        /// </summary>
         Outstanding,
+
+        /// <summary>
+        /// A fix is in the works
+        /// </summary>
         InDevelopment,
+
+        /// <summary>
+        /// A fix/evaluation cannot be applied due to external factors
+        /// </summary>
         Blocked,
+
+        /// <summary>
+        /// The issue has been fully resolved and exists only for recording purposes
+        /// </summary>
         Resolved
     }
 }
