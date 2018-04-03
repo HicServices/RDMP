@@ -1,4 +1,6 @@
 # RDMP
+## Install
+	RDMP is available as a ClickOnce package at https://hic.dundee.ac.uk/Installers/RDMP/Stable/ 
 
 ## Build
 
