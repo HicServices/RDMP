@@ -47,33 +47,32 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public override IContainer FilterContainer { get { return null; } }
 
         #endregion
 
-        /// <summary>
-        /// Used to fulfil requirements of interface. But Filters at Catalogue level are never nested / used in AND/OR containers
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public override int? FilterContainer_ID
         {
             get { throw new NotSupportedException(); }
             set { throw new NotSupportedException(); }
         }
-
+        /// <inheritdoc/>
         public override ColumnInfo GetColumnInfoIfExists()
         {
             return ExtractionInformation.ColumnInfo;
-
         }
 
+        /// <inheritdoc/>
         public override IFilterFactory GetFilterFactory()
         {
             return new ExtractionFilterFactory(ExtractionInformation);
         }
 
-
+        /// <inheritdoc/>
         public override Catalogue GetCatalogue()
         {
             return ExtractionInformation.CatalogueItem.Catalogue;

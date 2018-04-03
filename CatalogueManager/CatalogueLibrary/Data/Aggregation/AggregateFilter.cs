@@ -31,12 +31,14 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _filterContainerID;
         private int? _clonedFromExtractionFilterID;
 
+        /// <inheritdoc/>
         public override int? ClonedFromExtractionFilter_ID
         {
             get { return _clonedFromExtractionFilterID; }
             set { SetField(ref _clonedFromExtractionFilterID , value); }
         }
 
+        /// <inheritdoc/>
         public override int? FilterContainer_ID
         {
             get { return _filterContainerID; }
@@ -45,6 +47,10 @@ namespace CatalogueLibrary.Data.Aggregation
 
         private int? _associatedColumnInfoID;
 
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        [Obsolete("Not used or ever populated")]
         public int? AssociatedColumnInfo_ID
         {
             get { return _associatedColumnInfoID; }
@@ -58,11 +64,13 @@ namespace CatalogueLibrary.Data.Aggregation
             get { return Repository.GetAllObjectsWithParent<AggregateFilterParameter>(this); }
         }
 
+        /// <inheritdoc/>
         public override ISqlParameter[] GetAllParameters()
         {
             return AggregateFilterParameters.ToArray();
         }
-
+        
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;}}
 
@@ -102,11 +110,13 @@ namespace CatalogueLibrary.Data.Aggregation
                 FilterContainer_ID = null;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
-
+        
+        /// <inheritdoc/>
         public override ColumnInfo GetColumnInfoIfExists()
         {
             if (AssociatedColumnInfo_ID != null)
@@ -121,12 +131,12 @@ namespace CatalogueLibrary.Data.Aggregation
 
             return null;
         }
-
+        /// <inheritdoc/>
         public override IFilterFactory GetFilterFactory()
         {
             return new AggregateFilterFactory((ICatalogueRepository)Repository);
         }
-
+        /// <inheritdoc/>
         public override Catalogue GetCatalogue()
         {
             var agg = GetAggregate();

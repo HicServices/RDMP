@@ -40,12 +40,14 @@ namespace DataExportLibrary.Data.DataTables
         private int? _clonedFromExtractionFilterID;
         private int? _filterContainerID;
 
+        /// <inheritdoc/>
         public override int? ClonedFromExtractionFilter_ID
         {
             get { return _clonedFromExtractionFilterID; }
             set { SetField(ref _clonedFromExtractionFilterID , value); }
         }
-
+        
+        /// <inheritdoc/>
         public override int? FilterContainer_ID
         {
             get { return _filterContainerID; }
@@ -67,22 +69,25 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
-
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value) : null; } }
 
         #endregion
 
+        /// <inheritdoc/>
         public override ColumnInfo GetColumnInfoIfExists()
         {
             return null;
         }
 
+        /// <inheritdoc/>
         public override IFilterFactory GetFilterFactory()
         {
             return new DeployedExtractionFilterFactory((IDataExportRepository)Repository);
         }
 
+        /// <inheritdoc/>
         public override Catalogue GetCatalogue()
         {
             var ds = GetDataset().ExtractableDataSet;
@@ -97,6 +102,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public override ISqlParameter[] GetAllParameters()
         {
             return ExtractionFilterParameters.Cast<ISqlParameter>().ToArray();
