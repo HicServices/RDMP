@@ -109,6 +109,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             var externalServer = _catalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
             if (!String.IsNullOrWhiteSpace(externalServer.MappedDataPath))
                 _dataPathMap = new DirectoryInfo(externalServer.MappedDataPath);
+            else
+                throw new Exception("The selected Server (" + externalServer.Name + ") must have a Data Path in order to be used as an extraction destination.");
 
             var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
             _database = server.ExpectDatabase(dbName);
@@ -124,6 +126,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 {
                     throw new Exception("Table does not exist!");
                 }
+            }
+            foreach (var discoveredTable in _database.DiscoverTables(false))
+            {
+                if (!tables.Contains(discoveredTable.GetRuntimeName()))
+                    throw new Exception("Spurious table " + discoveredTable.GetRuntimeName() + " was found in the DB. " +
+                                        "Are you releasing ALL the extraction configuration which are part of the project?");
             }
         }
     }
