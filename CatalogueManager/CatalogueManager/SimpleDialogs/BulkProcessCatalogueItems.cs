@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,22 +18,22 @@ namespace CatalogueManager.SimpleDialogs
     /// very useful to be able to bulk process CatalogueItem/ColumnInfo relationships and create/delete ExtractionInformation on mass.  This dialog lets you do that for a given Catalogue
     /// (dataset).
     /// 
-    /// The starting point is to choose which CatalogueItems are to be bulk processed (Apply Transform To).  Either 'All CatalogueItems' or 'Only those matching paste list'.  If you choose
+    /// <para>The starting point is to choose which CatalogueItems are to be bulk processed (Apply Transform To).  Either 'All CatalogueItems' or 'Only those matching paste list'.  If you choose
     /// to paste in a list this is done in the left hand listbox.  The window is very flexible about what you can paste in such that you can for example 'Script Select Top 1000' in Microsoft
-    /// Sql Management Studio and paste the entire query in and it will work out the columns (it looks for the last bit of text on each line.
+    /// Sql Management Studio and paste the entire query in and it will work out the columns (it looks for the last bit of text on each line.</para>
     /// 
-    /// Once you have configured the bulk process target you can choose what operation to do.  These include:
+    /// <para>Once you have configured the bulk process target you can choose what operation to do.  These include:</para>
     /// 
-    /// Making all fields Extractable (with the given ExtractionCategory e.g. Core / Supplemental etc)
+    /// <para>Making all fields Extractable (with the given ExtractionCategory e.g. Core / Supplemental etc)</para>
     /// 
-    /// Make all fields Unextractable (Delete Extraction Information)
+    /// <para>Make all fields Unextractable (Delete Extraction Information)</para>
     /// 
-    /// Delete all underlying ColumnInfos (useful if you are trying to migrate your descriptive metadata to a new underlying table in your database e.g. MyDb.Biochemistry to 
-    /// MyDb.NewBiochemistry without losing CatalogueItem column descriptions and validation rules etc).
+    /// <para>Delete all underlying ColumnInfos (useful if you are trying to migrate your descriptive metadata to a new underlying table in your database e.g. MyDb.Biochemistry to 
+    /// MyDb.NewBiochemistry without losing CatalogueItem column descriptions and validation rules etc).</para>
     /// 
-    /// Guess New Associated Columns from a given TableInfo (stage 2 in the above example), which will try to match up descriptive CatalogueItems by name to a new underlying TableInfo
+    /// <para>Guess New Associated Columns from a given TableInfo (stage 2 in the above example), which will try to match up descriptive CatalogueItems by name to a new underlying TableInfo</para>
     /// 
-    ///  Delete All CatalogueItems (If you really want to nuke the lot of them!) 
+    /// <para> Delete All CatalogueItems (If you really want to nuke the lot of them!) </para>
     /// </summary>
     public partial class BulkProcessCatalogueItems : Form
     {

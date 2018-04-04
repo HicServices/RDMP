@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 
 namespace CatalogueLibrary.Data.Cache
 {
     /// <summary>
     /// Created this because TimeSpans can't handle months and I didn't want to go to the hassle of importing an entire library such as NodaTime just to be able to deal with months.
     /// 
-    /// Serialises to/from simple string representation of duration + type, where type is month (m) or day (d)
+    /// <para>Serialises to/from simple string representation of duration + type, where type is month (m) or day (d)</para>
     /// </summary>
     public class CacheLagPeriod
     {

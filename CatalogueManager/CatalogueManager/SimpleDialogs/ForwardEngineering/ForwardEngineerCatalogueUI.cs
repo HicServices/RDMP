@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,19 +13,19 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// This dialog is shown when the RDMP learns about a new data table in your data repository that you want it to curate.  This can be either following a the successful flat file import
     /// or after selecting an existing table for importing metadata from (See ImportSQLTable).
     /// 
-    /// If you click 'No' then no dataset (Catalogue) will be created and you will only have the TableInfo/ColumnInfo collection stored in your RDMP database, you will need to manually wire
-    /// these up to a Catalogue or delete them. 
+    /// <para>If you click 'No' then no dataset (Catalogue) will be created and you will only have the TableInfo/ColumnInfo collection stored in your RDMP database, you will need to manually wire
+    /// these up to a Catalogue or delete them. </para>
     /// 
-    /// Alternatively you can create a new Catalogue, this will result in a Catalogue (dataset) of the same name as the table and a CatalogueItem being created for each ColumnInfo imported.
+    /// <para>Alternatively you can create a new Catalogue, this will result in a Catalogue (dataset) of the same name as the table and a CatalogueItem being created for each ColumnInfo imported.
     /// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand (in CatalogueItemTab).  It is likely that
-    /// you don't want to release every column in the dataset to researchers so make sure to review the extractability of the CatalogueItems created (in CatalogueItemTab). 
+    /// you don't want to release every column in the dataset to researchers so make sure to review the extractability of the CatalogueItems created (in CatalogueItemTab). </para>
     /// 
-    /// You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e. 
-    /// you can use either CHI number or NHS Number but you can't mix and match (but you could have fields with different names e.g. PatCHI, PatientCHI, MotherCHI, FatherChiNo etc).
+    /// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e. 
+    /// you can use either CHI number or NHS Number but you can't mix and match (but you could have fields with different names e.g. PatCHI, PatientCHI, MotherCHI, FatherChiNo etc).</para>
     /// 
-    /// The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other 
+    /// <para>The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other 
     /// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
-    /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)
+    /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)</para>
     /// </summary>
     public partial class ForwardEngineerCatalogueUI : Form
     {

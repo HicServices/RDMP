@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -25,13 +25,13 @@ namespace DataExportLibrary.Data.DataTables
     /// In general if a filter concept is reusable and useful across multiple projects / over time then you should create it in the Catalogue database as an ExtractionFilter and then 
     /// import a copy into your ExtractionConfiguration each time you need it (or mark it as IsMandatory if it should always be used in data extraction of that Catalogue).
     /// 
-    /// DeployedExtractionFilter differs from ExtractionFilter in that DeployedExtractionFilters are 'per Catalogue in an ExtractionConfiguration' while ExtractionFilters are master copies
+    /// <para>DeployedExtractionFilter differs from ExtractionFilter in that DeployedExtractionFilters are 'per Catalogue in an ExtractionConfiguration' while ExtractionFilters are master copies
     /// stored in the Catalogue database (instead of the DataExportManager database).  When you import a master filter into your ExtractionConfiguration a copy of the WHERE SQL, any 
     /// parameters and the name and description will be made as a DeployedExtractionFilter which will also contain a reference back to the original (ClonedFromExtractionFilter_ID).  This
-    /// allows you to ensure consistency over time and gives you a central location (the ExtractionFilter) to fix errors in the Filter implementation etc.  
+    /// allows you to ensure consistency over time and gives you a central location (the ExtractionFilter) to fix errors in the Filter implementation etc.  </para>
     /// 
-    /// When you open an DeployedExtractionFilter and it differs from the master (either because you have deliberately adjusted your copy or because the master has been updated to fix
-    /// a problem) then you will be alerted via the Filter Checks. 
+    /// <para>When you open an DeployedExtractionFilter and it differs from the master (either because you have deliberately adjusted your copy or because the master has been updated to fix
+    /// a problem) then you will be alerted via the Filter Checks. </para>
     /// </summary>
     public class DeployedExtractionFilter : ConcreteFilter
     {

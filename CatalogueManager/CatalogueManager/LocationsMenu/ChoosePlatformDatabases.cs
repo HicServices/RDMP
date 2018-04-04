@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -36,17 +36,17 @@ namespace CatalogueManager.LocationsMenu
     /// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about 
     /// your datasets (including where they are stored etc).  The Data Export Manager database stores all the extraction configurations you have created for releasing to researchers.
     /// 
-    /// This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new ones.  These connection strings are recorded in each users settings file.
+    /// <para>This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new ones.  These connection strings are recorded in each users settings file.
     /// It is strongly advised that you use Integrated Security (Windows Security) for connecting rather than a username/password as this is the only case where Passwords are not encrypted
-    /// (Since the encryption certificate location is stored in the Catalogue! - see PasswordEncryptionKeyLocationUI).
+    /// (Since the encryption certificate location is stored in the Catalogue! - see PasswordEncryptionKeyLocationUI).</para>
     /// 
-    /// Only the Catalogue database is required, if you do not intend to do data extraction at this time then you can skip creating one.  
+    /// <para>Only the Catalogue database is required, if you do not intend to do data extraction at this time then you can skip creating one.  </para>
     /// 
-    /// It is a good idea to run Check after configuring your connection string to ensure that the database is accessible and that the tables/columns in the database match the softwares
-    /// expectations.  
+    /// <para>It is a good idea to run Check after configuring your connection string to ensure that the database is accessible and that the tables/columns in the database match the softwares
+    /// expectations.  </para>
     /// 
-    /// IMPORTANT: if you configure your connection string wrongly it might take up to 30s for windows to timeout the network connection (e.g. if you specify the wrong server name). This is
-    /// similar to if you type in a dodgy server name in Microsoft Windows Explorer.
+    /// <para>IMPORTANT: if you configure your connection string wrongly it might take up to 30s for windows to timeout the network connection (e.g. if you specify the wrong server name). This is
+    /// similar to if you type in a dodgy server name in Microsoft Windows Explorer.</para>
     /// </summary>
     public partial class ChoosePlatformDatabases : Form, IHelpWorkflowUser
     {

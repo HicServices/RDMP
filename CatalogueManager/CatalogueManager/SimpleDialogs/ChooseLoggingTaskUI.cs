@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,13 +19,13 @@ namespace CatalogueManager.SimpleDialogs
     /// Every dataset (Catalogue) can have it's own Logging task and Logging server.  If you have multiple logging servers (e.g. a test logging server and a live logging server). You 
     /// can configure each of these independently.  If you only have one logging server then just set the live logging server. 
     /// 
-    /// Once you have set the logging server you should create or select an existing task (e.g. 'Loading Biochemistry' might be a good logging task for Biochemistry dataset).  All datasets
+    /// <para>Once you have set the logging server you should create or select an existing task (e.g. 'Loading Biochemistry' might be a good logging task for Biochemistry dataset).  All datasets
     /// in a given load (see LoadMetadataUI) must share the same logging task so it is worth considering the naming for example you might call the task 'Loading Hospital Data' and another
-    /// 'Loading Primary Care Data'.
+    /// 'Loading Primary Care Data'.</para>
     /// 
-    /// Data Extraction always gets logged under a task called 'Data Extraction' but the server you select here will be the one that it is logged against when the dataset is extracted.
+    /// <para>Data Extraction always gets logged under a task called 'Data Extraction' but the server you select here will be the one that it is logged against when the dataset is extracted.</para>
     /// 
-    /// You can configure defaults for the logging servers of new datasets through ManageExternalServers dialog (See ManageExternalServers)
+    /// <para>You can configure defaults for the logging servers of new datasets through ManageExternalServers dialog (See ManageExternalServers)</para>
     /// </summary>
     public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
     {

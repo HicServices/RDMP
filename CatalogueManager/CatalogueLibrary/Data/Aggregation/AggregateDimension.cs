@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -42,7 +42,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// come from an extractable column in the parent <see cref="Catalogue"/>.  The Catalogue column definition is an <see cref="ExtractionInformation"/> and documents the
         /// master SELECT Sql (which can be overriden in the current AggregateDimension) as well as what the underlying <see cref="ColumnInfo"/> / <see cref="TableInfo"/>. 
         /// 
-        /// This property is the ID of the associated Catalogue master <see cref="ExtractionInformation"/>.
+        /// <para>This property is the ID of the associated Catalogue master <see cref="ExtractionInformation"/>.</para>
         /// </summary>
         public int ExtractionInformation_ID
         {

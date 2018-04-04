@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
@@ -12,7 +12,7 @@ namespace RDMPAutomationService.Logic.DLE
     /// identify when a new AutomatedDLELoad can be started.  Loads can be due to run either because they have a LoadPeriodically that indicates they should
     /// be run every so often or a LoadProgress / CacheProgress which indicate that there is data available to load.
     /// 
-    /// Used by DLEAutomationSource to decide when a new AutomatedDLELoad/AutomatedDLELoadFromCache can be started.
+    /// <para>Used by DLEAutomationSource to decide when a new AutomatedDLELoad/AutomatedDLELoadFromCache can be started.</para>
     /// </summary>
     public class DLERunFinder
     {

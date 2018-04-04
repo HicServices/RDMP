@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
@@ -12,8 +12,8 @@ namespace CatalogueLibrary.Data.ImportExport
     ///  ID but the same SharingUID).  Sometimes you will import whole networks of objects which might have shared object dependencies in this case newly imported 
     /// networks will reference existing imported objects where they are already available.
     /// 
-    /// This table exists to avoid all the unmaintainability/scalability of IDENTITY INSERT whilst also ensuring referential integrity of object shares and preventing
-    /// duplication of imported objects.
+    /// <para>This table exists to avoid all the unmaintainability/scalability of IDENTITY INSERT whilst also ensuring referential integrity of object shares and preventing
+    /// duplication of imported objects.</para>
     /// </summary>
     public class ObjectImport : DatabaseEntity
     {

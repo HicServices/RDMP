@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Common;
 using System.IO;
 using System.Security.Cryptography;
@@ -13,7 +13,7 @@ namespace CatalogueLibrary.Data
     /// and this is used by all SimpleStringValueEncryption.  This means that passwords can be securely held in the RDMP database so long as suitable windows account management
     /// takes place (only providing access to the key file location to users who should be able to use the passwords).
     /// 
-    /// See PasswordEncryptionKeyLocationUI for more information.
+    /// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
     /// </summary>
     public class PasswordEncryptionKeyLocation
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -34,10 +34,10 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// be included.  This UI handles column selection / editting for both regular Aggregate Graphs, Cohort Sets and Patient Index Tables (because they are all actually just AggregateConfiguration
     /// objects anyway). 
     /// 
-    /// Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change it's
-    /// SQL implementation it will not affect the main extraction implementation.  This means that if you tick a column and modify it then untick it you will loose the changes.
+    /// <para>Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change it's
+    /// SQL implementation it will not affect the main extraction implementation.  This means that if you tick a column and modify it then untick it you will loose the changes.</para>
     /// 
-    /// The count column appears in Wheat background color and can be modified to any GROUP BY aggregate function e.g. max(dt)
+    /// <para>The count column appears in Wheat background color and can be modified to any GROUP BY aggregate function e.g. max(dt)</para>
     /// </summary>
     public partial class SelectColumnUI : RDMPUserControl
     {

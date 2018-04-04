@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -18,15 +18,15 @@ namespace ReusableUIComponents.ChecksUI
     /// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating 
     /// that progress is made towards a fixed number e.g. you could get 1000 messages over the course of an hour reporting how close towards a goal of 1,000,000 records a given task is.
     /// 
-    /// This control covers the checking event system. For information about the progress system see ProgressUI.
+    /// <para>This control covers the checking event system. For information about the progress system see ProgressUI.</para>
     /// 
-    /// Used throughout the RDMP software to inform the user about the progress or checking of an activity.  Messages will appear along with a result (Success,Fail,Warning) and optionally
+    /// <para>Used throughout the RDMP software to inform the user about the progress or checking of an activity.  Messages will appear along with a result (Success,Fail,Warning) and optionally
     /// an Exception if one was generated.  Double clicking a message lets you view a StackTrace and even view the source code (See ViewSourceCodeDialog) where the message was generated 
-    /// (even if it wasn't an Exception).
+    /// (even if it wasn't an Exception).</para>
     /// 
-    /// You can copy and paste values out of the listbox using Ctrl+C and Ctrl+V to paste.
+    /// <para>You can copy and paste values out of the listbox using Ctrl+C and Ctrl+V to paste.</para>
     /// 
-    /// Typing into the Filter lets you filter by message text.
+    /// <para>Typing into the Filter lets you filter by message text.</para>
     /// </summary>
     public partial  class ChecksUI : UserControl, ICheckNotifier
     {

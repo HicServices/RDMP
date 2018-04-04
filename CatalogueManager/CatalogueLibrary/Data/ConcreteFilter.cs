@@ -14,8 +14,8 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// Abstract base class for all IFilters which are database entities (Stored in the Catalogue/Data Export database as objects). 
     /// 
-    /// ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / VersionedDatabaseEntity logic to IFilter (which would break 
-    /// SpontaneouslyInventedFilters)
+    /// <para>ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / VersionedDatabaseEntity logic to IFilter (which would break 
+    /// SpontaneouslyInventedFilters)</para>
     /// </summary>
     public abstract class ConcreteFilter :  VersionedDatabaseEntity,IFilter, ICheckable
     {

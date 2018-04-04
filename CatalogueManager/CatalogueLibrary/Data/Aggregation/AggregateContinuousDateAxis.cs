@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// Each AggregateConfiguration can have a single AggregateDimension defined as a date axis, this specifies the start/end and increment of the aggregate e.g.
     /// PrescribedDate dimension may have an axis defining it as running from 2001-2009 in increments of 1 month.  
     /// 
-    /// For this to work the AggregateDimension output data should be of type a date also.
+    /// <para>For this to work the AggregateDimension output data should be of type a date also.</para>
     /// </summary>
     public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     {

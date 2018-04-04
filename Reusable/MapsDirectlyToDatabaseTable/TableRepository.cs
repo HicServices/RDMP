@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -715,7 +715,7 @@ namespace MapsDirectlyToDatabaseTable
         /// a field which is named whatever your value in parameter columnWithObjectID is.  If you hate life you can pass a dbNullSubstition (which must also be of type
         /// T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the returned list instead.  
         /// 
-        /// IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into your select query 
+        /// <para>IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into your select query </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="selectQuery"></param>

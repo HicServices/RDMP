@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace RDMPStartup.Events
@@ -6,7 +6,7 @@ namespace RDMPStartup.Events
     /// <summary>
     /// EventArgs for MEF downloading during Startup.cs
     /// 
-    /// Records whether the file was succesfully downloaded and the number of dlls saved so far.
+    /// <para>Records whether the file was succesfully downloaded and the number of dlls saved so far.</para>
     /// </summary>
     public class MEFFileDownloadProgressEventArgs
     {

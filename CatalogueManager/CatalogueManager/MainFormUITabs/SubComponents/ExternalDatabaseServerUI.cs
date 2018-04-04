@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -20,10 +20,10 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     /// <summary>
     /// Allows you to change the connection strings of a known ExternalDatabaseServer.
     /// 
-    /// ExternalDatabaseServers are references to existing servers.  They have a logistical name (what you want to call it) and servername.  Optionally you can
+    /// <para>ExternalDatabaseServers are references to existing servers.  They have a logistical name (what you want to call it) and servername.  Optionally you can
     /// specify a database (required in the case of references to specific databases e.g. Logging Database), if you omit it then the 'master' database will be used.
     /// If you do not specify a username/password then Integrated Security will be used when connecting (the preferred method).  Usernames and passwords are stored
-    /// in encrypted form (See PasswordEncryptionKeyLocationUI).
+    /// in encrypted form (See PasswordEncryptionKeyLocationUI).</para>
     /// </summary>
     public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design, ISaveableUI
     {

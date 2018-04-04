@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data.ImportExport;
@@ -13,8 +13,8 @@ namespace CatalogueLibrary.Data.Serialization
     /// Handles Serialization of Database Entity classes.  Writing is done by by storing the ID, Type and RepositoryType where the object is stored.  Reading is done by
     /// using the IRDMPPlatformRepositoryServiceLocator to fetch the instance out of the database.  
     /// 
-    /// Also stores the ObjectExport SharingUID if available which will allow deserializing shared objects that might only exist in a local import form i.e. with a different ID
-    /// (<see cref="ShareManager"/>)
+    /// <para>Also stores the ObjectExport SharingUID if available which will allow deserializing shared objects that might only exist in a local import form i.e. with a different ID
+    /// (<see cref="ShareManager"/>)</para>
     /// </summary>
     public class DatabaseEntityJsonConverter:JsonConverter
     {

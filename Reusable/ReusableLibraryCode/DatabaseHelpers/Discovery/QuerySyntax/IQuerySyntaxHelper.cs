@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update;
@@ -11,8 +11,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
     /// how to translate broad requirements like 'database type capable of storing strings up to 10 characters long' into a specific implementation e.g. 
     /// 'varchar(10)' in Microsoft SQL Server and 'varchar2(10)' in Oracle (See ITypeTranslater).
     /// 
-    /// Also includes features such as qualifying database entities [MyDatabase]..[MyTable].[MyColumn] in Sql Server vs `MyDatabase`.`MyTable`.`MyColumn` in 
-    /// MySql.
+    /// <para>Also includes features such as qualifying database entities [MyDatabase]..[MyTable].[MyColumn] in Sql Server vs `MyDatabase`.`MyTable`.`MyColumn` in 
+    /// MySql.</para>
     /// 
     /// </summary>
     public interface IQuerySyntaxHelper

@@ -266,7 +266,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
 
                     if (text[i].Trim().Equals("/// <summary>"))
+                    {
                         areInSummary = true;
+                        paraOpened = false;
+                    }
 
                     if (text[i].Trim().Equals("/// </summary>"))
                     {

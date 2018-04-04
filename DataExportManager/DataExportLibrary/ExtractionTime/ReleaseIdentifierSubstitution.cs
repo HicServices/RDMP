@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
@@ -15,7 +15,7 @@ namespace DataExportLibrary.ExtractionTime
     /// [cohort]..[ReleaseId]).  Also includes the Join SQL string for linking the cohort table (which contains the ReleaseId e.g. [cohort]) with the dataset
     /// table (e.g. [biochemistry]). 
     /// 
-    /// This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See ExtractionQueryBuilder)
+    /// <para>This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See ExtractionQueryBuilder)</para>
     /// </summary>
     public class ReleaseIdentifierSubstitution : IColumn
     {

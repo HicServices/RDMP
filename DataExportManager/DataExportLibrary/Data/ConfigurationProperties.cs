@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -9,7 +9,7 @@ namespace DataExportLibrary.Data
     /// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release 
     /// Document that is provided to researchers (and anything else we might want to configure globally for extraction in future).
     /// 
-    /// Values are stored in the ConfigurationProperties table in the Data Export Database.
+    /// <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>
     /// </summary>
     public class ConfigurationProperties
     {

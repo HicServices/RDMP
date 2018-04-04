@@ -60,7 +60,6 @@ namespace ANOStore.ANOEngineering
         /// <summary>
         /// Constructor for deserialization via LazyConstructorsJsonConverter
         /// </summary>
-        /// <param name="shareManager"></param>
         public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _shareManager = new ShareManager(repositoryLocator);

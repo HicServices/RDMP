@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CachingEngine;
@@ -15,7 +15,7 @@ namespace RDMPAutomationService.Logic.Cache
     /// Identifies CacheProgresses which are not already executing/crashed/locked and are available to run (current time is within the CacheProgress PermissionWindow
     /// if any).  
     /// 
-    /// Used by CacheAutomationSource to identify when a new AutomatedCacheRun can be started.
+    /// <para>Used by CacheAutomationSource to identify when a new AutomatedCacheRun can be started.</para>
     /// </summary>
     public class CacheRunFinder
     {

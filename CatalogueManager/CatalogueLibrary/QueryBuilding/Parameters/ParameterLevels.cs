@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +9,7 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
     /// <summary>
     /// Describes the hierarchical level at which an ISqlParameter was found at by a ParameterManager.
     /// 
-    /// Do not reorder these!
+    /// <para>Do not reorder these!</para>
     /// </summary>
     public enum ParameterLevel
     {

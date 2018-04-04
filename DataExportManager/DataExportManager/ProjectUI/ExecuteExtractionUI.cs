@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -47,11 +47,11 @@ namespace DataExportManager.ProjectUI
     /// Allows you to execute an extraction of a project configuration (Generate anonymous project data extractions for researchers).  You should make sure that you have already selected 
     /// the correct datasets, filters, transforms etc to meet the researchers project requirements (and governance approvals) - See ExtractionConfigurationUI and ConfigureDatasetUI.
     /// 
-    /// Start by selecting which datasets you want to execute (this can be an iterative process - you can extract half of them overnight and then come back and extract the other half the 
-    /// next night).  See ChooseExtractablesUI for how to select datasets.
+    /// <para>Start by selecting which datasets you want to execute (this can be an iterative process - you can extract half of them overnight and then come back and extract the other half the 
+    /// next night).  See ChooseExtractablesUI for how to select datasets.</para>
     /// 
-    /// Next you should select/create a new extraction pipeline (See 'A Brief Overview Of What A Pipeline Is' in UserManual.docx).  This will determine the format of the extracted data
-    /// (e.g. .CSV or .MDB database file or any other file for which you have a plugin implemented for).
+    /// <para>Next you should select/create a new extraction pipeline (See 'A Brief Overview Of What A Pipeline Is' in UserManual.docx).  This will determine the format of the extracted data
+    /// (e.g. .CSV or .MDB database file or any other file for which you have a plugin implemented for).</para>
     /// </summary>
     public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     {

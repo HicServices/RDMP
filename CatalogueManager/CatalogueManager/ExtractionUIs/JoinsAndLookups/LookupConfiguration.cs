@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -32,27 +32,27 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
     /// from a different table (usually prefixed z_ to indicate it is a lookup table) e.g. 'z_DrugsLookup.DrugCode' and then a 'Description' column from the same table e.g. 
     /// 'z_DrugsLookup.DrugName'.  This is maintained in the RDMP Catalogue database and does not result in any changes / constraints on your actual data repository.  
     /// 
-    /// While it might seem redundant to have to configure this logic in the RDMP as well as (if you choose to) constraints in your data repository, this approach allows for 
-    /// flexibility when it comes to incomplete/corrupt lookup tables (common in the research data management domain) as well as letting us bundle lookups with data extracts etc.
+    /// <para>While it might seem redundant to have to configure this logic in the RDMP as well as (if you choose to) constraints in your data repository, this approach allows for 
+    /// flexibility when it comes to incomplete/corrupt lookup tables (common in the research data management domain) as well as letting us bundle lookups with data extracts etc.</para>
     /// 
-    /// This window is a low level alternative to LookupConfiguration (the recommended way of creating these Lookup relationships), this form lets you explicitly create a Lookup
+    /// <para>This window is a low level alternative to LookupConfiguration (the recommended way of creating these Lookup relationships), this form lets you explicitly create a Lookup
     /// relationship using the supplied columns.  First of all you should make sure that the column you right clicked to activate the Form is the Description column.  Then select the
-    /// 'Primary Key' and 'Foreign Key' as described above.  
+    /// 'Primary Key' and 'Foreign Key' as described above.  </para>
     /// 
-    /// If you have a particularly insane database design you can configure composite joins (where there are multiple columns that make up a composite 'Foreign Key' / 'Primary Key'.  For 
+    /// <para>If you have a particularly insane database design you can configure composite joins (where there are multiple columns that make up a composite 'Foreign Key' / 'Primary Key'.  For 
     /// example if there was crossover in 'DrugCode' between two countries then the Lookup relationship would need 'Primary Key' Prescribing.DrugCode + Prescribing.Country and the 
-    /// 'Foreign Key' would need to be z_DrugsLookup.DrugCode + z_DrugsLookup.Country.
+    /// 'Foreign Key' would need to be z_DrugsLookup.DrugCode + z_DrugsLookup.Country.</para>
     ///
-    /// Allows you to rapidly import and configure lookup table relationships into the RDMP.  This has two benefits, firstly lookup tables will be automatically included in project extracts
+    /// <para>Allows you to rapidly import and configure lookup table relationships into the RDMP.  This has two benefits, firstly lookup tables will be automatically included in project extracts
     /// of the dataset you are editing.  Secondly lookup columns will be available for inclusion directly into the extraction on a per row basis (for researchers who can't deal with having
-    /// to lookup the meaning of codes in separate files).
+    /// to lookup the meaning of codes in separate files).</para>
     /// 
-    /// Start by identifying a lookup table and click Import Lookup.  Then drag the primary key of the lookup into the PrimaryKey box.  Then drag the description column of the lookup onto the
+    /// <para>Start by identifying a lookup table and click Import Lookup.  Then drag the primary key of the lookup into the PrimaryKey box.  Then drag the description column of the lookup onto the
     /// Foreign key field in the dataset you are modifying.  If you have multiple foreign keys (e.g. two columns SendingLocation and DischargeLocation both of which are location codes) then 
-    /// join them both up (this will give you two lookup description fields SendingLocation_Desc and DischargeLocation_Desc).  
+    /// join them both up (this will give you two lookup description fields SendingLocation_Desc and DischargeLocation_Desc).  </para>
     /// 
-    /// All Lookups and Lookup column description configurations are artifacts in the RDMP database and no actual changes will take place on your data repository (i.e. no constraints will be added
-    /// to the underlying data database). 
+    /// <para>All Lookups and Lookup column description configurations are artifacts in the RDMP database and no actual changes will take place on your data repository (i.e. no constraints will be added
+    /// to the underlying data database). </para>
     /// </summary>
     public partial class LookupConfiguration : LookupConfiguration_Design
     {

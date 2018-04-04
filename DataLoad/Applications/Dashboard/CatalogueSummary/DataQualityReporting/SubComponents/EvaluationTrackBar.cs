@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,9 +11,9 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
     /// The Data Quality Engine stores all validation results in a relational database.  This includes the time the DQE was run.  This allows us to 'rewind' and look at previous results
     /// e.g. to compare the quality of the dataset before and after a data load.
     /// 
-    /// If this control is not enabled then it means you have only ever done one DQE evaluation or have never evaluated the dataset by using the DQE.
+    /// <para>If this control is not enabled then it means you have only ever done one DQE evaluation or have never evaluated the dataset by using the DQE.</para>
     /// 
-    /// Dragging the slider will adjust a IDataQualityReportingChart to show the results of the DQE on that day.
+    /// <para>Dragging the slider will adjust a IDataQualityReportingChart to show the results of the DQE on that day.</para>
     /// </summary>
     public partial class EvaluationTrackBar : UserControl
     {

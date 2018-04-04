@@ -24,11 +24,11 @@ namespace DataExportLibrary.Data.DataTables
     /// ExtractionConfigurations at a time for example a Project might have two cohorts 'Cases' and 'Controls' and you would have two ExtractionConfiguration possibly containing
     /// the same datasets and filters but with different cohorts.
     /// 
-    /// Once you have executed, extracted and released an ExtractionConfiguration then it becomes 'frozen' IsReleased and it is not possible to edit it (unless you unfreeze it 
-    /// directly in the database).  This is intended to ensure that once data has gone out the door the configuration that generated the data is immutable.
+    /// <para>Once you have executed, extracted and released an ExtractionConfiguration then it becomes 'frozen' IsReleased and it is not possible to edit it (unless you unfreeze it 
+    /// directly in the database).  This is intended to ensure that once data has gone out the door the configuration that generated the data is immutable.</para>
     /// 
-    /// If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
-    /// e.g. 'Cases - 5 year update'.
+    /// <para>If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
+    /// e.g. 'Cases - 5 year update'.</para>
     /// </summary>
     public class ExtractionConfiguration : VersionedDatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
     {

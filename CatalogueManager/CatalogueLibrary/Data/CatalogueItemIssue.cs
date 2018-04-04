@@ -14,8 +14,8 @@ namespace CatalogueLibrary.Data
     /// into the metadata report so be careful what you write in the name/description fields - i.e. don't put in sensitive information that could upset 
     /// governancers.
     /// 
-    /// Note also the Ticket property, this lets you use your own agencies Ticketing system (e.g. JIRA) to track time/descriptions whilst also making the 
-    /// RDMP aware of the issues.  See TicketingSystemConfiguration for how to setup a ticketing system plugin for your RDMP deployment.
+    /// <para>Note also the Ticket property, this lets you use your own agencies Ticketing system (e.g. JIRA) to track time/descriptions whilst also making the 
+    /// RDMP aware of the issues.  See TicketingSystemConfiguration for how to setup a ticketing system plugin for your RDMP deployment.</para>
     /// </summary>
     public class CatalogueItemIssue : VersionedDatabaseEntity,INamed
     {

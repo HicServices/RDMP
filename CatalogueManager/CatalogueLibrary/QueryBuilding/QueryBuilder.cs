@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -20,11 +20,11 @@ namespace CatalogueLibrary.QueryBuilding
     /// extract this set of ExtractionInformation objects only from the database.  This includes determining which ExtractionInformation
     /// are Lookups, which tables the various objects come from, figuring out whether they can be joined by using JoinInfo in the catalogue
     /// 
-    /// It will throw when query SQL if it is not possible to join all the underlying tables or there are any other problems.
+    /// <para>It will throw when query SQL if it is not possible to join all the underlying tables or there are any other problems.</para>
     /// 
-    /// You can ask it what is on line X or ask what line number has ExtractionInformation Y on it
+    /// <para>You can ask it what is on line X or ask what line number has ExtractionInformation Y on it</para>
     /// 
-    /// ExtractionInformation is sorted by column order prior to generating the SQL (i.e. not the order you add them to the query builder)
+    /// <para>ExtractionInformation is sorted by column order prior to generating the SQL (i.e. not the order you add them to the query builder)</para>
     /// </summary>
     public class QueryBuilder : ISqlQueryBuilder
     {

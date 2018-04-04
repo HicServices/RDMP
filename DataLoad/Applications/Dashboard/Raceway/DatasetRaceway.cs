@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -26,13 +26,13 @@ namespace Dashboard.Raceway
     /// Allows you to quickly view the timespan of each of your datasets, which sections of your datasets are failing validation (e.g. 'Prescribing' 2001-2002 records are all failing
     /// validation but 2003 onwards are fine) and identify any gaps in your record coverage.
     /// 
-    /// Each dataset appears as a green/red bar along a shared axis (See RacewayRenderAreaUI).  You can switch from viewing all months for which you have data, only
-    /// the last decade, year or last 6 months.
+    /// <para>Each dataset appears as a green/red bar along a shared axis (See RacewayRenderAreaUI).  You can switch from viewing all months for which you have data, only
+    /// the last decade, year or last 6 months.</para>
     /// 
-    /// By default the row height of each bar in a dataset indicates the proportion of records in that month relative to the average number of records per month, this allows you to see for
+    /// <para>By default the row height of each bar in a dataset indicates the proportion of records in that month relative to the average number of records per month, this allows you to see for
     /// example the gradual increase in volume of records per month in a dataset and identify any periods where it doubles (may indicate duplication) or a hole appears.  If you tick 'Ignore
     /// Row Counts' then full bars will appear only, this lets you identify which datasets are responsible for sparse errors (e.g. if 'Biochemistry' has 1,00,000,000 and some records have
-    /// dates sprinkled between 1900-01-01 and 2000-01-01 then these will appear on the axis but won't be visible due to how sparse the number of error records are).
+    /// dates sprinkled between 1900-01-01 and 2000-01-01 then these will appear on the axis but won't be visible due to how sparse the number of error records are).</para>
     /// </summary>
     public partial class DatasetRaceway : UserControl,IDashboardableControl
     {

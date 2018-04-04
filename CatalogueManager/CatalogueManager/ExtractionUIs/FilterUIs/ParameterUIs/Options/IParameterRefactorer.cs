@@ -1,4 +1,4 @@
-﻿using CatalogueLibrary.Data;
+using CatalogueLibrary.Data;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {

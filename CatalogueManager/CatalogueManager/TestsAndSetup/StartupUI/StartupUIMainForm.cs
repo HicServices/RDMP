@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
@@ -26,14 +26,14 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
     /// smiley face.  If you get an error (Red face) then there may be a hyperlink to resolve the problem (e.g. if a platform database needs patching or you have not yet configured your 
     /// platform databases (See ChoosePlatformDatabases).
     /// 
-    /// Green means that everything is working just fine.
+    /// <para>Green means that everything is working just fine.</para>
     /// 
-    /// Yellow means that something non-critical is not working e.g. a specific plugin is not working correctly
+    /// <para>Yellow means that something non-critical is not working e.g. a specific plugin is not working correctly</para>
     /// 
-    /// Red means that something critical is not working (Check for a fix hyperlink or look at the 'Technical' view to see the exact nature of the problem).
+    /// <para>Red means that something critical is not working (Check for a fix hyperlink or look at the 'Technical' view to see the exact nature of the problem).</para>
     /// 
-    /// The 'Technical' view shows the progress of the discovery / version checking of all tiers of platform databases.  This includes checking that the software version matches the database
-    /// schema version  (See ManagedDatabaseUI) and that plugins have loaded correctly (See MEFStartupUI).
+    /// <para>The 'Technical' view shows the progress of the discovery / version checking of all tiers of platform databases.  This includes checking that the software version matches the database
+    /// schema version  (See ManagedDatabaseUI) and that plugins have loaded correctly (See MEFStartupUI).</para>
     /// </summary>
     public partial class StartupUIMainForm : Form, ICheckNotifier
     {

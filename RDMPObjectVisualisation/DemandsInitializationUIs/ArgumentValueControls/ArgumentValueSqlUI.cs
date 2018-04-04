@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -12,7 +12,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     /// <summary>
     /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
     /// 
-    /// This Control is for setting Properties that are of Type string but expect SQL code.  Clicking the button will launch an SQL editor with syntax highlighting.
+    /// <para>This Control is for setting Properties that are of Type string but expect SQL code.  Clicking the button will launch an SQL editor with syntax highlighting.</para>
     /// </summary>
     [TechnicalUI]
     public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI

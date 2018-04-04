@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace DataQualityEngine.Reports.PeriodicityHelpers
     ///  Pivot Category - optional column value subdivision (e.g. Healthboard column is T or F)
     ///  Row Evaluation - final dimension is one record per Consquence of failed validation (Wrong / Missing / Correct etc).
     /// 
-    /// This class manages the time aspect as a Dictionary of year/month.  Other dimensions are managed by PeriodicityCube
+    /// <para>This class manages the time aspect as a Dictionary of year/month.  Other dimensions are managed by PeriodicityCube</para>
     /// </summary>
     public class PeriodicityCubesOverTime
     {

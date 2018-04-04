@@ -26,8 +26,8 @@ namespace CatalogueLibrary.Data
     /// Describes an sql table (or table valued function) on a given Server from which you intend to either extract and/or load / curate data.
     /// These can be created most easily by using TableInfoImporter.  This entity is the hanging off point for PreLoadDiscardedColumn, ColumnInfo etc
     /// 
-    /// This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
-    /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).
+    /// <para>This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
+    /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).</para>
     /// </summary>
     public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo
     {

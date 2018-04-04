@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
@@ -36,20 +36,20 @@ namespace DataExportManager.ProjectUI
     /// <summary>
     /// Allows you to view/edit a data extraction project including the extraction configurations that make it up (See ExtractionConfigurationUI).  
     /// 
-    /// First make sure your Project has a nice unique name that lets you rapidly identify it.  Next choose the 'Extraction Directory', this is the location where extracted data will be
+    /// <para>First make sure your Project has a nice unique name that lets you rapidly identify it.  Next choose the 'Extraction Directory', this is the location where extracted data will be
     /// generated (See ExecuteExtractionUI).  Make sure that the extraction directory is accessible to every data analyst who is using the software / working on the project (e.g. it could
-    /// be a shared network drive).
+    /// be a shared network drive).</para>
     /// 
-    /// Optionally you can specify a Ticket for logging time/issues against (See TicketingSystemConfigurationUI)
+    /// <para>Optionally you can specify a Ticket for logging time/issues against (See TicketingSystemConfigurationUI)</para>
     /// 
-    /// Add a ProjectNumber, this number must be unique.  This number must match the project number of the cohorts you intend to use with the project in the Cohort Database (you only need
-    /// to worry about a mismatch here if you are manually hacking your cohort database or if you change the project number halfway through its lifecycle).
+    /// <para>Add a ProjectNumber, this number must be unique.  This number must match the project number of the cohorts you intend to use with the project in the Cohort Database (you only need
+    /// to worry about a mismatch here if you are manually hacking your cohort database or if you change the project number halfway through its lifecycle).</para>
     ///  
-    /// Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit existing ones.  An extraction configuration is a collection of 
+    /// <para>Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit existing ones.  An extraction configuration is a collection of 
     /// datasets linked against a cohort private identifier and released against an anonymous project specific identifier (See ExtractableCohortUI and ExtractionConfigurationUI).  Once 
-    /// you have a few Extraction Configurations, they will appear in the datagrid too.
+    /// you have a few Extraction Configurations, they will appear in the datagrid too.</para>
     /// 
-    /// Selecting 'Check Project' will check all current and released extraction configurations in the project for problems (empty result sets, broken extraction SQL etc).
+    /// <para>Selecting 'Check Project' will check all current and released extraction configurations in the project for problems (empty result sets, broken extraction SQL etc).</para>
     ///  
     /// </summary>
     public partial class ProjectUI : ProjectUI_Design, ISaveableUI

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -31,7 +31,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
     /// stage.  The SQL will be executed on the database/server that corresponds to the stage.  So an Adjust RAW script cannot modify STAGING since those tables won't even exist at the time of
     /// execution and might even be on a different server.  
     /// 
-    /// You should avoid modifying Live tables directly with SQL since it circumvents the 'no duplication', 'RAW->STAGING->LIVE super transaction' model of RDMP.
+    /// <para>You should avoid modifying Live tables directly with SQL since it circumvents the 'no duplication', 'RAW->STAGING->LIVE super transaction' model of RDMP.</para>
     /// </summary>
     public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
     {

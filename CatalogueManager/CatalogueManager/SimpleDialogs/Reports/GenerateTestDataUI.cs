@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,12 +28,12 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// complex relationships are not modelled (e.g. there's no concept of someone being diabetic so just because someone is on INSULIN doesn't mean they will have diabetic blood tests 
     /// in biochemistry).  Likewise don't be surprised if people change address after they have died.
     ///
-    /// Identifiers are created from a central random pool and will be unique.  This means if you generate test data and then generate more tomorrow you are likely to only 
+    /// <para>Identifiers are created from a central random pool and will be unique.  This means if you generate test data and then generate more tomorrow you are likely to only 
     /// have very minimal intersection of patient identifiers.  For this reason it is important not to generate and load Prescribing one day and then generate and load Biochemistry the 
-    /// next day (instead you should generate all the data at once and use that as a reusable asset).
+    /// next day (instead you should generate all the data at once and use that as a reusable asset).</para>
     /// 
-    /// Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
-    /// interesting/realistic).
+    /// <para>Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
+    /// interesting/realistic).</para>
     /// </summary>
     public partial class GenerateTestDataUI : Form, IHelpWorkflowUser
     {

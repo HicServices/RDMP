@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -33,16 +33,16 @@ namespace DataExportManager.CohortUI
     /// Project.  Cohorts can have 'custom data', these are researcher datasets or datasets specific to the project extraction that are not needed for any other project (for example 
     /// questionnaire data which relates to the cohort).  
     /// 
-    /// The SQL window will show what SQL the QueryBuilder has produced to view the cohort and any accompanying custom data tables.  You can use this SQL to check that cohorts have the 
-    /// correct identifiers in them etc.
+    /// <para>The SQL window will show what SQL the QueryBuilder has produced to view the cohort and any accompanying custom data tables.  You can use this SQL to check that cohorts have the 
+    /// correct identifiers in them etc.</para>
     ///  
-    /// You can upload new files as custom data for the selected cohort by clicking 'Import New Custom Data File For Cohort...'  This will let you select a file and run it through a 
-    /// Pipeline to create a new data table in the cohort database that is like a project specific dataset.
+    /// <para>You can upload new files as custom data for the selected cohort by clicking 'Import New Custom Data File For Cohort...'  This will let you select a file and run it through a 
+    /// Pipeline to create a new data table in the cohort database that is like a project specific dataset.</para>
     /// 
-    /// A cohort is implemented as a private and release identifier column set and joined at data extraction time to your data repository datasets (the private identifiers are striped out
+    /// <para>A cohort is implemented as a private and release identifier column set and joined at data extraction time to your data repository datasets (the private identifiers are striped out
     /// and replaced with the corresponding patients project specific release identifier).  You can specify a 'OverrideReleaseIdentifierSQL', this will hijack what it says in the cohort
     /// database and do the release identifier substitution with the specific SQL you type instead (this is not recommended).  The use case for overriding would be if you have added some
-    /// additional release identifier columns into your cohort table and want to use that column instead of the listed release identifier column (again this is a really bad idea).
+    /// additional release identifier columns into your cohort table and want to use that column instead of the listed release identifier column (again this is a really bad idea).</para>
     /// 
     /// </summary>
     public partial class ExtractableCohortUI :ExtractableCohortUI_Design

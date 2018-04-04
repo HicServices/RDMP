@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
@@ -18,9 +18,9 @@ namespace CatalogueManager.DataQualityUIs
     /// Form for performing Data Quality Engine executions on a chosen Catalogue. Opening the form will trigger a series of pre run checks and once these have successfully completed you
     /// can then begin the execution by clicking the Start Execution button.
     /// 
-    /// While the execution is happening you can view the progress on the right hand side.
+    /// <para>While the execution is happening you can view the progress on the right hand side.</para>
     /// 
-    /// To view the results of the execution Right Click on the relevant catalogue and select View DQE Results.
+    /// <para>To view the results of the execution Right Click on the relevant catalogue and select View DQE Results.</para>
     /// </summary>
     public partial class DQEExecutionControl : DQEExecutionControl_Design
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -18,7 +18,7 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
     /// dataset are attributable to specific columns or whether the quality of the entire dataset is bad.  For example if the entire TimePeriodicityChart is red (failing validation)
     /// but only one column in the ColumnStatesChart is showing red then you know that the scope of the problem is limited only to that column.
     /// 
-    /// Also included in each column bar (underneath the main colour) is a black/grey bar which shows what proportion of the values in the column were null.
+    /// <para>Also included in each column bar (underneath the main colour) is a black/grey bar which shows what proportion of the values in the column were null.</para>
     /// </summary>
     public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -11,10 +11,10 @@ namespace CatalogueLibrary.Data.Remoting
     /// <summary>
     /// This represent a Remote Installation of RDMP which can accept connections at multiple endpoints
     /// 
-    /// Endpoints are usual REST endpoints with a URL and a type which they can accept.
+    /// <para>Endpoints are usual REST endpoints with a URL and a type which they can accept.
     /// The endpoint format is {Url}/api/{typename}
     /// The typename is used to create the URL for the endpoint.
-    /// If you are sending a collection, append this to the URI: ?asarray=true
+    /// If you are sending a collection, append this to the URI: ?asarray=true</para>
     /// </summary>
     public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -15,7 +15,7 @@ namespace LoadModules.Generic.DataFlowSources
     /// A collection of column names with explicitly defined column types that the user wants to force where present.  e.g. they loading a CSV and they get values 
     /// "291","195" but they know that some codes are like "012" and wish to preserve this leading 0s so they can explicitly define the column as being a string.
     /// 
-    /// This class can be used by [DemandsInitialization] properties and it will launch it's custom UI: ExplicitTypingCollectionUI
+    /// <para>This class can be used by [DemandsInitialization] properties and it will launch it's custom UI: ExplicitTypingCollectionUI</para>
     /// </summary>
     [Export(typeof(ICustomUIDrivenClass))]
     public class ExplicitTypingCollection:ICustomUIDrivenClass

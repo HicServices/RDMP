@@ -9,7 +9,7 @@ namespace MapsDirectlyToDatabaseTable
     /// also simultaneously having a database record existing in an IRepository (e.g. TableRepository).  This is how RDMP handles persistence, referential 
     /// integrity etc in a multi user environment.
     /// 
-    /// IRepository supports saving objects, loading objects by ID, Type etc 
+    /// <para>IRepository supports saving objects, loading objects by ID, Type etc </para>
     /// 
     /// </summary>
     public interface IRepository
@@ -19,7 +19,7 @@ namespace MapsDirectlyToDatabaseTable
         /// set parameters on T such that it matches exactly how it now appears in the repository e.g. if there are system Default values
         /// in the repository physical store they must be rehydrated back into the class T.
         /// 
-        /// YOU MUST ALSO SET Repository field on T when you hydrate
+        /// <para>YOU MUST ALSO SET Repository field on T when you hydrate</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="toCreate"></param>

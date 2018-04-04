@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
@@ -19,8 +19,8 @@ namespace CatalogueLibrary.Data.DataLoad
     /// been decorated with [DemandsInitialization] and for which the user has picked a value.  The class includes both the Type of the argument (extracted from
     /// the class Property PropertyInfo via reflection) and the Value (stored in the database as a string).
     /// 
-    /// This allows simple UI driven population and persistence of configuration settings for plugin and system core components as they are used in all pipeline and
-    /// dle activities.  See ArgumentCollection for UI logic.
+    /// <para>This allows simple UI driven population and persistence of configuration settings for plugin and system core components as they are used in all pipeline and
+    /// dle activities.  See ArgumentCollection for UI logic.</para>
     /// </summary>
     public abstract class Argument : VersionedDatabaseEntity, IArgument
     {

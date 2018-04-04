@@ -29,6 +29,7 @@ namespace RDMPAutomationService
         /// Packaged up method (IAutomateable) which will be hosted and started (asynchronously) run by an AutomationDestination while at the same time having it's execution state audited in the 
         /// database (via AutomationJobType). 
         /// </summary>
+        /// <param name="job"></param>
         /// <param name="automateable">A class containing a method which will achieve the stated goal (description), the IAutomateable will have it's RunTask method called asynchronously by the AutomationDestination in parallell with all the other running jobs.  You should make sure to update the AutomationJob regularly during the execution logic of your RunTask method and Delete it at the end if it completed successfully </param>
         public OnGoingAutomationTask(AutomationJob job, IAutomateable automateable)
         {

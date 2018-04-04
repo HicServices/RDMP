@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -14,8 +14,8 @@ namespace CatalogueLibrary.Data.Aggregation
     /// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR 
     /// the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data Export Manager but for AggregateConfigurations (GROUP BY queries)
     /// 
-    /// FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
-    /// The class deals with all this transparently via GetSubContainers.
+    /// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
+    /// The class deals with all this transparently via GetSubContainers.</para>
     /// </summary>
     public class AggregateFilterContainer: VersionedDatabaseEntity, IContainer
     {

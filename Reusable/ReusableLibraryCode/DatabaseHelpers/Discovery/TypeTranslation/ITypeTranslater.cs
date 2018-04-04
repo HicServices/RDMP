@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -6,8 +6,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     ///  Cross database type functionality for translating between database proprietary datatypes e.g. varchar (varchar2 in Oracle) and the C# Type (and vice
     ///  versa).  
     /// 
-    /// When translating into a database type from a C# Type you also need to know additonal information e.g. how long is the maximum length of a string, how much
-    /// scale/precision should a decimal have.  This is represented by the DatabaseTypeRequest class.
+    /// <para>When translating into a database type from a C# Type you also need to know additonal information e.g. how long is the maximum length of a string, how much
+    /// scale/precision should a decimal have.  This is represented by the DatabaseTypeRequest class.</para>
     /// 
     /// </summary>
     public interface ITypeTranslater

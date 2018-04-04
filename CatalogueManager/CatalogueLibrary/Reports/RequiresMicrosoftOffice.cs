@@ -12,7 +12,7 @@ namespace CatalogueLibrary.Reports
     /// Base class for all reports which generate Microsoft DocX files.  Note that the DocX library is used to create the .docx file so it doesn't actually require Microsoft
     /// Office to be installed on the machine using the class but in order to open the resulting files the user will need something compatible with .docx.
     /// 
-    /// Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.
+    /// <para>Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.</para>
     /// </summary>
     public class RequiresMicrosoftOffice
     {

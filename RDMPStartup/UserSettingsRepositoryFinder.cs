@@ -16,7 +16,7 @@ namespace RDMPStartup
     /// Records connection strings to the Catalogue and DataExport databases (See LinkedRepositoryProvider) in the user settings file for the current
     /// user.
     /// 
-    /// Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those databases (and to create new ones).
+    /// <para>Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those databases (and to create new ones).</para>
     /// </summary>
     public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
     {

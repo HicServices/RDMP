@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -30,7 +30,7 @@ namespace CatalogueManager.DataViewing
     /// The purpose is to give you a quick view as to the content of the table/column without having to launch 'Sql Management Studio' or whatever other tool you use to query your data
     /// repository.  You can edit the SQL as you need but only a single DataTable return is supported, this form is not a replacement for an SQL IDE.
     /// 
-    /// The query is sent using DataAccessContext.InternalDataProcessing
+    /// <para>The query is sent using DataAccessContext.InternalDataProcessing</para>
     /// </summary>
     public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectCollectionControl
     {

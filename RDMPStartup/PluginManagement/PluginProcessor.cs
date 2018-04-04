@@ -13,9 +13,9 @@ namespace RDMPStartup.PluginManagement
     /// Commits a .zip file containing dlls, pdbs and source code that constitutes an RDMP Plugin (Use PluginPackager.Packager to package up a .sln into such a
     /// zip file) into the given Catalogue Database.  
     /// 
-    /// All plugins are saved in binary format in the LoadModuleAssembly table of your Catalogue database and downloaded at Startup time into the MEF folder
+    /// <para>All plugins are saved in binary format in the LoadModuleAssembly table of your Catalogue database and downloaded at Startup time into the MEF folder
     /// where they are loaded into the app domain.  Through this method every user gets the same version of the currently installed plugins and the database
-    /// acts as the distributor of binaries.
+    /// acts as the distributor of binaries.</para>
     /// </summary>
     public class PluginProcessor
     {

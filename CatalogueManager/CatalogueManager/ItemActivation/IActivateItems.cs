@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -42,7 +42,7 @@ namespace CatalogueManager.ItemActivation
     /// Central component class for handling all low level RDMP main user interface systems. This includes things like Tree object child provision, Icon provision,
     /// the publish system for notifying out of date objects etc.  Each function is segregated by a component class property e.g. RefreshBus, FavouritesProvider etc
     /// 
-    /// Also exposes the location of the Catalogue / Data Export repository databases via RepositoryLocator
+    /// <para>Also exposes the location of the Catalogue / Data Export repository databases via RepositoryLocator</para>
     /// </summary>
     public interface IActivateItems
     {

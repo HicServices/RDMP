@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.Contracts;
@@ -17,7 +17,7 @@ namespace DataExportLibrary.Data.DataTables
     /// configured) and DataUsers.  A Project should never be deleted even after all ExtractionConfigurations have been executed as it serves as an audit and a cloning point if you 
     /// ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).
     /// 
-    /// The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. 
+    /// <para>The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. </para>
     /// </summary>
     public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString
     {

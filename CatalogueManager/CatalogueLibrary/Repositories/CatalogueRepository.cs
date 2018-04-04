@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Common;
@@ -26,9 +26,9 @@ namespace CatalogueLibrary.Repositories
     /// table matching their name).  CatalogueLibrary.dll objects in CatalogueRepository, DataExportLibrary.dll objects in DataExportRepository, DataQualityEngine.dll objects
     /// in DQERepository etc.
     /// 
-    /// This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Catalogue database.  
+    /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Catalogue database.  </para>
     /// 
-    /// It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. AggregateForcedJoiner
+    /// <para>It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. AggregateForcedJoiner</para>
     /// </summary>
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {

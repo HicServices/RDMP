@@ -12,10 +12,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     /// formatted) and identify an appropriate database type to hold the data.  For example if you see "2001-01-01" in the first row of column then the database
     /// type can be 'datetime' but if you subsequently see 'n\a' then it must become 'varchar(10)' (since 2001-01-01 is 10 characters long).
     /// 
-    /// Includes support for DateTime, Timespan, String (including calculating max length), Int, Decimal (including calculating scale/precision). 
+    /// <para>Includes support for DateTime, Timespan, String (including calculating max length), Int, Decimal (including calculating scale/precision). </para>
     /// 
-    /// DataTypeComputer will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
-    /// the guessed Type, ultimately falling back to varchar(x).
+    /// <para>DataTypeComputer will always use the most restrictive data type possible first and then fall back on weaker types as new values are seen that do not fit
+    /// the guessed Type, ultimately falling back to varchar(x).</para>
     /// </summary>
     public class DataTypeComputer
     {
@@ -321,7 +321,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// consider changing the value.  For example if you have read a CSV file into a DataTable and all current columns string/object then you can call this method
         /// to determine whether the DataTypeComputer found a more appropriate Type or not.  
         /// 
-        /// Note that if you want to change the Type you need to clone the DataTable, see: https://stackoverflow.com/questions/9028029/how-to-change-datatype-of-a-datacolumn-in-a-datatable
+        /// <para>Note that if you want to change the Type you need to clone the DataTable, see: https://stackoverflow.com/questions/9028029/how-to-change-datatype-of-a-datacolumn-in-a-datatable</para>
         /// </summary>
         /// <param name="col"></param>
         /// <returns></returns>

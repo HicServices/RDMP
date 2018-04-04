@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -34,7 +34,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
     /// The starting page of RDMP.  Provides a single easy access entry point into RDMP functionality for common tasks e.g. Data Management, Project Extraction etc.  Click the links of commands
     /// you want to carry out to access wizards that offer streamlined access to the RDMP functionality.
     /// 
-    /// You can access the HomeUI at any time by clicking the home icon in the top left of the RDMP tool bar.
+    /// <para>You can access the HomeUI at any time by clicking the home icon in the top left of the RDMP tool bar.</para>
     /// </summary>
     public partial class HomeUI : UserControl,ILifetimeSubscriber
     {

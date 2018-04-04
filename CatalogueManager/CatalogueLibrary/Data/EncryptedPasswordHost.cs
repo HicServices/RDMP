@@ -1,4 +1,4 @@
-﻿using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
@@ -9,7 +9,7 @@ namespace CatalogueLibrary.Data
     /// certificate will be a file location.  This allows you to use windows file system based user authentication to securely encrypt strings
     /// within RDMP databases.
     /// 
-    /// See also PasswordEncryptionKeyLocationUI
+    /// <para>See also PasswordEncryptionKeyLocationUI</para>
     /// </summary>
     public class EncryptedPasswordHost : IEncryptedPasswordHost
     {

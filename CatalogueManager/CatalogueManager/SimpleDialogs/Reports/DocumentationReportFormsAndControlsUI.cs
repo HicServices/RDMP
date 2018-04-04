@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,7 +29,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// of Form and UserControl.  The source code is evaluated for summary tags (like this one).  The form/control is constructed using all null parameters and a screenshot is taken of the 
     /// control.
     /// 
-    /// You can also see any errors in the generation of the screenshot or documentation in the ChecksUI. 
+    /// <para>You can also see any errors in the generation of the screenshot or documentation in the ChecksUI. </para>
     /// </summary>
     public partial class DocumentationReportFormsAndControlsUI : RDMPForm
     {

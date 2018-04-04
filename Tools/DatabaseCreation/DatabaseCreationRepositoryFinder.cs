@@ -8,7 +8,7 @@ namespace DatabaseCreation
     /// <summary>
     /// IRDMPPlatformRepositoryServiceLocator which identifies the location of Catalogue and Data Export databases during the runtime of DatabaseCreation.exe
     /// 
-    /// Since these connection strings are part of the command line arguments to DatabaseCreation.exe it's a pretty simple class!
+    /// <para>Since these connection strings are part of the command line arguments to DatabaseCreation.exe it's a pretty simple class!</para>
     /// </summary>
     public class DatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
     {

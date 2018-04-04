@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -11,9 +11,9 @@ namespace MapsDirectlyToDatabaseTable
     /// <summary>
     /// Stores DbCommands for saving IMapsDirectlyToDatabaseTable objects to the database.
     /// 
-    /// Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is created for saving the object back to
+    /// <para>Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is created for saving the object back to
     /// the database (using DbCommandBuilder).  Since this operation (figuring out the UPDATE command) is slow and we might be saving lots of objects we cache
-    /// the command so that we can apply it to all objects of that Type as they are saved.
+    /// the command so that we can apply it to all objects of that Type as they are saved.</para>
     /// </summary>
     public class UpdateCommandStore
     {

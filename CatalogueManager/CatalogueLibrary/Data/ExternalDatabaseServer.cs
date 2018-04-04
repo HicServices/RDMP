@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -18,14 +18,14 @@ namespace CatalogueLibrary.Data
     /// Records information about an SQL database.  This can be a system specific database e.g. a Logging database or an ANOStore or it could be a generic
     /// database you use to hold data (e.g. lookups). 
     /// 
-    /// IMPORTANT: do not add an ExternalDatabaseServer just because you store data on it, instead you should import pointers to the data you hold as TableInfo 
+    /// <para>IMPORTANT: do not add an ExternalDatabaseServer just because you store data on it, instead you should import pointers to the data you hold as TableInfo 
     /// objects which themselves store Server/Database which allows for minimal disruption when you decide to move a table to a different server (it also allows
-    /// for accessing the data under different accounts based on what is being done - loading vs extraction : see DataAccessCredentials_TableInfo).
+    /// for accessing the data under different accounts based on what is being done - loading vs extraction : see DataAccessCredentials_TableInfo).</para>
     /// 
-    /// ExternalDatabaseServer are really only for fixed global entities such as logging/identifier dumps etc.
+    /// <para>ExternalDatabaseServer are really only for fixed global entities such as logging/identifier dumps etc.</para>
     /// 
-    /// Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
-    /// is encrypted in the same fashion as in the DataAccessCredentials table.
+    /// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
+    /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
     /// </summary>
     public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed
     {

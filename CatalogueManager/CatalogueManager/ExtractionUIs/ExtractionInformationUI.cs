@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -45,26 +45,26 @@ namespace CatalogueManager.ExtractionUIs
     /// anyone get the column or are special approvals required).  This window lets you decide whether a CatalogueItem is extractable, optionally provide a transform (e.g. UPPER() etc),
     /// curate filter logic, flag it as the datasets extraction identifier (e.g. PatientId).
     /// 
-    /// Start by deciding whether a given Column is extractable by ticking Yes or No.  Then choose an extraction category, a column will only appear in DataExportManager as extractable if
-    /// it is Core, Supplemental or SpecialApprovalRequired (Internal and Deprecated columns cannot be extracted).  
+    /// <para>Start by deciding whether a given Column is extractable by ticking Yes or No.  Then choose an extraction category, a column will only appear in DataExportManager as extractable if
+    /// it is Core, Supplemental or SpecialApprovalRequired (Internal and Deprecated columns cannot be extracted).  </para>
     /// 
-    /// You should have a single field across all your datasets which identifies your cohorts (patients) e.g. PatientId.  If this column contains PatientIds then tick 'Is Extraction 
+    /// <para>You should have a single field across all your datasets which identifies your cohorts (patients) e.g. PatientId.  If this column contains PatientIds then tick 'Is Extraction 
     /// Identifier', very occasionally you might have multiple columns containing PatientIds e.g. Birth records might have a column for MotherId and a column for BabyId both of which contain
-    /// PatientIds (if this is the case then just tick both as 'Is Extraction Identifier'.  
+    /// PatientIds (if this is the case then just tick both as 'Is Extraction Identifier'.  </para>
     /// 
-    /// You can edit the Extraction Code which is a single line of SELECT SQL.  If you change this to include a function or something else make sure to include an alias 
-    /// (e.g. 'UPPER(MyTable.MyColumn) as MyColumn')
+    /// <para>You can edit the Extraction Code which is a single line of SELECT SQL.  If you change this to include a function or something else make sure to include an alias 
+    /// (e.g. 'UPPER(MyTable.MyColumn) as MyColumn')</para>
     /// 
-    /// You can also view the Filters that are associated with this column.  These are centrally curated and validated (Make sure to validate your filters!!!) pieces of WHERE logic which
+    /// <para>You can also view the Filters that are associated with this column.  These are centrally curated and validated (Make sure to validate your filters!!!) pieces of WHERE logic which
     /// can be used in Data Extraction and Cohort Identification with the dataset.  For example the Prescribing.DrugCode column could have 2 filters 'Prescription Painkillers' and 
     /// 'Diabetes Drugs'.  Filters should be adequately documented with name and description such that a data analyst can use them without necessarily understanding the SQL implementation.
-    /// For more information on configuring Filters see ExtractionFilterUI.
+    /// For more information on configuring Filters see ExtractionFilterUI.</para>
     /// 
-    /// If you tick the HashOnDataRelease column then the transform/column will be wrapped by the Hashing Algorithm (if any - See ConfigureHashingAlgorithm) when it comes to data extraction.
+    /// <para>If you tick the HashOnDataRelease column then the transform/column will be wrapped by the Hashing Algorithm (if any - See ConfigureHashingAlgorithm) when it comes to data extraction.
     /// Use this only if you have a hashing system implemented.  Hashing is separate from identifier allocation such as ANO (See ConfigureANOForTableInfo) in that its done at extraction
-    /// time in SQL only and the exact implementation is up to you.
+    /// time in SQL only and the exact implementation is up to you.</para>
     ///
-    /// 
+    /// <para></para>
     /// </summary>
     public partial class ExtractionInformationUI : ExtractionInformationUI_Design, ISaveableUI
     {

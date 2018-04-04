@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -22,7 +22,7 @@ namespace ANOStore.ANOEngineering
     /// TableInfo(s) and creating a new Catalogue entry.  Since Catalogues can have multiple underlying tables (e.g. lookup tables shared join tables etc) the engine
     /// supports migrating only a subset of tables across (the remaining tables must have already been migrated and exist in the destination database).
     /// 
-    /// Finally the engine creates a LoadMetadata which when run will migrate (copy) the data from the old table into the new table.
+    /// <para>Finally the engine creates a LoadMetadata which when run will migrate (copy) the data from the old table into the new table.</para>
     /// </summary>
     public class ForwardEngineerANOCatalogueEngine
     {

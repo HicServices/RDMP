@@ -20,12 +20,12 @@ namespace CatalogueLibrary.Data.DataLoad
     /// Describes a specific operation carried out at a specific step of a LoadMetadata.  This could be 'unzip all files called *.zip in for loading' or
     /// 'after loading the data to live, call sp_clean_table1' or 'Connect to webservice X and download 1,000,000 records which will be serialized into XML'
     /// 
-    /// The class achieves this wide ranging functionality through the interaction of ProcessTaskType and Path.  e.g. when ProcessTaskType is Attacher then
-    /// Path functions as the Type name of a class that implements IAttacher e.g. 'LoadModules.Generic.Attachers.AnySeparatorFileAttacher'.  
+    /// <para>The class achieves this wide ranging functionality through the interaction of ProcessTaskType and Path.  e.g. when ProcessTaskType is Attacher then
+    /// Path functions as the Type name of a class that implements IAttacher e.g. 'LoadModules.Generic.Attachers.AnySeparatorFileAttacher'.  </para>
     /// 
-    /// Each ProcessTask can have one or more strongly typed arguments (see entity ProcessTaskArgument), these are discovered at design time by using
+    /// <para>Each ProcessTask can have one or more strongly typed arguments (see entity ProcessTaskArgument), these are discovered at design time by using
     /// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
-    /// to write plugin classes to easily handle freaky source file types or complex/bespoke data load requirements.
+    /// to write plugin classes to easily handle freaky source file types or complex/bespoke data load requirements.</para>
     /// </summary>
     public class ProcessTask : VersionedDatabaseEntity, IProcessTask, IArgumentHost, ITableInfoCollectionHost, ILoadProgressHost, IOrderable,INamed, ICheckable
     {

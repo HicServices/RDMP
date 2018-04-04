@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update
@@ -9,7 +9,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update
     /// Cross Database Type class for turning a collection of arbitrary sql lines (CustomLine) into an UPDATE query where no suitable ANSI solution exists.  For example 
     /// updating a table using a join to another table where the relationship is n..n.
     /// 
-    /// Look at UpdateHelper.permissableLocations to determine which CustomLines you are allowed to pass in.
+    /// <para>Look at UpdateHelper.permissableLocations to determine which CustomLines you are allowed to pass in.</para>
     /// </summary>
     public interface IUpdateHelper
     {

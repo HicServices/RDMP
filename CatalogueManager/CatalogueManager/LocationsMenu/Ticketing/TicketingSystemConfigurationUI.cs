@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,16 +17,16 @@ namespace CatalogueManager.LocationsMenu.Ticketing
     /// interactions with ticketing systems (which can be skipped entirely if you do not want the functionality).  This window lets you configure which ticketing system you have, the
     /// credentials needed to access it and where it is located.  You will need to make sure you select the appropriate Type of ticketing system you have.
     /// 
-    /// Because there are many different ticketing systems and they can often be configured in diverse ways, the RDMP uses a 'plugin' approach to interacting with ticketing systems.
-    /// The scope of functionality includes: 
+    /// <para>Because there are many different ticketing systems and they can often be configured in diverse ways, the RDMP uses a 'plugin' approach to interacting with ticketing systems.
+    /// The scope of functionality includes: </para>
     /// 
-    /// 1. Validating whether a ticket is valid
+    /// <para>1. Validating whether a ticket is valid
     /// 2. Navigating to the ticket when the user clicks 'Show' in a TicketingControl (See TicketingControl)
     /// 3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process through your normal ticketing system but have RDMP prevent 
-    /// releases of data until the ticketing system says its ok). 
+    /// releases of data until the ticketing system says its ok). </para>
     /// 
-    /// Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to configure it.  If you do not see a Type that corresponds with your 
-    /// ticketing system you might need to write your own Ticketing dll (See ITicketingSystem interface) and upload it as a plugin to the Data Catalogue.
+    /// <para>Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to configure it.  If you do not see a Type that corresponds with your 
+    /// ticketing system you might need to write your own Ticketing dll (See ITicketingSystem interface) and upload it as a plugin to the Data Catalogue.</para>
     /// </summary>
     public partial class TicketingSystemConfigurationUI : RDMPUserControl
     {

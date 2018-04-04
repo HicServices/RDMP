@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Ticketing
@@ -8,7 +8,7 @@ namespace CatalogueLibrary.Ticketing
     /// to associate ticket identifiers with project extracts, catalogues, issues etc.  By implementing this interface for your ticketing system you can prevent
     /// data releases unless a ticket is in a given state etc.
     /// 
-    /// IMPORTANT: you must have a constructor that takes a single parameter of Type TicketingSystemConstructorParameters
+    /// <para>IMPORTANT: you must have a constructor that takes a single parameter of Type TicketingSystemConstructorParameters</para>
     /// </summary>
     public interface ITicketingSystem:ICheckable
     {

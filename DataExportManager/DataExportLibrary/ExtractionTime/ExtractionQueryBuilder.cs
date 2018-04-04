@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -31,8 +31,8 @@ namespace DataExportLibrary.ExtractionTime
         /// <summary>
         /// This produces the SQL that would retrieve the specified dataset columns including any JOINS 
         /// 
-        /// It uses:
-        /// QueryBuilder in the data CatalogueLibrary and then it adds some custom lines for linking to the cohort
+        /// <para>It uses:
+        /// QueryBuilder in the data CatalogueLibrary and then it adds some custom lines for linking to the cohort</para>
         /// </summary>
         /// <returns></returns>
         public QueryBuilder GetSQLCommandForFullExtractionSet(ExtractDatasetCommand request, out List<ReleaseIdentifierSubstitution> substitutions)

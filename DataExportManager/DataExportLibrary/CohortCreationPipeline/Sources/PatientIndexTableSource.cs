@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -26,13 +26,13 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
     /// used to identify their cohort (e.g. cohort query is 'everyone who has been hospitalised with code X within 6 months of having a prescription
     /// of drug Y - in this case the patient index table is 'the prescribed dates of drug Y').  
     /// 
-    /// Since 'Patient Index Tables' always contain a superset of the final identifiers this component will add an additional filter to the query
+    /// <para>Since 'Patient Index Tables' always contain a superset of the final identifiers this component will add an additional filter to the query
     /// to restrict rows returned only to those patients in your final cohort list (you must already have a committed final cohort list to use this
     /// component).  This prevents you saving a snapshot of 1,000,000 prescription dates when your final cohort of patients only own 500 of those 
-    /// records (because the cohort identification configuration includes further set operations that reduce the patient count beyond the prescribed drug Y).
+    /// records (because the cohort identification configuration includes further set operations that reduce the patient count beyond the prescribed drug Y).</para>
     /// 
-    /// The purpose of all this is usually to ship a table ('Patient Index Table') which was used to build the researchers cohort into the saved cohorts 
-    /// database so it can be linked and extracted (as custom data) along with all the normal datasets that make up the researchers extract.
+    /// <para>The purpose of all this is usually to ship a table ('Patient Index Table') which was used to build the researchers cohort into the saved cohorts 
+    /// database so it can be linked and extracted (as custom data) along with all the normal datasets that make up the researchers extract.</para>
     /// </summary>
     public class PatientIndexTableSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<AggregateConfiguration>, IPipelineRequirement<ExtractableCohort>
     {

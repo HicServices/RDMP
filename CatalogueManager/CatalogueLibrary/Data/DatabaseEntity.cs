@@ -19,11 +19,11 @@ namespace CatalogueLibrary.Data
     /// IMapsDirectlyToDatabaseTable.  You must always have two constructors, one that takes a DbDataReader and is responsible for constructing an instance from a 
     /// record in the database and one that takes the minimum parameters required to satisfy database constraints and is used to create new objects.
     /// 
-    /// A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This is the RDMP design pattern for object permenance, 
-    /// sharing and allowing advanced users to update the data model via database queries running directly on the object repository database.
+    /// <para>A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This is the RDMP design pattern for object permenance, 
+    /// sharing and allowing advanced users to update the data model via database queries running directly on the object repository database.</para>
     /// 
-    /// A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
-    /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]
+    /// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
+    /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
     /// </summary>
     public abstract class DatabaseEntity : IRevertable, IDeleteable, INotifyPropertyChanged
     {

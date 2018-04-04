@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Primitives;
 using System.IO;
@@ -13,11 +13,11 @@ namespace RDMPStartup.PluginManagement
     /// Evaluates a single Plugin that is committed in the current Catalogue database (and downloaded into the MEF folder - PluginDirectory).  All the files
     /// (.dlls) which make up the plugin (LoadModuleAssembly) are evaluated and a PluginAnalyserReport is produced for each.
     /// 
-    /// Used for debug purposes to identify unloadable dlls in a plugin or breaking API changes in different versions of loaded dlls.  Decompiles all methods
+    /// <para>Used for debug purposes to identify unloadable dlls in a plugin or breaking API changes in different versions of loaded dlls.  Decompiles all methods
     /// in all MEF exportable Types using Mono.Reflection to ensure that even though the Type can be loaded that the methods themselves can also be linked up
-    /// correctly (enumerating Instructions identifies any breaking changes in the API even when they don't result in unloadable Type errors).
+    /// correctly (enumerating Instructions identifies any breaking changes in the API even when they don't result in unloadable Type errors).</para>
     /// 
-    /// See PluginManagementForm for a friendly UI for this class.  
+    /// <para>See PluginManagementForm for a friendly UI for this class.  </para>
     /// </summary>
     public class PluginAnalyser
     {

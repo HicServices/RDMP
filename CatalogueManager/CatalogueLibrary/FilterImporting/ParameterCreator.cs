@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,15 +16,15 @@ namespace CatalogueLibrary.FilterImporting
     /// Handles the creation of new ISqlParameters based on the current WHERE SQL of a given IFilter.  This involves parsing the WHERE SQL for variables (@myVar).  This class
     /// also takes into account any globals that exist and supports the use of template parameter values for new ISqlParameter created (importFromIfAny)
     /// 
-    /// globals are ISqlParameters which exist in the same scope as the IFilter being edited, if the WHERE Sql contains a parameter with the same name as a global then no new 
+    /// <para>globals are ISqlParameters which exist in the same scope as the IFilter being edited, if the WHERE Sql contains a parameter with the same name as a global then no new 
     /// ISqlParameter will be created.  For example if you have an IFilter "myfilter" with WhereSQL "@bob = 'bob'" and there are not already any parameters for the filter with the
-    /// name @bob then a new one will be created (unless there is a global with the name @bob).
+    /// name @bob then a new one will be created (unless there is a global with the name @bob).</para>
     /// 
-    /// importFromIfAny is a collection of template parameters that contain appropriate values to assign to newly created parameters.  The use case for this is when you are importing
+    /// <para>importFromIfAny is a collection of template parameters that contain appropriate values to assign to newly created parameters.  The use case for this is when you are importing
     /// a Catalogue filter (E.g. ExtractionFilter) into a lower level (e.g. DeployedExtractionFilter) and you want to propagate down all the appropriate parameters to the new level.
-    /// In this use case the WhereSQL is parsed and any matching parameter names have the values copied into the newly created parameters.
+    /// In this use case the WhereSQL is parsed and any matching parameter names have the values copied into the newly created parameters.</para>
     /// 
-    /// This class relies on a delegate for creation of the actual parameter instances (See CreateAll method) 
+    /// <para>This class relies on a delegate for creation of the actual parameter instances (See CreateAll method) </para>
     /// </summary>
     public class ParameterCreator
     {

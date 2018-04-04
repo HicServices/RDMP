@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,10 +17,10 @@ namespace MapsDirectlyToDatabaseTableUI
     /// This dialog prompts you to select a single RDMP object from a selection of objects.  This dialog is reused in many places throughout RDMP so you will need to rely on the context
     /// the dialog was launched in to determine what the effects of a given selection are.
     /// 
-    /// As an example you might be prompted to select a Catalogue (dataset) from a list of all active Catalogues.  Optionally you might be able to select Null (usually clears a currently 
-    /// selected value).
+    /// <para>As an example you might be prompted to select a Catalogue (dataset) from a list of all active Catalogues.  Optionally you might be able to select Null (usually clears a currently 
+    /// selected value).</para>
     /// 
-    /// If the dialog was launched in read/write mode then pressing Del will delete the currently selected entity (if possible... don't do this unless you really do want to delete it).
+    /// <para>If the dialog was launched in read/write mode then pressing Del will delete the currently selected entity (if possible... don't do this unless you really do want to delete it).</para>
     /// </summary>
     public partial class SelectIMapsDirectlyToDatabaseTableDialog : Form
     {

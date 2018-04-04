@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace RDMPAutomationService.Logic.DQE
     /// Identifies Catalogues which have validation rules on them but have yet to have the Data Quality Engine run on them (or it has been a long time since
     /// the last DQE run happened).  
     /// 
-    ///  Used by DQEAutomationSource to decide when a new AutomatedDQERun can be started. 
+    /// <para> Used by DQEAutomationSource to decide when a new AutomatedDQERun can be started. </para>
     /// </summary>
     public class DQERunFinder
     {

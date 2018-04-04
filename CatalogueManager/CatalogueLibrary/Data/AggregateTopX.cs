@@ -15,8 +15,8 @@ namespace CatalogueLibrary.Data
     /// to the count column e.g. 'Only graph the top 10 most prescribed drugs'.  You can change the direction of the TopX to turn it into 'Only graph the 10 LEAST prescribed drugs' or you can
     /// change your count(*) SQL on the Aggregate to AVERAGE(dose) and then you would have 'Top 10 most prescribed drugs by average prescription amount... or something like that anyway'.
     /// 
-    /// Also if you have a very strange requirement you can pick an AggregateDimension for the TopX to apply to other than the count column e.g. top 10 drug names by ascending would give
-    ///  Asprin, Aardvarksprin, A... etc
+    /// <para>Also if you have a very strange requirement you can pick an AggregateDimension for the TopX to apply to other than the count column e.g. top 10 drug names by ascending would give
+    ///  Asprin, Aardvarksprin, A... etc</para>
     /// </summary>
     public class AggregateTopX : DatabaseEntity, IAggregateTopX
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace CatalogueLibrary.Data
     /// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called 
     /// 'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
     /// 
-    /// 
+    /// <para></para>
     /// </summary>
     public class TableInfoToCredentialsLinker
     {
@@ -77,9 +77,9 @@ namespace CatalogueLibrary.Data
         /// <summary>
         ///  Answers the question, "what is the best credential (if any) to use under the given context"
         /// 
-        /// Tries to find a DataAccessCredentials for the supplied TableInfo.  For example you are trying to find a username/pasword to use with the TableInfo when performing
+        /// <para>Tries to find a DataAccessCredentials for the supplied TableInfo.  For example you are trying to find a username/pasword to use with the TableInfo when performing
         /// a DataLoad, this method will first return any explicit usage allowances (if there is a credential liscenced for use during DataLoad) if no such credentials exist 
-        /// it will then check for a credential which is liscenced for Any usage (can be used for data load, data export etc) and return that else it will return null
+        /// it will then check for a credential which is liscenced for Any usage (can be used for data load, data export etc) and return that else it will return null</para>
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <param name="context"></param>

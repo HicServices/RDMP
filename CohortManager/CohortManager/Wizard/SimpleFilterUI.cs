@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -22,9 +22,9 @@ namespace CohortManager.Wizard
     /// you have a Filter 'Drug Prescribed' on the dataset 'Prescribing' typing "'Paracetamol'" into the parameter will likely restrict the cohort to matching only those patients who have ever
     /// been prescribed Paracetamol.  
     /// 
-    /// If the control is Readonly (disabled / greyed out) then it is probably a Mandatory filter on your dataset and you will not be able to remove it.
+    /// <para>If the control is Readonly (disabled / greyed out) then it is probably a Mandatory filter on your dataset and you will not be able to remove it.</para>
     /// 
-    /// This UI is a simplified version of ExtractionFilterUI
+    /// <para>This UI is a simplified version of ExtractionFilterUI</para>
     /// </summary>
     public partial class SimpleFilterUI : UserControl
     {

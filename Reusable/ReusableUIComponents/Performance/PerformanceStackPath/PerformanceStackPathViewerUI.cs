@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,8 +12,8 @@ namespace ReusableUIComponents.Performance.PerformanceStackPath
     /// Displays the same information as PerformanceCounterResultsUI but in a call hierarchy showing which stack frames are issuing database queries and the flow of execution between
     /// them.  Note that because database queries are logged in realtime (See PerformanceCounterUI) you will always get a node called 'Origin' from which all root stack frames are attached.
     /// 
-    /// This means if you turn on performance logging and right click a node then delete something else you should see 2 (or more) branches from Origin that relate to those actions (though
-    /// you might find common trunk frames e.g. Program.main etc.
+    /// <para>This means if you turn on performance logging and right click a node then delete something else you should see 2 (or more) branches from Origin that relate to those actions (though
+    /// you might find common trunk frames e.g. Program.main etc.</para>
     /// </summary>
     public partial class PerformanceStackPathViewerUI : UserControl
     {

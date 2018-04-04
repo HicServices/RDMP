@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -47,12 +47,12 @@ namespace DataExportManager.ProjectUI
     /// configured filters (See ConfigureDatasetUI).  You can have multiple active configurations in a project, for example you might extract 'Prescribing', 'Biochemistry' and 'Demography' for the cohort 'CasesForProject123' and
     /// only datasets 'Biochemistry' and 'Demography' for the cohort 'ControlsForProject123'.
     /// 
-    /// The attributes you can change include the name, description, ticketting system tickets etc.
+    /// <para>The attributes you can change include the name, description, ticketting system tickets etc.</para>
     /// 
-    /// You can also define global SQL parameters which will be available to all Filters in all datasets extracted as part of the configuration.
+    /// <para>You can also define global SQL parameters which will be available to all Filters in all datasets extracted as part of the configuration.</para>
     /// 
-    /// You can associate a specific CohortIdentificationConfiguration with the ExtractionConfiguration.  This will allow you to do a 'cohort refresh' (replace the current saved cohort 
-    /// identifier list with a new version built by executing the query - helpful if you have new data being loaded regularly and this results in the study cohort changing).
+    /// <para>You can associate a specific CohortIdentificationConfiguration with the ExtractionConfiguration.  This will allow you to do a 'cohort refresh' (replace the current saved cohort 
+    /// identifier list with a new version built by executing the query - helpful if you have new data being loaded regularly and this results in the study cohort changing).</para>
     /// </summary>
     public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Design, ISaveableUI
     {

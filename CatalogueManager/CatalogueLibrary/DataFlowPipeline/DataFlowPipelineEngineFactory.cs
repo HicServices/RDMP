@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +19,7 @@ namespace CatalogueLibrary.DataFlowPipeline
     /// and cannot be changed/configured by the user (FixedDestination/FixedSource).  If the context requires a FixedSource or FixedDestination then you must pass the ExplicitSource
     /// object / ExplicitDestination object into the constructor.
     /// 
-    /// In general rather than trying to use this class directly you should package up your requirements/initialization objects into a PipelineUseCase and call GetEngine. 
+    /// <para>In general rather than trying to use this class directly you should package up your requirements/initialization objects into a PipelineUseCase and call GetEngine. </para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class DataFlowPipelineEngineFactory<T> : IDataFlowPipelineEngineFactory

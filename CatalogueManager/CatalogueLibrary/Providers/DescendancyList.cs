@@ -12,7 +12,7 @@ namespace CatalogueLibrary.Providers
     /// AggregateConfigurations which are modelling a cohort apper both under their respective Catalogue and their CohortIdentificationConfiguration but sometimes one is an
     /// orphan (it's CohortIdentificationConfiguration has been deleted or it has been removed from it) in which case the only path is the 'less goood' one.
     /// 
-    /// It is not allowed to have duplicate objects in Parents.  All objects and parents must have appropriate implements of GetHashCode.
+    /// <para>It is not allowed to have duplicate objects in Parents.  All objects and parents must have appropriate implements of GetHashCode.</para>
     /// </summary>
     public class DescendancyList
     {

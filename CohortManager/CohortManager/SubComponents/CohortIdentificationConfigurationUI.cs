@@ -24,29 +24,29 @@ namespace CohortManager.SubComponents
     /// at the time of their first prescription of a diabetic medication (BNF chapter 6.1) and died within 6 months of the first prescribed date of the diabetic medication'.  The
     /// better the description the more likely it is that you and the researcher will be on the same page about what you are providing.
     /// 
-    /// If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
-    /// (See QueryCachingServerSelector) from the dropdown.
+    /// <para>If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
+    /// (See QueryCachingServerSelector) from the dropdown.</para>
     /// 
-    /// Next you should add datasets and set operation containers to generate your cohort by dragging datasets from the Catalogue list on the right into the CohortCompilerUI
-    /// list box (See CohortCompilerUI for configuring filters on the datasets added).
+    /// <para>Next you should add datasets and set operation containers to generate your cohort by dragging datasets from the Catalogue list on the right into the CohortCompilerUI
+    /// list box (See CohortCompilerUI for configuring filters on the datasets added).</para>
     /// 
-    /// In the above example you might have 
+    /// <para>In the above example you might have </para>
     /// 
-    /// Set 1 - Prescribing
+    /// <para>Set 1 - Prescribing</para>
     /// 
-    ///     Filter 1 - Prescription is for a diabetic medication
+    /// <para>    Filter 1 - Prescription is for a diabetic medication</para>
     /// 
-    ///     Filter 2 - Prescription is the first prescription of it's type for the patient
+    /// <para>    Filter 2 - Prescription is the first prescription of it's type for the patient</para>
     /// 
-    ///     Filter 3 - Patient died within 6 months of prescription
+    /// <para>    Filter 3 - Patient died within 6 months of prescription</para>
     /// 
-    /// INTERSECT
+    /// <para>INTERSECT</para>
     /// 
-    /// Set 2 - Demography
+    /// <para>Set 2 - Demography</para>
     ///     
-    ///     Filter 1 - Latest known healthboard is Tayside or Fife
+    /// <para>    Filter 1 - Latest known healthboard is Tayside or Fife</para>
     /// 
-    ///     Filter 2 - Date of Death - Date of Birth > 16 years
+    /// <para>    Filter 2 - Date of Death - Date of Birth > 16 years</para>
     ///  
     /// </summary>
     public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design, ISaveableUI

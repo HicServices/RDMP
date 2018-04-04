@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace DataExportManager.SimpleDialogs
     /// its user interface in which case a reference is created to the cohort in the cohort database once it has been successfully committed (so you won't need this dialog) (See 
     /// CohortCreationRequestUI).
     /// 
-    /// Only use this dialog if you have manually added a cohort into your cohort database yourself and RDMP does not show it in SavedCohortsCollectionUI.
+    /// <para>Only use this dialog if you have manually added a cohort into your cohort database yourself and RDMP does not show it in SavedCohortsCollectionUI.</para>
     /// </summary>
     public partial class SelectWhichCohortToImport : RDMPForm
     {

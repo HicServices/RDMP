@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Linq;
@@ -27,11 +27,11 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     /// This control offers the preferred method of telling RDMP about your existing datasets.  It lets you select a table on your server and then forward engineer an RDMP Catalogue
     /// which lets you build a data load for the table, document it's columns, configure extraction logic etc.  
     /// 
-    /// Start by entering the details of your table (server, database, table etc).  If you specify username/password then SQL Authentication will be used and the credentials will be
-    /// stored along with the table (See PasswordEncryptionKeyLocationUI for details), if you do not enter username/password then Windows Authentication will be used (preferred).  
+    /// <para>Start by entering the details of your table (server, database, table etc).  If you specify username/password then SQL Authentication will be used and the credentials will be
+    /// stored along with the table (See PasswordEncryptionKeyLocationUI for details), if you do not enter username/password then Windows Authentication will be used (preferred).  </para>
     /// 
-    /// Clicking Import will create TableInfo / ColumnInfo objects in your Data Catalogue database and then ForwardEngineerCatalogueUI will be launched which lets you pick which 
-    /// columns are extractable and which contains the Patient Identifier (e.g. CHI number / NHS number etc).  See ForwardEngineerCatalogueUI for full details. 
+    /// <para>Clicking Import will create TableInfo / ColumnInfo objects in your Data Catalogue database and then ForwardEngineerCatalogueUI will be launched which lets you pick which 
+    /// columns are extractable and which contains the Patient Identifier (e.g. CHI number / NHS number etc).  See ForwardEngineerCatalogueUI for full details. </para>
     /// </summary>
     public partial class ImportSQLTable : Form
     {

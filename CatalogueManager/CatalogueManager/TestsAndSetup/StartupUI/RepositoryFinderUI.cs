@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
@@ -23,7 +23,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
     /// the connection strings for tier 1 databases (Data Catalogue and optionally Data Export Manager).  Clicking 'Change...' will launch a dialog that lets you change the connection strings
     /// or create new catalogue / data export manager databases
     /// 
-    /// Clicking 'Change...' will launch ChoosePlatformDatabases.
+    /// <para>Clicking 'Change...' will launch ChoosePlatformDatabases.</para>
     /// </summary>
     public partial class RepositoryFinderUI : UserControl
     {

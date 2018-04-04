@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -47,7 +47,7 @@ namespace DataExportManager.Collections
     /// Contains a list of all the currently configured data export projects you have.  A data export Project is a collection of one or more datasets combined with a cohort (or multiple
     /// if you have sub ExtractionConfigurations within the same Project e.g. cases/controls).
     /// 
-    /// Data in these datasets will be linked against the cohort and anonymised on extraction (to flat files / database etc).
+    /// <para>Data in these datasets will be linked against the cohort and anonymised on extraction (to flat files / database etc).</para>
     /// </summary>
     public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableUIComponents;
@@ -11,11 +11,11 @@ namespace CatalogueManager.SimpleDialogs.Revertable
     /// etc).  Because the system is designed to run with multiple users accessing this database the same time (or by you having multiple applications running at once - like running
     /// CatalogueManager and Data Export Manager at the same time) it is possible that two users/applications will attempt to modify the same record at the same time.
     /// 
-    /// This dialog is shown any time the software is confused about which version of a database object is correct (the one it has in memory or the one it finds in the database).  The
+    /// <para>This dialog is shown any time the software is confused about which version of a database object is correct (the one it has in memory or the one it finds in the database).  The
     /// form will show you every property which has been changed and you must pick which is the correct version of the record.  Once you have selected the correct one the software will
-    /// update the database (if the one in memory is favoured) or discard its memory copy for a new database copy (if the database copy is preserved).
+    /// update the database (if the one in memory is favoured) or discard its memory copy for a new database copy (if the database copy is preserved).</para>
     /// 
-    /// If the above sounded too complicated, just look at the values of the properties and press the button for which is correct.
+    /// <para>If the above sounded too complicated, just look at the values of the properties and press the button for which is correct.</para>
     /// </summary>
     public partial class OfferChanceToSaveDialog : Form
     {

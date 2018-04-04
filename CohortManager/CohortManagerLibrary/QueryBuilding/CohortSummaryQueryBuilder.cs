@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -97,14 +97,14 @@ namespace CohortManagerLibrary.QueryBuilding
         /// <summary>
         /// Functions in two modes 
         /// 
-        /// WhereExtractionIdentifiersIn: 
+        /// <para>WhereExtractionIdentifiersIn: 
         /// Returns a adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an inception WHERE statement that restricts the IsExtractionIdentifier column
         /// by those values returned by the Cohort query.  In order that this query doesn't become super insane we require that the Cohort be cached so that it is just a simple single
-        /// like IFilter e.g. conceptually: WHERE CHI IN (Select CHI from IndexedExtractionIdentifierList_AggregateConfiguration5)
+        /// like IFilter e.g. conceptually: WHERE CHI IN (Select CHI from IndexedExtractionIdentifierList_AggregateConfiguration5)</para>
         /// 
-        /// WhereRecordsIn
+        /// <para>WhereRecordsIn
         /// Returns an adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an root AND container which includes both the container tree of the summary
-        /// and the cohort (resulting in a graphing of the RECORDS returned by the cohort set query instead of a master set of all those patients records - as above does).
+        /// and the cohort (resulting in a graphing of the RECORDS returned by the cohort set query instead of a master set of all those patients records - as above does).</para>
         /// </summary>
         /// <returns></returns>
         public AggregateBuilder GetAdjustedAggregateBuilder(CohortSummaryAdjustment adjustment, IFilter singleFilterOnly = null)

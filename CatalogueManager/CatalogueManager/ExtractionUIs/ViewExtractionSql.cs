@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -26,11 +26,11 @@ namespace CatalogueManager.ExtractionUIs
     /// Allows you to view the Extraction SQL that is built by the QueryBuilder when extracting or running data quality engine against a dataset (Catalogue).  Includes options for
     /// you to display only Core extraction fields or also supplemental / special approval.
     /// 
-    /// If you have an ExtractionFilters configured on your Catalogue then you can tick them to view their SQL implementation.  Because these are master filters and this dialog 
-    /// is for previewing only, no AND/OR container trees are included in the WHERE logic (See ExtractionFilterUI for more info about filters).
+    /// <para>If you have an ExtractionFilters configured on your Catalogue then you can tick them to view their SQL implementation.  Because these are master filters and this dialog 
+    /// is for previewing only, no AND/OR container trees are included in the WHERE logic (See ExtractionFilterUI for more info about filters).</para>
     /// 
-    /// If for some reason you see an error instead of your extraction SQL then read the description and take the steps it suggests (e.g. if it is complaining about not knowing
-    /// how to JOIN two tables then configure an appropriate JoinInfo - See JoinConfiguration). 
+    /// <para>If for some reason you see an error instead of your extraction SQL then read the description and take the steps it suggests (e.g. if it is complaining about not knowing
+    /// how to JOIN two tables then configure an appropriate JoinInfo - See JoinConfiguration). </para>
     /// </summary>
     public partial class ViewExtractionSql : ViewExtractionSql_Design
     {

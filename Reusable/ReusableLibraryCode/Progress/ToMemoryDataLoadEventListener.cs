@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +9,7 @@ namespace ReusableLibraryCode.Progress
     /// IDataLoadEventListener which records all OnNotify and all novel OnProgress messages in memory (in Dictionaries where the key is component which
     /// sent the message).  You can optionally respond to OnNotify events where the ProgressEventType is Error by throwing an Exception.
     /// 
-    /// The typical use case for this is for testing to ensure that components log specific messages.
+    /// <para>The typical use case for this is for testing to ensure that components log specific messages.</para>
     /// </summary>
     public class ToMemoryDataLoadEventListener:IDataLoadEventListener
     {

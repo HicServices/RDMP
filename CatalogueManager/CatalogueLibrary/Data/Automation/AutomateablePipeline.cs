@@ -15,9 +15,9 @@ namespace CatalogueLibrary.Data.Automation
     /// A user custom automated activity.  This involves the user having a plugin which has automation components and building a pipeline in which an automation service serves up
     /// jobs and the automation destination component executes those jobs.  What the pipeline will actually do when executed is entirely up to the functionality in the plugin.
     /// 
-    /// If you have an automation server running the automation executable and a free AutomationServiceSlot in your Catalogue database then the pipeline will be assembled and
+    /// <para>If you have an automation server running the automation executable and a free AutomationServiceSlot in your Catalogue database then the pipeline will be assembled and
     /// executed until the source returns null (no more jobs).  If you are a plugin writer you should make sure to put some kind of threshold on the source so that it doesn't 
-    /// serve up 1000 async jobs at once.
+    /// serve up 1000 async jobs at once.</para>
     /// </summary>
     public class AutomateablePipeline:DatabaseEntity,IHasDependencies
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +14,8 @@ namespace RDMPAutomationService.Interfaces
     /// Once you identify a descrete job (e.g. run an DQE evaluation on a dataset), construct your corresponding IAutomateable (e.g. AutomatedDQERun) and return
     /// IAutomateable.GetTask().
     /// 
-    /// IMPORTANT: GetChunk will be called regularly so ensure that once you have released an OnGoingAutomationTask, you mark that work package as ongoing so you
-    /// do not release the same / semantically similar work package again into the automation pipeline.
+    /// <para>IMPORTANT: GetChunk will be called regularly so ensure that once you have released an OnGoingAutomationTask, you mark that work package as ongoing so you
+    /// do not release the same / semantically similar work package again into the automation pipeline.</para>
     /// </summary>
     public interface IAutomationSource : IDataFlowSource<OnGoingAutomationTask>, IPipelineRequirement<AutomationServiceSlot>
     {

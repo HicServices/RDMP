@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Checks.SyntaxChecking;
@@ -18,7 +18,7 @@ namespace DataExportLibrary.Data.DataTables
     /// want to define @studyStartWindow and @studyEndWindow as global parameters which can be used to restrict the extraction window of each dataset.  GlobalExtractionFilterParameters
     /// are created and assocaited with a single ExtractionConfiguration after which they are available for use in all DeployedExtractionFilters of all datasets within the configuration.
     /// 
-    /// It also means you have a single point you can change the parameter if you need to adjust it later on.
+    /// <para>It also means you have a single point you can change the parameter if you need to adjust it later on.</para>
     /// </summary>
     public class GlobalExtractionFilterParameter : VersionedDatabaseEntity, ISqlParameter
     {

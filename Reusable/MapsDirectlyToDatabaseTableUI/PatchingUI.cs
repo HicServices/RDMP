@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -21,8 +21,8 @@ namespace MapsDirectlyToDatabaseTableUI
     /// The RDMP enforces a strict version policy in which the version of the codebase (the software running) must always match that of the databases it is running on.  Each new version of
     /// the RDMP software will include SQL patches designed to bring your databases up-to-date with the new feature set.
     /// 
-    /// This dialog shows you the version number of the database and the version number of the patching assembly (separate version numbers are maintained for the Catalogue Manager Database,
-    /// Data Export Database, Logging databases etc).  For a description of the Host/Database assembly model the RDMP uses, See ManagedDatabaseUI.
+    /// <para>This dialog shows you the version number of the database and the version number of the patching assembly (separate version numbers are maintained for the Catalogue Manager Database,
+    /// Data Export Database, Logging databases etc).  For a description of the Host/Database assembly model the RDMP uses, See ManagedDatabaseUI.</para>
     /// </summary>
     public partial class PatchingUI : Form
     {

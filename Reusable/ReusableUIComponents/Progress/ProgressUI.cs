@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -19,12 +19,12 @@ namespace ReusableUIComponents.Progress
     /// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating 
     /// that progress is made towards a fixed number e.g. you could get 1000 messages over the course of an hour reporting how close towards a goal of 1,000,000 records a given task is.
     /// 
-    /// This control handles progress messages.  For Checks event system see ChecksUI.
+    /// <para>This control handles progress messages.  For Checks event system see ChecksUI.</para>
     /// 
-    /// ProgressUI handles progress messages of numerical progress (in either records or kilobytes) by updating the datagrid.  Messages appear in the Notifications area and 
+    /// <para>ProgressUI handles progress messages of numerical progress (in either records or kilobytes) by updating the datagrid.  Messages appear in the Notifications area and 
     /// function very similarly to ChecksUI (you can double click them to view the message/copy it / view stack traces etc).  Because classes can be quite enthusiastic about notifying 
     /// progress this control buffers all messages it receives and only updates the user interface once every 3s (this improves performance).  All date/times come from the buffered messages
-    /// so there is no impact from the 3s refresh rate on those. 
+    /// so there is no impact from the 3s refresh rate on those. </para>
     /// </summary>
     public partial class ProgressUI : UserControl, IDataLoadEventListener
     {

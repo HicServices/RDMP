@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -18,11 +18,11 @@ namespace DataQualityEngine.Data
     /// table matching their name).  CatalogueLibrary.dll objects in CatalogueRepository, DataExportLibrary.dll objects in DataExportRepository, DataQualityEngine.dll objects
     /// in DQERepository etc.
     /// 
-    /// This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Quality database.
+    /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Quality database.</para>
     /// 
-    /// Data Qualilty Engine databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. 
+    /// <para>Data Qualilty Engine databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. 
     /// there are IDs in the dqe database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
-    /// in the paired Catalogue database.
+    /// in the paired Catalogue database.</para>
     /// </summary>
     public class DQERepository : TableRepository
     {

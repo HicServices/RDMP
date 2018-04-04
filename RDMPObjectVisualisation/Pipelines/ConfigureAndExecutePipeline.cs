@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,14 +26,14 @@ namespace RDMPObjectVisualisation.Pipelines
     /// be clearly described at the top of the form, this might be 'loading a flat file into the database to create a new cohort' (the actual description will be more verbose and clear 
     /// though).
     /// 
-    /// You should read the task description and select an appropriate pipeline (which will appear in the pipeline diagram along with the input objects this window was launched with).  If
-    /// you don't have a pipeline yet you can create a new one (See ConfigurePipelineUI).
+    /// <para>You should read the task description and select an appropriate pipeline (which will appear in the pipeline diagram along with the input objects this window was launched with).  If
+    /// you don't have a pipeline yet you can create a new one (See ConfigurePipelineUI).</para>
     /// 
-    /// Input objects are the objects that are provided to accomplish the task (for example a file you are trying to load).  You can usually double click input objects to learn more about
-    /// them (e.g. open a file, view a cohort etc).  
+    /// <para>Input objects are the objects that are provided to accomplish the task (for example a file you are trying to load).  You can usually double click input objects to learn more about
+    /// them (e.g. open a file, view a cohort etc).  </para>
     /// 
-    /// This may seem like a complicated approach to user interface design but it allows for maximum plugin architecture and freedom to build your own business practices into routine tasks
-    /// like cohort committing, data extraction etc.
+    /// <para>This may seem like a complicated approach to user interface design but it allows for maximum plugin architecture and freedom to build your own business practices into routine tasks
+    /// like cohort committing, data extraction etc.</para>
     /// 
     /// </summary>
     public partial class ConfigureAndExecutePipeline : UserControl

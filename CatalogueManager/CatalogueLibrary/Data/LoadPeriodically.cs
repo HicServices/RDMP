@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Data
     /// This class is used by the DLE windows service and describes how often to run a given LoadMetadata configuration.  For example you might load 'Hospital Admissions Data' once
     /// every month on the 1st day of each month.  
     /// 
-    /// The class records when it was last loaded and can also have a 'follow on' LoadMetadata which should be launched if the main load is successful. 
+    /// <para>The class records when it was last loaded and can also have a 'follow on' LoadMetadata which should be launched if the main load is successful. </para>
     /// </summary>
     public class LoadPeriodically : DatabaseEntity
     {

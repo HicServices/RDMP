@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -47,13 +47,13 @@ namespace CatalogueLibrary.Data
     /// Persistent reference in the Catalogue database that records how to join two TableInfos.  You can create instances of this class via JoinHelper (which is available as
     /// a property on ICatalogueRepository).  JoinInfos are processed by during query building in the following way:
     /// 
-    /// 1. Query builder identifies all the TablesUsedInQuery (from the columns selected, forced table inclusions etc)
+    /// <para>1. Query builder identifies all the TablesUsedInQuery (from the columns selected, forced table inclusions etc)
     /// 2. Query builder identifies all available JoinInfos between the TablesUsedInQuery (See SqlQueryBuilderHelper.FindRequiredJoins)
     /// 3. Query builder merges JoinInfos that reference the same tables together into Combo Joins (See AddQueryBuildingTimeComboJoinDiscovery)
-    /// 4. Query builder creates final Join Sql 
+    /// 4. Query builder creates final Join Sql </para>
     /// 
-    /// 'Combo Joins' (or ISupplementalJoin) are when you need to use multiple columns to do the join e.g. A Left Join B on A.x = B.x AND A.y = B.y.  You can define
-    /// these by simply declaring additional JoinInfos for the other column pairings with the same ExtractionJoinType.
+    /// <para>'Combo Joins' (or ISupplementalJoin) are when you need to use multiple columns to do the join e.g. A Left Join B on A.x = B.x AND A.y = B.y.  You can define
+    /// these by simply declaring additional JoinInfos for the other column pairings with the same ExtractionJoinType.</para>
     /// </summary>
     public class JoinInfo : IDeleteable, IJoin,IHasDependencies
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -12,8 +12,8 @@ namespace Sharing.Dependency.Gathering
     /// An example of this would be all Filters in a Catalogue where a single ColumnInfo is being renamed.  Any filter in the catalogue could contain a reference to
     /// the ColumnInfo but most won't.
     ///
-    /// Describes an RDMP object that is related to another e.g. a ColumnInfo can have 0+ CatalogueItems associated with it.  This differs from IHasDependencies by the fact that
-    /// it is a more constrained set rather than just spider webbing out everywhere.
+    /// <para>Describes an RDMP object that is related to another e.g. a ColumnInfo can have 0+ CatalogueItems associated with it.  This differs from IHasDependencies by the fact that
+    /// it is a more constrained set rather than just spider webbing out everywhere.</para>
     /// </summary>
     public class GatheredObject : IHasDependencies, IMasqueradeAs
     {

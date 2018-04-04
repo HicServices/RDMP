@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -37,26 +37,26 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// Allows you to adjust an Aggregate.  This can either be a breakdown of your dataset by columns possibly including a graph (Basic Aggregate), a list of patient identifiers (Identifier 
     /// List) or a patient index table (See AggregateConfiguration). The image in the top left tells you what type of AggregateConfiguration it is.
     ///  
-    /// Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue which will let you edit which SQL Parameters @startDate etc are available for use in filters on the 
-    /// AggregateConfiguration
+    /// <para>Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue which will let you edit which SQL Parameters @startDate etc are available for use in filters on the 
+    /// AggregateConfiguration</para>
     /// 
-    /// If you are editing a Basic Aggregate that does not include any patient identifier columns (IsExtractionIdentifier) then you can tick IsExtractable to make it available for use and
+    /// <para>If you are editing a Basic Aggregate that does not include any patient identifier columns (IsExtractionIdentifier) then you can tick IsExtractable to make it available for use and
     /// extraction for researchers who use the underlying dataset and receive a data extraction (they will receive the 'master' aggregate run on the entire data repository and a 'personal'
-    /// version which is the same query run against their project extraction only) See ExtractionAggregateGraphObjectCollection.
+    /// version which is the same query run against their project extraction only) See ExtractionAggregateGraphObjectCollection.</para>
     /// 
-    /// You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of 
-    /// any supplemental JOINs.
+    /// <para>You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of 
+    /// any supplemental JOINs.</para>
     /// 
-    /// If your Catalogue has multiple underlying TableInfos you can pick which ones to include in the query generated in the FROM section (any Columns included in the SELECT section
-    /// will be automatically included)
+    /// <para>If your Catalogue has multiple underlying TableInfos you can pick which ones to include in the query generated in the FROM section (any Columns included in the SELECT section
+    /// will be automatically included)</para>
     /// 
-    /// Typing into the HAVING block will make the Query Builder add the SQL into the HAVING section of a GROUP BY SQL statement
+    /// <para>Typing into the HAVING block will make the Query Builder add the SQL into the HAVING section of a GROUP BY SQL statement</para>
     /// 
-    /// You can (if it is a Basic Aggregate) choose a single column to PIVOT on.  This will turn row values into new column headers.  For example if you have a dataset with columns 'Date, Gender,
+    /// <para>You can (if it is a Basic Aggregate) choose a single column to PIVOT on.  This will turn row values into new column headers.  For example if you have a dataset with columns 'Date, Gender,
     /// Result' then you could pivot on Gender and the result set would have columns Date,Male,Female,Other,NumberOfResults' assuming your count SQL was called NumberOfResults.  Do not pick
-    /// a column with thousands of unique values or you will end up with a very unwieldy result set that will probably crash the AggregateGraph when run.
+    /// a column with thousands of unique values or you will end up with a very unwieldy result set that will probably crash the AggregateGraph when run.</para>
     /// 
-    /// One (DATE!) column can be marked as an Axis.  See AggregateContinuousDateAxisUI for description.
+    /// <para>One (DATE!) column can be marked as an Axis.  See AggregateContinuousDateAxisUI for description.</para>
     /// 
     /// </summary>
     public partial class AggregateEditor : AggregateEditor_Design,ISaveableUI

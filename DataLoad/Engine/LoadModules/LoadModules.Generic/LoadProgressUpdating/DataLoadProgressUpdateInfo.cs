@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Text;
 using CatalogueLibrary.Data;
@@ -20,8 +20,8 @@ namespace LoadModules.Generic.LoadProgressUpdating
     /// the load, in such cases you might want to update the DataLoadProgress to the 5 day mark on the assumption that there is a delay in data provision and it
     /// will arrive later.  There are multiple ways to determine what dates were actually loaded during a data load (See DataLoadProgressUpdateStrategy). 
     /// 
-    /// You can declare a [DemandsInitialization] decorated property of this Type in a data load component (IAttacher) etc in order to illicit a decision about
-    /// what to update the DataLoadProgress with from the user at design time.
+    /// <para>You can declare a [DemandsInitialization] decorated property of this Type in a data load component (IAttacher) etc in order to illicit a decision about
+    /// what to update the DataLoadProgress with from the user at design time.</para>
     /// </summary>
     public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
     {

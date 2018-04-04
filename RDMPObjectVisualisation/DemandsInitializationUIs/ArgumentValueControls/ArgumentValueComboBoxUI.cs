@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,7 +13,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     /// <summary>
     /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
     /// 
-    /// This Control is for setting Properties that are of of a known colleciton type e.g. TableInfo (from all TableInfos in a dle configuration).
+    /// <para>This Control is for setting Properties that are of of a known colleciton type e.g. TableInfo (from all TableInfos in a dle configuration).</para>
     /// </summary>
     [TechnicalUI]
     public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI

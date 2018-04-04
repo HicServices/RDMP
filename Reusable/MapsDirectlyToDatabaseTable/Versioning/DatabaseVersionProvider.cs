@@ -11,7 +11,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
     /// version numbers of the host assembly and database assembly match.  To this end when the database is deployed or patched (updated) the .Database assembly
     /// version is written into the database.  
     /// 
-    /// This prevents running mismatched versions of the RDMP software with out dated object definitions.
+    /// <para>This prevents running mismatched versions of the RDMP software with out dated object definitions.</para>
     /// </summary>
     public class DatabaseVersionProvider
     {

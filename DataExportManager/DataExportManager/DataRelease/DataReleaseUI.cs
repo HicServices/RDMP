@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -24,7 +24,7 @@ namespace DataExportManager.DataRelease
     /// Lists all the active (unreleased) configurations in a project extraction and allows you to start a data release with one or more of them.  Each configuration is hosted in a
     /// ConfigurationReleasePotentialUI (See ConfigurationReleasePotentialUI) which shows whether it is in a releasable state and allows you to add it to the Release.
     /// 
-    ///  Once you have selected all the configurations you want to release click Release.
+    /// <para> Once you have selected all the configurations you want to release click Release.</para>
     /// </summary>
     public partial class DataReleaseUI : DataReleaseUI_Design
     {

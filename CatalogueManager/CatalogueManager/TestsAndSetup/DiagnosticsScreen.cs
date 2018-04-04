@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
@@ -43,8 +43,8 @@ namespace CatalogueManager.TestsAndSetup
     /// can be run on the current platform databases to check the contents/configurations.  It also includes 'Create Test Dataset' which can be used as a user acceptance test to make
     /// sure that their installation is successfully working (See UserManual.docx)
     /// 
-    /// The 'Evaluate MEF Exports' button is particularly useful if you are trying to debug a plugin you have written to find out why your class isn't appearing in the relevant part of
-    /// the RDMP.
+    /// <para>The 'Evaluate MEF Exports' button is particularly useful if you are trying to debug a plugin you have written to find out why your class isn't appearing in the relevant part of
+    /// the RDMP.</para>
     /// </summary>
     public partial class DiagnosticsScreen : RDMPForm
     {

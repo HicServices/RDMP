@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -18,19 +18,19 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
     /// configured in the Data Catalogue Database and have marked your patient identifier columns as IsExtractionIdentifier (See ExtractionInformationUI, ImportSQLTable and 
     /// ForwardEngineerCatalogue).
     /// 
-    /// All your private patient identifier fields should have the same name and datatype (e.g. 'NHSNumber' char(10)).  If you have a large legacy architecture and you cannot standardise
+    /// <para>All your private patient identifier fields should have the same name and datatype (e.g. 'NHSNumber' char(10)).  If you have a large legacy architecture and you cannot standardise
     /// the names of your private identifier columns then you can just alias them '[MyTable].[MyCol] as MyColRenamed' in ExtractionInformationUI (but this is not recommended).  Press
-    /// the button at the top of the screen to list all the identifier columns in your datasets.  Select the correct name/datatype.
+    /// the button at the top of the screen to list all the identifier columns in your datasets.  Select the correct name/datatype.</para>
     /// 
-    /// After you have chosen the correct private identifier you should choose a strategy for allocating release identifiers.  Because each agency handles governance and identifier assignment
+    /// <para>After you have chosen the correct private identifier you should choose a strategy for allocating release identifiers.  Because each agency handles governance and identifier assignment
     /// differently you can select 'Leave Blank' and provide your own implementation by editing the resulting cohort database manually (advanced topic).  Or you can select from one of the 
-    /// two 'out of the box' solutions:
+    /// two 'out of the box' solutions:</para>
     /// 
-    /// 1. Auto Incrementing Int - generates an autonum column for the release identifier (Also known as magic numbers).
-    /// 2. Guid - generates a new Globally Unique Identifier String for each release identifier (e.g. 29e4506c-c8ad-48e5-b8ad-4fa999dcd3d3)
+    /// <para>1. Auto Incrementing Int - generates an autonum column for the release identifier (Also known as magic numbers).
+    /// 2. Guid - generates a new Globally Unique Identifier String for each release identifier (e.g. 29e4506c-c8ad-48e5-b8ad-4fa999dcd3d3)</para>
     /// 
-    /// Between the two, Guid is recommended since it prevents you making mistakes if you ever have to deanonymise data since you cannot cross map against the wrong cohort database (like you
-    /// could if you used autonums).
+    /// <para>Between the two, Guid is recommended since it prevents you making mistakes if you ever have to deanonymise data since you cannot cross map against the wrong cohort database (like you
+    /// could if you used autonums).</para>
     /// </summary>
     public partial class Screen2 : RDMPUserControl
     {

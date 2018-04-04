@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -21,8 +21,8 @@ namespace CatalogueLibrary.Data.Aggregation
     /// in QueryBuilding even if it is not a selected dimension (this allows you to for example aggregate the drug codes but filter by drug prescribed date even
     /// when the two fields are in different tables - that will be joined at Query Time).
     /// 
-    /// Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
-    /// paramaterise (for the user) your AggregateFilter
+    /// <para>Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
+    /// paramaterise (for the user) your AggregateFilter</para>
     /// </summary>
     public class AggregateFilter : ConcreteFilter
     {

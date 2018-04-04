@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,11 +37,11 @@ namespace CatalogueManager.Collections
     /// tables you would rather just forget about RDMP only tracks the tables you point it at.  This is done through TableInfo objects (which each have a collection of ColumnInfos).
     /// These are mostly discovered and synchronised by the RDMP (e.g. through ImportSQLTable).
     /// 
-    /// The control shows the RDMP's table reference (TableInfo), this is a pointer to the specific database/tables/credentials used to access the data in the dataset at query
-    /// time (e.g. when doing a project extraction).
+    /// <para>The control shows the RDMP's table reference (TableInfo), this is a pointer to the specific database/tables/credentials used to access the data in the dataset at query
+    /// time (e.g. when doing a project extraction).</para>
     /// 
-    /// TableInfos are not just cached schema data, they are also the launch point for configuring Lookup relationships (See LookupConfiguration), Join logic (See JoinConfiguration),
-    /// Anonymisation etc.  
+    /// <para>TableInfos are not just cached schema data, they are also the launch point for configuring Lookup relationships (See LookupConfiguration), Join logic (See JoinConfiguration),
+    /// Anonymisation etc.  </para>
     /// </summary>
     public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {

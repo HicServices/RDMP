@@ -15,11 +15,11 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
     /// Runtime realisation of a ProcessTask.  ProcessTask is the DesignTime template configured by the user.  RuntimeTask is the 'ready to execute' version.
     /// There are two main kinds of RuntimeTask in the RDMP data load engine (See DataLoadEngine.cd).
     /// 
-    /// The first are those that host a class instance (IMEFRuntimeTask) e.g. IAttacher, IDataProvider.  In this case the ProcessTask is expected to be configured
-    /// with the class Type and have IArguments that specify all values for hydrating the instance created (See ProcessTaskArgument).
+    /// <para>The first are those that host a class instance (IMEFRuntimeTask) e.g. IAttacher, IDataProvider.  In this case the ProcessTask is expected to be configured
+    /// with the class Type and have IArguments that specify all values for hydrating the instance created (See ProcessTaskArgument).</para>
     /// 
-    /// The second are those that do not have a MEF class powering them.  This includes ProcessTaskTypes like Executable and SQLFile where the ProcessTask.Path
-    /// is simply the location of the exe/sql file to run at runtime. 
+    /// <para>The second are those that do not have a MEF class powering them.  This includes ProcessTaskTypes like Executable and SQLFile where the ProcessTask.Path
+    /// is simply the location of the exe/sql file to run at runtime. </para>
     /// </summary>
     public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask
     {

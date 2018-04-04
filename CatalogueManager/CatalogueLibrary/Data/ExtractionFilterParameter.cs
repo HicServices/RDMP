@@ -16,7 +16,7 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// Describes an SQL parameter (e.g. @drugname) which is required for use of an ExtractionFilter (it's parent).
     /// 
-    /// See the description of ExtractionFilter to see how filters are cloned and adjusted depending on usage context
+    /// <para>See the description of ExtractionFilter to see how filters are cloned and adjusted depending on usage context</para>
     /// </summary>
     public class ExtractionFilterParameter : VersionedDatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
     {

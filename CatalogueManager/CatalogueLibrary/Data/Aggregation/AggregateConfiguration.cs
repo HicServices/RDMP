@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -27,20 +27,20 @@ namespace CatalogueLibrary.Data.Aggregation
     /// dataset by region over time since 2001 to present).  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of
     /// the configuration (e.g. AggregateDimension / AggregateFilter)
     /// 
-    /// AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
-    /// query being built.
+    /// <para>AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
+    /// query being built.</para>
     /// 
-    /// There are Three types of AggregateConfiguration:
+    /// <para>There are Three types of AggregateConfiguration:
     ///  1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard
     ///  2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')
     ///  3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See 
-    /// JoinableCohortAggregateConfiguration).
+    /// JoinableCohortAggregateConfiguration).</para>
     /// 
-    /// The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
-    /// AggregateConfiguration is. 
+    /// <para>The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
+    /// AggregateConfiguration is. </para>
     /// 
-    /// If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
-    /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).
+    /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
+    /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
     public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper
     {
@@ -105,7 +105,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// Indicates the AggregateDimension (if any) that will result in a pivot graph being generated.  E.g. if your AggregateConfiguration is a graph of records by year between
         /// 2001 and 2018 then specifying a pivot on healthboard would result in 1 line in the graph per healthboard instead of a single line for the count of all (the default).
         /// 
-        /// If an AggregateConfiguration is a Cohort or Patient index table then it cannot have a Pivot
+        /// <para>If an AggregateConfiguration is a Cohort or Patient index table then it cannot have a Pivot</para>
         /// </summary>
         public int? PivotOnDimensionID
         {
@@ -236,8 +236,8 @@ namespace CatalogueLibrary.Data.Aggregation
         /// 'Give me all prescriptions for morphine' (Prescribing) 'within 6 months of patient being discharged from hospital' (SMR01).  In this case
         /// a join is done against the secondary dataset. 
         /// 
-        /// This property returns all such 'patient index table' AggregateConfigurations which are currently being used by this AggregateConfiguration
-        /// for building it's join.
+        /// <para>This property returns all such 'patient index table' AggregateConfigurations which are currently being used by this AggregateConfiguration
+        /// for building it's join.</para>
         /// </summary>
         [NoMappingToDatabase]
         public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed {
@@ -284,9 +284,9 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <summary>
         /// Only relevant for AggregateConfigurations that are being used in a cohort identification capacity (See <see cref="IsCohortIdentificationAggregate"/>).
         /// 
-        /// The order location of an AggregateConfiguration within it's parent <see cref="CohortAggregateContainer"/> (if it has one).  This is mostly irrelevant for UNION /
+        /// <para>The order location of an AggregateConfiguration within it's parent <see cref="CohortAggregateContainer"/> (if it has one).  This is mostly irrelevant for UNION /
         /// INTERSECT operations (other than helping the user viewing the system) but is vital for EXCEPT containers where the first AggregateConfiguration in the container is
-        /// run producing a dataset and all subsequent AggregateConfigurations are then removed from that patient set.
+        /// run producing a dataset and all subsequent AggregateConfigurations are then removed from that patient set.</para>
         /// </summary>
         [NoMappingToDatabase]
         public int Order

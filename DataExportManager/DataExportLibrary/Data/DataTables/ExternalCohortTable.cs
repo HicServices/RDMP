@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -25,21 +25,21 @@ namespace DataExportLibrary.Data.DataTables
     /// is no fixed managed schema for cohort databases.  Instead you simply have to tell the software where to find your patient identifiers in an ExternalCohortTable record.  This
     /// stores:
     /// 
-    /// What table contains your cohort identifiers
+    /// <para>What table contains your cohort identifiers
     /// Which column is the private identifier
-    /// Which column is the release identifier
+    /// Which column is the release identifier</para>
     /// 
-    /// In addition to this you must have a table which describes your cohorts which must have columns called id, projectNumber, description, version and dtCreated.  And you must
-    /// have a table which stores custom data for the cohort with a column customTableName containing the names of any data that accompanies cohorts.
+    /// <para>In addition to this you must have a table which describes your cohorts which must have columns called id, projectNumber, description, version and dtCreated.  And you must
+    /// have a table which stores custom data for the cohort with a column customTableName containing the names of any data that accompanies cohorts.</para>
     /// 
-    /// Both the cohort and custom table names table must have a foreign key into the definition table.  
+    /// <para>Both the cohort and custom table names table must have a foreign key into the definition table.  </para>
     /// 
-    /// You are free to add additional columns to these tables or even base them on views of other existing tables in your database.  You can have multiple ExternalCohortTable sources
-    /// in your database for example if you need to support different identifier datatypes / formats.
+    /// <para>You are free to add additional columns to these tables or even base them on views of other existing tables in your database.  You can have multiple ExternalCohortTable sources
+    /// in your database for example if you need to support different identifier datatypes / formats.</para>
     /// 
-    /// If all this sounds too complicated you can use the CreateNewCohortDatabaseWizardUI to automatically generate a database that is compatible with the format requirements and has
+    /// <para>If all this sounds too complicated you can use the CreateNewCohortDatabaseWizardUI to automatically generate a database that is compatible with the format requirements and has
     /// release identifiers assigned automatically either as autonums or GUIDs (I suggest using GUIDs to prevent accidental crosstalk from ever occuring if you handle magic numbers from
-    /// other agencies). 
+    /// other agencies). </para>
     /// </summary>
     public class ExternalCohortTable : VersionedDatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
     {

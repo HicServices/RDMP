@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -29,17 +29,17 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     /// Allows you to change a table reference (TableInfo) to point at a new location.  This should only be used when you have moved a dataset to a new database or server and you should select
     /// 'Synchronize' after you make this change. 
     /// 
-    /// The 'Synchronize' button will connect to the referenced server/database and check that it exists and that the columns in the database match the ColumnInfo collection in the Catalogue 
+    /// <para>The 'Synchronize' button will connect to the referenced server/database and check that it exists and that the columns in the database match the ColumnInfo collection in the Catalogue 
     /// database.  Synchronization happens automatically within the RDMP at some points (e.g. data load) but it is useful to manually do it sometimes if you know you have made a change to your
-    /// database schema and want to update the Catalogue.
+    /// database schema and want to update the Catalogue.</para>
     /// 
-    /// If your TableInfo is pointed at a Table-valued Function then you can select 'Default Table Valued Function Parameters...' to launch a ParameterCollectionUI which contains all the defaults
+    /// <para>If your TableInfo is pointed at a Table-valued Function then you can select 'Default Table Valued Function Parameters...' to launch a ParameterCollectionUI which contains all the defaults
     /// that the Catalogue will use when invoking your SQL function.  The RDMP requires (and will automatically create) an SQL parameter (e.g. @myExcitingParameter) for each argument taken by
     /// your Table-valued function of a matching datatype and name to the argument as declared in your database.  In practice these default parameter values will usually be overridden at a higher
-    /// level (e.g. during cohort identification).
+    /// level (e.g. during cohort identification).</para>
     /// 
-    /// This interface also allows you to mark a TableInfo 'Is Primary Extraction Table' which means that the QueryBuilder will start JOIN statements with this table where it is part of a complex
-    /// multi table query.
+    /// <para>This interface also allows you to mark a TableInfo 'Is Primary Extraction Table' which means that the QueryBuilder will start JOIN statements with this table where it is part of a complex
+    /// multi table query.</para>
     /// </summary>
     public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
     {

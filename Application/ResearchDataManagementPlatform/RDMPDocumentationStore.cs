@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Reports;
@@ -15,7 +15,7 @@ namespace ResearchDataManagementPlatform
     /// DocumentationReportFormsAndControls (and DocumentationReportFormsAndControlsUI) in which summary comments are extracted from 
     /// SourceCodeForSelfAwareness.zip
     /// 
-    /// Also populates the static KeywordHelpTextListbox.HelpKeywordsDictionary via AddToHelpDictionaryIfNotExists
+    /// <para>Also populates the static KeywordHelpTextListbox.HelpKeywordsDictionary via AddToHelpDictionaryIfNotExists</para>
     /// </summary>
     public class RDMPDocumentationStore
     {

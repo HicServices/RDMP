@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data.DataLoad;
@@ -12,7 +12,7 @@ namespace CatalogueLibrary.Data.Pipelines
     /// Each PipelineComponent can have 0 or more PipelineComponentArguments, these function exactly like the relationship between ProcessTask and ProcessTaskArgument and
     /// reflect a [DemandsInitialization] property on a class of type IDataFlowComponent which is built and populated by reflection from the PipelineComponent (serialization)
     /// 
-    /// See Pipeline and PipelineComponent for more information about this
+    /// <para>See Pipeline and PipelineComponent for more information about this</para>
     /// </summary>
     public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     {

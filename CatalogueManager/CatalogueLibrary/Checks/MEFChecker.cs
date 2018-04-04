@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Checks
     /// e.g. "DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource" The class will not only check at runtime that the class
     /// exists but it will (via the ICheckNotifier) interface look for namespace changes that is classes with the same name as the missing MEF but in a different namespace
     /// 
-    /// If the Check method finds a namespace change and the ICheckNotifier accepts the substitution then the Action userAcceptedSubstitution is called with the new class name
+    /// <para>If the Check method finds a namespace change and the ICheckNotifier accepts the substitution then the Action userAcceptedSubstitution is called with the new class name</para>
     /// 
     /// </summary>
     public class MEFChecker : ICheckable

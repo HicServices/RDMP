@@ -17,14 +17,14 @@ namespace CatalogueLibrary.Data
     /// A virtual column that is made available to researchers.  Each Catalogue has 1 or more CatalogueItems, these contain the descriptions of what is contained
     /// in the column as well as any outstanding/resolved issues with the column (see CatalogueItemIssue).
     /// 
-    /// It is important to note that CatalogueItems are not tied to underlying database tables/columns except via an ExtractionInformation.  This means that you can
-    /// for example have multiple different versions of the same underlying ColumnInfo 
+    /// <para>It is important to note that CatalogueItems are not tied to underlying database tables/columns except via an ExtractionInformation.  This means that you can
+    /// for example have multiple different versions of the same underlying ColumnInfo </para>
     /// 
-    /// e.g.
+    /// <para>e.g.
     /// CatalogueItem: PatientDateOfBirth (ExtractionInformation verbatim but 'Special Approval Required')
-    /// CatalogueItem: PatientDateOfBirthApprox (ExtractionInformation rounds to nearest quarter but governance is 'Core')
+    /// CatalogueItem: PatientDateOfBirthApprox (ExtractionInformation rounds to nearest quarter but governance is 'Core')</para>
     /// 
-    /// Both the above would extract from the same ColumnInfo DateOfBirth
+    /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
     public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Data.Common;
@@ -15,7 +15,7 @@ namespace CatalogueLibrary.Repositories.Construction
     /// it has a blank constructor that's fine too or if it takes ITableInfo that's fine too... just use whatever works'.  If there are multiple matching constructors
     /// it will attempt to find the 'best' (See InvokeBestConstructor for implementation).
     /// 
-    /// If there are no compatible constructors you will get an ObjectLacksCompatibleConstructorException.
+    /// <para>If there are no compatible constructors you will get an ObjectLacksCompatibleConstructorException.</para>
     /// </summary>
     public class ObjectConstructor
     {
@@ -199,7 +199,7 @@ namespace CatalogueLibrary.Repositories.Construction
         /// then if none of those exist, it will look for a single object assignable to the parameter type.  If at any point there is two or more matching parameterObjects
         /// then an <seealso cref="ObjectLacksCompatibleConstructorException"/> will be thrown.
         /// 
-        /// If there are no objects provided that match any of the provided parameterObjects then null gets returned.
+        /// <para>If there are no objects provided that match any of the provided parameterObjects then null gets returned.</para>
         /// </summary>
         /// <param name="parameterType"></param>
         /// <param name="parameterObjects"></param>
