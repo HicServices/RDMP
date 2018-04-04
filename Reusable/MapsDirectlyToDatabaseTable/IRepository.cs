@@ -39,9 +39,9 @@ namespace MapsDirectlyToDatabaseTable
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
 
         /// <summary>
-        /// Each database Property 'PropertyX' can have an accompanying static int variable called 'PropertyX_MaxLength'.  Calling this 
-        /// method will examine the database table behind the class and calculate the maximum lengths supported by the schema of each
-        /// 'Property' and set the associated 'Property_MaxLength'
+        /// Each database Property 'PropertyX' can have an accompanying static int variable called 'PropertyX_MaxLength'.  Calling <see cref="IRepository.FigureOutMaxLengths"/> 
+        /// method will examine the database table behind the class and calculate the maximum lengths supported by the schema of each 'Property' and set the associated 
+        /// 'Property_MaxLength'
         /// </summary>
         /// <param name="oTableWrapperObject"></param>
         void FigureOutMaxLengths(IMapsDirectlyToDatabaseTable oTableWrapperObject);

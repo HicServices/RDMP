@@ -58,6 +58,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
         #endregion
 
+        /// <inheritdoc cref="GetAllParameters"/>
         #region Relationships
         [NoMappingToDatabase]
         public IEnumerable<AggregateFilterParameter> AggregateFilterParameters {
@@ -70,14 +71,16 @@ namespace CatalogueLibrary.Data.Aggregation
             return AggregateFilterParameters.ToArray();
         }
         
-        /// <inheritdoc/>
+        ///<inheritdoc/>
         [NoMappingToDatabase]
         public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;}}
 
         #endregion
 
-
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
         
 
