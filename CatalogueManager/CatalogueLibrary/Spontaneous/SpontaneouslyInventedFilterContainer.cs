@@ -39,7 +39,9 @@ namespace CatalogueLibrary.Spontaneous
             Operation = operation;
         }
 
+        /// <inheritdoc/>
         public FilterContainerOperation Operation { get; set; }
+
         public IContainer GetParentContainerIfAny()
         {
             return null;

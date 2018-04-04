@@ -22,6 +22,8 @@ namespace CatalogueLibrary.Data.Aggregation
         #region Database Properties
         private FilterContainerOperation _operation;
 
+
+        /// <inheritdoc/>
         public FilterContainerOperation Operation
         {
             get { return _operation; }
@@ -30,7 +32,11 @@ namespace CatalogueLibrary.Data.Aggregation
 
         #endregion
 
-
+        /// <summary>
+        /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="operation"></param>
         public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
@@ -44,26 +50,33 @@ namespace CatalogueLibrary.Data.Aggregation
             Operation = op;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Operation.ToString();
         }
+
+        /// <inheritdoc/>
         public IContainer GetParentContainerIfAny()
         {
             return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID=" + ID,
                 "AggregateFilterContainer_ParentID").SingleOrDefault();
         }
-        
+
+        /// <inheritdoc/>
         public IContainer[] GetSubContainers()
         {
             return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID=" + ID, 
                 "AggregateFilterContainer_ChildID").ToArray();
         }
+        
+        /// <inheritdoc/>
         public IFilter[] GetFilters()
         {
             return Repository.GetAllObjects<AggregateFilter>("WHERE FilterContainer_ID="+ID).ToArray();
         }
 
+        /// <inheritdoc/>
         public void AddChild(IContainer child)
         {
             AddChild((AggregateFilterContainer)child);
@@ -80,9 +93,9 @@ namespace CatalogueLibrary.Data.Aggregation
             });
         }
 
-        
 
 
+        /// <inheritdoc/>
         public void MakeIntoAnOrphan()
         {
             Repository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
@@ -90,23 +103,27 @@ namespace CatalogueLibrary.Data.Aggregation
                 {"AggregateFilterContainer_ChildID", ID}
             });
         }
-
+        
+        /// <inheritdoc/>
         public IContainer GetRootContainerOrSelf()
         {
             return new ContainerHelper().GetRootContainerOrSelf(this);
         }
 
+        /// <inheritdoc/>
         public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
         {
             return new ContainerHelper().GetAllFiltersIncludingInSubContainersRecursively(this);
         }
 
+        /// <inheritdoc/>
         public Catalogue GetCatalogueIfAny()
         {
             var agg = GetAggregate();
             return agg != null?agg.Catalogue:null;
         }
 
+        /// <inheritdoc/>
         public List<IContainer> GetAllSubContainersRecursively()
         {
             return new ContainerHelper().GetAllSubContainersRecursively(this);

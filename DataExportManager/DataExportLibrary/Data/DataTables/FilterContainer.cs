@@ -22,6 +22,7 @@ namespace DataExportLibrary.Data.DataTables
         #region Database Properties
         private FilterContainerOperation _operation;
 
+        /// <inheritdoc/>
         public FilterContainerOperation Operation
         {
             get { return _operation; }

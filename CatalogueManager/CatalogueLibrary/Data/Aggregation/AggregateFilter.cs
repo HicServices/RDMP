@@ -83,7 +83,12 @@ namespace CatalogueLibrary.Data.Aggregation
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
         
-
+        /// <summary>
+        /// Defines a new filter (line of WHERE SQL) in the specified AggregateFilterContainer (AND / OR).  Calling this constructor creates a new object in the database
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
+        /// <param name="container"></param>
         public AggregateFilter(ICatalogueRepository repository, string name=null, AggregateFilterContainer container=null)
         {
             name = name ?? "New AggregateFilter" + Guid.NewGuid();
@@ -150,6 +155,7 @@ namespace CatalogueLibrary.Data.Aggregation
             return agg.Catalogue;
         }
 
+        /// <inheritdoc cref="ClonedFilterChecker"/>
         public override void Check(ICheckNotifier notifier)
         {
             base.Check(notifier);
@@ -158,12 +164,21 @@ namespace CatalogueLibrary.Data.Aggregation
             checker.Check(notifier);
         }
 
+        /// <summary>
+        /// Removes the AggregateFilter from any AggregateFilterContainer (AND/OR) that it might be a part of 
+        /// effectively turning it into a disconnected orphan.
+        /// </summary>
         public void MakeIntoAnOrphan()
         {
             FilterContainer_ID = null;
             SaveToDatabase();
         }
 
+        /// <summary>
+        /// Gets the parent <see cref="AggregateConfiguration"/> that this AggregateFilter is part of by ascending it's AggregateFilterContainer hierarchy.
+        /// If the AggregateFilter is an orphan or one of the parental containers is an orphan then null will be returned.
+        /// </summary>
+        /// <returns></returns>
         public AggregateConfiguration GetAggregate()
         {
             if (FilterContainer_ID == null)

@@ -206,7 +206,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 for (int i = 0; i < text.Length; i++)
                 {
 
-                    Regex rMaxLength = new Regex(@"(\s+)public static int .*_MaxLength = -1;");
+                    Regex rMaxLength = new Regex(@"(\s+)public static int .*_MaxLength(\s?)=(\s?)-1;");
 
                     Match mMaxLength = rMaxLength.Match(text[i]);
                     if(mMaxLength.Success)
