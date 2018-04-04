@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MySql.Data.MySqlClient;
@@ -104,6 +105,31 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         public override IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable,IManagedConnection connection)
         {
             return new MySqlBulkCopy(discoveredTable, connection);
+        }
+
+        public override void MakeDistinct(DiscoveredTable discoveredTable)
+        {
+            var server = discoveredTable.Database.Server;
+
+            var tableName = discoveredTable.GetFullyQualifiedName();
+            var tempTable = discoveredTable.Database.ExpectTable(discoveredTable.GetRuntimeName() + "_DistinctingTemp").GetRuntimeName();
+
+            using (var con = server.BeginNewTransactedConnection())
+            {
+                var cmdDistinct = server.GetCommand(string.Format("CREATE TABLE {1} SELECT distinct * FROM {0}", tableName, tempTable), con);
+                cmdDistinct.ExecuteNonQuery();
+
+                var cmdTruncate = server.GetCommand(string.Format("DELETE FROM {0}", tableName), con);
+                cmdTruncate.ExecuteNonQuery();
+
+                var cmdBack = server.GetCommand(string.Format("INSERT INTO {0} (SELECT * FROM {1})", tableName,tempTable), con);
+                cmdBack.ExecuteNonQuery();
+
+                var cmdDropDistinctTable = server.GetCommand(string.Format("DROP TABLE {0}", tempTable), con);
+                cmdDropDistinctTable.ExecuteNonQuery();
+
+
+            }
         }
 
         public override string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)

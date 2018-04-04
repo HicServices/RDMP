@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using ReusableLibraryCode.Checks;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
@@ -184,6 +185,30 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
         public override IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable,IManagedConnection connection)
         {
             return new MicrosoftSQLBulkCopy(discoveredTable,connection);
+        }
+
+        public override void MakeDistinct(DiscoveredTable discoveredTable)
+        {
+            string sql = 
+            @"DELETE f
+            FROM (
+            SELECT	ROW_NUMBER() OVER (PARTITION BY {0} ORDER BY {0}) AS RowNum
+            FROM {1}
+            
+            ) as f
+            where RowNum > 1";
+            
+            string columnList = string.Join(",",discoveredTable.DiscoverColumns().Select(c=>c.GetRuntimeName()));
+
+            string sqlToExecute = string.Format(sql,columnList,discoveredTable.GetFullyQualifiedName());
+
+            var server = discoveredTable.Database.Server;
+
+            using (var con = server.GetConnection())
+            {
+                con.Open();
+                server.GetCommand(sqlToExecute, con).ExecuteNonQuery();
+            }
         }
 
         public override string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)
