@@ -283,8 +283,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                         areInSummary = false;
                     }
 
-                    //if we have a paragraph break in the summary comments
-                    if (areInSummary && text[i].Trim().Equals("///"))
+                    //if we have a paragraph break in the summary comments and the next line isn't an end summary
+                    if (areInSummary && text[i].Trim().Equals("///") && !text[i+1].Trim().Equals("/// </summary>"))
                     {
                         if(paraOpened)
                         {
