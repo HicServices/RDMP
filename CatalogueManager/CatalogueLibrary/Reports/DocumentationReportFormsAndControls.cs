@@ -88,7 +88,7 @@ namespace CatalogueLibrary.Reports
             }
         }
 
-        private string StripTags(string s)
+        public static string StripTags(string s)
         {
             string toReturn = s.Replace("<para>", "").Replace("</para>", "").Replace("<see cref=\"","").Replace("\"/>","");
             
