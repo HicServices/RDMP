@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Reports
@@ -74,7 +75,7 @@ namespace CatalogueLibrary.Reports
                         if(Summaries.ContainsKey(t))
                             continue;
 
-                        Summaries.Add(t, definition??"Not documented");
+                        Summaries.Add(t, StripTags(definition??"Not documented"));
                     }
                     catch (Exception e)
                     {
@@ -85,6 +86,13 @@ namespace CatalogueLibrary.Reports
 
                 }
             }
+        }
+
+        private string StripTags(string s)
+        {
+            string toReturn = s.Replace("<para>", "").Replace("</para>", "").Replace("<see cref=\"","").Replace("\"/>","");
+            
+            return toReturn;
         }
     }
 }
