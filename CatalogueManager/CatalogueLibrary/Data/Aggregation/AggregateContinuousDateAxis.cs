@@ -41,7 +41,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         /// <summary>
-        /// The date or scalar function determining what date the graph axis should start at.  This could be as simple as '2001-01-01' or complex like DateAdd(yy, -1, GetDate())
+        /// The date or scalar function determining what date the graph axis should start at.  This could be as simple as '2001-01-01' or complex like dateadd(yy, -1, GetDate())
         /// </summary>
         public string StartDate
         {

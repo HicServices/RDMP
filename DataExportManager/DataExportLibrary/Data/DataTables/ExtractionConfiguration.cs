@@ -127,10 +127,15 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
         
         #region MaxLengths
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Username_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int RequestTicket_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int ReleaseTicket_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Separator_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
         #endregion
 

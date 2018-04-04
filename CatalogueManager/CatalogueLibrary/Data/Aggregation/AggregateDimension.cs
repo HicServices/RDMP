@@ -52,7 +52,7 @@ namespace CatalogueLibrary.Data.Aggregation
 
         /// <summary>
         /// Specifies the column alias section of the SELECT statement.  When building the query (See <see cref="AggregateBuilder"/>) the Alias will be added in the SELECT section
-        /// of the query generated e.g. if the Alias is 'Bob' and the SelectSql is 'GetDate()' then the resultant line of SELECT in the query will be 'GetDate() as Bob'.
+        /// of the query generated e.g. if the Alias is 'Bob' and the SelectSQL is 'GetDate()' then the resultant line of SELECT in the query will be 'GetDate() as Bob'.
         /// </summary>
         public string Alias
         {

@@ -20,8 +20,11 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class SupportingDocument : VersionedDatabaseEntity,INamed
     {
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int URL_MaxLength = -1;
 
         #region Database Properties

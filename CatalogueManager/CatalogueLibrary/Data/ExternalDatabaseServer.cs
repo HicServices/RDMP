@@ -102,10 +102,15 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Server_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Database_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Username_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Password_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
 
         public ExternalDatabaseServer(ICatalogueRepository repository, string name, Assembly databaseAssemblyIfCreatedByOne = null)

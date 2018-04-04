@@ -109,7 +109,9 @@ namespace DataExportLibrary.Data.DataTables
 
         }
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
 
         public DeployedExtractionFilter(IDataExportRepository repository, string name, FilterContainer container)

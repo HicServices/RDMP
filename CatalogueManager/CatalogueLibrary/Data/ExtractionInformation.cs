@@ -69,6 +69,7 @@ namespace CatalogueLibrary.Data
         private CatalogueItem _catalogueItem;
         private bool _columnInfoFoundToBeNull = false;
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int SelectSQL_MaxLength = -1;
         
         

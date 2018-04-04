@@ -106,7 +106,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             var singlePropertyUIs = new SinglePropertyUISourceCodeEvaluator();
             singlePropertyUIs.FindProblems(csFilesFound);
 
-            var noMappingToDatabaseComments = new NoMappingToDatabaseCommentsEvaluator();
+            var noMappingToDatabaseComments = new AutoCommentsEvaluator();
             noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, csFilesFound);
 
         }
@@ -189,7 +189,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         }
     }
 
-    public class NoMappingToDatabaseCommentsEvaluator
+    public class AutoCommentsEvaluator
     {
         public void FindProblems(MEF mef, List<string> csFilesFound)
         {
@@ -205,7 +205,21 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
                 for (int i = 0; i < text.Length; i++)
                 {
-                    if (text[i].Trim().Equals("[NoMappingToDatabase]"))
+
+                    Regex rMaxLength = new Regex(@"(\s+)public static int .*_MaxLength = -1;");
+
+                    Match mMaxLength = rMaxLength.Match(text[i]);
+                    if(mMaxLength.Success)
+                    {
+                        //if previous line didn't have an inherit doc
+                        if (!text[i - 1].Trim().StartsWith("///"))
+                        {
+                            var whitespace = mMaxLength.Groups[1].Value;
+                            sbSuggestedText.AppendLine(whitespace + @"///<inheritdoc cref=""IRepository.FigureOutMaxLengths""/>");
+                            changes = true;
+                        }
+                    }
+                    else if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                     {
                         var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
 

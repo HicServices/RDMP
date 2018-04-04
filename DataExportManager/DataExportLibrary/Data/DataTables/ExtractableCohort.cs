@@ -109,6 +109,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int OverrideReleaseIdentifierSQL_MaxLength = -1;
 
         private Dictionary<string, string> _releaseToPrivateKeyDictionary;
