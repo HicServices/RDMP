@@ -192,7 +192,7 @@ namespace DataExportManager.DataRelease
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
-            var checksUI = new PopupChecksUI("Checking engine", false);
+            var checksUI = new PopupChecksUI("Checking engine", false, allowYesNoToAll: false);
             checksUI.Check(engine);
             
             if (checksUI.GetWorst() < CheckResult.Fail)

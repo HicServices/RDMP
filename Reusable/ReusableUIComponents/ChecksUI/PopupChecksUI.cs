@@ -18,8 +18,11 @@ namespace ReusableUIComponents.ChecksUI
     /// </summary>
     public partial class PopupChecksUI : Form,ICheckNotifier
     {
-        public PopupChecksUI(string task,bool showOnlyWhenError)
+        private readonly bool _allowYesNoToAll;
+
+        public PopupChecksUI(string task, bool showOnlyWhenError, bool allowYesNoToAll = true)
         {
+            _allowYesNoToAll = allowYesNoToAll;
             InitializeComponent();
             Text = task;
 
@@ -47,7 +50,7 @@ namespace ReusableUIComponents.ChecksUI
                     Invoke(new MethodInvoker(Show));
                 }
 
-            return checksUI1.OnCheckPerformed(args);
+            return checksUI1.OnCheckPerformed(args, _allowYesNoToAll);
         }
 
         protected override void OnClosed(EventArgs e)

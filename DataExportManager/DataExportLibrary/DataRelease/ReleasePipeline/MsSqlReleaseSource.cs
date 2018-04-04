@@ -133,6 +133,31 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     throw new Exception("Spurious table " + discoveredTable.GetRuntimeName() + " was found in the DB. " +
                                         "Are you releasing ALL the extraction configuration which are part of the project?");
             }
+
+            DirectoryInfo sourceFolder = GetSourceFolder();
+            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.OtherDataFolderName);
+
+            var databaseName = _database.GetRuntimeName();
+
+            if (File.Exists(Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf")) ||
+                File.Exists(Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf")))
+            {
+                if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("It seems that database {0} was already detached previously into {1} " +
+                                                                               "but not released or cleaned from the extraction folder", databaseName, dbOutputFolder.FullName),
+                                                                 CheckResult.Warning,
+                                                                 null,
+                                                                 "Do you want to delete it? You should check the contents first. Clicking 'No' will abort the Release.")))
+                {
+                    File.Delete(Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
+                    File.Delete(Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Cleaned non-empty existing db output folder folder: " + dbOutputFolder.FullName,
+                                                                 CheckResult.Success));
+                }
+                else
+                {
+                    throw new Exception("Release aborted by user.");
+                }
+            }
         }
     }
 }
