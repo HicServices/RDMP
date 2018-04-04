@@ -105,7 +105,9 @@ namespace CatalogueManager.FindAndReplace
 
         private object PropertyAspectGetter(object rowobject)
         {
-            return ((FindAndReplaceNode) rowobject).Property.Name;
+            var node = ((FindAndReplaceNode) rowobject);
+
+            return node.PropertyName;
         }
 
         private object ImageGetter(object rowObject)

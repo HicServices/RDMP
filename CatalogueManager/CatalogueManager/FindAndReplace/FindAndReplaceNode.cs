@@ -14,11 +14,13 @@ namespace CatalogueManager.FindAndReplace
         private object _currentValue;
         public IMapsDirectlyToDatabaseTable Instance { get; set; }
         public PropertyInfo Property { get; set; }
+        public string PropertyName { get; private set; }
 
         public FindAndReplaceNode(IMapsDirectlyToDatabaseTable instance, PropertyInfo property)
         {
             Instance = instance;
             Property = property;
+            PropertyName = instance.GetType().Name + "." + property.Name;
 
             _currentValue = Property.GetValue(Instance);
         }

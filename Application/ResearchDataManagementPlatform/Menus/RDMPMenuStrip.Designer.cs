@@ -34,12 +34,12 @@
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LocationsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.changeCatalogueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configureExternalServersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setTicketingSystemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.adjustFileLocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.governanceManagementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +71,6 @@
             this.tutorialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBar();
-            this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -136,6 +135,14 @@
             this.findToolStripMenuItem.Text = "Find";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
+            // findAndReplaceToolStripMenuItem
+            // 
+            this.findAndReplaceToolStripMenuItem.Name = "findAndReplaceToolStripMenuItem";
+            this.findAndReplaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
+            this.findAndReplaceToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.findAndReplaceToolStripMenuItem.Text = "Find and Replace";
+            this.findAndReplaceToolStripMenuItem.Click += new System.EventHandler(this.findAndReplaceToolStripMenuItem_Click);
+            // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
@@ -149,8 +156,7 @@
             this.LocationsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeCatalogueToolStripMenuItem,
             this.configureExternalServersToolStripMenuItem,
-            this.setTicketingSystemToolStripMenuItem,
-            this.adjustFileLocationsToolStripMenuItem});
+            this.setTicketingSystemToolStripMenuItem});
             this.LocationsMenu.Name = "LocationsMenu";
             this.LocationsMenu.Size = new System.Drawing.Size(70, 20);
             this.LocationsMenu.Text = "Locations";
@@ -159,7 +165,7 @@
             // 
             this.changeCatalogueToolStripMenuItem.Name = "changeCatalogueToolStripMenuItem";
             this.changeCatalogueToolStripMenuItem.Size = new System.Drawing.Size(295, 22);
-            this.changeCatalogueToolStripMenuItem.Text = "Change Platform Databases...";
+            this.changeCatalogueToolStripMenuItem.Text = "ndand";
             this.changeCatalogueToolStripMenuItem.Click += new System.EventHandler(this.changeCatalogueToolStripMenuItem_Click);
             // 
             // configureExternalServersToolStripMenuItem
@@ -176,12 +182,6 @@
             this.setTicketingSystemToolStripMenuItem.Size = new System.Drawing.Size(295, 22);
             this.setTicketingSystemToolStripMenuItem.Text = "Set Ticketing System...";
             this.setTicketingSystemToolStripMenuItem.Click += new System.EventHandler(this.setTicketingSystemToolStripMenuItem_Click);
-            // 
-            // adjustFileLocationsToolStripMenuItem
-            // 
-            this.adjustFileLocationsToolStripMenuItem.Name = "adjustFileLocationsToolStripMenuItem";
-            this.adjustFileLocationsToolStripMenuItem.Size = new System.Drawing.Size(295, 22);
-            this.adjustFileLocationsToolStripMenuItem.Text = "Adjust File Locations...";
             // 
             // viewToolStripMenuItem
             // 
@@ -429,14 +429,6 @@
             this.rdmpTaskBar1.Size = new System.Drawing.Size(1157, 25);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // findAndReplaceToolStripMenuItem
-            // 
-            this.findAndReplaceToolStripMenuItem.Name = "findAndReplaceToolStripMenuItem";
-            this.findAndReplaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.findAndReplaceToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.findAndReplaceToolStripMenuItem.Text = "Find and Replace";
-            this.findAndReplaceToolStripMenuItem.Click += new System.EventHandler(this.findAndReplaceToolStripMenuItem_Click);
-            // 
             // RDMPTopMenuStrip
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -459,7 +451,6 @@
         private System.Windows.Forms.ToolStripMenuItem changeCatalogueToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem configureExternalServersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setTicketingSystemToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem adjustFileLocationsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem governanceManagementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logViewerToolStripMenuItem;
