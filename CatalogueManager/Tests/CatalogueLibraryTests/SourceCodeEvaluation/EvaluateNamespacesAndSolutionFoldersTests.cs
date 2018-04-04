@@ -197,15 +197,21 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             foreach (var f in csFilesFound)
             {
+                if(f.Contains(".Designer.cs"))
+                    continue;
+
                 bool changes = false;
 
                 StringBuilder sbSuggestedText = new StringBuilder();
 
                 var text = File.ReadAllLines(f);
+                bool areInSummary = false;
+                bool paraOpened = false;
 
                 for (int i = 0; i < text.Length; i++)
                 {
 
+                    //////////////////////////////////MAX LENGTH FIELDS////////////////////////////////////////////////////
                     Regex rMaxLength = new Regex(@"(\s+)public static int .*_MaxLength(\s?)=(\s?)-1;");
 
                     Match mMaxLength = rMaxLength.Match(text[i]);
@@ -219,7 +225,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                             changes = true;
                         }
                     }
-                    else if (text[i].Trim().Equals("[NoMappingToDatabase]"))
+                    
+                    //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
+                    if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                     {
                         var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
 
@@ -253,6 +261,48 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                                 }
 
                             }
+                        }
+                    }
+
+
+                    if (text[i].Trim().Equals("/// <summary>"))
+                        areInSummary = true;
+
+                    if (text[i].Trim().Equals("/// </summary>"))
+                    {
+                        if (paraOpened)
+                        {
+                            //
+                            sbSuggestedText.Insert(sbSuggestedText.Length - 2, "</para>");
+                            paraOpened = false;
+                        }
+
+                        areInSummary = false;
+                    }
+
+                    //if we have a paragraph break in the summary comments
+                    if (areInSummary && text[i].Trim().Equals("///"))
+                    {
+                        if(paraOpened)
+                        {
+                            sbSuggestedText.Insert(sbSuggestedText.Length - 2, "</para>");
+                            paraOpened = false;
+                        }
+
+                        //there should be a para tag
+                        if (!text[i + 1].Contains("<para>") && text[i + 1].Contains("///"))
+                        {
+                            changes = true;
+                            
+                            //add current line
+                            sbSuggestedText.AppendLine(text[i]); 
+
+                            //add the para tag
+                            string nextLine = text[i + 1].Insert(text[i+1].IndexOf("///")+4,"<para>");
+                            sbSuggestedText.AppendLine(nextLine);
+                            i++;
+                            paraOpened = true;
+                            continue;
                         }
                     }
 
