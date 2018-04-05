@@ -55,7 +55,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             cbxFolder.Items.AddRange(existingFolders);
             cbxFolder.Text = "\\";
 
-            configureCatalogueExtractabilityUI1.SetUp(columnInfos);
+            configureCatalogueExtractabilityUI1.SetUp(columnInfos, activator);
         }
 
         private void cbAddToExisting_CheckedChanged(object sender, EventArgs e)

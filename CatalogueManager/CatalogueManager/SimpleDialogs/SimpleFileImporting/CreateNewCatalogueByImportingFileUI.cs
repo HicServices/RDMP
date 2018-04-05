@@ -420,7 +420,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             importer.DoImport(out table,out cols);
 
             var extractionPicker = new ConfigureCatalogueExtractabilityUI();
-            extractionPicker.SetUp(cols);
+            extractionPicker.SetUp(cols, _activator);
             SingleControlForm.ShowDialog(extractionPicker,true);
 
             var forwardEngineer = new ForwardEngineerCatalogue(table, cols, extractionPicker.MakeAllColumnsExtractable);
