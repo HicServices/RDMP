@@ -21,14 +21,13 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// </summary>
     public partial class ConfigureCatalogueExtractabilityUI : UserControl
     {
-        public bool MakeAllColumnsExtractable { get { return cbMakeAllColumnsExtractable.Checked; } }
         public ColumnInfo ExtractionIdentifier { get { return ddExtractionIdentifier.SelectedItem as ColumnInfo; } }
-        public Dictionary<ColumnInfo, ExtractionCategory?> ColumnExtractionCategories { get; private set; } 
         private readonly object[] _extractionCategories;
 
+        private readonly Dictionary<CatalogueItem, object> _extractabilityDictionary = new Dictionary<CatalogueItem, object>();
+        
         public ConfigureCatalogueExtractabilityUI()
         {
-            ColumnExtractionCategories = new Dictionary<ColumnInfo, ExtractionCategory?>();
             InitializeComponent();
 
             _extractionCategories = new object[]
@@ -47,52 +46,82 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             olvColumnExtractability.CellEditFinishing += TlvColumnExtractabilityOnCellEditFinishing;
             olvColumnExtractability.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
             olvColumnExtractability.ItemChecked += OlvColumnExtractabilityOnItemChecked;
+
+            olvIsExtractionIdentifier.AspectGetter += IsExtractionIdentifier_AspectGetter;
+            
+        }
+
+        private object IsExtractionIdentifier_AspectGetter(object rowObject)
+        {
+            var ei = rowObject as ExtractionInformation;
+
+            if (ei == null)
+                return false;
+
+            return ei.IsExtractionIdentifier;
         }
 
         private void OlvColumnExtractabilityOnItemChecked(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
         {
-            var columnInfo = (ColumnInfo) olvColumnExtractability.GetItem(itemCheckedEventArgs.Item.Index).RowObject;
-            if (itemCheckedEventArgs.Item.Checked)
-                ColumnExtractionCategories.Add(columnInfo, null);
-            else
-                ColumnExtractionCategories.Remove(columnInfo);
+            MakeExtractable(olvColumnExtractability.GetItem(itemCheckedEventArgs.Item.Index).RowObject, itemCheckedEventArgs.Item.Checked);
+        }
+
+        private void MakeExtractable(object o, bool shouldBeExtractable)
+        {
+            var ei = o as ExtractionInformation;
+            
+
+            if(ei != null)
+                if(shouldBeExtractable)
+                    return;
+                else
+                {
+                    //find underlying column info
+                    var columnInfo = ei.ColumnInfo;
+                    var catalogueItem = ei.CatalogueItem;
+                    
+                    olvColumnExtractability.RemoveObject(ei);
+                    ei.DeleteInDatabase();
+
+                    _extractabilityDictionary[catalogueItem] = columnInfo;
+                    
+                    olvColumnExtractability.AddObject(columnInfo);
+                    olvColumnExtractability.UncheckObject(columnInfo);
+                }
+
+            //if the model object is a column info
+            var colinfo = o as ColumnInfo;
+            if(colinfo != null)
+                if(!shouldBeExtractable) //it's already not extractable job done
+                    return;
+                else
+                {
+                    var catalogueItem = _extractabilityDictionary.Keys.Single(ci => ci.ColumnInfo_ID == colinfo.ID);
+
+                    //make it extractable
+                    var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) colinfo.Repository, catalogueItem, colinfo,colinfo.Name);
+
+                    _extractabilityDictionary[catalogueItem] = newExtractionInformation;
+
+                    olvColumnExtractability.RemoveObject(colinfo);
+                    olvColumnExtractability.AddObject(newExtractionInformation);
+                    olvColumnExtractability.CheckObject(newExtractionInformation);
+                }
         }
 
         private object ExtractableAspectGetter(object rowobject)
         {
-            var ci = rowobject as ColumnInfo;
-            try
-            {
-                if (ci != null)
-                    return ColumnExtractionCategories.ContainsKey(ci) ? "Extractable" : "Not Extractable";
-            }
-            catch (Exception)
-            {
-                return "Error";
-            }
-
-            return null;
+            return !(rowobject is ColumnInfo);
         }
 
         private object ExtractionCategoryAspectGetter(object rowobject)
         {
-            var ci = rowobject as ColumnInfo;
-            try
-            {
-                if (ci != null)
-                {
-                    if (ColumnExtractionCategories.ContainsKey(ci))
-                        return ColumnExtractionCategories[ci];
-                    
-                    return null;
-                }
-            }
-            catch (Exception)
-            {
-                return "Error";
-            }
+            var ei = rowobject as ExtractionInformation;
 
-            return null;
+            if (ei == null)
+                return null;
+
+            return ei.ExtractionCategory;
         }
 
         private void TlvColumnExtractabilityOnCellEditFinishing(object sender, CellEditEventArgs cellEditEventArgs)
@@ -100,10 +129,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             if (cellEditEventArgs.Column == olvExtractionCategory)
             {
                 var cbx = (ComboBox) cellEditEventArgs.Control;
-                var selectedColumnInfo = (ColumnInfo)olvColumnExtractability.GetItem(olvColumnExtractability.SelectedIndex).RowObject;
+                var ei = cellEditEventArgs.RowObject as ExtractionInformation;
+                if(ei == null)
+                    return;
 
-                var category = (ExtractionCategory) cbx.SelectedItem;
-                ColumnExtractionCategories[selectedColumnInfo] = category;
+                ei.ExtractionCategory = (ExtractionCategory) cbx.SelectedItem;
+                ei.SaveToDatabase();
             }
         }
 
@@ -114,6 +145,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             if (cellEditEventArgs.Column == olvExtractionCategory)
             {
+                if (cellEditEventArgs.RowObject is ColumnInfo)
+                {
+                    cellEditEventArgs.Cancel = true;
+                    return;
+                }
+                
                 var cbx = new ComboBox
                 {
                     DropDownStyle = ComboBoxStyle.DropDownList,
@@ -121,39 +158,28 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 };
                 cbx.Items.AddRange(_extractionCategories);
 
-                var selectedItem = olvColumnExtractability.GetItem(olvColumnExtractability.SelectedIndex);
-                if (selectedItem.Checked)
-                    cellEditEventArgs.Control = cbx;
-                else
-                    cellEditEventArgs.Cancel = true;
-                
-                var selectedColumnInfo = (ColumnInfo)selectedItem.RowObject;
-                if (ColumnExtractionCategories.ContainsKey(selectedColumnInfo))
-                    cbx.SelectedItem = ColumnExtractionCategories[selectedColumnInfo];
+                var ei = (ExtractionInformation) cellEditEventArgs.RowObject;
+                cbx.SelectedItem = ei.ExtractionCategory;
+                cellEditEventArgs.Control = cbx;
             }
         }
         
-        public void SetUp(ColumnInfo[] columnInfos, IActivateItems activator)
+        public void SetUp(CatalogueItem[] catalogueItems, ColumnInfo[] columnInfos, IActivateItems activator)
         {
-            ddExtractionIdentifier.Items.AddRange(columnInfos);
+            //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
+            foreach (CatalogueItem ci in catalogueItems)
+                _extractabilityDictionary.Add(ci, columnInfos.Single(col => ci.ColumnInfo_ID == col.ID));
+
+            ddExtractionIdentifier.Items.AddRange(_extractabilityDictionary.Values.ToArray());
             gbMarkAllExtractable.Enabled = true;
 
-            olvColumnInfoName.ImageGetter = delegate
-            {
-                return activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo);
-            };
+            olvColumnInfoName.ImageGetter = (o)=> activator.CoreIconProvider.GetImage(o);
 
-            ColumnExtractionCategories.Clear();
             olvColumnExtractability.ClearObjects();
             olvColumnExtractability.AddObjects(columnInfos);
             
             olvColumnExtractability.MultiSelect = true;
             olvColumnExtractability.CheckBoxes = true;
-        }
-
-        private void cbMakeAllColumnsExtractable_CheckedChanged(object sender, System.EventArgs e)
-        {
-            ddExtractionIdentifier.Enabled = cbMakeAllColumnsExtractable.Checked;
         }
 
         public void MarkExtractionIdentifier(IActivateItems activator ,ExtractionInformation[] eis)
@@ -238,8 +264,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             var filteredColumnInfos = olvColumnExtractability.FilteredObjects.OfType<ColumnInfo>();
             foreach (var filteredColumnInfo in filteredColumnInfos)
             {
-                if (ColumnExtractionCategories.ContainsKey(filteredColumnInfo))
-                    ColumnExtractionCategories[filteredColumnInfo] = (ExtractionCategory) ddCategoriseMany.SelectedItem;
+                //if (ColumnExtractionCategories.ContainsKey(filteredColumnInfo))
+                  //  ColumnExtractionCategories[filteredColumnInfo] = (ExtractionCategory) ddCategoriseMany.SelectedItem;
                 //todo else make it obvious Category can't be set without being checked as extractable
             }
         }

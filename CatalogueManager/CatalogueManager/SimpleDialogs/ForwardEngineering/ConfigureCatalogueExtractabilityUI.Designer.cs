@@ -33,19 +33,19 @@
             this.olvColumnInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExtractable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel1 = new System.Windows.Forms.Panel();
             this.ddExtractionIdentifier = new System.Windows.Forms.ComboBox();
-            this.cbMakeAllColumnsExtractable = new System.Windows.Forms.CheckBox();
             this.btnClear = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ddCategoriseMany = new System.Windows.Forms.ComboBox();
+            this.btnClearFilterMany = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.lbPastedColumns = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.btnClearFilterMany = new System.Windows.Forms.Button();
-            this.ddCategoriseMany = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.gbMarkAllExtractable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.panel1.SuspendLayout();
@@ -70,17 +70,20 @@
             this.olvColumnExtractability.AllColumns.Add(this.olvColumnInfoName);
             this.olvColumnExtractability.AllColumns.Add(this.olvExtractionCategory);
             this.olvColumnExtractability.AllColumns.Add(this.olvExtractable);
+            this.olvColumnExtractability.AllColumns.Add(this.olvIsExtractionIdentifier);
             this.olvColumnExtractability.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.olvColumnExtractability.CellEditUseWholeCell = false;
             this.olvColumnExtractability.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumnInfoName,
-            this.olvExtractionCategory});
+            this.olvExtractionCategory,
+            this.olvIsExtractionIdentifier});
             this.olvColumnExtractability.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvColumnExtractability.FullRowSelect = true;
             this.olvColumnExtractability.Location = new System.Drawing.Point(3, 46);
             this.olvColumnExtractability.Name = "olvColumnExtractability";
+            this.olvColumnExtractability.RowHeight = 19;
             this.olvColumnExtractability.ShowGroups = false;
             this.olvColumnExtractability.Size = new System.Drawing.Size(702, 415);
             this.olvColumnExtractability.TabIndex = 7;
@@ -105,10 +108,14 @@
             this.olvExtractable.DisplayIndex = 2;
             this.olvExtractable.IsVisible = false;
             // 
+            // olvIsExtractionIdentifier
+            // 
+            this.olvIsExtractionIdentifier.Text = "Is Patient Id";
+            this.olvIsExtractionIdentifier.Width = 106;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.ddExtractionIdentifier);
-            this.panel1.Controls.Add(this.cbMakeAllColumnsExtractable);
             this.panel1.Controls.Add(this.btnClear);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -128,17 +135,6 @@
             this.ddExtractionIdentifier.Name = "ddExtractionIdentifier";
             this.ddExtractionIdentifier.Size = new System.Drawing.Size(382, 21);
             this.ddExtractionIdentifier.TabIndex = 2;
-            // 
-            // cbMakeAllColumnsExtractable
-            // 
-            this.cbMakeAllColumnsExtractable.AutoSize = true;
-            this.cbMakeAllColumnsExtractable.Location = new System.Drawing.Point(1, 6);
-            this.cbMakeAllColumnsExtractable.Name = "cbMakeAllColumnsExtractable";
-            this.cbMakeAllColumnsExtractable.Size = new System.Drawing.Size(163, 17);
-            this.cbMakeAllColumnsExtractable.TabIndex = 0;
-            this.cbMakeAllColumnsExtractable.Text = "Make all columns extractable";
-            this.cbMakeAllColumnsExtractable.UseVisualStyleBackColor = true;
-            this.cbMakeAllColumnsExtractable.CheckedChanged += new System.EventHandler(this.cbMakeAllColumnsExtractable_CheckedChanged);
             // 
             // btnClear
             // 
@@ -174,6 +170,36 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(702, 207);
             this.panel2.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(472, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(99, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Set Category for all:";
+            // 
+            // ddCategoriseMany
+            // 
+            this.ddCategoriseMany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddCategoriseMany.FormattingEnabled = true;
+            this.ddCategoriseMany.Location = new System.Drawing.Point(578, 6);
+            this.ddCategoriseMany.Name = "ddCategoriseMany";
+            this.ddCategoriseMany.Size = new System.Drawing.Size(121, 21);
+            this.ddCategoriseMany.TabIndex = 5;
+            this.ddCategoriseMany.SelectedIndexChanged += new System.EventHandler(this.ddCategoriseMany_SelectedIndexChanged);
+            // 
+            // btnClearFilterMany
+            // 
+            this.btnClearFilterMany.Enabled = false;
+            this.btnClearFilterMany.Location = new System.Drawing.Point(37, 57);
+            this.btnClearFilterMany.Name = "btnClearFilterMany";
+            this.btnClearFilterMany.Size = new System.Drawing.Size(75, 23);
+            this.btnClearFilterMany.TabIndex = 4;
+            this.btnClearFilterMany.Text = "Clear";
+            this.btnClearFilterMany.UseVisualStyleBackColor = true;
+            this.btnClearFilterMany.Click += new System.EventHandler(this.btnClearFilterMany_Click);
             // 
             // label1
             // 
@@ -213,36 +239,6 @@
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
-            // btnClearFilterMany
-            // 
-            this.btnClearFilterMany.Enabled = false;
-            this.btnClearFilterMany.Location = new System.Drawing.Point(37, 57);
-            this.btnClearFilterMany.Name = "btnClearFilterMany";
-            this.btnClearFilterMany.Size = new System.Drawing.Size(75, 23);
-            this.btnClearFilterMany.TabIndex = 4;
-            this.btnClearFilterMany.Text = "Clear";
-            this.btnClearFilterMany.UseVisualStyleBackColor = true;
-            this.btnClearFilterMany.Click += new System.EventHandler(this.btnClearFilterMany_Click);
-            // 
-            // ddCategoriseMany
-            // 
-            this.ddCategoriseMany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddCategoriseMany.FormattingEnabled = true;
-            this.ddCategoriseMany.Location = new System.Drawing.Point(517, 97);
-            this.ddCategoriseMany.Name = "ddCategoriseMany";
-            this.ddCategoriseMany.Size = new System.Drawing.Size(121, 21);
-            this.ddCategoriseMany.TabIndex = 5;
-            this.ddCategoriseMany.SelectedIndexChanged += new System.EventHandler(this.ddCategoriseMany_SelectedIndexChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(411, 100);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Set Category for all:";
-            // 
             // ConfigureCatalogueExtractabilityUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -265,7 +261,6 @@
         private System.Windows.Forms.GroupBox gbMarkAllExtractable;
         private System.Windows.Forms.ComboBox ddExtractionIdentifier;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox cbMakeAllColumnsExtractable;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label6;
@@ -280,5 +275,6 @@
         private System.Windows.Forms.Button btnClearFilterMany;
         private System.Windows.Forms.ComboBox ddCategoriseMany;
         private System.Windows.Forms.Label label3;
+        private BrightIdeasSoftware.OLVColumn olvIsExtractionIdentifier;
     }
 }

@@ -55,7 +55,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             cbxFolder.Items.AddRange(existingFolders);
             cbxFolder.Text = "\\";
 
-            configureCatalogueExtractabilityUI1.SetUp(columnInfos, activator);
+            //configureCatalogueExtractabilityUI1.SetUp(columnInfos, activator);
         }
 
         private void cbAddToExisting_CheckedChanged(object sender, EventArgs e)
@@ -118,7 +118,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             
 
             //if add to existing is checked and enabled (not greyed out) then also add extraction informations
-            var forwardEngineer = new CatalogueLibrary.ForwardEngineerCatalogue(_tableInfo, _columnInfos,configureCatalogueExtractabilityUI1.MakeAllColumnsExtractable);
+            var forwardEngineer = new CatalogueLibrary.ForwardEngineerCatalogue(_tableInfo, _columnInfos);
 
             //the artifacts that will be created by forward engineering
             Catalogue c;

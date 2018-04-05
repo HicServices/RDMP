@@ -419,18 +419,17 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             ColumnInfo[] cols;
             importer.DoImport(out table,out cols);
 
-            var extractionPicker = new ConfigureCatalogueExtractabilityUI();
-            extractionPicker.SetUp(cols, _activator);
-            SingleControlForm.ShowDialog(extractionPicker,true);
-
-            var forwardEngineer = new ForwardEngineerCatalogue(table, cols, extractionPicker.MakeAllColumnsExtractable);
+            var forwardEngineer = new ForwardEngineerCatalogue(table, cols);
             Catalogue catalogue;
             CatalogueItem[] cis;
             ExtractionInformation[] eis;
 
             forwardEngineer.ExecuteForwardEngineering(out catalogue,out cis,out eis);
             
-            extractionPicker.MarkExtractionIdentifier(_activator,eis);
+            var extractionPicker = new ConfigureCatalogueExtractabilityUI();
+
+            extractionPicker.SetUp(cis,cols, _activator);
+            SingleControlForm.ShowDialog(extractionPicker, true);
 
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(catalogue));
             
