@@ -1,25 +1,34 @@
-# RDMP
+
+# ![logo](.\Application\ResearchDataManagementPlatform\Icon\mainsmall.png)Research Data Management Platform
+RDMP is a free, open source software application for the loading,linking,anonymisation and extraction of datasets stored in relational databases.  It is designed to assist data analysts in their current linkage workflows without requiring underlying data sources to be moved or altered.
+
 ## Install
-	RDMP is available as a ClickOnce package at https://hic.dundee.ac.uk/Installers/RDMP/Stable/ 
+RDMP is available as a ClickOnce package at <https://hic.dundee.ac.uk/Installers/RDMP/Stable/>
+## User Manual
+The RDMP UserManual is available on GitHub at <https://github.com/HicServices/RDMP/raw/master/Documentation/UserManual.docx>
 
 ## Build
 
-	You can build directly through Visual Studio by opening HIC.DataManagementPlatform.sln.  Do not worry about the unloadable installer projects, these require WiX to build and are not immediately required.
-	
-	Or alternatively you can run build.bat to perform a console build
+You can build directly through Visual Studio by opening HIC.DataManagementPlatform.sln.
+
+Or alternatively you can run build.bat to perform a console build
 	cd .\Uppercut
 	.\build.bat [TEST|LIVE]
-	
+
 ## Integration Test Database
-	If you run unit tests without first creating a test database suite, all database integration tests will fail.  To create the test databases you will need a Microsoft Sql Server (Sql Express is fine and free).  Once you have an instance installed you can run DatabaseCreation.exe with appropriate parameters.  For example if you have a local server you can run ".\DatabaseCreation\bin\Debug\DatabaseCreation.exe localhost\sqlexpress TEST_ -D".  This will create databases for Catalogue/Data Export etc with a prefix of 'TEST_', you can also create another database set with a different prefix if you want to be able to do manual tests or continue development while the tests run e.g. ".\DatabaseCreation\bin\Debug\DatabaseCreation.exe localhost\sqlexpress DEMO_ -D".  __The -D flag drops any existing databases with the target name__.
-	
-	If you need to change the server name or database prefix from the above example then before running the integration tests you will have to update ".\Tests.Common\DatabaseTests.txt" to have a matching servername and prefix.
-	
-	__WARNING__:Integration tests will delete all database contents of the TEST_ databases before each test is run so make sure you do not point DatabaseTests.txt to your live database/server.
+Before running integration tests you to run DatabaseCreation.exe with appropriate parameters
+
+For example if you have a local server you can run 
+		cd .\DatabaseCreation\bin\Debug\
+		DatabaseCreation.exe localhost\sqlexpress TEST_ -D"
+If you need to change the server name or database prefix from the above example then before running the integration tests you will have to update ".\Tests.Common\DatabaseTests.txt" to have a matching servername and prefix.
+	__WARNING__:Integration tests will delete the contents of the TEST_ databases before each test is run 
 
 ## Running the software
-	In order to run the software you can launch the startup project '.\Application\ResearchDataManagementPlatform'.  This will launch the startup user interface which will guide you through selecting your platform databases (See the 'Integration Test Database' section above for details on how to create these).  Once the main screen appears you can select 'Help=>Show User Manual'.
-	
+The easiest way to run RDMP is via the click once package (See Install) but if you want to run it directly from source then launch the startup project 
+	'.\Application\ResearchDataManagementPlatform'
+
+This will launch the startup user interface which will guide you through selecting your platform databases (See the 'Integration Test Database' section above for details on how to create these).  Once the main screen appears you can select 'Help=>Show User Manual'.
 ### Verbosity
 
 Can pass verbosity flag to MSBuild task, for example:
