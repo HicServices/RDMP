@@ -99,15 +99,18 @@ namespace CatalogueManager.AggregationUIs.Advanced
             var ti = rowobject as TableInfo;
             var patientIndexTable = rowobject as JoinableCohortAggregateConfiguration;
             var patientIndexTableUse = rowobject as JoinableCohortAggregateConfigurationUse;
+
+            var joiner = ((CatalogueRepository)_aggregate.Repository).AggregateForcedJoiner;
             
+
             //user is trying to use a joinable something
             if (newvalue == CheckState.Checked)
             {
                 //user is trying to turn on usage of a TableInfo
                 if(ti != null)
                 {
-                    var join = new AggregateForcedJoin((CatalogueRepository) _aggregate.Repository);
-                    join.CreateLinkBetween(_aggregate,ti);
+
+                    joiner.CreateLinkBetween(_aggregate, ti);
                     _forcedJoins.Add(ti);
                     Publish();
                 }
@@ -125,8 +128,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 //user is trying to turn off usage of a TableInfo
                 if (ti != null)
                 {
-                    var join = new AggregateForcedJoin((CatalogueRepository)_aggregate.Repository);
-                    join.BreakLinkBetween(_aggregate, ti);
+                    joiner.BreakLinkBetween(_aggregate, ti);
                     _forcedJoins.Remove(ti);
                     _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                 }
