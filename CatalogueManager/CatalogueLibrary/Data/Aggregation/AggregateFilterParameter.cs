@@ -31,19 +31,26 @@ namespace CatalogueLibrary.Data.Aggregation
         private string _value;
         private string _comment;
 
+        /// <summary>
+        /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
+        /// in it's WhereSQL.
+        /// </summary>
         public int AggregateFilter_ID
         {
             get { return _aggregateFilterID; }
             set { SetField(ref  _aggregateFilterID, value); }
         } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
+        
+        /// <inheritdoc/>
         [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref  _parameterSQL, value); }
         }
-        
+         
+        /// <inheritdoc/>
         [Sql]
         public string Value
         {
@@ -51,6 +58,7 @@ namespace CatalogueLibrary.Data.Aggregation
             set { SetField(ref  _value, value); }
         }
 
+        /// <inheritdoc/>
         public string Comment
         {
             get { return _comment; }
@@ -60,6 +68,8 @@ namespace CatalogueLibrary.Data.Aggregation
         #endregion
 
         #region Relationships
+
+        /// <inheritdoc cref="AggregateFilter_ID"/>
         [NoMappingToDatabase]
         public AggregateFilter AggregateFilter{ get { return Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID); }}
         
@@ -74,7 +84,14 @@ namespace CatalogueLibrary.Data.Aggregation
             get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
-        public AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, IFilter parent)
+        /// <summary>
+        /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this 
+        /// constructor.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parameterSQL"></param>
+        /// <param name="parent"></param>
+        internal AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, AggregateFilter parent)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
@@ -84,31 +101,34 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
 
-        public AggregateFilterParameter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal AggregateFilterParameter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             AggregateFilter_ID = int.Parse(r["AggregateFilter_ID"].ToString());
             ParameterSQL = r["ParameterSQL"] as string;
             Value = r["Value"] as string;
             Comment = r["Comment"] as string;
         }
-        
-        
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             //return the name of the variable
             return ParameterName;
         }
 
+        /// <inheritdoc cref="ParameterSyntaxChecker"/>
         public void Check(ICheckNotifier notifier)
         {
             new ParameterSyntaxChecker(this).Check(notifier);
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return AggregateFilter.GetQuerySyntaxHelper();
         }
 
+        /// <inheritdoc/>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             return AggregateFilter;

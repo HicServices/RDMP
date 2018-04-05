@@ -129,7 +129,11 @@ namespace CatalogueLibrary.Data.Aggregation
             return new ContainerHelper().GetAllSubContainersRecursively(this);
         }
         
-        
+        /// <summary>
+        /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those 
+        /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
+        /// </summary>
+        /// <returns></returns>
         public AggregateFilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
@@ -171,6 +175,7 @@ namespace CatalogueLibrary.Data.Aggregation
             return clone;
         }
 
+        /// <inheritdoc/>
         public void AddChild(IFilter filter)
         {
             if(filter.FilterContainer_ID.HasValue)
@@ -183,6 +188,11 @@ namespace CatalogueLibrary.Data.Aggregation
             filter.SaveToDatabase();
         }
 
+        /// <summary>
+        /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
+        /// Returns null if the container is somehow an orphan. 
+        /// </summary>
+        /// <returns></returns>
         public AggregateConfiguration GetAggregate()
         {
             var aggregateConfiguration = Repository.GetAllObjects<AggregateConfiguration>("WHERE RootFilterContainer_ID = " + ID).SingleOrDefault();
