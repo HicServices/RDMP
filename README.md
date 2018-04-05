@@ -1,5 +1,4 @@
-
-# ![logo](.\Application\ResearchDataManagementPlatform\Icon\mainsmall.png)Research Data Management Platform
+# ![logo](/Application/ResearchDataManagementPlatform/Icon/mainsmall.png)Research Data Management Platform
 RDMP is a free, open source software application for the loading,linking,anonymisation and extraction of datasets stored in relational databases.  It is designed to assist data analysts in their current linkage workflows without requiring underlying data sources to be moved or altered.
 
 ## Install
