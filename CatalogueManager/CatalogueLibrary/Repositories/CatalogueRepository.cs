@@ -14,6 +14,7 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Properties;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories.Construction;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -163,7 +164,14 @@ namespace CatalogueLibrary.Repositories
             }
             return toReturn;
         }
-        
+         
+        /// <inheritdoc/>
+        public LogManager GetDefaultLogManager()
+        {
+            ServerDefaults defaults = new ServerDefaults(this);
+            return new LogManager(defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
+        }
+
         public Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false)
         {
             return GetAllObjects<Catalogue>().Where(cata => (!cata.IsDeprecated) || includeDeprecatedCatalogues).ToArray();

@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using HIC.Logging.PastEvents;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
@@ -28,6 +29,11 @@ namespace HIC.Logging
     {
         public DiscoveredServer Server { get; private set; }
 
+        /// <summary>
+        /// If the Server was set from a persistent database reference this property will store it e.g. a logging ExternalDatabaseServer
+        /// </summary>
+        public IDataAccessPoint DataAccessPointIfAny { get; private set; }
+
         public ProgressLogging ProgressLogging { get; private set; }
         private readonly FatalErrorLogging _fatalErrorLogging;
         private readonly RowErrorLogging _rowErrorLogging;
@@ -42,7 +48,7 @@ namespace HIC.Logging
 
         public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging))
         {
-            
+            DataAccessPointIfAny = loggingServer;
         }
 
         public string[] ListDataTasks(bool hideTests=false)

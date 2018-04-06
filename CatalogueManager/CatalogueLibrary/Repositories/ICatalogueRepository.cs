@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
@@ -34,6 +35,12 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         List<FriendlyNamedCatalogueItem> GetFullNameOfAllCatalogueItems();
+
+        /// <summary>
+        /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
+        /// </summary>
+        /// <returns></returns>
+        LogManager GetDefaultLogManager();
 
         Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false);
         Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();

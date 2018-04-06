@@ -69,6 +69,15 @@ namespace CatalogueLibrary.Data.Automation
             Pipeline_ID = Convert.ToInt32(r["Pipeline_ID"]);
         }
 
+        /// <summary>
+        /// Defines that the specified <see cref="AutomationServiceSlot"/> is allowed to run an automation <see cref="Pipeline"/>.  When the automation service
+        /// is running it will try to build the associated Pipeline and execute it.
+        /// 
+        /// <para>The Pipeline must be compatible with AutomationPipelineContext</para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="allocatedToSlot"></param>
+        /// <param name="pipeline"></param>
         public AutomateablePipeline(ICatalogueRepository repository, AutomationServiceSlot allocatedToSlot, Pipeline pipeline = null)
         {
             if(pipeline == null)
@@ -81,6 +90,7 @@ namespace CatalogueLibrary.Data.Automation
             });
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             CachePipelineNameIfRequired();
@@ -94,11 +104,13 @@ namespace CatalogueLibrary.Data.Automation
                 _pipelineName = Pipeline.Name;
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[] { AutomationServiceSlot };
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
 
