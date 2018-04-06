@@ -568,14 +568,21 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void btnLoadPlan_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Plans (*.plan)|*.plan";
-            if (ofd.ShowDialog() == DialogResult.OK)
+            try
             {
-                var fi = new FileInfo(ofd.FileName);
-                var json = File.ReadAllText(fi.FullName);
-                _planManager = (ForwardEngineerANOCataloguePlanManager)
-                                    JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), _activator.RepositoryLocator);
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "Plans (*.plan)|*.plan";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    var fi = new FileInfo(ofd.FileName);
+                    var json = File.ReadAllText(fi.FullName);
+                    _planManager = (ForwardEngineerANOCataloguePlanManager)
+                        JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), _activator.RepositoryLocator);
+                }
+            }
+            catch (Exception exception)
+            {
+                ExceptionViewer.Show(exception);
             }
         }
     }

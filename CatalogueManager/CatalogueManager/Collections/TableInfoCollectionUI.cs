@@ -150,19 +150,6 @@ namespace CatalogueManager.Collections
                 tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
         }
         
-        private bool bExpand = true;
-             
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            if (bExpand)
-                tlvTableInfos.ExpandAll();
-            else
-                tlvTableInfos.CollapseAll();
-
-            btnExpandOrCollapse.Text = bExpand ? "Collapse" : "Expand";
-            bExpand = !bExpand;
-        }
-
         public static bool IsRootObject(object root)
         {
             return
