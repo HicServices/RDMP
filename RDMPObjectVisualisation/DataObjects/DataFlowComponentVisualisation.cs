@@ -63,14 +63,11 @@ namespace RDMPObjectVisualisation.DataObjects
                 _isEmpty = true;
                 lblText.Text = "Empty";
                 AllowDrop = _shouldAllowDrop != null;
-
-
             }
             else
             {
-                lblText.Text = value.GetType().Name;
+                lblText.Text = value.ToString();//.GetType().Name;
                 GenerateToolTipBasedOnProperties(value);
-
             }
 
             switch (role)

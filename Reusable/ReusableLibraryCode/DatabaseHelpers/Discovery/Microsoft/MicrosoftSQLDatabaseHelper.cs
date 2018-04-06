@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.IO;
 using System.Threading;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
@@ -128,6 +129,61 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
 
                 return toReturn;
             }
+        }
+
+        public override DirectoryInfo Detach(DiscoveredDatabase database)
+        {
+            const string GetDefaultSQLServerDatabaseDirectory = @"SELECT LEFT(physical_name,LEN(physical_name)-CHARINDEX('\',REVERSE(physical_name))+1) 
+                        FROM sys.master_files mf   
+                        INNER JOIN sys.[databases] d   
+                        ON mf.[database_id] = d.[database_id]   
+                        WHERE d.[name] = 'master' AND type = 0";
+
+            string dataFolder;
+
+            // Create a new server so we don't mutate database.Server and cause a whole lot of side-effects in other code, e.g. attachers
+            var server = database.Server;
+            var databaseToDetach = database.GetRuntimeName();
+
+            // set in simple recovery and truncate all logs!
+            string sql = "ALTER DATABASE [" + databaseToDetach + "] SET RECOVERY SIMPLE; " + Environment.NewLine + 
+                         "DBCC SHRINKFILE ([" + databaseToDetach + "], 1)";
+            using (var con = (SqlConnection)server.GetConnection())
+            {
+                con.Open();
+                var cmd = new SqlCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            // other operations must be done on master
+            server.ChangeDatabase("master");
+            
+            // set single user before detaching
+            sql = "ALTER DATABASE [" + databaseToDetach + "] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
+            using (var con = (SqlConnection)server.GetConnection())
+            {
+                con.Open();
+                var cmd = new SqlCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            // detach!
+            sql = @"EXEC sys.sp_detach_db '" + databaseToDetach + "';";
+            using (var con = (SqlConnection)server.GetConnection())
+            {
+                con.Open();
+                var cmd = new SqlCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            // get data-files path from SQL Server
+            using (var connection = (SqlConnection)server.GetConnection())
+            {
+                connection.Open();
+                dataFolder = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
+            }
+
+            return new DirectoryInfo(dataFolder);
         }
     }
 }

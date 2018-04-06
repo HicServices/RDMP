@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -17,7 +18,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public IDiscoveredDatabaseHelper Helper { get; private set; }
         public DiscoveredServer Server { get; private set; }
         
-
         public DiscoveredDatabase(DiscoveredServer server, string database, IQuerySyntaxHelper querySyntaxHelper)
         {
             Server = server;
@@ -101,7 +101,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Helper.DropDatabase(new DiscoveredDatabase(Server, _database, _querySyntaxHelper));
         }
     
-
         public Dictionary<string,string> DescribeDatabase()
         {
             return Helper.DescribeDatabase(Server.Builder, GetRuntimeName());
@@ -123,6 +122,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public DiscoveredTable CreateTable(string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
         {
             return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions,createEmpty);
+        }
+
+        /// <summary>
+        /// Detach this DiscoveredDatabase and returns the data path where the files are stored.
+        /// NOTE: you must know how to map this data path to a shared path you can access!
+        /// </summary>
+        /// <returns>Local drive data path where the files are stored</returns>
+        public DirectoryInfo Detach()
+        {
+            return Helper.Detach(this);
         }
     }
 }

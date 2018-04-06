@@ -157,24 +157,23 @@ namespace DataExportManager.ProjectUI
                     var globalExtractor = new ExtractionPipelineUseCase(ExtractDatasetCommand.EmptyCommand,_pipelineSelectionUI1.Pipeline,_dataLoadInfo);
 
                     Thread t = new Thread(() =>
-                    {
-                        try
                         {
-                            progressUI.ShowRunning(true);
+                            try
+                            {
+                                progressUI.ShowRunning(true);
 
-                            globalExtractor.ExtractGlobalsForDestination(Project,
-                                _configurationToExecute,
-                                globals,
-                                progressUI,
-                                _dataLoadInfo);
-                        }
-                        finally
-                        {
-                            progressUI.ShowRunning(false);
-                        }
-                    }
-                        
-                        );
+                                globalExtractor.ExtractGlobalsForDestination(Project,
+                                    _configurationToExecute,
+                                    globals,
+                                    progressUI,
+                                    _dataLoadInfo);
+                            }
+                            finally
+                            {
+                                progressUI.ShowRunning(false);
+                            }
+                        }   
+                    );
 
                     t.Start();
                 }
@@ -355,7 +354,7 @@ namespace DataExportManager.ProjectUI
             if (_pipelineSelectionUI1 == null)
             {
                 //create a new selection UI (pick an extraction pipeliene UI)
-                var useCase = new ExtractionPipelineUseCase();
+                var useCase = new ExtractionPipelineUseCase(Project);
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
                 _pipelineSelectionUI1 = factory.Create("Extraction Pipeline",DockStyle.Fill,panel1);

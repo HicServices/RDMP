@@ -47,7 +47,6 @@ namespace DataExportManager.ProjectUI
         public ExecuteDatasetExtractionHostUI(IExtractCommand extractCommand,Project project, DataLoadInfo dataLoadInfo, IPipeline pipeline )
         {
             ExtractCommand = extractCommand;
-            
 
             _dataLoadInfo = dataLoadInfo;
             _pipeline = pipeline;
@@ -63,10 +62,8 @@ namespace DataExportManager.ProjectUI
         
         private void btnCancel_Click(object sender, EventArgs e)
         {
-
             if (_pipelineUseCase != null)
-            {
-                
+            {   
                 //display it on the screen
                 progressUI1.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Attempting to Cancel"));
                 

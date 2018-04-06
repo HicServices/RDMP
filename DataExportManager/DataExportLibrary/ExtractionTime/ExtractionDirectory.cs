@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime;
 using DataExportLibrary.Data.DataTables;
+using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime
 {
@@ -16,26 +19,33 @@ namespace DataExportLibrary.ExtractionTime
     {
         private readonly DirectoryInfo root;
         private readonly DirectoryInfo extractionDirectory;
-        public const string CustomCohortDataFolderName = "CohortCustomData";
-        public const string GlobalsDataFolderName = "Globals";
+        
         public const string ExtractionSubFolderName = "Extractions";
         public const string StandardExtractionPrefix = "Extr_";
-        
+        public const string GlobalsDataFolderName = "Globals";
+        public const string CustomCohortDataFolderName = "CohortCustomData";
+        public const string OtherDataFolderName = "OtherData";
+
         public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
+            : this(rootExtractionDirectory, configuration, DateTime.Now)
         {
-            if(string.IsNullOrWhiteSpace(rootExtractionDirectory ))
+        }
+
+        private ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration, DateTime extractionDate)
+        {
+            if (string.IsNullOrWhiteSpace(rootExtractionDirectory))
                 throw new NullReferenceException("Extraction Directory not set");
 
             if (!rootExtractionDirectory.StartsWith("\\"))
                 if (!Directory.Exists(rootExtractionDirectory))
                     throw new DirectoryNotFoundException("Root directory \"" + rootExtractionDirectory + "\" does not exist");
-            
+
             root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, ExtractionSubFolderName));
             if (!root.Exists)
                 root.Create();
 
-            string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + DateTime.Now.ToString("yyyyMMdd");
-            
+            string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + extractionDate.ToString("yyyyMMdd");
+
             if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
                 extractionDirectory = root.CreateSubdirectory(subdirectoryName);
             else
@@ -45,6 +55,11 @@ namespace DataExportLibrary.ExtractionTime
         public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
         {
             return StandardExtractionPrefix + configuration.ID;
+        }
+
+        public static ExtractionDirectory GetForDifferentDate(string rootExtractionDirectory, IExtractionConfiguration configuration, DateTime extractDate)
+        {
+            return new ExtractionDirectory(rootExtractionDirectory, configuration, extractDate);
         }
 
         public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
@@ -90,6 +105,66 @@ namespace DataExportLibrary.ExtractionTime
         public DirectoryInfo GetDirectoryForCohortCustomData()
         {
             return extractionDirectory.CreateSubdirectory(CustomCohortDataFolderName);
+        }
+
+        public DirectoryInfo GetDirectoryForOtherData()
+        {
+            return extractionDirectory.CreateSubdirectory(OtherDataFolderName);
+        }
+
+        public static void CleanupExtractionDirectory(object sender, string extractionDirectory, IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)
+        {
+            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionSubFolderName));
+            var directoriesToDelete = new List<DirectoryInfo>();
+            var filesToDelete = new List<FileInfo>();
+
+            foreach (var extractionConfiguration in configurations)
+            {
+                var config = extractionConfiguration;
+                var directoryInfos = projectExtractionDirectory.GetDirectories().Where(d => IsOwnerOf(config, d));
+
+                foreach (DirectoryInfo toCleanup in directoryInfos)
+                    AddDirectoryToCleanupList(toCleanup, true, directoriesToDelete, filesToDelete);
+            }
+
+            foreach (var fileInfo in filesToDelete)
+            {
+                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information, "Deleting: " + fileInfo.FullName));
+                try
+                {
+                    fileInfo.Delete();
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + fileInfo.FullName, e));
+                }
+            }
+
+            foreach (var directoryInfo in directoriesToDelete)
+            {
+                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information, "Recursively deleting folder: " + directoryInfo.FullName));
+                try
+                {
+                    directoryInfo.Delete(true);
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + directoryInfo.FullName, e));
+                }
+            }
+        }
+
+        private static void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot, List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
+        {
+            //only add root folders to the delete queue
+            if (isRoot)
+                if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //dont add the same folder twice
+                    directoriesToDelete.Add(toCleanup);
+
+            filesToDelete.AddRange(toCleanup.EnumerateFiles());
+
+            foreach (var dir in toCleanup.EnumerateDirectories())
+                AddDirectoryToCleanupList(dir, false, directoriesToDelete, filesToDelete);
         }
     }
 }

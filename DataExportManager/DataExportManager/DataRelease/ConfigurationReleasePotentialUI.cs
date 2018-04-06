@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Ticketing;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -15,6 +16,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
@@ -177,9 +179,7 @@ namespace DataExportManager.DataRelease
 
                     message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n.ExtractableDataSet);
 
-                    if (
-                        MessageBox.Show(message, "Delete expired CumulativeExtractionResults for configuration", MessageBoxButtons.YesNo) ==
-                        DialogResult.Yes)
+                    if (MessageBox.Show(message, "Delete expired CumulativeExtractionResults for configuration", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         foreach (var result in oldResults)
                             result.DeleteInDatabase();
@@ -188,7 +188,17 @@ namespace DataExportManager.DataRelease
                 
                 //create new ReleaseAssesments
                 foreach (ExtractableDataSet dataSet in currentlyConfiguredDatasets)
-                    ReleasePotentials.Add(new ReleasePotential(RepositoryLocator,Configuration, dataSet));
+                {
+                    var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == dataSet.ID);
+                    if (extractionResults == null || extractionResults.DestinationDescription == null)
+                        ReleasePotentials.Add(new NoReleasePotential(RepositoryLocator, Configuration, dataSet));
+                    else
+                    {
+                        var releasePotential = ((IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(extractionResults.GetDestinationType()))
+                                                    .GetReleasePotential(RepositoryLocator, Configuration, dataSet);
+                        ReleasePotentials.Add(releasePotential);
+                    }
+                }
 
                 if (IsDisposed)
                     return;
@@ -297,33 +307,33 @@ namespace DataExportManager.DataRelease
 
                 switch (releasePotential.Assesment)
                 {
-                    case Releaseability.NeverBeensuccessfullyExecuted:
+                    case Releaseability.NeverBeenSuccessfullyExecuted:
                         i.ImageKey = "NeverBeenGenerated";
                         break;
 
                     case Releaseability.ExtractFilesMissing:
                         i.ImageKey = "FileMissing";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.ExtractionSQLDesynchronisation:
                         i.ImageKey = "OutOfSync";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.CohortDesynchronisation:
                         i.ImageKey = "WrongCohort";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.Releaseable:
                         i.ImageKey = "Releaseable";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.ColumnDifferencesVsCatalogue:
                         i.ImageKey = "DifferentFromCatalogue";
-                        i.SubItems.Add(((DateTime)releasePotential.DateOfExtraction).ToString());
+                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
                         break;
 
                     case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability :

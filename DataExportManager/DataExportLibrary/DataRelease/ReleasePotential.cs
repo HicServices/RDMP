@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -13,17 +17,20 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.DataRelease
 {
     /// <summary>
-    /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.  This includes making sure that the current configuration
-    /// in the database matches the extracted flat files that are destined for release.  It also checks that the user hasn't snuck some additional files into
-    /// the extract directory etc.
+    /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release. 
+    /// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
+    /// based on the extraction method used.
     /// </summary>
-    public class ReleasePotential
+    public abstract class ReleasePotential
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        protected readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly IRepository _repository;
         private List<IColumn> _columnsToExtract;
         public IExtractionConfiguration Configuration { get; set; }
@@ -32,18 +39,30 @@ namespace DataExportLibrary.DataRelease
         public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue { get; private set; }
 
         public Exception Exception { get; private set; }
+        public Releaseability Assesment { get; protected set; }
+        public DateTime DateOfExtraction { get; private set; }
+
+        /// <summary>
+        /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
+        /// </summary>
+        public string SqlExtracted { get; private set; }
+
+        /// <summary>
+        /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
+        /// </summary>
+        public string SqlCurrentConfiguration { get; private set; }
+
+        /// <summary>
+        /// The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made this will be NULL
+        /// </summary>
+        public DirectoryInfo ExtractDirectory { get; protected set; }
 
         /// <summary>
         /// The file that contains the dataset data e.g. biochemistry.csv (will be null if no extract files were found)
         /// </summary>
         public FileInfo ExtractFile { get; set; }
 
-        /// <summary>
-        /// The file that contains metadata for the dataset e.g. biochemistry.docx (will be null if no extract files were found)
-        /// </summary>
-        public FileInfo MetadataFile { get; set; }
-
-        public ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet)
+        protected ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet)
         {
             _repositoryLocator = repositoryLocator;
             _repository = configuration.Repository;
@@ -54,7 +73,6 @@ namespace DataExportLibrary.DataRelease
             ExtractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
 
             MakeAssesment();
-
         }
 
         private void MakeAssesment()
@@ -64,31 +82,33 @@ namespace DataExportLibrary.DataRelease
                 //always try to figure out what the current SQL is
                 SqlCurrentConfiguration = GetCurrentConfigurationSQL();
 
-                if (ExtractionResults == null || ExtractionResults.Filename == null)
+                if (ExtractionResults == null || ExtractionResults.DestinationDescription == null)
                 {
-                    Assesment = Releaseability.NeverBeensuccessfullyExecuted;
+                    Assesment = Releaseability.NeverBeenSuccessfullyExecuted;
                     return;
                 }
 
-                ExtractDirectory = new FileInfo(ExtractionResults.Filename).Directory;
                 //let the user know when the data was extracted
                 DateOfExtraction = ExtractionResults.DateOfExtraction;
                 SqlExtracted = ExtractionResults.SQLExecuted;
-                
+
                 //the cohort has been changed in the configuration in the time elapsed since the file we are evaluating was generated (that was when CummatliveExtractionResults was populated)
                 if (ExtractionResults.CohortExtracted != Configuration.Cohort_ID)
-                    Assesment = Releaseability.CohortDesynchronisation;
-                else
-                if (SqlOutOfSyncWithDataExportManagerConfiguration())
-                    Assesment = Releaseability.ExtractionSQLDesynchronisation;
-                else if (FilesAreMissing())
-                    Assesment = Releaseability.ExtractFilesMissing;
-                else
                 {
-                    ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
-
-                    Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+                    Assesment = Releaseability.CohortDesynchronisation;
+                    return;
                 }
+
+                if (SqlOutOfSyncWithDataExportManagerConfiguration())
+                {
+                    Assesment = Releaseability.ExtractionSQLDesynchronisation;
+                    return;
+                }
+
+                Assesment = GetSpecificAssessment();
+
+                if (Assesment == Releaseability.Undefined)
+                    Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
             }
             catch (Exception e)
             {
@@ -96,6 +116,8 @@ namespace DataExportLibrary.DataRelease
                 Assesment = Releaseability.ExceptionOccurredWhileEvaluatingReleaseability;
             }
         }
+
+        protected abstract Releaseability GetSpecificAssessment();
 
         private bool SqlDifferencesVsLiveCatalogue()
         {
@@ -116,14 +138,6 @@ namespace DataExportLibrary.DataRelease
             }
 
             return ColumnsThatAreDifferentFromCatalogue.Any();
-        }
-
-        private void ThrowIfPollutionFoundInConfigurationRootExtractionFolder()
-        {
-            Debug.Assert(ExtractDirectory.Parent != null, "Dont call this method until you have determined that an extracted file was actually produced!");
-
-            if(ExtractDirectory.Parent.GetFiles().Any())
-                throw new Exception("The following pollutants were found in the extraction directory\" " + ExtractDirectory.Parent.FullName + "\" pollutants were:" + ExtractDirectory.Parent.GetFiles().Aggregate("",(s,n)=>s + "\""+n+"\""));
         }
 
         private string GetCurrentConfigurationSQL()
@@ -149,41 +163,9 @@ namespace DataExportLibrary.DataRelease
 
             return resultLive.SQL;
         }
-
-        private bool FilesAreMissing()
-        {
-            ExtractFile = new FileInfo(ExtractionResults.Filename);
-            MetadataFile = new FileInfo(ExtractionResults.Filename.Replace(".csv", ".docx"));
-
-            if (!ExtractFile.Exists)
-                return true;//extract is missing
-
-            if (!ExtractFile.Extension.Equals(".csv"))
-                throw new Exception("Extraction file had extension '" + ExtractFile.Extension + "' (expected .csv)");
-
-            if (!MetadataFile.Exists)
-                return true;
-            
-            //see if there is any other polution in the extract directory
-            FileInfo unexpectedFile = ExtractFile.Directory.EnumerateFiles().FirstOrDefault(f=>
-                !(f.Name.Equals(ExtractFile.Name) || f.Name.Equals(MetadataFile.Name)));
-
-            if(unexpectedFile != null)
-                throw new Exception("Unexpected file found in extract directory " + unexpectedFile.FullName + " (pollution of extract directory is not permitted)");
-
-            DirectoryInfo unexpectedDirectory = ExtractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
-                !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") || d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
-
-            if(unexpectedDirectory != null)
-                throw new Exception("Unexpected directory found in extraction directory " + unexpectedDirectory.FullName + " (pollution of extract directory is not permitted)");
-
-            return false;
-        }
         
-
         private bool SqlOutOfSyncWithDataExportManagerConfiguration()
         {
-
             if (ExtractionResults.SQLExecuted == null)
                 throw new Exception("Cumulative Extraction Results for the extraction in which this dataset was involved in does not have any SQLExecuted recorded for it.");
             
@@ -191,24 +173,6 @@ namespace DataExportLibrary.DataRelease
             return !SqlCurrentConfiguration.Equals(ExtractionResults.SQLExecuted);
         }
         
-        public Releaseability Assesment { get; private set; }
-        public DateTime? DateOfExtraction { get; private set; }
-
-        /// <summary>
-        /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
-        /// </summary>
-        public string SqlExtracted { get; private set; }
-
-        /// <summary>
-        /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
-        /// </summary>
-        public string SqlCurrentConfiguration { get; private set; }
-
-        /// <summary>
-        /// The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made this will be NULL
-        /// </summary>
-        public DirectoryInfo ExtractDirectory { get; private set; }
-
         public override string ToString()
         {
             switch (Assesment)
@@ -217,8 +181,7 @@ namespace DataExportLibrary.DataRelease
                     return Exception.ToString();
                 default:
                     string toReturn = "Dataset:" + DataSet;
-                    if (DateOfExtraction != null)
-                        toReturn += " DateOfExtraction:" + ((DateTime) DateOfExtraction);
+                    toReturn += " DateOfExtraction:" + DateOfExtraction;
                     toReturn += " Status:" + Assesment;
 
                     return toReturn;
@@ -226,11 +189,11 @@ namespace DataExportLibrary.DataRelease
         }
     }
 
-
     public enum Releaseability
     {
+        Undefined = 0,
         ExceptionOccurredWhileEvaluatingReleaseability,
-        NeverBeensuccessfullyExecuted,
+        NeverBeenSuccessfullyExecuted,
         ExtractFilesMissing,
         ExtractionSQLDesynchronisation,
         CohortDesynchronisation,

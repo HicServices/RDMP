@@ -203,14 +203,14 @@ namespace DataExportManager.ProjectUI
                 return;
 
             //the use case is extracting a dataset
-            var useCase = new ExtractionPipelineUseCase();
+            var useCase = new ExtractionPipelineUseCase(_extractionConfiguration.Project);
 
             //the user is DefaultPipeline_ID field of ExtractionConfiguration
             var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),ExtractionConfiguration);
 
             //create the UI for this situation
             var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
-            _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline",DockStyle.Fill,pChooseExtractionPipeline);
+            _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
             _extractionPipelineSelectionUI.CollapseToSingleLineMode();
         }
         
