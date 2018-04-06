@@ -305,7 +305,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 FinaliseExtractability();
             else
             {
-                if (MessageBox.Show("You have not chosen a column to be Patient Id, do you wish to continue?", "Confirm", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                if (MessageBox.Show("You have not chosen a column to be IsExtractionIdentifier, do you wish to continue?", "Confirm", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                     return;
             }
 
