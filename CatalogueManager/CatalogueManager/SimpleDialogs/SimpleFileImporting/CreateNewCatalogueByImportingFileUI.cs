@@ -414,32 +414,21 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void ForwardEngineer(DiscoveredTable targetTableName)
         {
-            var importer = new TableInfoImporter(_activator.RepositoryLocator.CatalogueRepository, targetTableName);
-            TableInfo table;
-            ColumnInfo[] cols;
-            importer.DoImport(out table,out cols);
+            var extractionPicker = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_activator.RepositoryLocator.CatalogueRepository, targetTableName));
+            extractionPicker.ShowDialog();
 
-            var extractionPicker = new ConfigureCatalogueExtractabilityUI();
-            extractionPicker.SetUp(cols);
-            SingleControlForm.ShowDialog(extractionPicker,true);
-
-            var forwardEngineer = new ForwardEngineerCatalogue(table, cols, extractionPicker.MakeAllColumnsExtractable);
-            Catalogue catalogue;
-            CatalogueItem[] cis;
-            ExtractionInformation[] eis;
-
-            forwardEngineer.ExecuteForwardEngineering(out catalogue,out cis,out eis);
+            var catalogue = extractionPicker.CatalogueCreatedIfAny;
+            if (catalogue != null)
+            {
+                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(catalogue));
             
-            extractionPicker.MarkExtractionIdentifier(_activator,eis);
+                MessageBox.Show("Successfully imported new Dataset '" + catalogue + "'." +
+                                "\r\n" +
+                                "The edit functionality will now open.");
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(catalogue));
-            
-            MessageBox.Show("Successfully imported new Dataset '" + catalogue + "'." +
-                            "\r\n" +
-                            "The edit functionality will now open.");
-
-            _activator.WindowArranger.SetupEditCatalogue(this, catalogue);
-
+                _activator.WindowArranger.SetupEditCatalogue(this, catalogue);
+                
+            }
             if (cbAutoClose.Checked)
                 this.Close();
             else

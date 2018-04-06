@@ -36,14 +36,14 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     public partial class ImportSQLTable : Form
     {
         private readonly IActivateItems _activator;
-        private readonly bool _autoCreateCatalogue;
+        private readonly bool _allowImportAsCatalogue;
         public ITableInfoImporter Importer { get; private set; }
         public TableInfo TableInfoCreatedIfAny { get; private set; }
 
-        public ImportSQLTable(IActivateItems activator,bool autoCreateCatalogue)
+        public ImportSQLTable(IActivateItems activator,bool allowImportAsCatalogue)
         {
             _activator = activator;
-            _autoCreateCatalogue = autoCreateCatalogue;
+            _allowImportAsCatalogue = allowImportAsCatalogue;
             InitializeComponent();
 
             serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = true;
@@ -106,44 +106,37 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            TableInfo parent;
-            ColumnInfo[] newCols;
+
+            if(_allowImportAsCatalogue)
+            {
+                var ui = new ConfigureCatalogueExtractabilityUI(_activator, Importer);
+                ui.ShowDialog();
+                TableInfoCreatedIfAny = ui.TableInfoCreated;
+            }
+            else
+            {
+                // logic to add credentials 
+                    // parent.SetCredentials(); 
+                TableInfo ti;
+                ColumnInfo[] cols;
+                Importer.DoImport(out ti,out cols);
+                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(ti));
+                TableInfoCreatedIfAny = ti;
+            }
+
             try
             {
-                Importer.DoImport(out parent, out newCols);
                 DialogResult = DialogResult.OK;
 
-                TableInfoCreatedIfAny = parent;
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(parent));
+                var ti = TableInfoCreatedIfAny;
 
-
-                if (_autoCreateCatalogue)
+                if(ti.IsTableValuedFunction && ti.GetAllParameters().Any())
                 {
-                    ForwardEngineerCatalogue engineer = new ForwardEngineerCatalogue(parent,newCols.ToArray(),true);
-                    Catalogue catalogue;
-                    CatalogueItem[] cis;
-                    ExtractionInformation[] eis;
-                    engineer.ExecuteForwardEngineering(out catalogue,out cis,out eis);
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(catalogue));
-                }
-                else
-                {
-                    // logic to add credentials 
-                    // parent.SetCredentials(); 
-                    ForwardEngineerCatalogueUI f = new ForwardEngineerCatalogueUI(_activator,parent, newCols.ToArray());
-                    f.ShowDialog();
-
-                    if(f.CatalogueCreatedIfAny != null)
-                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(f.CatalogueCreatedIfAny));
-                }
-
-                if(parent.IsTableValuedFunction && parent.GetAllParameters().Any())
-                {
-                    var options = new ParameterCollectionUIOptionsFactory().Create(parent);
+                    var options = new ParameterCollectionUIOptionsFactory().Create(ti);
                     ParameterCollectionUI.ShowAsDialog(options,true);
                 }
 
-                MessageBox.Show("Successfully imported table '" + parent + "'");
+                MessageBox.Show("Successfully imported table '" + ti + "'");
                 Close();
             }
             catch (SqlException exception)

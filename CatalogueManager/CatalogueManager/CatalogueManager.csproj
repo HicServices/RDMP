@@ -498,6 +498,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
@@ -1107,7 +1108,7 @@
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.Designer.cs">
       <DependentUpon>ConfigureCatalogueExtractabilityUI.cs</DependentUpon>
@@ -1226,12 +1227,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.Designer.cs">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\ForwardEngineering\ForwardEngineerCatalogueUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\ForwardEngineering\ForwardEngineerCatalogueUI.Designer.cs">
-      <DependentUpon>ForwardEngineerCatalogueUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\ImportCloneOfCatalogueItem.cs">
       <SubType>Form</SubType>
@@ -1932,9 +1927,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.resx">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ForwardEngineering\ForwardEngineerCatalogueUI.resx">
-      <DependentUpon>ForwardEngineerCatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\ImportCloneOfCatalogueItem.resx">
       <DependentUpon>ImportCloneOfCatalogueItem.cs</DependentUpon>

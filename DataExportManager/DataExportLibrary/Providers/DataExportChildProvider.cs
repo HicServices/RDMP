@@ -88,8 +88,11 @@ namespace DataExportLibrary.Providers
                     c.InjectKnownCatalogueItemAndColumnInfo(null,null);
                 else
                 {
-                    var extractionInformation = AllExtractionInformationsDictionary[c.CatalogueExtractionInformation_ID.Value];
-                    c.InjectKnownCatalogueItemAndColumnInfo(extractionInformation.CatalogueItem, extractionInformation.ColumnInfo);
+                    if(AllExtractionInformationsDictionary.ContainsKey(c.CatalogueExtractionInformation_ID.Value))
+                    {
+                        var extractionInformation = AllExtractionInformationsDictionary[c.CatalogueExtractionInformation_ID.Value];
+                        c.InjectKnownCatalogueItemAndColumnInfo(extractionInformation.CatalogueItem, extractionInformation.ColumnInfo);
+                    }
                 }
 
                 if(!ExtractionConfigurationToExtractableColumnsDictionary.ContainsKey(c.ExtractionConfiguration_ID))
