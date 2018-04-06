@@ -34,10 +34,6 @@
             this.olvExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExtractable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.ddExtractionIdentifier = new System.Windows.Forms.ComboBox();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.ddCategoriseMany = new System.Windows.Forms.ComboBox();
@@ -48,14 +44,12 @@
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.gbMarkAllExtractable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
-            this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbMarkAllExtractable
             // 
             this.gbMarkAllExtractable.Controls.Add(this.olvColumnExtractability);
-            this.gbMarkAllExtractable.Controls.Add(this.panel1);
             this.gbMarkAllExtractable.Controls.Add(this.panel2);
             this.gbMarkAllExtractable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbMarkAllExtractable.Location = new System.Drawing.Point(0, 0);
@@ -81,11 +75,11 @@
             this.olvIsExtractionIdentifier});
             this.olvColumnExtractability.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvColumnExtractability.FullRowSelect = true;
-            this.olvColumnExtractability.Location = new System.Drawing.Point(3, 46);
+            this.olvColumnExtractability.Location = new System.Drawing.Point(3, 19);
             this.olvColumnExtractability.Name = "olvColumnExtractability";
             this.olvColumnExtractability.RowHeight = 19;
             this.olvColumnExtractability.ShowGroups = false;
-            this.olvColumnExtractability.Size = new System.Drawing.Size(702, 415);
+            this.olvColumnExtractability.Size = new System.Drawing.Size(702, 442);
             this.olvColumnExtractability.TabIndex = 7;
             this.olvColumnExtractability.UseCompatibleStateImageBehavior = false;
             this.olvColumnExtractability.UseFiltering = true;
@@ -112,49 +106,6 @@
             // 
             this.olvIsExtractionIdentifier.Text = "Is Patient Id";
             this.olvIsExtractionIdentifier.Width = 106;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.ddExtractionIdentifier);
-            this.panel1.Controls.Add(this.btnClear);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(3, 16);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(702, 29);
-            this.panel1.TabIndex = 6;
-            // 
-            // ddExtractionIdentifier
-            // 
-            this.ddExtractionIdentifier.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddExtractionIdentifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddExtractionIdentifier.Enabled = false;
-            this.ddExtractionIdentifier.FormattingEnabled = true;
-            this.ddExtractionIdentifier.Location = new System.Drawing.Point(274, 3);
-            this.ddExtractionIdentifier.Name = "ddExtractionIdentifier";
-            this.ddExtractionIdentifier.Size = new System.Drawing.Size(382, 21);
-            this.ddExtractionIdentifier.TabIndex = 2;
-            // 
-            // btnClear
-            // 
-            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClear.Location = new System.Drawing.Point(662, 2);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(40, 23);
-            this.btnClear.TabIndex = 3;
-            this.btnClear.Text = "Clear";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(170, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Extraction Identifier:";
             // 
             // panel2
             // 
@@ -248,8 +199,6 @@
             this.Size = new System.Drawing.Size(708, 674);
             this.gbMarkAllExtractable.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.ResumeLayout(false);
@@ -259,13 +208,9 @@
         #endregion
 
         private System.Windows.Forms.GroupBox gbMarkAllExtractable;
-        private System.Windows.Forms.ComboBox ddExtractionIdentifier;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tbFilter;
-        private System.Windows.Forms.Panel panel1;
         private BrightIdeasSoftware.ObjectListView olvColumnExtractability;
         private BrightIdeasSoftware.OLVColumn olvColumnInfoName;
         private BrightIdeasSoftware.OLVColumn olvExtractionCategory;

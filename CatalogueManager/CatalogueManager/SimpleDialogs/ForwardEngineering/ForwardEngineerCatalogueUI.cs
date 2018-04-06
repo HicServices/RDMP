@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using ReusableUIComponents;
 
@@ -138,12 +139,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             {
                 ExceptionViewer.Show("Could not set folder for new Catalogue (proceeding anyway, it will be left in the root)", exception);
             }
-
-            //if user wants to mark one of them as the extraction identifier (e.g. CHI)
-            var columnUserWantsToBeExtractionIdentifier = configureCatalogueExtractabilityUI1.ExtractionIdentifier;
-
-            if (columnUserWantsToBeExtractionIdentifier != null)
-                this.configureCatalogueExtractabilityUI1.MarkExtractionIdentifier(_activator, extractionInformations);
 
             this.Close();
         }

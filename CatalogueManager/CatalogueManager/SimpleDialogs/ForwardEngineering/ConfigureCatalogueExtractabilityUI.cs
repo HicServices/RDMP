@@ -7,11 +7,13 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode;
+using ReusableUIComponents;
 
 namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 {
@@ -21,20 +23,25 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// </summary>
     public partial class ConfigureCatalogueExtractabilityUI : UserControl
     {
-        public ColumnInfo ExtractionIdentifier { get { return ddExtractionIdentifier.SelectedItem as ColumnInfo; } }
         private readonly object[] _extractionCategories;
 
         private readonly Dictionary<CatalogueItem, object> _extractabilityDictionary = new Dictionary<CatalogueItem, object>();
-        
+        private IActivateItems _activator;
+
+        private string NotExtractable = "Not Extractable";
+
         public ConfigureCatalogueExtractabilityUI()
         {
             InitializeComponent();
 
             _extractionCategories = new object[]
             {
-                ExtractionCategory.Core, ExtractionCategory.Supplemental,
+                NotExtractable,
+                ExtractionCategory.Core,
+                ExtractionCategory.Supplemental,
                 ExtractionCategory.SpecialApprovalRequired,
-                ExtractionCategory.Internal, ExtractionCategory.Deprecated
+                ExtractionCategory.Internal,
+                ExtractionCategory.Deprecated
             };
             ddCategoriseMany.Items.AddRange(_extractionCategories);
 
@@ -66,14 +73,23 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             MakeExtractable(olvColumnExtractability.GetItem(itemCheckedEventArgs.Item.Index).RowObject, itemCheckedEventArgs.Item.Checked);
         }
 
-        private void MakeExtractable(object o, bool shouldBeExtractable)
+        private void MakeExtractable(object o, bool shouldBeExtractable, ExtractionCategory? category = null)
         {
             var ei = o as ExtractionInformation;
             
 
             if(ei != null)
+            {
                 if(shouldBeExtractable)
+                {
+                    //if they want to change the extraction category
+                    if(category.HasValue && ei.ExtractionCategory != category.Value)
+                    {
+                        ei.ExtractionCategory = category.Value;
+                        ei.SaveToDatabase();
+                    }
                     return;
+                }
                 else
                 {
                     //find underlying column info
@@ -88,6 +104,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     olvColumnExtractability.AddObject(columnInfo);
                     olvColumnExtractability.UncheckObject(columnInfo);
                 }
+            }
 
             //if the model object is a column info
             var colinfo = o as ColumnInfo;
@@ -100,6 +117,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
                     //make it extractable
                     var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) colinfo.Repository, catalogueItem, colinfo,colinfo.Name);
+
+                    if (category.HasValue)
+                    {
+                        newExtractionInformation.ExtractionCategory = category.Value;
+                        newExtractionInformation.SaveToDatabase();
+                    }
 
                     _extractabilityDictionary[catalogueItem] = newExtractionInformation;
 
@@ -166,11 +189,11 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         
         public void SetUp(CatalogueItem[] catalogueItems, ColumnInfo[] columnInfos, IActivateItems activator)
         {
+            _activator = activator;
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in catalogueItems)
                 _extractabilityDictionary.Add(ci, columnInfos.Single(col => ci.ColumnInfo_ID == col.ID));
 
-            ddExtractionIdentifier.Items.AddRange(_extractabilityDictionary.Values.ToArray());
             gbMarkAllExtractable.Enabled = true;
 
             olvColumnInfoName.ImageGetter = (o)=> activator.CoreIconProvider.GetImage(o);
@@ -182,35 +205,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             olvColumnExtractability.CheckBoxes = true;
         }
 
-        public void MarkExtractionIdentifier(IActivateItems activator ,ExtractionInformation[] eis)
-        {
-            if (ExtractionIdentifier != null)
-            {
-                //make the ExtractionInformation associated with the ColumnInfo an IsExtractionIdentifier
-                var identifier = eis.Single(e => e.ColumnInfo.Equals(ExtractionIdentifier));
-                identifier.IsExtractionIdentifier = true;
-                identifier.SaveToDatabase();
-
-                //and make the Catalogue an ExtractableDataSet
-                var cata = identifier.CatalogueItem.Catalogue;
-
-                if (activator.RepositoryLocator.DataExportRepository != null)
-                {
-                    //make sure catalogue is not already extractable
-                    if (!activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(cata).Any())
-                    {
-                        var ds = new ExtractableDataSet(activator.RepositoryLocator.DataExportRepository, cata);
-                        activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(ds));
-                    }
-                }
-            }
-        }
-
-        private void btnClear_Click(object sender, System.EventArgs e)
-        {
-            ddExtractionIdentifier.SelectedItem = null;
-        }
-
+      
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
             olvColumnExtractability.UseFiltering = true;
@@ -261,12 +256,32 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void ddCategoriseMany_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var filteredColumnInfos = olvColumnExtractability.FilteredObjects.OfType<ColumnInfo>();
-            foreach (var filteredColumnInfo in filteredColumnInfos)
+            var filteredObjects = olvColumnExtractability.FilteredObjects.Cast<object>().ToArray();
+            object toChangeTo = ddCategoriseMany.SelectedItem;
+            
+            if (MessageBox.Show("Set " + filteredObjects.Length + " to '" + toChangeTo + "'?",
+                    "Confirm Overwrite?", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                //if (ColumnExtractionCategories.ContainsKey(filteredColumnInfo))
-                  //  ColumnExtractionCategories[filteredColumnInfo] = (ExtractionCategory) ddCategoriseMany.SelectedItem;
-                //todo else make it obvious Category can't be set without being checked as extractable
+
+                foreach (object o in filteredObjects)
+                {
+                    if (toChangeTo.Equals(NotExtractable))
+                        MakeExtractable(o, false);
+                    else
+                        MakeExtractable(o, true, (ExtractionCategory) toChangeTo);
+                }
+            }
+
+        }
+
+        public void FinaliseExtractability()
+        {
+            var ei = _extractabilityDictionary.Values.OfType<ExtractionInformation>().FirstOrDefault();
+
+            if (ei != null)
+            {
+                var cmd = new ExecuteCommandChangeExtractability(_activator, ei.CatalogueItem.Catalogue, true);
+                cmd.Execute();
             }
         }
     }

@@ -31,6 +31,7 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandAddNewAggregateGraph(_activator, catalogue), Keys.None, addItem);
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null), Keys.None, addItem);
             Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue), Keys.None, addItem);
+            Add(new ExecuteCommandChangeExtractability(_activator, catalogue));
 
             Items.Add(addItem);
 

@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
-namespace DataExportManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandChangeExtractability:BasicUICommandExecution,IAtomicCommand
     {
         private readonly Catalogue _catalogue;
         private bool _isExtractable;
+
+        public ExecuteCommandChangeExtractability(IActivateItems activator, Catalogue catalogue,bool setExplictExtractability):this(activator,catalogue)
+        {
+            _isExtractable = setExplictExtractability;
+        }
 
         public ExecuteCommandChangeExtractability(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
@@ -31,7 +30,6 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             }
 
             _isExtractable = catalogue.GetIsExtractable();
-
         }
 
         public override string GetCommandName()

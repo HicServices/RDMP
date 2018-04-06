@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.PluginChildProvision;
@@ -27,14 +28,6 @@ namespace DataExportManager.CommandExecution
         
         public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
-            var cata = o as Catalogue;
-            
-
-            if (cata != null)
-                return GetMenuArray(
-                    new ExecuteCommandChangeExtractability(ItemActivator, cata)
-                    );
-
             return null;
         }
     }

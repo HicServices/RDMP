@@ -430,6 +430,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
             extractionPicker.SetUp(cis,cols, _activator);
             SingleControlForm.ShowDialog(extractionPicker, true);
+            extractionPicker.FinaliseExtractability();
 
             _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(catalogue));
             
