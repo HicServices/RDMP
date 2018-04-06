@@ -29,56 +29,30 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureCatalogueExtractabilityUI));
-            this.gbMarkAllExtractable = new System.Windows.Forms.GroupBox();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.olvColumnExtractability = new BrightIdeasSoftware.ObjectListView();
             this.olvColumnInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvExtractable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.panel2 = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnAddToExisting = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.ddCategoriseMany = new System.Windows.Forms.ComboBox();
-            this.btnClearFilterMany = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lbPastedColumns = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.gbMarkAllExtractable.SuspendLayout();
+            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.pChangeAll = new System.Windows.Forms.Panel();
+            this.pFilter = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
-            this.panel2.SuspendLayout();
+            this.pChangeAll.SuspendLayout();
+            this.pFilter.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // gbMarkAllExtractable
-            // 
-            this.gbMarkAllExtractable.Controls.Add(this.helpIcon1);
-            this.gbMarkAllExtractable.Controls.Add(this.olvColumnExtractability);
-            this.gbMarkAllExtractable.Controls.Add(this.panel2);
-            this.gbMarkAllExtractable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbMarkAllExtractable.Location = new System.Drawing.Point(0, 0);
-            this.gbMarkAllExtractable.Name = "gbMarkAllExtractable";
-            this.gbMarkAllExtractable.Size = new System.Drawing.Size(767, 622);
-            this.gbMarkAllExtractable.TabIndex = 7;
-            this.gbMarkAllExtractable.TabStop = false;
-            this.gbMarkAllExtractable.Text = "Extractability";
-            // 
-            // helpIcon1
-            // 
-            this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
-            this.helpIcon1.Location = new System.Drawing.Point(742, 13);
-            this.helpIcon1.Name = "helpIcon1";
-            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
-            this.helpIcon1.TabIndex = 8;
             // 
             // olvColumnExtractability
             // 
             this.olvColumnExtractability.AllColumns.Add(this.olvColumnInfoName);
             this.olvColumnExtractability.AllColumns.Add(this.olvExtractionCategory);
-            this.olvColumnExtractability.AllColumns.Add(this.olvExtractable);
             this.olvColumnExtractability.AllColumns.Add(this.olvIsExtractionIdentifier);
             this.olvColumnExtractability.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -90,11 +64,11 @@
             this.olvIsExtractionIdentifier});
             this.olvColumnExtractability.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvColumnExtractability.FullRowSelect = true;
-            this.olvColumnExtractability.Location = new System.Drawing.Point(3, 38);
+            this.olvColumnExtractability.Location = new System.Drawing.Point(6, 28);
             this.olvColumnExtractability.Name = "olvColumnExtractability";
             this.olvColumnExtractability.RowHeight = 19;
             this.olvColumnExtractability.ShowGroups = false;
-            this.olvColumnExtractability.Size = new System.Drawing.Size(761, 371);
+            this.olvColumnExtractability.Size = new System.Drawing.Size(751, 530);
             this.olvColumnExtractability.TabIndex = 7;
             this.olvColumnExtractability.UseCompatibleStateImageBehavior = false;
             this.olvColumnExtractability.UseFiltering = true;
@@ -105,44 +79,23 @@
             this.olvColumnInfoName.AspectName = "ToString";
             this.olvColumnInfoName.FillsFreeSpace = true;
             this.olvColumnInfoName.Groupable = false;
-            this.olvColumnInfoName.Text = "Column Name";
+            this.olvColumnInfoName.Text = "Name";
             // 
             // olvExtractionCategory
             // 
-            this.olvExtractionCategory.Groupable = false;
-            this.olvExtractionCategory.Text = "Catgeory";
-            // 
-            // olvExtractable
-            // 
-            this.olvExtractable.DisplayIndex = 2;
-            this.olvExtractable.IsVisible = false;
+            this.olvExtractionCategory.Text = "Is Extractable";
+            this.olvExtractionCategory.Width = 100;
             // 
             // olvIsExtractionIdentifier
             // 
-            this.olvIsExtractionIdentifier.Text = "Is Patient Id";
+            this.olvIsExtractionIdentifier.CheckBoxes = true;
+            this.olvIsExtractionIdentifier.Text = "IsExtractionIdentifier";
             this.olvIsExtractionIdentifier.Width = 106;
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.btnCancel);
-            this.panel2.Controls.Add(this.btnAddToExisting);
-            this.panel2.Controls.Add(this.btnOk);
-            this.panel2.Controls.Add(this.label3);
-            this.panel2.Controls.Add(this.ddCategoriseMany);
-            this.panel2.Controls.Add(this.btnClearFilterMany);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.lbPastedColumns);
-            this.panel2.Controls.Add(this.label6);
-            this.panel2.Controls.Add(this.tbFilter);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(3, 412);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(761, 207);
-            this.panel2.TabIndex = 5;
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(214, 175);
+            this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnCancel.Location = new System.Drawing.Point(269, 597);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(207, 23);
             this.btnCancel.TabIndex = 7;
@@ -152,7 +105,8 @@
             // 
             // btnAddToExisting
             // 
-            this.btnAddToExisting.Location = new System.Drawing.Point(427, 175);
+            this.btnAddToExisting.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnAddToExisting.Location = new System.Drawing.Point(482, 597);
             this.btnAddToExisting.Name = "btnAddToExisting";
             this.btnAddToExisting.Size = new System.Drawing.Size(161, 23);
             this.btnAddToExisting.TabIndex = 7;
@@ -162,7 +116,8 @@
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(89, 175);
+            this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnOk.Location = new System.Drawing.Point(144, 597);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(119, 23);
             this.btnOk.TabIndex = 7;
@@ -174,59 +129,27 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(490, 9);
+            this.label3.Location = new System.Drawing.Point(4, 6);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 13);
+            this.label3.Size = new System.Drawing.Size(40, 13);
             this.label3.TabIndex = 6;
-            this.label3.Text = "Set Category for all:";
+            this.label3.Text = "Set All:";
             // 
             // ddCategoriseMany
             // 
             this.ddCategoriseMany.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ddCategoriseMany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddCategoriseMany.FormattingEnabled = true;
-            this.ddCategoriseMany.Location = new System.Drawing.Point(596, 6);
+            this.ddCategoriseMany.Location = new System.Drawing.Point(50, 3);
             this.ddCategoriseMany.Name = "ddCategoriseMany";
-            this.ddCategoriseMany.Size = new System.Drawing.Size(151, 21);
+            this.ddCategoriseMany.Size = new System.Drawing.Size(207, 21);
             this.ddCategoriseMany.TabIndex = 5;
             this.ddCategoriseMany.SelectedIndexChanged += new System.EventHandler(this.ddCategoriseMany_SelectedIndexChanged);
-            // 
-            // btnClearFilterMany
-            // 
-            this.btnClearFilterMany.Enabled = false;
-            this.btnClearFilterMany.Location = new System.Drawing.Point(37, 57);
-            this.btnClearFilterMany.Name = "btnClearFilterMany";
-            this.btnClearFilterMany.Size = new System.Drawing.Size(75, 23);
-            this.btnClearFilterMany.TabIndex = 4;
-            this.btnClearFilterMany.Text = "Clear";
-            this.btnClearFilterMany.UseVisualStyleBackColor = true;
-            this.btnClearFilterMany.Click += new System.EventHandler(this.btnClearFilterMany_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 29);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(106, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Filter many (paste in):";
-            // 
-            // lbPastedColumns
-            // 
-            this.lbPastedColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbPastedColumns.FormattingEnabled = true;
-            this.lbPastedColumns.Location = new System.Drawing.Point(118, 29);
-            this.lbPastedColumns.Name = "lbPastedColumns";
-            this.lbPastedColumns.Size = new System.Drawing.Size(369, 134);
-            this.lbPastedColumns.TabIndex = 2;
-            this.lbPastedColumns.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbPastedColumns_KeyUp);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 6);
+            this.label6.Location = new System.Drawing.Point(3, 6);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(32, 13);
             this.label6.TabIndex = 1;
@@ -236,43 +159,85 @@
             // 
             this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(118, 3);
+            this.tbFilter.Location = new System.Drawing.Point(41, 3);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(369, 20);
+            this.tbFilter.Size = new System.Drawing.Size(441, 20);
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
+            // helpIcon1
+            // 
+            this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.Location = new System.Drawing.Point(201, 3);
+            this.helpIcon1.Name = "helpIcon1";
+            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.TabIndex = 8;
+            // 
+            // pChangeAll
+            // 
+            this.pChangeAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pChangeAll.Controls.Add(this.ddCategoriseMany);
+            this.pChangeAll.Controls.Add(this.label3);
+            this.pChangeAll.Location = new System.Drawing.Point(497, 564);
+            this.pChangeAll.Name = "pChangeAll";
+            this.pChangeAll.Size = new System.Drawing.Size(260, 26);
+            this.pChangeAll.TabIndex = 8;
+            // 
+            // pFilter
+            // 
+            this.pFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pFilter.Controls.Add(this.label6);
+            this.pFilter.Controls.Add(this.tbFilter);
+            this.pFilter.Location = new System.Drawing.Point(6, 564);
+            this.pFilter.Name = "pFilter";
+            this.pFilter.Size = new System.Drawing.Size(485, 27);
+            this.pFilter.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(189, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Choose which columns are extractable";
             // 
             // ConfigureCatalogueExtractabilityUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(767, 622);
-            this.Controls.Add(this.gbMarkAllExtractable);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.pChangeAll);
+            this.Controls.Add(this.btnAddToExisting);
+            this.Controls.Add(this.helpIcon1);
+            this.Controls.Add(this.btnOk);
+            this.Controls.Add(this.pFilter);
+            this.Controls.Add(this.olvColumnExtractability);
             this.Name = "ConfigureCatalogueExtractabilityUI";
             this.Text = "ConfigureCatalogueExtractabilityUI";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfigureCatalogueExtractabilityUI_FormClosing);
             this.Load += new System.EventHandler(this.ConfigureCatalogueExtractabilityUI_Load);
-            this.gbMarkAllExtractable.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).EndInit();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.pChangeAll.ResumeLayout(false);
+            this.pChangeAll.PerformLayout();
+            this.pFilter.ResumeLayout(false);
+            this.pFilter.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox gbMarkAllExtractable;
-        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tbFilter;
         private BrightIdeasSoftware.ObjectListView olvColumnExtractability;
         private BrightIdeasSoftware.OLVColumn olvColumnInfoName;
         private BrightIdeasSoftware.OLVColumn olvExtractionCategory;
-        private BrightIdeasSoftware.OLVColumn olvExtractable;
-        private System.Windows.Forms.ListBox lbPastedColumns;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnClearFilterMany;
         private System.Windows.Forms.ComboBox ddCategoriseMany;
         private System.Windows.Forms.Label label3;
         private BrightIdeasSoftware.OLVColumn olvIsExtractionIdentifier;
@@ -280,5 +245,8 @@
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnAddToExisting;
         private ReusableUIComponents.HelpIcon helpIcon1;
+        private System.Windows.Forms.Panel pChangeAll;
+        private System.Windows.Forms.Panel pFilter;
+        private System.Windows.Forms.Label label1;
     }
 }

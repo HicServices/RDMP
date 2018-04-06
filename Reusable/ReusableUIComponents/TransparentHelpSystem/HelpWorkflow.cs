@@ -19,7 +19,7 @@ namespace ReusableUIComponents.TransparentHelpSystem
 
         private TransparentHelpForm _help;
         private bool _helpClosed;
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource;
         public HelpStage RootStage { get; set; }
         public HelpStage CurrentStage { get; set; }
         
@@ -46,6 +46,8 @@ namespace ReusableUIComponents.TransparentHelpSystem
             if(!force && !ProgressProvider.ShouldShowUserWorkflow(this))
                 return;
             
+             _cancellationTokenSource = new CancellationTokenSource();
+
             _help = new TransparentHelpForm(HostControl);
             _help.ShowWithoutActivate();
             _helpClosed = false;
