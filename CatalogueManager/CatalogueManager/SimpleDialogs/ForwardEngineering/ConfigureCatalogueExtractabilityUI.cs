@@ -184,14 +184,24 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void TlvColumnExtractabilityOnCellEditFinishing(object sender, CellEditEventArgs cellEditEventArgs)
         {
+            var ei = cellEditEventArgs.RowObject as ExtractionInformation;
             if (cellEditEventArgs.Column == olvExtractionCategory)
             {
                 var cbx = (ComboBox) cellEditEventArgs.Control;
-                var ei = cellEditEventArgs.RowObject as ExtractionInformation;
                 if(ei == null)
                     return;
 
                 ei.ExtractionCategory = (ExtractionCategory) cbx.SelectedItem;
+                ei.SaveToDatabase();
+            }
+
+            if (cellEditEventArgs.Column == olvIsExtractionIdentifier)
+            {
+                var checkbox = (CheckBox) cellEditEventArgs.Control;
+                if (ei == null)
+                    return;
+
+                ei.IsExtractionIdentifier = checkbox.Checked;
                 ei.SaveToDatabase();
             }
         }
@@ -219,6 +229,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 var ei = (ExtractionInformation) cellEditEventArgs.RowObject;
                 cbx.SelectedItem = ei.ExtractionCategory;
                 cellEditEventArgs.Control = cbx;
+            }
+
+            if (cellEditEventArgs.Column == olvIsExtractionIdentifier)
+            {
+                if (cellEditEventArgs.RowObject is ColumnInfo)
+                    cellEditEventArgs.Cancel = true;
             }
         }
         
@@ -293,15 +309,9 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void FinaliseExtractability()
         {
-            _choicesFinalised = true;
-            var ei = _extractabilityDictionary.Values.OfType<ExtractionInformation>().FirstOrDefault(c=>c.IsExtractionIdentifier);
-
-            if (ei != null)
-            {
-                var cmd = new ExecuteCommandChangeExtractability(_activator, _catalogue, true);
-                if(!cmd.IsImpossible)
-                    cmd.Execute();
-            }
+            var cmd = new ExecuteCommandChangeExtractability(_activator, _catalogue, true);
+            if(!cmd.IsImpossible)
+                cmd.Execute();
         }
 
         private void btnAddToExisting_Click(object sender, EventArgs e)
@@ -340,7 +350,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -350,8 +360,16 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 MessageBox.Show("You have not marked any columns as extractable, try selecting an ExtractionCategory for your columns");
                 return;
             }
-            
-            FinaliseExtractability();
+
+            if (_extractabilityDictionary.Values.OfType<ExtractionInformation>().Any(c => c.IsExtractionIdentifier))
+                FinaliseExtractability();
+            else
+            {
+                if (MessageBox.Show("You have not chosen a column to be Patient Id, do you wish to continue?", "Confirm", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                    return;
+            }
+
+            _choicesFinalised = true;
             DialogResult = DialogResult.OK;
             Close();
         }
