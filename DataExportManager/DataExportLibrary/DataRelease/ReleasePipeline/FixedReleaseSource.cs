@@ -12,7 +12,6 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Ticketing;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
