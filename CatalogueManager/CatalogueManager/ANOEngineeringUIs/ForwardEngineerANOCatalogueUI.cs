@@ -578,6 +578,13 @@ namespace CatalogueManager.ANOEngineeringUIs
                     var json = File.ReadAllText(fi.FullName);
                     _planManager = (ForwardEngineerANOCataloguePlanManager)
                         JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), _activator.RepositoryLocator);
+
+                    if (_planManager.StartDate != null)
+                        tbStartDate.Text = _planManager.StartDate.Value.ToString();
+
+                    cbDateBasedLoad.Checked = _planManager.DateColumn != null;
+                    ddDateColumn.SelectedItem = _planManager.DateColumn;
+
                 }
             }
             catch (Exception exception)
