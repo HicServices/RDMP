@@ -120,6 +120,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     {
                         ei.ExtractionCategory = category.Value;
                         ei.SaveToDatabase();
+                        olvColumnExtractability.RefreshObject(ei);
                     }
                     return;
                 }
@@ -304,21 +305,36 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void btnAddToExisting_Click(object sender, EventArgs e)
         {
-            if (
-                MessageBox.Show(
-                    "This cancel Catalogue creation and instead add the extractable columns to an existing Catalogue instead.  Only use this feature if it is possible to join the imported table to the Catalogue you choose via primary key / foreign key relationship",
-                    "Add to existing", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            var eis = _extractabilityDictionary.Values.OfType<ExtractionInformation>().ToArray();
+
+            if (!eis.Any())
             {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.CoreChildProvider.AllCatalogues, false, false);
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    AddToExistingCatalogue((Catalogue)dialog.Selected);
+                MessageBox.Show("You must set at least one column to extractable before you can add them to another Catalogue");
+                return;
             }
+            
+
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.CoreChildProvider.AllCatalogues, false, false);
+                if (dialog.ShowDialog() == DialogResult.OK)
+
+                    if (MessageBox.Show("This will add " + eis.Length + " new columns to " + dialog.Selected + ". Are you sure this is what you want?","Add to existing", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        AddToExistingCatalogue((Catalogue) dialog.Selected,eis);
         }
 
-        private void AddToExistingCatalogue(Catalogue addToInstead)
+        private void AddToExistingCatalogue(Catalogue addToInstead, ExtractionInformation[] eis)
         {
+            //move all the CatalogueItems to the other Catalogue instead
+            foreach (ExtractionInformation ei in eis)
+            {
+                var ci = ei.CatalogueItem;
+                ci.Catalogue_ID = addToInstead.ID;
+                ci.SaveToDatabase();
+            }
+            
             _choicesFinalised = true;
-            throw new NotImplementedException();
+            _catalogue.DeleteInDatabase();
+            _catalogue = null;
+            Close();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -328,17 +344,25 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void btnOk_Click(object sender, EventArgs e)
         {
+            if (!_extractabilityDictionary.Values.OfType<ExtractionInformation>().Any())
+            {
+                MessageBox.Show("You have not marked any columns as extractable, try selecting an ExtractionCategory for your columns");
+                return;
+            }
+            
             FinaliseExtractability();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void ConfigureCatalogueExtractabilityUI_FormClosing(object sender, FormClosingEventArgs e)
         {
             if(!_choicesFinalised)
             {
-                if (MessageBox.Show("This will CANCEL all changes you have made and result in no Catalogue being created (TableInfos will still exist)",
-                    "Confirm Cancellation", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                if (MessageBox.Show("Your data table will still exist but no Catalogue will be created",
+                    "Confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-
+                    DialogResult = DialogResult.Cancel;
                     _catalogue.DeleteInDatabase();
                     _catalogue = null;
                 }
