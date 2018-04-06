@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime;
 using DataExportLibrary.Data.DataTables;
+using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime
 {
@@ -107,6 +110,61 @@ namespace DataExportLibrary.ExtractionTime
         public DirectoryInfo GetDirectoryForOtherData()
         {
             return extractionDirectory.CreateSubdirectory(OtherDataFolderName);
+        }
+
+        public static void CleanupExtractionDirectory(object sender, string extractionDirectory, IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)
+        {
+            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionSubFolderName));
+            var directoriesToDelete = new List<DirectoryInfo>();
+            var filesToDelete = new List<FileInfo>();
+
+            foreach (var extractionConfiguration in configurations)
+            {
+                var config = extractionConfiguration;
+                var directoryInfos = projectExtractionDirectory.GetDirectories().Where(d => IsOwnerOf(config, d));
+
+                foreach (DirectoryInfo toCleanup in directoryInfos)
+                    AddDirectoryToCleanupList(toCleanup, true, directoriesToDelete, filesToDelete);
+            }
+
+            foreach (var fileInfo in filesToDelete)
+            {
+                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information, "Deleting: " + fileInfo.FullName));
+                try
+                {
+                    fileInfo.Delete();
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + fileInfo.FullName, e));
+                }
+            }
+
+            foreach (var directoryInfo in directoriesToDelete)
+            {
+                listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information, "Recursively deleting folder: " + directoryInfo.FullName));
+                try
+                {
+                    directoryInfo.Delete(true);
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + directoryInfo.FullName, e));
+                }
+            }
+        }
+
+        private static void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot, List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
+        {
+            //only add root folders to the delete queue
+            if (isRoot)
+                if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //dont add the same folder twice
+                    directoriesToDelete.Add(toCleanup);
+
+            filesToDelete.AddRange(toCleanup.EnumerateFiles());
+
+            foreach (var dir in toCleanup.EnumerateDirectories())
+                AddDirectoryToCleanupList(dir, false, directoriesToDelete, filesToDelete);
         }
     }
 }

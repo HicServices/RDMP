@@ -107,7 +107,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 if (ReleaseSettings.DeleteFilesOnSuccess)
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
-                    CleanupExtractionFolders(_project.ExtractionDirectory, listener);
+                    ExtractionDirectory.CleanupExtractionDirectory(this, _project.ExtractionDirectory, _configurationReleased, listener);
                 }
 
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "All done!"));
@@ -132,61 +132,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
         {
             this._releaseData = value;
-        }
-
-        protected void CleanupExtractionFolders(string extractionDirectory, IDataLoadEventListener listener)
-        {
-            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionDirectory.ExtractionSubFolderName));
-            var directoriesToDelete = new List<DirectoryInfo>();
-            var filesToDelete = new List<FileInfo>();
-
-            foreach (var extractionConfiguration in _configurationReleased)
-            {
-                var config = extractionConfiguration;
-                var directoryInfos = projectExtractionDirectory.GetDirectories().Where(d => ExtractionDirectory.IsOwnerOf(config, d));
-
-                foreach (DirectoryInfo toCleanup in directoryInfos)
-                    AddDirectoryToCleanupList(toCleanup, true, directoriesToDelete, filesToDelete);
-            }
-
-            foreach (var fileInfo in filesToDelete)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting: " + fileInfo.FullName));
-                try
-                {
-                    fileInfo.Delete();
-                }
-                catch (Exception e)
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + fileInfo.FullName, e));
-                }
-            }
-
-            foreach (var directoryInfo in directoriesToDelete)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Recursively deleting folder: " + directoryInfo.FullName));
-                try
-                {
-                    directoryInfo.Delete(true);
-                }
-                catch (Exception e)
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error deleting: " + directoryInfo.FullName, e));
-                }
-            }
-        }
-
-        private void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot, List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
-        {
-            //only add root folders to the delete queue
-            if (isRoot)
-                if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //dont add the same folder twice
-                    directoriesToDelete.Add(toCleanup);
-
-            filesToDelete.AddRange(toCleanup.EnumerateFiles());
-
-            foreach (var dir in toCleanup.EnumerateDirectories())
-                AddDirectoryToCleanupList(dir, false, directoriesToDelete, filesToDelete);
         }
     }
 }

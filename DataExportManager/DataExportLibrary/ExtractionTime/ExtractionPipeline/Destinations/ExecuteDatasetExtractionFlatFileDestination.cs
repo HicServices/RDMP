@@ -271,7 +271,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         }
         
         public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-            ExtractionConfiguration configuration, ExtractableDataSet dataSet)
+            IExtractionConfiguration configuration, ExtractableDataSet dataSet)
         {
             return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
         }
