@@ -46,24 +46,27 @@ namespace CatalogueManager.Tutorials
             if (UserSettings.DisableTutorials)
                 return false;
             
-            var tutorial = GetTutorialFromWorkflow(workflow); 
-
-            return !UserSettings.GetTutorialDone(tutorial.Guid);
+            return !UserSettings.GetTutorialDone(GetTutorialGuidFromWorkflow(workflow));
         }
 
-        private Tutorial GetTutorialFromWorkflow(HelpWorkflow workflow)
+        private Guid GetTutorialGuidFromWorkflow(HelpWorkflow workflow)
         {
+            //if the workflow has a guid then it isn't associated with a specific command
+            if (workflow.WorkflowGuid != Guid.Empty)
+                return workflow.WorkflowGuid;
+
+            //workflow is associated with a specific Command, so it should have a Tutorial Available
             var tutorial = TutorialsAvailable.FirstOrDefault(t => t.CommandType == workflow.Command.GetType());
 
             if (tutorial == null)
                 throw new Exception("Unexpected HelpWorkflow encountered, it doesn't have a tutorial description in TutorialsAvailable");
 
-            return tutorial;
+            return tutorial.Guid;
         }
 
         public void Completed(HelpWorkflow helpWorkflow)
         {
-            UserSettings.SetTutorialDone(GetTutorialFromWorkflow(helpWorkflow).Guid,true);
+            UserSettings.SetTutorialDone(GetTutorialGuidFromWorkflow(helpWorkflow),true);
         }
 
         public void ClearCompleted()

@@ -13,11 +13,13 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableUIComponents;
+using ReusableUIComponents.TransparentHelpSystem;
 
 namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 {
@@ -36,9 +38,9 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         private Catalogue _catalogue;
         private TableInfo _tableInfo;
         private bool _choicesFinalised;
+        private HelpWorkflow _workflow;
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
-
 
         public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer)
         {
@@ -88,7 +90,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             olvColumnExtractability.CheckBoxes = true;
 
             olvColumnExtractability.RebuildColumns();
-            
         }
 
         private object IsExtractionIdentifier_AspectGetter(object rowObject)
@@ -374,6 +375,26 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 if(CatalogueCreatedIfAny != null)
                     _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(CatalogueCreatedIfAny));
             }
+        }
+
+        private void ConfigureCatalogueExtractabilityUI_Load(object sender, EventArgs e)
+        {
+            _workflow = new HelpWorkflow(this, new Guid("74e6943e-1ed8-4c43-89c2-96158c1360fa"), new TutorialTracker(_activator));
+            var stage1 = new HelpStage(olvColumnExtractability, "This is a collection of all the column definitions imported, tick one to make it extractable", () => _extractabilityDictionary.Values.OfType<ExtractionInformation>().Any());
+            var stage2 = new HelpStage(olvColumnExtractability, "One of your columns should contain a patient identifier, tick IsExtractionIdentifier on your patient identifier column", () => _extractabilityDictionary.Values.OfType<ExtractionInformation>().Any(ei=>ei.IsExtractionIdentifier));
+            var stage3 = new HelpStage(ddCategoriseMany, "Click to change all at once", () => _extractabilityDictionary.Values.All(o=> o is ExtractionInformation));
+            var stage4 = new HelpStage(tbFilter, "Type in here to find a specific column", () => !string.IsNullOrWhiteSpace(tbFilter.Text));
+
+            stage1.SetNext(stage2);
+            stage2.SetNext(stage3);
+            stage2.OptionButtonText = "I don't have one of those";
+            stage2.OptionDestination = stage3;
+            stage3.SetNext(stage4);
+
+            _workflow.RootStage = stage1;
+            _workflow.Start();
+
+            helpIcon1.SetHelpText("Configure Extractability", "Click for tutorial", _workflow);
         }
     }
 }
