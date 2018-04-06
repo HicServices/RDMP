@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.Ticketing;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable.Revertable;
