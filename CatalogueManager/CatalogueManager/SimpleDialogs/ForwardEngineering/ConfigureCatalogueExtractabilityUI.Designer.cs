@@ -42,6 +42,9 @@
             this.lbPastedColumns = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
+            this.btnOk = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnAddToExisting = new System.Windows.Forms.Button();
             this.gbMarkAllExtractable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.panel2.SuspendLayout();
@@ -54,7 +57,7 @@
             this.gbMarkAllExtractable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbMarkAllExtractable.Location = new System.Drawing.Point(0, 0);
             this.gbMarkAllExtractable.Name = "gbMarkAllExtractable";
-            this.gbMarkAllExtractable.Size = new System.Drawing.Size(708, 674);
+            this.gbMarkAllExtractable.Size = new System.Drawing.Size(692, 717);
             this.gbMarkAllExtractable.TabIndex = 7;
             this.gbMarkAllExtractable.TabStop = false;
             this.gbMarkAllExtractable.Text = "Extractability";
@@ -79,7 +82,7 @@
             this.olvColumnExtractability.Name = "olvColumnExtractability";
             this.olvColumnExtractability.RowHeight = 19;
             this.olvColumnExtractability.ShowGroups = false;
-            this.olvColumnExtractability.Size = new System.Drawing.Size(702, 442);
+            this.olvColumnExtractability.Size = new System.Drawing.Size(686, 485);
             this.olvColumnExtractability.TabIndex = 7;
             this.olvColumnExtractability.UseCompatibleStateImageBehavior = false;
             this.olvColumnExtractability.UseFiltering = true;
@@ -109,6 +112,9 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnCancel);
+            this.panel2.Controls.Add(this.btnAddToExisting);
+            this.panel2.Controls.Add(this.btnOk);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.ddCategoriseMany);
             this.panel2.Controls.Add(this.btnClearFilterMany);
@@ -117,9 +123,9 @@
             this.panel2.Controls.Add(this.label6);
             this.panel2.Controls.Add(this.tbFilter);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(3, 464);
+            this.panel2.Location = new System.Drawing.Point(3, 507);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(702, 207);
+            this.panel2.Size = new System.Drawing.Size(686, 207);
             this.panel2.TabIndex = 5;
             // 
             // label3
@@ -169,7 +175,7 @@
             this.lbPastedColumns.FormattingEnabled = true;
             this.lbPastedColumns.Location = new System.Drawing.Point(118, 29);
             this.lbPastedColumns.Name = "lbPastedColumns";
-            this.lbPastedColumns.Size = new System.Drawing.Size(243, 173);
+            this.lbPastedColumns.Size = new System.Drawing.Size(227, 134);
             this.lbPastedColumns.TabIndex = 2;
             this.lbPastedColumns.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbPastedColumns_KeyUp);
             // 
@@ -190,13 +196,45 @@
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
+            // btnOk
+            // 
+            this.btnOk.Location = new System.Drawing.Point(89, 175);
+            this.btnOk.Name = "btnOk";
+            this.btnOk.Size = new System.Drawing.Size(119, 23);
+            this.btnOk.TabIndex = 7;
+            this.btnOk.Text = "Ok";
+            this.btnOk.UseVisualStyleBackColor = true;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(214, 175);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(207, 23);
+            this.btnCancel.TabIndex = 7;
+            this.btnCancel.Text = "Cancel (Do not create a Catalogue)";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnAddToExisting
+            // 
+            this.btnAddToExisting.Location = new System.Drawing.Point(427, 175);
+            this.btnAddToExisting.Name = "btnAddToExisting";
+            this.btnAddToExisting.Size = new System.Drawing.Size(161, 23);
+            this.btnAddToExisting.TabIndex = 7;
+            this.btnAddToExisting.Text = "Add to existing Catalogue";
+            this.btnAddToExisting.UseVisualStyleBackColor = true;
+            this.btnAddToExisting.Click += new System.EventHandler(this.btnAddToExisting_Click);
+            // 
             // ConfigureCatalogueExtractabilityUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(692, 717);
             this.Controls.Add(this.gbMarkAllExtractable);
             this.Name = "ConfigureCatalogueExtractabilityUI";
-            this.Size = new System.Drawing.Size(708, 674);
+            this.Text = "ConfigureCatalogueExtractabilityUI";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfigureCatalogueExtractabilityUI_FormClosing);
             this.gbMarkAllExtractable.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).EndInit();
             this.panel2.ResumeLayout(false);
@@ -221,5 +259,8 @@
         private System.Windows.Forms.ComboBox ddCategoriseMany;
         private System.Windows.Forms.Label label3;
         private BrightIdeasSoftware.OLVColumn olvIsExtractionIdentifier;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnOk;
+        private System.Windows.Forms.Button btnAddToExisting;
     }
 }

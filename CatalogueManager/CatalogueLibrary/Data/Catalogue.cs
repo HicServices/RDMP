@@ -1180,12 +1180,22 @@ namespace CatalogueLibrary.Data
         private bool? _isExtractable;
 
 
-        public bool GetIsExtractabilityKnown()
+        /// <summary>
+        /// Returns whether or not the extractability of the Catalogue is known.  In general this is only true
+        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// </summary>
+        /// <returns></returns>
+        internal bool GetIsExtractabilityKnown()
         {
             return _isExtractable != null;
         }
 
-        public bool GetIsExtractable()
+        /// <summary>
+        /// Method is only valid once InjectExtractability is called, do not use it without first calling <see cref="GetIsExtractabilityKnown"/>.  In general this is only true
+        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// </summary>
+        /// <returns></returns>
+        internal bool GetIsExtractable()
         {
             if(_isExtractable == null)
                 throw new NotSupportedException("Method is only valid once InjectExtractability is called.  Catalogues do not know if they are extractable, it takes a Data Export object to tell them this fact");

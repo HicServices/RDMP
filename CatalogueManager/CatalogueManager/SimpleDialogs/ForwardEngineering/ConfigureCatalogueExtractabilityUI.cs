@@ -4,7 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -12,6 +14,8 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
+using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
@@ -21,7 +25,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// Allows you to choose whether to mark all columns in a newly created Catalogue as Extractable.  Also lets you specify which Column contains the patient identifier (used to link
     /// the records with those in the other tables).
     /// </summary>
-    public partial class ConfigureCatalogueExtractabilityUI : UserControl
+    public partial class ConfigureCatalogueExtractabilityUI : Form
     {
         private readonly object[] _extractionCategories;
 
@@ -29,10 +33,32 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         private IActivateItems _activator;
 
         private string NotExtractable = "Not Extractable";
+        private Catalogue _catalogue;
+        private TableInfo _tableInfo;
+        private bool _choicesFinalised;
+        public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
+        public TableInfo TableInfoCreated{get { return _tableInfo; }}
 
-        public ConfigureCatalogueExtractabilityUI()
+
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer)
         {
             InitializeComponent();
+
+            _activator = activator;
+                    ColumnInfo[] cols;
+                    importer.DoImport(out _tableInfo, out cols);
+
+            var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
+            CatalogueItem[] cis;
+            ExtractionInformation[] eis;
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue,out cis,out eis);
+            
+            //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
+            foreach (CatalogueItem ci in cis)
+                _extractabilityDictionary.Add(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID));
+
+            olvColumnExtractability.ClearObjects();
+            olvColumnExtractability.AddObjects(cols);
 
             _extractionCategories = new object[]
             {
@@ -55,6 +81,13 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             olvColumnExtractability.ItemChecked += OlvColumnExtractabilityOnItemChecked;
 
             olvIsExtractionIdentifier.AspectGetter += IsExtractionIdentifier_AspectGetter;
+
+            olvColumnInfoName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
+
+            olvColumnExtractability.MultiSelect = true;
+            olvColumnExtractability.CheckBoxes = true;
+
+            olvColumnExtractability.RebuildColumns();
             
         }
 
@@ -187,24 +220,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             }
         }
         
-        public void SetUp(CatalogueItem[] catalogueItems, ColumnInfo[] columnInfos, IActivateItems activator)
-        {
-            _activator = activator;
-            //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
-            foreach (CatalogueItem ci in catalogueItems)
-                _extractabilityDictionary.Add(ci, columnInfos.Single(col => ci.ColumnInfo_ID == col.ID));
-
-            gbMarkAllExtractable.Enabled = true;
-
-            olvColumnInfoName.ImageGetter = (o)=> activator.CoreIconProvider.GetImage(o);
-
-            olvColumnExtractability.ClearObjects();
-            olvColumnExtractability.AddObjects(columnInfos);
-            
-            olvColumnExtractability.MultiSelect = true;
-            olvColumnExtractability.CheckBoxes = true;
-        }
-
       
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
@@ -274,14 +289,66 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         }
 
-        public void FinaliseExtractability()
+        private void FinaliseExtractability()
         {
-            var ei = _extractabilityDictionary.Values.OfType<ExtractionInformation>().FirstOrDefault();
+            _choicesFinalised = true;
+            var ei = _extractabilityDictionary.Values.OfType<ExtractionInformation>().FirstOrDefault(c=>c.IsExtractionIdentifier);
 
             if (ei != null)
             {
-                var cmd = new ExecuteCommandChangeExtractability(_activator, ei.CatalogueItem.Catalogue, true);
-                cmd.Execute();
+                var cmd = new ExecuteCommandChangeExtractability(_activator, _catalogue, true);
+                if(!cmd.IsImpossible)
+                    cmd.Execute();
+            }
+        }
+
+        private void btnAddToExisting_Click(object sender, EventArgs e)
+        {
+            if (
+                MessageBox.Show(
+                    "This cancel Catalogue creation and instead add the extractable columns to an existing Catalogue instead.  Only use this feature if it is possible to join the imported table to the Catalogue you choose via primary key / foreign key relationship",
+                    "Add to existing", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.CoreChildProvider.AllCatalogues, false, false);
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    AddToExistingCatalogue((Catalogue)dialog.Selected);
+            }
+        }
+
+        private void AddToExistingCatalogue(Catalogue addToInstead)
+        {
+            _choicesFinalised = true;
+            throw new NotImplementedException();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnOk_Click(object sender, EventArgs e)
+        {
+            FinaliseExtractability();
+        }
+
+        private void ConfigureCatalogueExtractabilityUI_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(!_choicesFinalised)
+            {
+                if (MessageBox.Show("This will CANCEL all changes you have made and result in no Catalogue being created (TableInfos will still exist)",
+                    "Confirm Cancellation", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+
+                    _catalogue.DeleteInDatabase();
+                    _catalogue = null;
+                }
+                else
+                    e.Cancel = true;
+            }
+            else
+            {
+                if(CatalogueCreatedIfAny != null)
+                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(CatalogueCreatedIfAny));
             }
         }
     }
