@@ -78,7 +78,7 @@ for /f %%a in ('dir %CODE_DROP%environment.files\%ENV%\*.config /b /a-d ') do (
 )
 
 :: Also need to copy CommitAssembly exe config
-xcopy %CODE_DROP%environment.files\%ENV%\%ENV%.CommitAssembly.exe.config %CODE_DROP%Tests\CommitAssembly.exe.config /Y
+:: xcopy %CODE_DROP%environment.files\%ENV%\%ENV%.CommitAssembly.exe.config %CODE_DROP%Tests\CommitAssembly.exe.config /Y
 
 if %ERRORLEVEL% NEQ 0 goto errors
 
