@@ -162,6 +162,14 @@
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Plugin.Settings, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugins.Settings.3.1.1\lib\net45\Plugin.Settings.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Settings.Abstractions, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugins.Settings.3.1.1\lib\net45\Plugin.Settings.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="QuickGraph">
@@ -196,6 +204,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
+	 <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -265,6 +276,7 @@
       <DependentUpon>HeatmapUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Heatmapping\RainbowColorPicker.cs" />
+    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="HelpIcon.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -369,6 +381,13 @@
     <Compile Include="ServerDatabaseTableSelector.Designer.cs">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\UserSettings.cs" />
+    <Compile Include="Settings\UserSettingsUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\UserSettingsUI.Designer.cs">
+      <DependentUpon>UserSettingsUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="SimpleCounterButton.cs" />
     <Compile Include="SingleControlForms\IConsultableBeforeClosing.cs" />
     <Compile Include="SingleControlForms\SingleControlForm.cs" />
@@ -425,6 +444,7 @@
     <Compile Include="WideMessageBox.Designer.cs">
       <DependentUpon>WideMessageBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="WideMessageBoxTheme.cs" />
     <Compile Include="YesNoYesToAllDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -495,6 +515,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ServerDatabaseTableSelector.resx">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\UserSettingsUI.resx">
+      <DependentUpon>UserSettingsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SqlDialogs\SetSQLDialog.resx">
       <DependentUpon>SetSQLDialog.cs</DependentUpon>

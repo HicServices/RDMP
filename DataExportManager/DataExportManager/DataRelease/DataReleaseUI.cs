@@ -1,14 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Ticketing;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.Collections.Providers;
 using DataExportManager.Icons.IconProvision;
 using DataExportManager.ProjectUI;
 using DataExportLibrary;
@@ -16,7 +17,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 
 using ReusableUIComponents;
-using Ticketing;
 
 namespace DataExportManager.DataRelease
 {
@@ -24,7 +24,7 @@ namespace DataExportManager.DataRelease
     /// Lists all the active (unreleased) configurations in a project extraction and allows you to start a data release with one or more of them.  Each configuration is hosted in a
     /// ConfigurationReleasePotentialUI (See ConfigurationReleasePotentialUI) which shows whether it is in a releasable state and allows you to add it to the Release.
     /// 
-    ///  Once you have selected all the configurations you want to release click Release.
+    /// <para> Once you have selected all the configurations you want to release click Release.</para>
     /// </summary>
     public partial class DataReleaseUI : DataReleaseUI_Design
     {
@@ -58,6 +58,8 @@ namespace DataExportManager.DataRelease
         public DataReleaseUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
         public DataReleaseUI(IActivateItems activator, Project project)
@@ -69,6 +71,7 @@ namespace DataExportManager.DataRelease
 
             //tell children controls about the project
             doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
         private void SetupUIForProject(Project project)

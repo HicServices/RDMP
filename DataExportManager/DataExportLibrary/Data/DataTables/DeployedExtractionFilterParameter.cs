@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -25,11 +29,13 @@ namespace DataExportLibrary.Data.DataTables
             get { return _extractionFilter_ID; }
             set { SetField(ref _extractionFilter_ID, value); }
         }
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref _parameterSQL, value); }
         }
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -46,15 +52,12 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         public DeployedExtractionFilterParameter(IDataExportRepository repository, string parameterSQL, IFilter parent)
         {
             Repository = repository;
-
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
 
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
@@ -63,7 +66,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
+        internal DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());
@@ -76,6 +79,16 @@ namespace DataExportLibrary.Data.DataTables
         {
             //return the name of the variable
             return ParameterName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return ((DeployedExtractionFilter) GetOwnerIfAny()).GetQuerySyntaxHelper();
         }
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()

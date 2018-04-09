@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -12,7 +12,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     /// <summary>
     /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
     /// 
-    /// This Control is for setting Properties that can be represented as textual strings (this includes parsed types like int, Regex etc).
+    /// <para>This Control is for setting Properties that can be represented as textual strings (this includes parsed types like int, Regex etc).</para>
     /// </summary>
     [TechnicalUI]
     public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI

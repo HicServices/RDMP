@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,7 +15,7 @@ namespace DataExportManager.ProjectUI.DataUsers
     /// Allows you to configure the names of researchers who will be receiving project extractions (forename, surname, email).  Each project can have zero or more users registered as
     /// using the project data.  This has no effect other than documenting them and including their names as users in the Release Document (generated when a project extraction is released).
     /// 
-    /// You can safely skip doing this if you have other policies in place for documenting/managing project coordinators and data users.
+    /// <para>You can safely skip doing this if you have other policies in place for documenting/managing project coordinators and data users.</para>
     /// </summary>
     public partial class DataUserManagement : Form
     {

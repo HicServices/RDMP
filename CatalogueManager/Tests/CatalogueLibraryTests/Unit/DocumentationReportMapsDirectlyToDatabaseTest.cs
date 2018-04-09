@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,12 +47,12 @@ namespace CatalogueLibraryTests.Unit
     /// The central class for the RDMP, a Catalogue is a virtual dataset e.g. 'Hospital Admissions'.  A Catalogue can be a merging of multiple underlying tables and exists 
     /// independent of where the data is actually stored (look at other classes like TableInfo to see the actual locations of data).
     /// 
-    /// As well as storing human readable names/descriptions of what is in the dataset it is the hanging off point for Attachments (SupportingDocument), validation logic, 
-    /// extractable columns (CatalogueItem->ExtractionInformation->ColumnInfo) ways of filtering the data, aggregations to help understand the dataset etc.
+    /// <para>As well as storing human readable names/descriptions of what is in the dataset it is the hanging off point for Attachments (SupportingDocument), validation logic, 
+    /// extractable columns (CatalogueItem->ExtractionInformation->ColumnInfo) ways of filtering the data, aggregations to help understand the dataset etc.</para>
     /// 
-    /// Catalogues are always flat views although they can be built from multiple relational data tables underneath.
+    /// <para>Catalogues are always flat views although they can be built from multiple relational data tables underneath.</para>
     /// 
-    /// Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)
+    /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
     public class Catalogue : IDeleteable, IComparable, IMapsDirectlyToDatabaseTable, ICatalogueMetadata, IHasDependencies, ICheckable,IRevertable
     {

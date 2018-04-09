@@ -72,8 +72,15 @@ namespace CatalogueManager.DataViewing.Collections
         {
             var dim = AggregateConfiguration.AggregateDimensions.FirstOrDefault();
 
+            //the aggregate has no dimensions
             if (dim == null)
-                return null;
+            {
+                var table = AggregateConfiguration.ForcedJoins.FirstOrDefault();
+                if(table == null)
+                    throw new Exception("AggregateConfiguration '" + AggregateConfiguration +"' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
+
+                return table;
+            }
 
             return dim.ColumnInfo.TableInfo;
         }

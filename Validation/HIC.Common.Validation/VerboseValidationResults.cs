@@ -14,8 +14,8 @@ namespace HIC.Common.Validation
         /// Dictionary of column names (Key), Value is a Dictionary of each of the potential consequences
         /// and a count of the number of cells that failed validation with that Consequence (for that Column - Key)
         /// 
-        /// e.g. DictionaryOfFailure["Forename"][Consequence.Missing] is a count of the number of cells which are missing
-        /// (not there where they were expected) in column Forename
+        /// <para>e.g. DictionaryOfFailure["Forename"][Consequence.Missing] is a count of the number of cells which are missing
+        /// (not there where they were expected) in column Forename</para>
         /// 
         /// </summary>
         public Dictionary<string, Dictionary<Consequence, int>> DictionaryOfFailure { get; private set; }

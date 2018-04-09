@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
@@ -12,8 +12,8 @@ namespace CatalogueLibrary.Data
     /// Server defaults let you identify a role a server plays (e.g. IdentifierDumpServer) and make it the default one of it's type for all rows created which have an IdentifierDump.
     /// For example TableInfo.IdentifierDumpServer_ID defaults to whichever IdentifierDump ExternalDatabaseServer is configured (can be DBNull.Value).
     /// 
-    /// A scalar valued function GetDefaultExternalServerIDFor is used to retrieve defaults so that even if the user creates a new record in the TableInfo table himself manually without
-    /// using our library (very dangerous anyway btw) it will still have the default.
+    /// <para>A scalar valued function GetDefaultExternalServerIDFor is used to retrieve defaults so that even if the user creates a new record in the TableInfo table himself manually without
+    /// using our library (very dangerous anyway btw) it will still have the default.</para>
     /// </summary>
     public class ServerDefaults : IServerDefaults
     {

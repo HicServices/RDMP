@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
 using CatalogueLibrary.Data;
@@ -9,6 +10,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Theme;
 using CohortManager.Collections;
 using DataExportManager.Collections;
 using RDMPStartup;
@@ -19,6 +21,7 @@ using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
+using WeifenLuo.WinFormsUI.ThemeVS2012;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
@@ -52,10 +55,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _mainDockPanel = mainDockPanel;
             _mainDockPanel.Theme = new VS2005Theme();
             _mainDockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
-
+            
+            _mainDockPanel.ShowDocumentIcon = true;
+            
             RepositoryLocator = repositoryLocator;
         }
-
+        
         /// <summary>
         /// Creates a new instance of the given RDMPCollectionUI specified by the Enum collectionToCreate at the specified dock position
         /// </summary>
@@ -125,12 +130,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Bitmap image)
         {
+            BackColorProvider c = new BackColorProvider();
+            image = c.DrawBottomBar(image, collection);
+            
             var content = _windowFactory.Create(ContentManager,control, label, image, collection);//these are collections so are not tracked with a window tracker.
             content.Closed += (s, e) => content_Closed(collection);
 
             _visibleToolboxes.Add(collection, content);
             content.Show(_mainDockPanel, DockState.DockLeft);
-
+            
             return content;
         }
 

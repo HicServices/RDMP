@@ -7,6 +7,11 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class ContainerHelper
     {
+        /// <summary>
+        /// Returns all IContainers that are declared as below the current IContainer (e.g. children).  This includes children of children etc down the tree.
+        /// </summary>
+        /// <param name="current"></param>
+        /// <returns></returns>
         public List<IContainer> GetAllSubContainersRecursively(IContainer current)
         {
             List<IContainer> toReturn = new List<IContainer>();
@@ -20,6 +25,12 @@ namespace CatalogueLibrary.Data
             return toReturn;
         }
 
+        /// <summary>
+        /// Returns the absolute top level root IContainer of the hierarchy that the container is a part of.  If the specified container is already a root level container
+        /// or it is an orphan or part of it's hierarchy going upwards is an orphan then the same container reference will be returned.
+        /// </summary>
+        /// <param name="container"></param>
+        /// <returns></returns>
         public IContainer GetRootContainerOrSelf(IContainer container)
         {
             var parent = container.GetParentContainerIfAny();
@@ -29,6 +40,12 @@ namespace CatalogueLibrary.Data
             return container;
         }
 
+        /// <summary>
+        /// Returns all IFilters that are declared in the current container or any of it's subcontainers (recursively).  This includes children of children 
+        /// etc down the tree.
+        /// </summary>
+        /// <param name="current"></param>
+        /// <returns></returns>
         public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
         {
             List<IFilter> toReturn = new List<IFilter>();

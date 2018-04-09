@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -12,14 +12,14 @@ namespace CatalogueLibrary.Data
     /// such as JIRA.  This ticketing system is used to record ticket numbers of a variety of objects (e.g. SupportingDocuments, extraction projects etc) and allows them
     /// to accrue man hours without compromising your current workflow.
     /// 
-    /// In addition to tying objects to your ticketing system, the ticketing system will also be consulted about wheter data extraction projects are good to go or should
+    /// <para>In addition to tying objects to your ticketing system, the ticketing system will also be consulted about wheter data extraction projects are good to go or should
     /// not be released (e.g. do not release project X until it has been paid for / signed off by the governancer).  The exact implementation of this is mostly left to the
-    /// ticketing class you write.
+    /// ticketing class you write.</para>
     /// 
-    /// The Type field refers to a class that implements PluginTicketingSystem (see LoadModuleAssembly for how to write your own handler or use one of the compatible existing ones).  
-    /// this class will handle all communication with the ticketing system/server.
+    /// <para>The Type field refers to a class that implements PluginTicketingSystem (see LoadModuleAssembly for how to write your own handler or use one of the compatible existing ones).  
+    /// this class will handle all communication with the ticketing system/server.</para>
     ///
-    /// There is also a reference to DataAccessCredentials record which stores optional username and encrypted password to use in the plugin for communicating with the ticketing system.
+    /// <para>There is also a reference to DataAccessCredentials record which stores optional username and encrypted password to use in the plugin for communicating with the ticketing system.</para>
     /// 
     /// </summary>
     public class TicketingSystemConfiguration : DatabaseEntity
@@ -78,7 +78,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r)
+        internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             IsActive = (bool) r["IsActive"];

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using HIC.Common.Validation.Constraints;
@@ -10,7 +10,7 @@ namespace DataQualityEngine.Data
     /// Runtime class for DQE used to record the number of rows passing/failing validation/null overall.  This is calculated by validating every column in the row
     /// and selecting the worst validation failure Consequence (if any) for the row.
     /// 
-    /// These counts are incremented during the DQE evaluation process then finally saved into the PeriodicityState table in DQE database.
+    /// <para>These counts are incremented during the DQE evaluation process then finally saved into the PeriodicityState table in DQE database.</para>
     /// </summary>
    public class PeriodicityState
     {

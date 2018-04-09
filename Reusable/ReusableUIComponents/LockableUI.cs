@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -17,9 +17,9 @@ namespace ReusableUIComponents
     /// Allows you to view the status of an ILockable object in the Catalogue Database.  For example an AutomationServiceSlot gets locked by the Automation server so that no other automation
     /// executables can be started up at the same time.  The control will show when the lock was established.
     /// 
-    /// Sometimes an ILockable will hard crash (e.g. the someone trips over your automation servers power cable) in which case the lifeline graph will flat line (after 30 seconds or so).  Your
+    /// <para>Sometimes an ILockable will hard crash (e.g. the someone trips over your automation servers power cable) in which case the lifeline graph will flat line (after 30 seconds or so).  Your
     /// slot will still be locked.  Pressing the 'Force Lock Reset' will unlock the slot and make it available for use again, only do this if you are sure the ILockable (e.g. the automation 
-    /// executable) is no longer running.
+    /// executable) is no longer running.</para>
     /// </summary>
     public partial class LockableUI : UserControl
     {

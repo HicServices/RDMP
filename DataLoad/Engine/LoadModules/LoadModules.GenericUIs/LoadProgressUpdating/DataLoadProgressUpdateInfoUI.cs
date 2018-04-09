@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Data;
@@ -22,10 +22,10 @@ namespace LoadModules.GenericUIs.LoadProgressUpdating
     /// dataset fetched only contains data up until 2001-01-15.  In this case the component needs to update the progress (on success of data load) to the 2001-01-15 date instead.  This 
     /// dialog lets you do that by specifying one of 4 update strategies:
     /// 
-    ///  UseMaxRequestedDay - uses the upper limit of the load window i.e. 2001-01-29 
+    /// <para> UseMaxRequestedDay - uses the upper limit of the load window i.e. 2001-01-29 
     ///  ExecuteScalarSQLInRAW - allows you to execute an SQL query in RAW bubble to determine the max date e.g. 'Select MAX(dtCreated) from MyTable'.  In the above example this would be 2001-01-15
     ///  ExecuteScalarSQLInLIVE - same as above except the SQL query is executed against the LIVE dataset post load (this is the super set of all existing dataset records + the records loaded in the data load)
-    ///  DoNothing - The load progress is not updated, use this only if you have multiple components that share the same LoadProgress and you only want the last one to register for the progress update
+    ///  DoNothing - The load progress is not updated, use this only if you have multiple components that share the same LoadProgress and you only want the last one to register for the progress update</para>
     /// </summary>
     [Export(typeof(ICustomUI<>))]
     public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProgressUpdateInfo>

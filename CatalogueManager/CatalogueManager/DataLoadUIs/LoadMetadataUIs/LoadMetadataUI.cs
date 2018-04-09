@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -51,6 +52,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
         public LoadMetadataUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
         
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)

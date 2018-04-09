@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -34,13 +35,13 @@ namespace CatalogueManager.LoadExecutionUIs
     /// Runs the Data Load Engine on a single LoadMetadata.  This user interface is intended for manually executing and debugging loads.  If you have a stable load and you want
     /// to execute it automatically you can set up a periodic execution (See LoadPeriodicallyUI / AutomationServiceSlotUI).
     /// 
-    /// You can only attempt to launch a data load if the checks are all passing (or giving Warnings that you understand and are not concerned about).  
+    /// <para>You can only attempt to launch a data load if the checks are all passing (or giving Warnings that you understand and are not concerned about).  </para>
     /// 
-    /// Once started the load progress will appear and show as data is loaded into RAW, migrated to STAGING and committed to LIVE (See  'RAW Bubble, STAGING Bubble, LIVE Model'
-    /// in UserManual.docx for full implementation details).
+    /// <para>Once started the load progress will appear and show as data is loaded into RAW, migrated to STAGING and committed to LIVE (See  'RAW Bubble, STAGING Bubble, LIVE Model'
+    /// in UserManual.docx for full implementation details).</para>
     /// 
-    /// There are various options for debugging for example you can override and stop the data load after RAW is populated (in which case the load will crash out early allowing
-    /// you to evaluated the RAW data in a database environment conducive with debugging dataset issues). 
+    /// <para>There are various options for debugging for example you can override and stop the data load after RAW is populated (in which case the load will crash out early allowing
+    /// you to evaluated the RAW data in a database environment conducive with debugging dataset issues). </para>
     /// </summary>
     public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
@@ -64,6 +65,7 @@ namespace CatalogueManager.LoadExecutionUIs
             helpIconAbortShouldCancel.SetHelpText("Abort Behaviour", "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
 
             btnUnlockAll.Image = FamFamFamIcons.lock_break;
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)

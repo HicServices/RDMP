@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -27,11 +27,11 @@ namespace DataExportLibrary.Data.DataTables
     /// The ExtractableCohort object is a record that documents the location and ID of a cohort in your ExternalCohortTable.  This record means that the RDMP can record which cohorts
     /// are part of which ExtractionConfiguration in a Project without ever having to move the identifiers into the RDMP application database.
     /// 
-    /// The most important field in ExtractableCohort is the OriginID, this field represents the id of the cohort in the CohortDefinition table of the ExternalCohortTable.  Effectively
+    /// <para>The most important field in ExtractableCohort is the OriginID, this field represents the id of the cohort in the CohortDefinition table of the ExternalCohortTable.  Effectively
     /// this number is the id of the cohort in your cohort database while the ID property of the ExtractableCohort (as opposed to OriginID) is the RDMP ID assigned to the cohort.  This
     /// allows you to have two different cohort sources both of which have a cohort id 10 but the RDMP software is able to tell the difference.  In addition it allows for the unfortunate
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
-    /// and know the location of the original cohort even if it doesn't exist anymore. 
+    /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
     public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort
     {
@@ -59,9 +59,9 @@ namespace DataExportLibrary.Data.DataTables
         /// <summary>
         /// The cohortDefinition_id used to identify this cohort in the external cohort server/database that this ExtractableCohort comes from.
         /// 
-        /// Because there can be multiple Cohort sources there can be overlap in these i.e. cohort 1 from source 1 is not the same as cohort 1 from source 2
+        /// <para>Because there can be multiple Cohort sources there can be overlap in these i.e. cohort 1 from source 1 is not the same as cohort 1 from source 2</para>
         /// 
-        /// Therefore this is completely different from the ID of this ExtractableCohort - which is unique within the DataExportManager database
+        /// <para>Therefore this is completely different from the ID of this ExtractableCohort - which is unique within the DataExportManager database</para>
         /// </summary>
         public int OriginID
         {
@@ -109,11 +109,13 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int OverrideReleaseIdentifierSQL_MaxLength = -1;
 
         private Dictionary<string, string> _releaseToPrivateKeyDictionary;
         
         #region Relationships
+        /// <inheritdoc cref="ExternalCohortTable_ID"/>
         [NoMappingToDatabase]
         public IExternalCohortTable ExternalCohortTable
         {
@@ -133,7 +135,7 @@ namespace DataExportLibrary.Data.DataTables
 
 
 
-        public ExtractableCohort(IDataExportRepository repository, DbDataReader r)
+        internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             OverrideReleaseIdentifierSQL = r["OverrideReleaseIdentifierSQL"] as string;

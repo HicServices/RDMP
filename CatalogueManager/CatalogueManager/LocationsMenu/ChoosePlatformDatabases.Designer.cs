@@ -34,15 +34,16 @@ namespace CatalogueManager.LocationsMenu
             this.tbCatalogueConnectionString = new ReusableUIComponents.ConnectionStringTextBox();
             this.btnSaveAndClose = new System.Windows.Forms.Button();
             this.gbSqlServer = new System.Windows.Forms.GroupBox();
-            this.btnCreateNewDataExportManagerDatabase = new System.Windows.Forms.Button();
-            this.btnCreateNewCatalogue = new System.Windows.Forms.Button();
+            this.pReferenceADataExport = new System.Windows.Forms.Panel();
             this.tbDataExportManagerConnectionString = new ReusableUIComponents.ConnectionStringTextBox();
             this.btnCheckDataExportManager = new System.Windows.Forms.Button();
+            this.pReferenceACatalogue = new System.Windows.Forms.Panel();
             this.btnCheckCatalogue = new System.Windows.Forms.Button();
+            this.btnCreateNewDataExportManagerDatabase = new System.Windows.Forms.Button();
+            this.btnCreateNewCatalogue = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
-            this.btnShowRegistry = new System.Windows.Forms.Button();
             this.btnCreateSuite = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -51,12 +52,10 @@ namespace CatalogueManager.LocationsMenu
             this.tbDatabasePrefix = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.pCreateAllPlatformDatabases = new System.Windows.Forms.Panel();
-            this.pReferenceACatalogue = new System.Windows.Forms.Panel();
-            this.pReferenceADataExport = new System.Windows.Forms.Panel();
             this.gbSqlServer.SuspendLayout();
-            this.pCreateAllPlatformDatabases.SuspendLayout();
-            this.pReferenceACatalogue.SuspendLayout();
             this.pReferenceADataExport.SuspendLayout();
+            this.pReferenceACatalogue.SuspendLayout();
+            this.pCreateAllPlatformDatabases.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -107,27 +106,16 @@ namespace CatalogueManager.LocationsMenu
             this.gbSqlServer.TabStop = false;
             this.gbSqlServer.Text = "Connection Strings (SQL Server)";
             // 
-            // btnCreateNewDataExportManagerDatabase
+            // pReferenceADataExport
             // 
-            this.btnCreateNewDataExportManagerDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateNewDataExportManagerDatabase.Location = new System.Drawing.Point(1128, 71);
-            this.btnCreateNewDataExportManagerDatabase.Name = "btnCreateNewDataExportManagerDatabase";
-            this.btnCreateNewDataExportManagerDatabase.Size = new System.Drawing.Size(101, 23);
-            this.btnCreateNewDataExportManagerDatabase.TabIndex = 6;
-            this.btnCreateNewDataExportManagerDatabase.Text = "Create New...";
-            this.btnCreateNewDataExportManagerDatabase.UseVisualStyleBackColor = true;
-            this.btnCreateNewDataExportManagerDatabase.Click += new System.EventHandler(this.btnCreateNewDataExportManagerDatabase_Click);
-            // 
-            // btnCreateNewCatalogue
-            // 
-            this.btnCreateNewCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateNewCatalogue.Location = new System.Drawing.Point(1128, 20);
-            this.btnCreateNewCatalogue.Name = "btnCreateNewCatalogue";
-            this.btnCreateNewCatalogue.Size = new System.Drawing.Size(101, 23);
-            this.btnCreateNewCatalogue.TabIndex = 2;
-            this.btnCreateNewCatalogue.Text = "Create New...";
-            this.btnCreateNewCatalogue.UseVisualStyleBackColor = true;
-            this.btnCreateNewCatalogue.Click += new System.EventHandler(this.btnCreateNewCatalogue_Click);
+            this.pReferenceADataExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pReferenceADataExport.Controls.Add(this.tbDataExportManagerConnectionString);
+            this.pReferenceADataExport.Controls.Add(this.btnCheckDataExportManager);
+            this.pReferenceADataExport.Location = new System.Drawing.Point(165, 73);
+            this.pReferenceADataExport.Name = "pReferenceADataExport";
+            this.pReferenceADataExport.Size = new System.Drawing.Size(957, 49);
+            this.pReferenceADataExport.TabIndex = 9;
             // 
             // tbDataExportManagerConnectionString
             // 
@@ -150,6 +138,17 @@ namespace CatalogueManager.LocationsMenu
             this.btnCheckDataExportManager.UseVisualStyleBackColor = true;
             this.btnCheckDataExportManager.Click += new System.EventHandler(this.btnCheckDataExportManager_Click);
             // 
+            // pReferenceACatalogue
+            // 
+            this.pReferenceACatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pReferenceACatalogue.Controls.Add(this.tbCatalogueConnectionString);
+            this.pReferenceACatalogue.Controls.Add(this.btnCheckCatalogue);
+            this.pReferenceACatalogue.Location = new System.Drawing.Point(165, 19);
+            this.pReferenceACatalogue.Name = "pReferenceACatalogue";
+            this.pReferenceACatalogue.Size = new System.Drawing.Size(957, 48);
+            this.pReferenceACatalogue.TabIndex = 8;
+            // 
             // btnCheckCatalogue
             // 
             this.btnCheckCatalogue.Location = new System.Drawing.Point(3, 25);
@@ -159,6 +158,28 @@ namespace CatalogueManager.LocationsMenu
             this.btnCheckCatalogue.Text = "Check";
             this.btnCheckCatalogue.UseVisualStyleBackColor = true;
             this.btnCheckCatalogue.Click += new System.EventHandler(this.btnCheckCatalogue_Click);
+            // 
+            // btnCreateNewDataExportManagerDatabase
+            // 
+            this.btnCreateNewDataExportManagerDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateNewDataExportManagerDatabase.Location = new System.Drawing.Point(1128, 71);
+            this.btnCreateNewDataExportManagerDatabase.Name = "btnCreateNewDataExportManagerDatabase";
+            this.btnCreateNewDataExportManagerDatabase.Size = new System.Drawing.Size(101, 23);
+            this.btnCreateNewDataExportManagerDatabase.TabIndex = 6;
+            this.btnCreateNewDataExportManagerDatabase.Text = "Create New...";
+            this.btnCreateNewDataExportManagerDatabase.UseVisualStyleBackColor = true;
+            this.btnCreateNewDataExportManagerDatabase.Click += new System.EventHandler(this.btnCreateNewDataExportManagerDatabase_Click);
+            // 
+            // btnCreateNewCatalogue
+            // 
+            this.btnCreateNewCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateNewCatalogue.Location = new System.Drawing.Point(1128, 20);
+            this.btnCreateNewCatalogue.Name = "btnCreateNewCatalogue";
+            this.btnCreateNewCatalogue.Size = new System.Drawing.Size(101, 23);
+            this.btnCreateNewCatalogue.TabIndex = 2;
+            this.btnCreateNewCatalogue.Text = "Create New...";
+            this.btnCreateNewCatalogue.UseVisualStyleBackColor = true;
+            this.btnCreateNewCatalogue.Click += new System.EventHandler(this.btnCreateNewCatalogue_Click);
             // 
             // label8
             // 
@@ -187,16 +208,6 @@ namespace CatalogueManager.LocationsMenu
             this.checksUI1.Name = "checksUI1";
             this.checksUI1.Size = new System.Drawing.Size(1257, 347);
             this.checksUI1.TabIndex = 0;
-            // 
-            // btnShowRegistry
-            // 
-            this.btnShowRegistry.Location = new System.Drawing.Point(12, 222);
-            this.btnShowRegistry.Name = "btnShowRegistry";
-            this.btnShowRegistry.Size = new System.Drawing.Size(211, 23);
-            this.btnShowRegistry.TabIndex = 9;
-            this.btnShowRegistry.Text = "Show Registry Keys (Launches regedit)";
-            this.btnShowRegistry.UseVisualStyleBackColor = true;
-            this.btnShowRegistry.Click += new System.EventHandler(this.btnShowRegistry_Click);
             // 
             // btnCreateSuite
             // 
@@ -272,28 +283,6 @@ namespace CatalogueManager.LocationsMenu
             this.pCreateAllPlatformDatabases.Size = new System.Drawing.Size(676, 27);
             this.pCreateAllPlatformDatabases.TabIndex = 12;
             // 
-            // pReferenceACatalogue
-            // 
-            this.pReferenceACatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pReferenceACatalogue.Controls.Add(this.tbCatalogueConnectionString);
-            this.pReferenceACatalogue.Controls.Add(this.btnCheckCatalogue);
-            this.pReferenceACatalogue.Location = new System.Drawing.Point(165, 19);
-            this.pReferenceACatalogue.Name = "pReferenceACatalogue";
-            this.pReferenceACatalogue.Size = new System.Drawing.Size(957, 48);
-            this.pReferenceACatalogue.TabIndex = 8;
-            // 
-            // pReferenceADataExport
-            // 
-            this.pReferenceADataExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pReferenceADataExport.Controls.Add(this.tbDataExportManagerConnectionString);
-            this.pReferenceADataExport.Controls.Add(this.btnCheckDataExportManager);
-            this.pReferenceADataExport.Location = new System.Drawing.Point(165, 73);
-            this.pReferenceADataExport.Name = "pReferenceADataExport";
-            this.pReferenceADataExport.Size = new System.Drawing.Size(957, 49);
-            this.pReferenceADataExport.TabIndex = 9;
-            // 
             // ChoosePlatformDatabases
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -302,7 +291,6 @@ namespace CatalogueManager.LocationsMenu
             this.Controls.Add(this.pCreateAllPlatformDatabases);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.btnShowRegistry);
             this.Controls.Add(this.checksUI1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.gbSqlServer);
@@ -312,12 +300,12 @@ namespace CatalogueManager.LocationsMenu
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ChooseDatabase_KeyUp);
             this.gbSqlServer.ResumeLayout(false);
             this.gbSqlServer.PerformLayout();
-            this.pCreateAllPlatformDatabases.ResumeLayout(false);
-            this.pCreateAllPlatformDatabases.PerformLayout();
-            this.pReferenceACatalogue.ResumeLayout(false);
-            this.pReferenceACatalogue.PerformLayout();
             this.pReferenceADataExport.ResumeLayout(false);
             this.pReferenceADataExport.PerformLayout();
+            this.pReferenceACatalogue.ResumeLayout(false);
+            this.pReferenceACatalogue.PerformLayout();
+            this.pCreateAllPlatformDatabases.ResumeLayout(false);
+            this.pCreateAllPlatformDatabases.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -337,7 +325,6 @@ namespace CatalogueManager.LocationsMenu
         private System.Windows.Forms.Button btnCheckDataExportManager;
         private System.Windows.Forms.Button btnCheckCatalogue;
         private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
-        private System.Windows.Forms.Button btnShowRegistry;
         private System.Windows.Forms.Button btnCreateSuite;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;

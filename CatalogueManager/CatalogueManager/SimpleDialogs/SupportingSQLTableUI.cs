@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
 using CatalogueManager.SimpleControls;
@@ -15,7 +16,6 @@ using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
-using Ticketing;
 using Color = System.Drawing.Color;
 
 namespace CatalogueManager.SimpleDialogs
@@ -25,16 +25,16 @@ namespace CatalogueManager.SimpleDialogs
     /// want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the table/document is automatically copied and extracted into 
     /// project extraction directory for provision to the researcher.
     /// 
-    /// If you have Lookup tables (that you don't want to configure as Lookup objects, see ConfigureLookups) or complex dictionary tables etc which are required/helpful in understanding or
+    /// <para>If you have Lookup tables (that you don't want to configure as Lookup objects, see ConfigureLookups) or complex dictionary tables etc which are required/helpful in understanding or
     /// processing the data in your dataset then you should configure it as a SupportingSQLTable.  Make sure to put in an appropriate name and description of what is in the table.  You
     /// must select the server on which the SQL should be run (See ManageExternalServers), if you setup a single reference to your data repository with Database='master' and then ensure
-    /// that all your SupportingSQLTables are fully qualified (e.g. [MyDb].dbo.[MyTable]) then you can avoid having to create an ExternalDatabaseServer for each different database.
+    /// that all your SupportingSQLTables are fully qualified (e.g. [MyDb].dbo.[MyTable]) then you can avoid having to create an ExternalDatabaseServer for each different database.</para>
     /// 
-    /// If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers data request (useful for global lookups that contain cross dataset 
-    /// codes).  
+    /// <para>If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers data request (useful for global lookups that contain cross dataset 
+    /// codes).  </para>
     /// 
-    /// IMPORTANT: Make sure your SQL query DOES NOT return any identifiable data if it is marked as IsExtractable as this SQL is executed 'as is' and does not undergo any project level
-    /// anonymisation.
+    /// <para>IMPORTANT: Make sure your SQL query DOES NOT return any identifiable data if it is marked as IsExtractable as this SQL is executed 'as is' and does not undergo any project level
+    /// anonymisation.</para>
     /// </summary>
     public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveableUI
     {
@@ -59,6 +59,7 @@ namespace CatalogueManager.SimpleDialogs
             #endregion
 
             tcTicket.TicketTextChanged += TcTicketOnTicketTextChanged;
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
 

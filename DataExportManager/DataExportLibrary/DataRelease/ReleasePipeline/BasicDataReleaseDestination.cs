@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -6,6 +7,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
+using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -24,7 +26,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private Project _project;
         private DirectoryInfo _destinationFolder;
         private ReleaseEngine _engine;
-        
+        private List<IExtractionConfiguration> _configurationReleased;
+
         public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if (releaseAudit == null)
@@ -55,11 +58,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleted " + recordsDeleted + " old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
             }
 
-            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit.ReleaseFolder);
+            _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit);
 
             _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotential, isPatch: _releaseData.ReleaseState == ReleaseState.DoingPatch);
 
-            _destinationFolder = _engine.ReleaseFolder;
+            _destinationFolder = _engine.ReleaseAudit.ReleaseFolder;
+            _configurationReleased = _engine.ConfigurationsReleased;
 
             return null;
         }
@@ -89,7 +93,25 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             if(pipelineFailureExceptionIfAny == null && _destinationFolder != null)
+            {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
+                //mark configuration as released
+                if (ReleaseSettings.FreezeReleasedConfigurations)
+                {
+                    foreach (var config in _configurationReleased)
+                    {
+                        config.IsReleased = true;
+                        config.SaveToDatabase();
+                    }
+                } 
+                if (ReleaseSettings.DeleteFilesOnSuccess)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
+                    ExtractionDirectory.CleanupExtractionDirectory(this, _project.ExtractionDirectory, _configurationReleased, listener);
+                }
+
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "All done!"));
+            }
         }
 
         public void Abort(IDataLoadEventListener listener)

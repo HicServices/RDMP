@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,14 +20,14 @@ namespace CatalogueManager.LogViewer
     /// Displays all the activity going on within the RDMP that has been recorded in the logging database.  This includes data extractions, data loads, data quality runs etc.  This 
     /// information is stored in a relational database format including:
     /// 
-    /// Task - The overarching type of task e.g. 'Data Extraction', 'Loading Biochemistry' etc
+    /// <para>Task - The overarching type of task e.g. 'Data Extraction', 'Loading Biochemistry' etc
     /// Run - Each time data has flown from one set of locations to another, this encapsulates one execution e.g. An attempt to load 3 Biochemistry files on 2016-02-05 at 5AM
     /// Table Loads - Each run will have 0 or more Table Loads, these are destinations for the data being handled and may include flat file locations such as during data export to csv
     /// Data Sources - Each table can have an explicit source which might be a flat file being loaded or an SQL query in the case of data extraction.
     /// Fatal Errors - Any crash that happened during a run should appear in this view
-    /// Progress Messages - A log of every progress message generated during the run will appear here
+    /// Progress Messages - A log of every progress message generated during the run will appear here</para>
     /// 
-    /// The LogViewerNavigationPane on the right and the BreadcrumbNavigation controls allow you to rapidly zip around the logging database to see what has been going on / going wrong
+    /// <para>The LogViewerNavigationPane on the right and the BreadcrumbNavigation controls allow you to rapidly zip around the logging database to see what has been going on / going wrong</para>
     /// </summary>
     public partial class LogViewerForm : Form
     {

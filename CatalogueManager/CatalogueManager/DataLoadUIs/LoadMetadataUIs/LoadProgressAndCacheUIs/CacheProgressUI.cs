@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -11,6 +11,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
@@ -26,12 +27,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     /// temporal (i.e. a given set of files must correspond to a specific time) such that cache requests for a specific date/time do not vary in real time.  The exact implementation of any
     /// caching task is done through a Pipeline.  Since caching is super bespoke, it is anticipated that you will have written your own caching data classes for use in your pipeline.
     /// 
-    /// Clicking 'Configure Caching Pipeline' will let you setup what happens during the caching activity.
+    /// <para>Clicking 'Configure Caching Pipeline' will let you setup what happens during the caching activity.</para>
     /// 
-    /// Changing the 'Lag Period' to a positive number will indicate a period of time in which to NOT cache data (e.g. if you set it to 30 days then caching will always be suspended when it 
-    /// has cached up to 1 month ago).
+    /// <para>Changing the 'Lag Period' to a positive number will indicate a period of time in which to NOT cache data (e.g. if you set it to 30 days then caching will always be suspended when it 
+    /// has cached up to 1 month ago).</para>
     /// 
-    /// Setting a 'Permission Window' will create a restriction on the times of day in which caching can take place (e.g. between midnight and 4am only).
+    /// <para>Setting a 'Permission Window' will create a restriction on the times of day in which caching can take place (e.g. between midnight and 4am only).</para>
     /// </summary>
     public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
     {
@@ -45,7 +46,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             ddCacheLagDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
             ddCacheLagDelayDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
-            
+
+            AssociatedCollection = RDMPCollection.DataLoad;
             _bLoading = false;
         }
 

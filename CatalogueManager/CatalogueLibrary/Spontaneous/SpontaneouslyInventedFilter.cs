@@ -1,8 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
+using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
@@ -13,7 +16,7 @@ namespace CatalogueLibrary.Spontaneous
     /// (as opposed to ones the user has created).  This can be used to for example enforce additional constraints on the query e.g. 'generate this Aggregate Graph but
     /// restrict the results to patients appearing in my cohort list X' (in this case the SpontaneouslyInventedFilter would be the 'patients appearing in my cohort list X'
     /// 
-    /// The other way to inject sql code into an ISqlQueryBuilder is via CustomLine but that's less precise.
+    /// <para>The other way to inject sql code into an ISqlQueryBuilder is via CustomLine but that's less precise.</para>
     /// </summary>
     public class SpontaneouslyInventedFilter:SpontaneousObject,IFilter
     {
@@ -28,7 +31,8 @@ namespace CatalogueLibrary.Spontaneous
             Name = name;
             Description = description;
         }
-      
+
+        [Sql]
         public string WhereSQL { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -65,6 +69,11 @@ namespace CatalogueLibrary.Spontaneous
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             throw new NotImplementedException();
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new FilterSyntaxChecker(this).Check(notifier);
         }
     }
 }

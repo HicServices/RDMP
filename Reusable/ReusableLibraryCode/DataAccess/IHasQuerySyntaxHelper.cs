@@ -1,4 +1,4 @@
-﻿using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DataAccess
 {
@@ -6,7 +6,7 @@ namespace ReusableLibraryCode.DataAccess
     /// Object which works with a known DatabaseType and therefore has an associated IQuerySyntaxHelper (e.g. DatabaseType.MicrosoftSQLServer and 
     /// MicrosoftQuerySyntaxHelper).  
     /// 
-    /// When implementing this class you most likely want to start with 'new QuerySyntaxHelperFactory().Create(DatabaseType);'
+    /// <para>When implementing this class you most likely want to start with 'new QuerySyntaxHelperFactory().Create(DatabaseType);'</para>
     /// </summary>
     public interface IHasQuerySyntaxHelper
     {

@@ -1,4 +1,4 @@
-﻿using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
@@ -11,8 +11,8 @@ namespace CatalogueLibrary.Data
     /// Normally to open a connection to an IDataAccessPoint (location of server/database) you also need an optional IDataAccessCredentials (username and encrypted password).  These
     /// These are usually two separate objects e.g. TableInfo and DataAccessCredentials (optional - if ommmited connections use integrated/windows security).  
     /// 
-    /// Instead of doing that however, you can use this class to store all the bits in one object that implements both interfaces.  It can then be used with a 
-    /// DataAccessPortal.
+    /// <para>Instead of doing that however, you can use this class to store all the bits in one object that implements both interfaces.  It can then be used with a 
+    /// DataAccessPortal.</para>
     /// </summary>
     public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessCredentials, IDataAccessPoint
     {

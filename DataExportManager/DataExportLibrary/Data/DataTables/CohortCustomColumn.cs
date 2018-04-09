@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -14,8 +16,8 @@ namespace DataExportLibrary.Data.DataTables
     /// For example imagine you have a custom data set which is 'Patient ID,Date Consented' then you could configure an extraction filters that only extracted records from Prescribing,
     /// Demography, Biochemistry catalogues AFTER each patients consent date.
     /// 
-    /// CohortCustomColumns are how Data Export Manager tracks the columns in these data tables for linking in extraction configurations and use in filters.  The columns are synced every
-    /// time you edit your configuration.
+    /// <para>CohortCustomColumns are how Data Export Manager tracks the columns in these data tables for linking in extraction configurations and use in filters.  The columns are synced every
+    /// time you edit your configuration.</para>
     /// </summary>
     public class CohortCustomColumn : VersionedDatabaseEntity, IColumn
     {
@@ -23,6 +25,7 @@ namespace DataExportLibrary.Data.DataTables
         private string _selectSQL;
         private int _extractableCohort_ID;
 
+        [Sql]
         public string SelectSQL
         {
             get { return _selectSQL; }
@@ -62,7 +65,7 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public bool IsPrimaryKey { get { return false; } }
 
-        public CohortCustomColumn(IDataExportRepository repository, DbDataReader r)
+        internal CohortCustomColumn(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             SelectSQL = r["SelectSQL"] as string;
@@ -83,6 +86,11 @@ namespace DataExportLibrary.Data.DataTables
         public override string ToString()
         {
             return SelectSQL;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
         }
 
         public string GetRuntimeName()

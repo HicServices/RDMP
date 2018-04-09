@@ -8,7 +8,7 @@ namespace CatalogueLibrary.DataFlowPipeline
     /// A single component in an IDataFlowPipelineEngine T.  The component should do a single operation on the flowing data (e.g. if T is a System.Data.DataTable the component
     /// could delete duplicate rows) then return the results of the operation via ProcessPipelineData.
     /// 
-    /// Where possible, you should implement IPluginDataFlowComponent instead of this class so that you are MEF discoverable
+    /// <para>Where possible, you should implement IPluginDataFlowComponent instead of this class so that you are MEF discoverable</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IDataFlowComponent<T>
@@ -17,7 +17,7 @@ namespace CatalogueLibrary.DataFlowPipeline
         /// Contains the code that will be executed to modify the T object passing through the component.  E.g. ColumnRenamer component would take each DataTable (T is a 
         /// DataTable for this example) and rename the column it is configured for (at Design Time).  This method will be called once for each T served by the IDataFlowSource.
         /// 
-        /// Do not keep references to toProcess since it will interfere with garbage collection.
+        /// <para>Do not keep references to toProcess since it will interfere with garbage collection.</para>
         /// </summary>
         /// <param name="toProcess"></param>
         /// <param name="listener"></param>

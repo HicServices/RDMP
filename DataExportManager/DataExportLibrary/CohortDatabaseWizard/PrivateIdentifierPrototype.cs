@@ -8,7 +8,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
     /// what datatype to store patient identifiers in when creating a new cohort database (See CreateNewCohortDatabaseWizard).  Every IsExtractionIdentifier column
     /// datatype will be listed along with a count of the number of columns with that datatype and the user (or system) will be allowed to select one.
     /// 
-    /// This helps if you have for example 30 datasets where the patient identifier is varchar(10) and 5 where it is varchar(max) - logical choice is varchar(10).
+    /// <para>This helps if you have for example 30 datasets where the patient identifier is varchar(10) and 5 where it is varchar(max) - logical choice is varchar(10).</para>
     /// </summary>
     public class PrivateIdentifierPrototype
     {

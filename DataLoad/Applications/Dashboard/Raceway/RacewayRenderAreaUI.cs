@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -28,11 +28,11 @@ namespace Dashboard.Raceway
     /// that spans the whole length of time you have been holding data for in any of your datasets.  The data for this graph comes from the Data Quality Engine evaluations database so if
     /// you have never run the DQE on a given dataset it will not appear in the DatasetRaceway.
     /// 
-    /// In DatasetRaceway you can adjust the scope of the axis down from 'All Time' to 'Last Decade',  'Last Year' or 'Last 6 months' if you just want to see how up-to-date each dataset
-    /// is in finer detail.
+    /// <para>In DatasetRaceway you can adjust the scope of the axis down from 'All Time' to 'Last Decade',  'Last Year' or 'Last 6 months' if you just want to see how up-to-date each dataset
+    /// is in finer detail.</para>
     /// 
-    /// The overall effect of this control is to allow you to rapidly identify any datasets that you host which have suddenly started failing validation, see where each dataset starts and
-    /// if there are any gaps or periods of duplication (e.g. where the bars double in height for a period).
+    /// <para>The overall effect of this control is to allow you to rapidly identify any datasets that you host which have suddenly started failing validation, see where each dataset starts and
+    /// if there are any gaps or periods of duplication (e.g. where the bars double in height for a period).</para>
     /// </summary>
     [TechnicalUI]
     public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState

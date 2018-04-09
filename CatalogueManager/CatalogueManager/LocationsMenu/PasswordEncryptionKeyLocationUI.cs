@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -21,12 +21,12 @@ namespace CatalogueManager.LocationsMenu
     /// part of the RDMP codebase but it is recommended that you create your own Private Key.  Without your own private key someone could decompile this software and decrypt the passwords
     /// stored in your RDMP database if it ever became compromised.
     /// 
-    /// This control lets you create a custom 4096 bit RSA Private Key file.  The location of this file is stored in the RDMP database but the file itself should be held under access 
+    /// <para>This control lets you create a custom 4096 bit RSA Private Key file.  The location of this file is stored in the RDMP database but the file itself should be held under access 
     /// control (see UserManual.docx).  This ensures that passwords are only compromised if both the RDMP database and the Windows user account file system (where the private key is held)
-    /// are both compromised.
+    /// are both compromised.</para>
     /// 
-    /// It is only possible to have one key at any one time and once you generate a new one all your previously created passwords will be irretrievable so it is advisable to set this up
-    /// on day one otherwise you will have to reset all the passwords stored in the RDMP database.
+    /// <para>It is only possible to have one key at any one time and once you generate a new one all your previously created passwords will be irretrievable so it is advisable to set this up
+    /// on day one otherwise you will have to reset all the passwords stored in the RDMP database.</para>
     /// </summary>
     public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
     {

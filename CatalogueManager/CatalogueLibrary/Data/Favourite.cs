@@ -55,7 +55,7 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
-        public Favourite(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal Favourite(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             TypeName = r["TypeName"].ToString();
             ObjectID = Convert.ToInt32(r["ObjectID"]);

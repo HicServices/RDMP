@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -18,8 +18,8 @@ namespace RDMPObjectVisualisation.DataObjects
     /// component, whether the software was able to create an instance of the type and whether it passed checking.  Components can be either a Source, Middle (of which there can be any 
     /// number) or Destination.  Objects (usually DataTables) flow through the pipeline and are processed by each component in turn.
     /// 
-    /// But first the pipeline must be constructed, this component is used as part of PipelineDiagram to let you adjust the order / add new components etc into your pipeline.  The pipeline
-    /// itself is stored as a reusable resource in the Catalogue Database. 
+    /// <para>But first the pipeline must be constructed, this component is used as part of PipelineDiagram to let you adjust the order / add new components etc into your pipeline.  The pipeline
+    /// itself is stored as a reusable resource in the Catalogue Database. </para>
     /// </summary>
     [TechnicalUI]
     class PipelineComponentVisualisation:DataFlowComponentVisualisation

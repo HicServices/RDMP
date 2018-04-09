@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +22,13 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
     /// the ParameterManager needs to create renamed versions in memory (SpontaneouslyInventedSqlParameter) and update the IFilter.  However if there is an ISqlParameter
     /// @hb declared at the root (the CohortIdentificationConfiguration) then it will override both and be used instead.
     /// 
-    /// See ParameterLevel for a description of the various levels ISqlParameters can be found at.
+    /// <para>See ParameterLevel for a description of the various levels ISqlParameters can be found at.</para>
     /// 
-    /// ParameterManager has a ParameterManagerLifecycleState (State) which indicates whether it is still collecting new ISqlParameters or whether it has resolved them
-    /// into a final representation.  
+    /// <para>ParameterManager has a ParameterManagerLifecycleState (State) which indicates whether it is still collecting new ISqlParameters or whether it has resolved them
+    /// into a final representation.  </para>
     /// 
-    /// You can merge multiple ParameterManagers together (like CohortQueryBuilder does) by calling ImportAndElevateResolvedParametersFromSubquery which will create the
-    /// final CompositeQueryLevel. 
+    /// <para>You can merge multiple ParameterManagers together (like CohortQueryBuilder does) by calling ImportAndElevateResolvedParametersFromSubquery which will create the
+    /// final CompositeQueryLevel. </para>
     /// </summary>
     public class ParameterManager
     {
@@ -279,7 +279,8 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
                     var spont = new SpontaneouslyInventedSqlParameter(
                         parameterToImport.ParameterSQL.Replace(toImportParameterName,parameterToImport + "_" + newSuffix),
                         parameterToImport.Value,
-                        parameterToImport.Comment
+                        parameterToImport.Comment,
+                        parameterToImport.GetQuerySyntaxHelper()
                         );
                     
                     //now make it a composite query level parameter used by us

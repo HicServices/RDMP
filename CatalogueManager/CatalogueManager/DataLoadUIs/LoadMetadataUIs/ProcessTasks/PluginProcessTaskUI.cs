@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs.Advanced;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -27,18 +28,18 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
     /// Lets you view/edit a single data load module.  This is a pre-canned class e.g. FTPDownloader or a custom plugin you have written.  You should ensure
     /// that the Name field accurately describes (in plenty of detail) what the module/script is intended to do.  
     /// 
-    /// These can be either:
+    /// <para>These can be either:
     /// Attacher - Run the named C# class (which implements the interface IAttacher).  This only works in Mounting stage.  This usually results in records being loaded into the RAW bubble (e.g. AnySeparatorFileAttacher)
     /// DataProvider - Run the named C# class (which implements IDataProvider).  Normally this runs in GetFiles but really it can run on any Stage.  This usually results in files being created or modified (e.g. FTPDownloader)
     /// MutilateDataTable - Run the named C# class (which implements IMutilateDataTables).  Runs in any Adjust/PostLoad stage.  These are dangerous operations which operate pre-canned functionality directly
-    /// on the DataTable being loaded e.g. resolving primary key collisions (which can result in significant data loss if you have not configured the correct primary keys on your dataset).
+    /// on the DataTable being loaded e.g. resolving primary key collisions (which can result in significant data loss if you have not configured the correct primary keys on your dataset).</para>
     /// 
-    /// Each C# module based task has a collection of arguments which each have a description of how they change the behaviour of the module.  Make sure to click on each Argument in turn
-    /// and set an appropriate value such that you understand ahead of time what the module will do when it is run.
+    /// <para>Each C# module based task has a collection of arguments which each have a description of how they change the behaviour of the module.  Make sure to click on each Argument in turn
+    /// and set an appropriate value such that you understand ahead of time what the module will do when it is run.</para>
     /// 
-    /// The data load engine design (RAW,STAGING,LIVE) makes it quite difficult to corrupt your data without realising but you should still adopt best practice: Do as much data modification
+    /// <para>The data load engine design (RAW,STAGING,LIVE) makes it quite difficult to corrupt your data without realising but you should still adopt best practice: Do as much data modification
     /// in the RAW bubble (i.e. not as a post load operation), only use modules you understand the function of and try to restrict the scope of your adjustment operations (it is usually better
-    /// to write an extraction transform than to transform the data during load in case there is a mistake or a researcher wants uncorrupted original data).
+    /// to write an extraction transform than to transform the data during load in case there is a mistake or a researcher wants uncorrupted original data).</para>
     /// </summary>
     public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design,ISaveableUI
     {
@@ -49,6 +50,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         public PluginProcessTaskUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)

@@ -38,6 +38,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.Name = "HelpIcon";
             this.Size = new System.Drawing.Size(19, 19);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.HelpIcon_MouseClick);
             this.MouseHover += new System.EventHandler(this.HelpIcon_MouseHover);
             this.ResumeLayout(false);
 

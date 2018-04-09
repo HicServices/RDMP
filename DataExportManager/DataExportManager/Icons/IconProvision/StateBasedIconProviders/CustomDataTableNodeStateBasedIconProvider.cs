@@ -1,7 +1,7 @@
 using System.Drawing;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
-using DataExportManager.Collections.Nodes;
+using DataExportLibrary.Providers.Nodes;
 
 namespace DataExportManager.Icons.IconProvision.StateBasedIconProviders
 {

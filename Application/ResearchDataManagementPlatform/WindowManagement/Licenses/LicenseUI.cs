@@ -9,8 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableUIComponents;
+using ReusableUIComponents.Settings;
 
 namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 {
@@ -51,21 +51,21 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
         private bool allowClose = false;
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            UserSettingsFile.GetInstance().LicenseAccepted = true;
+            UserSettings.LicenseAccepted = true;
             allowClose = true;
             this.Close();
         }
 
         private void btnDecline_Click(object sender, EventArgs e)
         {
-            UserSettingsFile.GetInstance().LicenseAccepted = false;
+            UserSettings.LicenseAccepted = false;
             allowClose = true;
             Process.GetCurrentProcess().Kill();
         }
 
         private void LicenseUI_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!UserSettingsFile.GetInstance().LicenseAccepted && !allowClose)
+            if (!UserSettings.LicenseAccepted && !allowClose)
             {
                 e.Cancel = true;
                 MessageBox.Show("You have not accepted/declined the license");

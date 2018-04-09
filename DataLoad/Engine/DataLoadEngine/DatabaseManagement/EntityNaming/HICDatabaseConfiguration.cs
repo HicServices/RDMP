@@ -14,11 +14,11 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
     /// <summary>
     /// Wrapper for StandardDatabaseHelper (which tells you where RAW, STAGING and LIVE databases are during data load execution).  This class exists for two reasons
     /// 
-    /// Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear magically during DLE execution (e.g. by attaching 
-    /// an MDF file).
+    /// <para>Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear magically during DLE execution (e.g. by attaching 
+    /// an MDF file).</para>
     /// 
-    /// Secondly to allow for overriding the RAW database server (which defaults to localhost).  It is a good idea to have RAW on a different server to LIVE/STAGING
-    /// in order to reduce the risk incorrectly referencing tables in LIVE in Adjust RAW scripts etc.
+    /// <para>Secondly to allow for overriding the RAW database server (which defaults to localhost).  It is a good idea to have RAW on a different server to LIVE/STAGING
+    /// in order to reduce the risk incorrectly referencing tables in LIVE in Adjust RAW scripts etc.</para>
     /// </summary>
     public class HICDatabaseConfiguration
     {

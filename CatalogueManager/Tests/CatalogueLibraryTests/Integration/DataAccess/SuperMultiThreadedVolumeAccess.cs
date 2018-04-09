@@ -126,16 +126,16 @@ namespace CatalogueLibraryTests.Integration.DataAccess
             for (int i = 0; i < numberToFire; i++)
             {
                 int i1 = i;
-                ts.Add( new Thread(()=>{
-                                           try
-                                           {
+                ts.Add(new Thread(() => {
+                    try
+                    {
 
-                                               method(useTransactions && i1 == 0);
-                                           }
-                                           catch (Exception ex)
-                                           {
-                                               exes.Add(ex);
-                                           }
+                        method(useTransactions && i1 == 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        exes.Add(ex);
+                    }
                 }));
             }
 

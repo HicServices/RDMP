@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -22,13 +22,13 @@ namespace DataExportManager.ProjectUI
     /// Reports the progress of a single dataset bundle in a project extraction.  A dataset bundle is the dataset, any accompanying lookups / supporting documents etc.  You will see one
     /// control per dataset you ticked in ChooseExtractablesUI plus a custom one called Globals which is for all global attachments (See SupportingDocumentsViewer).
     /// 
-    /// The notifications will include the extraction SQL sent to the data repository (including the join against the cohort and any extraction specific filters - See ConfigureDatasetUI).
+    /// <para>The notifications will include the extraction SQL sent to the data repository (including the join against the cohort and any extraction specific filters - See ConfigureDatasetUI).
     /// Then depending on the pipeline you selected in ExecuteExtractionUI you will then see messages about the data being extracted including the number of records written/fetched and
-    /// any problems encountered.  These messages are also stored in the Logging database (See LogViewerForm).
+    /// any problems encountered.  These messages are also stored in the Logging database (See LogViewerForm).</para>
     ///  
-    /// The pipeline destination component in the pipeline you selected in ExecuteExtractionUI will determine the exact file types of the destination.  The RDMP ships with two destinations,
+    /// <para>The pipeline destination component in the pipeline you selected in ExecuteExtractionUI will determine the exact file types of the destination.  The RDMP ships with two destinations,
     /// one produces a CSV file and word metadata document, the other extracts records into a new SQL Server database which can be detached to ship the data in .mdb format (useful for extracts
-    /// that are too large for traditional flat file adapters in programs like SPSS and STATA).
+    /// that are too large for traditional flat file adapters in programs like SPSS and STATA).</para>
     /// </summary>
     public partial class ExecuteDatasetExtractionHostUI : RDMPUserControl
     {
@@ -47,7 +47,6 @@ namespace DataExportManager.ProjectUI
         public ExecuteDatasetExtractionHostUI(IExtractCommand extractCommand,Project project, DataLoadInfo dataLoadInfo, IPipeline pipeline )
         {
             ExtractCommand = extractCommand;
-            
 
             _dataLoadInfo = dataLoadInfo;
             _pipeline = pipeline;
@@ -63,10 +62,8 @@ namespace DataExportManager.ProjectUI
         
         private void btnCancel_Click(object sender, EventArgs e)
         {
-
             if (_pipelineUseCase != null)
-            {
-                
+            {   
                 //display it on the screen
                 progressUI1.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Attempting to Cancel"));
                 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.Common;
 using DataQualityEngine.Data;
 using HIC.Common.Validation.Constraints;
@@ -8,7 +8,7 @@ namespace DataQualityEngine.Reports.PeriodicityHelpers
     /// <summary>
     /// Records the number of records passing / failing validation with each consquence (See PeriodicityState).
     /// 
-    /// This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).
+    /// <para>This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).</para>
     /// </summary>
     public class PeriodicityCube
     {

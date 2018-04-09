@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -43,8 +43,8 @@ namespace CatalogueManager.AggregationUIs
     /// Executes and renders an AggregateConfiguration as a graph.  An AggregateConfiguration is a GROUP BY sql statement.  You can view the statement executed through the 
     /// 'SQL Code' tab.  In the Data tab you can view the raw data returned by the GROUP BY query (And also if applicable you can cache the results for displaying on the website).
     /// 
-    /// The Graph will do it's best to render something appropriate to the selected Dimensions, Pivot, Axis etc but there are limits.  If the graph doesn't look the way you want
-    /// try putting a year/month axis onto the AggregateConfiguration.  Also make sure that your PIVOT Dimension doesn't have 1000 values or the graph will be completely incomprehensible.
+    /// <para>The Graph will do it's best to render something appropriate to the selected Dimensions, Pivot, Axis etc but there are limits.  If the graph doesn't look the way you want
+    /// try putting a year/month axis onto the AggregateConfiguration.  Also make sure that your PIVOT Dimension doesn't have 1000 values or the graph will be completely incomprehensible.</para>
     /// </summary>
     public partial class AggregateGraph : AggregateGraph_Design
     {

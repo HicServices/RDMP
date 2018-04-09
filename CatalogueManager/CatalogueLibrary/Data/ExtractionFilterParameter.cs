@@ -1,23 +1,29 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes an SQL parameter (e.g. @drugname) which is required for use of an ExtractionFilter (it's parent).
     /// 
-    /// See the description of ExtractionFilter to see how filters are cloned and adjusted depending on usage context
+    /// <para>See the description of ExtractionFilter to see how filters are cloned and adjusted depending on usage context</para>
     /// </summary>
     public class ExtractionFilterParameter : VersionedDatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
     {
         #region Database Properties
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int ParameterSQL_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Value_MaxLength = -1;
 
         private string _value;
@@ -25,6 +31,7 @@ namespace CatalogueLibrary.Data
         private string _parameterSQL;
         private int _extractionFilterID;
 
+        [Sql]
         public string Value
         {
             get { return _value; }
@@ -35,6 +42,7 @@ namespace CatalogueLibrary.Data
             get { return _comment; }
             set { SetField(ref _comment, value); }
         }
+        [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
@@ -55,10 +63,11 @@ namespace CatalogueLibrary.Data
         /// </summary>
         [NoMappingToDatabase]
         public string ParameterName {
-            get { return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         #region Relationships
+        /// <inheritdoc cref="ExtractionFilter_ID"/>
         [NoMappingToDatabase]
         public ExtractionFilter ExtractionFilter
         {
@@ -68,9 +77,6 @@ namespace CatalogueLibrary.Data
 
         public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
         {
-            if (!RDMPQuerySyntaxHelper.IsValidParameterName(parameterSQL))
-                throw new ArgumentException("parameterSQL is not valid \"" + parameterSQL + "\"");
-
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"ParameterSQL", parameterSQL},
@@ -79,7 +85,7 @@ namespace CatalogueLibrary.Data
         }
 
 
-        public ExtractionFilterParameter(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilterParameter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());
@@ -93,6 +99,17 @@ namespace CatalogueLibrary.Data
             //return the name of the variable
             return ParameterName;
         }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return ExtractionFilter.GetQuerySyntaxHelper();
+        }
+
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {ExtractionFilter};

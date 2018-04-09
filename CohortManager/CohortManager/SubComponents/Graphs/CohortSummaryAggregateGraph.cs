@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AggregationUIs;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -18,19 +19,24 @@ namespace CohortManager.SubComponents.Graphs
     /// records for 5 healthboards over time then you combine it with a 'cohort set' "People who have lived in Tayside or Fife for at least 5 years" you should expect to see the graph only
     /// show Tayside and Fife records.
     /// 
-    /// There are 2 ways of combining the two queries (cohort and original graph):
+    /// <para>There are 2 ways of combining the two queries (cohort and original graph):
     /// WhereExtractionIdentifiersIn - provides an identical query to the original graph with an extra restriction that the patient identifier must appear in the 'Cohort Set'.  This lets you
     /// have a 'Cohort Set' "Prescriptions for Morphine" but generate a graph of "All drug prescriptions over time" and have it show all the drugs that those patients are on over time (this
-    /// should show a high favouritism for Morphine but also show other drugs Morphine users also take).
+    /// should show a high favouritism for Morphine but also show other drugs Morphine users also take).</para>
     /// 
-    /// WhereRecordsIn - provides an identical query to the original graph but also applies the Filters that are on the 'Cohort Set'.  This means that the same 'Cohort Set' "Prescriptions for
+    /// <para>WhereRecordsIn - provides an identical query to the original graph but also applies the Filters that are on the 'Cohort Set'.  This means that the same 'Cohort Set' "Prescriptions for
     /// Morphine" combined with the 'Aggregate Chart' "All drug prescriptions over time" would show ONLY Morphine prescriptions (since that is what the records that are returned by the cohort
-    /// query).
+    /// query).</para>
     ///  
     /// </summary>
     public class CohortSummaryAggregateGraph:AggregateGraph, IObjectCollectionControl
     {
         private CohortSummaryAggregateGraphObjectCollection _collection;
+
+        public CohortSummaryAggregateGraph()
+        {
+            AssociatedCollection = RDMPCollection.Cohort;
+        }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {

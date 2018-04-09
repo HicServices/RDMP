@@ -67,7 +67,7 @@ namespace CatalogueLibrary.Data.Governance
             });
         }
 
-        public GovernanceDocument(ICatalogueRepository repository, DbDataReader r)
+        internal GovernanceDocument(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             //cannot be null

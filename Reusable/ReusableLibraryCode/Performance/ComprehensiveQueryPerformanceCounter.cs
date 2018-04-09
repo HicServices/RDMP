@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Threading;
@@ -10,9 +10,9 @@ namespace ReusableLibraryCode.Performance
     /// final state of the command (which could have parameters or have it's command text modified after construction).  Mostly it is useful for detecting
     /// lines of code that are sending hundreds/thousands of duplicate queries.
     /// 
-    /// You can install a ComprehensiveQueryPerformanceCounter by using DatabaseCommandHelper.PerformanceCounter = new ComprehensiveQueryPerformanceCounter()
+    /// <para>You can install a ComprehensiveQueryPerformanceCounter by using DatabaseCommandHelper.PerformanceCounter = new ComprehensiveQueryPerformanceCounter()</para>
     /// 
-    /// You can view the results of a ComprehensiveQueryPerformanceCounter by using a PerformanceCounterUI/PerformanceCounterResultsUI.
+    /// <para>You can view the results of a ComprehensiveQueryPerformanceCounter by using a PerformanceCounterUI/PerformanceCounterResultsUI.</para>
     /// </summary>
     public class ComprehensiveQueryPerformanceCounter
     {

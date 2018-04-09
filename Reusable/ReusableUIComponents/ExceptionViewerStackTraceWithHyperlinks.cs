@@ -23,8 +23,8 @@ namespace ReusableUIComponents
     /// Displays an in-depth technical report about an error that occurred during a task.  The error messages and the location in each class file in the stack is displayed including line 
     /// numbers if a .pdb is available.  The pdb files for all RDMP code is shipped with the RDMP installer.
     /// 
-    /// Additionally as part of the build process of RDMP applications the built codebase is zipped into a file called SourceCodeForSelfAwareness.zip clicking one of the hyperlinks in
-    /// the stack trace will launch a small popup viewer showing you the codebase at that point with a highlight of the line that threw the Exception.
+    /// <para>Additionally as part of the build process of RDMP applications the built codebase is zipped into a file called SourceCodeForSelfAwareness.zip clicking one of the hyperlinks in
+    /// the stack trace will launch a small popup viewer showing you the codebase at that point with a highlight of the line that threw the Exception.</para>
     /// 
     /// </summary>
     public partial class ExceptionViewerStackTraceWithHyperlinks : Form

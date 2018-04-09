@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -19,16 +19,16 @@ namespace QueryCaching.Aggregation
     /// Handles the caching and versioning of AggregateConfigurations in a QueryCaching database (QueryCaching.Database.csproj).  Query caching is the process
     /// of storing the SQL query and resulting DataTable from running an Aggregate Configuration SQL query (Usually built by an AggregateBuilder).  
     /// 
-    /// Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with WHERE conditions and even Patient Index 
+    /// <para>Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with WHERE conditions and even Patient Index 
     /// Tables (See JoinableCohortAggregateConfiguration).  The only way some of these queries can finish in a sensible time frame (i.e. minutes instead of days) 
     /// is to execute each subquery (AggregateConfiguration) and cache the resulting identifier lists with primary key indexes.  The 
-    /// CohortIdentificationConfiguration can then be built into a query that uses the cached results (See CohortQueryBuilder).
+    /// CohortIdentificationConfiguration can then be built into a query that uses the cached results (See CohortQueryBuilder).</para>
     /// 
-    /// In order to ensure the cache is never stale the exact SQL query is stored in a table (CachedAggregateConfigurationResults) so that if the user changes
-    /// the AggregateConfiguration the cached DataTable is discarded (until the user executes and caches the new version).
+    /// <para>In order to ensure the cache is never stale the exact SQL query is stored in a table (CachedAggregateConfigurationResults) so that if the user changes
+    /// the AggregateConfiguration the cached DataTable is discarded (until the user executes and caches the new version).</para>
     /// 
-    ///  CachedAggregateConfigurationResultsManager can cache any CacheCommitArguments (includes not just patient identifier lists but also aggregate graphs and
-    /// patient index tables).
+    /// <para> CachedAggregateConfigurationResultsManager can cache any CacheCommitArguments (includes not just patient identifier lists but also aggregate graphs and
+    /// patient index tables).</para>
     /// </summary>
     public class CachedAggregateConfigurationResultsManager
     {

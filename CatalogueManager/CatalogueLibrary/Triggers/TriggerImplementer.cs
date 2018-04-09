@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -22,11 +22,11 @@ namespace CatalogueLibrary.Triggers
     /// was archived etc).  The _Archive table can be used to view the changes that occured during data loading (See DiffDatabaseDataFetcher) and/or generate a 
     /// 'way back machine' view of the data at a given date in the past (See CreateViewOldVersionsTableValuedFunction method).
     /// 
-    /// This class is super Microsoft Sql Server specific.  It is not suitable to create backup triggers on tables in which you expect high volitility (lots of frequent
-    /// updates all the time).
+    /// <para>This class is super Microsoft Sql Server specific.  It is not suitable to create backup triggers on tables in which you expect high volitility (lots of frequent
+    /// updates all the time).</para>
     /// 
-    /// Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match when it was created and the _Archive table hasn't
-    /// got a different schema to the live table (e.g. if you made a change to the live table this would pick up that the _Archive wasn't updated).
+    /// <para>Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match when it was created and the _Archive table hasn't
+    /// got a different schema to the live table (e.g. if you made a change to the live table this would pick up that the _Archive wasn't updated).</para>
     /// </summary>
     public class TriggerImplementer
     {

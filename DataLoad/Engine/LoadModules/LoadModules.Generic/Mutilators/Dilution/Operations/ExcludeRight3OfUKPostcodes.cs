@@ -44,7 +44,7 @@ AS
 Begin
 
     Declare @KeepValues as varchar(50)
-    Set @KeepValues = '%[^a-z0-9]%'
+    Set @KeepValues = '%[^A-Za-z0-9]%'
     While PatIndex(@KeepValues, @Temp) > 0
         Set @Temp = Stuff(@Temp, PatIndex(@KeepValues, @Temp), 1, '')
 
@@ -86,7 +86,7 @@ BEGIN
     --PO1 3AX
     
     --Have we identified the 3AX bit correctly?
-    if PATINDEX('[0-9][A-Z][A-Z]' ,UPPER(@discardedBit)) = 1 --Yes
+    if PATINDEX('[0-9][A-Za-z][A-Za-z]' ,UPPER(@discardedBit)) = 1 --Yes
         RETURN SUBSTRING(@hackedStr,1,LEN(@hackedStr)-3) --Return the hacked string (no dodgy characters) minus the validated suffix
     
     --Suffix is missing or malformed but there is 5 or more characters so we aren't looking at 'DD3' we are looking at 'DD3 5L5' where the final digit should be a char but is an int by mistype

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -18,15 +18,15 @@ namespace ReusableUIComponents.ChecksUI
     /// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating 
     /// that progress is made towards a fixed number e.g. you could get 1000 messages over the course of an hour reporting how close towards a goal of 1,000,000 records a given task is.
     /// 
-    /// This control covers the checking event system. For information about the progress system see ProgressUI.
+    /// <para>This control covers the checking event system. For information about the progress system see ProgressUI.</para>
     /// 
-    /// Used throughout the RDMP software to inform the user about the progress or checking of an activity.  Messages will appear along with a result (Success,Fail,Warning) and optionally
+    /// <para>Used throughout the RDMP software to inform the user about the progress or checking of an activity.  Messages will appear along with a result (Success,Fail,Warning) and optionally
     /// an Exception if one was generated.  Double clicking a message lets you view a StackTrace and even view the source code (See ViewSourceCodeDialog) where the message was generated 
-    /// (even if it wasn't an Exception).
+    /// (even if it wasn't an Exception).</para>
     /// 
-    /// You can copy and paste values out of the listbox using Ctrl+C and Ctrl+V to paste.
+    /// <para>You can copy and paste values out of the listbox using Ctrl+C and Ctrl+V to paste.</para>
     /// 
-    /// Typing into the Filter lets you filter by message text.
+    /// <para>Typing into the Filter lets you filter by message text.</para>
     /// </summary>
     public partial  class ChecksUI : UserControl, ICheckNotifier
     {
@@ -139,10 +139,9 @@ namespace ReusableUIComponents.ChecksUI
                 AllChecksComplete(this,new AllChecksCompleteHandlerArgs(listener));
         }
 
-
-        public bool OnCheckPerformed(CheckEventArgs args)
+        public bool OnCheckPerformed(CheckEventArgs args, bool allowYesNoToAll = true)
         {
-            bool shouldApplyFix = DoesUserWantToApplyFix(args);
+            bool shouldApplyFix = DoesUserWantToApplyFix(args, allowYesNoToAll);
 
             AddToListbox(shouldApplyFix
                 ? new CheckEventArgs("Fix will be applied for message:" + args.Message, CheckResult.Warning, args.Ex)
@@ -150,17 +149,19 @@ namespace ReusableUIComponents.ChecksUI
 
             return shouldApplyFix;
         }
-
-        private bool DoesUserWantToApplyFix(CheckEventArgs args)
+        
+        private bool DoesUserWantToApplyFix(CheckEventArgs args, bool allowYesNoToAll)
         {
             //if there is a fix and a request handler for whether or not to apply the fix
             if (args.ProposedFix != null)
             {
                 if (args.Result == CheckResult.Success)
-                    throw new Exception("Why did you propose the fix " + args.ProposedFix + " when there is was no problem (dont specify a proposedFix if you are passing in CheckResult.Success)");
+                    throw new Exception("Why did you propose the fix " + args.ProposedFix + " when there is was no problem " +
+                                        "(dont specify a proposedFix if you are passing in CheckResult.Success)");
 
                 //there is a suggested fix, see if the user has subscribed to the fix handler (i.e. the fix handler tells the class whether the user wants to apply this specific fix, like maybe a messagebox or something gets shown and it returns true to apply the fix)
-                bool applyFix = MakeChangePopup.ShowYesNoMessageBoxToApplyFix(yesNoYesToAllDialog,args.Message, args.ProposedFix);//user wants to apply fix (or doesnt)
+                bool applyFix = MakeChangePopup.ShowYesNoMessageBoxToApplyFix(allowYesNoToAll ? yesNoYesToAllDialog : null, 
+                                                                              args.Message, args.ProposedFix);
 
                 //user wants to apply fix so don't raise any more events
                 if (applyFix)
@@ -170,8 +171,6 @@ namespace ReusableUIComponents.ChecksUI
             //do not apply fix
             return false;
         }
-
-        
 
         private void AddToListbox(CheckEventArgs args)
         {
@@ -218,6 +217,11 @@ namespace ReusableUIComponents.ChecksUI
         private void btnAbortChecking_Click(object sender, EventArgs e)
         {
             TerminateWithExtremePrejudice();
+        }
+
+        public bool OnCheckPerformed(CheckEventArgs args)
+        {
+            return OnCheckPerformed(args, true);
         }
     }
 }

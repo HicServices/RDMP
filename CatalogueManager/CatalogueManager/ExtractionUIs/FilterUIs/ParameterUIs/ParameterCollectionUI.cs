@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,22 +26,22 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
     /// Filters, Aggregates, Extractions etc can all make use of SQL parameters (e.g. @drugName).  This dialog appears any time you are viewing/editing the parameters associated with a
     /// given parameter use case.  If you do not understand what SQL parameters (aka variables) are then you should read up on this before using this control.
     /// 
-    /// The following help instructions will relate to the context of editing a Filter and configuring some parameters but is equally applicable to configuring global parameters on an 
-    /// extraction or in a cohort identification configuration etc.
+    /// <para>The following help instructions will relate to the context of editing a Filter and configuring some parameters but is equally applicable to configuring global parameters on an 
+    /// extraction or in a cohort identification configuration etc.</para>
     /// 
-    /// The first time you use a parameter in your filter (e.g. @drugName), a template SQL Parameter will be created (probably as a varchar(50)).  You should adjust the Declare SQL such
+    /// <para>The first time you use a parameter in your filter (e.g. @drugName), a template SQL Parameter will be created (probably as a varchar(50)).  You should adjust the Declare SQL such
     /// that it is the correct data type for your filter and give it a default value which illustrates how it should be used when deployed as part of cohort identification or data extraction.
-    /// Finally provide a description of what the parameter is supposed to do in the Comment section.  
+    /// Finally provide a description of what the parameter is supposed to do in the Comment section.  </para>
     /// 
-    /// Parameters exist at multiple levels within the system and it is possible that you are editing parameters that are not at the top level.  For example, you are configuring an extract
+    /// <para>Parameters exist at multiple levels within the system and it is possible that you are editing parameters that are not at the top level.  For example, you are configuring an extract
     /// in which the global parameter @drugCodesOfInterest is declared for all datasets in the project and you have just opened a Filter.  In this context you will see some greyed out
     /// 'Overriding' parameters, these are available for use at lower levels but cannot be changed (because the new Value would be applied to all users of the global i.e. all datasets in the
-    /// extraction, not just the one you are editing).
+    /// extraction, not just the one you are editing).</para>
     /// 
-    /// So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL 'dateCollected > @dateOfCollection'.  When you save the Filter the 
-    /// parameter @dateOfCollection will be created (unless there is already a global with the same name/type).
+    /// <para>So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL 'dateCollected > @dateOfCollection'.  When you save the Filter the 
+    /// parameter @dateOfCollection will be created (unless there is already a global with the same name/type).</para>
     /// 
-    /// Sometimes the Globals are explicit fixed value parameters for example the @ProjectNumber in a data extraction, in this case the Parameter cannot be modified period.
+    /// <para>Sometimes the Globals are explicit fixed value parameters for example the @ProjectNumber in a data extraction, in this case the Parameter cannot be modified period.</para>
     /// </summary>
     public partial class ParameterCollectionUI : UserControl
     {

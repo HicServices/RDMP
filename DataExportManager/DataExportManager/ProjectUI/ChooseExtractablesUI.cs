@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,9 +30,9 @@ namespace DataExportManager.ProjectUI
     /// and Lookups (See ConfigureLookups) you want to execute on this pass.  You can only select datasets etc which are part of the currently executing project configuration (See 
     /// ExecuteExtractionUI).
     /// 
-    /// All artifacts are extracted in parallel into the data extraction directory of the project (in a subfolder for the configuration).  This execution will override any files it finds
+    /// <para>All artifacts are extracted in parallel into the data extraction directory of the project (in a subfolder for the configuration).  This execution will override any files it finds
     /// for previous executions of the same dataset but will not delete unticked datasets.  This allows you to run an extraction overnight of half the datasets and then do the other half
-    /// the next night.
+    /// the next night.</para>
     /// </summary>
     public partial class ChooseExtractablesUI : RDMPUserControl
     {

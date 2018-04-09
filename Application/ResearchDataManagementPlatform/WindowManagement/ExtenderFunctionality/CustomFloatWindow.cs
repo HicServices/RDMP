@@ -8,7 +8,6 @@ using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.Menus.MenuItems;
-using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
 

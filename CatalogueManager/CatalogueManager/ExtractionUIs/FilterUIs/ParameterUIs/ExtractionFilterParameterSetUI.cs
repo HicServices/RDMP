@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -26,7 +26,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
     /// with a parameter @listOfConditionCodes, then you can have multiple ExtractionFilterParameterSets 'Dementia Conditions', 'High Blood Pressure', 'Coronary Heart Disease' which
     /// are currated lists of codes that are effectively just a 'good value' for the main filter.
     /// 
-    /// This user interface lets you edit one of these.
+    /// <para>This user interface lets you edit one of these.</para>
     /// </summary>
     public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterSetUI_Design, ISaveableUI
     {

@@ -17,25 +17,33 @@ namespace CatalogueLibrary.Data
     /// A virtual column that is made available to researchers.  Each Catalogue has 1 or more CatalogueItems, these contain the descriptions of what is contained
     /// in the column as well as any outstanding/resolved issues with the column (see CatalogueItemIssue).
     /// 
-    /// It is important to note that CatalogueItems are not tied to underlying database tables/columns except via an ExtractionInformation.  This means that you can
-    /// for example have multiple different versions of the same underlying ColumnInfo 
+    /// <para>It is important to note that CatalogueItems are not tied to underlying database tables/columns except via an ExtractionInformation.  This means that you can
+    /// for example have multiple different versions of the same underlying ColumnInfo </para>
     /// 
-    /// e.g.
+    /// <para>e.g.
     /// CatalogueItem: PatientDateOfBirth (ExtractionInformation verbatim but 'Special Approval Required')
-    /// CatalogueItem: PatientDateOfBirthApprox (ExtractionInformation rounds to nearest quarter but governance is 'Core')
+    /// CatalogueItem: PatientDateOfBirthApprox (ExtractionInformation rounds to nearest quarter but governance is 'Core')</para>
     /// 
-    /// Both the above would extract from the same ColumnInfo DateOfBirth
+    /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
     public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed
     {
         #region Database Properties
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Statistical_cons_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Research_relevance_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Topic_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Agg_method_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Limitations_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Comments_MaxLength = -1;
 
         public string _Name;
@@ -127,6 +135,7 @@ namespace CatalogueLibrary.Data
 
 
         #region Relationships
+        /// <inheritdoc cref="Catalogue_ID"/>
         [NoMappingToDatabase]
         public Catalogue Catalogue {
             get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
@@ -141,6 +150,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="ColumnInfo_ID"/>
         [NoMappingToDatabase]
         public ColumnInfo ColumnInfo
         {
@@ -185,7 +195,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public CatalogueItem(ICatalogueRepository repository, DbDataReader r)
+        internal CatalogueItem(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString()); //gets around decimals and other random crud number field types that sql returns

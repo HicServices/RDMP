@@ -188,7 +188,18 @@ namespace CatalogueLibrary
                         ForwardEngineerCatalogue c = new ForwardEngineerCatalogue(_tableToSync, added.ToArray(), true);
 
                         //In the Catalogue
-                        c.ExecuteForwardEngineering(relatedCatalogues[0]);
+                        Catalogue cata;
+                        CatalogueItem[] cis;
+                        ExtractionInformation[] eis;
+                        c.ExecuteForwardEngineering(relatedCatalogues[0],out cata,out cis, out eis);
+                        
+                        //make them extractable only as internal since it is likely they could contain sensitive data if user is just used to hammering Ok on all dialogues
+                        foreach (var e in eis)
+                        {
+                            e.ExtractionCategory = ExtractionCategory.Internal;
+                            e.SaveToDatabase();
+                        }
+
                     }
         }
 

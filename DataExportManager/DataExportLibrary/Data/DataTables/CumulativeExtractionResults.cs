@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
@@ -26,7 +26,8 @@ namespace DataExportLibrary.Data.DataTables
         private int _extractionConfiguration_ID;
         private int _extractableDataSet_ID;
         private DateTime _dateOfExtraction;
-        private string _filename;
+        private string _destinationType;
+        private string _destinationDescription;
         private int _recordsExtracted;
         private int _distinctReleaseIdentifiersEncountered;
         private string _filtersUsed;
@@ -49,10 +50,15 @@ namespace DataExportLibrary.Data.DataTables
             get { return _dateOfExtraction; }
             set { SetField(ref _dateOfExtraction, value); }
         }
-        public string Filename
+        public string DestinationType
         {
-            get { return _filename; }
-            set { SetField(ref _filename, value); }
+            get { return _destinationType; }
+            set { SetField(ref _destinationType, value); }
+        }
+        public string DestinationDescription
+        {
+            get { return _destinationDescription; }
+            set { SetField(ref _destinationDescription, value); }
         }
         public int RecordsExtracted
         {
@@ -88,6 +94,7 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="ExtractableDataSet_ID"/>
         [NoMappingToDatabase]
         public IExtractableDataSet ExtractableDataSet
         {
@@ -111,7 +118,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public CumulativeExtractionResults(IDataExportRepository repository, DbDataReader r)
+        internal CumulativeExtractionResults(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionConfiguration_ID = int.Parse(r["ExtractionConfiguration_ID"].ToString());
@@ -121,14 +128,14 @@ namespace DataExportLibrary.Data.DataTables
             DistinctReleaseIdentifiersEncountered = int.Parse(r["DistinctReleaseIdentifiersEncountered"].ToString());
             Exception = r["Exception"] as string;
             FiltersUsed = r["FiltersUsed"] as string;
-            Filename = r["Filename"] as string;
+            DestinationType = r["DestinationType"] as string;
+            DestinationDescription = r["DestinationDescription"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
             CohortExtracted = int.Parse(r["CohortExtracted"].ToString());
         }
 
         public IReleaseLogEntry GetReleaseLogEntryIfAny()
         {
-
             var repo = (DataExportRepository)Repository;
             using (var con = repo.GetConnection())
             {
@@ -144,6 +151,11 @@ namespace DataExportLibrary.Data.DataTables
 
                 return null;
             }
+        }
+
+        public Type GetDestinationType()
+        {
+            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType);
         }
     }
 }

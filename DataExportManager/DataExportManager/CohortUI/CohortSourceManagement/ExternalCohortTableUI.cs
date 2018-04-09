@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -77,6 +78,8 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
         public ExternalCohortTableUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.SavedCohorts;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

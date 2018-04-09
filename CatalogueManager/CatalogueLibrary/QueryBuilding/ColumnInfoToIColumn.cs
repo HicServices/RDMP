@@ -1,5 +1,8 @@
 ﻿using System;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
+using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -31,11 +34,17 @@ namespace CatalogueLibrary.QueryBuilding
 
         public ColumnInfo ColumnInfo { get; private set; }
         public int Order { get; set; }
+        
+        [Sql]
         public string SelectSQL { get; set; }
         public int ID { get; private set; }
         public string Alias { get; set; }
         public bool HashOnDataRelease { get; private set; }
         public bool IsExtractionIdentifier { get; private set; }
         public bool IsPrimaryKey { get; private set; }
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
+        }
     }
 }

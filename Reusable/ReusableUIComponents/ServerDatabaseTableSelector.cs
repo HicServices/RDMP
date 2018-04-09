@@ -87,9 +87,14 @@ namespace ReusableUIComponents
             _workerRefreshTables.DoWork += UpdateTablesListAsync;
             _workerRefreshTables.WorkerSupportsCancellation = true;
             _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
-
             
             pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType);
+            
+            var r = new RecentHistoryOfControls(cbxServer, new Guid("01ccc304-0686-4145-86a5-cc0468d40027"));
+            r.AddHistoryAsItemsToComboBox(cbxServer);
+
+            var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
+            r2.AddHistoryAsItemsToComboBox(cbxDatabase);
         }
 
         

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -23,7 +23,7 @@ namespace LoadModules.GenericUIs.DataFlowSources
     /// where they are likely to be confused e.g. if you have a column with important leading zeroes that should be treated as a string despite looking like an int.  If you have too
     /// many explicitly typed columns it can limit your Pipelines reusability with novel files you might receive in the future.
     /// 
-    /// For a use case of when this is useful see ExplicitColumnTypeUI (this form hosts a collection of these controls).
+    /// <para>For a use case of when this is useful see ExplicitColumnTypeUI (this form hosts a collection of these controls).</para>
     /// </summary>
     [Export(typeof(ICustomUI))]
     public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTypingCollection>

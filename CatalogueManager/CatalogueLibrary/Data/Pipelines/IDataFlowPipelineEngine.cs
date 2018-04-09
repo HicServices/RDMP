@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 
@@ -9,9 +9,9 @@ namespace CatalogueLibrary.Data.Pipelines
     /// ending with an IDataFlowDestination with any number of IDataFlowComponents in the middle.  Each component must operate on the class that flows through which is
     /// of type T (see the Generic implementation).  
     /// 
-    /// Before running the IDataFlowPipelineEngine you should call Initialize with the objects that are available for IPipelineRequirement on components.
+    /// <para>Before running the IDataFlowPipelineEngine you should call Initialize with the objects that are available for IPipelineRequirement on components.</para>
     /// 
-    /// See also Pipeline
+    /// <para>See also Pipeline</para>
     /// </summary>
     public interface IDataFlowPipelineEngine : ICheckable
     {

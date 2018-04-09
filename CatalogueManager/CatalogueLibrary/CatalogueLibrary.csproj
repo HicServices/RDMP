@@ -343,9 +343,9 @@
     <Reference Include="MySql.Data">
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -374,14 +374,13 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ANOEngineering\ForwardEngineerANOCataloguePlanManager.cs" />
-    <Compile Include="ANOEngineering\ForwardEngineerANOCatalogueEngine.cs" />
-    <Compile Include="ANOEngineering\IDilutionOperation.cs" />
-    <Compile Include="Cloning\MissingTableException.cs" />
+    <Compile Include="Checks\SyntaxChecking\ColumnSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\FilterSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\ParameterSyntaxChecker.cs" />
+    <Compile Include="Checks\SyntaxChecking\SyntaxChecker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
-    <Compile Include="DataFlowPipeline\FixedSource.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
@@ -405,8 +404,9 @@
     <Compile Include="Data\IAggregateTopX.cs" />
     <Compile Include="Data\IColumnInfo.cs" />
     <Compile Include="Data\IMasqueradeAs.cs" />
-    <Compile Include="Data\ObjectExport.cs" />
-    <Compile Include="Data\ObjectImport.cs" />
+    <Compile Include="Data\ImportExport\ShareManager.cs" />
+    <Compile Include="Data\ImportExport\ObjectExport.cs" />
+    <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
@@ -414,6 +414,11 @@
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
+    <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
+    <Compile Include="Data\Serialization\ILazyConstructorFinishedCallback.cs" />
+    <Compile Include="Data\Serialization\JsonCompatibleDictionary.cs" />
+    <Compile Include="Data\Serialization\JsonConvertExtensions.cs" />
+    <Compile Include="Data\Serialization\LazyConstructorsJsonConverter.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
@@ -453,14 +458,10 @@
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
-    <Compile Include="Refactoring\SelectSQLRefactorer.cs" />
-    <Compile Include="Refactoring\Exceptions\RefactoringException.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
-    <Compile Include="ObjectSharing\ObjectSharingObscureDependencyFinder.cs" />
-    <Compile Include="ObjectSharing\SharedPluginImporter.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
     <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
@@ -497,7 +498,6 @@
     <Compile Include="Providers\DescendancyList.cs" />
     <Compile Include="Providers\IChildProvider.cs" />
     <Compile Include="Providers\ICoreChildProvider.cs" />
-    <Compile Include="Remoting\RemotePushingService.cs" />
     <Compile Include="Reports\DocumentationReportFormsAndControlsOfficeBit.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabase.cs" />
     <Compile Include="Reports\Exceptions\SourceCodeNotFoundException.cs" />
@@ -582,7 +582,6 @@
     <Compile Include="Data\SafeDirectoryCatalog.cs" />
     <Compile Include="Data\ServerDefaults.cs" />
     <Compile Include="Data\DataLoad\ANOTable.cs" />
-    <Compile Include="Cloning\CatalogueCloner.cs" />
     <Compile Include="DataHelper\JoinHelper.cs" />
     <Compile Include="DataHelper\TableInfoImporter.cs" />
     <Compile Include="DataHelper\TableValuedFunctionImporter.cs" />
@@ -649,9 +648,7 @@
     <Compile Include="Reports\MetadataReport.cs" />
     <Compile Include="Reports\RequiresMicrosoftOffice.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabaseOfficeBit.cs" />
-    <Compile Include="Repositories\Sharing\MapsDirectlyToDatabaseTableStatelessDefinition.cs" />
     <Compile Include="Repositories\MEF.cs" />
-    <Compile Include="Repositories\Sharing\ShareManager.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedAggregateTopX.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedArgument.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedFilter.cs" />
@@ -660,6 +657,10 @@
     <Compile Include="Spontaneous\SpontaneouslyInventedSqlParameter.cs" />
     <Compile Include="Spontaneous\SpontaneousObject.cs" />
     <Compile Include="SupportingDocumentsFetcher.cs" />
+    <Compile Include="Ticketing\ITicketingSystem.cs" />
+    <Compile Include="Ticketing\PluginTicketingSystem.cs" />
+    <Compile Include="Ticketing\TicketingSystemConstructorParameters.cs" />
+    <Compile Include="Ticketing\TicketingSystemFactory.cs" />
     <Compile Include="Triggers\DiffDatabaseDataFetcher.cs" />
     <Compile Include="Triggers\Exceptions\IrreconcilableColumnDifferencesInArchiveException.cs" />
     <Compile Include="Triggers\SpecialFieldNames.cs" />
@@ -699,6 +700,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
+    <Folder Include="Remoting\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

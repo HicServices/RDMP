@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.CommandExecution;
@@ -11,14 +12,21 @@ namespace ReusableUIComponents.TransparentHelpSystem
 {
     public class HelpWorkflow
     {
+        public Guid WorkflowGuid { get; private set; }
         public Control HostControl { get; private set; }
-        public ICommandExecution Command { get; set; }
+        public ICommandExecution Command { get; private set; }
         public IHelpWorkflowProgressProvider ProgressProvider { get; set; }
 
         private TransparentHelpForm _help;
         private bool _helpClosed;
+        private CancellationTokenSource _cancellationTokenSource;
         public HelpStage RootStage { get; set; }
         public HelpStage CurrentStage { get; set; }
+        
+        public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider):this(hostControl,null,progressProvider)
+        {
+            WorkflowGuid = workflowGuid;
+        }
 
         public HelpWorkflow(Control hostControl, ICommandExecution command, IHelpWorkflowProgressProvider progressProvider)
         {
@@ -32,27 +40,30 @@ namespace ReusableUIComponents.TransparentHelpSystem
         /// </summary>
         public void Start(bool force = false)
         {
-            if(Command == null)
-                return;
-
             if (RootStage == null)
                 throw new Exception("No RootStage exists for Help, you will need to create one");
             
             if(!force && !ProgressProvider.ShouldShowUserWorkflow(this))
                 return;
             
+             _cancellationTokenSource = new CancellationTokenSource();
+
             _help = new TransparentHelpForm(HostControl);
             _help.ShowWithoutActivate();
             _helpClosed = false;
-            _help.FormClosed += (sender, args) => _helpClosed = true;
-
+            _help.FormClosed += (sender, args) =>
+            {
+                _helpClosed = true;
+                _cancellationTokenSource.Cancel();
+            };
+            
             ShowStage(RootStage);
         }
 
         public void ShowStage(HelpStage stage)
         {
             //Abandon must have already been called
-            if (_help == null || Command == null)
+            if (_help == null)
                 return;
 
             if (HostControl.InvokeRequired)
@@ -65,12 +76,29 @@ namespace ReusableUIComponents.TransparentHelpSystem
             
             var helpBox = _help.ShowStage(this,CurrentStage);
             helpBox.OptionTaken += () => ShowStage(CurrentStage.OptionDestination);
+            
+            var t = stage.Await(_cancellationTokenSource.Token);
+            t.ContinueWith(r =>
+            {
+                if(r.IsFaulted || r.IsCanceled)
+                    Abandon();
+                else
+                    try
+                    {
+                        if(r.Result)
+                            ShowNextStageOrClose();
+                    }
+                    catch (Exception)
+                    {
+                        Abandon();
+                    }
+            });
         }
 
         public bool ShowNextStageOrClose()
         {
             //Abandon must have already been called
-            if (_help == null || Command == null)
+            if (_help == null)
                 return false;
 
             if (HostControl.InvokeRequired)

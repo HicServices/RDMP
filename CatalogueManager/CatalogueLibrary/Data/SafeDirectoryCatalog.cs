@@ -18,7 +18,7 @@ namespace CatalogueLibrary.Data
     /// provided (usually the current directory and the %appdata%\MEF directory).  Each dll (Assembly) is classed as either a 'Bad Assembly' (could not be loaded) or a
     /// 'Good Assembly' (was loaded).  GoodAssemblies are exposed as AssemblyCatalogs (MEF) which area  collection of ComposablePartDefinition (Parts).
     /// 
-    /// These can then be constructed/queried like you normally do with MEF (See MEF.LocateExportInContainerByTypeName).
+    /// <para>These can then be constructed/queried like you normally do with MEF (See MEF.LocateExportInContainerByTypeName).</para>
     /// </summary>
     public class SafeDirectoryCatalog : ComposablePartCatalog
     {

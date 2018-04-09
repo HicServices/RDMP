@@ -9,6 +9,9 @@ namespace MapsDirectlyToDatabaseTable
     /// </summary>
     public interface INamed : IRevertable, IDeleteable, INotifyPropertyChanged
     {
+        /// <summary>
+        /// A user meaningful name for describing the entity, this should be suitable for display in minimal screen space.
+        /// </summary>
         string Name { get; set; }
     }
 }

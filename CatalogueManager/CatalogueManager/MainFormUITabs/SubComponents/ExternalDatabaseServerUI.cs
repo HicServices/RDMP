@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -19,10 +20,10 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     /// <summary>
     /// Allows you to change the connection strings of a known ExternalDatabaseServer.
     /// 
-    /// ExternalDatabaseServers are references to existing servers.  They have a logistical name (what you want to call it) and servername.  Optionally you can
+    /// <para>ExternalDatabaseServers are references to existing servers.  They have a logistical name (what you want to call it) and servername.  Optionally you can
     /// specify a database (required in the case of references to specific databases e.g. Logging Database), if you omit it then the 'master' database will be used.
     /// If you do not specify a username/password then Integrated Security will be used when connecting (the preferred method).  Usernames and passwords are stored
-    /// in encrypted form (See PasswordEncryptionKeyLocationUI).
+    /// in encrypted form (See PasswordEncryptionKeyLocationUI).</para>
     /// </summary>
     public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design, ISaveableUI
     {
@@ -32,6 +33,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         public ExternalDatabaseServerUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)
@@ -49,6 +51,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                 tbID.Text = _server.ID.ToString();
                 tbName.Text = _server.Name;
                 tbServerName.Text = _server.Server;
+                tbMappedDataPath.Text = _server.MappedDataPath;
                 tbDatabaseName.Text = _server.Database;
                 tbUsername.Text = _server.Username;
                 tbPassword.Text = _server.GetDecryptedPassword();
@@ -80,6 +83,11 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         private void tbServerName_TextChanged(object sender, EventArgs e)
         {
             _server.Server = tbServerName.Text;
+        }
+
+        private void tbMappedDataPath_TextChanged(object sender, EventArgs e)
+        {
+            _server.MappedDataPath = tbMappedDataPath.Text;
         }
 
         private void tbDatabaseName_TextChanged(object sender, EventArgs e)

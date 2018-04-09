@@ -13,7 +13,7 @@ namespace QueryCaching.Aggregation.Arguments
     /// Request to cache an AggregateConfiguration that is a cohort identifier list subquery from a CohortIdentificationConfiguration (it is a query that 
     /// identifies patients fitting certain criteria e.g. 'patients with HBA1c biochemistry results > 50').  
     /// 
-    /// Serves as an input to CachedAggregateConfigurationResultsManager.
+    /// <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>
     /// </summary>
     public class CacheCommitIdentifierList : CacheCommitArguments
     {

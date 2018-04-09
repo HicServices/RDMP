@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -53,15 +53,15 @@ namespace CatalogueLibrary.Data
     /// however you might have simple transformations e.g. 'UPPER([MyDatabase]..[Users].[Name]' or even call complex SQL scalar functions for example
     /// 'fn_CleanDrugCode([Prescribing]..[Items].[DrugCode])'
     /// 
-    /// Note that alias is stored separately because it is useful for GetRuntimeName().  Also note that you should not have newlines in your SelectSQL 
-    /// since this will likely confuse QueryBuilder.
+    /// <para>Note that alias is stored separately because it is useful for GetRuntimeName().  Also note that you should not have newlines in your SelectSQL 
+    /// since this will likely confuse QueryBuilder.</para>
     /// 
-    /// The interface ExtractionInformationUI handles all of these requirements transparentely.  Also recorded in ExtractionInformation is ExtractionCategory
-    /// which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired
+    /// <para>The interface ExtractionInformationUI handles all of these requirements transparentely.  Also recorded in ExtractionInformation is ExtractionCategory
+    /// which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired</para>
     /// 
-    /// Finally one ExtractionInformation (and only one) in each CatalogueItem set (of parent Catalogue) must be flagged as IsExtractionIdentifier.  This 
+    /// <para>Finally one ExtractionInformation (and only one) in each CatalogueItem set (of parent Catalogue) must be flagged as IsExtractionIdentifier.  This 
     /// is the column which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify people
-    /// in your datasets (e.g. Community Health Index or NHS Number).
+    /// in your datasets (e.g. Community Health Index or NHS Number).</para>
     /// </summary>
     public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies
     {
@@ -69,6 +69,7 @@ namespace CatalogueLibrary.Data
         private CatalogueItem _catalogueItem;
         private bool _columnInfoFoundToBeNull = false;
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int SelectSQL_MaxLength = -1;
         
         
@@ -101,6 +102,7 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
         //These fields are fetched (cached version) from lookup link table - ExtractionInformation can only exist where there is a relationship between a CatalogueItem and a ColumnInfo
+        /// <inheritdoc cref="CatalogueItem_ID"/>
         [NoMappingToDatabase]
         public CatalogueItem CatalogueItem
         {
@@ -162,7 +164,7 @@ namespace CatalogueLibrary.Data
             
         }
 
-        public ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             SelectSQL = r["SelectSQL"].ToString();
 

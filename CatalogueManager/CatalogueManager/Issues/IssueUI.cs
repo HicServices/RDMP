@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
@@ -28,13 +29,13 @@ namespace CatalogueManager.Issues
     /// an existing Issue.  Issues are associated with CatalogueItems (columns in your dataset) and are intended to document problems identified by data analysts or researchers 
     /// with the dataset.  For example you could have an issue 'It is not clear what the difference between 0 and null is in the 'PatientDeleted' of column 'Demographics' dataset.
     /// 
-    /// Issues have statuses (Outstanding / Blocked etc) and severity (Red/Amber/Green) as well as a Reporter and Owner.  You can document the issue and the Actions taken to try to 
-    /// resolve it.  Finally you should try to write some SQL that will highlight the issue (e.g. Select PatientDeleted, count(*) from Demographics Group By PatientDeleted).  
+    /// <para>Issues have statuses (Outstanding / Blocked etc) and severity (Red/Amber/Green) as well as a Reporter and Owner.  You can document the issue and the Actions taken to try to 
+    /// resolve it.  Finally you should try to write some SQL that will highlight the issue (e.g. Select PatientDeleted, count(*) from Demographics Group By PatientDeleted).  </para>
     /// 
-    /// You can also provide an Excel sheet as an attachment which goes into more detail.  
+    /// <para>You can also provide an Excel sheet as an attachment which goes into more detail.  </para>
     /// 
-    /// IMPORTANT: Be careful of your language in Description and Notes to Researcher fields because depending on settings Issues can be reported in the data extraction metadata 
-    /// supplied to researchers who receive extracts of the dataset.
+    /// <para>IMPORTANT: Be careful of your language in Description and Notes to Researcher fields because depending on settings Issues can be reported in the data extraction metadata 
+    /// supplied to researchers who receive extracts of the dataset.</para>
     /// </summary>
     public partial class IssueUI : IssueUI_Design,ISaveableUI
     {
@@ -183,6 +184,8 @@ namespace CatalogueManager.Issues
             this.pSQL.Controls.Add(QueryPreview);
             #endregion
 
+
+            AssociatedCollection = RDMPCollection.Catalogue;
             
 
         }

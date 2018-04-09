@@ -41,7 +41,7 @@ using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
 using Dashboard.Automation;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
@@ -363,11 +363,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var log = Activate<SingleDataLoadLogView, ExternalDatabaseServer>(loggingServer);
             log.ShowDataLoadRunID(dataLoadRunID);
-        }
-
-        public void ActivateLoadProgress(object sender, LoadProgress loadProgress)
-        {
-            Activate<LoadProgressUI, LoadProgress>(loadProgress);
         }
 
         public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)

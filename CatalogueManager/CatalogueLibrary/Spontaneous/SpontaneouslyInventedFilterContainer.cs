@@ -8,20 +8,20 @@ namespace CatalogueLibrary.Spontaneous
     /// <summary>
     /// Spontaneous (memory only) implementation of IContainer.  
     /// 
-    /// IContainers are collections of subcontainers and WHERE statements e.g. 
+    /// <para>IContainers are collections of subcontainers and WHERE statements e.g. 
     /// (
     ///     --age is above 5
     ///     Age > 5
     /// AND
     ///    --name is bob
     ///     Name like 'Bob%'
-    /// )
+    /// )</para>
     /// 
-    /// Most IContainers come from the DataCatalogue/DataExport Database and are a hierarchical list of filters the user wants to use to create a query.  But sometimes IN CODE,
+    /// <para>Most IContainers come from the DataCatalogue/DataExport Database and are a hierarchical list of filters the user wants to use to create a query.  But sometimes IN CODE,
     /// we want to create an impromptu container and ram some additional filters we have either also invented or have pulled out of the Catalogue into the container.  This 
-    /// Class lets you do that, it creates a 'memory only' container which cannot be saved/deleted etc but can be used in query building by ISqlQueryBuilders.
+    /// Class lets you do that, it creates a 'memory only' container which cannot be saved/deleted etc but can be used in query building by ISqlQueryBuilders.</para>
     /// 
-    /// See also SpontaneouslyInventedFilter
+    /// <para>See also SpontaneouslyInventedFilter</para>
     /// </summary>
     public class SpontaneouslyInventedFilterContainer:SpontaneousObject,IContainer
     {
@@ -39,7 +39,9 @@ namespace CatalogueLibrary.Spontaneous
             Operation = operation;
         }
 
+        /// <inheritdoc/>
         public FilterContainerOperation Operation { get; set; }
+
         public IContainer GetParentContainerIfAny()
         {
             return null;

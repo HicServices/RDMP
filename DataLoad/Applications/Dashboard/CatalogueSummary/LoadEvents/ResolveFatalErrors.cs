@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,8 +24,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
     /// live dataset (See 'RAW, STAGING, LIVE' in UserManual.docx).  If however you have lots of post load tasks or other custom functionality with knock on consequences it is possible
     /// that a crash will result unforeseen consequences.  For this reason all failure messages are stored in an 'unresolved' state.  Through LoadEventsTreeView you can launch this dialog.
     /// 
-    /// This dialog lets you mark errors as 'resolved' and provide a message as to why the error happened and the steps you have taken to resolve it e.g. "Data load failed because data provider
-    /// has started sending 'Male' instead of 'M' for column 'Gender', I have adjusted the column width to varchar(10) to compensate and have created an issue to standardise the column values".
+    /// <para>This dialog lets you mark errors as 'resolved' and provide a message as to why the error happened and the steps you have taken to resolve it e.g. "Data load failed because data provider
+    /// has started sending 'Male' instead of 'M' for column 'Gender', I have adjusted the column width to varchar(10) to compensate and have created an issue to standardise the column values".</para>
     /// </summary>
     public partial class ResolveFatalErrors : RDMPForm
     {

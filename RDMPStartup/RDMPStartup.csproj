@@ -156,7 +156,7 @@
     <Compile Include="PluginManagement\PluginProcessor.cs" />
     <Compile Include="PluginRepositoryFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegistryRepositoryFinder.cs" />
+    <Compile Include="UserSettingsRepositoryFinder.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -227,6 +227,14 @@
     <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
+      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
+      <Name>ReusableUIComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
     </ProjectReference>
     <ProjectReference Include="..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>

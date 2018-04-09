@@ -161,6 +161,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "ToMemory",
             "ToDatabase",
             "TEST_Logging",
+            "DatePrescribed",
+
+            //This is a legit verb
+            "ANDed",
 
         };
 

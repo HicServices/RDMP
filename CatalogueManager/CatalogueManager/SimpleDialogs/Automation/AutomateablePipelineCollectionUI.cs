@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -24,12 +24,12 @@ namespace CatalogueManager.SimpleDialogs.Automation
     /// Part of AutomationServiceSlotUI, this dialog is where you configure your custom Automation activities if you have one or more Automation Plugins.  If you do not have any 
     /// automation plugins or do not know what those are then you won't need this user interface!
     /// 
-    /// TECHNICAL: Automation plugins are custom plugins that generate async Tasks which are executed on the automation server.  For example you could write a plugin which ran.  Check on
+    /// <para>TECHNICAL: Automation plugins are custom plugins that generate async Tasks which are executed on the automation server.  For example you could write a plugin which ran.  Check on
     /// all Catalogues (something which might take quite some time).  After programming the plugin source and uploading the plugin (See PluginManagementForm) you can use this control to create
-    /// a new Pipeline which uses the plugin source.
+    /// a new Pipeline which uses the plugin source.</para>
     /// 
-    /// Plugin sources (IAutomationSource) GetChunk method is polled so make sure you only package up an automation job if you have detected appropriate conditions (e.g. one isn't executing 
-    /// already at the destination) otherwise you will flood the pipeline with new Async Tasks.
+    /// <para>Plugin sources (IAutomationSource) GetChunk method is polled so make sure you only package up an automation job if you have detected appropriate conditions (e.g. one isn't executing 
+    /// already at the destination) otherwise you will flood the pipeline with new Async Tasks.</para>
     /// </summary>
     public partial class AutomateablePipelineCollectionUI : RDMPUserControl
     {

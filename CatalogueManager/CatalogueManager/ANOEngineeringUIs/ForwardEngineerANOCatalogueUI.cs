@@ -8,19 +8,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ANOStore.ANOEngineering;
 using BrightIdeasSoftware;
-using CatalogueLibrary.ANOEngineering;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
+using Newtonsoft.Json;
 using ReusableUIComponents;
+using Sharing.Sharing;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
@@ -36,8 +41,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
         private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;
         private ForwardEngineerANOCataloguePlanManager _planManager;
-        private ColumnInfo[] _suggestions;
-
+        
         public ForwardEngineerANOCatalogueUI()
         {
             InitializeComponent();
@@ -58,11 +62,18 @@ namespace CatalogueManager.ANOEngineeringUIs
             olvDilution.ImageGetter += Dilution_ImageGetter;
             
             olvDestinationType.AspectGetter += DestinationTypeAspectGetter;
+
+            olvDestinationExtractionCategory.AspectGetter += DestinationExtractionCategoryAspectGetter;
             
             tlvTableInfoMigrations.CellEditStarting += tlvTableInfoMigrations_CellEditStarting;
             tlvTableInfoMigrations.CellEditFinishing += tlvTableInfoMigrations_CellEditFinishing;
 
             tlvTableInfoMigrations.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
+
+            AssociatedCollection = RDMPCollection.Catalogue;
+
+            btnLoadPlan.Image = FamFamFamIcons.page_white_get;
+            btnSavePlan.Image = FamFamFamIcons.page_white_put;
         }
 
         #region Aspect Getters and Setters
@@ -73,7 +84,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             var table = rowobject as TableInfo;
 
             if (col != null)
-                return _planManager.GetPlanForColumnInfo(col);
+                return _planManager.GetPlanForColumnInfo(col).Plan;
 
             if (_planManager.SkippedTables.Contains(table))
                 return "Already Exists";
@@ -85,7 +96,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             var ci = rowObject as ColumnInfo;
 
-            if (ci != null && _planManager.GetPlannedANOTable(ci) != null)
+            if (ci != null && _planManager.GetPlanForColumnInfo(ci).ANOTable != null)
                 return imageList1.Images["ANOTable"];
 
             return null;
@@ -97,12 +108,12 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (col != null)
             {
-                var ano = _planManager.GetPlannedANOTable(col);
+                var plan = _planManager.GetPlanForColumnInfo(col);
 
-                if (ano != null)
-                    return ano.ToString();
+                if (plan.ANOTable != null)
+                    return plan.ANOTable.ToString();
 
-                if (_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.ANO)
+                if (plan.Plan  == Plan.ANO)
                     return "pick";
             }
 
@@ -115,12 +126,12 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (col != null)
             {
-                var dilution = _planManager.GetPlannedDilution(col);
+                var plan = _planManager.GetPlanForColumnInfo(col);
 
-                if (dilution != null)
-                    return dilution;
+                if (plan.Dilution != null)
+                    return plan.Dilution;
 
-                if (_planManager.GetPlanForColumnInfo(col) == ForwardEngineerANOCataloguePlanManager.Plan.Dilute)
+                if (plan.Plan == Plan.Dilute)
                     return "pick";
             }
 
@@ -132,7 +143,9 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (col != null)
             {
-                if (_planManager.GetPlannedDilution(col) != null)
+                var plan = _planManager.GetPlanForColumnInfo(col);
+
+                if (plan.Dilution != null)
                     return "PreLoadDiscardedColumn";
             }
 
@@ -145,7 +158,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             try
             {
                 if (ci != null)
-                    return _planManager.GetEndpointDataType(ci);
+                    return _planManager.GetPlanForColumnInfo(ci).GetEndpointDataType();
             }
             catch (Exception)
             {
@@ -154,6 +167,32 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             return null;
         }
+
+
+        private object DestinationExtractionCategoryAspectGetter(object rowobject)
+        {
+            var ci = rowobject as ColumnInfo;
+            try
+            {
+                if (ci != null)
+                {
+                    var plan = _planManager.GetPlanForColumnInfo(ci);
+
+                    if (plan.ExtractionCategoryIfAny.HasValue)
+                        return plan.ExtractionCategoryIfAny;
+
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                return "Error";
+            }
+
+            return null;
+        }
+
+
         #endregion
 
         void tlvTableInfoMigrations_CellEditStarting(object sender, BrightIdeasSoftware.CellEditEventArgs e)
@@ -169,44 +208,74 @@ namespace CatalogueManager.ANOEngineeringUIs
             if (e.Column == olvMigrationPlan)
                 e.Control.Bounds = e.CellBounds;
 
-            if (col != null && e.Column == olvPickedANOTable)
+            if (col != null)
             {
-                if(_planManager.GetPlanForColumnInfo(col) != ForwardEngineerANOCataloguePlanManager.Plan.ANO)
+                var plan = _planManager.GetPlanForColumnInfo(col);
+
+                if (e.Column == olvPickedANOTable)
                 {
+                    if (plan.Plan != Plan.ANO)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(
+                        _activator.CoreChildProvider.AllANOTables, true, false);
+                    try
+                    {
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                            plan.ANOTable = dialog.Selected as ANOTable;
+
+                        Check();
+                    }
+                    catch (Exception exception)
+                    {
+                        ExceptionViewer.Show(exception);
+                    }
+
                     e.Cancel = true;
-                    return;
                 }
 
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.CoreChildProvider.AllANOTables, true, false);
-                try
+                if (e.Column == olvDilution)
                 {
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                        _planManager.SetPlannedANOTable(col, dialog.Selected as ANOTable);
+
+                    if (plan.Plan != Plan.Dilute)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var cbx = new ComboBox();
+                    cbx.DropDownStyle = ComboBoxStyle.DropDownList;
+                    cbx.Bounds = e.CellBounds;
+                    cbx.Items.AddRange(_planManager.DilutionOperations.ToArray());
+                    e.Control = cbx;
+                }
+                if (e.Column == olvDestinationExtractionCategory)
+                {
+                    //if the plan is to drop
+                    if (plan.Plan == Plan.Drop)
+                    {
+                        //don't let them edit it
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var cbx = new ComboBox();
+                    cbx.DropDownStyle = ComboBoxStyle.DropDownList;
+                    cbx.Bounds = e.CellBounds;
+
+                    var list = Enum.GetValues(typeof (ExtractionCategory)).Cast<object>().Select(s=>s.ToString()).ToList();
+                    list.Add("Clear");
                     
-                    Check();
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show(exception);
-                }
+                    cbx.Items.AddRange(list.ToArray());
+                    e.Control = cbx;
 
-                e.Cancel = true;
-            }
-
-            if (col != null && e.Column == olvDilution)
-            {
-
-                if (_planManager.GetPlanForColumnInfo(col) != ForwardEngineerANOCataloguePlanManager.Plan.Dilute)
-                {
-                    e.Cancel = true;
-                    return;
+                    if(plan.ExtractionCategoryIfAny.HasValue)
+                        cbx.SelectedItem = plan.ExtractionCategoryIfAny.Value.ToString();
                 }
 
-                var cbx = new ComboBox();
-                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbx.Bounds = e.CellBounds;
-                cbx.Items.AddRange(_planManager.DilutionOperations.ToArray());
-                e.Control = cbx;
             }
         }
         
@@ -216,13 +285,32 @@ namespace CatalogueManager.ANOEngineeringUIs
             {
                 var col = e.RowObject as ColumnInfo;
 
+                if(col == null)
+                    return;
+
+                var plan = _planManager.GetPlanForColumnInfo(col);
+
                 if(e.Column == olvMigrationPlan)
-                    _planManager.SetPlan(col,(ForwardEngineerANOCataloguePlanManager.Plan) e.NewValue);
+                    plan.Plan = (Plan) e.NewValue;
 
                 if(e.Column == olvDilution)
                 {
                     var cbx = (ComboBox)e.Control;
-                    _planManager.SetPlannedDilution(col,(IDilutionOperation)cbx.SelectedItem);
+                    plan.Dilution = (IDilutionOperation)cbx.SelectedItem;
+                }
+                
+                if (e.Column == olvDestinationExtractionCategory)
+                {
+                    var cbx = (ComboBox)e.Control;
+                    if (cbx.SelectedItem == "Clear")
+                        plan.ExtractionCategoryIfAny = null;
+                    else
+                    {
+                        ExtractionCategory c;
+                        ExtractionCategory.TryParse((string) cbx.SelectedItem, out c);
+                        plan.ExtractionCategoryIfAny = c;
+                    }
+                        
                 }
             }
             catch (Exception exception)
@@ -239,7 +327,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             if (!_setup)
             {
-                _planManager = new ForwardEngineerANOCataloguePlanManager(databaseObject);
+                _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator,databaseObject);
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
@@ -257,8 +345,6 @@ namespace CatalogueManager.ANOEngineeringUIs
                 
                 rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
                 rdmpObjectsRibbonUI1.Add(databaseObject);
-
-                _suggestions = _planManager.MakeSuggestions();
 
                 _setup = true;
             }
@@ -299,20 +385,15 @@ namespace CatalogueManager.ANOEngineeringUIs
             DisableObjects();
         }
 
-        private void tlvTableInfoMigrations_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
-        {
-            var ci = e.Model as ColumnInfo;
-
-            if (ci != null )
-                if (_suggestions != null && _suggestions.Contains(ci))
-                    e.Item.BackColor = lblPlanIsSuggestion.BackColor;
-                else
-                if( _planManager.IsMandatoryForMigration(ci))
-                    e.Item.BackColor = lblMandatory.BackColor;
-        }
-
         private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)
         {
+            
+            var ci = e.Model as ColumnInfo;
+
+            if (ci != null)
+                if (_planManager.GetPlanForColumnInfo(ci).IsMandatory)
+                    e.SubItem.BackColor = lblMandatory.BackColor;
+
             if(e.Column == olvMigrationPlan)
                 if(e.Model is ColumnInfo)
                     e.SubItem.Font = new Font(e.Item.Font, FontStyle.Underline);
@@ -331,6 +412,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void btnRefreshChecks_Click(object sender, EventArgs e)
         {
+            _planManager.TargetDatabase = serverDatabaseTableSelector1.GetDiscoveredDatabase();
             Check();
         }
 
@@ -355,7 +437,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             try
             {
-                var engine = new ForwardEngineerANOCatalogueEngine(_activator.RepositoryLocator.CatalogueRepository, _planManager);
+                var engine = new ForwardEngineerANOCatalogueEngine(_activator.RepositoryLocator, _planManager);
                 engine.Execute();
 
                 if(engine.NewCatalogue != null && engine.LoadMetadata != null)
@@ -463,6 +545,52 @@ namespace CatalogueManager.ANOEngineeringUIs
             }
 
             return null;
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            tlvTableInfoMigrations.UseFiltering = true;
+            tlvTableInfoMigrations.ModelFilter = new TextMatchFilter(tlvTableInfoMigrations,tbFilter.Text);
+        }
+
+        private void btnSavePlan_Click(object sender, EventArgs e)
+        {
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Plans (*.plan)|*.plan";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                var fi = new FileInfo(sfd.FileName);
+                var json = JsonConvertExtensions.SerializeObject(_planManager, _activator.RepositoryLocator);
+                File.WriteAllText(fi.FullName,json);
+            }
+        }
+
+        private void btnLoadPlan_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "Plans (*.plan)|*.plan";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    var fi = new FileInfo(ofd.FileName);
+                    var json = File.ReadAllText(fi.FullName);
+                    _planManager = (ForwardEngineerANOCataloguePlanManager)
+                        JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), _activator.RepositoryLocator);
+
+                    if (_planManager.StartDate != null)
+                        tbStartDate.Text = _planManager.StartDate.Value.ToString();
+
+                    cbDateBasedLoad.Checked = _planManager.DateColumn != null;
+                    ddDateColumn.SelectedItem = _planManager.DateColumn;
+
+                }
+            }
+            catch (Exception exception)
+            {
+                ExceptionViewer.Show(exception);
+            }
         }
     }
 

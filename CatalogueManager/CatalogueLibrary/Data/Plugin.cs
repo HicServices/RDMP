@@ -50,7 +50,7 @@ namespace CatalogueLibrary.Data
             
         }
 
-        public Plugin(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+        internal Plugin(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
             Name = r["Name"].ToString();
             UploadedFromDirectory = r["UploadedFromDirectory"].ToString();

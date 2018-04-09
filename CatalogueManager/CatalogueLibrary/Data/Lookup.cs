@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -15,17 +15,17 @@ namespace CatalogueLibrary.Data
     /// key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName).  And a third ColumnInfo from a different table (e.g. 
     /// Prescribing) which is a foreign key (e.g. DrugPrescribed).
     /// 
-    /// The QueryBuilder uses this information to work out how to join together various tables in a query.  Note that it is possible
+    /// <para>The QueryBuilder uses this information to work out how to join together various tables in a query.  Note that it is possible
     /// to define the same lookup multiple times just with different foreign keys (e.g. Prescribing and DrugAbuse datasets might both
-    /// share the same lookup table z_drugName).
+    /// share the same lookup table z_drugName).</para>
     /// 
-    /// It is not possible to create these lookup dependencies automatically because often an agency won't actually have relationships
+    /// <para>It is not possible to create these lookup dependencies automatically because often an agency won't actually have relationships
     /// (referential integrity) between their lookup tables and main datasets due to dirty data / missing lookup values.  These are all
-    /// concepts which the RDMP is familiar with and built to handle.
+    /// concepts which the RDMP is familiar with and built to handle.</para>
     /// 
-    /// Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly lookups (e.g. if you 
+    /// <para>Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly lookups (e.g. if you 
     /// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and 
-    /// prescriberHealthboard).
+    /// prescriberHealthboard).</para>
     /// </summary>
     public class Lookup : VersionedDatabaseEntity, IJoin, IHasDependencies, ICheckable
     {
@@ -140,7 +140,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public Lookup(ICatalogueRepository repository, DbDataReader r)
+        internal Lookup(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Description_ID = int.Parse(r["Description_ID"].ToString());

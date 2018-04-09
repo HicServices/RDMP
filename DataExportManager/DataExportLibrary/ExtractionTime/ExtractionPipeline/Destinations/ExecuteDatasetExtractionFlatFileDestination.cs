@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
@@ -44,12 +46,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public TableLoadInfo TableLoadInfo { get; private set; }
         
         public DirectoryInfo DirectoryPopulated { get; private set; }
-        
+        public bool GeneratesFiles { get { return true; } }
+
         public int SeparatorsStrippedOut { get; set; }
         public string OutputFile { get; private set; }
         public int LinesWritten { get; private set; }
         Stopwatch stopwatch = new Stopwatch();
-
 
         [DemandsInitialization("The date format to output all datetime fields in e.g. dd/MM/yyyy for uk format yyyy-MM-dd for something more machine processable, see https://msdn.microsoft.com/en-us/library/8kb3ddd4(v=vs.110).aspx", DemandType.Unspecified, "yyyy-MM-dd", Mandatory = true)]
         public string DateFormat { get; set; }
@@ -151,8 +153,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             haveWrittenBundleContents = true;
         }
 
-
-
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             CloseFile(listener);
@@ -249,6 +249,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return OutputFile;
         }
 
+        public DestinationType GetDestinationType()
+        {
+            return DestinationType.FileSystem;
+        }
+
         public void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globals, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             ExtractionDirectory targetDirectory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
@@ -264,8 +269,18 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
         }
-
         
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+            IExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        {
+            return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
+        }
+
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
+        {
+            return new FlatFileReleaseSource<ReleaseAudit>();
+        }
+
         private bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
         {
             SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(null);

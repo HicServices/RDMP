@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -34,14 +34,14 @@ namespace DataExportManager.CohortUI.ImportCustomData
     /// Wraps ConfigureAndExecutePipeline.  Lets you upload a flat file as custom data for a cohort.  Custom data is a project specific dataset for use with only one the specific cohort, 
     /// for example if a researcher had collected questionnaire data about 1000 participants in his cohort and wanted it supplied in anonymous form along with his project extract.  
     /// 
-    /// The custom table must contain the private patient identifier column (or will must by the end of the pipeline execution).  The custom table will be maintained in the Cohort 
+    /// <para>The custom table must contain the private patient identifier column (or will must by the end of the pipeline execution).  The custom table will be maintained in the Cohort 
     /// database and anonymised during extractions.  The columns of the table will also be available for use as addendums to existing datasets (e.g. if your custom data has a field 
-    /// 'DateConsentedToStudy' then you could add this on the end of all Prescription dataset rows as a new column).
+    /// 'DateConsentedToStudy' then you could add this on the end of all Prescription dataset rows as a new column).</para>
     /// 
-    /// You must select an appropriate pipeline or create a new one.  The pipeline has a fixed destination which you cannot change (CustomCohortDataDestination) but you can put in any 
+    /// <para>You must select an appropriate pipeline or create a new one.  The pipeline has a fixed destination which you cannot change (CustomCohortDataDestination) but you can put in any 
     /// 'Middle' components that change the DataTable during execution (e.g. to replace a third party identifier with your own patient identifiers).  You must also select an appropriate
     /// source pipeline component for your file type.  When building pipelines remember that they should be as reusable as possible and have a lifetime that should last forever so make 
-    /// sure to describe what it does properly and try to reduce any implementation specific logic (e.g. explicitly named columns that relate to this one time load).
+    /// sure to describe what it does properly and try to reduce any implementation specific logic (e.g. explicitly named columns that relate to this one time load).</para>
     /// 
     /// </summary>
     public partial class ImportCustomDataFileUI : RDMPUserControl

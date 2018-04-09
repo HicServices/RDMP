@@ -43,7 +43,7 @@ namespace CatalogueLibrary.Data.Dashboarding
         public DashboardControl[] Controls{ get { return Repository.GetAllObjectsWithParent<DashboardControl>(this); }}
         #endregion
 
-        public DashboardLayout(ICatalogueRepository repository, DbDataReader r)
+        internal DashboardLayout(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"].ToString();

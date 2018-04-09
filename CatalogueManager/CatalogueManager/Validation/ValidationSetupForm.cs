@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -27,10 +28,10 @@ namespace CatalogueManager.Validation
     /// trivial situation the first step would be to confirm if it is a mistake with the data provider, if not then a decision should be made whether to standardise on the old/new 
     /// categories and adjust the data load accordingly.
     /// 
-    /// But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this by allowing you to specify validation rules on each of the 
+    /// <para>But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this by allowing you to specify validation rules on each of the 
     /// extractable columns / transforms you make available to researchers.  On the left of this form you can see all the columns/transforms.  By selecting one you can view/edit its'
     /// collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the datatype, only use a primary constraint if you have an insane
-    /// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).
+    /// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).</para>
     /// </summary>
     public partial class ValidationSetupForm : ValidationSetupForm_Design, ISaveableUI
     {
@@ -70,6 +71,8 @@ namespace CatalogueManager.Validation
 
             int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
             tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private bool isFirstTime = true;

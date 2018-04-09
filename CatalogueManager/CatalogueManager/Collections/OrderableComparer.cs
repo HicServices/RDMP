@@ -9,8 +9,8 @@ namespace CatalogueManager.Collections
     /// Compares model objects bearing in mind that anything that is compared against IOrderable MUST come in that order.  This class is a wrapper for 
     /// ModelObjectComparer that looks out for IOrderable objects passing through and enforces that order.
     /// 
-    /// This class is designed to modify the behaviour of TreeListView to ensure that despite the users worst efforts, the order of IOrderable nodes is always
-    /// Ascending
+    /// <para>This class is designed to modify the behaviour of TreeListView to ensure that despite the users worst efforts, the order of IOrderable nodes is always
+    /// Ascending</para>
     /// </summary>
     public class OrderableComparer : IComparer
     {

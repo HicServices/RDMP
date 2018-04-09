@@ -74,7 +74,7 @@ namespace CatalogueLibrary.Data.Dashboarding
         public DashboardLayout ParentLayout { get { return Repository.GetObjectByID<DashboardLayout>(DashboardLayout_ID); } }
         #endregion
 
-        public DashboardControl(ICatalogueRepository repository, DbDataReader r)
+        internal DashboardControl(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             DashboardLayout_ID = Convert.ToInt32(r["DashboardLayout_ID"]);

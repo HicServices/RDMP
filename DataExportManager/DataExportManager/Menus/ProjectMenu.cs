@@ -13,7 +13,6 @@ using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
-using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTableUI;

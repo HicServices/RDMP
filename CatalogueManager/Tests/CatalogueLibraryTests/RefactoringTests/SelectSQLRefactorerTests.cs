@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Refactoring;
-using CatalogueLibrary.Refactoring.Exceptions;
 using NUnit.Framework;
+using Sharing.Refactoring;
+using Sharing.Refactoring.Exceptions;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.RefactoringTests

@@ -322,21 +322,6 @@
     <Compile Include="Collections\DataExportCollectionUI.Designer.cs">
       <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\Nodes\AllCohortsNode.cs" />
-    <Compile Include="Collections\Nodes\ExtractionConfigurationsNode.cs" />
-    <Compile Include="Collections\Nodes\FrozenExtractionConfigurationsNode.cs" />
-    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
-    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
-    <Compile Include="Collections\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
-    <Compile Include="Collections\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
-    <Compile Include="Collections\Nodes\CustomDataTableNode.cs" />
-    <Compile Include="Collections\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
-    <Compile Include="Collections\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
-    <Compile Include="Collections\Nodes\ExtractionDirectoryNode.cs" />
-    <Compile Include="Collections\Nodes\LinkedCohortNode.cs" />
-    <Compile Include="Collections\Nodes\PackageContentNode.cs" />
-    <Compile Include="Collections\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
-    <Compile Include="Collections\Providers\DataExportChildProvider.cs" />
     <Compile Include="Collections\SavedCohortsCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -346,7 +331,6 @@
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\CohortCreationCommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractableDataSetPackage.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
@@ -372,7 +356,6 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSets.cs" />
     <Compile Include="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
-    <Compile Include="Collections\Providers\DataExportProblemProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableDataSetStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractionConfigurationStateBasedIconProvider.cs" />
     <Compile Include="DataRelease\CleanupConfirmationDialog.cs">
@@ -488,12 +471,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\CustomDataTableNodeStateBasedIconProvider.cs" />
-    <Compile Include="SimpleDialogs\BlacklistOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\BlacklistOptions.Designer.cs">
-      <DependentUpon>BlacklistOptions.cs</DependentUpon>
-    </Compile>
     <Compile Include="SimpleDialogs\ConfigureDisclaimer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -617,9 +594,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SimpleDialogs\BlacklistOptions.resx">
-      <DependentUpon>BlacklistOptions.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\ConfigureDisclaimer.resx">
       <DependentUpon>ConfigureDisclaimer.cs</DependentUpon>
     </EmbeddedResource>
@@ -629,10 +603,6 @@
     <EmbeddedResource Include="SimpleDialogs\SelectWhichCohortToImport.resx">
       <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="Wizard\CreateNewDataExtractionProjectUI.resx">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -690,10 +660,6 @@
     <ProjectReference Include="..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj">
       <Project>{FDF08240-2AFC-48A4-8F48-37CC7EA3000B}</Project>
       <Name>CatalogueManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\CatalogueManager\TicketingModules\Ticketing\Ticketing.csproj">
-      <Project>{048E1478-E4A7-4AD1-95AB-C40C604A4F60}</Project>
-      <Name>Ticketing</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
@@ -1031,6 +997,7 @@
     </PublishFile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Collections\Providers\" />
     <Folder Include="SubComponents\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

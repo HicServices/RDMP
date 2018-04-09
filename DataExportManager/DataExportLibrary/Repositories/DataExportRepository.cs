@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Reflection;
@@ -21,12 +21,12 @@ namespace DataExportLibrary.Repositories
     /// table matching their name).  CatalogueLibrary.dll objects in CatalogueRepository, DataExportLibrary.dll objects in DataExportRepository, DataQualityEngine.dll objects
     /// in DQERepository etc.
     /// 
-    /// This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Export database.  This includes extraction
-    /// Projects, ExtractionConfigurations, ExtractableCohorts etc.
+    /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Export database.  This includes extraction
+    /// Projects, ExtractionConfigurations, ExtractableCohorts etc.</para>
     /// 
-    /// Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. there are
+    /// <para>Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. there are
     /// IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
-    /// in the paired Catalogue database.
+    /// in the paired Catalogue database.</para>
     /// </summary>
     public class DataExportRepository : TableRepository, IDataExportRepository
     {

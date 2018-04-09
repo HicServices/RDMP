@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,12 +22,12 @@ namespace DataExportManager.SimpleDialogs
     /// Any column in a data extraction which is marked with 'Hash On Data Release' (See ExtractionInformationUI) will be wrapped with this SQL string.  Use this to call a scalar valued
     /// function which generates hash strings based on the column value and the project number (salt).
     /// 
-    /// For example Work.dbo.HicHash({0},{1}) would wrap column names such that the column name appeared in the {0} and the project number appeared in {1}.  For this to work you must have
+    /// <para>For example Work.dbo.HicHash({0},{1}) would wrap column names such that the column name appeared in the {0} and the project number appeared in {1}.  For this to work you must have
     /// a database Work and a scalar function called HicHash (this is just an example, you can call the function whatever you want and adjust it accordingly).  You don't have to use the
-    /// salt if you don't want to either, if you don't add a {1} then you won't get a salt argument into your scalar function.
+    /// salt if you don't want to either, if you don't add a {1} then you won't get a salt argument into your scalar function.</para>
     /// 
-    /// This is quite technical if you don't know what a Scalar Function is in SQL then you probably don't want to do hashing and instead you might want to just not extract these columns
-    /// or configure them with the RDMP ANO system (See ConfigureANOForTableInfo).
+    /// <para>This is quite technical if you don't know what a Scalar Function is in SQL then you probably don't want to do hashing and instead you might want to just not extract these columns
+    /// or configure them with the RDMP ANO system (See ConfigureANOForTableInfo).</para>
     /// </summary>
     public partial class ConfigureHashingAlgorithm : RDMPForm
     {

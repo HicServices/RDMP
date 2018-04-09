@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -21,8 +21,8 @@ namespace CatalogueLibrary.Data.Aggregation
     /// in QueryBuilding even if it is not a selected dimension (this allows you to for example aggregate the drug codes but filter by drug prescribed date even
     /// when the two fields are in different tables - that will be joined at Query Time).
     /// 
-    /// Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
-    /// paramaterise (for the user) your AggregateFilter
+    /// <para>Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
+    /// paramaterise (for the user) your AggregateFilter</para>
     /// </summary>
     public class AggregateFilter : ConcreteFilter
     {
@@ -31,12 +31,14 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _filterContainerID;
         private int? _clonedFromExtractionFilterID;
 
+        /// <inheritdoc/>
         public override int? ClonedFromExtractionFilter_ID
         {
             get { return _clonedFromExtractionFilterID; }
             set { SetField(ref _clonedFromExtractionFilterID , value); }
         }
 
+        /// <inheritdoc/>
         public override int? FilterContainer_ID
         {
             get { return _filterContainerID; }
@@ -45,6 +47,10 @@ namespace CatalogueLibrary.Data.Aggregation
 
         private int? _associatedColumnInfoID;
 
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        [Obsolete("Not used or ever populated")]
         public int? AssociatedColumnInfo_ID
         {
             get { return _associatedColumnInfoID; }
@@ -52,27 +58,37 @@ namespace CatalogueLibrary.Data.Aggregation
         }
         #endregion
 
+        /// <inheritdoc cref="GetAllParameters"/>
         #region Relationships
         [NoMappingToDatabase]
         public IEnumerable<AggregateFilterParameter> AggregateFilterParameters {
             get { return Repository.GetAllObjectsWithParent<AggregateFilterParameter>(this); }
         }
 
+        /// <inheritdoc/>
         public override ISqlParameter[] GetAllParameters()
         {
             return AggregateFilterParameters.ToArray();
         }
-
+        
+        ///<inheritdoc/>
         [NoMappingToDatabase]
         public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;}}
 
         #endregion
 
-
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
         
-
+        /// <summary>
+        /// Defines a new filter (line of WHERE SQL) in the specified AggregateFilterContainer (AND / OR).  Calling this constructor creates a new object in the database
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
+        /// <param name="container"></param>
         public AggregateFilter(ICatalogueRepository repository, string name=null, AggregateFilterContainer container=null)
         {
             name = name ?? "New AggregateFilter" + Guid.NewGuid();
@@ -84,7 +100,7 @@ namespace CatalogueLibrary.Data.Aggregation
             });
         }
 
-        public AggregateFilter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal AggregateFilter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             WhereSQL = r["WhereSQL"] as string;
             Description = r["Description"] as string;
@@ -102,11 +118,13 @@ namespace CatalogueLibrary.Data.Aggregation
                 FilterContainer_ID = null;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
-
+        
+        /// <inheritdoc/>
         public override ColumnInfo GetColumnInfoIfExists()
         {
             if (AssociatedColumnInfo_ID != null)
@@ -121,12 +139,12 @@ namespace CatalogueLibrary.Data.Aggregation
 
             return null;
         }
-
+        /// <inheritdoc/>
         public override IFilterFactory GetFilterFactory()
         {
             return new AggregateFilterFactory((ICatalogueRepository)Repository);
         }
-
+        /// <inheritdoc/>
         public override Catalogue GetCatalogue()
         {
             var agg = GetAggregate();
@@ -137,6 +155,7 @@ namespace CatalogueLibrary.Data.Aggregation
             return agg.Catalogue;
         }
 
+        /// <inheritdoc cref="ClonedFilterChecker"/>
         public override void Check(ICheckNotifier notifier)
         {
             base.Check(notifier);
@@ -145,12 +164,21 @@ namespace CatalogueLibrary.Data.Aggregation
             checker.Check(notifier);
         }
 
+        /// <summary>
+        /// Removes the AggregateFilter from any AggregateFilterContainer (AND/OR) that it might be a part of 
+        /// effectively turning it into a disconnected orphan.
+        /// </summary>
         public void MakeIntoAnOrphan()
         {
             FilterContainer_ID = null;
             SaveToDatabase();
         }
 
+        /// <summary>
+        /// Gets the parent <see cref="AggregateConfiguration"/> that this AggregateFilter is part of by ascending it's AggregateFilterContainer hierarchy.
+        /// If the AggregateFilter is an orphan or one of the parental containers is an orphan then null will be returned.
+        /// </summary>
+        /// <returns></returns>
         public AggregateConfiguration GetAggregate()
         {
             if (FilterContainer_ID == null)

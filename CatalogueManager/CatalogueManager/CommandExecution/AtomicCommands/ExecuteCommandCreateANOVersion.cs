@@ -24,7 +24,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.ANOTable,OverlayKind.Execute);
+            return iconProvider.GetImage(RDMPConcept.ANOTable);
         }
 
         public override void Execute()

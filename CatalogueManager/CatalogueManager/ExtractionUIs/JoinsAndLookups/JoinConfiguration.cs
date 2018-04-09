@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -29,20 +30,20 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
     /// multiple tables.  For example if you have a Header and Results table in which Header tells you when a test was done and by whom including sample volume etc and each test
     /// gives multiple results (white blood cell count, red blood cell count etc) then you will obviously want to store it as two separate tables.
     /// 
-    /// Configuring join logic in RDMP enables the QueryBuilder to write an SQL SELECT query including a LEFT JOIN / RIGHT JOIN / INNER JOIN over two or more tables.  If you don't
+    /// <para>Configuring join logic in RDMP enables the QueryBuilder to write an SQL SELECT query including a LEFT JOIN / RIGHT JOIN / INNER JOIN over two or more tables.  If you don't
     /// understand what an SQL Join is then you should research this before using this window.  Unlike a Lookup (See ConfigureLookups) it doesn't really matter which table contains
     /// the ForeignKey and which contains the PrimaryKey since changing the Join direction effectively inverts this logic anyway (i.e. Header RIGHT JOIN Results is the same as Results
     /// LEFT JOIN Header).  Configuring join logic in the RDMP database does not affect your data repository in any way (i.e. it doesn't mean we will suddenly start putting referential
-    /// integrity constraints into your database!).
+    /// integrity constraints into your database!).</para>
     ///  
-    /// You might wonder why you have to configure JoinInfo information into RDMP when it is possibly already implemented in your data model (e.g. with foreign key constraints).  The
+    /// <para>You might wonder why you have to configure JoinInfo information into RDMP when it is possibly already implemented in your data model (e.g. with foreign key constraints).  The
     /// explicit record in the RDMP database allows you to hold corrupt/unlinkable data (which would violate a foreign key constraint) and still know that the tables must be joined. 
     /// Additionally it lets you configure joins between tables in different databases and to specify an explicit direction (LEFT / RIGHT / INNER) which is always the same when it comes
-    /// time to extract your data for researchers.
+    /// time to extract your data for researchers.</para>
     /// 
-    /// If you need to join on more than 1 column then just create a JoinInfo for each pair of columns (making sure the direction - LEFT/RIGHT/INNER matches).  For example if the join is
+    /// <para>If you need to join on more than 1 column then just create a JoinInfo for each pair of columns (making sure the direction - LEFT/RIGHT/INNER matches).  For example if the join is
     /// Header.LabNumber = Results.LabNumber AND Header.Hospital = Results.Hospital (because of crossover in LabNumber between hospitals) then you would configure a JoinInfo for 
-    /// Header.LabNumber = Results.LabNumber and another for Header.Hospital = Results.Hospital.
+    /// Header.LabNumber = Results.LabNumber and another for Header.Hospital = Results.Hospital.</para>
     /// </summary>
     public partial class JoinConfiguration : JoinConfiguration_Design
     {
@@ -58,6 +59,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
             olvLeftColumns.RowHeight = 19;
             olvRightColumns.RowHeight = 19;
+            AssociatedCollection = RDMPCollection.Tables;
         }
         
         public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)

@@ -17,8 +17,13 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.SimpleDialogs.NavigateTo;
+using CatalogueManager.Theme;
+using CohortManager.Collections;
+using DataExportManager.Collections;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
+using ResearchDataManagementPlatform.WindowManagement.HomePane;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
@@ -37,13 +42,27 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         public RDMPTaskBar()
         {
             InitializeComponent();
+            BackColorProvider provider = new BackColorProvider();
+
             btnHome.Image = FamFamFamIcons.application_home;
             btnCatalogues.Image = CatalogueIcons.Catalogue;
+            btnCatalogues.BackgroundImage = provider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
+
             btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration;
+            btnCohorts.BackgroundImage = provider.GetBackgroundImage(btnCohorts.Size, RDMPCollection.Cohort);
+
             btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode;
+            btnSavedCohorts.BackgroundImage = provider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
+
             btnDataExport.Image = CatalogueIcons.Project;
+            btnDataExport.BackgroundImage = provider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
+
             btnTables.Image = CatalogueIcons.TableInfo;
+            btnTables.BackgroundImage = provider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
+
             btnLoad.Image = CatalogueIcons.LoadMetadata;
+            btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
+            
             btnFavourites.Image = CatalogueIcons.Favourite;
         }
 
@@ -54,8 +73,32 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             
             btnAddDashboard.Image = manager.ContentManager.CoreIconProvider.GetImage(RDMPConcept.DashboardLayout,OverlayKind.Add);
             ReCreateDashboardsDropDown();
+
+            SetupToolTipText();
         }
-        
+
+        private void SetupToolTipText()
+        {
+            int maxCharactersForButtonTooltips = 200;
+
+            try
+            {
+                btnHome.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(HomeUI));
+                btnCatalogues.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CatalogueCollectionUI));
+                btnCohorts.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CohortIdentificationCollectionUI));
+                btnSavedCohorts.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(SavedCohortsCollectionUI));
+                btnDataExport.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(DataExportCollectionUI));
+                btnTables.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(TableInfoCollectionUI));
+                btnLoad.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(LoadMetadataCollectionUI));
+                btnFavourites.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(FavouritesCollectionUI)); 
+
+            }
+            catch (Exception e)
+            {
+                _manager.ContentManager.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to setup tool tips", CheckResult.Fail, e));
+            }
+
+        }
 
         private void ReCreateDashboardsDropDown()
         {
@@ -145,31 +188,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             return collectionToToggle;
         }
 
-        private ToolStripButton EnumToButton(RDMPCollection collection)
-        {
-            switch (collection)
-            {
-                case RDMPCollection.None:
-                    return null;
-                case RDMPCollection.Tables:
-                    return btnTables;
-                case RDMPCollection.Catalogue:
-                    return btnCatalogues;
-                case RDMPCollection.DataExport:
-                    return btnDataExport;
-                case RDMPCollection.Cohort:
-                    return btnCohorts;
-                case RDMPCollection.DataLoad:
-                    return btnLoad;
-                case RDMPCollection.SavedCohorts:
-                    return btnSavedCohorts;
-                case RDMPCollection.Favourites:
-                    return btnFavourites;
-                default:
-                    throw new ArgumentOutOfRangeException("collection");
-            }
-        }
-
+        
         private void cbxDashboards_DropDownClosed(object sender, EventArgs e)
         {
             var layoutToOpen = cbxDashboards.SelectedItem as DashboardLayout;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ReusableLibraryCode.CommandExecution
 {
@@ -8,7 +8,7 @@ namespace ReusableLibraryCode.CommandExecution
     /// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure 
     /// IsImpossible is respected in the unlikely event that some code or user attempts to execute an impossible command.
     /// 
-    /// Override GetCommandHelp and GetCommandName to change the persentation layer of the command (if applicable).
+    /// <para>Override GetCommandHelp and GetCommandName to change the persentation layer of the command (if applicable).</para>
     /// </summary>
     public abstract class BasicCommandExecution : ICommandExecution
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace CatalogueManager.MainFormUITabs
     /// the recommended route is to use the built in metadata reports (e.g. ConfigureMetadataReport).  Alternatively you can run queries directly on the RDMP Data Catalogue database
     /// which is a super relational database with many tables (Catalogue, CatalogueItem, SupportingDocument etc etc).
     /// 
-    /// NOTE: Make sure that you have set a Resource Acronym for each of your datasets (Catalogues) before attempting to extract in DITA format.
+    /// <para>NOTE: Make sure that you have set a Resource Acronym for each of your datasets (Catalogues) before attempting to extract in DITA format.</para>
     /// </summary>
     public partial class DitaExtractorUI : RDMPUserControl
     {

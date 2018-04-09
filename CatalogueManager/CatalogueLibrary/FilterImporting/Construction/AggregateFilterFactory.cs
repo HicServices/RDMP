@@ -30,7 +30,7 @@ namespace CatalogueLibrary.FilterImporting.Construction
 
         public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
         {
-            return new AggregateFilterParameter(_repository,parameterSQL,filter);
+            return new AggregateFilterParameter(_repository,parameterSQL,(AggregateFilter)filter);
         }
 
         public Type GetRootOwnerType()

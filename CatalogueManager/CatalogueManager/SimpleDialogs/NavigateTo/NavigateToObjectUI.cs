@@ -28,6 +28,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.Theme;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
@@ -81,18 +82,18 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         /// <summary>
         /// Object types that appear in the task bar as filterable types
         /// </summary>
-        private Type[] EasyFilterTypes = new[]
+        private Dictionary<Type,RDMPCollection> EasyFilterTypesAndAssociatedCollections = new Dictionary<Type, RDMPCollection>()
         {
-            typeof (Catalogue),
-            typeof (CatalogueItem),
-            typeof (SupportingDocument),
-            typeof (Project),
-            typeof (ExtractionConfiguration),
-            typeof (ExtractableCohort),
-            typeof (CohortIdentificationConfiguration),
-            typeof (TableInfo),
-            typeof (ColumnInfo),
-            typeof (LoadMetadata)
+            {typeof (Catalogue),RDMPCollection.Catalogue},
+            {typeof (CatalogueItem),RDMPCollection.Catalogue},
+            {typeof (SupportingDocument),RDMPCollection.Catalogue},
+            {typeof (Project),RDMPCollection.DataExport},
+            {typeof (ExtractionConfiguration),RDMPCollection.DataExport},
+            {typeof (ExtractableCohort),RDMPCollection.SavedCohorts},
+            {typeof (CohortIdentificationConfiguration),RDMPCollection.Cohort},
+            {typeof (TableInfo),RDMPCollection.Tables},
+            {typeof (ColumnInfo),RDMPCollection.Tables},
+            {typeof (LoadMetadata),RDMPCollection.DataLoad},
         };
 
 
@@ -188,7 +189,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
                 startingFilters = StartingEasyFilters[focusedCollection];
             
-            foreach (Type t in EasyFilterTypes)
+            BackColorProvider backColorProvider = new BackColorProvider();
+
+            foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
             {
                 var b = new ToolStripButton();
                 b.Image = activator.CoreIconProvider.GetImage(t);
@@ -198,6 +201,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 b.Text = t.ToString();
                 b.CheckedChanged += CollectionCheckedChanged;
                 b.Checked = startingFilters != null && startingFilters.Contains(t);
+
+                b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
 
                 toolStrip1.Items.Add(b);
             }
@@ -401,27 +406,23 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                         if (_isClosed)
                             return;
                         
-                        Invoke(new MethodInvoker(() =>
+                        try
                         {
-                            try
-                            {
-                                if(_isClosed)
-                                    return;
+                            if(_isClosed)
+                                return;
 
-                                AdjustHeight();
+                            AdjustHeight();
 
-                                if (_isClosed)
-                                    return;
+                            if (_isClosed)
+                                return;
 
-                                Invalidate();
-                            }
-                            catch (ObjectDisposedException)
-                            {
+                            Invalidate();
+                        }
+                        catch (ObjectDisposedException)
+                        {
                                 
-                            }
-                        }));
-                        
-                    });
+                        }
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void FetchMatches(string text, CancellationToken cancellationToken)

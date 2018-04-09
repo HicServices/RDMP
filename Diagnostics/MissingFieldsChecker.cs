@@ -165,7 +165,7 @@ namespace Diagnostics
 
             //connection exists
             if (string.IsNullOrWhiteSpace(_connectionStringBuilder.ConnectionString))
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not check " +_assemblyName + " because the specified Connection String was empty.  Check for a missing registry key/database settings", CheckResult.Fail, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not check " + _assemblyName + " because the specified Connection String was empty.  Check for a missing user settings connection strings (e.g. UserSettings.DataExportConnectionString)", CheckResult.Fail, null));
             
             try
             {

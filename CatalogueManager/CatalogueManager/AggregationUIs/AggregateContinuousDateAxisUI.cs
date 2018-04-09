@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Checks;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataHelper;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
@@ -19,8 +21,8 @@ namespace CatalogueManager.AggregationUIs
     /// when you include a Date in a GroupBy it will group it by unique value (just like any other field), most SQL users will get around this by using a function such as Year(MyDateCol) 
     /// to produce Aggregate of records per year.  However this approach will not fill in years where no date exists.
     /// 
-    /// Setting an AggregateContinuousDateAxis will generate a continuous record set for the date field specified even when there are no records.  For example you can set up an axis that
-    /// goes from 2001-01-01 to 2016-01-01 in increments of 1 month without having to worry about gaps in the axis or outlier dates (e.g. freaky dates like 1900-01-01).
+    /// <para>Setting an AggregateContinuousDateAxis will generate a continuous record set for the date field specified even when there are no records.  For example you can set up an axis that
+    /// goes from 2001-01-01 to 2016-01-01 in increments of 1 month without having to worry about gaps in the axis or outlier dates (e.g. freaky dates like 1900-01-01).</para>
     /// </summary>
     public partial class AggregateContinuousDateAxisUI : UserControl
     {
@@ -130,7 +132,7 @@ namespace CatalogueManager.AggregationUIs
 
             try
             {
-                RDMPQuerySyntaxHelper.ParityCheckCharacterPairs(new[] {'(', '\''}, new[] {')', '\''}, s.Text);
+                SyntaxChecker.ParityCheckCharacterPairs(new[] {'(', '\''}, new[] {')', '\''}, s.Text);
                 s.ForeColor = Color.Black;
 
                 _axis.SaveToDatabase();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using ReusableLibraryCode.Progress;
 
@@ -8,7 +8,7 @@ namespace CatalogueLibrary.DataFlowPipeline
     /// First component in an IDataFlowPipelineEngine, responsible for producing objects of type T via GetChunk until there are no new Ts available (e.g. reading from a
     /// csv file 50,000 lines at a time and generating System.Data.Table(s) until the file is exhausted).
     /// 
-    /// Where possible, you should implement IPluginDataFlowSource instead of this class so that you are MEF discoverable
+    /// <para>Where possible, you should implement IPluginDataFlowSource instead of this class so that you are MEF discoverable</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IDataFlowSource<out T>
@@ -42,7 +42,7 @@ namespace CatalogueLibrary.DataFlowPipeline
         /// This method is used at Design Time to help the user building a valid pipeline.  In theory the method should return a sample DataTable (or T) which is then 
         /// available programatically for checks and stuff.
         /// 
-        /// In practice just returning null will work fine (it means no preview is available) or you can return an empty object with the compatible schema.
+        /// <para>In practice just returning null will work fine (it means no preview is available) or you can return an empty object with the compatible schema.</para>
         /// </summary>
         /// <returns></returns>
         T TryGetPreview();

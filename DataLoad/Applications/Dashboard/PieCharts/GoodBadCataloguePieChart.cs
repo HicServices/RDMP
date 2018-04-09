@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -21,11 +21,11 @@ namespace Dashboard.PieCharts
     /// <summary>
     /// Part of OverviewScreen, shows a pie chart describing how good or bad the situation is with respect to one of the following:
     /// 
-    /// Issues - How many outstanding issues are there (See IssueUI)
+    /// <para>Issues - How many outstanding issues are there (See IssueUI)</para>
     /// 
-    /// Empty Descriptions - How many extractable columns are there which do not yet have descriptions in the Data Catalogue Database (See CatalogueItemTab)
+    /// <para>Empty Descriptions - How many extractable columns are there which do not yet have descriptions in the Data Catalogue Database (See CatalogueItemTab)</para>
     /// 
-    /// Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)
+    /// <para>Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)</para>
     /// 
     /// </summary>
     public partial class GoodBadCataloguePieChart : UserControl,IDashboardableControl

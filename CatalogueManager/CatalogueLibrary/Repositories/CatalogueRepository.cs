@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Common;
@@ -14,7 +14,7 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Properties;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories.Construction;
-using CatalogueLibrary.Repositories.Sharing;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -27,9 +27,9 @@ namespace CatalogueLibrary.Repositories
     /// table matching their name).  CatalogueLibrary.dll objects in CatalogueRepository, DataExportLibrary.dll objects in DataExportRepository, DataQualityEngine.dll objects
     /// in DQERepository etc.
     /// 
-    /// This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Catalogue database.  
+    /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Catalogue database.  </para>
     /// 
-    /// It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. AggregateForcedJoiner
+    /// <para>It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. AggregateForcedJoiner</para>
     /// </summary>
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
@@ -38,8 +38,7 @@ namespace CatalogueLibrary.Repositories
         public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
         public JoinInfoFinder JoinInfoFinder { get; set; }
         public MEF MEF { get; set; }
-        public ShareManager ShareManager { get; set; }
-
+        
         readonly ObjectConstructor _constructor = new ObjectConstructor();
         
         /// <summary>
@@ -58,7 +57,6 @@ namespace CatalogueLibrary.Repositories
             PasswordEncryptionKeyLocation = new PasswordEncryptionKeyLocation(this);
             JoinInfoFinder = new JoinInfoFinder(this);
             MEF = new MEF(this);
-            ShareManager = new ShareManager(this);
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
 
@@ -166,7 +164,14 @@ namespace CatalogueLibrary.Repositories
             }
             return toReturn;
         }
-        
+         
+        /// <inheritdoc/>
+        public LogManager GetDefaultLogManager()
+        {
+            ServerDefaults defaults = new ServerDefaults(this);
+            return new LogManager(defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
+        }
+
         public Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false)
         {
             return GetAllObjects<Catalogue>().Where(cata => (!cata.IsDeprecated) || includeDeprecatedCatalogues).ToArray();

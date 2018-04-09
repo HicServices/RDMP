@@ -11,7 +11,7 @@ namespace CatalogueLibrary.Data.Pipelines
     /// reading records and you want to use it in many places (in many other pipelines).  You must define the Context and any Fixed components.  Note that you can even
     /// set yourself (this) to the FixedDestination to effectively join two IPipelines together.  
     /// 
-    /// The user will only be able to select IPipelines which are compatible with the Context you provide (so it won't for example override source/destination etc).
+    /// <para>The user will only be able to select IPipelines which are compatible with the Context you provide (so it won't for example override source/destination etc).</para>
     /// </summary>
     public interface IDemandToUseAPipeline
     {

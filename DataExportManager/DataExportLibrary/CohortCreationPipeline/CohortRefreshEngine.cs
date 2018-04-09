@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -19,8 +19,8 @@ namespace DataExportLibrary.CohortCreationPipeline
     /// ExtractionConfiguration (if any) being recalculated and a new updated set of patient identifiers commited as the next version number in the cohort
     /// database for that ExtractionConfiguration.
     /// 
-    /// Use this class if you want to re-run a the patient identifiers of an ExtractionConfiguration without changing the cohort identification configuration
-    /// query (say 1 month later you want to generate an extract with the new patients fitting cohort criteria).
+    /// <para>Use this class if you want to re-run a the patient identifiers of an ExtractionConfiguration without changing the cohort identification configuration
+    /// query (say 1 month later you want to generate an extract with the new patients fitting cohort criteria).</para>
     /// </summary>
     public class CohortRefreshEngine
     {

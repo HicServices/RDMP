@@ -7,7 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
-using DataExportManager.Collections.Nodes;
+using DataExportLibrary.Providers.Nodes;
 using DataExportManager.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.Menus

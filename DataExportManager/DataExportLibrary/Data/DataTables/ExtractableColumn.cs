@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.Contracts;
@@ -18,14 +18,14 @@ namespace DataExportLibrary.Data.DataTables
     /// a given ExtractionConfiguration are being released to the researcher.  It also allows you to change the implementation of the column, for example a given researcher might want 
     /// all values UPPERd or he might want the Value field of Prescribing to be passed through his adjustment Scalar Valued Function to normalise or some other wierdness.
     /// 
-    /// When selecting a column for extraction in ExtractionConfigurationUI an ExtractableColumn will be created with a pointer to the original ExtractionInformation 
+    /// <para>When selecting a column for extraction in ExtractionConfigurationUI an ExtractableColumn will be created with a pointer to the original ExtractionInformation 
     /// (CatalogueExtractionInformation_ID) in the Catalogue database.  The ExtractionInformations SelectSQL will also be copied out.  The ExtractionQueryBuilder will use these records to
-    /// assemble the correct SQL for each Catalogue in your ExtractionConfiguration.
+    /// assemble the correct SQL for each Catalogue in your ExtractionConfiguration.</para>
     /// 
-    /// The ExtractableColumn 'copy' process allows not only for you to modify the SelectSQL on a 'per extraction' basis but also it means that if you ever delete an ExtractionInformation
+    /// <para>The ExtractableColumn 'copy' process allows not only for you to modify the SelectSQL on a 'per extraction' basis but also it means that if you ever delete an ExtractionInformation
     /// from the Catalogue or change the implementation then the record in DataExportManager still reflects the values that were actually used to execute the extraction.  This means
     /// that if you clone a 10 year old extraction you will still get the same SQL (along with lots of warnings about orphan CatalogueExtractionInformation_ID etc).  It even allows you
-    /// to delete entire datasets (Catalogues) without breaking old extractions (this is not a good idea though - you should always just deprecate the Catalogue instead).
+    /// to delete entire datasets (Catalogues) without breaking old extractions (this is not a good idea though - you should always just deprecate the Catalogue instead).</para>
     /// </summary>
     public class ExtractableColumn : ConcreteColumn, IComparable
     {
@@ -58,6 +58,7 @@ namespace DataExportLibrary.Data.DataTables
         
         #region Relationships
         
+        /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation CatalogueExtractionInformation
         {
@@ -97,7 +98,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public ExtractableColumn(IDataExportRepository repository, DbDataReader r)
+        internal ExtractableColumn(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractableDataSet_ID = int.Parse(r["ExtractableDataSet_ID"].ToString());

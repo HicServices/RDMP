@@ -69,6 +69,9 @@ namespace CatalogueManager.SimpleControls
             ParentForm.Leave += ParentFormOnLeave;
             Enable(false);
             Text = "&Save";
+
+            //the first time it is set up it could still be out of date!
+            CheckForOutOfDateObjectAndOfferToFix();
         }
 
         private void ParentFormOnLeave(object sender, EventArgs eventArgs)

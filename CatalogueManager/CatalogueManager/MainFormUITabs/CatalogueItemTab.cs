@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ExtractionUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -34,7 +35,7 @@ namespace CatalogueManager.MainFormUITabs
     /// an extraction transform/rule set (See ExtractionInformationUI) and a descriptive entity which describes what the researcher will receive if they are given the column in an extract.
     /// This helpfully also lets you delete/restructure your data tables underneath without losing the descriptive data, validation rules, logging history etc of your datasets.
     /// 
-    /// This control lets you view/edit the descriptive metadata of a CatalogueItem in a dataset (Catalogue).
+    /// <para>This control lets you view/edit the descriptive metadata of a CatalogueItem in a dataset (Catalogue).</para>
     /// </summary>
     public partial class CatalogueItemTab : CatalogueItemTab_Design ,ISaveableUI
     {
@@ -44,6 +45,7 @@ namespace CatalogueManager.MainFormUITabs
         {
             InitializeComponent();
             objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private CatalogueItem _catalogueItem;

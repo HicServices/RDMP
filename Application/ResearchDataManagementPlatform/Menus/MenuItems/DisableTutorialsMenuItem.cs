@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using CatalogueManager.Tutorials;
+using ReusableUIComponents.Settings;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
@@ -21,7 +22,7 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems
 
         void parent_DropDownOpened(object sender, EventArgs e)
         {
-            Checked = _tracker.IsDisableAllTutorialsOn();
+            Checked = UserSettings.DisableTutorials;
         }
 
         protected override void OnClick(EventArgs e)

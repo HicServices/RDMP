@@ -385,9 +385,9 @@
     <Reference Include="MySql.Data">
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
@@ -498,6 +498,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
@@ -506,6 +507,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
@@ -516,6 +518,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadPeriodically.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
@@ -524,6 +527,13 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionFilterParameterSet.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
+    <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
+    <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FindAndReplace\FindAndReplaceUI.Designer.cs">
+      <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
@@ -532,7 +542,7 @@
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
     <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCachingSupportToLoadProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
@@ -949,18 +959,6 @@
     <Compile Include="Refreshing\ILifetimeSubscriber.cs" />
     <Compile Include="Refreshing\IRefreshBusSubscriber.cs" />
     <Compile Include="Refreshing\RefreshBus.cs" />
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.Designer.cs">
-      <DependentUpon>LocationAdjustableObjectUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.Designer.cs">
-      <DependentUpon>LocationAdjustablePropertyUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1110,7 +1108,7 @@
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.Designer.cs">
       <DependentUpon>ConfigureCatalogueExtractabilityUI.cs</DependentUpon>
@@ -1150,12 +1148,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\Governance\GovernanceUI.Designer.cs">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.Designer.cs">
-      <DependentUpon>LocationsAdjuster.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.cs">
       <SubType>Form</SubType>
@@ -1235,12 +1227,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.Designer.cs">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\ForwardEngineering\ForwardEngineerCatalogueUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\ForwardEngineering\ForwardEngineerCatalogueUI.Designer.cs">
-      <DependentUpon>ForwardEngineerCatalogueUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\ImportCloneOfCatalogueItem.cs">
       <SubType>Form</SubType>
@@ -1354,11 +1340,11 @@
     <Compile Include="TestsAndSetup\StartupUI\PluginPatcherUI.Designer.cs">
       <DependentUpon>PluginPatcherUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\RegistryRepositoryFinderUI.cs">
+    <Compile Include="TestsAndSetup\StartupUI\RepositoryFinderUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\RegistryRepositoryFinderUI.Designer.cs">
-      <DependentUpon>RegistryRepositoryFinderUI.cs</DependentUpon>
+    <Compile Include="TestsAndSetup\StartupUI\RepositoryFinderUI.Designer.cs">
+      <DependentUpon>RepositoryFinderUI.cs</DependentUpon>
     </Compile>
     <Compile Include="TestsAndSetup\StartupUI\StartupUIMainForm.cs">
       <SubType>Form</SubType>
@@ -1372,6 +1358,7 @@
     <Compile Include="TestsAndSetup\StartupUI\MEFStartupUI.Designer.cs">
       <DependentUpon>MEFStartupUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Theme\BackColorProvider.cs" />
     <Compile Include="ToolTips.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1557,6 +1544,8 @@
     <None Include="Icons\AllObjectSharingNode.png" />
     <None Include="Icons\CohortCustomColumn.png" />
     <None Include="Icons\ExtractableColumn.png" />
+    <None Include="Icons\famfamfam\page_white_get.png" />
+    <None Include="Icons\famfamfam\page_white_put.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1645,6 +1634,9 @@
     <None Include="Icons\ObjectImport.png" />
     <None Include="Icons\ObjectSharingNode.png" />
     <None Include="Icons\ProjectCohortsNode.png" />
+    <None Include="Icons\TinyYellow.png" />
+    <None Include="Icons\TinyGreen.png" />
+    <None Include="Icons\TinyRed.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1704,6 +1696,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
+      <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
@@ -1797,12 +1792,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Images.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationAdjustableObjectUI.resx">
-      <DependentUpon>LocationAdjustableObjectUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationAdjustablePropertyUI.resx">
-      <DependentUpon>LocationAdjustablePropertyUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
@@ -1900,9 +1889,6 @@
     <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceUI.resx">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\LocationAdjustment\LocationsAdjuster.resx">
-      <DependentUpon>LocationsAdjuster.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.resx">
       <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1941,9 +1927,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.resx">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ForwardEngineering\ForwardEngineerCatalogueUI.resx">
-      <DependentUpon>ForwardEngineerCatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\ImportCloneOfCatalogueItem.resx">
       <DependentUpon>ImportCloneOfCatalogueItem.cs</DependentUpon>
@@ -2004,8 +1987,8 @@
     <EmbeddedResource Include="TestsAndSetup\StartupUI\PluginPatcherUI.resx">
       <DependentUpon>PluginPatcherUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\StartupUI\RegistryRepositoryFinderUI.resx">
-      <DependentUpon>RegistryRepositoryFinderUI.cs</DependentUpon>
+    <EmbeddedResource Include="TestsAndSetup\StartupUI\RepositoryFinderUI.resx">
+      <DependentUpon>RepositoryFinderUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TestsAndSetup\StartupUI\StartupUIMainForm.resx">
       <DependentUpon>StartupUIMainForm.cs</DependentUpon>
@@ -2019,10 +2002,6 @@
       <LastGenOutput>ToolTips.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="..\..\Documentation\UserManual.docx">
       <Link>UserManual.docx</Link>
     </EmbeddedResource>
@@ -2061,17 +2040,13 @@
       <Project>{01028615-752e-470a-90a7-d809af2ee09f}</Project>
       <Name>IdentifierDump</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Caching\Engine\CachingEngine\CachingEngine.csproj">
+    <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj">
       <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
       <Name>CachingEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj">
       <Project>{AA8B053B-3CF6-42EF-B5E6-2F9EE97F822F}</Project>
       <Name>CohortManagerLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DatabaseCreation\DatabaseCreation.csproj">
-      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
-      <Name>DatabaseCreation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
@@ -2084,10 +2059,6 @@
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Applications\RDMPAutomationService\RDMPAutomationService\RDMPAutomationService.csproj">
-      <Project>{04aebb47-fdd6-4bdf-8fef-572b947afeff}</Project>
-      <Name>RDMPAutomationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
@@ -2108,10 +2079,6 @@
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Developer\PluginPackager\PluginPackager.csproj">
-      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
-      <Name>PluginPackager</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
@@ -2157,6 +2124,22 @@
       <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
       <Name>ReusableUIComponents</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj">
+      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
+      <Name>DatabaseCreation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
+      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
+      <Name>PluginPackager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
+      <Name>RDMPAutomationService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
       <Name>HIC.Common.Validation</Name>
@@ -2168,10 +2151,6 @@
     <ProjectReference Include="..\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TicketingModules\Ticketing\Ticketing.csproj">
-      <Project>{048E1478-E4A7-4AD1-95AB-C40C604A4F60}</Project>
-      <Name>Ticketing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataQualityEngine.Data;
@@ -15,13 +16,13 @@ namespace Dashboard.CatalogueSummary
     /// <summary>
     /// Summarises the state of a single dataset (Catalogue).  This includes:
     /// 
-    /// Loads - A history of all the loads you have ever made to the dataset (highlighted according to whether they were successful or failed).  Expanding nodes will let you see the progress
-    /// messages, error messages, tables loaded and data sources etc (See LogViewerForm for more information about the RDMP logging structure).
+    /// <para>Loads - A history of all the loads you have ever made to the dataset (highlighted according to whether they were successful or failed).  Expanding nodes will let you see the progress
+    /// messages, error messages, tables loaded and data sources etc (See LogViewerForm for more information about the RDMP logging structure).</para>
     /// 
-    /// Descriptions / Issues - Pie charts showing how many of the extractable columns are lacking descriptions and how many outstanding issues there are on the dataset (See IssueUI)
+    /// <para>Descriptions / Issues - Pie charts showing how many of the extractable columns are lacking descriptions and how many outstanding issues there are on the dataset (See IssueUI)</para>
     /// 
-    /// Data Quality Tab - Shows a longitudinal breakdown of all Data Quality Engine runs on the dataset including the ability to 'rewind' to look at the dataset quality graphs of previous
-    /// runs of the DQE over time (e.g. before and after a data load).
+    /// <para>Data Quality Tab - Shows a longitudinal breakdown of all Data Quality Engine runs on the dataset including the ability to 'rewind' to look at the dataset quality graphs of previous
+    /// runs of the DQE over time (e.g. before and after a data load).</para>
     /// </summary>
     public partial class CatalogueSummaryScreen : CatalogueSummaryScreen_Design
     {
@@ -32,6 +33,8 @@ namespace Dashboard.CatalogueSummary
             InitializeComponent();
 
             dqePivotCategorySelector1.PivotCategorySelectionChanged += dqePivotCategorySelector1_PivotCategorySelectionChanged;
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public Catalogue Catalogue

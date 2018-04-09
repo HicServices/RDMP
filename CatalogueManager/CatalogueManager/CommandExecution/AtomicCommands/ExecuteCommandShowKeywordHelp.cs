@@ -29,7 +29,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return "Keyword Help:" + _className;
+            return "What is this?";
         }
 
         public Image GetImage(IIconProvider iconProvider)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -21,18 +21,17 @@ namespace HIC.Common.Validation
     /// add a number of ItemValidators to it.  Alternatively you can use the static method LoadFromXml.  Ensure you set 
     /// LocatorForXMLDeserialization.
     /// 
-    /// Generally, there are two phases of interaction with a Validator:
+    /// <para>Generally, there are two phases of interaction with a Validator:</para>
     /// 
-    /// 1. Design Time
+    /// <para>1. Design Time
     /// During this phase, the client will instantiate and set up a Validator. The Check() method can be called to check for 
-    /// any type incompatibilities prior to running the actual Validate() method.
+    /// any type incompatibilities prior to running the actual Validate() method.</para>
     /// 
-    /// 2. Run Time
-    /// The Validation(o) method is called, applying the previously set up validation rules to the supplied domain object (o).
+    /// <para>2. Run Time
+    /// The Validation(o) method is called, applying the previously set up validation rules to the supplied domain object (o).</para>
     /// 
-    /// Note: As of this writing the Dictionary-based method is under active development, whereas the Object-based method
-    /// is not adequately developed or tested . PLEASE USE THE DICTIONARY method FOR NOW!
-    ///  
+    /// <para>Note: As of this writing the Dictionary-based method is under active development, whereas the Object-based method
+    /// is not adequately developed or tested . PLEASE USE THE DICTIONARY method FOR NOW!</para>
     /// </summary>
     [XmlRoot("Validator")]
     public class Validator
