@@ -381,6 +381,13 @@ namespace CatalogueLibrary.Data.Aggregation
 
         private InjectedValue<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration = new InjectedValue<JoinableCohortAggregateConfiguration>();
 
+
+        /// <summary>
+        /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
+        /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
+        /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method IsJoinablePatientIndexTable
+        /// </summary>
+        /// <param name="joinable"></param>
         public void InjectKnown(InjectedValue<JoinableCohortAggregateConfiguration> instance)
         {
             _knownJoinableCohortAggregateConfiguration = instance;
@@ -694,12 +701,6 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         
-        /// <summary>
-        /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
-        /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
-        /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method IsJoinablePatientIndexTable
-        /// </summary>
-        /// <param name="joinable"></param>
         public void InjectKnownJoinableOrNone(JoinableCohortAggregateConfiguration joinable)
         {
             _knownJoinableCohortAggregateConfiguration = new InjectedValue<JoinableCohortAggregateConfiguration>(joinable);
