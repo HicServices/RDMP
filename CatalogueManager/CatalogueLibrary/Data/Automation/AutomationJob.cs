@@ -232,7 +232,7 @@ namespace CatalogueLibrary.Data.Automation
         /// </summary> 
         /// <example><code>
         /// var lm = repository.GetDefaultLogManager();
-        /// var dli = lm.CreateDataLoadInfo("LoadingData", "myexe.exe", "routine load 123", null, false);
+        /// var dli = lm.CreateDataLoadInfo("Loading Data", "myexe.exe", "routine load 123", null, false);
         /// job.SetLoggingInfo((ExternalDatabaseServer)lm.DataAccessPointIfAny,dli.ID);
         /// </code></example>
         /// <param name="serverChosen"></param>

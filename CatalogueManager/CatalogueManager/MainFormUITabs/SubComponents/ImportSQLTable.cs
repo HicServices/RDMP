@@ -30,8 +30,8 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     /// <para>Start by entering the details of your table (server, database, table etc).  If you specify username/password then SQL Authentication will be used and the credentials will be
     /// stored along with the table (See PasswordEncryptionKeyLocationUI for details), if you do not enter username/password then Windows Authentication will be used (preferred).  </para>
     /// 
-    /// <para>Clicking Import will create TableInfo / ColumnInfo objects in your Data Catalogue database and then ForwardEngineerCatalogueUI will be launched which lets you pick which 
-    /// columns are extractable and which contains the Patient Identifier (e.g. CHI number / NHS number etc).  See ForwardEngineerCatalogueUI for full details. </para>
+    /// <para>Clicking Import will create TableInfo / ColumnInfo objects in your Data Catalogue database and then ConfigureCatalogueExtractabilityUI will be launched which lets you pick which 
+    /// columns are extractable and which contains the Patient Identifier (e.g. CHI number / NHS number etc).  See ConfigureCatalogueExtractabilityUI for full details. </para>
     /// </summary>
     public partial class ImportSQLTable : Form
     {
