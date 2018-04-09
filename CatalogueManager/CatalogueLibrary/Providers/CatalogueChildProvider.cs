@@ -18,6 +18,7 @@ using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Providers
@@ -75,8 +76,6 @@ namespace CatalogueLibrary.Providers
         public AllObjectSharingNode AllObjectSharingNode { get; private set; }
         public ObjectImport[] AllImports { get; set; }
         public ObjectExport[] AllExports { get; set; }
-
-        public Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; private set; }
 
         private CatalogueItemIssue[] _allCatalogueItemIssues;
 
@@ -175,7 +174,7 @@ namespace CatalogueLibrary.Providers
                 if (ci.ColumnInfo_ID != null && _allColumnInfos.ContainsKey(ci.ColumnInfo_ID.Value))
                     col = _allColumnInfos[ci.ColumnInfo_ID.Value];
 
-                ci.InjectKnownColumnInfo(col);
+                ci.InjectKnown(new InjectedValue<ColumnInfo>(col));
             }
 
             AllExtractionInformationsDictionary = repository.GetAllObjects<ExtractionInformation>().ToDictionary(i => i.ID, o => o);
@@ -190,9 +189,7 @@ namespace CatalogueLibrary.Providers
             _allCatalogueItemIssues = repository.GetAllObjects<CatalogueItemIssue>();
 
             AllAggregateConfigurations = repository.GetAllObjects<AggregateConfiguration>();
-
-            CatalogueItemClassifications = repository.ClassifyAllCatalogueItems();
-
+            
             _filterChildProvider = new CatalogueFilterHierarchy(repository);
             _cohortContainerChildProvider = new CohortHierarchy(repository,this);
 
@@ -524,9 +521,7 @@ namespace CatalogueLibrary.Providers
             }
             
             var cis = AllCatalogueItems
-                .Where(ci => ci.Catalogue_ID == c.ID).OrderBy(ci2=>
-                    //order them by the Order field in the classification (extraction) where not extractable columns (Order is null) appear afterwards and finally unclassified CatalogueItems (really shouldn't happen) appear last
-                    CatalogueItemClassifications.ContainsKey(ci2.ID) ? CatalogueItemClassifications[ci2.ID].Order ?? 99999 : 999999)
+                .Where(ci => ci.Catalogue_ID == c.ID)
                 .ToArray();
 
             //add a new CatalogueItemNode (can be empty)
@@ -596,22 +591,17 @@ namespace CatalogueLibrary.Providers
         {
             List<object> childObjects = new List<object>();
 
-            if(CatalogueItemClassifications.ContainsKey(ci.ID))
-            {  
-                var extractionInformationIfAnyId = CatalogueItemClassifications[ci.ID].ExtractionInformation_ID;
+            var extractionInformation = AllExtractionInformations.SingleOrDefault(ei => ei.CatalogueItem_ID == ci.ID);
 
-                if(extractionInformationIfAnyId != null)
-                {
-                    var extractionInformation = AllExtractionInformationsDictionary[extractionInformationIfAnyId.Value];
-                    childObjects.Add(extractionInformation);
-                    AddChildren(extractionInformation,descendancy.Add(extractionInformation));
-                }
-                
-                var colInfoIfAny = CatalogueItemClassifications[ci.ID].ColumnInfo_ID;
-                
-                if(colInfoIfAny != null)
-                    childObjects.Add(new LinkedColumnInfoNode(ci,_allColumnInfos[colInfoIfAny.Value]));
+            if (extractionInformation != null)
+            {
+                ci.InjectKnown(new InjectedValue<ExtractionInformation>(extractionInformation));
+                childObjects.Add(extractionInformation);
+                AddChildren(extractionInformation,descendancy.Add(extractionInformation));
             }
+
+            if (ci.ColumnInfo_ID.HasValue)
+                childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
 
             childObjects.AddRange(_allCatalogueItemIssues.Where(i => i.CatalogueItem_ID == ci.ID));
 

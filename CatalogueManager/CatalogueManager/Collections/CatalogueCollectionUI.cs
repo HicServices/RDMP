@@ -166,8 +166,6 @@ namespace CatalogueManager.Collections
         {
             Stopwatch sw = new Stopwatch();
             sw.Restart();
-
-            _classifications = _activator.CoreChildProvider.CatalogueItemClassifications;
             
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
@@ -245,14 +243,11 @@ namespace CatalogueManager.Collections
             CheckCatalogues();
         }
 
-        private Dictionary<int, CatalogueItemClassification> _classifications;
-
         private object FilterAspectGetter(object rowObject)
         {
             var cataItem = rowObject as CatalogueItem;
             if (cataItem != null)
-                if (_classifications.ContainsKey(cataItem.ID))
-                    return _classifications[cataItem.ID].ExtractionFilterCount;
+                return _activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
 
             return null;
         }

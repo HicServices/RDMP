@@ -151,6 +151,8 @@
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeleteable.cs" />
     <Compile Include="INamed.cs" />
+    <Compile Include="Injection\IInjectKnown.cs" />
+    <Compile Include="Injection\InjectedValue.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="IMapsDirectlyToDatabaseTable.cs" />
     <Compile Include="ITableRepository.cs" />

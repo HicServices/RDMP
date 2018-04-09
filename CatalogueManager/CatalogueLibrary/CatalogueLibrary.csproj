@@ -544,7 +544,6 @@
     <Compile Include="Data\Cache\CacheFetchFailure.cs" />
     <Compile Include="Data\Cache\ICacheFetchFailure.cs" />
     <Compile Include="Data\CatalogueFolder.cs" />
-    <Compile Include="Data\PerformanceImprovement\CatalogueItemClassification.cs" />
     <Compile Include="Data\CatalogueObscureDependencyFinder.cs" />
     <Compile Include="Data\Cohort\CohortAggregateContainer.cs" />
     <Compile Include="Data\Cohort\AnyTableSqlParameter.cs" />

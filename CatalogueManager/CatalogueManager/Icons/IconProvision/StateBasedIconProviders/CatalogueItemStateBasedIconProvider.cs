@@ -11,7 +11,6 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
     {
         private readonly Bitmap basicImage;
         private readonly IconOverlayProvider _overlayProvider;
-        private Dictionary<int, CatalogueItemClassification> _classifications;
 
         public CatalogueItemStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
@@ -28,20 +27,12 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 
             Bitmap toReturn = basicImage;
 
-            //fetch from cached classifications if you can 
-            if (_classifications != null && _classifications.ContainsKey(ci.ID))
-            {
-                //it's extractable
-                if (_classifications[ci.ID].ExtractionInformation_ID != null)
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
-            }
+            //it's extractable
+            if (ci.ExtractionInformation != null)
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
+            
 
             return toReturn;
-        }
-
-        public void SetClassifications(Dictionary<int, CatalogueItemClassification> classifications)
-        {
-            _classifications = classifications;
         }
     }
 }

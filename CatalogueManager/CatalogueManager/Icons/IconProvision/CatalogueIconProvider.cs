@@ -66,11 +66,6 @@ namespace CatalogueManager.Icons.IconProvision
             _catalogueItemStateBasedIconProvider = new CatalogueItemStateBasedIconProvider(OverlayProvider);
             StateBasedIconProviders.Add(_catalogueItemStateBasedIconProvider);
         }
-        
-        public void SetClassifications(Dictionary<int, CatalogueItemClassification> catalogueItemClassifications)
-        {
-            _catalogueItemStateBasedIconProvider.SetClassifications(catalogueItemClassifications);
-        }
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {

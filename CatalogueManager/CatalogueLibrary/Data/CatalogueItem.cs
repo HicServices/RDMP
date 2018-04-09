@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -26,7 +27,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
-    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed
+    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>
     {
         #region Database Properties
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -57,7 +58,10 @@ namespace CatalogueLibrary.Data
         private int _catalogueID;
         private int? _columnInfoID;
         private Catalogue.CataloguePeriodicity _periodicity;
-        
+
+        private InjectedValue<ExtractionInformation> _knownExtractionInformation = new InjectedValue<ExtractionInformation>();
+        private InjectedValue<ColumnInfo> _knownColumnInfo = new InjectedValue<ColumnInfo>();
+
 
         [DoNotExtractProperty]
         public int Catalogue_ID
@@ -121,7 +125,7 @@ namespace CatalogueLibrary.Data
             set
             {
                 SetField(ref _columnInfoID , value);
-                _haveCachedColumnInfo = false;
+                _knownColumnInfo.Clear();
             }
         }
 
@@ -146,7 +150,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                return Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
+                return _knownExtractionInformation.GetValueIfKnownOrRun(()=>Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault());
             }
         }
 
@@ -156,23 +160,10 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                try
-                {
-                    CacheColumnInfoIfRequired();
+                if (!ColumnInfo_ID.HasValue)
+                    return null;
 
-                    return _columnInfoCached;
-                }
-                catch (KeyNotFoundException) //The ColumnInfo has been deleted elsewhere in the program? but this local object in memory doesn't know that
-                {
-                    //Let's make sure that's definetly the case
-                    if(HasLocalChanges().Differences.Any(d=>d.Property.Name.Equals("ColumnInfo_ID") && d.DatabaseValue == null))
-                    {
-                        ColumnInfo_ID = null;
-                        return null;
-                    }
-
-                    throw;
-                }
+                return _knownColumnInfo.GetValueIfKnownOrRun(()=> Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value));
             }
         }
 
@@ -223,6 +214,17 @@ namespace CatalogueLibrary.Data
                      Periodicity = Catalogue.CataloguePeriodicity.Unknown;
 
             }
+        }
+
+        /// <inheritdoc/>
+        public void InjectKnown(InjectedValue<ExtractionInformation> instance)
+        {
+            _knownExtractionInformation = instance;
+        }
+        /// <inheritdoc/>
+        public void InjectKnown(InjectedValue<ColumnInfo> instance)
+        {
+            _knownColumnInfo = instance;
         }
 
         public override string ToString()
@@ -292,11 +294,13 @@ namespace CatalogueLibrary.Data
             
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return null;
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             List<IHasDependencies> dependantObjects = new List<IHasDependencies>();
@@ -315,26 +319,9 @@ namespace CatalogueLibrary.Data
 
         public void SetColumnInfo(ColumnInfo columnInfo)
         {
-            ((CatalogueRepository)Repository).SaveSpecificPropertyOnlyToDatabase(this,"ColumnInfo_ID",columnInfo != null? (object) columnInfo.ID:null);
-            InjectKnownColumnInfo(columnInfo);
-        }
-
-        private ColumnInfo _columnInfoCached;
-        private bool _haveCachedColumnInfo;
-
-        private void CacheColumnInfoIfRequired()
-        {
-            if(_haveCachedColumnInfo)
-                return;
-
-            _columnInfoCached = ColumnInfo_ID == null ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
-            _haveCachedColumnInfo = true;
-        }
-
-        public void InjectKnownColumnInfo(ColumnInfo col)
-        {
-            _columnInfoCached = col;
-            _haveCachedColumnInfo = true;
+            ColumnInfo_ID = columnInfo == null ? (int?) null : columnInfo.ID;
+            SaveToDatabase();
+            InjectKnown(new InjectedValue<ColumnInfo>(columnInfo));
         }
     }
 }
