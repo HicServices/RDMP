@@ -84,7 +84,7 @@ if %ERRORLEVEL% NEQ 0 goto errors
 
 :: Bring the ENV's integration database up to the most recent version
 ECHO Setting up the DB for integration tests
-CALL ..\DatabaseCreation\Release\DatabaseCreation.exe %DBSERVER% %DBPREFIX% -D
+CALL ..\Tools\DatabaseCreation\Release\DatabaseCreation.exe %DBSERVER% %DBPREFIX% -D
 REM ECHO Catalogue DB...
 REM ECHO "%DEPLOYMENT_DIR%%ENV%.IntegrationTestDBDeployment.RESTORE.bat"
 REM CALL "%DEPLOYMENT_DIR%%ENV%.IntegrationTestDBDeployment.RESTORE.bat"
