@@ -9,6 +9,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -27,13 +28,13 @@ namespace DataExportLibrary.Data.DataTables
     /// that if you clone a 10 year old extraction you will still get the same SQL (along with lots of warnings about orphan CatalogueExtractionInformation_ID etc).  It even allows you
     /// to delete entire datasets (Catalogues) without breaking old extractions (this is not a good idea though - you should always just deprecate the Catalogue instead).</para>
     /// </summary>
-    public class ExtractableColumn : ConcreteColumn, IComparable
+    public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<CatalogueItem>,IInjectKnown<ColumnInfo>,IInjectKnown<ExtractionInformation>
     {
         #region Database Properties
         private int _extractableDataSet_ID;
         private int _extractionConfiguration_ID;
         private int? _catalogueExtractionInformation_ID;
-
+        
         public int ExtractableDataSet_ID
         {
             get { return _extractableDataSet_ID; }
@@ -50,7 +51,8 @@ namespace DataExportLibrary.Data.DataTables
             set
             {
                 SetField(ref _catalogueExtractionInformation_ID, value);
-                _haveCachedCatalogueItem = false;
+                _knownCatalogueItem.Clear();
+                _knownColumnInfo.Clear();
             }
         }
 
@@ -76,8 +78,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             get
             {
-                CacheCatalogueStuffIfRequired();
-                return _columnInfoCached;
+                return _knownColumnInfo.GetValueIfKnownOrRun(FetchColumnInfo);
             }
         }
 
@@ -117,20 +118,36 @@ namespace DataExportLibrary.Data.DataTables
             IsPrimaryKey = (bool) r["IsPrimaryKey"];
         }
 
-        
+        private InjectedValue<CatalogueItem> _knownCatalogueItem = new InjectedValue<CatalogueItem>();
+        private InjectedValue<ColumnInfo> _knownColumnInfo = new InjectedValue<ColumnInfo>();
+        private InjectedValue<ExtractionInformation> _knownExtractionInformation = new InjectedValue<ExtractionInformation>();
+
+        public void InjectKnown(InjectedValue<CatalogueItem> instance)
+        {
+            _knownCatalogueItem = instance;
+        }
+
+        public void InjectKnown(InjectedValue<ColumnInfo> instance)
+        {
+            _knownColumnInfo = instance;
+        }
+
+        public void InjectKnown(InjectedValue<ExtractionInformation> instance)
+        {
+            _knownExtractionInformation = instance;
+        }
+
         public override string ToString()
         {
             if(!string.IsNullOrWhiteSpace(Alias))
                 return Alias;
 
-            CacheCatalogueStuffIfRequired();
-            
             //the ExtractionInformation has been deleted in the Catalogue!
-            if (_catalogueItemCached == null)
+            if (_knownCatalogueItem.GetValueIfKnownOrRun(FetchCatalogueItem) == null)
                 return SelectSQL;
 
             //it hasn't, copy down the name of it
-            return _catalogueItemCached.Name;
+            return _knownCatalogueItem.GetValueIfKnownOrRun(FetchCatalogueItem).Name;
         }
 
         public int CompareTo(object obj)
@@ -143,46 +160,60 @@ namespace DataExportLibrary.Data.DataTables
         
         public bool HasOriginalExtractionInformationVanished()
         {
-            CacheCatalogueStuffIfRequired();
-            return _columnInfoCached == null;
+            return _knownColumnInfo.GetValueIfKnownOrRun(FetchColumnInfo) == null;
         }
 
-        private ColumnInfo _columnInfoCached = null;
-        private CatalogueItem _catalogueItemCached;
-        private bool _haveCachedCatalogueItem;
-
-        public void InjectKnownCatalogueItemAndColumnInfo(CatalogueItem ci, ColumnInfo co)
+        private ColumnInfo FetchColumnInfo()
         {
-            _catalogueItemCached = ci;
-            _columnInfoCached = co;
-            _haveCachedCatalogueItem = true;
+            var ci = _knownCatalogueItem.GetValueIfKnownOrRun(FetchCatalogueItem);
+            if (ci == null || ci.ColumnInfo_ID == null)
+                return null;
+
+            return ci.ColumnInfo;
         }
 
-
-        private void CacheCatalogueStuffIfRequired()
+        private CatalogueItem FetchCatalogueItem()
         {
-            //if we already know either
-            if(_haveCachedCatalogueItem)
-                return; //dont bother hitting up the database
+            var ei = _knownExtractionInformation.GetValueIfKnownOrRun(FetchExtractionInformation);
 
-            if (CatalogueExtractionInformation_ID != null)
+            if (ei == null)
+                return null;
+            
+            return ei.CatalogueItem;
+        }
+
+        private ExtractionInformation FetchExtractionInformation()
+        {
+            //it's not based on a Catalogue column
+            if (!CatalogueExtractionInformation_ID.HasValue)
+                return null;
+
+            try
             {
-                bool exists = ((DataExportRepository)Repository).CatalogueRepository.StillExists<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
-
-                //We have been orphaned! we have an CatalogueExtractionInformation_ID which should point to the Catalogue object but the Catalogue object has been deleted
-                if (!exists)
-                    CatalogueExtractionInformation_ID = null;
-                else
-                    _catalogueItemCached = CatalogueExtractionInformation.CatalogueItem;
+                return ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
             }
-
-            if (_columnInfoCached == null && CatalogueExtractionInformation_ID != null)
-                _columnInfoCached = CatalogueExtractionInformation.CatalogueItem.ColumnInfo;
-
-            _haveCachedCatalogueItem = true;
+            catch (KeyNotFoundException)
+            {
+                return null;
+            }
         }
 
+        public void InjectKnown( ExtractionInformation extractionInformation)
+        {
+            InjectKnown(new InjectedValue<ExtractionInformation>(extractionInformation));
 
+            if (extractionInformation == null)
+            {
+                InjectKnown(new InjectedValue<CatalogueItem>(null));
+                InjectKnown(new InjectedValue<ColumnInfo>(null));    
+            }
+            else
+            {
+                InjectKnown(new InjectedValue<CatalogueItem>(extractionInformation.CatalogueItem));
+                InjectKnown(new InjectedValue<ColumnInfo>(extractionInformation.ColumnInfo));
+            }
+            
 
+        }
     }
 }

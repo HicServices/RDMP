@@ -15,6 +15,7 @@ using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -84,14 +85,15 @@ namespace DataExportLibrary.Providers
             //record all extractable columns in each ExtractionConfiguration for fast reference later
             foreach (var c in dataExportRepository.GetAllObjects<ExtractableColumn>())
             {
-                if(c.CatalogueExtractionInformation_ID == null)
-                    c.InjectKnownCatalogueItemAndColumnInfo(null,null);
+                if (c.CatalogueExtractionInformation_ID == null)
+                    c.InjectKnown((ExtractionInformation) null);
                 else
                 {
-                    if(AllExtractionInformationsDictionary.ContainsKey(c.CatalogueExtractionInformation_ID.Value))
+                    if (AllExtractionInformationsDictionary.ContainsKey(c.CatalogueExtractionInformation_ID.Value))
                     {
                         var extractionInformation = AllExtractionInformationsDictionary[c.CatalogueExtractionInformation_ID.Value];
-                        c.InjectKnownCatalogueItemAndColumnInfo(extractionInformation.CatalogueItem, extractionInformation.ColumnInfo);
+
+                        c.InjectKnown(extractionInformation);
                     }
                 }
 

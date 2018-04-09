@@ -317,6 +317,12 @@ namespace CatalogueLibrary.Data
             return dependantObjects.ToArray();
         }
 
+        /// <summary>
+        /// Changes the CatalogueItem in the database to be based off of the specified ColumnInfo (or none if null is specified).  This will
+        /// likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in it's
+        /// <see cref="CatalogueLibrary.Data.ExtractionInformation.SelectSQL"/>.
+        /// </summary>
+        /// <param name="columnInfo"></param>
         public void SetColumnInfo(ColumnInfo columnInfo)
         {
             ColumnInfo_ID = columnInfo == null ? (int?) null : columnInfo.ID;
