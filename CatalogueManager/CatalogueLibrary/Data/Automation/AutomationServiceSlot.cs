@@ -36,78 +36,112 @@ namespace CatalogueLibrary.Data.Automation
         private int? _globalTimeoutPeriod;
         private string _name;
 
+        /// <inheritdoc/>
         public bool LockedBecauseRunning
         {
             get { return _lockedBecauseRunning; }
             set {SetField(ref  _lockedBecauseRunning , value); }
         }
 
+        /// <inheritdoc/>
         public string LockHeldBy
         {
             get { return _lockHeldBy; }
             set {SetField(ref  _lockHeldBy , value); }
         }
 
+        /// <summary>
+        /// The maximum number of AutomationJobs of type Data Quality Engine that should be allowed to run simultaneously
+        /// </summary>
         public int DQEMaxConcurrentJobs
         {
             get { return _dqeMaxConcurrentJobs; }
             set {SetField(ref  _dqeMaxConcurrentJobs , value); }
         }
 
+        /// <summary>
+        /// The number of days to wait before triggering an automated DQE evaluation of a dataset
+        /// </summary>
         public int DQEDaysBetweenEvaluations
         {
             get { return _dqeDaysBetweenEvaluations; }
             set {SetField(ref  _dqeDaysBetweenEvaluations , value); }
         }
 
+        /// <summary>
+        /// Determines which Catalogue to run the automted DQE on when multiple Catalogues are due
+        /// to have DQE run
+        /// </summary>
         public AutomationDQEJobSelectionStrategy DQESelectionStrategy
         {
             get { return _dqeSelectionStrategy; }
             set {SetField(ref  _dqeSelectionStrategy , value); }
         }
 
+        /// <summary>
+        /// Determines what to do when a DQE evaluation crashes on a Catalogue
+        /// </summary>
         public AutomationFailureStrategy DQEFailureStrategy
         {
             get { return _dqeFailureStrategy; }
             set {SetField(ref  _dqeFailureStrategy , value); }
         }
 
+        /// <summary>
+        /// The maximum number of AutomationJobs of type Data Load Engine that should be allowed to run simultaneously
+        /// </summary>
         public int DLEMaxConcurrentJobs
         {
             get { return _dleMaxConcurrentJobs; }
             set {SetField(ref  _dleMaxConcurrentJobs , value); }
         }
-
+        
+        /// <summary>
+        /// Determines what to do when an automated Data Load crashes
+        /// </summary>
         public AutomationFailureStrategy DLEFailureStrategy
         {
             get { return _dleFailureStrategy; }
             set {SetField(ref  _dleFailureStrategy , value); }
         }
 
+        /// <summary>
+        /// The maximum number of AutomationJobs of type Caching (long running tasks that primarily involve fetching files and storing to disk) that should be
+        ///  allowed to run simultaneously
+        /// </summary>
         public int CacheMaxConcurrentJobs
         {
             get { return _cacheMaxConcurrentJobs; }
             set {SetField(ref  _cacheMaxConcurrentJobs , value); }
         }
-
+        
+        /// <summary>
+        /// Determines what to do when an automated Data caching crashes
+        /// </summary>
         public AutomationFailureStrategy CacheFailureStrategy
         {
             get { return _cacheFailureStrategy; }
             set {SetField(ref  _cacheFailureStrategy , value); }
         }
 
+        /// <inheritdoc/>
         public DateTime? Lifeline
         {
             get { return _lifeline; }
             set {SetField(ref  _lifeline , value); }
         }
 
+        /// <summary>
+        /// Overrides the application wide default timeout setting for database commands.  This is usually 30 seconds (<see cref="DatabaseCommandHelper.GlobalTimeout"/>).  This
+        /// will only affect commands where an explicit (usually longer) timeout has been set on the command e.g. for MERGE operations etc that are expected to take a long time. 
+        /// </summary>
         public int? GlobalTimeoutPeriod
         {
             get { return _globalTimeoutPeriod; }
             set {SetField(ref  _globalTimeoutPeriod , value); }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
@@ -170,6 +204,15 @@ namespace CatalogueLibrary.Data.Automation
             return outVar;
         }
 
+        /// <summary>
+        /// Defines a persistent slot for the automation service to run the jobs specified according to the strategies you pick.  You will still
+        /// need to run the RDMPAutomationService, this class only outlines the users desired behaviour. 
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="dqeFailureStrategy"></param>
+        /// <param name="dleFailureStrategy"></param>
+        /// <param name="cacheFailureStrategy"></param>
+        /// <param name="dqeSelectionStrategy"></param>
         public AutomationServiceSlot(ICatalogueRepository repository,
             AutomationFailureStrategy dqeFailureStrategy = AutomationFailureStrategy.Stop,
             AutomationFailureStrategy dleFailureStrategy = AutomationFailureStrategy.Stop,
@@ -188,6 +231,7 @@ namespace CatalogueLibrary.Data.Automation
             });
         }
 
+        /// <inheritdoc/>
         public void Lock()
         {
             LockedBecauseRunning = true;
@@ -196,6 +240,7 @@ namespace CatalogueLibrary.Data.Automation
             SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public void Unlock()
         {
             LockedBecauseRunning = false;
@@ -203,11 +248,16 @@ namespace CatalogueLibrary.Data.Automation
             SaveToDatabase();
         }
 
+        /// <summary>
+        /// Returns the Name property
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
             if(LockedBecauseRunning)
@@ -215,22 +265,31 @@ namespace CatalogueLibrary.Data.Automation
 
             base.DeleteInDatabase();
         }
-        
+
+        /// <inheritdoc/>
         public void TickLifeline()
         {
             ((CatalogueRepository)Repository).TickLifeline(this);
         }
 
+        /// <inheritdoc/>
         public void RefreshLifelinePropertyFromDatabase()
         {
             Lifeline = ((CatalogueRepository) Repository).GetTickLifeline(this);
         }
 
+        /// <inheritdoc/>
         public void RefreshLockPropertiesFromDatabase()
         {
             ((CatalogueRepository)Repository).RefreshLockPropertiesFromDatabase(this);
         }
 
+        /// <summary>
+        /// Returns true if the maximum number of jobs permitted on the slot has not yet been reached for the given AutomationJobType.  Also considers the AutomationFailureStrategy
+        /// if there are outstanding crashed jobs of the corresponding jobType.
+        /// </summary>
+        /// <param name="jobType"></param>
+        /// <returns></returns>
         public bool IsAcceptingNewJobs(AutomationJobType jobType)
         {
             AutomationFailureStrategy strategy;
@@ -274,34 +333,48 @@ namespace CatalogueLibrary.Data.Automation
             return jobs.Count(j => j.AutomationJobType == jobType) < maxAcceptable;
         }
 
+        /// <inheritdoc cref="AutomationJobs/>
         public AutomationJob[] GetAutomationJobs(int maximumNumberToRetrieve)
         {
-
             return Repository.SelectAll<AutomationJob>("SELECT TOP " + maximumNumberToRetrieve +
                                                 " ID FROM AutomationJob WHERE AutomationServiceSlot_ID = " + ID +
                                                 " ORDER BY ID ASC","ID").ToArray();
         }
 
+        /// <summary>
+        /// Documents that a new job has begun on the Automation Server that occupies the AutomationServiceSlot (has it locked).
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
         public AutomationJob AddNewJob(AutomationJobType type, string description)
         {
             return new AutomationJob((ICatalogueRepository) Repository, this, type, description);
         }
 
+        /// <summary>
+        /// Documents that a new caching job has begun on the Automation Server that occupies the AutomationServiceSlot (has it locked).
+        /// </summary>
         public AutomationJob AddNewJob(CacheProgress cacheProgress)
         {
             return new AutomationJob((ICatalogueRepository)Repository,this,cacheProgress);
         }
 
+        /// <summary>
+        /// Documents that a new caching job using the PermissionWindow has begun on the Automation Server that occupies the AutomationServiceSlot (has it locked).
+        /// </summary>
         public AutomationJob AddNewJob(PermissionWindow permissionWindow)
         {
             return new AutomationJob((ICatalogueRepository)Repository, this, permissionWindow);
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             List<IHasDependencies> dependencies = new List<IHasDependencies>();

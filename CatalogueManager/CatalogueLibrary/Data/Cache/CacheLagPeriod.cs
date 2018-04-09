@@ -10,15 +10,35 @@ namespace CatalogueLibrary.Data.Cache
     public class CacheLagPeriod
     {
         /// <summary>
-        /// Is the lag period measured in moths or days
+        /// Is the lag period measured in months or days
         /// </summary>
         public enum PeriodType
         {
+            /// <summary>
+            /// Specifies that the <see cref="Duration"/> is a count of Months
+            /// </summary>
             Month,
+
+            /// <summary>
+            /// Specifies that the <see cref="Duration"/> is a count of Days
+            /// </summary>
             Day
         };
 
+        /// <summary>
+        /// The number of Days/Months etc (See <see cref="Type"/>) to wait before the associated CacheProgress should be run.  This specifies a window of time
+        /// measured from the present not to load e.g. 'do not load any data if it is newer than 3 months since the remote endpoint data source is still volatile
+        /// in this range'.
+        /// 
+        /// <para>Use this when your remote endpoint to which you make Cache fetch requests is not a realtime system in which records are instantly available and
+        /// utterly immutable</para>
+        /// </summary>
         public int Duration { get; set; }
+
+        /// <summary>
+        /// Indicates which interval type (Days / Months etc) <see cref="Duration"/> is measured in.
+        /// </summary>
+        /// <seealso cref="Duration"/>
         public PeriodType Type { get; set; }
 
         // if a null/empty string is passed in to the constructor then there is no lag period, create it as '0d'
@@ -37,7 +57,11 @@ namespace CatalogueLibrary.Data.Cache
 
         public static CacheLagPeriod Zero {get { return new CacheLagPeriod(0, PeriodType.Month); }} 
 
-        public CacheLagPeriod(string cacheLagPeriod)
+        /// <summary>
+        /// Deserializes a <see cref="CacheProgress.CacheLagPeriodLoadDelay"/> string into an instance of <see cref="CacheLagPeriod"/>
+        /// </summary>
+        /// <param name="cacheLagPeriod"></param>
+        internal CacheLagPeriod(string cacheLagPeriod)
         {
             var type = cacheLagPeriod.Substring(cacheLagPeriod.Length - 1);
             SetTypeFromString(type);
@@ -47,6 +71,12 @@ namespace CatalogueLibrary.Data.Cache
                 : Convert.ToInt32(cacheLagPeriod.Substring(0, cacheLagPeriod.Length - 1));
         }
 
+        /// <summary>
+        /// Defines a new lag period of the specified number of Months/Days etc
+        /// </summary>
+        /// <seealso cref="Duration"/>
+        /// <param name="duration"></param>
+        /// <param name="type"></param>
         public CacheLagPeriod(int duration, PeriodType type)
         {
             Duration = duration;
@@ -74,6 +104,11 @@ namespace CatalogueLibrary.Data.Cache
             }
         }
 
+        /// <summary>
+        /// String representation of the CacheLagPeriod.  This should be a valid serialization such that it can be loaded by the internal constructor.
+        /// </summary>
+        /// <remarks>Do not change this without good reason because it's implementation is tied to the internal constructor</remarks>
+        /// <returns></returns>
         public override string ToString()
         {
             var s = Duration.ToString();
@@ -92,7 +127,12 @@ namespace CatalogueLibrary.Data.Cache
             return s;
         }
 
-        public DateTime CalculateStartOfLagPeriodFrom(DateTime dt)
+        /// <summary>
+        /// Adds the <see cref="Duration"/> to the specified DateTime.  Use this to decide whether the lag time is up or not
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        internal DateTime CalculateStartOfLagPeriodFrom(DateTime dt)
         {
             switch (Type)
             {
@@ -105,11 +145,24 @@ namespace CatalogueLibrary.Data.Cache
             }
         }
 
+        /// <summary>
+        /// Pass the date you are about to create a cache fetch request for.  Returns true if the date is outside (i.e. older than) the lag period.  E.g. if you have a lag period of 
+        /// 6 months then any date before 6 months is valid for fetching since the remote endpoint is likely to have had it's data stabalised.
+        /// </summary>
+        /// <seealso cref="Duration"/>
+        /// <param name="time"></param>
+        /// <returns></returns>
         public bool TimeIsWithinPeriod(DateTime time)
         {
             return time >= CalculateStartOfLagPeriodFrom(DateTime.Now);
         }
 
+        /// <summary>
+        /// Allows comparing a TimeSpan with a CacheLagPeriod.  This treats the Timespan as an offset equivalent to <see cref="Duration"/>
+        /// </summary>
+        /// <param name="timespan"></param>
+        /// <param name="lagPeriod"></param>
+        /// <returns></returns>
         public static bool operator <(TimeSpan timespan, CacheLagPeriod lagPeriod)
         {
             var dt1 = DateTime.Now;
@@ -122,6 +175,12 @@ namespace CatalogueLibrary.Data.Cache
             return dt1 < dt2;
         }
 
+        /// <summary>
+        /// Allows comparing a TimeSpan with a CacheLagPeriod.  This treats the Timespan as an offset equivalent to <see cref="Duration"/>
+        /// </summary>
+        /// <param name="timespan"></param>
+        /// <param name="lagPeriod"></param>
+        /// <returns></returns>
         public static bool operator >(TimeSpan timespan, CacheLagPeriod lagPeriod)
         {
             var dt1 = DateTime.Now;

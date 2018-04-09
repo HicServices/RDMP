@@ -24,7 +24,7 @@ namespace ReusableLibraryCode
         public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
 
         /// <summary>
-        /// Sets the default Global timeout for new DbCommand objects being created 
+        /// Sets the default Global timeout in seconds for new DbCommand objects being created 
         /// </summary>
         public static int GlobalTimeout = 30;
 
