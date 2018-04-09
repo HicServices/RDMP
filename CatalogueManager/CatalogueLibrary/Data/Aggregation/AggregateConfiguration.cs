@@ -13,6 +13,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
@@ -42,7 +43,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>
     {
         #region Database Properties
         private string _countSQL;
@@ -378,6 +379,13 @@ namespace CatalogueLibrary.Data.Aggregation
             _orderWithinKnownContainer = ((CatalogueRepository) Repository).GetOrderIfExistsFor(this);
         }
 
+        private InjectedValue<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration = new InjectedValue<JoinableCohortAggregateConfiguration>();
+
+        public void InjectKnown(InjectedValue<JoinableCohortAggregateConfiguration> instance)
+        {
+            _knownJoinableCohortAggregateConfiguration = instance;
+        }
+
         /// <summary>
         /// Returns the Name.  If the AggregateConfiguration is a cohort identification aggregate (distinguished by <see cref="CohortIdentificationConfiguration.CICPrefix"/>)
         /// then the prefix is removed from the return value.
@@ -548,13 +556,9 @@ namespace CatalogueLibrary.Data.Aggregation
         ///  JoinableCohortAggregateConfiguration object</returns>
         public bool IsJoinablePatientIndexTable()
         {
-            if (!_databaseLookupPerformed)
-            {
-                _cachedJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
-                _databaseLookupPerformed = true;
-            }
-
-            return _cachedJoinable != null;
+            return _knownJoinableCohortAggregateConfiguration.GetValueIfKnownOrRun(
+                Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault)
+                != null;
         }
 
         /// <summary>
@@ -689,9 +693,7 @@ namespace CatalogueLibrary.Data.Aggregation
             return dependers.ToArray();
         }
 
-        private JoinableCohortAggregateConfiguration _cachedJoinable;
-        private bool _databaseLookupPerformed;
-
+        
         /// <summary>
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
         /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
@@ -700,8 +702,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="joinable"></param>
         public void InjectKnownJoinableOrNone(JoinableCohortAggregateConfiguration joinable)
         {
-            _cachedJoinable = joinable;
-            _databaseLookupPerformed = true;
+            _knownJoinableCohortAggregateConfiguration = new InjectedValue<JoinableCohortAggregateConfiguration>(joinable);
         }
     }
 }

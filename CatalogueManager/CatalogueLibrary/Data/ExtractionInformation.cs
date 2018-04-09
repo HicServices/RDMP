@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
@@ -63,10 +64,8 @@ namespace CatalogueLibrary.Data
     /// is the column which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify people
     /// in your datasets (e.g. Community Health Index or NHS Number).</para>
     /// </summary>
-    public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies
+    public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>
     {
-        private ColumnInfo _columnInfo;
-        private CatalogueItem _catalogueItem;
         private bool _columnInfoFoundToBeNull = false;
 
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -78,7 +77,7 @@ namespace CatalogueLibrary.Data
         
         private int _catalogueItemID;
         private ExtractionCategory _extractionCategory;
-
+        
         //For other properties see ConcreteColumn
         public int CatalogueItem_ID
         {
@@ -108,11 +107,8 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                //Cache answer the first time it is requested
-                if(_catalogueItem == null)
-                    _catalogueItem = Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID);
-
-                return _catalogueItem;
+                //Cache answer the first time it is requested (or injected)
+                return _knownCatalogueItem.GetValueIfKnownOrRun(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
             }
         }
 
@@ -121,18 +117,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                //Cache answer the first time it is requested
-                if (_columnInfo == null && !_columnInfoFoundToBeNull)
-                {
-                    //The cached answer
-                    _columnInfo = CatalogueItem.ColumnInfo;
-
-                    //oh oh! it's null! flag that it was found to be null in order to prevent constantly trying to work it out every time ColumnInfo property is interrogated.
-                    if (_columnInfo == null)
-                        _columnInfoFoundToBeNull = true;
-                }
-                
-                return _columnInfo;
+                return _knownColumninfo.GetValueIfKnownOrRun(()=>CatalogueItem.ColumnInfo);
             }
         }
 
@@ -182,8 +167,25 @@ namespace CatalogueLibrary.Data
             IsExtractionIdentifier = (bool) r["IsExtractionIdentifier"];
             IsPrimaryKey = (bool) r["IsPrimaryKey"];
             CatalogueItem_ID = (int) r["CatalogueItem_ID"];
+        }
 
+        private InjectedValue<ColumnInfo> _knownColumninfo = new InjectedValue<ColumnInfo>();
+        private InjectedValue<CatalogueItem> _knownCatalogueItem = new InjectedValue<CatalogueItem>();
 
+        public void InjectKnown(InjectedValue<ColumnInfo> instance)
+        {
+            _knownColumninfo = instance;
+        }
+
+        public void InjectKnown(InjectedValue<CatalogueItem> instance)
+        {
+            _knownCatalogueItem = instance;
+        }
+
+        public void InjectKnownColumnInfoAndCatalogueItems(ColumnInfo col, CatalogueItem ci)
+        {
+            _knownColumninfo = new InjectedValue<ColumnInfo>(col);
+            _knownCatalogueItem = new InjectedValue<CatalogueItem>(ci);
         }
 
         public override string ToString()
@@ -205,13 +207,6 @@ namespace CatalogueLibrary.Data
         {
             return ID.GetHashCode();
         }
-
-        public void InjectKnownColumnInfoAndCatalogueItems(ColumnInfo col, CatalogueItem ci)
-        {
-            _columnInfo = col;
-            _catalogueItem = ci;
-        }
-
         public int CompareTo(object obj)
         {
             if(obj is ExtractionInformation)
