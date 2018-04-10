@@ -243,7 +243,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             try
             {
-                _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabaseSettings(IsTestServerInterrogation));
+                _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabaseSettings());
                 results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
             }
             catch (OperationCanceledException)//user cancels

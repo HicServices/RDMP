@@ -55,7 +55,7 @@ namespace CatalogueLibraryTests.Unit
             var period1 = new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Subtract(fiveMinutes), utcTime.Add(fiveMinutes));
 
             var permissionWindow = new PermissionWindow(new List<PermissionWindowPeriod> {period1});
-            Assert.IsTrue(permissionWindow.CurrentlyWithinPermissionWindow());
+            Assert.IsTrue(permissionWindow.WithinPermissionWindow());
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace CatalogueLibraryTests.Unit
             var period1 = new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Add(oneMinute), utcTime.Add(oneMinute));
 
             var permissionWindow = new PermissionWindow(new List<PermissionWindowPeriod> { period1 });
-            Assert.IsFalse(permissionWindow.CurrentlyWithinPermissionWindow());
+            Assert.IsFalse(permissionWindow.WithinPermissionWindow());
         }
     }
 }

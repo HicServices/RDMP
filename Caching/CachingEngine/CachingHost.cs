@@ -47,8 +47,8 @@ namespace CachingEngine
                     CacheProgressList.Count + ")");
 
             var cacheProgress = CacheProgressList[0];
-            var loadProgress = cacheProgress.GetLoadProgress();
-            var permissionWindow = cacheProgress.GetPermissionWindow();
+            var loadProgress = cacheProgress.LoadProgress;
+            var permissionWindow = cacheProgress.PermissionWindow;
 
             if (permissionWindow != null && permissionWindow.LockedBecauseRunning)
                 throw new InvalidOperationException("The Permission Window for " + loadProgress.Name +

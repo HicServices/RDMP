@@ -84,7 +84,7 @@ namespace CatalogueLibraryTests.Unit
             previousFailure.Expect(f => f.SaveToDatabase()).Repeat.Once();
 
             var cacheProgress = MockRepository.GenerateStub<ICacheProgress>();
-            cacheProgress.Stub(c => c.GetPermissionWindow()).Return(MockRepository.GenerateStub<IPermissionWindow>());
+            cacheProgress.Stub(c => c.PermissionWindow).Return(MockRepository.GenerateStub<IPermissionWindow>());
 
             var request = new CacheFetchRequest(previousFailure, cacheProgress);
             request.RequestFailed(new Exception());
@@ -104,7 +104,7 @@ namespace CatalogueLibraryTests.Unit
             previousFailure.Expect(f => f.Resolve()).Repeat.Once();
 
             var cacheProgress = MockRepository.GenerateStub<ICacheProgress>();
-            cacheProgress.Stub(c => c.GetPermissionWindow()).Return(MockRepository.GenerateStub<IPermissionWindow>());
+            cacheProgress.Stub(c => c.PermissionWindow).Return(MockRepository.GenerateStub<IPermissionWindow>());
 
             var request = new CacheFetchRequest(previousFailure, cacheProgress);
             request.RequestSucceeded();

@@ -21,8 +21,9 @@ namespace CatalogueLibrary.Data.Cache
         int? Pipeline_ID { get; set; }
 
         IPipeline Pipeline { get; }
-        PermissionWindow PermissionWindow { get; }
-        LoadProgress LoadProgress { get;}
+        IPermissionWindow PermissionWindow { get; }
+        IEnumerable<ICacheFetchFailure> CacheFetchFailures { get; }
+        ILoadProgress LoadProgress { get;}
 
         CacheLagPeriod GetCacheLagPeriod();
         void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod);
@@ -30,10 +31,8 @@ namespace CatalogueLibrary.Data.Cache
         CacheLagPeriod GetCacheLagPeriodLoadDelay();
         void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagPeriod);
 
-        ILoadProgress GetLoadProgress();
-        IPermissionWindow GetPermissionWindow();
-        IEnumerable<ICacheFetchFailure> GetAllFetchFailures();
         IEnumerable<ICacheFetchFailure> FetchPage(int start, int batchSize);
+
         TimeSpan GetShortfall();
     }
 }

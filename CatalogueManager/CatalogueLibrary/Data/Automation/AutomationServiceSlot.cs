@@ -363,7 +363,7 @@ namespace CatalogueLibrary.Data.Automation
         /// <summary>
         /// Documents that a new caching job using the PermissionWindow has begun on the Automation Server that occupies the AutomationServiceSlot (has it locked).
         /// </summary>
-        public AutomationJob AddNewJob(PermissionWindow permissionWindow)
+        public AutomationJob AddNewJob(IPermissionWindow permissionWindow)
         {
             return new AutomationJob((ICatalogueRepository)Repository, this, permissionWindow);
         }
