@@ -28,7 +28,7 @@ namespace DataExportLibrary.Data.DataTables
     /// that if you clone a 10 year old extraction you will still get the same SQL (along with lots of warnings about orphan CatalogueExtractionInformation_ID etc).  It even allows you
     /// to delete entire datasets (Catalogues) without breaking old extractions (this is not a good idea though - you should always just deprecate the Catalogue instead).</para>
     /// </summary>
-    public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<CatalogueItem>,IInjectKnown<ColumnInfo>,IInjectKnown<ExtractionInformation>
+    public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<CatalogueItem>,IInjectKnown<ColumnInfo>, IInjectKnown<ExtractionInformation>
     {
         #region Database Properties
         private int _extractableDataSet_ID;
@@ -51,8 +51,7 @@ namespace DataExportLibrary.Data.DataTables
             set
             {
                 SetField(ref _catalogueExtractionInformation_ID, value);
-                _knownCatalogueItem.Clear();
-                _knownColumnInfo.Clear();
+                ClearAllInjections();
             }
         }
 
@@ -66,10 +65,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             get
             {
-                if (CatalogueExtractionInformation_ID == null)
-                    return null;
-
-                return ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
+                return _knownExtractionInformation.Value;
             }
         }
 
@@ -78,13 +74,11 @@ namespace DataExportLibrary.Data.DataTables
         {
             get
             {
-                return _knownColumnInfo.GetValueIfKnownOrRun(FetchColumnInfo);
+                return _knownColumnInfo.Value;
             }
         }
 
         #endregion
-        
-        
 
         public ExtractableColumn(IDataExportRepository repository, IExtractableDataSet dataset, ExtractionConfiguration configuration, ExtractionInformation extractionInformation, int order, string selectSQL)
         {
@@ -97,6 +91,8 @@ namespace DataExportLibrary.Data.DataTables
                 {"Order", order},
                 {"SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? DBNull.Value : (object)selectSQL}
             });
+            
+            ClearAllInjections();
         }
 
         internal ExtractableColumn(IDataExportRepository repository, DbDataReader r)
@@ -116,26 +112,47 @@ namespace DataExportLibrary.Data.DataTables
             HashOnDataRelease = (bool)r["HashOnDataRelease"];
             IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
             IsPrimaryKey = (bool) r["IsPrimaryKey"];
+            
+            ClearAllInjections();
         }
 
-        private InjectedValue<CatalogueItem> _knownCatalogueItem = new InjectedValue<CatalogueItem>();
-        private InjectedValue<ColumnInfo> _knownColumnInfo = new InjectedValue<ColumnInfo>();
-        private InjectedValue<ExtractionInformation> _knownExtractionInformation = new InjectedValue<ExtractionInformation>();
+        #region value caching and injection
+        private Lazy<CatalogueItem> _knownCatalogueItem;
+        private Lazy<ColumnInfo> _knownColumnInfo;
+        private Lazy<ExtractionInformation> _knownExtractionInformation;
 
-        public void InjectKnown(InjectedValue<CatalogueItem> instance)
+        public void InjectKnown(CatalogueItem instance)
         {
-            _knownCatalogueItem = instance;
+            _knownCatalogueItem = new Lazy<CatalogueItem>(()=>instance);
         }
 
-        public void InjectKnown(InjectedValue<ColumnInfo> instance)
+        public void InjectKnown(ColumnInfo instance)
         {
-            _knownColumnInfo = instance;
+            _knownColumnInfo = new Lazy<ColumnInfo>(()=>instance);
+        }
+        public void InjectKnown(ExtractionInformation extractionInformation)
+        {
+            //_knownExtractionInformation = new Lazy<ExtractionInformation>(() => extractionInformation);
+
+            if (extractionInformation == null)
+            {
+                InjectKnown((CatalogueItem)null);
+                InjectKnown((ColumnInfo)(null));
+            }
+            else
+            {
+                InjectKnown(extractionInformation.CatalogueItem);
+                InjectKnown(extractionInformation.ColumnInfo);
+            }
         }
 
-        public void InjectKnown(InjectedValue<ExtractionInformation> instance)
+        public void ClearAllInjections()
         {
-            _knownExtractionInformation = instance;
+            _knownCatalogueItem = new Lazy<CatalogueItem>(FetchCatalogueItem);
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformation);
+            _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfo);
         }
+        #endregion 
 
         public override string ToString()
         {
@@ -143,11 +160,11 @@ namespace DataExportLibrary.Data.DataTables
                 return Alias;
 
             //the ExtractionInformation has been deleted in the Catalogue!
-            if (_knownCatalogueItem.GetValueIfKnownOrRun(FetchCatalogueItem) == null)
+            if (_knownCatalogueItem.Value == null)
                 return SelectSQL;
 
             //it hasn't, copy down the name of it
-            return _knownCatalogueItem.GetValueIfKnownOrRun(FetchCatalogueItem).Name;
+            return _knownCatalogueItem.Value.Name;
         }
 
         public int CompareTo(object obj)
@@ -160,12 +177,12 @@ namespace DataExportLibrary.Data.DataTables
         
         public bool HasOriginalExtractionInformationVanished()
         {
-            return _knownColumnInfo.GetValueIfKnownOrRun(FetchColumnInfo) == null;
+            return ColumnInfo == null;
         }
 
         private ColumnInfo FetchColumnInfo()
         {
-            var ci = _knownCatalogueItem.GetValueIfKnownOrRun(FetchCatalogueItem);
+            var ci = _knownCatalogueItem.Value;
             if (ci == null || ci.ColumnInfo_ID == null)
                 return null;
 
@@ -174,7 +191,7 @@ namespace DataExportLibrary.Data.DataTables
 
         private CatalogueItem FetchCatalogueItem()
         {
-            var ei = _knownExtractionInformation.GetValueIfKnownOrRun(FetchExtractionInformation);
+            ExtractionInformation ei = _knownExtractionInformation.Value;
 
             if (ei == null)
                 return null;
@@ -187,7 +204,7 @@ namespace DataExportLibrary.Data.DataTables
             //it's not based on a Catalogue column
             if (!CatalogueExtractionInformation_ID.HasValue)
                 return null;
-
+            
             try
             {
                 return ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
@@ -196,24 +213,6 @@ namespace DataExportLibrary.Data.DataTables
             {
                 return null;
             }
-        }
-
-        public void InjectKnown( ExtractionInformation extractionInformation)
-        {
-            InjectKnown(new InjectedValue<ExtractionInformation>(extractionInformation));
-
-            if (extractionInformation == null)
-            {
-                InjectKnown(new InjectedValue<CatalogueItem>(null));
-                InjectKnown(new InjectedValue<ColumnInfo>(null));    
-            }
-            else
-            {
-                InjectKnown(new InjectedValue<CatalogueItem>(extractionInformation.CatalogueItem));
-                InjectKnown(new InjectedValue<ColumnInfo>(extractionInformation.ColumnInfo));
-            }
-            
-
         }
     }
 }

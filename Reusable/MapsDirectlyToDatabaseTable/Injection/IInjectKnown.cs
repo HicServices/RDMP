@@ -1,37 +1,51 @@
+using System;
+
 namespace MapsDirectlyToDatabaseTable.Injection
 {
     /// <summary>
     /// Defines that the implementing class has an expensive operation for fetching a T but that a known instance might already be
     /// available (e.g. in a cache) which can be injected into it. 
-    /// <example><code>
-    /// public class Bob : IInjectKnown&lt;byte[]&gt;
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// public class Bob:IInjectKnown&lt;byte[]&gt;
     /// {
-    ///     private InjectedValue&lt;byte[]> _bytes = new InjectedValue&lt;byte[]&gt;();
+    ///     private Lazy&lt;byte[]&gt; _knownBytes;
     /// 
-    ///     public byte[] GetBytes()
+    ///     public Bob()
     ///     {
-    ///         return _bytes.GetValueIfKnownOrRun(ExpensiveOperation);
+    ///         ClearAllInjections();   
     ///     }
     /// 
-    ///     public void InjectKnown(InjectedValue&lt;byte[]&gt; instance)
+    ///     public void InjectKnown(byte[] instance)
     ///     {
-    ///         _bytes = instance;
+    ///         _knownBytes = new Lazy&lt;byte[]&gt;(()=>instance);
     ///     }
     /// 
-    ///     private byte[] ExpensiveOperation()
+    ///     public void ClearAllInjections()
     ///     {
-    ///         return new byte[100232];
+    ///         _knownBytes = new Lazy&lt;byte[]&gt;(FetchBytesExpensive);
+    ///     }
+    /// 
+    ///     private byte[] FetchBytesExpensive()
+    ///     {
+    ///         return new byte[10000];
     ///     }
     /// }
+    /// 
     /// </code></example>
-    /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IInjectKnown<T>
     {
         /// <summary>
-        /// Records the known state of T 
+        /// Records the known state of T.
         /// </summary>
         /// <param name="instance"></param>
-        void InjectKnown(InjectedValue<T> instance);
+        void InjectKnown(T instance);
+
+        /// <summary>
+        /// Informs the implementing class that it should forget about all values provided by any InjectKnown calls
+        /// </summary>
+        void ClearAllInjections();
     }
 }

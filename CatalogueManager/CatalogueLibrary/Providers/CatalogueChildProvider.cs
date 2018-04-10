@@ -174,7 +174,7 @@ namespace CatalogueLibrary.Providers
                 if (ci.ColumnInfo_ID != null && _allColumnInfos.ContainsKey(ci.ColumnInfo_ID.Value))
                     col = _allColumnInfos[ci.ColumnInfo_ID.Value];
 
-                ci.InjectKnown(new InjectedValue<ColumnInfo>(col));
+                ci.InjectKnown(col);
             }
 
             AllExtractionInformationsDictionary = repository.GetAllObjects<ExtractionInformation>().ToDictionary(i => i.ID, o => o);
@@ -183,7 +183,8 @@ namespace CatalogueLibrary.Providers
             foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
             {
                 CatalogueItem ci = AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
-                ei.InjectKnownColumnInfoAndCatalogueItems(ci.ColumnInfo,ci);
+                ei.InjectKnown(ci.ColumnInfo);
+                ei.InjectKnown(ci);
             }
 
             _allCatalogueItemIssues = repository.GetAllObjects<CatalogueItemIssue>();
@@ -240,7 +241,7 @@ namespace CatalogueLibrary.Providers
                     ? joinableDictionaryByAggregateConfigurationId[ac.ID] //inject that we know the joinable (and what it is)
                     : null; //otherwise inject that it is not a joinable (suppresses database checking later)
 
-                ac.InjectKnown(new InjectedValue<JoinableCohortAggregateConfiguration>(joinable));
+                ac.InjectKnown(joinable);
             }
                     
         }
@@ -599,7 +600,7 @@ namespace CatalogueLibrary.Providers
 
             if (extractionInformation != null)
             {
-                ci.InjectKnown(new InjectedValue<ExtractionInformation>(extractionInformation));
+                ci.InjectKnown(extractionInformation);
                 childObjects.Add(extractionInformation);
                 AddChildren(extractionInformation,descendancy.Add(extractionInformation));
             }

@@ -59,8 +59,8 @@ namespace CatalogueLibrary.Data
         private int? _columnInfoID;
         private Catalogue.CataloguePeriodicity _periodicity;
 
-        private InjectedValue<ExtractionInformation> _knownExtractionInformation = new InjectedValue<ExtractionInformation>();
-        private InjectedValue<ColumnInfo> _knownColumnInfo = new InjectedValue<ColumnInfo>();
+        private Lazy<ExtractionInformation> _knownExtractionInformation;
+        private Lazy<ColumnInfo> _knownColumnInfo;
 
 
         [DoNotExtractProperty]
@@ -124,8 +124,12 @@ namespace CatalogueLibrary.Data
             get { return _columnInfoID; }
             set
             {
+                //don't change it to the same value it already has
+                if(value == ColumnInfo_ID )
+                    return;
+
                 SetField(ref _columnInfoID , value);
-                _knownColumnInfo.Clear();
+                ClearAllInjections();
             }
         }
 
@@ -150,7 +154,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                return _knownExtractionInformation.GetValueIfKnownOrRun(()=>Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault());
+                return _knownExtractionInformation.Value;
             }
         }
 
@@ -160,10 +164,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                if (!ColumnInfo_ID.HasValue)
-                    return null;
-
-                return _knownColumnInfo.GetValueIfKnownOrRun(()=> Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value));
+                return _knownColumnInfo.Value;
             }
         }
 
@@ -184,6 +185,8 @@ namespace CatalogueLibrary.Data
                 {"Name", name},
                 {"Catalogue_ID", parent.ID}
             });
+            
+            ClearAllInjections();
         }
 
         internal CatalogueItem(ICatalogueRepository repository, DbDataReader r)
@@ -212,19 +215,39 @@ namespace CatalogueLibrary.Data
                     Periodicity = periodicityAsEnum;
                 else
                      Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-
             }
+
+            ClearAllInjections();
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformationIfAny);
+        }
+
+        private ExtractionInformation FetchExtractionInformationIfAny()
+        {
+            return Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
+        }
+
+        private ColumnInfo FetchColumnInfoIfAny()
+        {
+            if (!ColumnInfo_ID.HasValue)
+                return null;
+
+            return Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
         }
 
         /// <inheritdoc/>
-        public void InjectKnown(InjectedValue<ExtractionInformation> instance)
+        public void InjectKnown(ExtractionInformation instance)
         {
-            _knownExtractionInformation = instance;
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(()=>instance);
         }
         /// <inheritdoc/>
-        public void InjectKnown(InjectedValue<ColumnInfo> instance)
+        public void InjectKnown(ColumnInfo instance)
         {
-            _knownColumnInfo = instance;
+            _knownColumnInfo = new Lazy<ColumnInfo>(()=>instance);
         }
 
         public override string ToString()
@@ -327,7 +350,8 @@ namespace CatalogueLibrary.Data
         {
             ColumnInfo_ID = columnInfo == null ? (int?) null : columnInfo.ID;
             SaveToDatabase();
-            InjectKnown(new InjectedValue<ColumnInfo>(columnInfo));
+            InjectKnown(columnInfo);
         }
+
     }
 }

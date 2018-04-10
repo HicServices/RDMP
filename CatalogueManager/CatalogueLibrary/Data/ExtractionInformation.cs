@@ -12,43 +12,6 @@ using ReusableLibraryCode;
 namespace CatalogueLibrary.Data
 {
     /// <summary>
-    /// Determines how accessible a given ExtractionInformation should be.
-    /// </summary>
-    public enum ExtractionCategory
-    {
-        /// <summary>
-        /// This column is always available for extraction
-        /// </summary>
-        Core,
-
-        /// <summary>
-        /// This column is available but might not always be wanted e.g. lookup descriptions where there is already a lookup code
-        /// </summary>
-        Supplemental,
-
-        /// <summary>
-        /// This column is only available to researchers who have additional approvals over and above those required for a basic data extract
-        /// </summary>
-        SpecialApprovalRequired,
-
-        /// <summary>
-        /// This column is for internal use only and shouldn't be released to researchers during data extraction
-        /// </summary>
-        Internal,
-
-        /// <summary>
-        /// This column used to be supplied to researchers but should no longer be provided
-        /// </summary>
-        Deprecated,
-
-        /// <summary>
-        /// Value can only be used for fetching ExtractionInformations.  This means that all will be returned.  You cannot set a column to have an ExtractionCategory of Any
-        /// </summary>
-        Any
-
-    }
-
-    /// <summary>
     /// Describes in a single line of SELECT SQL a transform to perform on an underlying ColumnInfo.  ExtractionInformation is the technical implementation 
     /// of what is described by a CatalogueItem.  Most ExtractionInformations in your database will just be direct extraction (verbatim) of the ColumnInfo
     /// however you might have simple transformations e.g. 'UPPER([MyDatabase]..[Users].[Name]' or even call complex SQL scalar functions for example
@@ -108,7 +71,7 @@ namespace CatalogueLibrary.Data
             get
             {
                 //Cache answer the first time it is requested (or injected)
-                return _knownCatalogueItem.GetValueIfKnownOrRun(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
+                return _knownCatalogueItem.Value;
             }
         }
 
@@ -117,7 +80,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                return _knownColumninfo.GetValueIfKnownOrRun(()=>CatalogueItem.ColumnInfo);
+                return _knownColumninfo.Value;
             }
         }
 
@@ -146,7 +109,7 @@ namespace CatalogueLibrary.Data
                                                 catalogueItem + " with ColumnInfo " + column +
                                                 " because the CatalogueItem is already associated with a different ColumnInfo: " +
                                                 catalogueItem.ColumnInfo);
-            
+            ClearAllInjections();
         }
 
         internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)
@@ -167,27 +130,30 @@ namespace CatalogueLibrary.Data
             IsExtractionIdentifier = (bool) r["IsExtractionIdentifier"];
             IsPrimaryKey = (bool) r["IsPrimaryKey"];
             CatalogueItem_ID = (int) r["CatalogueItem_ID"];
+
+            ClearAllInjections();
         }
 
-        private InjectedValue<ColumnInfo> _knownColumninfo = new InjectedValue<ColumnInfo>();
-        private InjectedValue<CatalogueItem> _knownCatalogueItem = new InjectedValue<CatalogueItem>();
+        private Lazy<ColumnInfo> _knownColumninfo;
+        private Lazy<CatalogueItem> _knownCatalogueItem;
 
-        public void InjectKnown(InjectedValue<ColumnInfo> instance)
+        public void ClearAllInjections()
         {
-            _knownColumninfo = instance;
+            _knownColumninfo = new Lazy<ColumnInfo>(()=>CatalogueItem.ColumnInfo);
+            _knownCatalogueItem = new Lazy<CatalogueItem>(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
         }
 
-        public void InjectKnown(InjectedValue<CatalogueItem> instance)
+
+        public void InjectKnown(ColumnInfo instance)
         {
-            _knownCatalogueItem = instance;
+            _knownColumninfo = new Lazy<ColumnInfo>(()=>instance);
         }
 
-        public void InjectKnownColumnInfoAndCatalogueItems(ColumnInfo col, CatalogueItem ci)
+        public void InjectKnown(CatalogueItem instance)
         {
-            _knownColumninfo = new InjectedValue<ColumnInfo>(col);
-            _knownCatalogueItem = new InjectedValue<CatalogueItem>(ci);
+            _knownCatalogueItem = new Lazy<CatalogueItem>(() => instance);
         }
-
+        
         public override string ToString()
         {
             //prefer alias, then prefer catalogue name
@@ -243,5 +209,6 @@ namespace CatalogueLibrary.Data
             //if the selct sql is different from the column underlying it then it is a proper transform (not just a copy paste)
             return !SelectSQL.Equals(ColumnInfo.Name);
         }
+
     }
 }

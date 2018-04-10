@@ -398,6 +398,7 @@
     <Compile Include="Data\DataLoad\RequiredPropertyInfo.cs" />
     <Compile Include="Data\DemandsNestedInitializationAttribute.cs" />
     <Compile Include="Data\DemandType.cs" />
+    <Compile Include="Data\ExtractionCategory.cs" />
     <Compile Include="Data\ExtractionFilterParameterSet.cs" />
     <Compile Include="Data\ExtractionFilterParameterSetValue.cs" />
     <Compile Include="Data\Favourite.cs" />

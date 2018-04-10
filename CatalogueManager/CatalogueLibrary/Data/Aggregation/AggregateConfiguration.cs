@@ -338,6 +338,8 @@ namespace CatalogueLibrary.Data.Aggregation
                 {"Name", name},
                 {"Catalogue_ID", catalogue.ID}
             });
+
+            ClearAllInjections();
         }
         
         internal AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
@@ -367,7 +369,7 @@ namespace CatalogueLibrary.Data.Aggregation
             OverrideFiltersByUsingParentAggregateConfigurationInstead_ID =
                 ObjectToNullableInt(r["OverrideFiltersByUsingParentAggregateConfigurationInstead_ID"]);
 
-            
+            ClearAllInjections();
         }
 
 
@@ -379,7 +381,7 @@ namespace CatalogueLibrary.Data.Aggregation
             _orderWithinKnownContainer = ((CatalogueRepository) Repository).GetOrderIfExistsFor(this);
         }
 
-        private InjectedValue<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration = new InjectedValue<JoinableCohortAggregateConfiguration>();
+        private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
 
 
         /// <summary>
@@ -388,9 +390,14 @@ namespace CatalogueLibrary.Data.Aggregation
         /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method IsJoinablePatientIndexTable
         /// </summary>
         /// <param name="joinable"></param>
-        public void InjectKnown(InjectedValue<JoinableCohortAggregateConfiguration> instance)
+        public void InjectKnown(JoinableCohortAggregateConfiguration instance)
         {
-            _knownJoinableCohortAggregateConfiguration = instance;
+            _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
         }
 
         /// <summary>
@@ -563,9 +570,7 @@ namespace CatalogueLibrary.Data.Aggregation
         ///  JoinableCohortAggregateConfiguration object</returns>
         public bool IsJoinablePatientIndexTable()
         {
-            return _knownJoinableCohortAggregateConfiguration.GetValueIfKnownOrRun(
-                Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault)
-                != null;
+            return _knownJoinableCohortAggregateConfiguration.Value != null;
         }
 
         /// <summary>
@@ -703,7 +708,7 @@ namespace CatalogueLibrary.Data.Aggregation
         
         public void InjectKnownJoinableOrNone(JoinableCohortAggregateConfiguration joinable)
         {
-            _knownJoinableCohortAggregateConfiguration = new InjectedValue<JoinableCohortAggregateConfiguration>(joinable);
+            _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>joinable);
         }
     }
 }
