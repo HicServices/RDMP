@@ -387,7 +387,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <summary>
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
         /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
-        /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method IsJoinablePatientIndexTable
+        /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method <see cref="IsJoinablePatientIndexTable"/>
         /// </summary>
         /// <param name="joinable"></param>
         public void InjectKnown(JoinableCohortAggregateConfiguration instance)
@@ -395,6 +395,7 @@ namespace CatalogueLibrary.Data.Aggregation
             _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>instance);
         }
 
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
@@ -703,12 +704,6 @@ namespace CatalogueLibrary.Data.Aggregation
                 dependers.Add(cic);
 
             return dependers.ToArray();
-        }
-
-        
-        public void InjectKnownJoinableOrNone(JoinableCohortAggregateConfiguration joinable)
-        {
-            _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>joinable);
         }
     }
 }

@@ -165,7 +165,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
             //This is a legit verb
             "ANDed",
-
+            "FetchBytesExpensive",
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

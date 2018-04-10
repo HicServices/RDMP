@@ -55,6 +55,10 @@ namespace CatalogueLibrary.Data.Cache
         /// </summary>
         public int Days { get { return Type == PeriodType.Day ? Duration : 0; } }
 
+        /// <summary>
+        /// Define a Zero length CacheLagPeriod i.e. the remote end point from which caching happens is real time up to the millisecond so you can always issue a cache fetch 
+        /// request for data up to DateTime.Now (obviously you can't request future data).
+        /// </summary>
         public static CacheLagPeriod Zero {get { return new CacheLagPeriod(0, PeriodType.Month); }} 
 
         /// <summary>
