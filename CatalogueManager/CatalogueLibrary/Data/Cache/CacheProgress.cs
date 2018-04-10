@@ -169,6 +169,12 @@ namespace CatalogueLibrary.Data.Cache
             CacheLagPeriodLoadDelay = (cacheLagLoadDelayPeriod == null) ? "" : cacheLagLoadDelayPeriod.ToString();
         }
 
+        /// <summary>
+        /// Defines that the given <see cref="LoadProgress"/> is a DLE data load that is driven by reading data from a cache.  The instance created can be used
+        /// to describe which pipeline should be run to fill that cache, the period that has been fetched from the remote endpoint so far etc.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="loadProgress"></param>
         public CacheProgress(ICatalogueRepository repository, ILoadProgress loadProgress)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -189,6 +195,7 @@ namespace CatalogueLibrary.Data.Cache
             ChunkPeriod = (TimeSpan)r["ChunkPeriod"];
         }
 
+        /// <inheritdoc/>
         public IEnumerable<ICacheFetchFailure> FetchPage(int start, int batchSize)
         {
             List<int> toReturnIds = new List<int>();
@@ -244,6 +251,7 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction);
             return shortfall;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return "Cache Progress " + ID;

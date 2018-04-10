@@ -31,6 +31,14 @@ namespace CatalogueLibrary.Data.Cache
         CacheLagPeriod GetCacheLagPeriodLoadDelay();
         void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagPeriod);
 
+        /// <summary>
+        /// Returns a subset of CacheFetchFailures between the start and batch size.  Should return only unresolved 
+        /// failures.
+        /// <para>This differs from CacheFetchFailures since it ignores resolved failures and only returns 're-runnable' ICacheFetchFailures</para>
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="batchSize"></param>
+        /// <returns></returns>
         IEnumerable<ICacheFetchFailure> FetchPage(int start, int batchSize);
 
         TimeSpan GetShortfall();

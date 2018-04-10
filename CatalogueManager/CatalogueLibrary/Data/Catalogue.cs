@@ -138,217 +138,333 @@ namespace CatalogueLibrary.Data
         private string _sourceOfDataCollection;
         private string _ticket;
 
+        /// <summary>
+        /// Shorthand (recommended 3 characters or less) for referring to this dataset (e.g. 'DEM' for the dataset 'Demography')
+        /// </summary>
         public string Acronym
         {
             get { return _acronym; }
             set { SetField(ref  _acronym, value); }
         }
 
+        /// <summary>
+        /// The full human readable name of the dataset.  This should usually match the name of the underlying <see cref="TableInfo"/> but might differ
+        /// if there are multiple tables powering the Catalogue or they don't have user accessible names.
+        /// </summary>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// A user defined hierarchical category which designates the role of the dataset e.g. '\datasets\extractable\labdata\'
+        /// <para>Should always start and end with a '\' even if it is the root (i.e. '\')</para>
+        /// </summary>
         public CatalogueFolder Folder
         {
             get { return _folder; }
             set { SetField(ref  _folder, value); }
         }
-
+         
+        /// <summary>
+        /// Human readable description provided by the RDMP user that describes what the dataset contains.  
+        /// <para>This can be multiple paragraphs.</para>
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <summary>
+        /// User defined Uri for a website page which describes the dataset (probably null)
+        /// </summary>
         public Uri Detail_Page_URL
         {
             get { return _detailPageUrl; }
             set { SetField(ref  _detailPageUrl, value); }
         }
 
+        /// <summary>
+        /// User defined classification of the Type of dataset the Catalogue is e.g. Cohort, ResearchStudy etc
+        /// </summary>
         public CatalogueType Type
         {
             get { return _type; }
             set { SetField(ref  _type, value); }
         }
 
+        /// <summary>
+        /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded
+        /// and might be an outright lie.
+        /// </summary>
         public CataloguePeriodicity Periodicity
         {
             get { return _periodicity; }
             set { SetField(ref  _periodicity, value); }
         }
 
+        /// <summary>
+        /// User specified field describing how the dataset is subdivided/bounded e.g. relates to a single 'HealthBoard' / 'Clinic' / 'Hosptial' etc.
+        /// </summary>
         public CatalogueGranularity Granularity
         {
             get { return _granularity; }
             set { SetField(ref  _granularity, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Geographical_coverage
         {
             get { return _geographicalCoverage; }
             set { SetField(ref  _geographicalCoverage, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Background_summary
         {
             get { return _backgroundSummary; }
             set { SetField(ref  _backgroundSummary, value); }
         }
 
+        /// <summary>
+        /// User specified list of keywords that are intended to help in finding the Catalogue
+        /// </summary>
         public string Search_keywords
         {
             get { return _searchKeywords; }
             set { SetField(ref  _searchKeywords, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// <seealso cref="Periodicity"/>
+        /// </summary>
         public string Update_freq
         {
             get { return _updateFreq; }
             set { SetField(ref  _updateFreq, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// <seealso cref="Periodicity"/>
+        /// </summary>
         public string Update_sched
         {
             get { return _updateSched; }
             set { SetField(ref  _updateSched, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// <seealso cref="Periodicity"/>
+        /// </summary>
         public string Time_coverage
         {
             get { return _timeCoverage; }
             set { SetField(ref  _timeCoverage, value); }
         }
 
+        /// <summary>
+        /// User specified date that user alledgedly reviewed the contents of the Catalogue / Metadata
+        /// </summary>
         public DateTime? Last_revision_date
         {
             get { return _lastRevisionDate; }
             set { SetField(ref  _lastRevisionDate, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Contact_details
         {
             get { return _contactDetails; }
             set { SetField(ref  _contactDetails, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Resource_owner
         {
             get { return _resourceOwner; }
             set { SetField(ref  _resourceOwner, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Attribution_citation
         {
             get { return _attributionCitation; }
             set { SetField(ref  _attributionCitation, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Access_options
         {
             get { return _accessOptions; }
             set { SetField(ref  _accessOptions, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string SubjectNumbers
         {
             get { return _subjectNumbers; }
             set { SetField(ref  _subjectNumbers, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for accessing the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri API_access_URL
         {
             get { return _apiAccessUrl; }
             set { SetField(ref  _apiAccessUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for browsing the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri Browse_URL
         {
             get { return _browseUrl; }
             set { SetField(ref  _browseUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for bulk downloading the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri Bulk_Download_URL
         {
             get { return _bulkDownloadUrl; }
             set { SetField(ref  _bulkDownloadUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for querying the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri Query_tool_URL
         {
             get { return _queryToolUrl; }
             set { SetField(ref  _queryToolUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a website describing where you procured the data from? Not used for anything by RDMP.
+        /// </summary>
         public Uri Source_URL
         {
             get { return _sourceUrl; }
             set { SetField(ref  _sourceUrl, value); }
         }
 
-        //new fields requested by Wilfred
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Country_of_origin
         {
             get { return _countryOfOrigin; }
             set { SetField(ref  _countryOfOrigin, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Data_standards
         {
             get { return _dataStandards; }
             set { SetField(ref  _dataStandards, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_name
         {
             get { return _administrativeContactName; }
             set { SetField(ref  _administrativeContactName, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_email
         {
             get { return _administrativeContactEmail; }
             set { SetField(ref  _administrativeContactEmail, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_telephone
         {
             get { return _administrativeContactTelephone; }
             set { SetField(ref  _administrativeContactTelephone, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_address
         {
             get { return _administrativeContactAddress; }
             set { SetField(ref  _administrativeContactAddress, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Not used for anything by RDMP.
+        /// </summary>
         public bool? Explicit_consent
         {
             get { return _explicitConsent; }
             set { SetField(ref  _explicitConsent, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Ethics_approver
         {
             get { return _ethicsApprover; }
             set { SetField(ref  _ethicsApprover, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Source_of_data_collection
         {
             get { return _sourceOfDataCollection; }
             set { SetField(ref  _sourceOfDataCollection, value); }
         }
 
+        /// <summary>
+        /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for recording issues (if you are not
+        /// using the RDMP issue system (See <see cref="CatalogueItemIssue"/>
+        /// </summary>
         public string Ticket
         {
             get { return _ticket; }
             set { SetField(ref _ticket, value); }
         }
         
+        /// <summary>
+        /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue. 
+        /// <seealso cref="HIC.Logging.LogManager"/>
+        /// </summary>
         [DoNotExtractProperty]
         public string LoggingDataTask
         {
@@ -357,7 +473,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Currently configured validation on a Catalogue, this can be deserialized into a HIC.Common.Validation.Validator
+        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a <see cref="HIC.Common.Validation.Validator"/>
         /// </summary>
         [DoNotExtractProperty]
         public string ValidatorXML
@@ -366,6 +482,11 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _validatorXml, value); }
         }
 
+        /// <summary>
+        /// The <see cref="ExtractionInformation"/> which indicates the time field (in dataset time) of the dataset.  This should be a column in your table
+        /// that indicates for every row when it became active e.g. 'PrescribedDate' for prescribing.  Try to avoid using columns that have lots of nulls or 
+        /// where the date is arbitrary (e.g. 'RecordLoadedDate')
+        /// </summary>
         [DoNotExtractProperty]
         public int? TimeCoverage_ExtractionInformation_ID
         {
@@ -373,6 +494,13 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _timeCoverageExtractionInformationID, value); }
         }
 
+        /// <summary>
+        /// The <see cref="ExtractionInformation"/> which can provide a useful subdivision of the dataset e.g. 'Healthboard'.  This should be a logical subdivision
+        /// that helps in the assesment of data quality e.g. you might imagine that if you have 10% errors in data quality and 10 healthboards knowing that all the errors
+        /// are from a single healthboard would be handy.
+        /// 
+        /// <para>This chosen column should not have hundreds/thousands of unique values</para>
+        /// </summary>
         [DoNotExtractProperty]
         public int? PivotCategory_ExtractionInformation_ID
         {
@@ -380,6 +508,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _pivotCategoryExtractionInformationID, value); }
         }
 
+        /// <summary>
+        /// Bit flag indicating whether the dataset should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting a Catalogue.  The implications
+        /// of this are that it no longer appears in UIs by default and that warnings will appear when trying to do extractions of the Catalogue
+        /// </summary>
         [DoNotExtractProperty]
         public bool IsDeprecated
         {
@@ -387,6 +519,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isDeprecated, value); }
         }
 
+        /// <summary>
+        /// Bit flag indicating whether the dataset should NEVER be extracted and ONLY EVER used internally by data analysts.
+        /// </summary>
         [DoNotExtractProperty]
         public bool IsInternalDataset
         {
@@ -394,6 +529,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isInternalDataset, value); }
         }
 
+        /// <summary>
+        /// Bit flag indicating whether the Catalogue is a seldom used dataset that should be hidden by default.  Use this if you are importing lots of researcher
+        /// datasets for cohort generation / extraction but don't want them to clog up your user interface.
+        /// </summary>
         [DoNotExtractProperty]
         public bool IsColdStorageDataset
         {
@@ -401,6 +540,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isColdStorageDataset, value); }
         }
 
+        /// <summary>
+        /// The ID of the logging server that is to be used to log data loads of the dataset <see cref="HIC.Logging.LogManager"/>
+        /// </summary>
         [DoNotExtractProperty]
         public int? LiveLoggingServer_ID
         {
@@ -408,6 +550,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _liveLoggingServerID, value); }
         }
 
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
         [DoNotExtractProperty]
         public int? TestLoggingServer_ID
         {
