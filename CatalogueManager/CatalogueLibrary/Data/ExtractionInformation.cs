@@ -6,47 +6,11 @@ using System.Runtime.CompilerServices;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
-    /// <summary>
-    /// Determines how accessible a given ExtractionInformation should be.
-    /// </summary>
-    public enum ExtractionCategory
-    {
-        /// <summary>
-        /// This column is always available for extraction
-        /// </summary>
-        Core,
-
-        /// <summary>
-        /// This column is available but might not always be wanted e.g. lookup descriptions where there is already a lookup code
-        /// </summary>
-        Supplemental,
-
-        /// <summary>
-        /// This column is only available to researchers who have additional approvals over and above those required for a basic data extract
-        /// </summary>
-        SpecialApprovalRequired,
-
-        /// <summary>
-        /// This column is for internal use only and shouldn't be released to researchers during data extraction
-        /// </summary>
-        Internal,
-
-        /// <summary>
-        /// This column used to be supplied to researchers but should no longer be provided
-        /// </summary>
-        Deprecated,
-
-        /// <summary>
-        /// Value can only be used for fetching ExtractionInformations.  This means that all will be returned.  You cannot set a column to have an ExtractionCategory of Any
-        /// </summary>
-        Any
-
-    }
-
     /// <summary>
     /// Describes in a single line of SELECT SQL a transform to perform on an underlying ColumnInfo.  ExtractionInformation is the technical implementation 
     /// of what is described by a CatalogueItem.  Most ExtractionInformations in your database will just be direct extraction (verbatim) of the ColumnInfo
@@ -63,10 +27,8 @@ namespace CatalogueLibrary.Data
     /// is the column which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify people
     /// in your datasets (e.g. Community Health Index or NHS Number).</para>
     /// </summary>
-    public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies
+    public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>
     {
-        private ColumnInfo _columnInfo;
-        private CatalogueItem _catalogueItem;
         private bool _columnInfoFoundToBeNull = false;
 
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -78,7 +40,7 @@ namespace CatalogueLibrary.Data
         
         private int _catalogueItemID;
         private ExtractionCategory _extractionCategory;
-
+        
         //For other properties see ConcreteColumn
         public int CatalogueItem_ID
         {
@@ -108,11 +70,8 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                //Cache answer the first time it is requested
-                if(_catalogueItem == null)
-                    _catalogueItem = Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID);
-
-                return _catalogueItem;
+                //Cache answer the first time it is requested (or injected)
+                return _knownCatalogueItem.Value;
             }
         }
 
@@ -121,18 +80,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                //Cache answer the first time it is requested
-                if (_columnInfo == null && !_columnInfoFoundToBeNull)
-                {
-                    //The cached answer
-                    _columnInfo = CatalogueItem.ColumnInfo;
-
-                    //oh oh! it's null! flag that it was found to be null in order to prevent constantly trying to work it out every time ColumnInfo property is interrogated.
-                    if (_columnInfo == null)
-                        _columnInfoFoundToBeNull = true;
-                }
-                
-                return _columnInfo;
+                return _knownColumninfo.Value;
             }
         }
 
@@ -161,7 +109,7 @@ namespace CatalogueLibrary.Data
                                                 catalogueItem + " with ColumnInfo " + column +
                                                 " because the CatalogueItem is already associated with a different ColumnInfo: " +
                                                 catalogueItem.ColumnInfo);
-            
+            ClearAllInjections();
         }
 
         internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)
@@ -183,9 +131,29 @@ namespace CatalogueLibrary.Data
             IsPrimaryKey = (bool) r["IsPrimaryKey"];
             CatalogueItem_ID = (int) r["CatalogueItem_ID"];
 
-
+            ClearAllInjections();
         }
 
+        private Lazy<ColumnInfo> _knownColumninfo;
+        private Lazy<CatalogueItem> _knownCatalogueItem;
+
+        public void ClearAllInjections()
+        {
+            _knownColumninfo = new Lazy<ColumnInfo>(()=>CatalogueItem.ColumnInfo);
+            _knownCatalogueItem = new Lazy<CatalogueItem>(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
+        }
+
+
+        public void InjectKnown(ColumnInfo instance)
+        {
+            _knownColumninfo = new Lazy<ColumnInfo>(()=>instance);
+        }
+
+        public void InjectKnown(CatalogueItem instance)
+        {
+            _knownCatalogueItem = new Lazy<CatalogueItem>(() => instance);
+        }
+        
         public override string ToString()
         {
             //prefer alias, then prefer catalogue name
@@ -205,13 +173,6 @@ namespace CatalogueLibrary.Data
         {
             return ID.GetHashCode();
         }
-
-        public void InjectKnownColumnInfoAndCatalogueItems(ColumnInfo col, CatalogueItem ci)
-        {
-            _columnInfo = col;
-            _catalogueItem = ci;
-        }
-
         public int CompareTo(object obj)
         {
             if(obj is ExtractionInformation)
@@ -248,5 +209,6 @@ namespace CatalogueLibrary.Data
             //if the selct sql is different from the column underlying it then it is a proper transform (not just a copy paste)
             return !SelectSQL.Equals(ColumnInfo.Name);
         }
+
     }
 }

@@ -21,6 +21,16 @@ using Sharing.Dependency.Gathering;
 
 namespace CatalogueManager.FindAndReplace
 {
+    /// <summary>
+    /// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The 
+    /// feature is primarily intended for system wide operations such as when you change a network UNC folder location or mapped network drive and you need to change ALL references
+    /// to the root path to the new location.
+    /// 
+    /// <para>Sql properties are also exposed but this is even more dangerous to modify.  For example if you change a database name and want to perform a system wide rename on all
+    /// references including filters, extractable columns, extracted project definitions etc etc</para>
+    /// 
+    /// <para>You should always back up both your Catalogue and DataExport databases before embarking on a Find and Replace</para>
+    /// </summary>
     public partial class FindAndReplaceUI : UserControl
     {
         private readonly IActivateItems _activator;

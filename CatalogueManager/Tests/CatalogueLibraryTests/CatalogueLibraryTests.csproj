@@ -264,7 +264,6 @@
     <Compile Include="Integration\GovernanceTests.cs" />
     <Compile Include="Integration\HangingConnectionTest.cs" />
     <Compile Include="Integration\ObscureDependencyTests\ObjectSharingObscureDependencyFinderTests.cs" />
-    <Compile Include="Integration\PerformanceImprovementTests.cs" />
     <Compile Include="Integration\MEFCheckerTests.cs" />
     <Compile Include="Integration\ObscureDependencyTests\BetweenCatalogueAndDataExportObscureDependencyFinderTests.cs" />
     <Compile Include="Integration\PasswordEncryptionKeyLocationTests.cs" />
@@ -291,6 +290,7 @@
     <Compile Include="Integration\Validation\StandardRegexTests.cs" />
     <Compile Include="Integration\VersioningTests.cs" />
     <Compile Include="JsonSerializationTests\JsonSerializationTests.cs" />
+    <Compile Include="LazyTest.cs" />
     <Compile Include="RefactoringTests\SelectSQLRefactorerTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />

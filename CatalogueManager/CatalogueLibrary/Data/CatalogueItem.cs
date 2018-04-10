@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -26,7 +27,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
-    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed
+    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>
     {
         #region Database Properties
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -57,7 +58,10 @@ namespace CatalogueLibrary.Data
         private int _catalogueID;
         private int? _columnInfoID;
         private Catalogue.CataloguePeriodicity _periodicity;
-        
+
+        private Lazy<ExtractionInformation> _knownExtractionInformation;
+        private Lazy<ColumnInfo> _knownColumnInfo;
+
 
         [DoNotExtractProperty]
         public int Catalogue_ID
@@ -120,8 +124,12 @@ namespace CatalogueLibrary.Data
             get { return _columnInfoID; }
             set
             {
+                //don't change it to the same value it already has
+                if(value == ColumnInfo_ID )
+                    return;
+
                 SetField(ref _columnInfoID , value);
-                _haveCachedColumnInfo = false;
+                ClearAllInjections();
             }
         }
 
@@ -146,7 +154,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                return Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
+                return _knownExtractionInformation.Value;
             }
         }
 
@@ -156,23 +164,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                try
-                {
-                    CacheColumnInfoIfRequired();
-
-                    return _columnInfoCached;
-                }
-                catch (KeyNotFoundException) //The ColumnInfo has been deleted elsewhere in the program? but this local object in memory doesn't know that
-                {
-                    //Let's make sure that's definetly the case
-                    if(HasLocalChanges().Differences.Any(d=>d.Property.Name.Equals("ColumnInfo_ID") && d.DatabaseValue == null))
-                    {
-                        ColumnInfo_ID = null;
-                        return null;
-                    }
-
-                    throw;
-                }
+                return _knownColumnInfo.Value;
             }
         }
 
@@ -193,6 +185,8 @@ namespace CatalogueLibrary.Data
                 {"Name", name},
                 {"Catalogue_ID", parent.ID}
             });
+            
+            ClearAllInjections();
         }
 
         internal CatalogueItem(ICatalogueRepository repository, DbDataReader r)
@@ -221,8 +215,39 @@ namespace CatalogueLibrary.Data
                     Periodicity = periodicityAsEnum;
                 else
                      Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-
             }
+
+            ClearAllInjections();
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformationIfAny);
+        }
+
+        private ExtractionInformation FetchExtractionInformationIfAny()
+        {
+            return Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
+        }
+
+        private ColumnInfo FetchColumnInfoIfAny()
+        {
+            if (!ColumnInfo_ID.HasValue)
+                return null;
+
+            return Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
+        }
+
+        /// <inheritdoc/>
+        public void InjectKnown(ExtractionInformation instance)
+        {
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(()=>instance);
+        }
+        /// <inheritdoc/>
+        public void InjectKnown(ColumnInfo instance)
+        {
+            _knownColumnInfo = new Lazy<ColumnInfo>(()=>instance);
         }
 
         public override string ToString()
@@ -292,11 +317,13 @@ namespace CatalogueLibrary.Data
             
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return null;
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             List<IHasDependencies> dependantObjects = new List<IHasDependencies>();
@@ -313,28 +340,18 @@ namespace CatalogueLibrary.Data
             return dependantObjects.ToArray();
         }
 
+        /// <summary>
+        /// Changes the CatalogueItem in the database to be based off of the specified ColumnInfo (or none if null is specified).  This will
+        /// likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in it's
+        /// <see cref="CatalogueLibrary.Data.ExtractionInformation.SelectSQL"/>.
+        /// </summary>
+        /// <param name="columnInfo"></param>
         public void SetColumnInfo(ColumnInfo columnInfo)
         {
-            ((CatalogueRepository)Repository).SaveSpecificPropertyOnlyToDatabase(this,"ColumnInfo_ID",columnInfo != null? (object) columnInfo.ID:null);
-            InjectKnownColumnInfo(columnInfo);
+            ColumnInfo_ID = columnInfo == null ? (int?) null : columnInfo.ID;
+            SaveToDatabase();
+            InjectKnown(columnInfo);
         }
 
-        private ColumnInfo _columnInfoCached;
-        private bool _haveCachedColumnInfo;
-
-        private void CacheColumnInfoIfRequired()
-        {
-            if(_haveCachedColumnInfo)
-                return;
-
-            _columnInfoCached = ColumnInfo_ID == null ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
-            _haveCachedColumnInfo = true;
-        }
-
-        public void InjectKnownColumnInfo(ColumnInfo col)
-        {
-            _columnInfoCached = col;
-            _haveCachedColumnInfo = true;
-        }
     }
 }

@@ -21,7 +21,6 @@ namespace CatalogueLibrary.Providers
     /// </summary>
     public interface ICoreChildProvider:IChildProvider
     {
-        Dictionary<int, CatalogueItemClassification> CatalogueItemClassifications { get; }
         LoadMetadata[] AllLoadMetadatas { get; }
         TableInfoServerNode[] AllServers { get; }
         TableInfo[] AllTableInfos { get;}

@@ -376,52 +376,6 @@ namespace CatalogueLibrary.Repositories
 
             return servers.Where(s => s.CreatedByAssembly == assembly).ToArray();
         }
-
-        public Dictionary<int, CatalogueItemClassification> ClassifyAllCatalogueItems()
-        {
-              var classifications = new Dictionary<int, CatalogueItemClassification>();
-            List<CatalogueItemClassification> foundSoFar = new List<CatalogueItemClassification>();
-
-            using (var con = GetConnection())
-            {
-                string sql =
-                    @"SELECT 
-CatalogueItem.ID as CatalogueItem_ID,
-ColumnInfo_ID,
-ExtractionInformation.ID as ExtractionInformation_ID,
-ExtractionInformation.[Order] as [Order],
-ExtractionCategory,
-ISNULL(col.IsPrimaryKey,0) as IsPrimaryKey,
-case when exists (SELECT * FROM Lookup WHERE Description_ID = ColumnInfo_ID) then 1 else 0 end IsLookupDescription,
-case when exists (SELECT * FROM Lookup WHERE ForeignKey_ID = ColumnInfo_ID) then 1 else 0 end IsLookupForeignKey,
-case when exists (SELECT * FROM Lookup WHERE PrimaryKey_ID = ColumnInfo_ID) then 1 else 0 end IsLookupPrimaryKey,
-(select count(*) from ExtractionFilter where ExtractionInformation_ID = ExtractionInformation.ID) as ExtractionFilterCount
-FROM
-  [CatalogueItem]
- left join
-  ExtractionInformation 
- on ExtractionInformation.CatalogueItem_ID = CatalogueItem.ID
- left join ColumnInfo col 
- on 
- ColumnInfo_ID = col.ID
-ORDER BY 
-Catalogue_ID asc,
-[Order] asc";
-
-
-                var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
-                var r = cmd.ExecuteReader();
-                while (r.Read())
-                    foundSoFar.Add(new CatalogueItemClassification(r));
-
-
-                foreach (var c in foundSoFar)
-                    classifications.Add(c.CatalogueItem_ID, c);
-
-                return classifications;
-            }
-        }
-
     }
 
     public enum Tier2DatabaseType

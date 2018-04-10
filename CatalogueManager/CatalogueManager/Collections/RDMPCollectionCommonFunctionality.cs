@@ -493,7 +493,6 @@ namespace CatalogueManager.Collections
         private void OnRefreshChildProvider(ICoreChildProvider coreChildProvider)
         {
             CoreChildProvider = coreChildProvider;
-            CoreIconProvider.SetClassifications(CoreChildProvider.CatalogueItemClassifications);
         }
 
         public void TearDown()
