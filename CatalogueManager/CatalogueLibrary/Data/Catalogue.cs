@@ -137,7 +137,17 @@ namespace CatalogueLibrary.Data
         private string _ethicsApprover;
         private string _sourceOfDataCollection;
         private string _ticket;
-
+        private DateTime? _datasetStartDate;
+        private string _loggingDataTask;
+        private string _validatorXml;
+        private int? _timeCoverageExtractionInformationID;
+        private int? _pivotCategoryExtractionInformationID;
+        private bool _isDeprecated;
+        private bool _isInternalDataset;
+        private bool _isColdStorageDataset;
+        private int? _liveLoggingServerID;
+        private int? _testLoggingServerID;
+        
         /// <summary>
         /// Shorthand (recommended 3 characters or less) for referring to this dataset (e.g. 'DEM' for the dataset 'Demography')
         /// </summary>
@@ -561,6 +571,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _testLoggingServerID, value); }
         }
 
+        /// <summary>
+        /// The alledged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
+        /// <para>This field is optional</para>
+        /// </summary>
         public DateTime? DatasetStartDate
         {
             get { return _datasetStartDate; }
@@ -568,6 +582,10 @@ namespace CatalogueLibrary.Data
         }
 
         private int? _loadMetadataId;
+
+        /// <summary>
+        /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
+        /// </summary>
         [DoNotExtractProperty]
         public int? LoadMetadata_ID
         {
@@ -582,6 +600,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="CatalogueItem"/>
         [NoMappingToDatabase]
         public CatalogueItem[] CatalogueItems
         {
@@ -603,7 +622,12 @@ namespace CatalogueLibrary.Data
                 return Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
             }
         }
-        
+
+        /// <summary>
+        /// Returns all <see cref="AggregateConfiguration"/> that are associated with the Catalogue.  This includes both summary graphs, patient index tables and all
+        /// cohort aggregates that are built to query this dataset.
+        /// </summary>
+        /// <seealso cref="AggregateConfiguration"/>
         [NoMappingToDatabase]
         public AggregateConfiguration[] AggregateConfigurations
         {
@@ -777,6 +801,13 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
+        /// <summary>
+        /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.  
+        /// 
+        /// <para>The preferred method of getting a Catalogue is to use <see cref="CatalogueLibrary.DataHelper.TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
         public Catalogue(ICatalogueRepository repository, string name)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
@@ -920,11 +951,17 @@ namespace CatalogueLibrary.Data
             Folder = new CatalogueFolder(this,r["Folder"].ToString());
         }
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Sorts alphabetically based on <see cref="Name"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public int CompareTo(object obj)
         {
             if (obj is Catalogue)
@@ -935,32 +972,10 @@ namespace CatalogueLibrary.Data
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
         }
 
-      
-        public string GetServerFromExtractionInformation(ExtractionCategory category)
-        {
-            string lastServerEncountered = null;
-            
-            foreach (var extractionInformation in GetAllExtractionInformation(category))
-            {
-                string currentServer = extractionInformation.ColumnInfo.TableInfo.Server;
-
-                //if we haven't yet found any Server names then pick up the first one we see
-                if (lastServerEncountered == null)
-                    lastServerEncountered = currentServer;
-                else
-                    if (lastServerEncountered != currentServer) //if we have found a server name before now but this one is different!
-                        throw new Exception("Found multiple servers listed under ExtractionInformations of category:" + category + " for catalogue:" + this.Name + ".  The servers were " + lastServerEncountered + " and " + currentServer);
-                    
-                if(string.IsNullOrWhiteSpace(currentServer))
-                    throw new NullReferenceException("ExtractionInformation " + extractionInformation + " does not list a server where it's data can be fetched from");
-
-                //if we get here then the server had the same name
-                Debug.Assert(lastServerEncountered == currentServer);
-            }
-
-            return lastServerEncountered;
-        }
-
+        /// <summary>
+        /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos 
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             string reason;
@@ -1057,8 +1072,6 @@ namespace CatalogueLibrary.Data
             f.Check(notifier);
         }
 
-        
-
         /// <summary>
         /// Retrieves all the TableInfo objects associated with a particular catalogue
         /// </summary>
@@ -1085,12 +1098,16 @@ namespace CatalogueLibrary.Data
 
             return lookupTables.ToArray();
         }
-
-        public ILoadMetadata GetLoadMetadata()
-        {
-            return LoadMetadata;
-        }
-
+        
+        /// <summary>
+        /// Gets all distinct underlying <see cref="TableInfo"/> that are referenced by the <see cref="CatalogueItem"/>s of the Catalogue.  The tables are divided into
+        /// 'normalTables' and 'lookupTables' depending on whether there are any <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on any of the
+        /// Catalogue referenced ColumnInfos.
+        /// <para>The sets are exclusive, a TableInfo is either a normal data contributor or it is a linked lookup table</para>
+        /// </summary>
+        /// <param name="normalTables">Unique TableInfos amongst all CatalogueItems in the Catalogue</param>
+        /// <param name="lookupTables">Unique TableInfos amongst all CatalogueItems in the Catalogue where there is at least
+        ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
         public void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables)
         {
             var normalTableIds = new HashSet<int>();
@@ -1128,80 +1145,29 @@ namespace CatalogueLibrary.Data
             lookupTables = Repository.GetAllObjectsInIDList<TableInfo>(lookupTableIds).ToList();
         }
 
-        public IEnumerable<ColumnInfo> GetColumnInfos()
+        private IEnumerable<ColumnInfo> GetColumnInfos()
         {
             return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
         }
 
+        /// <summary>
+        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue where the IsMandatory flag is set.
+        /// </summary>
+        /// <returns></returns>
         public ExtractionFilter[] GetAllMandatoryFilters()
         {
              return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f=>f.ExtractionFilters).Where(f=>f.IsMandatory).ToArray();
         }
 
+        /// <summary>
+        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue.
+        /// </summary>
+        /// <returns></returns>
         public ExtractionFilter[] GetAllFilters()
         {
             return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters).ToArray();
         }
-
-        private string _getServerNameCachedAnswer = null;
-        public string GetServerName(bool allowCaching = true)
-        {
-            if (!allowCaching)
-                _getServerNameCachedAnswer = null;
-
-            if(_getServerNameCachedAnswer == null)
-            {
-
-                var tableInfoList = GetTableInfoList(false);
-                if (!tableInfoList.Any())
-                    tableInfoList = GetTableInfoList(true);
-
-                if (!tableInfoList.Any()) throw new Exception("'" + Name + "' catalogue (" + ID + ") has no TableInfo entries");
-                if (tableInfoList.Select(info => info.GetDatabaseRuntimeName()).Distinct().Count() > 1)
-                    throw new Exception("'" + Name + "' catalogue (" + ID + ") references multiple databases");
-                _getServerNameCachedAnswer = tableInfoList.First().Server;
-            }
-
-            return _getServerNameCachedAnswer;
-        }
-
-        private string _getDatabaseNameCachedAnswer = null;
-        private DateTime? _datasetStartDate;
-        private string _loggingDataTask;
-        private string _validatorXml;
-        private int? _timeCoverageExtractionInformationID;
-        private int? _pivotCategoryExtractionInformationID;
-        private bool _isDeprecated;
-        private bool _isInternalDataset;
-        private bool _isColdStorageDataset;
-        private int? _liveLoggingServerID;
-        private int? _testLoggingServerID;
         
-        public string GetDatabaseName(bool allowCaching = true)
-        {
-            if (!allowCaching)
-                _getDatabaseNameCachedAnswer = null;
-
-            if (_getDatabaseNameCachedAnswer == null)
-            {
-                var tableInfoList = GetTableInfoList(false);
-                if (!tableInfoList.Any())
-                    tableInfoList = GetTableInfoList(true);
-                
-                if (!tableInfoList.Any()) throw new Exception("'" + Name + "' catalogue (" + ID + ") has no TableInfo entries");
-                if (tableInfoList.Select(info => info.GetDatabaseRuntimeName()).Distinct().Count() > 1)
-                    throw new Exception("'" + Name + "' catalogue (" + ID + ") references multiple databases");
-                _getDatabaseNameCachedAnswer = tableInfoList.First().GetDatabaseRuntimeName();
-            }
-
-            return _getDatabaseNameCachedAnswer;
-        }
-
-        public string GetRawDatabaseName()
-        {
-            return GetDatabaseName() + "_RAW";
-        }
-
         private void PerformDisassociationCheck()
         {
             if(LoadMetadata_ID == null)
@@ -1321,8 +1287,6 @@ namespace CatalogueLibrary.Data
             if(LoadMetadata != null)
                 iDependOn.Add(LoadMetadata);
 
-            
-
             return iDependOn.ToArray();
         }
 
@@ -1355,8 +1319,7 @@ namespace CatalogueLibrary.Data
             string whoCares;
             return IsAcceptableName(name, out whoCares);
         }
-
-
+        
         public CatalogueItemIssue[] GetAllIssues()
         {
             return Repository.GetAllObjects<CatalogueItemIssue>("WHERE CatalogueItem_ID in (select ID from CatalogueItem WHERE Catalogue_ID =  " + ID + ")").ToArray();

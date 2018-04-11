@@ -29,7 +29,7 @@ namespace CatalogueLibrary.Data
         DateTime? DatasetStartDate { get; set; }
         ExtractionInformation TimeCoverage_ExtractionInformation { get; }
         ExtractionInformation PivotCategory_ExtractionInformation { get; }
-
+        LoadMetadata LoadMetadata { get; }
         CatalogueItem[] CatalogueItems { get; }
         AggregateConfiguration[] AggregateConfigurations { get; }
         string Acronym { get; set; }
@@ -41,13 +41,11 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         TableInfo[] GetTableInfoList(bool includeLookupTables);
         TableInfo[] GetLookupTableInfoList();
-        ILoadMetadata GetLoadMetadata();
+        
         Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destination, INameDatabasesAndTablesDuringLoads namer);
-        string GetRawDatabaseName();
+        
         IDataAccessPoint GetLoggingServer(bool isTest);
         DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase);
-        string GetServerName(bool allowCaching=true);
-        string GetDatabaseName(bool allowCaching = true);
         CatalogueItemIssue[] GetAllIssues();
         SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch);
         ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category);
