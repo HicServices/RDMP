@@ -63,12 +63,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                             if (!string.IsNullOrWhiteSpace(task) && !task.Equals(cata.LoggingDataTask))
                             {
                                 var liveServers = otherCatalogues.Where(c => c.LiveLoggingServer_ID != null).Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
-                                var testServers = otherCatalogues.Where(c => c.TestLoggingServer_ID != null).Select(c => c.TestLoggingServer_ID).Distinct().ToArray();
 
                                 //AND if there is agreement on what logging server to use!
-                                if (liveServers.Count() <= 1 && testServers.Count() <= 1)
+                                if (liveServers.Count() <= 1)
                                 {
-                                    
                                     //if there is no current logging task for the Catalogue
                                     if(string.IsNullOrWhiteSpace(cata.LoggingDataTask)
 
@@ -79,7 +77,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                                         //switch Catalogue to use that logging task (including servers)
                                         cata.LoggingDataTask = task;
                                         cata.LiveLoggingServer_ID = liveServers.SingleOrDefault();
-                                        cata.TestLoggingServer_ID = testServers.SingleOrDefault();
                                         cata.SaveToDatabase();
                                     }
                                 }

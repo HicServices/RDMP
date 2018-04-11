@@ -160,7 +160,7 @@ namespace DataLoadEngineTests.Integration
                 catalogue.SaveToDatabase();
 
                 // Set up and run load process
-                var info = catalogue.GetLoggingServer(true);
+                var info = catalogue.LiveLoggingServer;
 
                 var loadPipeline = MockRepository.GenerateStub<IDataLoadExecution>();
                 var checker = MockRepository.GenerateStub<ICheckable>();

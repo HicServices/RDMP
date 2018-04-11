@@ -190,7 +190,7 @@ namespace CatalogueLibrary.Data.DataLoad
             if (!catalogue.Any())
                 throw new NotSupportedException("LoadMetaData '" + ToString() + " (ID=" + ID + ") does not have any Catalogues associated with it so it is not possible to fetch it's LoggingDatabaseSettings");
 
-            return catalogue.Select(c => c.GetLoggingServer(false)).ToArray();
+            return catalogue.Select(c => c.LiveLoggingServer).ToArray();
         }
 
         public string GetDistinctLoggingTask()

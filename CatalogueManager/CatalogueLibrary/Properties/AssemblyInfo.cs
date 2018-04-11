@@ -21,3 +21,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Sharing")]
 [assembly: InternalsVisibleTo("CatalogueLibraryTests")]
 [assembly: InternalsVisibleTo("CatalogueManager")]
+[assembly: InternalsVisibleTo("DataExportLibrary")]

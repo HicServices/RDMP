@@ -1197,10 +1197,6 @@ namespace CatalogueLibrary.Data
             return mappings;
         }
 
-        public IDataAccessPoint GetLoggingServer(bool isTest)
-        {
-            return isTest ? TestLoggingServer : LiveLoggingServer;
-        }
 
         public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
         {
@@ -1257,27 +1253,17 @@ namespace CatalogueLibrary.Data
             _loadMetadataId = null;
         }
 
-        public LogManager GetLogManager(bool live)
+        public LogManager GetLogManager()
         {
-            ExternalDatabaseServer loggingServer;
-
-            if (live)
-                if(LiveLoggingServer_ID == null) 
-                    throw new Exception("No live logging server set for Catalogue " + this.Name);
-                else
-                    loggingServer = LiveLoggingServer;
-            else//not live
-                if(TestLoggingServer_ID == null) 
-                    throw new Exception("No test logging server set for Catalogue " + this.Name);
-                else
-                    loggingServer = TestLoggingServer;
-            
-            var server = DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging);
+            if(LiveLoggingServer_ID == null) 
+                throw new Exception("No live logging server set for Catalogue " + this.Name);
+                
+            var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
             return new LogManager(server);
-
         }
         
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             List<IHasDependencies> iDependOn = new List<IHasDependencies>();
@@ -1290,36 +1276,12 @@ namespace CatalogueLibrary.Data
             return iDependOn.ToArray();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return AggregateConfigurations;
         }
 
-        public static bool IsAcceptableName(string name, out string reason)
-        {
-            if (name == null || string.IsNullOrWhiteSpace(name))
-            {
-                reason = "Name cannot be blank";
-                return false;
-            }
-
-            var invalidCharacters = name.Where(c => Path.GetInvalidPathChars().Contains(c) || c == '\\' || c == '/' || c == '.' || c == '#' || c=='@' || c=='$').ToArray();
-            if (invalidCharacters.Any())
-            {
-                reason = "The following invalid characters were found:" + string.Join(",", invalidCharacters.Select(c=>"'"+c+"'"));
-                return false;
-            }
-
-            reason = null;
-            return true;
-        }
-
-        public static bool IsAcceptableName(string name)
-        {
-            string whoCares;
-            return IsAcceptableName(name, out whoCares);
-        }
-        
         public CatalogueItemIssue[] GetAllIssues()
         {
             return Repository.GetAllObjects<CatalogueItemIssue>("WHERE CatalogueItem_ID in (select ID from CatalogueItem WHERE Catalogue_ID =  " + ID + ")").ToArray();
@@ -1372,9 +1334,9 @@ namespace CatalogueLibrary.Data
                         (e.ExtractionCategory == category || category == ExtractionCategory.Any))
                     .ToArray();
         }
+
         private bool? _isExtractable;
-
-
+        
         /// <summary>
         /// Returns whether or not the extractability of the Catalogue is known.  In general this is only true
         /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
@@ -1398,7 +1360,11 @@ namespace CatalogueLibrary.Data
             return _isExtractable.Value;
         }
 
-        public void InjectExtractability(bool isExtractable)
+        /// <summary>
+        /// Inform the Catalogue that there is/isn't an associated ExtractableDataSet in the data export database (the presence of one of these is what defines extractability)
+        /// </summary>
+        /// <param name="isExtractable"></param>
+        internal void InjectExtractability(bool isExtractable)
         {
             _isExtractable = isExtractable;
         }
@@ -1413,5 +1379,32 @@ namespace CatalogueLibrary.Data
             
             return f.Create(type.Value);
         }
+
+        #region Static Methods
+        public static bool IsAcceptableName(string name, out string reason)
+        {
+            if (name == null || string.IsNullOrWhiteSpace(name))
+            {
+                reason = "Name cannot be blank";
+                return false;
+            }
+
+            var invalidCharacters = name.Where(c => Path.GetInvalidPathChars().Contains(c) || c == '\\' || c == '/' || c == '.' || c == '#' || c == '@' || c == '$').ToArray();
+            if (invalidCharacters.Any())
+            {
+                reason = "The following invalid characters were found:" + string.Join(",", invalidCharacters.Select(c => "'" + c + "'"));
+                return false;
+            }
+
+            reason = null;
+            return true;
+        }
+
+        public static bool IsAcceptableName(string name)
+        {
+            string whoCares;
+            return IsAcceptableName(name, out whoCares);
+        }
+        #endregion
     }
 }

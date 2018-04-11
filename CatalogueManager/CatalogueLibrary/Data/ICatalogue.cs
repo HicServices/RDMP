@@ -18,7 +18,6 @@ namespace CatalogueLibrary.Data
         int? LoadMetadata_ID { get; }
         string LoggingDataTask { get; }
         int? LiveLoggingServer_ID { get; set; }
-        int? TestLoggingServer_ID { get; set; }
         string Name { get; }
         string ValidatorXML { get; set; }
         int? TimeCoverage_ExtractionInformation_ID { get; set; }
@@ -32,6 +31,8 @@ namespace CatalogueLibrary.Data
         LoadMetadata LoadMetadata { get; }
         CatalogueItem[] CatalogueItems { get; }
         AggregateConfiguration[] AggregateConfigurations { get; }
+        ExternalDatabaseServer LiveLoggingServer { get; }
+
         string Acronym { get; set; }
 
         /// <summary>
@@ -43,9 +44,10 @@ namespace CatalogueLibrary.Data
         TableInfo[] GetLookupTableInfoList();
         
         Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destination, INameDatabasesAndTablesDuringLoads namer);
-        
-        IDataAccessPoint GetLoggingServer(bool isTest);
+
+        DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint);
         DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase);
+
         CatalogueItemIssue[] GetAllIssues();
         SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch);
         ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category);
