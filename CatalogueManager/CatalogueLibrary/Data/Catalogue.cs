@@ -33,7 +33,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
-    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed
+    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper
     {
         #region Database Properties
 
@@ -1197,7 +1197,15 @@ namespace CatalogueLibrary.Data
             return mappings;
         }
 
-
+        /// <summary>
+        /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 
+        /// determined by comparing all the underlying <see cref="TableInfo"/> that power the <see cref="ExtractionInformation"/> of the Catalogue and looking for a shared
+        /// servername.  This will handle when the tables are in different databases but only if you set <see cref="setInitialDatabase"/> to false
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="setInitialDatabase">True to require all tables be in the same database.  False will just connect to master / unspecified database</param>
+        /// <param name="distinctAccessPoint"></param>
+        /// <returns></returns>
         public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
         {
             var tables = GetTableInfosIdeallyJustFromMainTables();
@@ -1205,6 +1213,12 @@ namespace CatalogueLibrary.Data
             distinctAccessPoint = tables.FirstOrDefault();
 
             return DataAccessPortal.GetInstance().ExpectDistinctServer(tables, context, setInitialDatabase);
+        }
+
+        /// <inheritdoc cref="GetDistinctLiveDatabaseServer(DataAccessContext,bool,out IDataAccessPoint)"/>
+        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
+        {
+            return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
         }
 
         private TableInfo[] GetTableInfosIdeallyJustFromMainTables()
@@ -1220,6 +1234,12 @@ namespace CatalogueLibrary.Data
             return tables;
         }
 
+        /// <summary>
+        /// Returns the unique <see cref="DatabaseType"/> shared by all <see cref="TableInfo"/> which underlie the Catalogue.  This is similar to GetDistinctLiveDatabaseServer 
+        /// but is faster and more tolerant of failure i.e. if there are no underlying <see cref="TableInfo"/> at all or they are on different servers this will still return
+        /// the shared / null <see cref="DatabaseType"/>
+        /// </summary>
+        /// <returns></returns>
         public DatabaseType? GetDistinctLiveDatabaseServerType()
         {
             var tables = GetTableInfosIdeallyJustFromMainTables();
@@ -1235,13 +1255,6 @@ namespace CatalogueLibrary.Data
             throw new Exception("The Catalogue '" + this + "' has TableInfos belonging to multiple DatabaseTypes (" + string.Join(",",tables.Select(t=>t.GetRuntimeName()  +"(ID=" +t.ID + " is " + t.DatabaseType +")")));
         }
 
-        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
-        {
-
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(
-                GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
-        }
-
         /// <summary>
         /// Use to set LoadMetadata to null without first performing Disassociation checks.  This should only be used for in-memory operations such as cloning
         /// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if 
@@ -1253,6 +1266,11 @@ namespace CatalogueLibrary.Data
             _loadMetadataId = null;
         }
 
+        /// <summary>
+        /// Gets the <see cref="HIC.Logging.LogManager"/> for logging load events related to this Catalogue / it's LoadMetadata (if it has one).  This will throw if no
+        /// logging server has been configured.
+        /// </summary>
+        /// <returns></returns>
         public LogManager GetLogManager()
         {
             if(LiveLoggingServer_ID == null) 
@@ -1282,18 +1300,22 @@ namespace CatalogueLibrary.Data
             return AggregateConfigurations;
         }
 
+
+        /// <inheritdoc cref="CatalogueItemIssue"/>
         public CatalogueItemIssue[] GetAllIssues()
         {
             return Repository.GetAllObjects<CatalogueItemIssue>("WHERE CatalogueItem_ID in (select ID from CatalogueItem WHERE Catalogue_ID =  " + ID + ")").ToArray();
         }
 
+        /// <inheritdoc cref="SupportingDocument"/>
         public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
         {
             string sql = GetFetchSQL(fetch);
 
             return Repository.GetAllObjects<SupportingDocument>(sql).ToArray();
         }
-
+        
+        /// <inheritdoc cref="SupportingSQLTable"/>
         public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
         {
             string sql = GetFetchSQL(fetch);
@@ -1326,6 +1348,14 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Returns all <see cref="ExtractionInformation"/> declared under this <see cref="Catalogue"/> <see cref="CatalogueItem"/>s.  This can be restricted by 
+        /// <see cref="ExtractionCategory"/> 
+        /// 
+        /// <para>pass <see cref="ExtractionCategory.Any"/> to fetch all <see cref="ExtractionInformation"/> regardless of category</para>
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
         {
             return
@@ -1369,6 +1399,10 @@ namespace CatalogueLibrary.Data
             _isExtractable = isExtractable;
         }
 
+        /// <summary>
+        /// Gets an IQuerySyntaxHelper for the <see cref="GetDistinctLiveDatabaseServerType"/> amongst all underlying <see cref="TableInfo"/>.  This can be used to assist query building.
+        /// </summary>
+        /// <returns></returns>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             var f = new QuerySyntaxHelperFactory();
@@ -1381,6 +1415,13 @@ namespace CatalogueLibrary.Data
         }
 
         #region Static Methods
+        /// <summary>
+        /// Returns true if the given name would be sensible for a Catalogue.  This means no slashes, hashes @ symbols etc and other things which make XML serialization hard
+        /// or prevent naming a database table after a Catalogue (all things we might want to do with the <see cref="Catalogue.Name"/>).
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="reason"></param>
+        /// <returns></returns>
         public static bool IsAcceptableName(string name, out string reason)
         {
             if (name == null || string.IsNullOrWhiteSpace(name))
@@ -1400,6 +1441,7 @@ namespace CatalogueLibrary.Data
             return true;
         }
 
+        /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)"/>
         public static bool IsAcceptableName(string name)
         {
             string whoCares;
