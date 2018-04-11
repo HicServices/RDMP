@@ -29,7 +29,7 @@ namespace CatalogueLibraryTests.JsonSerializationTests
             mySerializeable.Title = "War and Pieces";
             
             var dbConverter = new DatabaseEntityJsonConverter(RepositoryLocator);
-            var lazyConverter = new LazyConstructorsJsonConverter(RepositoryLocator);
+            var lazyConverter = new PickAnyConstructorJsonConverter(RepositoryLocator);
 
 
             var asString = JsonConvert.SerializeObject(mySerializeable, dbConverter,lazyConverter);

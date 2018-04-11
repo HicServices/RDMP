@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Used to Serialize DatabaseEntity objects as pointers">
+    <Position X="5.042" Y="1.115" Height="0.313" Width="3.283" />
+  </Comment>
+  <Comment CommentText="Used to Deserialize objects which have no blank constructors.  Pass array of objects it will pick the most compatible constructor but won't nessesarily use all the objects.  Also supports invoking AfterConstructor callback if you implement IPickAnyConstructorFinishedCallback">
+    <Position X="5.146" Y="2.469" Height="1.229" Width="3.919" />
+  </Comment>
+  <Class Name="CatalogueLibrary.Data.Serialization.JsonCompatibleDictionary&lt;TK, TV&gt;" Collapsed="true">
+    <Position X="9" Y="1.5" Width="3" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Serialization.JsonConvertExtensions">
+    <Position X="2.25" Y="1.75" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Serialization.DatabaseEntityJsonConverter" Collapsed="true">
+    <Position X="5.5" Y="1.5" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Serialization.PickAnyConstructorJsonConverter" Collapsed="true">
+    <Position X="5.5" Y="3.75" Width="3" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="CatalogueLibrary.Data.Serialization.IPickAnyConstructorFinishedCallback">
+    <Position X="5.5" Y="4.5" Width="3" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

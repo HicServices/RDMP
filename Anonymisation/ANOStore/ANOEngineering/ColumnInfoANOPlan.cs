@@ -81,7 +81,7 @@ namespace ANOStore.ANOEngineering
         }
 
         /// <summary>
-        /// Json deserialization constructor <see cref="LazyConstructorsJsonConverter"/>
+        /// Json deserialization constructor <see cref="PickAnyConstructorJsonConverter"/>
         /// </summary>
         public ColumnInfoANOPlan(ColumnInfo  columnInfo)
         {

@@ -416,10 +416,10 @@
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
     <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
-    <Compile Include="Data\Serialization\ILazyConstructorFinishedCallback.cs" />
+    <Compile Include="Data\Serialization\IPickAnyConstructorFinishedCallback.cs" />
     <Compile Include="Data\Serialization\JsonCompatibleDictionary.cs" />
     <Compile Include="Data\Serialization\JsonConvertExtensions.cs" />
-    <Compile Include="Data\Serialization\LazyConstructorsJsonConverter.cs" />
+    <Compile Include="Data\Serialization\PickAnyConstructorJsonConverter.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
