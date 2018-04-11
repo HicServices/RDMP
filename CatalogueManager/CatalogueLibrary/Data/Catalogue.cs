@@ -206,7 +206,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// User specified field describing how the dataset is subdivided/bounded e.g. relates to a single 'HealthBoard' / 'Clinic' / 'Hosptial' etc.
+        /// User specified field describing how the dataset is subdivided/bounded e.g. relates to a multiple 'HealthBoards' / 'Clinics' / 'Hosptials' etc.
         /// </summary>
         public CatalogueGranularity Granularity
         {
@@ -659,37 +659,123 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        #region Enums
+        /// <summary>
+        /// Somewhat arbitrary concepts for defining the limitations of a Catalogues data
+        /// </summary>
         public enum CatalogueType
         {
+            /// <summary>
+            /// No CatalogueType has been specified
+            /// </summary>
             Unknown,
+            
+            /// <summary>
+            /// Catalogue data relates to a research study
+            /// </summary>
             ResearchStudy,
+
+            /// <summary>
+            /// Catalogue data relates to or defines a Cohort
+            /// </summary>
             Cohort,
+
+            /// <summary>
+            /// Catalogue data is collected by a national registry
+            /// </summary>
             NationalRegistry, 
+
+            /// <summary>
+            /// Catalogue data is collected by a healthcare provider
+            /// </summary>
             HealthcareProviderRegistry,
+
+            /// <summary>
+            /// Catalogue data can be classified as Electronic Health Records (prescriptions, hospital records etc.)
+            /// </summary>
             EHRExtract
         }
 
+        /// <summary>
+        /// Notional user declared period on which the data in the Catalogue is refreshed.  This may not have any bearing
+        /// on reality.  Not used by RDMP for any technical processes.
+        /// </summary>
         public enum CataloguePeriodicity
         {
+            /// <summary>
+            /// No period for the dataset has been specified
+            /// </summary>
             Unknown,
+
+            /// <summary>
+            /// Data is updated on a daily basis
+            /// </summary>
             Daily,
+            /// <summary>
+            /// Data is updated on a weekly basis
+            /// </summary>
             Weekly,
+            /// <summary>
+            /// Data is updated every 2 weeks
+            /// </summary>
             Fortnightly,
+            /// <summary>
+            /// Data is updated every month
+            /// </summary>
             Monthly,
+
+            /// <summary>
+            /// Data is updated every 2 months
+            /// </summary>
             BiMonthly,
+
+            /// <summary>
+            /// Data is updated every 4 months
+            /// </summary>
             Quarterly,
+
+            /// <summary>
+            /// Data is updated on a yearly basis
+            /// </summary>
             Yearly
         }
 
+        /// <summary>
+        /// Notional user declared boundary for the dataset defined by the Catalogue.  The data should be isolated to this Granularity
+        /// </summary>
         public enum CatalogueGranularity
         {
+            /// <summary>
+            /// No granularity has been specified
+            /// </summary>
             Unknown,
+            
+            /// <summary>
+            /// Contains data relating to multiple nations
+            /// </summary>
             National,
+
+            /// <summary>
+            /// Contains data relating to multiple regions (e.g. Scotland / England)
+            /// </summary>
             Regional,
+
+            /// <summary>
+            /// Contains data relating to multiple healthboards (e.g. Tayside / Fife)
+            /// </summary>
             HealthBoard,
+
+            /// <summary>
+            /// Contains data relating to multiple hospitals (e.g. Ninewells)
+            /// </summary>
             Hospital,
+
+            /// <summary>
+            /// Contains data relating to multiple clinics (e.g. Radiology)
+            /// </summary>
             Clinic
         }
+        #endregion
 
         public Catalogue(ICatalogueRepository repository, string name)
         {
