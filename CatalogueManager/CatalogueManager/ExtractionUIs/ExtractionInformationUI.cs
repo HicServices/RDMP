@@ -187,16 +187,20 @@ namespace CatalogueManager.ExtractionUIs
             ddExtractionCategory.Enabled = true;
             ddExtractionCategory.SelectedItem = ExtractionInformation.ExtractionCategory;
 
+            var colInfo = ExtractionInformation.ColumnInfo;
+
             //deal with empty values in database (shouldn't be any but could be)
-            if (string.IsNullOrWhiteSpace(ExtractionInformation.SelectSQL))
+            if (string.IsNullOrWhiteSpace(ExtractionInformation.SelectSQL) && colInfo != null)
             {
-                ExtractionInformation.SelectSQL = ExtractionInformation.ColumnInfo.Name.Trim();
+                ExtractionInformation.SelectSQL = colInfo.Name.Trim();
                 ExtractionInformation.SaveToDatabase();
             }
 
 
             QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias) ? _querySyntaxHelper.AliasPrefix + ExtractionInformation.Alias : "");
-            lblFromTable.Text = ExtractionInformation.ColumnInfo.TableInfo.Name;
+
+            
+            lblFromTable.Text = colInfo == null?"MISSING ColumnInfo":colInfo.TableInfo.Name;
 
             tbDefaultOrder.Text = ExtractionInformation.Order.ToString();
             tbAlias.Text = ExtractionInformation.Alias;
