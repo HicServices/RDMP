@@ -91,5 +91,27 @@ namespace Sharing.Dependency.Gathering
             return Dependencies.Cast<IHasDependencies>().Union(DependencyTypes.Values).ToArray();
         }
 
+        /// <summary>
+        /// Returns all Dependencies recursively as IMapsDirectlyToDatabaseTable
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IMapsDirectlyToDatabaseTable> Flatten()
+        {
+            return Flatten(new HashSet<IMapsDirectlyToDatabaseTable>());
+        }
+
+        private HashSet<IMapsDirectlyToDatabaseTable> Flatten(HashSet<IMapsDirectlyToDatabaseTable> set)
+        {
+            set.Add(Object);
+            foreach (GatheredObject gatheredObject in Dependencies)
+                foreach (var o in gatheredObject.Flatten())
+                    set.Add(o);
+
+            foreach (GatheredType t in DependencyTypes.Values)
+                foreach (GatheredObject o in t.Dependencies)
+                    o.Flatten(set);
+
+            return set;
+        }
     }
 }

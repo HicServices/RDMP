@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
@@ -21,10 +22,15 @@ namespace Sharing.Dependency.Gathering
         
         private Dictionary<int, ExtractionConfiguration> _allExtractionConfigurations;
         private ExtractableColumn[] _allExtractionColumns;
-        
+
+        readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>>();
+
         public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
+            
+            _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
+            _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
         }
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
@@ -32,6 +38,31 @@ namespace Sharing.Dependency.Gathering
             var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetEverySingleObjectInEntireDatabase();
             var allDataExportObjects = ((DataExportRepository)_repositoryLocator.DataExportRepository).GetEverySingleObjectInEntireDatabase();
             return allCatalogueObjects.Union(allDataExportObjects).ToArray();
+        }
+
+        /// <summary>
+        /// Invokes the relevant overload if it exists. 
+        /// <seealso cref="CanGatherDependencies"/>
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
+        public bool CanGatherDependencies(DatabaseEntity databaseEntity)
+        {
+            return _functions.ContainsKey(databaseEntity.GetType());
+        }
+
+        public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o)
+        {
+            return _functions[o.GetType()](o);
+        }
+
+        public GatheredObject GatherDependencies(ANOTable anoTable)
+        {
+            var g = new GatheredObject(anoTable);
+            var anoServer = new GatheredObject(anoTable.Server);
+            g.Dependencies.Add(anoServer);
+
+            return null;
         }
 
         /// <summary>
@@ -43,7 +74,6 @@ namespace Sharing.Dependency.Gathering
         /// <returns></returns>
         public GatheredObject GatherDependencies(ColumnInfo c)
         {
-            
             var allObjects = GetAllObjectsInAllDatabases();
 
             var propertyFinder = new AttributePropertyFinder<SqlAttribute>(allObjects);
@@ -140,5 +170,6 @@ namespace Sharing.Dependency.Gathering
             
             return root;
         }
+
     }
 }

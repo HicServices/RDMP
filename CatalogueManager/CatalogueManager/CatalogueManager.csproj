@@ -507,6 +507,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
