@@ -46,7 +46,7 @@ namespace Sharing.Dependency.Gathering
         /// </summary>
         /// <param name="databaseEntity"></param>
         /// <returns></returns>
-        public bool CanGatherDependencies(DatabaseEntity databaseEntity)
+        public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity)
         {
             return _functions.ContainsKey(databaseEntity.GetType());
         }
