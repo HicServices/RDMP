@@ -17,34 +17,25 @@ namespace Sharing.Dependency.Gathering
     /// </summary>
     public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
-        public List<GatheredObject> Dependencies { get; private set; }
-        public Dictionary<Type,GatheredType> DependencyTypes { get; private set; }
+        public IMapsDirectlyToDatabaseTable Object { get; set; }
+        public string ForeignKeyPropertyIfAny { get; set; }
 
-        public GatheredObject(IMapsDirectlyToDatabaseTable o)
+        public List<GatheredObject> Dependencies { get; private set; }
+
+        public GatheredObject(IMapsDirectlyToDatabaseTable o,string foreignKeyPropertyIfAny = null)
         {
             Object = o;
+            ForeignKeyPropertyIfAny = foreignKeyPropertyIfAny;
             Dependencies = new List<GatheredObject>();
-            DependencyTypes = new Dictionary<Type, GatheredType>();
         }
-
-        public bool Contains(Type t)
-        {
-            return DependencyTypes.ContainsKey(t);
-        }
-        public void Add(GatheredType gatheredType)
-        {
-            DependencyTypes.Add(gatheredType.Type, gatheredType);
-        }
-
-        public IMapsDirectlyToDatabaseTable Object { get; set; }
-
-        public bool TenousRelationship { get; set; }
 
         /// <summary>
         /// True if the gathered object is a data export object (e.g. it is an ExtractableColumn or DeployedExtractionFilter) and it is part of a frozen (released)
         /// ExtractionConfiguration 
         /// </summary>
         public bool IsReleased { get; set; }
+
+        
 
         #region Equality
         protected bool Equals(GatheredObject other)
@@ -83,12 +74,12 @@ namespace Sharing.Dependency.Gathering
 
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
-            return new IHasDependencies[0];
+            return Dependencies.ToArray();
         }
 
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return Dependencies.Cast<IHasDependencies>().Union(DependencyTypes.Values).ToArray();
+            return new IHasDependencies[0];
         }
 
         /// <summary>
@@ -106,10 +97,6 @@ namespace Sharing.Dependency.Gathering
             foreach (GatheredObject gatheredObject in Dependencies)
                 foreach (var o in gatheredObject.Flatten())
                     set.Add(o);
-
-            foreach (GatheredType t in DependencyTypes.Values)
-                foreach (GatheredObject o in t.Dependencies)
-                    o.Flatten(set);
 
             return set;
         }

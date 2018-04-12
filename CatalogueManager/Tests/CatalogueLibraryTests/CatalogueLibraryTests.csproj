@@ -243,6 +243,7 @@
     <Compile Include="Automation\AutomationJobTests.cs" />
     <Compile Include="Automation\AutomationServiceSlotTests.cs" />
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
+    <Compile Include="ImportTests\GatherAndShareTests.cs" />
     <Compile Include="ImportTests\TestImportingAnObject.cs" />
     <Compile Include="Integration\AllKeywordsDescribedTest.cs" />
     <Compile Include="Integration\AllObjectsHaveImages.cs" />

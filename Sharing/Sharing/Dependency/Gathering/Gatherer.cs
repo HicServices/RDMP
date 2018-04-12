@@ -31,6 +31,7 @@ namespace Sharing.Dependency.Gathering
             
             _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
             _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
+            _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
         }
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
@@ -58,11 +59,19 @@ namespace Sharing.Dependency.Gathering
 
         public GatheredObject GatherDependencies(ANOTable anoTable)
         {
-            var g = new GatheredObject(anoTable);
-            var anoServer = new GatheredObject(anoTable.Server);
-            g.Dependencies.Add(anoServer);
+            var root = new GatheredObject(anoTable.Server);
+            root.Dependencies.Add(new GatheredObject(anoTable,"Server_ID"));
 
-            return g;
+            return root;
+        }
+        public GatheredObject GatherDependencies(Plugin plugin)
+        {
+            var root = new GatheredObject(plugin);
+
+            foreach (var lma in plugin.LoadModuleAssemblies)
+                root.Dependencies.Add(new GatheredObject(lma, "Plugin_ID"));
+            
+            return root;
         }
 
         /// <summary>
@@ -86,24 +95,12 @@ namespace Sharing.Dependency.Gathering
                 if(Equals(o,c))
                     continue;
                 
-                bool foundReference = false;
-
-                    foreach (var propertyInfo in propertyFinder.GetProperties(o))
-                    {
-                        var sql = (string)propertyInfo.GetValue(o);
-
-                        if (sql.Contains(c.Name))
-                            foundReference = true;
-                    }
-
-                if(foundReference)
+                foreach (var propertyInfo in propertyFinder.GetProperties(o))
                 {
-                    var type = o.GetType();
+                    var sql = (string)propertyInfo.GetValue(o);
 
-                    if(!root.Contains(type))
-                        root.Add(new GatheredType(type));
-
-                    root.DependencyTypes[type].Add(o);
+                    if (sql.Contains(c.Name))
+                        root.Dependencies.Add(new GatheredObject(o));
                 }
             }
             /*
