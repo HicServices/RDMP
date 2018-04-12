@@ -139,6 +139,14 @@
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
+      <Project>{27bdabce-8fef-48d9-bad6-8e280b13adf5}</Project>
+      <Name>PluginPackager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04aebb47-fdd6-4bdf-8fef-572b947afeff}</Project>
+      <Name>RDMPAutomationService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
       <Name>HIC.Common.Validation</Name>
