@@ -62,7 +62,7 @@ namespace Sharing.Dependency.Gathering
             var anoServer = new GatheredObject(anoTable.Server);
             g.Dependencies.Add(anoServer);
 
-            return null;
+            return g;
         }
 
         /// <summary>
