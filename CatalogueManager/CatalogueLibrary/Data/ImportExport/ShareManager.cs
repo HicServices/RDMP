@@ -103,9 +103,17 @@ namespace CatalogueLibrary.Data.ImportExport
 
         public ObjectExport GetExportFor(IMapsDirectlyToDatabaseTable o)
         {
-            var existing = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
+            var existingExport = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
 
-            return existing ?? new ObjectExport(_catalogueRepository, o);
+            if (existingExport != null)
+                return existingExport;
+
+            var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsImportedObject(o));
+            
+            if (existingImport != null)
+                return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
+            
+            return new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
         }
 
         public IMapsDirectlyToDatabaseTable GetExistingImportObject(string sharingUID)

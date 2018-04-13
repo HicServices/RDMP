@@ -51,14 +51,14 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="objectForSharing"></param>
-        internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing)
+        internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
                 {"ObjectID",objectForSharing.ID},
                 {"ObjectTypeName",objectForSharing.GetType().Name},
                 {"RepositoryTypeName",objectForSharing.Repository.GetType().Name},
-                {"SharingUID",Guid.NewGuid().ToString()},
+                {"SharingUID",guid.ToString()},
             
             });
 
@@ -72,6 +72,11 @@ namespace CatalogueLibrary.Data.ImportExport
             ObjectID = Convert.ToInt32(r["ObjectID"]);
             SharingUID = r["SharingUID"].ToString();
             RepositoryTypeName = r["RepositoryTypeName"].ToString();
+        }
+
+        public override string ToString()
+        {
+            return "E::" + ObjectTypeName +"::" + SharingUID;
         }
 
         /// <summary>
