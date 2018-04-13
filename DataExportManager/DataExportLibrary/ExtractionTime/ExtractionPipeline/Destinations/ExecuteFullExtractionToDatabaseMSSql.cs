@@ -80,16 +80,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
             {
-                var bundle = ((ExtractDatasetCommand) _request).DatasetBundle;
+                var bundle = ((ExtractDatasetCommand)_request).DatasetBundle;
                 foreach (var sql in bundle.SupportingSQL)
                     bundle.States[sql] = ExtractSupportingSql(sql, listener);
 
-                foreach (var document in ((ExtractDatasetCommand) _request).DatasetBundle.Documents)
+                foreach (var document in ((ExtractDatasetCommand)_request).DatasetBundle.Documents)
                     bundle.States[document] = ExtractSupportingDocument(_request.GetExtractionDirectory(), document, listener);
 
                 haveExtractedBundledContent = true;
             }
-
+         
             if (_destination == null)
             {
                 //see if the user has entered an extraction server/database 
@@ -274,7 +274,26 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             ExtractionDirectory targetDirectory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
             DirectoryInfo globalsDirectory = targetDirectory.GetGlobalsDirectory();
+            if (_destination == null)
+            {
+                //see if the user has entered an extraction server/database 
+                if (TargetDatabaseServer == null)
+                    throw new Exception(
+                        "TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
 
+                _destinationDatabase = GetDestinationDatabase(listener);
+
+                try
+                {
+                    if (!_destinationDatabase.Exists())
+                        _destinationDatabase.Create();
+                }
+                catch (Exception e)
+                {
+                    //Probably the database didn't exist or the credentials were wrong or something
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to inspect destination for already existing datatables", e));
+                }
+            }
             if (globalsToExtract.Any())
             {
                 foreach (var sql in globalsToExtract.SupportingSQL)
