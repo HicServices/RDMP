@@ -147,7 +147,9 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AdjustableLocationAttribute.cs" />
+    <Compile Include="Attributes\AdjustableLocationAttribute.cs" />
+    <Compile Include="Attributes\AttributePropertyFinder.cs" />
+    <Compile Include="Attributes\IAttributePropertyFinder.cs" />
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeleteable.cs" />
     <Compile Include="INamed.cs" />
@@ -156,13 +158,13 @@
     <Compile Include="IMapsDirectlyToDatabaseTable.cs" />
     <Compile Include="ITableRepository.cs" />
     <Compile Include="ObjectDeletedException.cs" />
-    <Compile Include="RelationshipAttribute.cs" />
+    <Compile Include="Attributes\RelationshipAttribute.cs" />
     <Compile Include="RepositoryResultCaching\SuperCache.cs" />
     <Compile Include="RepositoryResultCaching\SuperCacheManager.cs" />
     <Compile Include="RepositoryResultCaching\SuperCachingDisposalToken.cs" />
     <Compile Include="RepositoryResultCaching\SuperCachingModeIsOnException.cs" />
     <Compile Include="RepositoryResultCaching\SuperResultCache.cs" />
-    <Compile Include="SqlAttribute.cs" />
+    <Compile Include="Attributes\SqlAttribute.cs" />
     <Compile Include="TableRepository.cs" />
     <Compile Include="IObscureDependencyFinder.cs" />
     <Compile Include="Revertable\ChangeDescription.cs" />
@@ -170,7 +172,7 @@
     <Compile Include="Revertable\RevertableObjectReport.cs" />
     <Compile Include="Revertable\RevertablePropertyDifference.cs" />
     <Compile Include="UpdateCommandStore.cs" />
-    <Compile Include="UsefulProperty.cs" />
+    <Compile Include="Attributes\UsefulPropertyAttribute.cs" />
     <Compile Include="Versioning\DatabaseVersionProvider.cs" />
     <Compile Include="Versioning\InvalidPatchException.cs" />
     <Compile Include="Versioning\MasterDatabaseScriptExecutor.cs" />

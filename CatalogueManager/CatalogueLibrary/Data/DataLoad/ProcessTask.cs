@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

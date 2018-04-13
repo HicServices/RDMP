@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
+using MapsDirectlyToDatabaseTable.Revertable;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Sharing.Dependency.Gathering;
@@ -25,7 +26,7 @@ namespace CatalogueLibraryTests.ImportTests
         public void GatherAndShare_ANOTable_Test(bool goViaJson)
         {
             var anoserver = new ExternalDatabaseServer(CatalogueRepository, "MyGatherAndShareTestANOServer", typeof (Class1).Assembly);
-            var anoTable = new ANOTable(CatalogueRepository, anoserver, "ANOMagad", "_N");
+            var anoTable = new ANOTable(CatalogueRepository, anoserver, "ANOMagad", "N");
 
             Assert.AreEqual(anoTable.Server_ID,anoserver.ID);
             
@@ -37,7 +38,6 @@ namespace CatalogueLibraryTests.ImportTests
             //root should be the server
             Assert.AreEqual(gObj.Object,anoserver);
             Assert.AreEqual(gObj.Dependencies.Single().Object, anoTable);
-            Assert.AreEqual(gObj.Dependencies.Single().ForeignKeyPropertyIfAny, "Server_ID");
 
             //get the sharing definitions
             var shareManager = new ShareManager(RepositoryLocator);
@@ -59,8 +59,8 @@ namespace CatalogueLibraryTests.ImportTests
                 defChild = (ShareDefinition)JsonConvertExtensions.DeserializeObject(sChild, typeof(ShareDefinition), RepositoryLocator);
             }
 
-            var anoserverAfter = new ExternalDatabaseServer(CatalogueRepository, defParent);
-
+            var anoserverAfter = new ExternalDatabaseServer(shareManager, defParent);
+            
             Assert.IsTrue(anoserverAfter.Exists());
 
             //new instance
@@ -73,6 +73,34 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual(anoserverAfter.DatabaseType, anoserver.DatabaseType);
             Assert.AreEqual(anoserverAfter.Username, anoserver.Username);
             Assert.AreEqual(anoserverAfter.Password, anoserver.Password);
+
+            var anoTableAfter = new ANOTable(shareManager, defChild);
+
+            //new instance
+            Assert.AreNotEqual(anoTableAfter.ID, anoTable.ID);
+            Assert.AreNotEqual(anoTableAfter.Server_ID, anoTable.Server_ID);
+
+            //same properties
+            Assert.AreEqual(anoTableAfter.NumberOfCharactersToUseInAnonymousRepresentation, anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
+            Assert.AreEqual(anoTableAfter.Suffix, anoTable.Suffix);
+
+            //change a property and save it
+            anoTableAfter.Suffix = "CAMMELS!";
+            CatalogueRepository.SaveToDatabase(anoTableAfter);
+            //anoTableAfter.SaveToDatabase(); <- this decides to go check the ANOTable exists on the server refernced which is immaginary btw >< thats why we have the above line instead
+
+            //reimport (this time it should be an update, we import the share definitions and it overrdies our database copy (sharing is UPSERT)
+            var anoTableAfter2 = new ANOTable(shareManager, defChild);
+
+            Assert.AreEqual(anoTableAfter.ID, anoTableAfter2.ID);
+            Assert.AreEqual("N", anoTableAfter2.Suffix);
+            Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent,anoTableAfter.HasLocalChanges().Evaluation);
+
+            anoTableAfter.DeleteInDatabase();
+            anoserverAfter.DeleteInDatabase();
+
+            foreach (ObjectImport o in RepositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>())
+                o.DeleteInDatabase();
         }
 
         [Test]
@@ -100,7 +128,6 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual(gObj.Object, plugin);
             Assert.IsTrue(gObj.Dependencies.Any(d=>d.Object.Equals(lma1)));
             Assert.IsTrue(gObj.Dependencies.Any(d => d.Object.Equals(lma2)));
-            Assert.IsTrue(gObj.Dependencies.All(d=>d.ForeignKeyPropertyIfAny == "Plugin_ID"));
         }
     }
 }

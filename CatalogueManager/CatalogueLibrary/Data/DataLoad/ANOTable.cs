@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
@@ -115,6 +118,11 @@ namespace CatalogueLibrary.Data.DataLoad
             NumberOfIntegersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfIntegersToUseInAnonymousRepresentation"].ToString());
             NumberOfCharactersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfCharactersToUseInAnonymousRepresentation"].ToString());
             Suffix = r["Suffix"].ToString();
+        }
+
+        internal ANOTable(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 
         public override void SaveToDatabase()

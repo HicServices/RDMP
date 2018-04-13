@@ -9,6 +9,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace Sharing.Dependency.Gathering
@@ -60,16 +61,17 @@ namespace Sharing.Dependency.Gathering
         public GatheredObject GatherDependencies(ANOTable anoTable)
         {
             var root = new GatheredObject(anoTable.Server);
-            root.Dependencies.Add(new GatheredObject(anoTable,"Server_ID"));
+            root.Dependencies.Add(new GatheredObject(anoTable));
 
             return root;
         }
+
         public GatheredObject GatherDependencies(Plugin plugin)
         {
             var root = new GatheredObject(plugin);
 
             foreach (var lma in plugin.LoadModuleAssemblies)
-                root.Dependencies.Add(new GatheredObject(lma, "Plugin_ID"));
+                root.Dependencies.Add(new GatheredObject(lma));
             
             return root;
         }

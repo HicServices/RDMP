@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 
 namespace CatalogueLibrary.Data
 {

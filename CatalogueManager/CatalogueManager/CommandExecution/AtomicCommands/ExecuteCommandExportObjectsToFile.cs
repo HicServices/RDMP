@@ -50,7 +50,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 var fi = new FileInfo(sfd.FileName);
                 
                 var allDependencies = new HashSet<IMapsDirectlyToDatabaseTable>();
-
+                /*
                 foreach (var d in _toExport.Select(_gatherer.GatherDependencies))
                     foreach (var o in d.Flatten())
                         allDependencies.Add(o);
@@ -59,8 +59,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
                 foreach (var o in allDependencies)
                     exportDictionary.Add(o, _shareManager.GetExportFor(o));
-
-                
+                */
             }
         }
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 
 namespace CatalogueLibrary.Data
 {

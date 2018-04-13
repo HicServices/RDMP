@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableUIComponents;
 using ReusableUIComponents.Settings;
 
@@ -107,7 +108,7 @@ namespace MapsDirectlyToDatabaseTableUI
                 //look for useful properties
                 foreach (PropertyInfo propertyInfo in types[0].GetProperties())
                 {
-                    if (propertyInfo.GetCustomAttributes(typeof(UsefulProperty), true).Any())
+                    if (propertyInfo.GetCustomAttributes(typeof(UsefulPropertyAttribute), true).Any())
                     {
                         //add a column
                         var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);

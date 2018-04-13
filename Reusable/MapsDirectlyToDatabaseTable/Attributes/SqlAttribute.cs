@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MapsDirectlyToDatabaseTable
+namespace MapsDirectlyToDatabaseTable.Attributes
 {
     /// <summary>
     /// Used to indicate a property that contains sql e.g. Where logic, Select logic etc.  Using this property makes the Attribute

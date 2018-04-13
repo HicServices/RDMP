@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace MapsDirectlyToDatabaseTable
+namespace MapsDirectlyToDatabaseTable.Attributes
 {
     /// <summary>
     /// Used to indicate when an ID column contains the ID of another RDMP object.  Decorate the foreign key object. This can be involve going 
@@ -30,5 +30,31 @@ namespace MapsDirectlyToDatabaseTable
             Cref = cref;
             PropertyName = propertyName;
         }
+
+        #region Equality Members
+        protected bool Equals(RelationshipAttribute other)
+        {
+            return base.Equals(other) && Equals(Cref, other.Cref) && string.Equals(PropertyName, other.PropertyName);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((RelationshipAttribute) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = base.GetHashCode();
+                hashCode = (hashCode*397) ^ (Cref != null ? Cref.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (PropertyName != null ? PropertyName.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+        #endregion
     }
 }

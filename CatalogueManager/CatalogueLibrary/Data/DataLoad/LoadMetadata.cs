@@ -6,6 +6,7 @@ using System.Linq;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;

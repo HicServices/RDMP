@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MapsDirectlyToDatabaseTable
+namespace MapsDirectlyToDatabaseTable.Attributes
 {
     /// <summary>
     /// Used to indicate when a string or Uri property is 'find and replaceable' through the FindAndReplaceUI

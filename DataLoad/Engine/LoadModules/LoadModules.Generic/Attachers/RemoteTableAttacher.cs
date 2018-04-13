@@ -17,6 +17,7 @@ using DataLoadEngine.Job.Scheduling;
 using HIC.Logging;
 using LoadModules.Generic.LoadProgressUpdating;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

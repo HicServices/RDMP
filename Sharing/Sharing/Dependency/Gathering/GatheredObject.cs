@@ -6,6 +6,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace Sharing.Dependency.Gathering
@@ -21,14 +22,11 @@ namespace Sharing.Dependency.Gathering
     public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
         public IMapsDirectlyToDatabaseTable Object { get; set; } 
-        public string ForeignKeyPropertyIfAny { get; set; }
-
         public List<GatheredObject> Dependencies { get; private set; }
 
-        public GatheredObject(IMapsDirectlyToDatabaseTable o,string foreignKeyPropertyIfAny = null)
+        public GatheredObject(IMapsDirectlyToDatabaseTable o)
         {
             Object = o;
-            ForeignKeyPropertyIfAny = foreignKeyPropertyIfAny;
             Dependencies = new List<GatheredObject>();
         }
 
@@ -37,7 +35,6 @@ namespace Sharing.Dependency.Gathering
         /// ExtractionConfiguration 
         /// </summary>
         public bool IsReleased { get; set; }
-
         
         public ShareDefinition ToShareDefinition(ShareManager shareManager,List<ShareDefinition> branchParents)
         {
@@ -46,8 +43,8 @@ namespace Sharing.Dependency.Gathering
             Dictionary<string,object> properties = new Dictionary<string, object>();
             Dictionary<RelationshipAttribute,Guid> relationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
 
-            AttributePropertyFinder<RelationshipAttribute> relationshipFinder = new AttributePropertyFinder<RelationshipAttribute>(new[] {Object});
-            AttributePropertyFinder<NoMappingToDatabase> noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(new[] { Object });
+            AttributePropertyFinder<RelationshipAttribute> relationshipFinder = new AttributePropertyFinder<RelationshipAttribute>(Object);
+            AttributePropertyFinder<NoMappingToDatabase> noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(Object);
 
             
             //for each property in the Object class
@@ -80,7 +77,7 @@ namespace Sharing.Dependency.Gathering
                     properties.Add(property.Name, property.GetValue(Object));
             }
 
-            return new ShareDefinition(export.SharingUIDAsGuid,Object.ID,Object.Repository.GetType().FullName,Object.GetType(),properties,relationshipProperties);
+            return new ShareDefinition(export.SharingUIDAsGuid,Object.ID,Object.GetType(),properties,relationshipProperties);
         }
 
         #region Equality
@@ -126,25 +123,6 @@ namespace Sharing.Dependency.Gathering
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];
-        }
-
-        /// <summary>
-        /// Returns all Dependencies recursively as IMapsDirectlyToDatabaseTable
-        /// </summary>
-        /// <returns></returns>
-        public HashSet<IMapsDirectlyToDatabaseTable> Flatten()
-        {
-            return Flatten(new HashSet<IMapsDirectlyToDatabaseTable>());
-        }
-
-        private HashSet<IMapsDirectlyToDatabaseTable> Flatten(HashSet<IMapsDirectlyToDatabaseTable> set)
-        {
-            set.Add(Object);
-            foreach (GatheredObject gatheredObject in Dependencies)
-                foreach (var o in gatheredObject.Flatten())
-                    set.Add(o);
-
-            return set;
         }
     }
 }
