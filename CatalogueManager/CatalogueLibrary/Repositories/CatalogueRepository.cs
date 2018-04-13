@@ -397,7 +397,15 @@ namespace CatalogueLibrary.Repositories
                 foreach (PropertyInfo prop in GetPropertyInfos(typeof(T)))
                 {
                     if (propertiesDictionary.ContainsKey(prop.Name))
-                        prop.SetValue(toCreate, propertiesDictionary[prop.Name]); //if it's a shared property (most properties) use the new shared value being imported
+                    {
+                        //sometimes json decided to swap types on you e.g. int64 for int32
+                        var val = propertiesDictionary[prop.Name];
+                        if (val != null && val != DBNull.Value && !prop.PropertyType.IsInstanceOfType(val))
+                            val = Convert.ChangeType(val, prop.PropertyType);
+
+                        prop.SetValue(toCreate, val); //if it's a shared property (most properties) use the new shared value being imported
+                        
+                    }
                     else
                         prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
 
