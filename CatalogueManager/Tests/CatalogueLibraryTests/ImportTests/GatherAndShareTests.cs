@@ -37,12 +37,12 @@ namespace CatalogueLibraryTests.ImportTests
             
             //root should be the server
             Assert.AreEqual(gObj.Object,anoserver);
-            Assert.AreEqual(gObj.Dependencies.Single().Object, anoTable);
+            Assert.AreEqual(gObj.Children.Single().Object, anoTable);
 
             //get the sharing definitions
             var shareManager = new ShareManager(RepositoryLocator);
             ShareDefinition defParent = gObj.ToShareDefinition(shareManager,new List<ShareDefinition>());
-            ShareDefinition defChild = gObj.Dependencies.Single().ToShareDefinition(shareManager, new List<ShareDefinition>(new []{defParent}));
+            ShareDefinition defChild = gObj.Children.Single().ToShareDefinition(shareManager, new List<ShareDefinition>(new []{defParent}));
 
             //make it look like we never had it in the first place
             shareManager.GetExportFor(anoserver).DeleteInDatabase();
@@ -126,8 +126,8 @@ namespace CatalogueLibraryTests.ImportTests
 
             //root should be the server
             Assert.AreEqual(gObj.Object, plugin);
-            Assert.IsTrue(gObj.Dependencies.Any(d=>d.Object.Equals(lma1)));
-            Assert.IsTrue(gObj.Dependencies.Any(d => d.Object.Equals(lma2)));
+            Assert.IsTrue(gObj.Children.Any(d=>d.Object.Equals(lma1)));
+            Assert.IsTrue(gObj.Children.Any(d => d.Object.Equals(lma2)));
         }
     }
 }

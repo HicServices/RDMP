@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using Newtonsoft.Json;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using Sharing.Dependency.Gathering;
 
@@ -43,23 +47,24 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var sfd = new SaveFileDialog();
-            sfd.Filter = "Object Export Collection (*.oe)|*.oe";
-            if (sfd.ShowDialog() == DialogResult.OK)
+            var fb = new FolderBrowserDialog();
+            
+            if (fb.ShowDialog() == DialogResult.OK)
             {
-                var fi = new FileInfo(sfd.FileName);
-                
-                var allDependencies = new HashSet<IMapsDirectlyToDatabaseTable>();
-                /*
-                foreach (var d in _toExport.Select(_gatherer.GatherDependencies))
-                    foreach (var o in d.Flatten())
-                        allDependencies.Add(o);
+                var dir = new DirectoryInfo(fb.SelectedPath);
 
-                var exportDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, ObjectExport>();
+                foreach (var o in _toExport)
+                {
+                    var d = _gatherer.GatherDependencies(o);
+                    var filename = QuerySyntaxHelper.MakeHeaderNameSane(o.ToString()) + ".sd";
+                    
+                    var shareDefinitions = d.ToShareDefinitionWithChildren(_shareManager);
+                    string serial = JsonConvertExtensions.SerializeObject(shareDefinitions, Activator.RepositoryLocator);
+                    var f = Path.Combine(dir.FullName, filename);
+                    File.WriteAllText(f,serial);
+                }
 
-                foreach (var o in allDependencies)
-                    exportDictionary.Add(o, _shareManager.GetExportFor(o));
-                */
+                Process.Start("explorer.exe", dir.FullName);
             }
         }
 

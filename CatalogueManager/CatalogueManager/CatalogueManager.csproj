@@ -509,6 +509,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportShareDefinitionList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
@@ -536,6 +537,7 @@
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
+    <Compile Include="Menus\AllObjectImportsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\AllANOTablesNodeMenu.cs" />

@@ -61,7 +61,7 @@ namespace Sharing.Dependency.Gathering
         public GatheredObject GatherDependencies(ANOTable anoTable)
         {
             var root = new GatheredObject(anoTable.Server);
-            root.Dependencies.Add(new GatheredObject(anoTable));
+            root.Children.Add(new GatheredObject(anoTable));
 
             return root;
         }
@@ -71,7 +71,7 @@ namespace Sharing.Dependency.Gathering
             var root = new GatheredObject(plugin);
 
             foreach (var lma in plugin.LoadModuleAssemblies)
-                root.Dependencies.Add(new GatheredObject(lma));
+                root.Children.Add(new GatheredObject(lma));
             
             return root;
         }
@@ -102,7 +102,7 @@ namespace Sharing.Dependency.Gathering
                     var sql = (string)propertyInfo.GetValue(o);
 
                     if (sql.Contains(c.Name))
-                        root.Dependencies.Add(new GatheredObject(o));
+                        root.Children.Add(new GatheredObject(o));
                 }
             }
             /*

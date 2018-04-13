@@ -22,12 +22,12 @@ namespace Sharing.Dependency.Gathering
     public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
         public IMapsDirectlyToDatabaseTable Object { get; set; } 
-        public List<GatheredObject> Dependencies { get; private set; }
+        public List<GatheredObject> Children { get; private set; }
 
         public GatheredObject(IMapsDirectlyToDatabaseTable o)
         {
             Object = o;
-            Dependencies = new List<GatheredObject>();
+            Children = new List<GatheredObject>();
         }
 
         /// <summary>
@@ -36,6 +36,16 @@ namespace Sharing.Dependency.Gathering
         /// </summary>
         public bool IsReleased { get; set; }
         
+        /// <summary>
+        /// Creates a sharing export (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and then serializes it as a <see cref="ShareDefinition"/>.  
+        /// This includes mapping any [<see cref="RelationshipAttribute"/>] properties on the <see cref="GatheredObject.Object"/> to the relevant Share Guid (which must
+        /// exist in branchParents).
+        /// 
+        /// <para>ToShareDefinitionWithChildren if you want a full list of shares for the whole tree</para>
+        /// </summary>
+        /// <param name="shareManager"></param>
+        /// <param name="branchParents"></param>
+        /// <returns></returns>
         public ShareDefinition ToShareDefinition(ShareManager shareManager,List<ShareDefinition> branchParents)
         {
             var export = shareManager.GetExportFor(Object);
@@ -80,6 +90,32 @@ namespace Sharing.Dependency.Gathering
             return new ShareDefinition(export.SharingUIDAsGuid,Object.ID,Object.GetType(),properties,relationshipProperties);
         }
 
+        /// <summary>
+        /// Creates sharing exports (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and all <see cref="GatheredObject.Children"/> and 
+        /// then serializes them as <see cref="ShareDefinition"/>
+        /// </summary>
+        /// <param name="shareManager"></param>
+        /// <returns></returns>
+        public List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager)
+        {
+            return ToShareDefinitionWithChildren(shareManager, new List<ShareDefinition>());
+        }
+
+        private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager, List<ShareDefinition> branchParents)
+        {
+            var me = ToShareDefinition(shareManager, branchParents);
+            
+            var toReturn = new List<ShareDefinition>();
+            var parents = new List<ShareDefinition>(branchParents);
+            parents.Add(me);
+            toReturn.Add(me);
+
+            foreach (GatheredObject child in Children)
+                toReturn.AddRange(child.ToShareDefinitionWithChildren(shareManager, parents));
+
+            return toReturn;
+        }
+
         #region Equality
         protected bool Equals(GatheredObject other)
         {
@@ -117,12 +153,12 @@ namespace Sharing.Dependency.Gathering
 
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
-            return Dependencies.ToArray();
+            return new IHasDependencies[0];
         }
 
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return new IHasDependencies[0];
+            return Children.ToArray();
         }
     }
 }
