@@ -168,7 +168,7 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
             try
             {
                 pipeline = SetupPipeline();
-                pipelineUseCase = new ExtractionPipelineUseCase(_request, pipeline, d);
+                pipelineUseCase = new ExtractionPipelineUseCase(_request.Configuration.Project, _request, pipeline, d);
 
                 pipelineUseCase.Execute(new ThrowImmediatelyDataLoadEventListener());
 
