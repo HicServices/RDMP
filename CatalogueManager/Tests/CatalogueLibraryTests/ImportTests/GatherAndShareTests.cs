@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,10 @@ using System.Threading.Tasks;
 using ANOStore;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Repositories;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Sharing.Dependency.Gathering;
 using Tests.Common;
@@ -15,8 +20,9 @@ namespace CatalogueLibraryTests.ImportTests
 {
     public class GatherAndShareTests:DatabaseTests
     {
-        [Test]
-        public void GatherAndShare_ANOTable_Test()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GatherAndShare_ANOTable_Test(bool goViaJson)
         {
             var anoserver = new ExternalDatabaseServer(CatalogueRepository, "MyGatherAndShareTestANOServer", typeof (Class1).Assembly);
             var anoTable = new ANOTable(CatalogueRepository, anoserver, "ANOMagad", "_N");
@@ -32,6 +38,41 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual(gObj.Object,anoserver);
             Assert.AreEqual(gObj.Dependencies.Single().Object, anoTable);
             Assert.AreEqual(gObj.Dependencies.Single().ForeignKeyPropertyIfAny, "Server_ID");
+
+            //get the sharing definitions
+            var shareManager = new ShareManager(RepositoryLocator);
+            ShareDefinition defParent = gObj.ToShareDefinition(shareManager,new List<ShareDefinition>());
+            ShareDefinition defChild = gObj.Dependencies.Single().ToShareDefinition(shareManager, new List<ShareDefinition>(new []{defParent}));
+
+            //make it look like we never had it in the first place
+            shareManager.GetExportFor(anoserver).DeleteInDatabase();
+            shareManager.GetExportFor(anoTable).DeleteInDatabase();
+            anoTable.DeleteInDatabase();
+            anoserver.DeleteInDatabase();
+
+            if(goViaJson)
+            {
+                var sParent = JsonConvertExtensions.SerializeObject(defParent,RepositoryLocator);
+                var sChild = JsonConvertExtensions.SerializeObject(defChild, RepositoryLocator);
+
+                defParent = (ShareDefinition)JsonConvertExtensions.DeserializeObject(sParent, typeof(ShareDefinition),RepositoryLocator);
+                defChild = (ShareDefinition)JsonConvertExtensions.DeserializeObject(sChild, typeof(ShareDefinition), RepositoryLocator);
+            }
+
+            var anoserverAfter = new ExternalDatabaseServer(CatalogueRepository, defParent);
+
+            Assert.IsTrue(anoserverAfter.Exists());
+
+            //new instance
+            Assert.AreNotEqual(anoserverAfter.ID, anoserver.ID);
+
+            //same properties
+            Assert.AreEqual(anoserverAfter.Name, anoserver.Name);
+            Assert.AreEqual(anoserverAfter.CreatedByAssembly, anoserver.CreatedByAssembly);
+            Assert.AreEqual(anoserverAfter.Database, anoserver.Database);
+            Assert.AreEqual(anoserverAfter.DatabaseType, anoserver.DatabaseType);
+            Assert.AreEqual(anoserverAfter.Username, anoserver.Username);
+            Assert.AreEqual(anoserverAfter.Password, anoserver.Password);
         }
 
         [Test]

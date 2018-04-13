@@ -57,5 +57,10 @@ namespace Sharing.Dependency.Gathering
         {
             return _properties.ContainsKey(arg.GetType());
         }
+
+        public T GetAttribute(PropertyInfo property)
+        {
+            return (T) property.GetCustomAttributes(typeof (T), true).SingleOrDefault();
+        }
     }
 }

@@ -25,7 +25,6 @@ using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using Newtonsoft.Json;
 using ReusableUIComponents;
-using Sharing.Sharing;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {

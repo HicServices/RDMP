@@ -169,6 +169,8 @@ namespace CatalogueLibrary.Data
 	        get { return _dllFileVersion;}
 	        set { SetField(ref _dllFileVersion,value);}
         }
+
+        [Relationship(typeof(Plugin))]
         public int Plugin_ID
         {
 	        get { return _plugin_ID;}

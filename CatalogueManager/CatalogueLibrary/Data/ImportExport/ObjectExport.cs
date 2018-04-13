@@ -42,6 +42,10 @@ namespace CatalogueLibrary.Data.ImportExport
             set { SetField(ref _repositoryTypeName, value); }
         }
 
+        /// <inheritdoc cref="SharingUID"/>
+        [NoMappingToDatabase]
+        public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); }}
+
         /// <summary>
         /// use CatalogueRepository.GetExportFor to access this constructor
         /// </summary>

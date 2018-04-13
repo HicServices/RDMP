@@ -156,6 +156,7 @@
     <Compile Include="IMapsDirectlyToDatabaseTable.cs" />
     <Compile Include="ITableRepository.cs" />
     <Compile Include="ObjectDeletedException.cs" />
+    <Compile Include="RelationshipAttribute.cs" />
     <Compile Include="RepositoryResultCaching\SuperCache.cs" />
     <Compile Include="RepositoryResultCaching\SuperCacheManager.cs" />
     <Compile Include="RepositoryResultCaching\SuperCachingDisposalToken.cs" />
@@ -164,8 +165,6 @@
     <Compile Include="SqlAttribute.cs" />
     <Compile Include="TableRepository.cs" />
     <Compile Include="IObscureDependencyFinder.cs" />
-    <Compile Include="Relationships\Relationship.cs" />
-    <Compile Include="Relationships\RelationshipMap.cs" />
     <Compile Include="Revertable\ChangeDescription.cs" />
     <Compile Include="Revertable\IRevertable.cs" />
     <Compile Include="Revertable\RevertableObjectReport.cs" />
@@ -193,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
+    <Folder Include="Transmission\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

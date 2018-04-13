@@ -8,7 +8,6 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
-using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.ObscureDependencyTests

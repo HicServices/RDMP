@@ -13,7 +13,6 @@ using CatalogueLibrary.Repositories;
 using Newtonsoft.Json;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Serialization;
-using Sharing.Sharing;
 
 namespace Sharing.Transmission
 {
@@ -113,11 +112,11 @@ namespace Sharing.Transmission
                     
                 foreach (var plugin in plugins)
                 {
-
-                    var pStateless = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(plugin);
+                    /*
+                    var pStateless = new ShareDefinition<Plugin>(plugin);
                     var lmaStatelessArray =
                         plugin.LoadModuleAssemblies.Select(
-                            lma => new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(lma)).ToArray();
+                            lma => new ShareDefinition<LoadModuleAssembly>(lma)).ToArray();
 
                     var bf = new BinaryFormatter();
                     string pluginString;
@@ -174,6 +173,7 @@ namespace Sharing.Transmission
                     });
                     sender.Start();
                     tasks.Add(sender);
+                     * */
                 }
             }
 

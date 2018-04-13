@@ -12,7 +12,6 @@ using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Rhino.Mocks;
-using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.JsonSerializationTests

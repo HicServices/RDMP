@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Web.UI.WebControls;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -135,6 +136,14 @@ namespace CatalogueLibrary.Data
             repository.InsertAndHydrate(this, parameters);
         }
 
+        internal ExternalDatabaseServer(ICatalogueRepository repository, ShareDefinition shareDefinition)
+        {
+            Repository = repository;
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)repository, DatabaseType.MicrosoftSQLServer);
+            Repository.InsertAndHydrate(this,shareDefinition.Properties);
+
+        }
+
         internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             Name = r["Name"] as string;
@@ -149,7 +158,7 @@ namespace CatalogueLibrary.Data
                 Username = r["Username"] as string
             };
         }
-        
+
         public override string ToString()
         {
             return Name;

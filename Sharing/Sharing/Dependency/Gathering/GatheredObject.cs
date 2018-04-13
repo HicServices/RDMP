@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
@@ -17,7 +20,7 @@ namespace Sharing.Dependency.Gathering
     /// </summary>
     public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
-        public IMapsDirectlyToDatabaseTable Object { get; set; }
+        public IMapsDirectlyToDatabaseTable Object { get; set; } 
         public string ForeignKeyPropertyIfAny { get; set; }
 
         public List<GatheredObject> Dependencies { get; private set; }
@@ -36,6 +39,49 @@ namespace Sharing.Dependency.Gathering
         public bool IsReleased { get; set; }
 
         
+        public ShareDefinition ToShareDefinition(ShareManager shareManager,List<ShareDefinition> branchParents)
+        {
+            var export = shareManager.GetExportFor(Object);
+
+            Dictionary<string,object> properties = new Dictionary<string, object>();
+            Dictionary<RelationshipAttribute,Guid> relationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
+
+            AttributePropertyFinder<RelationshipAttribute> relationshipFinder = new AttributePropertyFinder<RelationshipAttribute>(new[] {Object});
+            AttributePropertyFinder<NoMappingToDatabase> noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(new[] { Object });
+
+            
+            //for each property in the Object class
+            foreach (PropertyInfo property in Object.GetType().GetProperties())
+            {
+                //if it's the ID column skip it
+                if(property.Name == "ID")
+                    continue;
+                
+                //skip [NoMapping] columns
+                if(noMappingFinder.GetAttribute(property) != null)
+                    continue;
+
+                //skip IRepositories (these tell you where the object came from)
+                if (typeof(IRepository).IsAssignableFrom(property.PropertyType))
+                    continue;
+
+                RelationshipAttribute attribute = relationshipFinder.GetAttribute(property);
+
+                //if it's a relationship
+                if (attribute != null)
+                {
+                    var idOfParent = property.GetValue(Object);
+                    Type typeOfParent = attribute.Cref;
+
+                    var parent = branchParents.Single(d => d.Type == typeOfParent && d.ID.Equals(idOfParent));
+                    relationshipProperties.Add(attribute, parent.SharingGuid);
+                }
+                else
+                    properties.Add(property.Name, property.GetValue(Object));
+            }
+
+            return new ShareDefinition(export.SharingUIDAsGuid,Object.ID,Object.Repository.GetType().FullName,Object.GetType(),properties,relationshipProperties);
+        }
 
         #region Equality
         protected bool Equals(GatheredObject other)
