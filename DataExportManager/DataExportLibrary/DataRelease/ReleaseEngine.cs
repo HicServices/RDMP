@@ -118,7 +118,7 @@ namespace DataExportLibrary.DataRelease
                 if (customDataFolder != null)
                     AuditDirectoryCreation(customDataFolder.FullName, sw, 1);
 
-                var otherDataFolder = ReleaseOtherData(kvp, configurationSubDirectory);
+                var otherDataFolder = ReleaseMasterData(kvp, configurationSubDirectory);
                 if (otherDataFolder != null)
                     AuditDirectoryCreation(otherDataFolder.FullName, sw, 1);
 
@@ -156,16 +156,16 @@ namespace DataExportLibrary.DataRelease
             return fromCustomData;
         }
 
-        protected virtual DirectoryInfo ReleaseOtherData(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
+        protected virtual DirectoryInfo ReleaseMasterData(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
         {
             //if there is custom data copy that across for the specific cohort
-            DirectoryInfo fromOtherData = ThrowIfOtherDataConflictElseReturnFirstOtherDataFolder(kvp);
-            if (fromOtherData != null)
+            DirectoryInfo fromMasterData = ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(kvp);
+            if (fromMasterData != null)
             {
-                var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.Parent.FullName, fromOtherData.Name));
-                fromOtherData.CopyAll(destination);
+                var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.Parent.FullName, fromMasterData.Name));
+                fromMasterData.CopyAll(destination);
             }
-            return fromOtherData;
+            return fromMasterData;
         }
 
         protected virtual void AuditExtractionConfigurationDetails(StreamWriter sw, DirectoryInfo configurationSubDirectory, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
@@ -210,10 +210,10 @@ namespace DataExportLibrary.DataRelease
             return GetUniqueDirectoryFrom(customDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
         }
 
-        protected DirectoryInfo ThrowIfOtherDataConflictElseReturnFirstOtherDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+        protected DirectoryInfo ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
-            var otherDataDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.OtherDataFolderName, toRelease);
-            return GetUniqueDirectoryFrom(otherDataDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
+            var masterDataDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.MasterDataFolderName, toRelease);
+            return GetUniqueDirectoryFrom(masterDataDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
         }
 
         protected IEnumerable<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
