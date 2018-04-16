@@ -47,7 +47,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         /// </summary>
         public IExecuteDatasetExtractionDestination Destination { get; private set; }
       
-        public ExtractionPipelineUseCase(IProject project) : this(ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
+        public ExtractionPipelineUseCase(IProject project) : this(project, ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
+        { }
+
+        public ExtractionPipelineUseCase(IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
+            : this(extractCommand, pipeline, dataLoadInfo)
         {
             _project = project;
         }
@@ -151,7 +155,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
 
         public void ExtractGlobalsForDestination(IProject project, ExtractionConfiguration configuration, GlobalsBundle globalsBundle,IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
-            
             try
             {
                 //if we don't yet know the destination create an engine which populates Destination/Source as a byproduct

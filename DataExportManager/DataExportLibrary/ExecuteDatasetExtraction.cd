@@ -41,7 +41,7 @@
   <Class Name="DataExportLibrary.Data.DataTables.ExtractableColumn" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="13" Y="3" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>BAAQAAQAAgAAIAQlAAAAgAAABAAAAAACICAAAAAAAAI=</HashCode>
+      <HashCode>BAEQAAQAAAAAABQlAAAAgAAABAAAAAACCCAAIAAQAAA=</HashCode>
       <FileName>Data\DataTables\ExtractableColumn.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -57,7 +57,7 @@
   <Class Name="DataExportLibrary.Data.DataTables.ExtractionConfiguration" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="6.5" Y="1" Width="2" />
     <TypeIdentifier>
-      <HashCode>gBwGIAAKARRgIiSmgREAKIQRBBIABJEAAgJIoBAghgk=</HashCode>
+      <HashCode>gBwGIAAKARRgIiSmgREAKIQRBBIgBJEAAgJIoBAghgk=</HashCode>
       <FileName>Data\DataTables\ExtractionConfiguration.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -70,7 +70,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.WordDataWritter">
+  <Class Name="DataExportLibrary.ExtractionTime.WordDataWriter">
     <Position X="0.75" Y="1.75" Width="2.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -78,7 +78,7 @@
     </Compartments>
     <TypeIdentifier>
       <HashCode>AAAACAAAAAAAACABAAIAAEQCAAAAAAgIBEAAAGAAAAA=</HashCode>
-      <FileName>ExtractionTime\WordDataWritter.cs</FileName>
+      <FileName>ExtractionTime\WordDataWriter.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataExportLibrary.ExtractionTime.ExtractionTimeValidator" Collapsed="true">
@@ -101,12 +101,11 @@
       <HashCode>AIIAAAgAAAAAACAMABEIAAAABIEAAAAAAAAIAQAAAAA=</HashCode>
       <FileName>Data\DataTables\DeployedExtractionFilter.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="DataExportLibrary.Data.DataTables.DeployedExtractionFilterParameter" Collapsed="true">
     <Position X="17.5" Y="3" Width="3" />
     <TypeIdentifier>
-      <HashCode>AhgAAAAEEAAAAAAEAAQEAAAAAAAAABAAAAAgEAAAAAA=</HashCode>
+      <HashCode>AhgAAAgEEAAAAAAEACQEAAAAAAAAABAAAAAgEAAAAAA=</HashCode>
       <FileName>Data\DataTables\DeployedExtractionFilterParameter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -144,11 +143,11 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.ExtractionPipeline.ExtractionPipelineHost">
+  <Class Name="DataExportLibrary.ExtractionTime.ExtractionPipeline.ExtractionPipelineUseCase">
     <Position X="3.5" Y="10.25" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAwgEABAQAACAAAABAAAIAAAAEACAEAAAAEAA=</HashCode>
-      <FileName>ExtractionTime\ExtractionPipeline\ExtractionPipelineHost.cs</FileName>
+      <FileName>ExtractionTime\ExtractionPipeline\ExtractionPipelineUseCase.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_pipeline" />
@@ -160,8 +159,38 @@
   <Class Name="DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource">
     <Position X="11.25" Y="9.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAEqAA0MACAgISJAAQAACAAAEgACghAAAAUEiABKJBA=</HashCode>
+      <HashCode>AAEqAA0MACAgISJAgQAAAAAAEgACghAAAAUEiABKJBA=</HashCode>
       <FileName>ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.Commands.ExtractCohortCustomTableCommand" Collapsed="true">
+    <Position X="5.25" Y="16.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAEAAAAAAQAAAAACAAggAAABUAAAAA=</HashCode>
+      <FileName>ExtractionTime\Commands\ExtractCohortCustomTableCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.Commands.ExtractCommandCollection">
+    <Position X="3.75" Y="17.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ExtractionTime\Commands\ExtractCommandCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.Commands.ExtractCommandCollectionFactory">
+    <Position X="2" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAA=</HashCode>
+      <FileName>ExtractionTime\Commands\ExtractCommandCollectionFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataExportLibrary.ExtractionTime.Commands.ExtractDatasetCommand" Collapsed="true">
+    <Position X="8.75" Y="16.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>ABBAAhAAAAEBAAAEAAACAAQAEAAACCQggAABBEAwAAA=</HashCode>
+      <FileName>ExtractionTime\Commands\ExtractDatasetCommand.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -172,7 +201,7 @@
   <Interface Name="DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations.IExecuteDatasetExtractionDestination" Collapsed="true">
     <Position X="7.25" Y="14.5" Width="3.5" />
     <TypeIdentifier>
-      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAIAAAAAAAA=</HashCode>
+      <HashCode>QBAAAAAAAgAAAAAAAAgAAAAAAYAAJAAAgAIAIAAAQAA=</HashCode>
       <FileName>ExtractionTime\ExtractionPipeline\Destinations\IExecuteDatasetExtractionDestination.cs</FileName>
     </TypeIdentifier>
   </Interface>

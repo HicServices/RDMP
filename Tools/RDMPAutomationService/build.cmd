@@ -47,8 +47,8 @@ call "%ProgramFiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 goto build
 
 :build
-nuget restore ..\..\..\..\HIC.DataManagementPlatform.sln
-msbuild /t:Clean,Build /p:Configuration=Release,Outdir=..\..\..\..\Release\RDMPAutomationService RDMPAutomationService.csproj
+nuget restore ..\..\HIC.DataManagementPlatform.sln
+msbuild /t:Clean,Build /p:Configuration=Release,Outdir=..\..\Release\RDMPAutomationService RDMPAutomationService.csproj
 goto end
 
 :end
