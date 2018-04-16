@@ -35,8 +35,9 @@ namespace CatalogueLibrary.Data
         string Comment { get; set; }
 
         /// <summary>
-        /// Returns the IFilter if any that the parameter is declared on.  If the parameter is a global level parameter e.g. declared at AggregateConfiguration level then 
-        /// the corresponding higher level object will be returned (e.g. <see cref="AnyTableSqlParameter"/>).
+        /// Returns the <see cref="IMapsDirectlyToDatabaseTable"/> (usually an <see cref="IFilter"/>) that the parameter is declared on.  If the parameter is a global level
+        /// parameter e.g. declared at <see cref="CatalogueLibrary.Data.Aggregation.AggregateConfiguration"/> level then the corresponding higher level object will be returned 
+        ///  (e.g. <see cref="AnyTableSqlParameter"/>).
         /// </summary>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable GetOwnerIfAny();
