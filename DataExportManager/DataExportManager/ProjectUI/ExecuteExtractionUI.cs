@@ -154,7 +154,7 @@ namespace DataExportManager.ProjectUI
                     progressUI.Dock = DockStyle.Fill;
                     globalsTab.Controls.Add(progressUI);
 
-                    var globalExtractor = new ExtractionPipelineUseCase(Project, ExtractDatasetCommand.EmptyCommand,_pipelineSelectionUI1.Pipeline,_dataLoadInfo);
+                    var globalExtractor = new ExtractionPipelineUseCase(Project, ExtractDatasetCommand.EmptyCommand, _pipelineSelectionUI1.Pipeline, _dataLoadInfo);
 
                     Thread t = new Thread(() =>
                         {
