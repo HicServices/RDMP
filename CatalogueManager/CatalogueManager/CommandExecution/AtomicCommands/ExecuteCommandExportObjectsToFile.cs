@@ -22,12 +22,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     internal class ExecuteCommandExportObjectsToFile : BasicUICommandExecution,IAtomicCommand
     {
         private readonly IMapsDirectlyToDatabaseTable[] _toExport;
+        private readonly DirectoryInfo _targetDirectoryInfo;
         private ShareManager _shareManager;
         private Gatherer _gatherer;
 
-        public ExecuteCommandExportObjectsToFile(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport): base(activator)
+        public ExecuteCommandExportObjectsToFile(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport,DirectoryInfo targetDirectoryInfo = null): base(activator)
         {
             _toExport = toExport;
+            _targetDirectoryInfo = targetDirectoryInfo;
             _shareManager = new ShareManager(activator.RepositoryLocator);
 
             if(toExport == null || !toExport.Any())
@@ -47,12 +49,17 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var fb = new FolderBrowserDialog();
-            
-            if (fb.ShowDialog() == DialogResult.OK)
-            {
-                var dir = new DirectoryInfo(fb.SelectedPath);
+            var dir = _targetDirectoryInfo;
 
+            if(dir == null)
+            {
+                var fb = new FolderBrowserDialog();
+                if (fb.ShowDialog() == DialogResult.OK)
+                    dir = new DirectoryInfo(fb.SelectedPath);
+            }
+            
+            if(dir != null)
+            {
                 foreach (var o in _toExport)
                 {
                     var d = _gatherer.GatherDependencies(o);

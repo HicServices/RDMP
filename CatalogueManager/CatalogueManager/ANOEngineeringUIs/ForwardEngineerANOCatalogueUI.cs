@@ -16,6 +16,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -562,6 +563,9 @@ namespace CatalogueManager.ANOEngineeringUIs
                 var fi = new FileInfo(sfd.FileName);
                 var json = JsonConvertExtensions.SerializeObject(_planManager, _activator.RepositoryLocator);
                 File.WriteAllText(fi.FullName,json);
+
+                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(_activator,RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
+                cmdAnoTablesToo.Execute();
             }
         }
 
