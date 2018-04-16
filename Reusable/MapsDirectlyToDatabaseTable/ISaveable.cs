@@ -7,6 +7,9 @@
     /// </summary>
     public interface ISaveable
     {
+        /// <summary>
+        /// Saves the current values of all Properties not declared as <seealso cref="NoMappingToDatabase"/> to the database.
+        /// </summary>
         void SaveToDatabase();
     }
 }

@@ -15,7 +15,7 @@ namespace MapsDirectlyToDatabaseTable
     public interface IObscureDependencyFinder
     {
         /// <summary>
-        ///  Throws if there are relationships that cannot be handled with database constraints that should prevent the deletion of the passed object.  For example a 
+        /// Throws if there are relationships that cannot be handled with database constraints that should prevent the deletion of the passed object.  For example a 
         /// CatalogueItem could have deletion prevented by the fact that it is referenced in a Catalogue ValidationXml (this dependency could not be modelled at database
         /// level).  An Exception is thrown if the delete is not allowed
         /// </summary>
