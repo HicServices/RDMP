@@ -386,7 +386,12 @@ namespace CatalogueLibrary.Repositories
             Dictionary<string,object> propertiesDictionary = shareDefinition.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             
             //If we have already got a local copy of this shared object?
+            //either as an import
             T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid);
+
+            //or as an export
+            if(actual == null)
+                 actual = (T)shareManager.GetExistingExportObject(shareDefinition.SharingGuid);
 
             //we already have a copy imported of the shared object
             if (actual != null)

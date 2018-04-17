@@ -87,5 +87,15 @@ namespace CatalogueLibrary.Data.ImportExport
         {
             return o.ID == ObjectID && o.GetType().Name == ObjectTypeName && o.Repository.GetType().Name == RepositoryTypeName;
         }
+
+        /// <summary>
+        /// Returns the local object referenced by this export declaration
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
+        public IMapsDirectlyToDatabaseTable GetLocalObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            return repositoryLocator.GetArbitraryDatabaseObject(RepositoryTypeName, ObjectTypeName, ObjectID);
+        }
     }
 }

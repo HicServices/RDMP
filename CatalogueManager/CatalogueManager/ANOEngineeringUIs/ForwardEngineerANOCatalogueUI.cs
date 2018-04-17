@@ -561,11 +561,15 @@ namespace CatalogueManager.ANOEngineeringUIs
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 var fi = new FileInfo(sfd.FileName);
+                
+                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
+
+                if (!cmdAnoTablesToo.IsImpossible)
+                    cmdAnoTablesToo.Execute();
+
                 var json = JsonConvertExtensions.SerializeObject(_planManager, _activator.RepositoryLocator);
                 File.WriteAllText(fi.FullName,json);
 
-                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(_activator,RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
-                cmdAnoTablesToo.Execute();
             }
         }
 

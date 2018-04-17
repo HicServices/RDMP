@@ -192,7 +192,7 @@ namespace ANOStore.ANOEngineering
         {
             if (_shareManager.IsExportedObject(m))
             {
-                var existingExport = _shareManager.GetExportFor(m);
+                var existingExport = _shareManager.GetNewOrExistingExportFor(m);
                 var existingImportReference = _shareManager.GetExistingImport(existingExport.SharingUID);
 
                 if (existingImportReference != null)

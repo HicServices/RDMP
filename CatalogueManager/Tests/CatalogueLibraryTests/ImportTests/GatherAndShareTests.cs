@@ -45,8 +45,8 @@ namespace CatalogueLibraryTests.ImportTests
             ShareDefinition defChild = gObj.Children.Single().ToShareDefinition(shareManager, new List<ShareDefinition>(new []{defParent}));
 
             //make it look like we never had it in the first place
-            shareManager.GetExportFor(anoserver).DeleteInDatabase();
-            shareManager.GetExportFor(anoTable).DeleteInDatabase();
+            shareManager.GetNewOrExistingExportFor(anoserver).DeleteInDatabase();
+            shareManager.GetNewOrExistingExportFor(anoTable).DeleteInDatabase();
             anoTable.DeleteInDatabase();
             anoserver.DeleteInDatabase();
 

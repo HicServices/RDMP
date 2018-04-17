@@ -48,7 +48,7 @@ namespace Sharing.Dependency.Gathering
         /// <returns></returns>
         public ShareDefinition ToShareDefinition(ShareManager shareManager,List<ShareDefinition> branchParents)
         {
-            var export = shareManager.GetExportFor(Object);
+            var export = shareManager.GetNewOrExistingExportFor(Object);
 
             Dictionary<string,object> properties = new Dictionary<string, object>();
             Dictionary<RelationshipAttribute,Guid> relationshipProperties = new Dictionary<RelationshipAttribute, Guid>();

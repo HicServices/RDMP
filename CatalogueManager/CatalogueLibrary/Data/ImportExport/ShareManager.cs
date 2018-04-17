@@ -44,7 +44,7 @@ namespace CatalogueLibrary.Data.ImportExport
             sb.Append(PersistenceSeparator);
 
             if (IsExportedObject(o))
-                sb.Append(GetExportFor(o).SharingUID);
+                sb.Append(GetNewOrExistingExportFor(o).SharingUID);
 
             return sb.ToString();
         }
@@ -101,7 +101,7 @@ namespace CatalogueLibrary.Data.ImportExport
             return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").Any();
         }
 
-        public ObjectExport GetExportFor(IMapsDirectlyToDatabaseTable o)
+        public ObjectExport GetNewOrExistingExportFor(IMapsDirectlyToDatabaseTable o)
         {
             var existingExport = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
 
@@ -125,11 +125,26 @@ namespace CatalogueLibrary.Data.ImportExport
 
             return import.GetLocalObject(RepositoryLocator);
         }
-
         public object GetExistingImportObject(Guid sharingGuid)
         {
             return GetExistingImportObject(sharingGuid.ToString());
         }
+
+        public IMapsDirectlyToDatabaseTable GetExistingExportObject(string sharingUID)
+        {
+            var export = GetExistingExport(sharingUID);
+
+            if (export == null)
+                return null;
+
+            return export.GetLocalObject(RepositoryLocator);
+        }
+        public object GetExistingExportObject(Guid sharingGuid)
+        {
+            return GetExistingExportObject(sharingGuid.ToString());
+        }
+
+
         /// <summary>
         /// Returns a matching ObjectImport for the provided sharingUID or null if the UID has never been imported
         /// </summary>
@@ -144,6 +159,22 @@ namespace CatalogueLibrary.Data.ImportExport
         public ObjectImport GetExistingImport(Guid sharingUID)
         {
             return GetExistingImport(sharingUID.ToString());
+        }
+
+        /// <summary>
+        /// Returns a matching ObjectExport for the provided sharingUID or null if the UID has never been imported
+        /// </summary>
+        /// <param name="sharingUID"></param>
+        /// <returns></returns>
+        public ObjectExport GetExistingExport(string sharingUID)
+        {
+            return _catalogueRepository.GetAllObjects<ObjectExport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+        }
+
+        /// <inheritdoc cref="GetExistingExport(string)"/>
+        public ObjectExport GetExistingExport(Guid sharingUID)
+        {
+            return GetExistingExport(sharingUID.ToString());
         }
 
         public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o)

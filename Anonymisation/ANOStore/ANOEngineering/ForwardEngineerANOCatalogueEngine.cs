@@ -380,7 +380,7 @@ namespace ANOStore.ANOEngineering
         private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
         {
             //make it shareable
-            var export = _shareManager.GetExportFor(parent);
+            var export = _shareManager.GetNewOrExistingExportFor(parent);
 
             //share it to yourself where the child is the realisation of the share (this creates relationship in database)
             var import = _shareManager.GetImportAs(export.SharingUID, child);
