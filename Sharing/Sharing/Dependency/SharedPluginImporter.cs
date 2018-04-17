@@ -7,26 +7,26 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
-using Sharing.Sharing;
 
 namespace Sharing.Dependency
 {
+    /*
     /// <summary>
     /// Facilitiates importing plugins from a remote contributor (as a MapsDirectlyToDatabaseTableStatelessDefinition) and creating the local copies of the Plugin dlls
     /// in the local CatalogueRepository database.
     /// </summary>
     public class SharedPluginImporter
     {
-        private MapsDirectlyToDatabaseTableStatelessDefinition<Plugin> _plugin;
-        private List<MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>> _lma;
+        private ShareDefinition<Plugin> _plugin;
+        private List<ShareDefinition<LoadModuleAssembly>> _lma;
 
         public SharedPluginImporter(Plugin plugin)
         {
-            _plugin = new MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>(plugin);
-            _lma = plugin.LoadModuleAssemblies.Select(s => new MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>(s)).ToList();
+            _plugin = new ShareDefinition<Plugin>(plugin);
+            _lma = plugin.LoadModuleAssemblies.Select(s => new ShareDefinition<LoadModuleAssembly>(s)).ToList();
         }
 
-        public SharedPluginImporter(MapsDirectlyToDatabaseTableStatelessDefinition<Plugin> plugin, MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>[] loadModuleAssemblies)
+        public SharedPluginImporter(ShareDefinition<Plugin> plugin, ShareDefinition<LoadModuleAssembly>[] loadModuleAssemblies)
         {
             _plugin = plugin;
             _lma = loadModuleAssemblies.ToList();
@@ -39,13 +39,13 @@ namespace Sharing.Dependency
 
             using (MemoryStream ms = new MemoryStream(received))
             {
-                _plugin = (MapsDirectlyToDatabaseTableStatelessDefinition<Plugin>) bf.Deserialize(ms);
+                _plugin = (ShareDefinition<Plugin>) bf.Deserialize(ms);
             }
 
             received = Convert.FromBase64String(loadModuleAssemblies);
             using (MemoryStream ms = new MemoryStream(received))
             {
-                _lma = ((MapsDirectlyToDatabaseTableStatelessDefinition<LoadModuleAssembly>[]) bf.Deserialize(ms)).ToList();
+                _lma = ((ShareDefinition<LoadModuleAssembly>[]) bf.Deserialize(ms)).ToList();
             }
         }
 
@@ -114,5 +114,5 @@ namespace Sharing.Dependency
             }
             return newPlugin;
         }
-    }
+    }*/
 }

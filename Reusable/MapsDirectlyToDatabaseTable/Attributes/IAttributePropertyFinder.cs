@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using MapsDirectlyToDatabaseTable;
 
-namespace Sharing.Dependency.Gathering
+namespace MapsDirectlyToDatabaseTable.Attributes
 {
     /// <summary>
     /// Helper for finding public properties on objects which are decorated with a given Attribute.  Includes

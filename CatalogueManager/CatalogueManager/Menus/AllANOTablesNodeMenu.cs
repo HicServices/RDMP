@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus
 {
@@ -20,6 +19,8 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
                 typeof(ANOStore.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.ANOStore) 
                 { OverrideCommandName = "Create ANOStore Database" });
+
+            Add(new ExecuteCommandExportObjectsToFile(_activator,_activator.CoreChildProvider.AllANOTables));
         }
     }
 }

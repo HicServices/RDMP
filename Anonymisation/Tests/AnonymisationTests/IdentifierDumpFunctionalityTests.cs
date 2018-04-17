@@ -13,7 +13,6 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using Diagnostics.TestData;
-using MapsDirectlyToDatabaseTable.Relationships;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

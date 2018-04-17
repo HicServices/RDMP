@@ -10,12 +10,15 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Properties;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories.Construction;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -375,6 +378,90 @@ namespace CatalogueLibrary.Repositories
             }
 
             return servers.Where(s => s.CreatedByAssembly == assembly).ToArray();
+        }
+
+        public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
+        {
+            //Make a dictionary of the normal properties we are supposed to be importing
+            Dictionary<string,object> propertiesDictionary = shareDefinition.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            
+            //If we have already got a local copy of this shared object?
+            //either as an import
+            T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid);
+
+            //or as an export
+            if(actual == null)
+                 actual = (T)shareManager.GetExistingExportObject(shareDefinition.SharingGuid);
+
+            //we already have a copy imported of the shared object
+            if (actual != null)
+            {
+                //It's an UPDATE i.e. take the new shared properties and apply them to the database copy / memory copy
+
+                //copy all the values out of the share definition / database copy
+                foreach (PropertyInfo prop in GetPropertyInfos(typeof(T)))
+                {
+                    if (propertiesDictionary.ContainsKey(prop.Name))
+                    {
+                        //sometimes json decided to swap types on you e.g. int64 for int32
+                        var val = propertiesDictionary[prop.Name];
+                        if (val != null && val != DBNull.Value && !prop.PropertyType.IsInstanceOfType(val))
+                            val = Convert.ChangeType(val, prop.PropertyType);
+
+                        prop.SetValue(toCreate, val); //if it's a shared property (most properties) use the new shared value being imported
+                        
+                    }
+                    else
+                        prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
+
+                }
+
+                toCreate.Repository = actual.Repository;
+                
+                //commit the updated values to the database
+                SaveToDatabase(toCreate);
+            }
+            else
+            {
+                //It's an INSERT i.e. create a new database copy with the correct foreign key values and update the memory copy
+                
+                var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
+
+                //for each relationship property on the class we are trying to hydrate
+                foreach (PropertyInfo property in GetPropertyInfos(typeof(T)))
+                {
+                    RelationshipAttribute relationshipAttribute = finder.GetAttribute(property);
+
+                    //if it has a relationship attribute then we would expect the ShareDefinition to include a dependency relationship with the sharing UID of the parent
+                    //and also that we had already imported it since dependencies must be imported in order
+                    if(relationshipAttribute != null)
+                    {
+                        //Confirm that the share definition includes the knowledge that theres a parent class to this object
+                        if(!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
+                            throw new Exception("Share Definition for object of Type " + typeof(T) + " is missing an expected RelationshipProperty called " + property.Name );
+
+                        //Get the SharingUID of the parent for this property
+                        Guid importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
+
+                        //Confirm that we have a local import of the parent
+                        var parentImport = shareManager.GetExistingImport(importGuidOfParent);
+
+                        if(parentImport == null)
+                            throw new Exception("Cannot import an object of type " + typeof(T) + " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " + relationshipAttribute.Cref + " with a SharingUID of " + importGuidOfParent);
+
+                        //get the ID of the local import of the parent
+                        propertiesDictionary.Add(property.Name,parentImport.LocalObjectID);
+                    }
+                }
+
+                //insert the full dictionary into the database under the Type
+                InsertAndHydrate(toCreate,propertiesDictionary);
+
+                //document that a local import of the share now exists and should be updated/reused from now on when that same GUID comes in / gets used by child objects
+                shareManager.GetImportAs(shareDefinition.SharingGuid.ToString(), toCreate);
+            }
+            
+
         }
     }
 

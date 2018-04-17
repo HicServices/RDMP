@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
@@ -67,6 +70,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <summary>
         /// The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This should have been created by the ANOStoreDatabasePatcher
         /// </summary>
+        [Relationship(typeof(ExternalDatabaseServer))]
         public int Server_ID
         {
             get { return _serverID; }
@@ -114,6 +118,11 @@ namespace CatalogueLibrary.Data.DataLoad
             NumberOfIntegersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfIntegersToUseInAnonymousRepresentation"].ToString());
             NumberOfCharactersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfCharactersToUseInAnonymousRepresentation"].ToString());
             Suffix = r["Suffix"].ToString();
+        }
+
+        internal ANOTable(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 
         public override void SaveToDatabase()
@@ -175,6 +184,47 @@ namespace CatalogueLibrary.Data.DataLoad
                 .DiscoverTables(false);
 
             return tables.SingleOrDefault(t => t.GetRuntimeName().Equals(TableName));
+        }
+
+        public void DeleteANOTableInANOStore()
+        {
+            RevertToDatabaseState();
+
+            var s = Server;
+            
+            if(string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Database))
+                return;
+
+            //it must not be broken
+            var server =  DataAccessPortal.GetInstance().ExpectServer(s, DataAccessContext.DataLoad);
+
+            var db = server.ExpectDatabase(Server.Database);
+
+            //ANOTable references a database that does not exist so its ok to delete it
+            if (!db.Exists())
+                return;
+
+            //ANOTable references a table that does not exist so it is ok to delete it (it would fail Check() anyway)
+            if (!db.ExpectTable(TableName).Exists())
+                return;
+            
+            using (var con = server.GetConnection())
+            {
+                con.Open();
+                
+                DbCommand cmdHowManyRows = server.GetCommand("Select count(*) from "+ TableName,con);
+                cmdHowManyRows.CommandTimeout = 5000;
+                
+                int rowCount = Convert.ToInt32(cmdHowManyRows.ExecuteScalar());
+
+                if(rowCount != 0)
+                    throw new Exception("Cannot delete ANOTable because it references " + TableName + " which is a table on server " + Server + " which contains " + rowCount + " rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
+
+                DbCommand cmdDelete = server.GetCommand("Drop Table "+ TableName,con);
+                cmdDelete.ExecuteNonQuery();
+
+                con.Close();
+            }
         }
 
         /// <summary>
@@ -275,42 +325,6 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
                 notifier.OnCheckPerformed(new CheckEventArgs("Failed to save state after table was successfully? pushed to ANO server", CheckResult.Fail,e));
             }
             
-        }
-
-        public void DeleteANOTableInANOStore()
-        {
-            RevertToDatabaseState();
-
-            //it must not be broken
-            var server =  DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
-            
-            var db = server.ExpectDatabase(Server.Database);
-
-            //ANOTable references a database that does not exist so its ok to delete it
-            if (!db.Exists())
-                return;
-
-            //ANOTable references a table that does not exist so it is ok to delete it (it would fail Check() anyway)
-            if (!db.ExpectTable(TableName).Exists())
-                return;
-            
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                
-                DbCommand cmdHowManyRows = server.GetCommand("Select count(*) from "+ TableName,con);
-                cmdHowManyRows.CommandTimeout = 5000;
-                
-                int rowCount = Convert.ToInt32(cmdHowManyRows.ExecuteScalar());
-
-                if(rowCount != 0)
-                    throw new Exception("Cannot delete ANOTable because it references " + TableName + " which is a table on server " + Server + " which contains " + rowCount + " rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
-
-                DbCommand cmdDelete = server.GetCommand("Drop Table "+ TableName,con);
-                cmdDelete.ExecuteNonQuery();
-
-                con.Close();
-            }
         }
 
         public string GetRuntimeDataType(LoadStage loadStage)

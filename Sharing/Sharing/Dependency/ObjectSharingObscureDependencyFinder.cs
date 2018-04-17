@@ -3,7 +3,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Sharing.Sharing;
 
 namespace Sharing.Dependency
 {
