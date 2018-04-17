@@ -163,5 +163,10 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
         {
             throw new NotImplementedException();
         }
+
+        public override void MakeDistinct(DiscoveredTable discoveredTable)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

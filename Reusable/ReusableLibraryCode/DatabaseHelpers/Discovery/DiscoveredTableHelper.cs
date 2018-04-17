@@ -39,5 +39,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 server.GetCommand("TRUNCATE TABLE " + discoveredTable.GetFullyQualifiedName(), con).ExecuteNonQuery();
             }
         }
+
+        public abstract void MakeDistinct(DiscoveredTable discoveredTable);
     }
 }
