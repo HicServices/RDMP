@@ -13,7 +13,6 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using Sharing.Refactoring;
-using Sharing.Sharing;
 
 namespace ANOStore.ANOEngineering
 {
@@ -23,7 +22,7 @@ namespace ANOStore.ANOEngineering
     /// load or should load in date based batches (e.g. 1 year at a time - use this option if you have too much data in the source table to be migrated in one go - e.g.
     /// tens of millions of records). 
     /// </summary>
-    public class ForwardEngineerANOCataloguePlanManager : ICheckable, ILazyConstructorFinishedCallback
+    public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstructorFinishedCallback
     {
         private readonly ShareManager _shareManager;
 
@@ -193,7 +192,7 @@ namespace ANOStore.ANOEngineering
         {
             if (_shareManager.IsExportedObject(m))
             {
-                var existingExport = _shareManager.GetExportFor(m);
+                var existingExport = _shareManager.GetNewOrExistingExportFor(m);
                 var existingImportReference = _shareManager.GetExistingImport(existingExport.SharingUID);
 
                 if (existingImportReference != null)
@@ -261,7 +260,7 @@ namespace ANOStore.ANOEngineering
             return TableInfos.Any(t => t.ID == columnInfo.TableInfo_ID);
         }
 
-        public void LazyConstructorFinished()
+        public void AfterConstruction()
         {
             InitializePlans();
         }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 
 namespace CatalogueLibrary.Data
 {
@@ -169,6 +170,8 @@ namespace CatalogueLibrary.Data
 	        get { return _dllFileVersion;}
 	        set { SetField(ref _dllFileVersion,value);}
         }
+
+        [Relationship(typeof(Plugin))]
         public int Plugin_ID
         {
 	        get { return _plugin_ID;}

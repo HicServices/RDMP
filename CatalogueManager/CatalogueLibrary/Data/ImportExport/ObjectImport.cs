@@ -23,6 +23,7 @@ namespace CatalogueLibrary.Data.ImportExport
         private int _localObjectID;
         private string _localTypeName;
         private string _repositoryTypeName;
+        
         #endregion
 
         public string SharingUID
@@ -45,6 +46,10 @@ namespace CatalogueLibrary.Data.ImportExport
             get { return _repositoryTypeName; }
             set { SetField(ref _repositoryTypeName, value); }
         }
+
+        [NoMappingToDatabase]
+        public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); } }
+
         /// <summary>
         /// Use GetImportAs to access this
         /// </summary>
@@ -71,6 +76,11 @@ namespace CatalogueLibrary.Data.ImportExport
             LocalObjectID = Convert.ToInt32(r["LocalObjectID"]);
             LocalTypeName = r["LocalTypeName"].ToString();
             RepositoryTypeName = r["RepositoryTypeName"].ToString();
+        }
+
+        public override string ToString()
+        {
+            return "I::" + LocalTypeName + "::" + SharingUID;
         }
 
         public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)

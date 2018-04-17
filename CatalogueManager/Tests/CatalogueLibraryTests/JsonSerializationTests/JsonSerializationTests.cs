@@ -12,7 +12,6 @@ using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Rhino.Mocks;
-using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.JsonSerializationTests
@@ -29,7 +28,7 @@ namespace CatalogueLibraryTests.JsonSerializationTests
             mySerializeable.Title = "War and Pieces";
             
             var dbConverter = new DatabaseEntityJsonConverter(RepositoryLocator);
-            var lazyConverter = new LazyConstructorsJsonConverter(RepositoryLocator);
+            var lazyConverter = new PickAnyConstructorJsonConverter(RepositoryLocator);
 
 
             var asString = JsonConvert.SerializeObject(mySerializeable, dbConverter,lazyConverter);

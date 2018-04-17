@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 
 namespace CatalogueLibrary.Data.DataLoad
 {

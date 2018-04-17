@@ -17,10 +17,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private GatheredObject _dependencies;
 
-        public ExecuteCommandFindUsages(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
+        public ExecuteCommandFindUsages(IActivateItems activator, DatabaseEntity o) : base(activator)
         {
             var gatherer = new Gatherer(activator.RepositoryLocator);
-            _dependencies = gatherer.GatherDependencies(columnInfo);
+            if(!gatherer.CanGatherDependencies(o))
+                SetImpossible("Object Type " + o.GetType() + " is not compatible with Gatherer");
+            else
+                _dependencies = gatherer.GatherDependencies(o);
         }
 
         public override void Execute()

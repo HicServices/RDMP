@@ -15,12 +15,12 @@ namespace CatalogueLibrary.Data.Serialization
     /// arguments to classes you want to deserialize.  This JsonConverter will assert that it CanConvert any object for which it finds no default constructor and
     /// a single constructor which is compatible with the constructorObjects (or a subset of them)
     /// </summary>
-    public class LazyConstructorsJsonConverter:JsonConverter
+    public class PickAnyConstructorJsonConverter:JsonConverter
     {
         private readonly object[] _constructorObjects;
         private ObjectConstructor _objectConstructor;
 
-        public LazyConstructorsJsonConverter(params object[] constructorObjects)
+        public PickAnyConstructorJsonConverter(params object[] constructorObjects)
         {
             _constructorObjects = constructorObjects;
             _objectConstructor = new ObjectConstructor();
@@ -47,9 +47,9 @@ namespace CatalogueLibrary.Data.Serialization
 
             serializer.Populate(reader,instance);
 
-            var callback = instance as ILazyConstructorFinishedCallback;
+            var callback = instance as IPickAnyConstructorFinishedCallback;
             if(callback != null)
-                callback.LazyConstructorFinished();
+                callback.AfterConstruction();
 
             return instance;
         }

@@ -8,7 +8,7 @@ FK_CacheProgress_LoadSchedule:Prevents you deleting a LoadProgress that has a Ca
 FK_CacheProgress_PermissionWindow: Prevents you from deleting a PermissionWindow that is in use by one or more CacheProgress.
 FK_CohortAggregateSubContainer_CohortAggregateContainer_ParentID: Prevents deleting a container that is part of a subcontainer relationship.  Deleting containers must be done programatically from the bottom up or by nuking all subcontainer relationships and then nuking all containers
 FK_CohortAggregateContainer_AggregateConfiguration_AggregateConfiguration:Prevents deleting an AggregateConfiguration which is part of a CohortIdentificationConfiguration in CohortManager
-FK_ANOTable_ExternalDatabaseServer:Prevents deleting an ExternalDatabaseServer that configured as an ANOTable endpoint i.e. the server contains anonymous/identifiable DLE value substitutions so deleting it would result in unreachable data and orphan ANOTables
+FK_ANOTable_ExternalDatabaseServer:Prevents deleting an ExternalDatabaseServer that is configured as an ANOTable endpoint i.e. the server contains anonymous/identifiable DLE value substitutions so deleting it would result in unreachable data and orphan ANOTables
 FK_AggregateConfiguration_AggregateDimension: Prevents you deleting the AggregateDimension that is configured as the pivot column of it's parent AggregateConfiguration
 FK_GovernanceDocument_GovernancePeriod:Prevents you deleting GovernancePeriods which have one or more GovernanceDocument configured on them.
 FK_GovernancePeriod_Catalogue_GovernancePeriod:Prevents you deleting GovernancePeriods which are configured to provide Governance for one or more Catalogues

@@ -27,7 +27,7 @@ namespace CatalogueLibrary.Data.Serialization
         public static object DeserializeObject(string value, Type type,IRDMPPlatformRepositoryServiceLocator repositoryLocator, params object[] objectsForConstructingStuffWith)
         {
             var databaseEntityJsonConverter = new DatabaseEntityJsonConverter(repositoryLocator);
-            var lazyJsonConverter = new LazyConstructorsJsonConverter(new[] {repositoryLocator}.Union(objectsForConstructingStuffWith).ToArray());
+            var lazyJsonConverter = new PickAnyConstructorJsonConverter(new[] {repositoryLocator}.Union(objectsForConstructingStuffWith).ToArray());
 
             var settings = new JsonSerializerSettings
             {
