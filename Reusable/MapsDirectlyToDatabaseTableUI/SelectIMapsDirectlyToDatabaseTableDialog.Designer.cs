@@ -30,47 +30,55 @@ namespace MapsDirectlyToDatabaseTableUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.listBox1 = new BrightIdeasSoftware.ObjectListView();
+            this.components = new System.ComponentModel.Container();
+            this.olvObjects = new BrightIdeasSoftware.ObjectListView();
             this.olvID = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvSelected = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelect = new System.Windows.Forms.Button();
             this.btnSelectNULL = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.listBox1)).BeginInit();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.olvObjects)).BeginInit();
             this.SuspendLayout();
             // 
-            // listBox1
+            // olvObjects
             // 
-            this.listBox1.AllColumns.Add(this.olvID);
-            this.listBox1.AllColumns.Add(this.olvName);
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.olvObjects.AllColumns.Add(this.olvID);
+            this.olvObjects.AllColumns.Add(this.olvSelected);
+            this.olvObjects.AllColumns.Add(this.olvName);
+            this.olvObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBox1.CellEditUseWholeCell = false;
-            this.listBox1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvObjects.CellEditUseWholeCell = false;
+            this.olvObjects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvID,
+            this.olvSelected,
             this.olvName});
-            this.listBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.listBox1.FullRowSelect = true;
-            this.listBox1.Location = new System.Drawing.Point(2, 12);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.ShowGroups = false;
-            this.listBox1.Size = new System.Drawing.Size(273, 381);
-            this.listBox1.TabIndex = 1;
-            this.listBox1.UseCompatibleStateImageBehavior = false;
-            this.listBox1.UseFiltering = true;
-            this.listBox1.View = System.Windows.Forms.View.Details;
-            this.listBox1.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listBox1_CellClick);
-            this.listBox1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listBox1_ItemChecked);
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            this.listBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
+            this.olvObjects.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvObjects.FullRowSelect = true;
+            this.olvObjects.Location = new System.Drawing.Point(2, 12);
+            this.olvObjects.Name = "olvObjects";
+            this.olvObjects.ShowGroups = false;
+            this.olvObjects.Size = new System.Drawing.Size(273, 381);
+            this.olvObjects.TabIndex = 1;
+            this.olvObjects.UseCompatibleStateImageBehavior = false;
+            this.olvObjects.UseFiltering = true;
+            this.olvObjects.View = System.Windows.Forms.View.Details;
+            this.olvObjects.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listBox1_CellClick);
+            this.olvObjects.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.olvObjects.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
             // 
             // olvID
             // 
             this.olvID.AspectName = "ID";
             this.olvID.Text = "ID";
+            // 
+            // olvSelected
+            // 
+            this.olvSelected.Text = "Selected";
             // 
             // olvName
             // 
@@ -136,6 +144,12 @@ namespace MapsDirectlyToDatabaseTableUI
             this.label1.TabIndex = 3;
             this.label1.Text = "Filter:";
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 200;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // SelectIMapsDirectlyToDatabaseTableDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -146,12 +160,12 @@ namespace MapsDirectlyToDatabaseTableUI
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSelectNULL);
             this.Controls.Add(this.btnSelect);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.olvObjects);
             this.Name = "SelectIMapsDirectlyToDatabaseTableDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SelectIMapsDirectlyToTableDialog";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SelectIMapsDirectlyToDatabaseTableDialog_KeyUp);
-            ((System.ComponentModel.ISupportInitialize)(this.listBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.olvObjects)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -166,6 +180,8 @@ namespace MapsDirectlyToDatabaseTableUI
         private System.Windows.Forms.Label label1;
         private OLVColumn olvName;
         private OLVColumn olvID;
-        private ObjectListView listBox1;
+        private ObjectListView olvObjects;
+        private OLVColumn olvSelected;
+        private System.Windows.Forms.Timer timer1;
     }
 }

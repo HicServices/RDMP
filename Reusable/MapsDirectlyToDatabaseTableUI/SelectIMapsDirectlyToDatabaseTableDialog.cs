@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableUIComponents;
@@ -38,7 +39,7 @@ namespace MapsDirectlyToDatabaseTableUI
             if (ImageGetter != null)
             {
                 olvName.ImageGetter = (model) => ImageGetter(model);
-                listBox1.RowHeight = 19;
+                olvObjects.RowHeight = 19;
             }
 
             if (toSelectFrom == null)
@@ -54,44 +55,61 @@ namespace MapsDirectlyToDatabaseTableUI
             }
 
             //default to not allowing multi selection
-            listBox1.MultiSelect = false;
-
+            olvObjects.MultiSelect = false;
             btnSelect.Enabled = false;
 
             //Array them
             var o = toSelectFrom.ToArray();
             
             //Add them to the tree view
-            listBox1.AddObjects(o);
+            olvObjects.AddObjects(o);
 
 
             //If there were any
             if(o.Any())
             {
                 //Set Width of the Form to accommodate all names no matter how long
-                var pixelWidthofWidestText = o.Max(s =>TextRenderer.MeasureText( s.ToString(),listBox1.Font).Width);
+                var pixelWidthofWidestText = o.Max(s =>TextRenderer.MeasureText( s.ToString(),olvObjects.Font).Width);
 
                 //But don't make it too small (smaller than the form designer shows or larger than 1000 pixels)
                 this.Width = Math.Min(Math.Max(Width,100 + pixelWidthofWidestText),1000);
             }
 
             AddUsefulPropertiesIfHomogeneousTypes(o);
-            listBox1.CustomSorter += CustomSorter;
 
-            try
-            {
-                listBox1.Sort(olvID,SortOrder.Descending);
-            }
-            catch (Exception e)
-            {
-                //Previous value extraction failed, ah well nevermind eh
-                Console.WriteLine(e);
-            }
+            olvSelected.CheckBoxes = true;
+            olvSelected.AspectGetter += Selected_AspectGetter;
+            olvSelected.AspectPutter += Selected_AspectPutter;
+            olvSelected.IsVisible = false;
+
+            olvObjects.RebuildColumns();
+            
+            MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>();
         }
 
-        private void CustomSorter(OLVColumn column, SortOrder sortOrder)
+        private bool buildGroupsRequired = false;
+
+        private void Selected_AspectPutter(object rowobject, object newvalue)
         {
-            listBox1.ListViewItemSorter = new CheckedObjectsFirstComparer(listBox1,column,sortOrder);
+            var b = (bool) newvalue;
+            if (b)
+                MultiSelected.Add((IMapsDirectlyToDatabaseTable) rowobject);
+            else
+                MultiSelected.Remove((IMapsDirectlyToDatabaseTable) rowobject);
+            
+            //olvObjects.BuildGroups();
+            buildGroupsRequired = true;
+
+            UpdateButtonEnabledness();
+        }
+
+        
+        private object Selected_AspectGetter(object rowObject)
+        {
+            if (!AllowMultiSelect)
+                return null;
+
+            return MultiSelected.Contains(rowObject);
         }
 
         private void AddUsefulPropertiesIfHomogeneousTypes(IMapsDirectlyToDatabaseTable[] mapsDirectlyToDatabaseTables)
@@ -112,7 +130,7 @@ namespace MapsDirectlyToDatabaseTableUI
                     {
                         //add a column
                         var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
-                        listBox1.AllColumns.Add(newCol);
+                        olvObjects.AllColumns.Add(newCol);
                         addedColumns = true;
                     }
                 }
@@ -122,12 +140,12 @@ namespace MapsDirectlyToDatabaseTableUI
                 //they are all different types!
                 var newCol = new OLVColumn( "Type",null);
                 newCol.AspectGetter += TypeAspectGetter;
-                listBox1.AllColumns.Add(newCol);
+                olvObjects.AllColumns.Add(newCol);
                 addedColumns = true;
             }
 
             if (addedColumns)
-                listBox1.RebuildColumns();
+                olvObjects.RebuildColumns();
         }
 
         private object TypeAspectGetter(object rowObject)
@@ -135,24 +153,38 @@ namespace MapsDirectlyToDatabaseTableUI
             return rowObject.GetType().Name;
         }
 
-        public IEnumerable<IMapsDirectlyToDatabaseTable> MultiSelected { get; set; }
+        public HashSet<IMapsDirectlyToDatabaseTable> MultiSelected { get; private set; }
 
         public bool AllowMultiSelect
         {
-            get { return listBox1.MultiSelect; }
+            get { return olvObjects.MultiSelect; }
             set
             {
-                listBox1.MultiSelect = value;
-                listBox1.CheckBoxes = value;
+                olvObjects.MultiSelect = value;
+                olvSelected.IsVisible = value;
+
+                if (value)
+                {
+                    olvObjects.ShowGroups = true;
+                    olvObjects.AlwaysGroupByColumn = olvSelected;
+                    olvObjects.AlwaysGroupBySortOrder = SortOrder.Descending;
+                    
+                }
+                else
+                {
+
+                    olvObjects.AlwaysGroupByColumn = null;
+                    olvObjects.ShowGroups = false;
+                }
+
+                olvObjects.RebuildColumns();
             }
         }
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            if (AllowMultiSelect)
-                MultiSelected = listBox1.CheckedObjects.Cast<IMapsDirectlyToDatabaseTable>();
-            else
-                Selected = (IMapsDirectlyToDatabaseTable) listBox1.SelectedObject;
+            if (!AllowMultiSelect)
+                Selected = (IMapsDirectlyToDatabaseTable) olvObjects.SelectedObject;
 
             DialogResult = DialogResult.OK;
             this.Close();
@@ -182,9 +214,9 @@ namespace MapsDirectlyToDatabaseTableUI
         private void UpdateButtonEnabledness()
         {
             if (AllowMultiSelect)
-                btnSelect.Enabled = listBox1.CheckedObjects.Cast<IMapsDirectlyToDatabaseTable>().Any();
+                btnSelect.Enabled = MultiSelected.Any();
             else
-                btnSelect.Enabled = listBox1.SelectedObject != null;
+                btnSelect.Enabled = olvObjects.SelectedObject != null;
         }
 
         private void SelectIMapsDirectlyToDatabaseTableDialog_KeyUp(object sender, KeyEventArgs e)
@@ -198,7 +230,7 @@ namespace MapsDirectlyToDatabaseTableUI
 
         private void listBox1_KeyUp(object sender, KeyEventArgs e)
         {
-            var deletable = listBox1.SelectedObject as IDeleteable;
+            var deletable = olvObjects.SelectedObject as IDeleteable;
             if (e.KeyCode == Keys.Delete && _allowDeleting && deletable != null)
             {
                 if(MessageBox.Show("Confirm deleting " + deletable,"Really delete?",MessageBoxButtons.YesNoCancel)== DialogResult.Yes)
@@ -206,7 +238,7 @@ namespace MapsDirectlyToDatabaseTableUI
                     try
                     {
                         deletable.DeleteInDatabase();
-                        listBox1.RemoveObject(deletable);
+                        olvObjects.RemoveObject(deletable);
                     }
                     catch (Exception exception)
                     {
@@ -215,16 +247,29 @@ namespace MapsDirectlyToDatabaseTableUI
                 }
             }
 
-            if (e.KeyCode == Keys.Enter && listBox1.SelectedObject != null)
+            if (e.KeyCode == Keys.Enter && olvObjects.SelectedObject != null)
             {
                 DialogResult = DialogResult.OK;
-                Selected =  listBox1.SelectedObject as IMapsDirectlyToDatabaseTable;
+                Selected =  olvObjects.SelectedObject as IMapsDirectlyToDatabaseTable;
 
                 if (Selected == null)
                     return;
 
-                MultiSelected = new[] { Selected };
+                MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>(new []{ Selected });
                 this.Close();
+            }
+
+            //space flips the selectedness of the objects that are selected
+            if (e.KeyCode == Keys.Space && AllowMultiSelect && olvObjects.SelectedObjects != null)
+            {
+                foreach (IMapsDirectlyToDatabaseTable o in olvObjects.SelectedObjects)
+                {
+                    if (MultiSelected.Contains(o))
+                        MultiSelected.Remove(o);
+                    else
+                        MultiSelected.Add(o);
+                }
+                olvObjects.RebuildColumns();
             }
 
         }
@@ -232,25 +277,15 @@ namespace MapsDirectlyToDatabaseTableUI
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            listBox1.ModelFilter = new TextMatchFilterWithWhiteList(GetCheckedItems(),listBox1,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
+            olvObjects.ModelFilter = new TextMatchFilterWithWhiteList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
         }
-
-        private IEnumerable<object> GetCheckedItems()
-        {
-            if (!AllowMultiSelect)
-                yield break;
-
-            foreach (var checkedObject in listBox1.CheckedObjects)
-                yield return checkedObject;
-        }
-
-
+        
         private void tbFilter_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
-                if (!listBox1.Focused)
+                if (!olvObjects.Focused)
                 {
-                    listBox1.Focus();
+                    olvObjects.Focus();
                     SendKeys.Send(e.KeyCode == Keys.Up ? "{UP}":"{DOWN}");
                 }
         }
@@ -261,17 +296,16 @@ namespace MapsDirectlyToDatabaseTableUI
                 e.SuppressKeyPress = true;
         }
 
-
         private void listBox1_CellClick(object sender, CellClickEventArgs e)
         {
             if (e.ClickCount >= 2)
             {
-                Selected = listBox1.SelectedObject as IMapsDirectlyToDatabaseTable;
+                Selected = olvObjects.SelectedObject as IMapsDirectlyToDatabaseTable;
 
                 if (Selected == null)
                     return;
 
-                MultiSelected = new[] { Selected };
+                MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>(new[] { Selected });
                 DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -291,42 +325,13 @@ namespace MapsDirectlyToDatabaseTableUI
             return default(T);
         }
 
-        private void listBox1_ItemChecked(object sender, ItemCheckedEventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
-            UpdateButtonEnabledness();
-            listBox1.Sort();
-        }
-    }
-
-    internal class CheckedObjectsFirstComparer : IComparer
-    {
-        private readonly ObjectListView _olvList;
-        private ColumnComparer _columnCompare;
-
-        public CheckedObjectsFirstComparer(ObjectListView olvList, OLVColumn column, SortOrder sortOrder)
-        {
-            _olvList = olvList;
-            _columnCompare = new ColumnComparer(column, sortOrder);
-        }
-
-        public int Compare(object x, object y)
-        {
-            var xRowObject = ((OLVListItem)x).RowObject;
-            var yRowObject = ((OLVListItem)y).RowObject;
-
-            var xChecked = _olvList.IsChecked(xRowObject);
-            var yChecked = _olvList.IsChecked(yRowObject);
-
-            if (xChecked && yChecked)
-                return _columnCompare.Compare(x, y);
-
-            if (xChecked)
-                return -1;
-            
-            if (yChecked)
-                return 1;
-
-            return _columnCompare.Compare(x, y);
+            if (buildGroupsRequired)
+            {
+                buildGroupsRequired = false;
+                olvObjects.BuildGroups();
+            }
         }
     }
 }
