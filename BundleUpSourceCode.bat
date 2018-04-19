@@ -12,4 +12,4 @@ call "%ProgramFiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 goto buildDocumentationCache
 
 :buildDocumentationCache
-msbuild HIC.DataManagementPlatform.sln /t:Reusable\BundleUpSourceIntoZip:Rebuild /p:Configuration="Debug" /p:Platform="Any CPU"
+msbuild HIC.DataManagementPlatform.sln /t:Tools\BundleUpSourceIntoZip:Rebuild /p:Configuration="Debug" /p:Platform="Any CPU"

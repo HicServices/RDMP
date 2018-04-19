@@ -135,6 +135,14 @@
       <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
       <Name>Tests.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj">
+      <Project>{3abb76cf-1be8-4eef-9a57-c925c3c98abe}</Project>
+      <Name>DatabaseCreation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\Tests\RDMPAutomationServiceTests\RDMPAutomationServiceTests.csproj">
+      <Project>{33cdfc10-6e3a-44c1-b29c-caf77d846421}</Project>
+      <Name>RDMPAutomationServiceTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
       <Name>HIC.Common.Validation</Name>

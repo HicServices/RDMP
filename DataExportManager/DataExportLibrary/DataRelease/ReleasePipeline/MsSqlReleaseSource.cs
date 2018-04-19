@@ -40,7 +40,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 firstTime = false;
                 DirectoryInfo sourceFolder = GetSourceFolder();
                 Debug.Assert(sourceFolder != null, "sourceFolder != null");
-                var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.OtherDataFolderName);
+                var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
 
                 var releaseAudit = new ReleaseAudit()
                 {
@@ -135,7 +135,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             DirectoryInfo sourceFolder = GetSourceFolder();
-            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.OtherDataFolderName);
+            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
 
             var databaseName = _database.GetRuntimeName();
 
