@@ -37,18 +37,24 @@ namespace CatalogueLibrary.Data.Cohort
         private string _value;
         private string _comment;
 
+        /// <summary>
+        /// The ID of the parent object table in <see cref="ParentTable"/> which the parameter is declared against.
+        /// </summary>
         public int Parent_ID
         {
             get { return _parentID; }
             set { SetField(ref  _parentID, value); }
         }
-
+        /// <summary>
+        /// The name of the table in which the parent object declaring this parameter resides (See <see cref="Parent_ID"/>).
+        /// </summary>
         public string ParentTable
         {
             get { return _parentTable; }
             set { SetField(ref  _parentTable, value); }
         }
-
+        
+        /// <inheritdoc/>
         [Sql]
         public string ParameterSQL
         {
@@ -56,6 +62,7 @@ namespace CatalogueLibrary.Data.Cohort
             set { SetField(ref  _parameterSQL, value); }
         }
 
+        /// <inheritdoc/>
         [Sql]
         public string Value
         {
@@ -63,6 +70,7 @@ namespace CatalogueLibrary.Data.Cohort
             set { SetField(ref  _value, value); }
         }
 
+        /// <inheritdoc/>
         public string Comment
         {
             get { return _comment; }
@@ -72,13 +80,21 @@ namespace CatalogueLibrary.Data.Cohort
 
         #endregion
 
-
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public string ParameterName
         {
             get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
+        /// <summary>
+        /// Declares that a new <see cref="ISqlParameter"/> (e.g. 'DECLARE @bob as varchar(10)') exists for the parent database object.  The object
+        /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="ISqlQueryBuilder"/>
+        /// then the parameter will be used 
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
+        /// <param name="parameterSQL"></param>
         public AnyTableSqlParameter(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable parent, string parameterSQL)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -99,16 +115,19 @@ namespace CatalogueLibrary.Data.Cohort
             Comment = r["Comment"] as string;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return ParameterName;
         }
 
+        /// <inheritdoc cref="ParameterSyntaxChecker"/>
         public void Check(ICheckNotifier notifier)
         {
             new ParameterSyntaxChecker(this).Check(notifier);
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
@@ -119,11 +138,24 @@ namespace CatalogueLibrary.Data.Cohort
             return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
         }
 
+        /// <summary>
+        /// Returns true if the Type (which should implement <see cref="IMapsDirectlyToDatabaseTable"/>) is one which is designed to store it's <see cref="ISqlParameter"/>
+        /// in this table.  Only supported objects will have parameters sought here by <see cref="ISqlQueryBuilder"/>s.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <seealso cref="DescribeUseCaseForParent"/>
         public static bool IsSupportedType(Type type)
         {
             return DescribeUseCaseForParent(type) != null;
         }
 
+        /// <summary>
+        /// Describes how the <see cref="ISqlParameter"/>s declared in this table will be used with parents of the supplied Type (See <see cref="ParentTable"/>).
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <seealso cref="IsSupportedType"/>
         public static string DescribeUseCaseForParent(Type type)
         {
             if (type == typeof(CohortIdentificationConfiguration))
@@ -138,6 +170,10 @@ namespace CatalogueLibrary.Data.Cohort
             return null;
         }
 
+        /// <summary>
+        /// Returns the parent object that declares this paramter (see <see cref="Parent_ID"/> and <see cref="ParentTable"/>)
+        /// </summary>
+        /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             var type = typeof (Catalogue).Assembly.GetTypes().Single(t=>t.Name.Equals(ParentTable));
@@ -160,6 +196,11 @@ namespace CatalogueLibrary.Data.Cohort
             return new IHasDependencies[0];
         }
 
+        /// <summary>
+        /// Returns true if the <see cref="databaseEntity"/> supplied is the same as the one that this references (see <see cref="Parent_ID"/> and <see cref="ParentTable"/>)
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
         public bool BelongsTo(DatabaseEntity databaseEntity)
         {
             return ParentTable.Equals(databaseEntity.GetType().Name) && Parent_ID == databaseEntity.ID;

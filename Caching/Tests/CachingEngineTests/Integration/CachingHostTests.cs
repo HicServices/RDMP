@@ -32,7 +32,7 @@ namespace CachingEngineTests.Integration
             loadProgress.LockedBecauseRunning = false;
             loadProgress.IsDisabled = false;
 
-            cacheProgress.Stub(progress => progress.GetLoadProgress()).Return(loadProgress);
+            cacheProgress.Stub(progress => progress.LoadProgress).Return(loadProgress);
 
             return cacheProgress;
         }
@@ -60,15 +60,15 @@ namespace CachingEngineTests.Integration
             var cacheProgress = CreateCacheProgressStubWithUnlockedLoadProgress();
             cacheProgress.CacheFillProgress = DateTime.Now.AddDays(-1);
             cacheProgress.PermissionWindow_ID = 1;
-            cacheProgress.GetLoadProgress().Stub(schedule => schedule.GetLoadMetadata()).Return(loadMetadata);
+            cacheProgress.LoadProgress.Stub(schedule => schedule.LoadMetadata).Return(loadMetadata);
 
             var permissionWindow = MockRepository.GenerateStub<IPermissionWindow>();
             permissionWindow.RequiresSynchronousAccess = true;
             permissionWindow.ID = 1;
             permissionWindow.Name = "Test Permission Window";
-            permissionWindow.Stub(window => window.CurrentlyWithinPermissionWindow()).Return(false);
+            permissionWindow.Stub(window => window.WithinPermissionWindow()).Return(false);
 
-            cacheProgress.Stub(progress => progress.GetPermissionWindow()).Return(permissionWindow);
+            cacheProgress.Stub(progress => progress.PermissionWindow).Return(permissionWindow);
 
             var dataFlowPipelineEngine = MockRepository.GenerateMock<IDataFlowPipelineEngine>();
 

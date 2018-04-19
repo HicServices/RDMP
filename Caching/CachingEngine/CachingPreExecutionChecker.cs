@@ -24,11 +24,11 @@ namespace CachingEngine
     /// </summary>
     public class CachingPreExecutionChecker : ICheckable
     {
-        private readonly CacheProgress _cacheProgress;
+        private readonly ICacheProgress _cacheProgress;
         private CatalogueRepository _repository;
 
 
-        public CachingPreExecutionChecker(CacheProgress cacheProgress)
+        public CachingPreExecutionChecker(ICacheProgress cacheProgress)
         {
             _cacheProgress = cacheProgress;
             _repository = (CatalogueRepository) _cacheProgress.Repository;
@@ -67,7 +67,7 @@ namespace CachingEngine
                             CheckResult.Fail));
 
                 if (_cacheProgress.PermissionWindow_ID != null &&
-                    !_cacheProgress.PermissionWindow.TimeIsWithinPermissionWindow(DateTime.UtcNow))
+                    !_cacheProgress.PermissionWindow.WithinPermissionWindow(DateTime.UtcNow))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Current time is " + DateTime.UtcNow +

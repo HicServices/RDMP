@@ -75,7 +75,7 @@ namespace CachingEngine.Factories
             _catalogueRepository = (ICatalogueRepository)_cacheProgress.Repository;
 
             // Get the HICProjectDirectory for the engine initialization
-            var lmd = _cacheProgress.GetLoadProgress().GetLoadMetadata();
+            var lmd = _cacheProgress.LoadProgress.LoadMetadata;
 
             if (string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
                 if (throwIfNoPipeline)

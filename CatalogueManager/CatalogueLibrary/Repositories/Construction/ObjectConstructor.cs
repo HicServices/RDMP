@@ -21,23 +21,50 @@ namespace CatalogueLibrary.Repositories.Construction
     {
         private readonly static BindingFlags BindingFlags = BindingFlags.Instance  | BindingFlags.Public| BindingFlags.NonPublic;
 
+        /// <summary>
+        /// Constructs a new instance of Type t using the blank constructor
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public object Construct(Type t)
         {
             return GetUsingBlankConstructor(t);
         }
 
         #region permissable constructor signatures for use with this class
+
+        /// <summary>
+        /// Constructs a new instance of Type t using the default constructor or one that takes an IRDMPPlatformRepositoryServiceLocator (or any derrived class)
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="serviceLocator"></param>
+        /// <param name="allowBlank"></param>
+        /// <returns></returns>
         public object Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator,bool allowBlank = true)
         {
             return Construct<IRDMPPlatformRepositoryServiceLocator>(t,serviceLocator, allowBlank);
         }
 
+        /// <summary>
+        /// Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any derrived class)
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="catalogueRepository"></param>
+        /// <param name="allowBlank"></param>
+        /// <returns></returns>
         public object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true)
         {
             return Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
         }
 
-
+        /// <summary>
+        /// Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r) (See <see cref="CatalogueLibrary.Data.DatabaseEntity"/>).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objectType"></param>
+        /// <param name="repositoryOfTypeT"></param>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public IMapsDirectlyToDatabaseTable ConstructIMapsDirectlyToDatabaseObject<T>(Type objectType, T repositoryOfTypeT, DbDataReader reader) where T : IRepository
         {
             // Preferred constructor
@@ -249,11 +276,24 @@ namespace CatalogueLibrary.Repositories.Construction
             return (blankConstructor.Invoke(new object[0]));
         }
 
+        /// <summary>
+        /// Returns true if the Type has a blank constructor
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
         public bool HasBlankConstructor(Type arg)
         {
             return arg.GetConstructor(Type.EmptyTypes) != null;
         }
 
+        /// <summary>
+        /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
+        /// so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).  
+        /// <para>Throws <see cref="ObjectLacksCompatibleConstructorException"/> if there is no clear single constructor to use</para>
+        /// </summary>
+        /// <param name="typeToConstruct"></param>
+        /// <param name="constructorValues"></param>
+        /// <returns></returns>
         public object ConstructIfPossible(Type typeToConstruct, params object[] constructorValues)
         {
             List<ConstructorInfo> compatible = new List<ConstructorInfo>();

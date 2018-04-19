@@ -11,11 +11,7 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
-    /// <summary>
-    /// Describes a period of time in which a given act can take place (e.g. only cache data from the MRI imaging web service during the hours of 11pm - 5am so as not to 
-    /// disrupt routine hospital use).  Also serves as a Locking point for job control.  Once an IPermissionWindow is in use by a process (e.g. Caching Pipeline) then it
-    /// is not available to other processes (e.g. loading or other caching pipelines that share the same IPermissionWindow).
-    /// </summary>
+    /// <inheritdoc/>
     public class PermissionWindow : VersionedDatabaseEntity, IPermissionWindow, ILockable
     {
         #region Database Properties
@@ -70,7 +66,7 @@ namespace CatalogueLibrary.Data
         #region Relationships
 
         [NoMappingToDatabase]
-        public IEnumerable<CacheProgress> CacheProgresses {
+        public IEnumerable<ICacheProgress> CacheProgresses {
             get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
         }
         #endregion
@@ -99,16 +95,17 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        public bool CurrentlyWithinPermissionWindow()
+        public bool WithinPermissionWindow()
         {
             if (!PermissionWindowPeriods.Any())
                 return true;
 
-            return TimeIsWithinPermissionWindow(DateTime.UtcNow);
+            return WithinPermissionWindow(DateTime.UtcNow);
         }
-        
-        public virtual bool TimeIsWithinPermissionWindow(DateTime dateTimeUTC)
+
+        public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
         {
+            
             if (!PermissionWindowPeriods.Any())
                 return true;
 
@@ -147,11 +144,6 @@ namespace CatalogueLibrary.Data
             return (string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name) + "(ID = " + ID + ")";
         }
         
-        public IEnumerable<ICacheProgress> GetAllCacheProgresses()
-        {
-            return CacheProgresses;
-        }
-
         public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
         {
             PermissionWindowPeriods = windowPeriods;

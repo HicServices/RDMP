@@ -37,7 +37,7 @@ namespace DataLoadEngine.Job.Scheduling
 
         {
             _typeToCreate =
-                strategy.GetAllLoadProgresses(false).Any(p => p.GetCacheProgress() != null)//if any of the strategies you plan to use (without locking btw) have a cache progress
+                strategy.GetAllLoadProgresses(false).Any(p => p.CacheProgress != null)//if any of the strategies you plan to use (without locking btw) have a cache progress
                 ? typeof (SingleScheduleCacheDateTrackingStrategy) //then we should use a cache progress based strategy
                 : typeof (SingleScheduleConsecutiveDateStrategy);//otherwise we should probably use consecutive days strategy;
         }
@@ -47,7 +47,7 @@ namespace DataLoadEngine.Job.Scheduling
             if (_typeToCreate == typeof(SingleScheduleConsecutiveDateStrategy))
                 return new SingleScheduleConsecutiveDateStrategy(loadProgress);
 
-            var loadMetadata = loadProgress.GetLoadMetadata();
+            var loadMetadata = loadProgress.LoadMetadata;
             
             if (_typeToCreate == typeof(SingleScheduleCacheDateTrackingStrategy))
                 return new SingleScheduleCacheDateTrackingStrategy(CreateCacheLayout(loadProgress, loadMetadata, listener), loadProgress,listener);
@@ -59,7 +59,7 @@ namespace DataLoadEngine.Job.Scheduling
         {
             AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks);
 
-            var cp = loadProgress.GetCacheProgress();
+            var cp = loadProgress.CacheProgress;
 
             var factory = new CachingPipelineUseCase(cp);
             var destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());

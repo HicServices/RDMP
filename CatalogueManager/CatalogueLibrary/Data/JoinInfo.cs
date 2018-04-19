@@ -38,8 +38,19 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public enum ExtractionJoinType
     {
+        /// <summary>
+        /// All records from the table on the left and any matching ones from the table on the right (otherwise null for those fields)
+        /// </summary>
         Left,
+
+        /// <summary>
+        /// All records from the table on the right and any matching ones from the table on the left (otherwise null for those fields)
+        /// </summary>
         Right,
+
+        /// <summary>
+        /// Only records where the primary/foreign keys match exactly between both tables (the right and the left)
+        /// </summary>
         Inner
     }
     

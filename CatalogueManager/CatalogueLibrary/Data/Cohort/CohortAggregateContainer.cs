@@ -28,18 +28,31 @@ namespace CatalogueLibrary.Data.Cohort
         private string _name;
         private int _order;
 
+        /// <summary>
+        /// Describes how patient identifier sets identified by children (subcontainers and <see cref="AggregateConfiguration"/>s) in this container are combined using
+        /// SQL operations (UNION / INTERSECT / EXCEPT).
+        /// </summary>
         public SetOperation Operation
         {
             get { return _operation; }
             set { SetField(ref  _operation, value); }
         }
 
+        /// <inheritdoc/>
+        /// <remarks>Starts out as simply the name of the <see cref="Operation"/> but can be changed by the user e.g. 'EXCEPT - Study Exclusion Criteria
+        /// <para>This property should always start with the <see cref="Operation"/> to avoid confusion</para>
+        /// </remarks>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// The order within the parent <see cref="CohortAggregateContainer"/> (if it is not a Root level container / orphan).  Symantically this position is relevant only for
+        /// the <see cref="SetOperation.EXCEPT"/> which takes the first set and throws out all subsequent sets.
+        /// <remarks>Also affects the order of IncludeCumulativeTotals</remarks>
+        /// </summary>
         public int Order
         {
             get { return _order; }
@@ -58,6 +71,13 @@ namespace CatalogueLibrary.Data.Cohort
             Name = r["Name"].ToString();
         }
 
+        /// <summary>
+        /// Creates a new container (which starts out as an oprhan) with the given <see cref="SetOperation"/>.  You should either set a
+        ///  <see cref="CohortIdentificationConfiguration.RootCohortAggregateContainer_ID"/> to this.<see cref="ID"/> to make this container the root container
+        /// or use <see cref="AddChild(CohortAggregateContainer)"/>  on another container to make this a subcontainer of it.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="operation"></param>
         public CohortAggregateContainer(ICatalogueRepository repository, SetOperation operation)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -67,6 +87,12 @@ namespace CatalogueLibrary.Data.Cohort
                 {"Name", operation.ToString()}
             });
         }
+
+        /// <summary>
+        /// Gets all the subcontainers of the current container (if any)
+        /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
+        /// </summary>
+        /// <returns></returns>
         public CohortAggregateContainer[] GetSubContainers()
         {
             return Repository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ChildID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ParentID=@CohortAggregateContainer_ParentID", 
@@ -77,6 +103,10 @@ namespace CatalogueLibrary.Data.Cohort
                 }).ToArray();
         }
 
+        /// <summary>
+        /// Gets the parent container of the current container (if it is not a root / orphan container)
+        /// </summary>
+        /// <returns></returns>
         public CohortAggregateContainer GetParentContainerIfAny()
         {
             return Repository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ParentID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ChildID=@CohortAggregateContainer_ChildID",
@@ -87,6 +117,12 @@ namespace CatalogueLibrary.Data.Cohort
                 }).SingleOrDefault();
         }
 
+        /// <summary>
+        /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in 
+        /// order defined by <see cref="IOrderable.Order"/> and can be interspersed with subcontainers (<see cref="GetSubContainers"/>).
+        /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
+        /// </summary>
+        /// <returns></returns>
         public AggregateConfiguration[] GetAggregateConfigurations()
         {
             return Repository.SelectAll<AggregateConfiguration>("SELECT AggregateConfiguration_ID FROM CohortAggregateContainer_AggregateConfiguration where CohortAggregateContainer_ID=" + ID).OrderBy(config=>config.Order).ToArray();
@@ -112,6 +148,11 @@ namespace CatalogueLibrary.Data.Cohort
         }
 
 
+        /// <summary>
+        /// Removes the given <see cref="AggregateConfiguration"/> from this container if it is an immediate child.
+        /// <para>Has no effect if if the <see cref="AggregateConfiguration"/> is not an immediate child</para>
+        /// </summary>
+        /// <param name="configuration"></param>
         public void RemoveChild(AggregateConfiguration configuration)
         {
             Repository.Delete("DELETE FROM CohortAggregateContainer_AggregateConfiguration WHERE CohortAggregateContainer_ID = @CohortAggregateContainer_ID AND AggregateConfiguration_ID = @AggregateConfiguration_ID", new Dictionary<string, object>
@@ -146,6 +187,10 @@ namespace CatalogueLibrary.Data.Cohort
             });
         }
 
+        /// <summary>
+        /// Makes the other <see cref="CohortAggregateContainer"/> into a subcontainer of this container
+        /// </summary>
+        /// <param name="child"></param>
         public void AddChild(CohortAggregateContainer child)
         {
             Repository.Insert("INSERT INTO CohortAggregateSubContainer(CohortAggregateContainer_ParentID,CohortAggregateContainer_ChildID) VALUES (@CohortAggregateContainer_ParentID, @CohortAggregateContainer_ChildID)", new Dictionary<string, object>
@@ -155,6 +200,8 @@ namespace CatalogueLibrary.Data.Cohort
             });
         }
 
+        /// <inheritdoc/>
+        /// <remarks>Also deletes subcontainers to avoid leaving orphans in the database</remarks>
         public override void DeleteInDatabase()
         {
             var children = GetSubContainers();
@@ -167,6 +214,7 @@ namespace CatalogueLibrary.Data.Cohort
             base.DeleteInDatabase();
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
@@ -190,6 +238,11 @@ namespace CatalogueLibrary.Data.Cohort
             return potentialChild.ID == this.ID || foundChildThroughRecursion;
         }
 
+        /// <summary>
+        /// Returns true if the supplied <seealso cref="AggregateConfiguration"/> is a child of this container or any of it's subcontainers (recursively)
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public bool HasChild(AggregateConfiguration configuration)
         {
             bool foundChildThroughRecursion = false;
@@ -205,6 +258,10 @@ namespace CatalogueLibrary.Data.Cohort
             || foundChildThroughRecursion;//no but a child had it
         }
 
+        /// <summary>
+        /// Returns all subcontainers and identifier sets (<see cref="AggregateConfiguration"/>) of this container in order (See <see cref="Order"/>)
+        /// </summary>
+        /// <returns></returns>
         public IOrderedEnumerable<IOrderable> GetOrderedContents()
         {
             List<IOrderable> toReturn = new List<IOrderable>();
@@ -212,9 +269,12 @@ namespace CatalogueLibrary.Data.Cohort
             toReturn.AddRange(GetAggregateConfigurations());
 
             return toReturn.OrderBy(o => o.Order);
-
         }
 
+        /// <summary>
+        /// Returns all <see cref="AggregateConfiguration"/> identifier sets in this container or any subcontainers
+        /// </summary>
+        /// <returns></returns>
         public List<AggregateConfiguration> GetAllAggregateConfigurationsRecursively()
         {
             var toReturn = new List<AggregateConfiguration>();
@@ -279,8 +339,9 @@ namespace CatalogueLibrary.Data.Cohort
                         cloneJoinUse.JoinType = j.JoinType;
                         cloneJoinUse.SaveToDatabase();
 
-                        //Now! (brace yourself).  Some the filters in the AggregateConfiguration we just cloned might reference a table called ix2934 or whetever, this is the Joinable we need to 
-                        //do a replace to point them at the correct ix number (although if they are good users they will have aliased any patient index columns anyway)
+                        //Now! (brace yourself).  Some the filters in the AggregateConfiguration we just cloned might reference a table called ix2934 or whetever, this
+                        //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any 
+                        //patient index columns anyway)
                         if (configClone.RootFilterContainer_ID != null)
                         {
                             foreach (var clonedFilter in SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(configClone.RootFilterContainer))
@@ -310,6 +371,12 @@ namespace CatalogueLibrary.Data.Cohort
             return cloneContainer;
         }
 
+        /// <summary>
+        /// Returns the <see cref="CohortIdentificationConfiguration"/> that this container is a part of either as a root container or contained with in a subcontainer of
+        /// the root container.
+        /// <para>Returns null if the container is an orphan</para>
+        /// </summary>
+        /// <returns></returns>
         public CohortIdentificationConfiguration GetCohortIdentificationConfiguration()
         {
             var candidates = Repository.GetAllObjects<CohortIdentificationConfiguration>().ToArray();
@@ -333,6 +400,13 @@ namespace CatalogueLibrary.Data.Cohort
             return null;
         }
 
+        /// <summary>
+        /// Moves all children containers/identifier lists (See <see cref="GetOrderedContents"/>) to make space for inserting a new one at the specified
+        /// Order (See <see cref="Order"/>).
+        /// </summary>
+        /// <param name="makeRoomFor"></param>
+        /// <param name="order"></param>
+        /// <param name="incrementOrderOfCollisions"></param>
         public void CreateInsertionPointAtOrder(IOrderable makeRoomFor, int order, bool incrementOrderOfCollisions)
         {
             foreach (var orderable in GetOrderedContents().ToArray())
@@ -347,6 +421,11 @@ namespace CatalogueLibrary.Data.Cohort
             }
         }
 
+        /// <summary>
+        /// Returns a list of all the <see cref="CohortAggregateContainer"/> that are subcontainers of the this.  This includes all children and children
+        /// of children etc recursively.
+        /// </summary>
+        /// <returns></returns>
         public List<CohortAggregateContainer> GetAllSubContainersRecursively()
         {
             List<CohortAggregateContainer> toReturn = new List<CohortAggregateContainer>();
@@ -359,12 +438,5 @@ namespace CatalogueLibrary.Data.Cohort
             
             return toReturn;
         }
-    }
-
-    public enum SetOperation
-    {
-        UNION,
-        INTERSECT,
-        EXCEPT
     }
 }

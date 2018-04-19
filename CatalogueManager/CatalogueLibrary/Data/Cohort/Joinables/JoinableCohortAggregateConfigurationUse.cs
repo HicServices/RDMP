@@ -20,18 +20,29 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         private int _aggregateConfigurationID;
         private ExtractionJoinType _joinType;
 
+        /// <summary>
+        /// Specifies the patient index table against which the <see cref="AggregateConfiguration_ID"/> should be joined with at query generation time
+        /// </summary>
         public int JoinableCohortAggregateConfiguration_ID
         {
             get { return _joinableCohortAggregateConfigurationID; }
             set { SetField(ref  _joinableCohortAggregateConfigurationID, value); }
         }
 
+        /// <summary>
+        /// Specifies the <see cref="AggregateConfiguration"/> which should be joined with the referenced patient index table (See <see cref="JoinableCohortAggregateConfiguration_ID"/>)
+        /// at query generation time
+        /// </summary>
         public int AggregateConfiguration_ID
         {
             get { return _aggregateConfigurationID; }
             set { SetField(ref  _aggregateConfigurationID, value); }
         }
 
+        /// <summary>
+        /// Determines how the cohort set <see cref="AggregateConfiguration"/> will be joined against the patient index table referenced by the <see cref="JoinableCohortAggregateConfiguration_ID"/>
+        /// <para>The cohort aggregate is always the 'left' table and the patient index table is the 'right' table.  The join is performed on the patient identifier column</para>
+        /// </summary>
         public ExtractionJoinType JoinType
         {
             get { return _joinType; }
@@ -92,6 +103,10 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
             });
         }
 
+        /// <summary>
+        /// Translates <see cref="ExtractionJoinType"/> into an SQL keyword (LEFT / RIGHT etc).
+        /// </summary>
+        /// <returns></returns>
         public string GetJoinDirectionSQL()
         {
             switch (JoinType)
@@ -111,7 +126,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         private const string ToStringPrefix = "JOIN Against:";
         private string _toStringName;
         
-
+        /// <inheritdoc/>
         public override string ToString()
         {
             return _toStringName ?? GetCachedName();
@@ -123,6 +138,11 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
             return _toStringName;
         }
 
+        /// <summary>
+        /// Gets the table alias for the index table in the join sql query e.g. if the alias was ix123 then the query built would be something like
+        /// <code>'select chi from Tbl1 INNER JOIN TblPatIndx ix123 on Tbl1.chi = ix123.chi where ix123.date > GETDATE()'</code>
+        /// </summary>
+        /// <returns></returns>
         public string GetJoinTableAlias()
         {
             return "ix" + JoinableCohortAggregateConfiguration_ID;

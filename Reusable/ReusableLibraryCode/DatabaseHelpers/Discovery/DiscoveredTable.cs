@@ -62,6 +62,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return _table;
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return _querySyntaxHelper;

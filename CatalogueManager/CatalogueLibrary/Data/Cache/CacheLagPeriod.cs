@@ -3,10 +3,12 @@ using System;
 namespace CatalogueLibrary.Data.Cache
 {
     /// <summary>
-    /// Created this because TimeSpans can't handle months and I didn't want to go to the hassle of importing an entire library such as NodaTime just to be able to deal with months.
-    /// 
+    /// Describes the period of time for which data should not be fetched during caching (See <see cref="CacheProgress"/>) in Months/Days.  This allows for the fact that
+    /// data in the remote server is unlikley to be real time up to the second accurate and you might need to delay requesting data until it has been collected.
+    ///  
     /// <para>Serialises to/from simple string representation of duration + type, where type is month (m) or day (d)</para>
     /// </summary>
+    /// <remarks>Created this because TimeSpans can't handle months and I didn't want to go to the hassle of importing an entire library such as NodaTime just to be able to deal with months</remarks>
     public class CacheLagPeriod
     {
         /// <summary>

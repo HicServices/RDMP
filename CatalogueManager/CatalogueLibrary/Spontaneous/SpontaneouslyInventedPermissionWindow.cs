@@ -32,8 +32,6 @@ namespace CatalogueLibrary.Spontaneous
         {
             RequiresSynchronousAccess = true;
             Name = "Spontaneous Permission Window";
-
-
         }
 
         public bool LockedBecauseRunning { get; set; }
@@ -56,8 +54,9 @@ namespace CatalogueLibrary.Spontaneous
         public string Name { get; set; }
         public string Description { get; set; }
         public bool RequiresSynchronousAccess { get; set; }
+        
         public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
-        public bool CurrentlyWithinPermissionWindow()
+        public bool WithinPermissionWindow()
         {
             //if no periods then yeah its in the window yo
             if (PermissionWindowPeriods == null || !PermissionWindowPeriods.Any())
@@ -66,10 +65,12 @@ namespace CatalogueLibrary.Spontaneous
             return PermissionWindowPeriods.Any(w => w.Contains(DateTime.Now, true));
         }
 
-        public IEnumerable<ICacheProgress> GetAllCacheProgresses()
+        public bool WithinPermissionWindow(DateTime dateTimeUTC)
         {
-            return new[] {_cp};
+            return WithinPermissionWindow(DateTime.UtcNow);
         }
+
+        public IEnumerable<ICacheProgress> CacheProgresses{get { return new[] {_cp}; }}
 
         public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
         {

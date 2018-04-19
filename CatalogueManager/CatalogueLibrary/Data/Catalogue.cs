@@ -33,7 +33,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
-    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed
+    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper
     {
         #region Database Properties
 
@@ -137,218 +137,344 @@ namespace CatalogueLibrary.Data
         private string _ethicsApprover;
         private string _sourceOfDataCollection;
         private string _ticket;
-
+        private DateTime? _datasetStartDate;
+        private string _loggingDataTask;
+        private string _validatorXml;
+        private int? _timeCoverageExtractionInformationID;
+        private int? _pivotCategoryExtractionInformationID;
+        private bool _isDeprecated;
+        private bool _isInternalDataset;
+        private bool _isColdStorageDataset;
+        private int? _liveLoggingServerID;
+        private int? _testLoggingServerID;
+        
+        /// <summary>
+        /// Shorthand (recommended 3 characters or less) for referring to this dataset (e.g. 'DEM' for the dataset 'Demography')
+        /// </summary>
         public string Acronym
         {
             get { return _acronym; }
             set { SetField(ref  _acronym, value); }
         }
 
+        /// <summary>
+        /// The full human readable name of the dataset.  This should usually match the name of the underlying <see cref="TableInfo"/> but might differ
+        /// if there are multiple tables powering the Catalogue or they don't have user accessible names.
+        /// </summary>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// A user defined hierarchical category which designates the role of the dataset e.g. '\datasets\extractable\labdata\'
+        /// <para>Should always start and end with a '\' even if it is the root (i.e. '\')</para>
+        /// </summary>
         public CatalogueFolder Folder
         {
             get { return _folder; }
             set { SetField(ref  _folder, value); }
         }
-
+         
+        /// <summary>
+        /// Human readable description provided by the RDMP user that describes what the dataset contains.  
+        /// <para>This can be multiple paragraphs.</para>
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <summary>
+        /// User defined Uri for a website page which describes the dataset (probably null)
+        /// </summary>
         public Uri Detail_Page_URL
         {
             get { return _detailPageUrl; }
             set { SetField(ref  _detailPageUrl, value); }
         }
 
+        /// <summary>
+        /// User defined classification of the Type of dataset the Catalogue is e.g. Cohort, ResearchStudy etc
+        /// </summary>
         public CatalogueType Type
         {
             get { return _type; }
             set { SetField(ref  _type, value); }
         }
 
+        /// <summary>
+        /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded
+        /// and might be an outright lie.
+        /// </summary>
         public CataloguePeriodicity Periodicity
         {
             get { return _periodicity; }
             set { SetField(ref  _periodicity, value); }
         }
 
+        /// <summary>
+        /// User specified field describing how the dataset is subdivided/bounded e.g. relates to a multiple 'HealthBoards' / 'Clinics' / 'Hosptials' etc.
+        /// </summary>
         public CatalogueGranularity Granularity
         {
             get { return _granularity; }
             set { SetField(ref  _granularity, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Geographical_coverage
         {
             get { return _geographicalCoverage; }
             set { SetField(ref  _geographicalCoverage, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Background_summary
         {
             get { return _backgroundSummary; }
             set { SetField(ref  _backgroundSummary, value); }
         }
 
+        /// <summary>
+        /// User specified list of keywords that are intended to help in finding the Catalogue
+        /// </summary>
         public string Search_keywords
         {
             get { return _searchKeywords; }
             set { SetField(ref  _searchKeywords, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// <seealso cref="Periodicity"/>
+        /// </summary>
         public string Update_freq
         {
             get { return _updateFreq; }
             set { SetField(ref  _updateFreq, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// <seealso cref="Periodicity"/>
+        /// </summary>
         public string Update_sched
         {
             get { return _updateSched; }
             set { SetField(ref  _updateSched, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// <seealso cref="Periodicity"/>
+        /// </summary>
         public string Time_coverage
         {
             get { return _timeCoverage; }
             set { SetField(ref  _timeCoverage, value); }
         }
 
+        /// <summary>
+        /// User specified date that user alledgedly reviewed the contents of the Catalogue / Metadata
+        /// </summary>
         public DateTime? Last_revision_date
         {
             get { return _lastRevisionDate; }
             set { SetField(ref  _lastRevisionDate, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Contact_details
         {
             get { return _contactDetails; }
             set { SetField(ref  _contactDetails, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Resource_owner
         {
             get { return _resourceOwner; }
             set { SetField(ref  _resourceOwner, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Attribution_citation
         {
             get { return _attributionCitation; }
             set { SetField(ref  _attributionCitation, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Access_options
         {
             get { return _accessOptions; }
             set { SetField(ref  _accessOptions, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string SubjectNumbers
         {
             get { return _subjectNumbers; }
             set { SetField(ref  _subjectNumbers, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for accessing the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri API_access_URL
         {
             get { return _apiAccessUrl; }
             set { SetField(ref  _apiAccessUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for browsing the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri Browse_URL
         {
             get { return _browseUrl; }
             set { SetField(ref  _browseUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for bulk downloading the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri Bulk_Download_URL
         {
             get { return _bulkDownloadUrl; }
             set { SetField(ref  _bulkDownloadUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a webservice for querying the dataset? Not used for anything by RDMP.
+        /// </summary>
         public Uri Query_tool_URL
         {
             get { return _queryToolUrl; }
             set { SetField(ref  _queryToolUrl, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Supposedly a URL for a website describing where you procured the data from? Not used for anything by RDMP.
+        /// </summary>
         public Uri Source_URL
         {
             get { return _sourceUrl; }
             set { SetField(ref  _sourceUrl, value); }
         }
 
-        //new fields requested by Wilfred
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Country_of_origin
         {
             get { return _countryOfOrigin; }
             set { SetField(ref  _countryOfOrigin, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Data_standards
         {
             get { return _dataStandards; }
             set { SetField(ref  _dataStandards, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_name
         {
             get { return _administrativeContactName; }
             set { SetField(ref  _administrativeContactName, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_email
         {
             get { return _administrativeContactEmail; }
             set { SetField(ref  _administrativeContactEmail, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_telephone
         {
             get { return _administrativeContactTelephone; }
             set { SetField(ref  _administrativeContactTelephone, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Administrative_contact_address
         {
             get { return _administrativeContactAddress; }
             set { SetField(ref  _administrativeContactAddress, value); }
         }
 
+        /// <summary>
+        /// User specified field.  Not used for anything by RDMP.
+        /// </summary>
         public bool? Explicit_consent
         {
             get { return _explicitConsent; }
             set { SetField(ref  _explicitConsent, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Ethics_approver
         {
             get { return _ethicsApprover; }
             set { SetField(ref  _ethicsApprover, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Source_of_data_collection
         {
             get { return _sourceOfDataCollection; }
             set { SetField(ref  _sourceOfDataCollection, value); }
         }
 
+        /// <summary>
+        /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for recording issues (if you are not
+        /// using the RDMP issue system (See <see cref="CatalogueItemIssue"/>
+        /// </summary>
         public string Ticket
         {
             get { return _ticket; }
             set { SetField(ref _ticket, value); }
         }
         
+        /// <summary>
+        /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue. 
+        /// <seealso cref="HIC.Logging.LogManager"/>
+        /// </summary>
         [DoNotExtractProperty]
         public string LoggingDataTask
         {
@@ -357,7 +483,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Currently configured validation on a Catalogue, this can be deserialized into a HIC.Common.Validation.Validator
+        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a <see cref="HIC.Common.Validation.Validator"/>
         /// </summary>
         [DoNotExtractProperty]
         public string ValidatorXML
@@ -366,6 +492,11 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _validatorXml, value); }
         }
 
+        /// <summary>
+        /// The <see cref="ExtractionInformation"/> which indicates the time field (in dataset time) of the dataset.  This should be a column in your table
+        /// that indicates for every row when it became active e.g. 'PrescribedDate' for prescribing.  Try to avoid using columns that have lots of nulls or 
+        /// where the date is arbitrary (e.g. 'RecordLoadedDate')
+        /// </summary>
         [DoNotExtractProperty]
         public int? TimeCoverage_ExtractionInformation_ID
         {
@@ -373,6 +504,13 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _timeCoverageExtractionInformationID, value); }
         }
 
+        /// <summary>
+        /// The <see cref="ExtractionInformation"/> which can provide a useful subdivision of the dataset e.g. 'Healthboard'.  This should be a logical subdivision
+        /// that helps in the assesment of data quality e.g. you might imagine that if you have 10% errors in data quality and 10 healthboards knowing that all the errors
+        /// are from a single healthboard would be handy.
+        /// 
+        /// <para>This chosen column should not have hundreds/thousands of unique values</para>
+        /// </summary>
         [DoNotExtractProperty]
         public int? PivotCategory_ExtractionInformation_ID
         {
@@ -380,6 +518,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _pivotCategoryExtractionInformationID, value); }
         }
 
+        /// <summary>
+        /// Bit flag indicating whether the dataset should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting a Catalogue.  The implications
+        /// of this are that it no longer appears in UIs by default and that warnings will appear when trying to do extractions of the Catalogue
+        /// </summary>
         [DoNotExtractProperty]
         public bool IsDeprecated
         {
@@ -387,6 +529,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isDeprecated, value); }
         }
 
+        /// <summary>
+        /// Bit flag indicating whether the dataset should NEVER be extracted and ONLY EVER used internally by data analysts.
+        /// </summary>
         [DoNotExtractProperty]
         public bool IsInternalDataset
         {
@@ -394,6 +539,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isInternalDataset, value); }
         }
 
+        /// <summary>
+        /// Bit flag indicating whether the Catalogue is a seldom used dataset that should be hidden by default.  Use this if you are importing lots of researcher
+        /// datasets for cohort generation / extraction but don't want them to clog up your user interface.
+        /// </summary>
         [DoNotExtractProperty]
         public bool IsColdStorageDataset
         {
@@ -401,6 +550,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isColdStorageDataset, value); }
         }
 
+        /// <summary>
+        /// The ID of the logging server that is to be used to log data loads of the dataset <see cref="HIC.Logging.LogManager"/>
+        /// </summary>
         [DoNotExtractProperty]
         public int? LiveLoggingServer_ID
         {
@@ -408,6 +560,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _liveLoggingServerID, value); }
         }
 
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
         [DoNotExtractProperty]
         public int? TestLoggingServer_ID
         {
@@ -415,6 +571,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _testLoggingServerID, value); }
         }
 
+        /// <summary>
+        /// The alledged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
+        /// <para>This field is optional</para>
+        /// </summary>
         public DateTime? DatasetStartDate
         {
             get { return _datasetStartDate; }
@@ -422,6 +582,10 @@ namespace CatalogueLibrary.Data
         }
 
         private int? _loadMetadataId;
+
+        /// <summary>
+        /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
+        /// </summary>
         [DoNotExtractProperty]
         public int? LoadMetadata_ID
         {
@@ -436,6 +600,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="CatalogueItem"/>
         [NoMappingToDatabase]
         public CatalogueItem[] CatalogueItems
         {
@@ -457,7 +622,12 @@ namespace CatalogueLibrary.Data
                 return Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
             }
         }
-        
+
+        /// <summary>
+        /// Returns all <see cref="AggregateConfiguration"/> that are associated with the Catalogue.  This includes both summary graphs, patient index tables and all
+        /// cohort aggregates that are built to query this dataset.
+        /// </summary>
+        /// <seealso cref="AggregateConfiguration"/>
         [NoMappingToDatabase]
         public AggregateConfiguration[] AggregateConfigurations
         {
@@ -513,38 +683,131 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        #region Enums
+        /// <summary>
+        /// Somewhat arbitrary concepts for defining the limitations of a Catalogues data
+        /// </summary>
         public enum CatalogueType
         {
+            /// <summary>
+            /// No CatalogueType has been specified
+            /// </summary>
             Unknown,
+            
+            /// <summary>
+            /// Catalogue data relates to a research study
+            /// </summary>
             ResearchStudy,
+
+            /// <summary>
+            /// Catalogue data relates to or defines a Cohort
+            /// </summary>
             Cohort,
+
+            /// <summary>
+            /// Catalogue data is collected by a national registry
+            /// </summary>
             NationalRegistry, 
+
+            /// <summary>
+            /// Catalogue data is collected by a healthcare provider
+            /// </summary>
             HealthcareProviderRegistry,
+
+            /// <summary>
+            /// Catalogue data can be classified as Electronic Health Records (prescriptions, hospital records etc.)
+            /// </summary>
             EHRExtract
         }
 
+        /// <summary>
+        /// Notional user declared period on which the data in the Catalogue is refreshed.  This may not have any bearing
+        /// on reality.  Not used by RDMP for any technical processes.
+        /// </summary>
         public enum CataloguePeriodicity
         {
+            /// <summary>
+            /// No period for the dataset has been specified
+            /// </summary>
             Unknown,
+
+            /// <summary>
+            /// Data is updated on a daily basis
+            /// </summary>
             Daily,
+            /// <summary>
+            /// Data is updated on a weekly basis
+            /// </summary>
             Weekly,
+            /// <summary>
+            /// Data is updated every 2 weeks
+            /// </summary>
             Fortnightly,
+            /// <summary>
+            /// Data is updated every month
+            /// </summary>
             Monthly,
+
+            /// <summary>
+            /// Data is updated every 2 months
+            /// </summary>
             BiMonthly,
+
+            /// <summary>
+            /// Data is updated every 4 months
+            /// </summary>
             Quarterly,
+
+            /// <summary>
+            /// Data is updated on a yearly basis
+            /// </summary>
             Yearly
         }
 
+        /// <summary>
+        /// Notional user declared boundary for the dataset defined by the Catalogue.  The data should be isolated to this Granularity
+        /// </summary>
         public enum CatalogueGranularity
         {
+            /// <summary>
+            /// No granularity has been specified
+            /// </summary>
             Unknown,
+            
+            /// <summary>
+            /// Contains data relating to multiple nations
+            /// </summary>
             National,
+
+            /// <summary>
+            /// Contains data relating to multiple regions (e.g. Scotland / England)
+            /// </summary>
             Regional,
+
+            /// <summary>
+            /// Contains data relating to multiple healthboards (e.g. Tayside / Fife)
+            /// </summary>
             HealthBoard,
+
+            /// <summary>
+            /// Contains data relating to multiple hospitals (e.g. Ninewells)
+            /// </summary>
             Hospital,
+
+            /// <summary>
+            /// Contains data relating to multiple clinics (e.g. Radiology)
+            /// </summary>
             Clinic
         }
+        #endregion
 
+        /// <summary>
+        /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.  
+        /// 
+        /// <para>The preferred method of getting a Catalogue is to use <see cref="CatalogueLibrary.DataHelper.TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
         public Catalogue(ICatalogueRepository repository, string name)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
@@ -688,11 +951,17 @@ namespace CatalogueLibrary.Data
             Folder = new CatalogueFolder(this,r["Folder"].ToString());
         }
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Sorts alphabetically based on <see cref="Name"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public int CompareTo(object obj)
         {
             if (obj is Catalogue)
@@ -703,32 +972,10 @@ namespace CatalogueLibrary.Data
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
         }
 
-      
-        public string GetServerFromExtractionInformation(ExtractionCategory category)
-        {
-            string lastServerEncountered = null;
-            
-            foreach (var extractionInformation in GetAllExtractionInformation(category))
-            {
-                string currentServer = extractionInformation.ColumnInfo.TableInfo.Server;
-
-                //if we haven't yet found any Server names then pick up the first one we see
-                if (lastServerEncountered == null)
-                    lastServerEncountered = currentServer;
-                else
-                    if (lastServerEncountered != currentServer) //if we have found a server name before now but this one is different!
-                        throw new Exception("Found multiple servers listed under ExtractionInformations of category:" + category + " for catalogue:" + this.Name + ".  The servers were " + lastServerEncountered + " and " + currentServer);
-                    
-                if(string.IsNullOrWhiteSpace(currentServer))
-                    throw new NullReferenceException("ExtractionInformation " + extractionInformation + " does not list a server where it's data can be fetched from");
-
-                //if we get here then the server had the same name
-                Debug.Assert(lastServerEncountered == currentServer);
-            }
-
-            return lastServerEncountered;
-        }
-
+        /// <summary>
+        /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos 
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             string reason;
@@ -825,8 +1072,6 @@ namespace CatalogueLibrary.Data
             f.Check(notifier);
         }
 
-        
-
         /// <summary>
         /// Retrieves all the TableInfo objects associated with a particular catalogue
         /// </summary>
@@ -853,12 +1098,16 @@ namespace CatalogueLibrary.Data
 
             return lookupTables.ToArray();
         }
-
-        public ILoadMetadata GetLoadMetadata()
-        {
-            return LoadMetadata;
-        }
-
+        
+        /// <summary>
+        /// Gets all distinct underlying <see cref="TableInfo"/> that are referenced by the <see cref="CatalogueItem"/>s of the Catalogue.  The tables are divided into
+        /// 'normalTables' and 'lookupTables' depending on whether there are any <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on any of the
+        /// Catalogue referenced ColumnInfos.
+        /// <para>The sets are exclusive, a TableInfo is either a normal data contributor or it is a linked lookup table</para>
+        /// </summary>
+        /// <param name="normalTables">Unique TableInfos amongst all CatalogueItems in the Catalogue</param>
+        /// <param name="lookupTables">Unique TableInfos amongst all CatalogueItems in the Catalogue where there is at least
+        ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
         public void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables)
         {
             var normalTableIds = new HashSet<int>();
@@ -896,80 +1145,29 @@ namespace CatalogueLibrary.Data
             lookupTables = Repository.GetAllObjectsInIDList<TableInfo>(lookupTableIds).ToList();
         }
 
-        public IEnumerable<ColumnInfo> GetColumnInfos()
+        private IEnumerable<ColumnInfo> GetColumnInfos()
         {
             return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
         }
 
+        /// <summary>
+        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue where the IsMandatory flag is set.
+        /// </summary>
+        /// <returns></returns>
         public ExtractionFilter[] GetAllMandatoryFilters()
         {
              return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f=>f.ExtractionFilters).Where(f=>f.IsMandatory).ToArray();
         }
 
+        /// <summary>
+        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue.
+        /// </summary>
+        /// <returns></returns>
         public ExtractionFilter[] GetAllFilters()
         {
             return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters).ToArray();
         }
-
-        private string _getServerNameCachedAnswer = null;
-        public string GetServerName(bool allowCaching = true)
-        {
-            if (!allowCaching)
-                _getServerNameCachedAnswer = null;
-
-            if(_getServerNameCachedAnswer == null)
-            {
-
-                var tableInfoList = GetTableInfoList(false);
-                if (!tableInfoList.Any())
-                    tableInfoList = GetTableInfoList(true);
-
-                if (!tableInfoList.Any()) throw new Exception("'" + Name + "' catalogue (" + ID + ") has no TableInfo entries");
-                if (tableInfoList.Select(info => info.GetDatabaseRuntimeName()).Distinct().Count() > 1)
-                    throw new Exception("'" + Name + "' catalogue (" + ID + ") references multiple databases");
-                _getServerNameCachedAnswer = tableInfoList.First().Server;
-            }
-
-            return _getServerNameCachedAnswer;
-        }
-
-        private string _getDatabaseNameCachedAnswer = null;
-        private DateTime? _datasetStartDate;
-        private string _loggingDataTask;
-        private string _validatorXml;
-        private int? _timeCoverageExtractionInformationID;
-        private int? _pivotCategoryExtractionInformationID;
-        private bool _isDeprecated;
-        private bool _isInternalDataset;
-        private bool _isColdStorageDataset;
-        private int? _liveLoggingServerID;
-        private int? _testLoggingServerID;
         
-        public string GetDatabaseName(bool allowCaching = true)
-        {
-            if (!allowCaching)
-                _getDatabaseNameCachedAnswer = null;
-
-            if (_getDatabaseNameCachedAnswer == null)
-            {
-                var tableInfoList = GetTableInfoList(false);
-                if (!tableInfoList.Any())
-                    tableInfoList = GetTableInfoList(true);
-                
-                if (!tableInfoList.Any()) throw new Exception("'" + Name + "' catalogue (" + ID + ") has no TableInfo entries");
-                if (tableInfoList.Select(info => info.GetDatabaseRuntimeName()).Distinct().Count() > 1)
-                    throw new Exception("'" + Name + "' catalogue (" + ID + ") references multiple databases");
-                _getDatabaseNameCachedAnswer = tableInfoList.First().GetDatabaseRuntimeName();
-            }
-
-            return _getDatabaseNameCachedAnswer;
-        }
-
-        public string GetRawDatabaseName()
-        {
-            return GetDatabaseName() + "_RAW";
-        }
-
         private void PerformDisassociationCheck()
         {
             if(LoadMetadata_ID == null)
@@ -999,11 +1197,15 @@ namespace CatalogueLibrary.Data
             return mappings;
         }
 
-        public IDataAccessPoint GetLoggingServer(bool isTest)
-        {
-            return isTest ? TestLoggingServer : LiveLoggingServer;
-        }
-
+        /// <summary>
+        /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 
+        /// determined by comparing all the underlying <see cref="TableInfo"/> that power the <see cref="ExtractionInformation"/> of the Catalogue and looking for a shared
+        /// servername.  This will handle when the tables are in different databases but only if you set <see cref="setInitialDatabase"/> to false
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="setInitialDatabase">True to require all tables be in the same database.  False will just connect to master / unspecified database</param>
+        /// <param name="distinctAccessPoint"></param>
+        /// <returns></returns>
         public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
         {
             var tables = GetTableInfosIdeallyJustFromMainTables();
@@ -1011,6 +1213,12 @@ namespace CatalogueLibrary.Data
             distinctAccessPoint = tables.FirstOrDefault();
 
             return DataAccessPortal.GetInstance().ExpectDistinctServer(tables, context, setInitialDatabase);
+        }
+
+        /// <inheritdoc cref="GetDistinctLiveDatabaseServer(DataAccessContext,bool,out IDataAccessPoint)"/>
+        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
+        {
+            return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
         }
 
         private TableInfo[] GetTableInfosIdeallyJustFromMainTables()
@@ -1026,6 +1234,12 @@ namespace CatalogueLibrary.Data
             return tables;
         }
 
+        /// <summary>
+        /// Returns the unique <see cref="DatabaseType"/> shared by all <see cref="TableInfo"/> which underlie the Catalogue.  This is similar to GetDistinctLiveDatabaseServer 
+        /// but is faster and more tolerant of failure i.e. if there are no underlying <see cref="TableInfo"/> at all or they are on different servers this will still return
+        /// the shared / null <see cref="DatabaseType"/>
+        /// </summary>
+        /// <returns></returns>
         public DatabaseType? GetDistinctLiveDatabaseServerType()
         {
             var tables = GetTableInfosIdeallyJustFromMainTables();
@@ -1041,13 +1255,6 @@ namespace CatalogueLibrary.Data
             throw new Exception("The Catalogue '" + this + "' has TableInfos belonging to multiple DatabaseTypes (" + string.Join(",",tables.Select(t=>t.GetRuntimeName()  +"(ID=" +t.ID + " is " + t.DatabaseType +")")));
         }
 
-        public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
-        {
-
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(
-                GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
-        }
-
         /// <summary>
         /// Use to set LoadMetadata to null without first performing Disassociation checks.  This should only be used for in-memory operations such as cloning
         /// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if 
@@ -1059,27 +1266,22 @@ namespace CatalogueLibrary.Data
             _loadMetadataId = null;
         }
 
-        public LogManager GetLogManager(bool live)
+        /// <summary>
+        /// Gets the <see cref="HIC.Logging.LogManager"/> for logging load events related to this Catalogue / it's LoadMetadata (if it has one).  This will throw if no
+        /// logging server has been configured.
+        /// </summary>
+        /// <returns></returns>
+        public LogManager GetLogManager()
         {
-            ExternalDatabaseServer loggingServer;
-
-            if (live)
-                if(LiveLoggingServer_ID == null) 
-                    throw new Exception("No live logging server set for Catalogue " + this.Name);
-                else
-                    loggingServer = LiveLoggingServer;
-            else//not live
-                if(TestLoggingServer_ID == null) 
-                    throw new Exception("No test logging server set for Catalogue " + this.Name);
-                else
-                    loggingServer = TestLoggingServer;
-            
-            var server = DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging);
+            if(LiveLoggingServer_ID == null) 
+                throw new Exception("No live logging server set for Catalogue " + this.Name);
+                
+            var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
             return new LogManager(server);
-
         }
         
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             List<IHasDependencies> iDependOn = new List<IHasDependencies>();
@@ -1089,54 +1291,31 @@ namespace CatalogueLibrary.Data
             if(LoadMetadata != null)
                 iDependOn.Add(LoadMetadata);
 
-            
-
             return iDependOn.ToArray();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return AggregateConfigurations;
         }
 
-        public static bool IsAcceptableName(string name, out string reason)
-        {
-            if (name == null || string.IsNullOrWhiteSpace(name))
-            {
-                reason = "Name cannot be blank";
-                return false;
-            }
 
-            var invalidCharacters = name.Where(c => Path.GetInvalidPathChars().Contains(c) || c == '\\' || c == '/' || c == '.' || c == '#' || c=='@' || c=='$').ToArray();
-            if (invalidCharacters.Any())
-            {
-                reason = "The following invalid characters were found:" + string.Join(",", invalidCharacters.Select(c=>"'"+c+"'"));
-                return false;
-            }
-
-            reason = null;
-            return true;
-        }
-
-        public static bool IsAcceptableName(string name)
-        {
-            string whoCares;
-            return IsAcceptableName(name, out whoCares);
-        }
-
-
+        /// <inheritdoc cref="CatalogueItemIssue"/>
         public CatalogueItemIssue[] GetAllIssues()
         {
             return Repository.GetAllObjects<CatalogueItemIssue>("WHERE CatalogueItem_ID in (select ID from CatalogueItem WHERE Catalogue_ID =  " + ID + ")").ToArray();
         }
 
+        /// <inheritdoc cref="SupportingDocument"/>
         public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
         {
             string sql = GetFetchSQL(fetch);
 
             return Repository.GetAllObjects<SupportingDocument>(sql).ToArray();
         }
-
+        
+        /// <inheritdoc cref="SupportingSQLTable"/>
         public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
         {
             string sql = GetFetchSQL(fetch);
@@ -1169,6 +1348,14 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Returns all <see cref="ExtractionInformation"/> declared under this <see cref="Catalogue"/> <see cref="CatalogueItem"/>s.  This can be restricted by 
+        /// <see cref="ExtractionCategory"/> 
+        /// 
+        /// <para>pass <see cref="ExtractionCategory.Any"/> to fetch all <see cref="ExtractionInformation"/> regardless of category</para>
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
         {
             return
@@ -1177,9 +1364,9 @@ namespace CatalogueLibrary.Data
                         (e.ExtractionCategory == category || category == ExtractionCategory.Any))
                     .ToArray();
         }
+
         private bool? _isExtractable;
-
-
+        
         /// <summary>
         /// Returns whether or not the extractability of the Catalogue is known.  In general this is only true
         /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
@@ -1203,11 +1390,19 @@ namespace CatalogueLibrary.Data
             return _isExtractable.Value;
         }
 
-        public void InjectExtractability(bool isExtractable)
+        /// <summary>
+        /// Inform the Catalogue that there is/isn't an associated ExtractableDataSet in the data export database (the presence of one of these is what defines extractability)
+        /// </summary>
+        /// <param name="isExtractable"></param>
+        internal void InjectExtractability(bool isExtractable)
         {
             _isExtractable = isExtractable;
         }
 
+        /// <summary>
+        /// Gets an IQuerySyntaxHelper for the <see cref="GetDistinctLiveDatabaseServerType"/> amongst all underlying <see cref="TableInfo"/>.  This can be used to assist query building.
+        /// </summary>
+        /// <returns></returns>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             var f = new QuerySyntaxHelperFactory();
@@ -1218,5 +1413,40 @@ namespace CatalogueLibrary.Data
             
             return f.Create(type.Value);
         }
+
+        #region Static Methods
+        /// <summary>
+        /// Returns true if the given name would be sensible for a Catalogue.  This means no slashes, hashes @ symbols etc and other things which make XML serialization hard
+        /// or prevent naming a database table after a Catalogue (all things we might want to do with the <see cref="Catalogue.Name"/>).
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        public static bool IsAcceptableName(string name, out string reason)
+        {
+            if (name == null || string.IsNullOrWhiteSpace(name))
+            {
+                reason = "Name cannot be blank";
+                return false;
+            }
+
+            var invalidCharacters = name.Where(c => Path.GetInvalidPathChars().Contains(c) || c == '\\' || c == '/' || c == '.' || c == '#' || c == '@' || c == '$').ToArray();
+            if (invalidCharacters.Any())
+            {
+                reason = "The following invalid characters were found:" + string.Join(",", invalidCharacters.Select(c => "'" + c + "'"));
+                return false;
+            }
+
+            reason = null;
+            return true;
+        }
+
+        /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)"/>
+        public static bool IsAcceptableName(string name)
+        {
+            string whoCares;
+            return IsAcceptableName(name, out whoCares);
+        }
+        #endregion
     }
 }

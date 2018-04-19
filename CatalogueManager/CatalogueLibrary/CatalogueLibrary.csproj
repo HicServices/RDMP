@@ -386,6 +386,7 @@
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
+    <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
     <Compile Include="Data\ContainerHelper.cs" />
     <Compile Include="Data\Dashboarding\DashboardControl.cs" />

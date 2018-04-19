@@ -26,10 +26,10 @@ namespace RDMPAutomationService.Logic.DLE
     class AutomatedDLELoadFromCache:IAutomateable
     {
         private AutomationServiceSlot _slottedService;
-        private LoadProgress _cacheBasedLoadWeCanRun;
-        private CacheProgress _cache;
+        private ILoadProgress _cacheBasedLoadWeCanRun;
+        private ICacheProgress _cache;
 
-        public AutomatedDLELoadFromCache(AutomationServiceSlot serviceSlot, LoadProgress cacheBasedLoadWeCanRun)
+        public AutomatedDLELoadFromCache(AutomationServiceSlot serviceSlot, ILoadProgress cacheBasedLoadWeCanRun)
         {
             _slottedService = serviceSlot;
             _cacheBasedLoadWeCanRun = cacheBasedLoadWeCanRun;

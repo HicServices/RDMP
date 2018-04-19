@@ -52,7 +52,7 @@ namespace RDMPAutomationService.Logic.DLE
             //return _catalogueRepository.GetAllObjects<LoadPeriodically>().FirstOrDefault(p => p.IsLoadDue(lockedCatalogues));
         }
 
-        public LoadProgress SuggestLoadBecauseCacheAvailable()
+        public ILoadProgress SuggestLoadBecauseCacheAvailable()
         {
             var cacheProgresses = _catalogueRepository.GetAllObjects<CacheProgress>();
             var lockedCatalogues = _catalogueRepository.GetAllAutomationLockedCatalogues();
@@ -124,7 +124,7 @@ namespace RDMPAutomationService.Logic.DLE
             return null;
         }
 
-        private bool LocksPreventLoading(LoadProgress cacheProgress, Catalogue[] lockedCatalogues)
+        private bool LocksPreventLoading(ILoadProgress cacheProgress, Catalogue[] lockedCatalogues)
         {
             var loadCatalogues = cacheProgress.LoadMetadata.GetAllCatalogues();
 

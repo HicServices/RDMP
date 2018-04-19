@@ -33,7 +33,7 @@ namespace DataLoadEngineTests.Integration
             _cpMock = MockRepository.GenerateMock<ICacheProgress>();
 
             _lpMock = MockRepository.GenerateMock<ILoadProgress>();
-            _lpMock.Stub(cp => cp.GetCacheProgress()).Return(_cpMock);
+            _lpMock.Stub(cp => cp.CacheProgress).Return(_cpMock);
 
             
         }
