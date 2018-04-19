@@ -125,6 +125,8 @@ namespace DataExportLibrary.Providers
             
             _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, SelectedDataSets[]>();
 
+            GetCohortAvailability();
+
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
                 _configurationToDatasetMapping.Add(configuration, SelectedDataSets.Where(c => c.ExtractionConfiguration_ID == configuration.ID).ToArray());
 
@@ -338,7 +340,70 @@ namespace DataExportLibrary.Providers
             AddToDictionaries(new HashSet<object>(cohorts), descendancy);
         }
 
-        
+        private void GetCohortAvailability()
+        {
+            foreach (ExternalCohortTable source in CohortSources.Except(BlackListedSources))
+            {
+                DiscoveredServer server = null;
+
+                Exception ex = null;
+
+                //it obviously hasn't been initialised properly yet
+                if (string.IsNullOrWhiteSpace(source.Server) || string.IsNullOrWhiteSpace(source.Database))
+                    continue;
+
+
+                try
+                {
+                    server = DataAccessPortal.GetInstance().ExpectDatabase(source, DataAccessContext.DataExport).Server;
+                }
+                catch (Exception exception)
+                {
+                    ex = exception;
+                }
+
+                if (server == null || !server.RespondsWithinTime(10, out ex))
+                {
+                    BlackListedSources.Add(source);
+                    throw new Exception("Blacklisted source '" + source + "' due to error " + ex);
+                }
+
+                using (var con = server.GetConnection())
+                {
+                    con.Open();
+                    
+                    //Get all of the project numbers and remote origin ids etc from the source in one query
+                    var cmd = server.GetCommand(source.GetExternalDataSql(), con);
+                    cmd.CommandTimeout = 120;
+
+                    var r = cmd.ExecuteReader();
+                    while (r.Read())
+                    {
+                        //really should be only one here but still they might for some reason have 2 references to the same external cohort
+                        var cohorts = Cohorts.Where(
+                            c => c.OriginID == Convert.ToInt32(r["OriginID"]) && c.ExternalCohortTable_ID == source.ID)
+                            .ToArray();
+
+                        //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
+                        foreach (ExtractableCohort c in cohorts)
+                        {
+                            //load external data from the result set
+                            var externalData = new ExternalCohortDefinitionData((SqlDataReader)r, source.Name);
+
+                            //tell the cohort about the data
+                            c.SetKnownExternalData(externalData);
+
+                            //for performance also keep a dictionary of project number => compatible cohorts
+                            if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
+                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
+
+                            ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
+                        }
+                    }
+                }
+            }
+        }
+
         private List<CohortSourceUsedByProjectNode> GetAllCohortProjectUsageNodesFor(Project project)
         {
             //if the current project does not have a number or there are no cohorts associated with it
