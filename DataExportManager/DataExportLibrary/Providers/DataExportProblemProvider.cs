@@ -97,7 +97,18 @@ namespace DataExportLibrary.Providers
             var cols = _exportChildProvider.GetColumnsIn(selectedDataset);
 
             if(!cols.Any(c=>c.IsExtractionIdentifier))
+            {
                 _problems.Add(selectedDataset,"There are no IsExtractionIdentifier columns in dataset");
+                return;
+            }
+
+            var eds = selectedDataset.ExtractableDataSet;
+
+            if(eds.Project_ID != null && eds.Project_ID != selectedDataset.ExtractionConfiguration.Project_ID)
+            {
+                _problems.Add(selectedDataset,"Catalogue is 'Project Specific' for another Project");
+                return;
+            }
         }
 
         public bool HasProblem(object o)

@@ -7,7 +7,9 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 
 
 namespace DataExportLibrary.Data.LinkCreators
@@ -16,7 +18,7 @@ namespace DataExportLibrary.Data.LinkCreators
     /// Usually when creating an ExtractionConfiguration you do not want to extract all the datasets (Catalogues).  SelectedDataSets represents the desire to extract a
     /// given dataset for a given ExtractableDataSet for a given ExtractionConfiguration.  
     /// </summary>
-    public class SelectedDataSets : DatabaseEntity,ISelectedDataSets
+    public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>
     {
         #region Database Properties
         
@@ -24,7 +26,8 @@ namespace DataExportLibrary.Data.LinkCreators
         private int _extractableDataSet_ID;
         private int? _rootFilterContainer_ID;
 
-        private ExtractableDataSet _knownDataSet;
+        private Lazy<IExtractableDataSet> _extractableDataSet;
+        
 
         public int ExtractionConfiguration_ID
         {
@@ -34,7 +37,11 @@ namespace DataExportLibrary.Data.LinkCreators
         public int ExtractableDataSet_ID
         {
             get { return _extractableDataSet_ID; }
-            set { SetField(ref _extractableDataSet_ID, value); }
+            set
+            {
+                ClearAllInjections();
+                SetField(ref _extractableDataSet_ID, value);
+            }
         }
         public int? RootFilterContainer_ID
         {
@@ -67,13 +74,10 @@ namespace DataExportLibrary.Data.LinkCreators
 
         /// <inheritdoc cref="ExtractableDataSet_ID"/>
         [NoMappingToDatabase]
-        public ExtractableDataSet ExtractableDataSet {
-            get
-            {
-                return Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID); 
-            }
+        public IExtractableDataSet ExtractableDataSet {
+            get { return _extractableDataSet.Value; }
         }
-
+        
         #endregion
 
         internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)
@@ -92,22 +96,36 @@ namespace DataExportLibrary.Data.LinkCreators
                 {"ExtractableDataSet_ID",dataSet.ID},
                 {"RootFilterContainer_ID",rootContainerIfAny != null?(object) rootContainerIfAny.ID:DBNull.Value}
             });
+            
+            ClearAllInjections();
+            InjectKnown(dataSet);
         }
-
-        public void SetKnownDataSet(ExtractableDataSet ds)
-        {
-            if(ds.ID != ExtractableDataSet_ID)
-                throw new ArgumentException("That is not our dataset, our dataset has ID " +ExtractableDataSet_ID,"ds");
-
-            _knownDataSet = ds;
-        }
-
+        
         public override string ToString()
         {
-            if(_knownDataSet == null)
-                return base.ToString();
+            return ExtractableDataSet.ToString();
+        }
+        
+        public void InjectKnown(IExtractableDataSet instance)
+        {
+            if(instance.ID != ExtractableDataSet_ID)
+                throw new ArgumentException("That is not our dataset, our dataset has ID " +ExtractableDataSet_ID,"ds");
 
-            return _knownDataSet.ToString();
+            _extractableDataSet = new Lazy<IExtractableDataSet>(()=>instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _extractableDataSet = new Lazy<IExtractableDataSet>(FetchExtractableDataset);
+        }
+        private ICatalogue FetchCatalogue()
+        {
+            return ExtractableDataSet.Catalogue;
+        }
+
+        private IExtractableDataSet FetchExtractableDataset()
+        {
+            return Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
         }
     }
 }

@@ -8,6 +8,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -19,7 +20,7 @@ namespace DataExportLibrary.Data.DataTables
     /// have multiple DataExportManager databases all feeding off the same Catalogue database - e.g. one that does identifiable extracts and one which does anonymous extracts.  Some
     /// datasets (Catalogues) would therefore be extractable in one DataExportManager database while a different set would be extractable in the other DataExportManager database.
     /// </summary>
-    public class ExtractableDataSet : VersionedDatabaseEntity, IExtractableDataSet
+    public class ExtractableDataSet : VersionedDatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
     {
         #region Database Properties
         private int _catalogue_ID;
@@ -29,7 +30,11 @@ namespace DataExportLibrary.Data.DataTables
         public int Catalogue_ID
         {
             get { return _catalogue_ID; }
-            set { SetField(ref _catalogue_ID, value); }
+            set
+            {
+                ClearAllInjections();
+                SetField(ref _catalogue_ID, value);
+            }
         }
         public bool DisableExtraction
         {
@@ -78,10 +83,7 @@ namespace DataExportLibrary.Data.DataTables
 
 
         [NoMappingToDatabase]
-        public ICatalogue Catalogue { get
-        {
-            return ((DataExportRepository) Repository).CatalogueRepository.GetObjectByID<Catalogue>(Catalogue_ID);
-        }}
+        public ICatalogue Catalogue { get {return _catalogue.Value;}}
         #endregion
 
         /// <summary>
@@ -96,6 +98,9 @@ namespace DataExportLibrary.Data.DataTables
                 {"DisableExtraction", disableExtraction},
                 {"Catalogue_ID",catalogue.ID}
             });
+
+            ClearAllInjections();
+            InjectKnown(catalogue);
         }
 
         internal ExtractableDataSet(IDataExportRepository repository, DbDataReader r)
@@ -104,69 +109,29 @@ namespace DataExportLibrary.Data.DataTables
             Catalogue_ID = Convert.ToInt32(r["Catalogue_ID"]);
             DisableExtraction = (bool) r["DisableExtraction"];
             Project_ID = ObjectToNullableInt(r["Project_ID"]);
-        }
 
-        private Catalogue _catalogue;
+            ClearAllInjections();
+        }
 
         [NoMappingToDatabase]
         public bool IsCatalogueDeprecated
         {
             get
             {
-                return _catalogue != null && _catalogue.IsDeprecated;
+                return Catalogue == null || Catalogue.IsDeprecated;
             }
         }
-
-
+        
         public override string ToString()
         {
+            if (Catalogue == null)
+                return "DELETED CATALOGUE " + Catalogue_ID;
+
             //only bother refreshing Catalogue details if we will be able to get a legit catalogue name
-            if (_catalogue == null && !_datasetBroken)
-                RefreshCatalogueInfo();
+            if (Catalogue.IsDeprecated)
+                return "DEPRECATED CATALOGUE " + Catalogue.Name;
 
-            if (_catalogue == null)
-                return "Catalogue Deleted (Catalogue_ID=" + Catalogue_ID+")";
-
-            if (_catalogue.IsDeprecated)
-                return "DEPRECATED CATALOGUE " + _catalogue.Name;
-            
-            return _catalogue.Name;
-        }
-
-        private bool _datasetBroken;
-        
-
-        private void RefreshCatalogueInfo()
-        {
-            try
-            {
-                _catalogue = ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<Catalogue>((int) Catalogue_ID);
-
-                if (_catalogue == null)
-                    _datasetBroken = true;
-            }
-            catch (Exception e)
-            {
-                if (e.Message.ToLower().Contains("could not find"))
-                {
-                    _catalogue = null;
-                    _datasetBroken = true;
-                }
-                else
-                    throw;
-            }
-        }
-
-        /// <summary>
-        /// Only use if you have an existing reference to Catalogue_ID and want to stop the ToString method from popping off to the database
-        /// </summary>
-        /// <param name="c"></param>
-        public void SetKnownCatalogue(Catalogue c)
-        {
-            if(c.ID != Catalogue_ID)
-                throw new ArgumentOutOfRangeException("You told us our Catalogue was '" + c+"' but it's ID didn't match so that is NOT our Catalogue","c");
-            
-            _catalogue = c;
+            return Catalogue.Name;
         }
         
         #region Stuff for updating our internal database records
@@ -192,6 +157,40 @@ namespace DataExportLibrary.Data.DataTables
             base.RevertToDatabaseState();
             //clear the cached knowledge
             _catalogue = null;
+        }
+
+        public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus()
+        {
+            return new CatalogueExtractabilityStatus(true, Project_ID != null);
+        }
+
+        private Lazy<ICatalogue> _catalogue;
+        
+        public void InjectKnown(ICatalogue instance)
+        {
+            if(instance.ID != Catalogue_ID)
+                throw new ArgumentOutOfRangeException("You told us our Catalogue was '" + instance +"' but it's ID didn't match so that is NOT our Catalogue","c");
+            _catalogue = new Lazy<ICatalogue>(() => instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _catalogue = new Lazy<ICatalogue>(FetchCatalogue);
+        }
+
+        private ICatalogue FetchCatalogue()
+        {
+            try
+            {
+                var cata =  ((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<Catalogue>(Catalogue_ID);
+                cata.InjectKnown(GetCatalogueExtractabilityStatus());
+                return cata;
+            }
+            catch (KeyNotFoundException e)
+            {
+                //Catalogue has been deleted!
+                return null;
+            }
         }
     }
 }

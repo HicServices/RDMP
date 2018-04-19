@@ -22,6 +22,7 @@ using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -48,7 +49,7 @@ namespace DataExportManager.ProjectUI
     public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design
     {
         public SelectedDataSets SelectedDataSet { get; private set; }
-        private ExtractableDataSet _dataSet;
+        private IExtractableDataSet _dataSet;
         private ExtractionConfiguration _config;
         
         //constructor
@@ -119,16 +120,22 @@ namespace DataExportManager.ProjectUI
                 return;
             }
 
-            //then get all the extractable columns from each item (some items have multiple extractable columns)
-            olvAvailable.AddObjects(cata.GetAllExtractionInformation(ExtractionCategory.Any));
+            //on the left
 
+            //add all the extractable columns from the current Catalogue (unless its project specific anyway)
+            if (!cata.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsProjectSpecific)
+                olvAvailable.AddObjects(cata.GetAllExtractionInformation(ExtractionCategory.Any));
+            
+            //add the stuff that is in Project Catalogues so they can pick these too
+            olvAvailable.AddObjects(_config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.Any));
+            
+            //on the right
+
+            //add the already included ones on the right
             var allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
 
             //now get all the ExtractableColumns that are already configured for this configuration (previously)
             olvSelected.AddObjects(allExtractableColumns);
-            
-            //add the stuff that is in Project Catalogues so they can pick these too
-            olvAvailable.AddObject(_config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.Any));
 
             RefreshDisabledObjectStatus();
             

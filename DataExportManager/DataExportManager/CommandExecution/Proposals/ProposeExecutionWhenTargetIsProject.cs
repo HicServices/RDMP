@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueManager.CommandExecution.Proposals;
@@ -35,6 +34,10 @@ namespace DataExportManager.CommandExecution.Proposals
             var cicCommand = cmd as CohortIdentificationConfigurationCommand;
             if(cicCommand != null)
                 return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
+
+            var cataCommand = cmd as CatalogueCommand;
+            if (cataCommand != null)
+                return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
 
             return null;
         }

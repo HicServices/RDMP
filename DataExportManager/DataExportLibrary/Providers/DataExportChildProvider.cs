@@ -104,13 +104,13 @@ namespace DataExportLibrary.Providers
             SelectedDataSets = dataExportRepository.GetAllObjects<SelectedDataSets>();
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
             foreach (SelectedDataSets s in SelectedDataSets)
-                s.SetKnownDataSet(dsDictionary[s.ExtractableDataSet_ID]);
+                s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
             
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
             var dictionary = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
                 if(dictionary.ContainsKey(ds.Catalogue_ID))
-                    ds.SetKnownCatalogue(dictionary[ds.Catalogue_ID]);
+                    ds.InjectKnown(dictionary[ds.Catalogue_ID]);
                 
             AllPackages = dataExportRepository.GetAllObjects<ExtractableDataSetPackage>();
             PackageContents = new ExtractableDataSetPackageContents(dataExportRepository);
@@ -145,7 +145,7 @@ namespace DataExportLibrary.Providers
             //inject extractability into Catalogues
             foreach (Catalogue catalogue in AllCatalogues)
                 if (cataToEds.ContainsKey(catalogue.ID))
-                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, cataToEds[catalogue.ID].Project_ID != null));
+                    catalogue.InjectKnown(cataToEds[catalogue.ID].GetCatalogueExtractabilityStatus());
                 else
                     catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));    
         }
@@ -465,8 +465,10 @@ namespace DataExportLibrary.Providers
             //Get the extraction configurations node of the project
             var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
 
+            var frozenConfigurationsNode = GetChildren(configurationsNode).OfType<FrozenExtractionConfigurationsNode>().Single();
+
             //then add all the children extraction configurations
-            return GetChildren(configurationsNode).OfType<ExtractionConfiguration>();
+            return GetChildren(configurationsNode).OfType<ExtractionConfiguration>().Union(GetChildren(frozenConfigurationsNode).OfType<ExtractionConfiguration>());
         }
 
         public IEnumerable<ExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)

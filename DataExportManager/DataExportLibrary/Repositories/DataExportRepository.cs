@@ -59,7 +59,7 @@ namespace DataExportLibrary.Repositories
             if (eds == null)
                 return new CatalogueExtractabilityStatus(false, false);
 
-            return new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
+            return eds.GetCatalogueExtractabilityStatus();
         }
     }
 }

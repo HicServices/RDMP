@@ -30,7 +30,7 @@ namespace DataExportManager.Icons.IconProvision
                 return base.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
 
             if (concept is SelectedDataSets)
-                return base.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link);
+                return base.GetImage(((SelectedDataSets)concept).ExtractableDataSet.Catalogue, OverlayKind.Link);
 
             if (concept is PackageContentNode)
                 return base.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link);
