@@ -391,7 +391,6 @@
     <Compile Include="ChangesSavedHandler.cs" />
     <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
     <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
-    <Compile Include="Menus\CustomDataTableNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportPatientIndexTableAsCustomData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />

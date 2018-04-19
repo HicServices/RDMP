@@ -56,6 +56,8 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
         public ImportCustomDataFileUI(IActivateItems activator, ExtractableCohort cohort, params object[] initializationObjects)
         {
+            throw new NotImplementedException("Needs rewritten");
+
             _context = new DataFlowPipelineContextFactory<DataTable>().Create(
                 PipelineUsage.FixedDestination |
                 PipelineUsage.LogsToTableLoadInfo |
@@ -114,7 +116,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
             if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.ResultText))
             {
                 _cohort.AppendToAuditLog("Custom File Imported" + Environment.NewLine + dialog.ResultText);
-                _cohort.CreateCustomColumnsIfCustomTableExists();
                 _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_cohort));
             }
             else

@@ -668,7 +668,6 @@
       <DependentUpon>DQEExecutionControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DataViewing\Collections\ViewAggregateExtractUICollection.cs" />
-    <Compile Include="DataViewing\Collections\ViewCustomCohortTableExtractionUICollection.cs" />
     <Compile Include="ExtractionUIs\FilterUIs\FilterGraph.cs">
       <SubType>UserControl</SubType>
     </Compile>

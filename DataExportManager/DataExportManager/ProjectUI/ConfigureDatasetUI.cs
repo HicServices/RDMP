@@ -86,13 +86,9 @@ namespace DataExportManager.ProjectUI
         private object AvailableColumnCategoryAspectGetter(object rowObject)
         {
             var ei = rowObject as ExtractionInformation;
-            var cd = rowObject as CohortCustomColumn;
 
             if (ei != null)
                 return ei.ExtractionCategory.ToString();
-
-            if (cd != null)
-                return "Cohort Columns";
 
             return null;
         }
@@ -131,26 +127,8 @@ namespace DataExportManager.ProjectUI
             //now get all the ExtractableColumns that are already configured for this configuration (previously)
             olvSelected.AddObjects(allExtractableColumns);
             
-            //add the stuff that is in the cohort table so they can pick these too
-            if (_config.Cohort_ID != null)
-            {
-                var cohort = _config.Cohort;
-
-                try
-                {
-                    foreach (var cohortCustomColumn in cohort.CustomCohortColumns)
-                        if (
-                            //if the column has the same name as CHI (or whatever the private field is then don't add it)
-                            !cohortCustomColumn.GetRuntimeName().ToLower().EndsWith(cohort.GetPrivateIdentifier(true).ToLower())
-                            )
-                            //it can be legally added because its not selected or private
-                            olvAvailable.AddObject(cohortCustomColumn);
-                }
-                catch (Exception e)
-                {
-                    ExceptionViewer.Show("Error occurred while trying to enumerate the custom cohort columns:" + e.Message, e);
-                }
-            }
+            //add the stuff that is in Project Catalogues so they can pick these too
+            olvAvailable.AddObject(_config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.Any));
 
             RefreshDisabledObjectStatus();
             
@@ -172,10 +150,6 @@ namespace DataExportManager.ProjectUI
         {
             var selectedColumns = olvSelected.Objects.Cast<ConcreteColumn>();
 
-            //compare custom columns on select sql
-            if (info is CohortCustomColumn)
-                return selectedColumns.Any(ec => ec.SelectSQL == info.SelectSQL);
-            
             //compare regular columns on their ID in the catalogue
             return selectedColumns.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == info.ID);
         }
@@ -245,6 +219,8 @@ namespace DataExportManager.ProjectUI
             _dataSet = SelectedDataSet.ExtractableDataSet;
             _config = SelectedDataSet.ExtractionConfiguration;
             
+            
+
             SetupUserInterface();
 
             SortSelectedByOrder();
