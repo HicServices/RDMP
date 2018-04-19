@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,7 +28,7 @@ namespace CohortManagerLibrary.Execution
     /// CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of the query is cached, whether it 
     /// has been cancelled / crashed etc.  The CohortIdentificationTaskExecution handles the actual execution of the query on the data set database.
     /// 
-    /// See CohortCompiler.cd
+    /// <para>See CohortCompiler.cd</para>
     /// </summary>
     public class CohortCompiler
     {

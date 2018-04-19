@@ -484,7 +484,7 @@
       <Project>{2CDD82D5-3E34-46C5-9679-ADEAB49B170C}</Project>
       <Name>AnonymisationTests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Caching\Engine\CachingEngine\CachingEngine.csproj">
+    <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj">
       <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
       <Name>CachingEngine</Name>
     </ProjectReference>

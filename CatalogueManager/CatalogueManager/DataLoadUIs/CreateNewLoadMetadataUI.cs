@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,7 +19,7 @@ namespace CatalogueManager.DataLoadUIs
     /// to configure it's LoadMetadata (how data is loaded).  You can either select an existing LoadMetadata (which will probably need modifying such that it correctly loads
     /// the new table in addition to what other datasets it already loaded.  Or you can create a new LoadMetadata and create a load from scratch.
     /// 
-    /// Once selected you will be taken to the dataset load configuration screen (See LoadMetadataUI)
+    /// <para>Once selected you will be taken to the dataset load configuration screen (See LoadMetadataUI)</para>
     /// 
     /// </summary>
     public partial class CreateNewLoadMetadataUI : RDMPForm

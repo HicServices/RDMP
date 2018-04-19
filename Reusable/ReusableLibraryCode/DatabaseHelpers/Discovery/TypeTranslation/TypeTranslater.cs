@@ -39,7 +39,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
             if (t == typeof (DateTime) || t == typeof (DateTime?))
                 return GetDateDateTimeDataType();
-
+            
             if (t == typeof (float) || t == typeof (float?) || t == typeof (double) ||
                 t == typeof (double?) || t == typeof (decimal) ||
                 t == typeof (decimal?))
@@ -130,6 +130,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
             if (IsInt(sqlType))
                 return typeof(int);
+
+            if (IsSmallInt(sqlType))
+                return typeof (short);
 
             if (IsBit(sqlType))
                 return typeof (bool);
@@ -280,6 +283,11 @@ select LEN(dt) from omgdates
         protected bool IsTime(string sqlType)
         {
             return sqlType.Trim().Equals("time",StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        protected virtual bool IsSmallInt(string sqlType)
+        {
+            return sqlType.ToLower().Equals("smallint");
         }
 
         protected virtual bool IsByte(string sqlType)

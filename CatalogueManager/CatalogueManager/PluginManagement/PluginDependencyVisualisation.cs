@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +22,7 @@ namespace CatalogueManager.PluginManagement
     /// expanded to see the MSIL operations that make them up.  This is useful for quickly determining whether a plugin is compatible with a new version of the RDMP software or for identifying
     /// missing dependencies.  
     /// 
-    /// This also ensures that you can see the exact MISL operations for a plugin for debugging errors even when you don't have the source code for the plugin. 
+    /// <para>This also ensures that you can see the exact MISL operations for a plugin for debugging errors even when you don't have the source code for the plugin. </para>
     /// </summary>
     public partial class PluginDependencyVisualisation : UserControl
     {

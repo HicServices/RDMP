@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
@@ -24,10 +25,10 @@ namespace Dashboard.CatalogueSummary.LoadEvents
     /// Shows the longitudinal history of all data loads of the selected Catalogue (dataset).  This is an expandable tree including all progress messages, errors, table load notifications
     /// etc.
     /// 
-    /// Right clicking on red error messages will allow you to resolve them into yellow state (error has been investigated and did not result in any serious problems / data integrity loss etc).
-    /// This launches the ResolveFatalErrors dialog.  You can resolve multiple errors at the same time by selecting all the errors at once and then right clicking one of them.
+    /// <para>Right clicking on red error messages will allow you to resolve them into yellow state (error has been investigated and did not result in any serious problems / data integrity loss etc).
+    /// This launches the ResolveFatalErrors dialog.  You can resolve multiple errors at the same time by selecting all the errors at once and then right clicking one of them.</para>
     /// 
-    /// Right clicking a live table load message will let you view a sample of the the UPDATES / INSERTS that happened during the data load (launches ViewInsertsAndUpdatesDialog).
+    /// <para>Right clicking a live table load message will let you view a sample of the the UPDATES / INSERTS that happened during the data load (launches ViewInsertsAndUpdatesDialog).</para>
     /// 
     /// </summary>
     public partial class LoadEventsTreeView : LoadEventsTreeView_Design
@@ -72,6 +73,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             //We will handle this ourselves because default behaviour is to limit the amount of text copied
             treeView1.CopySelectionOnControlC = false;
+
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         private object olvDescription_AspectGetter(object rowObject)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,12 +18,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
     /// Allows you to either create a new HICProjectDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading, 
     /// Executables etc.  In almost all cases you want to have a different directory for each load, this prevents simultaneous loads tripping over one another.
     /// 
-    /// To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
-    /// when you click Ok.
+    /// <para>To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
+    /// when you click Ok.</para>
     /// 
-    /// Alternatively if you want to reuse an existing directory (for example if you have accidentally deleted your old data load configuration and lost the reference to it's folder) then
+    /// <para>Alternatively if you want to reuse an existing directory (for example if you have accidentally deleted your old data load configuration and lost the reference to it's folder) then
     /// you can select the 'use existing' checkbox and enter the path to the existing folder (this should be the root folder i.e. not the Data folder).  This will run Checks on the folder
-    /// to confirm that it is has an intact structure and then use it for your load.
+    /// to confirm that it is has an intact structure and then use it for your load.</para>
     /// 
     /// </summary>
     public partial class ChooseHICProjectDialog : Form

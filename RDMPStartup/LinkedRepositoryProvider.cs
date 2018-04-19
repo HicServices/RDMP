@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.ObjectSharing;
 using CatalogueLibrary.Reports.Exceptions;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
@@ -11,6 +10,7 @@ using DataExportLibrary;
 using DataExportLibrary.Repositories;
 using HIC.Common.Validation.Dependency;
 using MapsDirectlyToDatabaseTable;
+using Sharing.Dependency;
 
 namespace RDMPStartup
 {
@@ -18,7 +18,7 @@ namespace RDMPStartup
     /// Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information (what datasets there are, what extraction
     /// projects there are, what IFilters are available etc - literally everything, just look at who inherits from IMapsDirectlyToDatabaseTable!).
     /// 
-    /// See also RegistryRepositoryFinder
+    /// <para>See also UserSettingsRepositoryFinder</para>
     /// </summary>
     public class LinkedRepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {

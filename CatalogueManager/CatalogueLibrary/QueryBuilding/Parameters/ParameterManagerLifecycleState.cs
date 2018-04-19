@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +11,7 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
     /// started you cannot add more Globals because they are considered when deciding whether or not to add a given ISqlParameter found at a lower level (e.g. if you 
     /// have a global @hb then finding @hb on an IFilter can be ignored since there is the global defined).
     /// 
-    /// Finalized occurs when you resolve the parameters collected into a single difinitive set (merging duplicates / overrides etc).
+    /// <para>Finalized occurs when you resolve the parameters collected into a single difinitive set (merging duplicates / overrides etc).</para>
     /// </summary>
     public enum ParameterManagerLifecycleState
     {

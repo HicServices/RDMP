@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
     /// will opt to only extract a subset of datasets (or he may have already succesfully extracted some datasets).  This collection should contain a full
     /// set of all the things that can be run for a given ExtractionConfiguration (including dataset specific lookups etc).
     /// 
-    /// Use ExtractCommandCollectionFactory to create instances of this class.
+    /// <para>Use ExtractCommandCollectionFactory to create instances of this class.</para>
     /// 
     /// </summary>
     public class ExtractCommandCollection

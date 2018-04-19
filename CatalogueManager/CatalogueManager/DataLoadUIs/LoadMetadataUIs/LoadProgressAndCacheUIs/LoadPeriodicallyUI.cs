@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -16,8 +17,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     /// Allows you to mark a LoadMetadata for periodic automated loading.  This will only work if you have a computer running the RDMPAutomationService (the routine loader).  If the automation
     /// service is not running you can still configure periodic loading in which case the DueLoads Dashboard will simply show that a load is due. 
     /// 
-    /// You can set how often to run the load and also chain it to another load e.g. you might want 'Load GP data' to always trigger 'Load Practice data'.  Chained loads will only ever launch
-    /// if the primary load was successful.
+    /// <para>You can set how often to run the load and also chain it to another load e.g. you might want 'Load GP data' to always trigger 'Load Practice data'.  Chained loads will only ever launch
+    /// if the primary load was successful.</para>
     /// </summary>
     public partial class LoadPeriodicallyUI : LoadPeriodicallyUI_Design, ISaveableUI
     {
@@ -81,6 +82,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public LoadPeriodicallyUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         protected override void OnLoad(EventArgs e)

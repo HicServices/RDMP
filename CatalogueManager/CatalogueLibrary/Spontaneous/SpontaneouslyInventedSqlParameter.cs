@@ -1,6 +1,11 @@
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -11,13 +16,19 @@ namespace CatalogueLibrary.Spontaneous
     /// </summary>
     public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParameter
     {
+        private readonly IQuerySyntaxHelper _syntaxHelper;
+
+        [Sql]
         public string ParameterSQL { get; set; }
+
+        [Sql]
         public string Value { get; set; }
         
         public string Comment { get; set; }
 
-        public SpontaneouslyInventedSqlParameter(string declarationSql,string value, string comment)
+        public SpontaneouslyInventedSqlParameter(string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper)
         {
+            _syntaxHelper = syntaxHelper;
             ParameterSQL = declarationSql;
             Value = value;
             Comment = comment;
@@ -25,13 +36,23 @@ namespace CatalogueLibrary.Spontaneous
 
         public string ParameterName { get
         {
-            return RDMPQuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+            return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
         }}
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             //I am my own owner! mwahahaha
             return this;
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            return _syntaxHelper;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ParameterSyntaxChecker(this).Check(notifier);
         }
     }
 }

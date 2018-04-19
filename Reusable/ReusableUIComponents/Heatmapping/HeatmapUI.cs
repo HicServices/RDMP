@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -22,10 +22,10 @@ namespace ReusableUIComponents.Heatmapping
     /// followed by any number (usually high e.g. 500+) additional columns which contain values that correspond to the axis.  A typical usage of this control would be to display drug 
     /// prescriptions by month where there are thousands of different prescribeable drugs.  
     /// 
-    /// The HeatmapUI renders each column as a row of heat map with each cell in the column as a 'pixel' (where the pixel width depends on the number of increments in the axis).  The color
-    /// of each pixel ranges from blue to red (with 0 appearing as black).  The effect of this is to show the distribution of popular vs rare pivot values across time (or whatever the axis is).
+    /// <para>The HeatmapUI renders each column as a row of heat map with each cell in the column as a 'pixel' (where the pixel width depends on the number of increments in the axis).  The color
+    /// of each pixel ranges from blue to red (with 0 appearing as black).  The effect of this is to show the distribution of popular vs rare pivot values across time (or whatever the axis is).</para>
     /// 
-    /// You can use this to visualise high dimensionality data that is otherwise incomprehensible in AggregateGraph
+    /// <para>You can use this to visualise high dimensionality data that is otherwise incomprehensible in AggregateGraph</para>
     /// </summary>
     public partial class HeatmapUI : UserControl
     {

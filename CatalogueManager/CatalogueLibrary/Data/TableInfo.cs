@@ -26,16 +26,21 @@ namespace CatalogueLibrary.Data
     /// Describes an sql table (or table valued function) on a given Server from which you intend to either extract and/or load / curate data.
     /// These can be created most easily by using TableInfoImporter.  This entity is the hanging off point for PreLoadDiscardedColumn, ColumnInfo etc
     /// 
-    /// This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
-    /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).
+    /// <para>This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
+    /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).</para>
     /// </summary>
     public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo
     {
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Server_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Database_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int State_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int ValidationXml_MaxLength = -1;
 
         #region Database Properties
@@ -106,6 +111,9 @@ namespace CatalogueLibrary.Data
         private readonly ICatalogueRepository _catalogueRepository;
 
         #region Relationships
+        /// <summary>
+        /// Fetches all the ColumnInfos associated with this TableInfo (This is refreshed every time you call this property)
+        /// </summary>
         [NoMappingToDatabase]
         public ColumnInfo[] ColumnInfos { get
         {
@@ -117,7 +125,8 @@ namespace CatalogueLibrary.Data
         {
             return Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
         }}
-
+        
+        /// <inheritdoc cref="IdentifierDumpServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer IdentifierDumpServer { get
         {
@@ -137,7 +146,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public TableInfo(ICatalogueRepository repository, DbDataReader r)
+        internal TableInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             _catalogueRepository = repository;

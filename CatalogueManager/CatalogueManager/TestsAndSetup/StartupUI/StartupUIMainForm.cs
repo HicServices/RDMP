@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
@@ -26,14 +26,14 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
     /// smiley face.  If you get an error (Red face) then there may be a hyperlink to resolve the problem (e.g. if a platform database needs patching or you have not yet configured your 
     /// platform databases (See ChoosePlatformDatabases).
     /// 
-    /// Green means that everything is working just fine.
+    /// <para>Green means that everything is working just fine.</para>
     /// 
-    /// Yellow means that something non-critical is not working e.g. a specific plugin is not working correctly
+    /// <para>Yellow means that something non-critical is not working e.g. a specific plugin is not working correctly</para>
     /// 
-    /// Red means that something critical is not working (Check for a fix hyperlink or look at the 'Technical' view to see the exact nature of the problem).
+    /// <para>Red means that something critical is not working (Check for a fix hyperlink or look at the 'Technical' view to see the exact nature of the problem).</para>
     /// 
-    /// The 'Technical' view shows the progress of the discovery / version checking of all tiers of platform databases.  This includes checking that the software version matches the database
-    /// schema version  (See ManagedDatabaseUI) and that plugins have loaded correctly (See MEFStartupUI).
+    /// <para>The 'Technical' view shows the progress of the discovery / version checking of all tiers of platform databases.  This includes checking that the software version matches the database
+    /// schema version  (See ManagedDatabaseUI) and that plugins have loaded correctly (See MEFStartupUI).</para>
     /// </summary>
     public partial class StartupUIMainForm : Form, ICheckNotifier
     {
@@ -246,19 +246,19 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             {
                 try
                 {
-                    lblProgress.Text = "Constructing RegistryRepositoryFinder";
-                    RegistryRepositoryFinder finder = new RegistryRepositoryFinder();
+                    lblProgress.Text = "Constructing UserSettingsRepositoryFinder";
+                    UserSettingsRepositoryFinder finder = new UserSettingsRepositoryFinder();
                     _startup.RepositoryLocator = finder;
                 }
                 catch (Exception ex)
                 {
-                    lblProgress.Text = "Constructing RegistryRepositoryFinder Failed";
+                    lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
                     Fatal(ex);
                 }
             }
             else
-                if(!(_startup.RepositoryLocator is RegistryRepositoryFinder))
-                    throw new NotSupportedException("You created Startup with an existing repository finder so we were going to reuse that one but it wasn't a RegistryRepositoryFinder (it was a " + _startup.RepositoryLocator.GetType().Name + "!)");
+                if(!(_startup.RepositoryLocator is UserSettingsRepositoryFinder))
+                    throw new NotSupportedException("You created Startup with an existing repository finder so we were going to reuse that one but it wasn't a UserSettingsRepositoryFinder (it was a " + _startup.RepositoryLocator.GetType().Name + "!)");
             
 
             Catalogue.Visible = false;
@@ -283,12 +283,12 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             llException.Visible = false;
             llChoosePlatformDatabases.Visible = false;
 
-            registryRepositoryFinderUI1.SetRegistryRepositoryFinder((RegistryRepositoryFinder)_startup.RepositoryLocator);
+            repositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
 
             lblStartupComplete1.Visible = false;
             lblStartupComplete2.Visible = false;
 
-            //10% progress because we connected to registry
+            //10% progress because we connected to user settings
             pbLoadProgress.Value = 100;
 
             lblProgress.Text = "Awaiting Platform Database Discovery...";
@@ -467,7 +467,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
 
         private void llChoosePlatformDatabases_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var cmd = new ExecuteCommandChoosePlatformDatabase(new RegistryRepositoryFinder());
+            var cmd = new ExecuteCommandChoosePlatformDatabase(new UserSettingsRepositoryFinder());
             cmd.Execute();
             StartOrRestart(true);
         }

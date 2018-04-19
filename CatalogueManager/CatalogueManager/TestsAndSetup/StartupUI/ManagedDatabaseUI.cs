@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
@@ -25,9 +25,9 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
     /// creation script for the database type.  The HostAssembly contains the data access logic.  The versions of both dlls AND the database (See [RoundhousE].[Version] table in your 
     /// database) must match.  If the assemblies are ahead of the database then this control will offer the option to Patch (upgrade) the database to match the new assembly.
     /// 
-    /// A green face indicates that the correct host assemblies are found and the database is the correct version and reachable etc.
+    /// <para>A green face indicates that the correct host assemblies are found and the database is the correct version and reachable etc.
     /// A yellow face indicates that a new version of the host assemblies have been found and the database needs upgrading (patching)
-    /// A red face indicates that the database is unreachable or the database version is ahead of the assemblies (you are using outdated assemblies?) or other catastrophic problem.
+    /// A red face indicates that the database is unreachable or the database version is ahead of the assemblies (you are using outdated assemblies?) or other catastrophic problem.</para>
     /// </summary>
     public partial class ManagedDatabaseUI : UserControl
     {

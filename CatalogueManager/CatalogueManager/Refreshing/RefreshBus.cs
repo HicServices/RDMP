@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -100,8 +100,8 @@ namespace CatalogueManager.Refreshing
         /// 2. If the RefreshBus sees a refresh for your object specifically (that was not published by yourself)
         ///     2.1 SetDatabaseObject will be called with the new state (in memory as it was passed to Publish) of the object
         /// 
-        /// Note: you can subscribe to EstablishSelfDestructProtocol in your SetDatabaseObject method if you want without worrying about repeat subscriptions but know that only
-        /// the first subscription is respected therefore you should NOT change the database object to a different one
+        /// <para>Note: you can subscribe to EstablishSelfDestructProtocol in your SetDatabaseObject method if you want without worrying about repeat subscriptions but know that only
+        /// the first subscription is respected therefore you should NOT change the database object to a different one</para>
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>

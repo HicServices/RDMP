@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using CatalogueLibrary;
-using CatalogueLibrary.Cloning;
 using CatalogueLibrary.Data;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
+using Sharing.Sharing;
 
 
 namespace CatalogueManager.SimpleDialogs
@@ -150,7 +150,8 @@ namespace CatalogueManager.SimpleDialogs
                 ci.CloneCatalogueItemWithIDIntoCatalogue(_cataToImportTo);
             else
             {
-                CatalogueCloner.CopyValuesFromCatalogueItemIntoCatalogueItem(ci,_overwriteTarget,true);
+                var pp = new PropertyPopulater();
+                pp.CopyNonIDValuesAcross(ci, _overwriteTarget, true);
                 this.Close();
             }
 

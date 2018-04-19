@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.Composition;
+using System.ComponentModel.Composition;
 using System.Reflection;
 using CatalogueLibrary.Data;
 
@@ -8,7 +8,7 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// Identifies databases belong to a specific .Database assembly that might need patching at Startup.  Document the host and database assembly classes (e.g. CatalogueLibrary
     /// and CatalogueLibrary.Database).
 	///
-    /// If you are writing a plugin you should use IPluginPatcher instead which is MEF discoverable
+    /// <para>If you are writing a plugin you should use IPluginPatcher instead which is MEF discoverable</para>
     /// </summary>
     public interface IPatcher
     {

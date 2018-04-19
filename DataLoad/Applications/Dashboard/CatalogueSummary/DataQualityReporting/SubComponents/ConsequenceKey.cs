@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -16,7 +16,7 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
     /// is useless (e.g. a hospital admissions record with no patient identifier making it unlinkable).  See SecondaryConstraintUI for more information on how validation rules are 
     /// interpreted.
     /// 
-    /// This control documents which colours are used to render each of these consequences in ColumnStatesChart. 
+    /// <para>This control documents which colours are used to render each of these consequences in ColumnStatesChart. </para>
     /// </summary>
     public partial class ConsequenceKey : UserControl
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,8 +16,8 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
     /// <summary>
     /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
     /// 
-    /// This Control is for setting Properties that are of Type derrived from ICustomUIDrivenClass and require a specific plugin user interface to be displayed in order to let the user edit
-    /// the value he wants (e.g. configure a web service endpoint with many properties that should be serialised / configured through a specific UI you have written).
+    /// <para>This Control is for setting Properties that are of Type derrived from ICustomUIDrivenClass and require a specific plugin user interface to be displayed in order to let the user edit
+    /// the value he wants (e.g. configure a web service endpoint with many properties that should be serialised / configured through a specific UI you have written).</para>
     /// </summary>
     [TechnicalUI]
     public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgumentValueUI

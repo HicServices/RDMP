@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -21,17 +21,17 @@ namespace CatalogueManager.SimpleDialogs
     /// It is highly likely that you will have columns in different datasets which are conceptually the same (e.g. patient identifier).  Maintaining a central description of this concept is
     /// important, it is no use having 10 slightly different descriptions of 'PatientCareNumber' for example.
     /// 
-    /// This dialog appears any time you save a description of a column/transform (CatalogueItem) and there is another column in any of your other datasets which has the same name.  It shows
+    /// <para>This dialog appears any time you save a description of a column/transform (CatalogueItem) and there is another column in any of your other datasets which has the same name.  It shows
     /// you the other columns that share the same name and lets you view their descriptions and the differences between their descriptions and your new description.  To view the changes
-    /// select one of the properties you changed on the right listbox (e.g. Description) and then scroll through the objects on the left to view the differences in descriptions.
+    /// select one of the properties you changed on the right listbox (e.g. Description) and then scroll through the objects on the left to view the differences in descriptions.</para>
     /// 
-    /// Next you must decide whether your new description applies to all the other objects too or whether the software made a mistake and actually you want to maintain the unique descriptions
-    /// (for example it is likely if you have a column EventDate it might have different descriptions in each dataset).
+    /// <para>Next you must decide whether your new description applies to all the other objects too or whether the software made a mistake and actually you want to maintain the unique descriptions
+    /// (for example it is likely if you have a column EventDate it might have different descriptions in each dataset).</para>
     /// 
-    /// Select either:
+    /// <para>Select either:
     /// Cancel - Nothing will be saved and your column description change will be lost
     /// No (Save only this one) - Only the original column description you were modifying will be saved
-    /// Yes (Copy over changes) - The original column and ALL OTHER TICKED columns will all be set to have the same description (that you originally saved).
+    /// Yes (Copy over changes) - The original column and ALL OTHER TICKED columns will all be set to have the same description (that you originally saved).</para>
     /// </summary>
     public partial class PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems : RDMPForm
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
 using CohortManagerLibrary.QueryBuilding;
@@ -12,9 +12,9 @@ namespace RDMPObjectVisualisation.DataObjects
     /// which when executed will return a table of relevant events about a patient set (e.g. all the prescription dates for opiates in Tayside).  This table will be part of a cohort identification
     /// configuration (e.g. find patients who have had a prescription for cannabis within 3 weeks of a prescription for opiates and are alive today and resident in Tayside).
     /// 
-    /// If you are seeing a PatientIndexTableVisualisation then it means that a patient index table query is available for use in the pipeline you are executing.  For example you might have executed
+    /// <para>If you are seeing a PatientIndexTableVisualisation then it means that a patient index table query is available for use in the pipeline you are executing.  For example you might have executed
     /// a cohort identification configuration and imported it as a cohort and now chosen to import all of the patient index tables used to give them to the researcher as custom data in thier project
-    /// extract.
+    /// extract.</para>
     /// </summary>
     public partial class PatientIndexTableVisualisation : UserControl, ICheckable
     {

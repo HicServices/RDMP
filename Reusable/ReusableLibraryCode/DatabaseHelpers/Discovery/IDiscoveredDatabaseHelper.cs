@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -29,5 +30,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty=false);
         DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns);
+        DirectoryInfo Detach(DiscoveredDatabase database);
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -15,12 +15,12 @@ namespace CatalogueLibrary.Spontaneous
     /// SpontaneousObjects are 'memory only' versions of IMapsDirectlyToDatabaseTable classes which throw NotSupportedException on any attempt to persist / delete them etc but which
     /// you can initialize and set properties on towards your own nefarious ends.
     /// 
-    /// E.g. lets say during the course of your programming you want to bolt another container and filter onto an AggregateContainer (in your Catalogue) then you can
+    /// <para>E.g. lets say during the course of your programming you want to bolt another container and filter onto an AggregateContainer (in your Catalogue) then you can
     /// SpontaneouslyInventedFilterContainer, put the AggregateContainer into it and create a SpontaneouslyInventedFilter along side it.  Then pass the Sponted container
-    /// to an ISqlQueryBuilder and watch it treat it just like any other normal collection of (database based) filters / containers.
+    /// to an ISqlQueryBuilder and watch it treat it just like any other normal collection of (database based) filters / containers.</para>
     /// 
-    /// SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for object equality without getting confused but prevents the
-    /// system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue
+    /// <para>SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for object equality without getting confused but prevents the
+    /// system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue</para>
     /// </summary>
     public abstract class SpontaneousObject:IMapsDirectlyToDatabaseTable,ISaveable,IDeleteable,IRevertable
     {

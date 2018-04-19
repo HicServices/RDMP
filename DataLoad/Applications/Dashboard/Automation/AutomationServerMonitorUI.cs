@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
@@ -26,9 +26,9 @@ namespace Dashboard.Automation
     /// is currently running and the state of those jobs and it's state (whether it has crashed etc).  Also includes the last 'check in' time, which is when the Automation Executable last
     /// checked in with the database to remind everyone it is still alive.
     /// 
-    /// Also visible as red Flags are a lists of all the errors encountered by the automation service. If there are flags appearing in this control then you should go check lifeline / last checked
+    /// <para>Also visible as red Flags are a lists of all the errors encountered by the automation service. If there are flags appearing in this control then you should go check lifeline / last checked
     /// in counter on the right to see if the automation process to see if it is still running.  You can view and resolve the flags by clicking on them.  Typing in an Explanation will resolve the 
-    /// error such that it no longer appears on the dashboard. If you do this make sure you have fixed the underlying problem and relaunched the automation service (if required).
+    /// error such that it no longer appears on the dashboard. If you do this make sure you have fixed the underlying problem and relaunched the automation service (if required).</para>
     /// </summary>
     public partial class AutomationServerMonitorUI : AutomationServerMonitorUI_Design
     {
@@ -37,6 +37,8 @@ namespace Dashboard.Automation
         public AutomationServerMonitorUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

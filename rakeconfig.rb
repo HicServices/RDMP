@@ -1,5 +1,5 @@
 PUBLISH_DIR =  ENV['PUBLISH_DIR']  || "Release" 
-SOLUTION =     ENV['SOLUTION']     || "DatabaseCreation/DatabaseCreation.csproj" 
+SOLUTION =     ENV['SOLUTION']     || "Tools/DatabaseCreation/DatabaseCreation.csproj" 
 DBSERVER =     ENV['DBSERVER']     || "localhost\\sqlexpress" 
 DBPREFIX =     ENV['DBPREFIX']     || "TEST_" 
 PRERELEASE =   ENV['PRERELEASE']   || "false"

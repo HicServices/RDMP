@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -32,18 +32,18 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
     /// interesting subsets (e.g. 'How to identify all lab test codes for Creatinine').  This can involve complicated SQL which can end up buried in undocumented extraction scripts 
     /// or kept in the head of the data analyst and lost if he ever leaves the organisation.
     /// 
-    /// RDMP Filters are an attempt to reduce this risk by centralising SQL 'WHERE' logic into clearly defined and documented reusable blocks (called Filters).  These named filters can
+    /// <para>RDMP Filters are an attempt to reduce this risk by centralising SQL 'WHERE' logic into clearly defined and documented reusable blocks (called Filters).  These named filters can
     /// then be combined/used by new data analyst who don't necessarily understand the exact implementation.  For this to work it is vital that you accurately name and describe what each
-    /// filter does, including any peculiarities and that you robustly test the SQL in the implementation to make sure it actually works.
+    /// filter does, including any peculiarities and that you robustly test the SQL in the implementation to make sure it actually works.</para>
     /// 
-    /// To write the actual implementation type into the SQL prompt (omitting the 'WHERE' keyword).  For example you could create a Filter called 'Active Records Only' with a description
+    /// <para>To write the actual implementation type into the SQL prompt (omitting the 'WHERE' keyword).  For example you could create a Filter called 'Active Records Only' with a description
     /// 'This filter throws out all records which have expired because a clinician has deleted them or the patient has withdrawn consent' and implmenetation SQL of 'MyTable.IActive=1'. Make
     /// sure to fully specify the names of columns in your WHERE SQL incase the filter is used as part of a join across multiple tables with columns that contain the same name (e.g. it might
     /// be that many other tables also include a field called IsActive).  Make sure you fully explore your dataset before finalising your filter and consider edge cases e.g. what does it mean
-    /// when IsActive is null? are there any values above 1? and if so what does that mean?
+    /// when IsActive is null? are there any values above 1? and if so what does that mean?</para>
     /// 
-    /// If you want to parameterise your query (e.g. a filter for 'Approved name of drug like X') then just type a parameter like you normally would e.g. 'Prescription.DrugName like @drugName'
-    /// and save. This will automatically create an empty parameter (See ParameterCollectionUI).
+    /// <para>If you want to parameterise your query (e.g. a filter for 'Approved name of drug like X') then just type a parameter like you normally would e.g. 'Prescription.DrugName like @drugName'
+    /// and save. This will automatically create an empty parameter (See ParameterCollectionUI).</para>
     /// </summary>
     public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
     {

@@ -3,7 +3,6 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.Collections.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.Icons.IconProvision.StateBasedIconProviders

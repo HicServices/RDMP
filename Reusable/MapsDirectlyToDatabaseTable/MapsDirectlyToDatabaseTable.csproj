@@ -147,7 +147,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AdjustableLocation.cs" />
+    <Compile Include="AdjustableLocationAttribute.cs" />
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeleteable.cs" />
     <Compile Include="INamed.cs" />
@@ -160,6 +160,7 @@
     <Compile Include="RepositoryResultCaching\SuperCachingDisposalToken.cs" />
     <Compile Include="RepositoryResultCaching\SuperCachingModeIsOnException.cs" />
     <Compile Include="RepositoryResultCaching\SuperResultCache.cs" />
+    <Compile Include="SqlAttribute.cs" />
     <Compile Include="TableRepository.cs" />
     <Compile Include="IObscureDependencyFinder.cs" />
     <Compile Include="Relationships\Relationship.cs" />

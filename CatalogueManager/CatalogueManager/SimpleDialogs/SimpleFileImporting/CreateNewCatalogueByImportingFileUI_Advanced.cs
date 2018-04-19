@@ -73,17 +73,10 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     var dest = (DataTableUploadDestination)args.PipelineEngine.DestinationObject;
                     targetTable = dest.TargetTableName;
                     var table = _database.ExpectTable(targetTable);
-
-                    TableInfoImporter importer = new TableInfoImporter(_repositoryLocator.CatalogueRepository, table);
-
-                    TableInfo t;
-                    ColumnInfo[] cols;
-                    importer.DoImport(out t,out cols);
-
-                    ForwardEngineerCatalogueUI forwardEngineer = new ForwardEngineerCatalogueUI(_activator, t, cols);
-                    forwardEngineer.ShowDialog(this);
                     
-                    var cata = CatalogueCreatedIfAny = forwardEngineer.CatalogueCreatedIfAny;
+                    var ui = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_repositoryLocator.CatalogueRepository, table));
+                    
+                    var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
 
                     if (cata != null)
                         MessageBox.Show("Catalogue " + cata.Name + " successfully created");

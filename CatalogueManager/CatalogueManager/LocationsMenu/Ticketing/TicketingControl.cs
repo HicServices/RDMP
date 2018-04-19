@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Ticketing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-
-using Ticketing;
 using Color = System.Drawing.Color;
 
 namespace CatalogueManager.LocationsMenu.Ticketing
@@ -17,8 +16,8 @@ namespace CatalogueManager.LocationsMenu.Ticketing
     /// If you don't yet have a ticketing system configured (and you have a plugin that supports the ticketing system) then you can set up the ticketing system configuration by launching
     /// TicketingSystemConfigurationUI (from Catalogue Manager main menu).
     /// 
-    /// Assuming your ticketing system plugin is working correctly and correctly configured in RDMP then clicking 'Show' should take you directly to your ticketing system (e.g. launch a
-    /// new browser window at the website page of the ticket).
+    /// <para>Assuming your ticketing system plugin is working correctly and correctly configured in RDMP then clicking 'Show' should take you directly to your ticketing system (e.g. launch a
+    /// new browser window at the website page of the ticket).</para>
     /// </summary>
     public partial class TicketingControl : RDMPUserControl
     {

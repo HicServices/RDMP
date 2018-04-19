@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -12,11 +12,11 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
+using CatalogueManager.FindAndReplace;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.LocationsMenu;
-using CatalogueManager.LocationsMenu.LocationAdjustment;
 using CatalogueManager.LocationsMenu.Ticketing;
 using CatalogueManager.LogViewer;
 using CatalogueManager.MainFormUITabs;
@@ -42,11 +42,11 @@ using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
-using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.Menus
@@ -55,25 +55,25 @@ namespace ResearchDataManagementPlatform.Menus
     /// <summary>
     /// The Top menu of the RDMP lets you do most tasks that do not relate directly to a single object (most single object tasks are accessed by right clicking the object).
     /// 
-    /// Locations:
+    /// <para>Locations:
     /// - Change which DataCatalogue database you are pointed at (not usually needed unless you have two different databases e.g. a Test database and a Live database)
     /// - Setup Logging / Anonymisation / Query Caching / Data Quality Engine databases
     /// - Configure a Ticketing system e.g. Jira for tracking time against tickets (you can set a ticket identifier for datasets, project extractions etc)
     /// - Perform bulk renaming operations across your entire catalogue database (useful for when someone remaps your server drives to a new letter! e.g. 'D:\Datasets\Private\' becomes 'E:\')
-    /// - Refresh the window by reloading all Catalogues/TableInfos etc 
+    /// - Refresh the window by reloading all Catalogues/TableInfos etc </para>
     /// 
-    /// View:
+    /// <para>View:
     /// - View/Edit dataset loading logic
     /// - View/Edit the governance approvals your datasets have (including attachments, period covered, datasets included in approval etc)
-    /// - View the Logging database contents (a relational view of all activities undertaken by all Data Analysts using the RDMP - loading, extractions, dqe runs etc).
+    /// - View the Logging database contents (a relational view of all activities undertaken by all Data Analysts using the RDMP - loading, extractions, dqe runs etc).</para>
     /// 
-    /// Reports
-    /// - Generate a variety of reports that summarise the state of your datasets / governance etc
+    /// <para>Reports
+    /// - Generate a variety of reports that summarise the state of your datasets / governance etc</para>
     /// 
-    /// Help
+    /// <para>Help
     /// - View the user manual
     /// - View a technical description of each of the core objects maintained by RDMP (Catalogues, TableInfos etc) and what they mean (intended for programmers)
-    /// - Generate user interface document (the document you are currently reading).
+    /// - Generate user interface document (the document you are currently reading).</para>
     /// </summary>
 
     public partial class RDMPTopMenuStrip : RDMPUserControl
@@ -114,13 +114,6 @@ namespace ResearchDataManagementPlatform.Menus
             _activator.ShowWindow(ui,true);
         }
 
-        private void adjustFileLocationsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LocationsAdjuster adjuster = new LocationsAdjuster();
-            adjuster.RepositoryLocator = RepositoryLocator;
-            adjuster.ShowDialog(this);
-        }
-        
         private void governanceManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GovernanceUI dialog = new GovernanceUI();
@@ -205,11 +198,6 @@ namespace ResearchDataManagementPlatform.Menus
             new PerformanceCounterUI().Show();
         }
 
-        private void clearAllAutocompleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RecentHistoryOfControls.GetInstance().Clear();
-        }
-        
         private void openExeDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -317,7 +305,7 @@ namespace ResearchDataManagementPlatform.Menus
 
             _windowManager.ContentManager.WindowFactory.TabChanged += WindowFactory_TabChanged;
 
-            var tracker = TutorialTracker.GetInstance(_activator);
+            var tracker = new TutorialTracker(_activator);
             foreach (Tutorial t in tracker.TutorialsAvailable)
                 tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem, _activator, t, tracker));
 
@@ -376,7 +364,7 @@ namespace ResearchDataManagementPlatform.Menus
             var singleObject = singleObjectControlTab.GetControl() as IRDMPSingleDatabaseObjectControl;
 
             //if user wants to emphasise on tab change and theres an object we can emphasise associated with the control
-            if (singleObject != null && UserSettingsFile.GetInstance().EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
+            if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
 
             _saveToolStripMenuItem.Saveable = saveable;
@@ -439,6 +427,11 @@ namespace ResearchDataManagementPlatform.Menus
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentTab.Close();
+        }
+
+        private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _activator.ShowWindow(new FindAndReplaceUI(_activator),true);
         }
     }
 }

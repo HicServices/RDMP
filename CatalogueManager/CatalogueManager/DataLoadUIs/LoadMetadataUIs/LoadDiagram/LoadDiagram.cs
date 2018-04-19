@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -9,6 +9,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers.Copying;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
@@ -30,18 +31,18 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
     /// <summary>
     ///  This control functions in two ways. 
     /// 
-    /// Firstly it allows you to visualise both the anticipated tables that will be created during a data load (See LoadMetadataUI) including columns which vary by stage e.g. hic_validFrom which
-    /// is computed and only in LIVE and primary keys which are unconstrained (nullable) in RAW.
+    /// <para>Firstly it allows you to visualise both the anticipated tables that will be created during a data load (See LoadMetadataUI) including columns which vary by stage e.g. hic_validFrom which
+    /// is computed and only in LIVE and primary keys which are unconstrained (nullable) in RAW.</para>
     /// 
-    /// Secondly it allows you to (on demand) view the actual state of the tables as they exist now.  This is done by clicking 'Fetch State'. Note that RAW and STAGING will likely not
+    /// <para>Secondly it allows you to (on demand) view the actual state of the tables as they exist now.  This is done by clicking 'Fetch State'. Note that RAW and STAGING will likely not
     /// exist at the time you are viewing this control (design time) as they are created during the load as part of normal execution and dropped at the end.  The diagram also shows the LIVE
-    /// database and tables that are associated with the load.
+    /// database and tables that are associated with the load.</para>
     /// 
-    /// You can click check the state at any time even during a load or after a failed load (Where bubbles RAW and STAGING will be left for you to debug).  Double clicking a Table will allow you
-    /// to see what is in the table and let you run diagnostic SQL you type to run on it (this lets you debug what went wrong with your load / the data you were supplied with).
+    /// <para>You can click check the state at any time even during a load or after a failed load (Where bubbles RAW and STAGING will be left for you to debug).  Double clicking a Table will allow you
+    /// to see what is in the table and let you run diagnostic SQL you type to run on it (this lets you debug what went wrong with your load / the data you were supplied with).</para>
     /// 
-    /// The way that tables/databases are determined is via UNIONing all the TableInfos of all the Catalogues that are associated with the load (including any linked lookup tables).  See 
-    /// LoadMetadataCollectionUI for changing this.
+    /// <para>The way that tables/databases are determined is via UNIONing all the TableInfos of all the Catalogues that are associated with the load (including any linked lookup tables).  See 
+    /// LoadMetadataCollectionUI for changing this.</para>
     /// </summary>
     public partial class LoadDiagram : LoadDiagram_Design
     {
@@ -66,6 +67,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             tlvLoadedTables.UseCellFormatEvents = true;
             tlvLoadedTables.FormatCell += tlvLoadedTables_FormatCell;
             tlvLoadedTables.ItemActivate += tlvLoadedTables_ItemActivate;
+
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
 
         void tlvLoadedTables_ItemActivate(object sender, EventArgs e)

@@ -8,9 +8,8 @@ using CatalogueManager.PluginChildProvision;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.UsedByProject;
-using DataExportManager.Collections.Providers;
+using DataExportLibrary.Providers.Nodes;
+using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 

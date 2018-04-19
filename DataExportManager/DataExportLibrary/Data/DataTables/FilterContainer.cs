@@ -22,6 +22,7 @@ namespace DataExportLibrary.Data.DataTables
         #region Database Properties
         private FilterContainerOperation _operation;
 
+        /// <inheritdoc/>
         public FilterContainerOperation Operation
         {
             get { return _operation; }
@@ -39,7 +40,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+        internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository, r)
         {
             FilterContainerOperation op;
 

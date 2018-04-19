@@ -150,6 +150,8 @@ namespace CatalogueLibrary.Reports
             if (characterIndex == 0)
                 notifier.OnCheckPerformed(new CheckEventArgs("Did not find <summary> in file ", CheckResult.Fail));
 
+            definition = DocumentationReportFormsAndControls.StripTags(definition);
+
             return definition;
         }
     }

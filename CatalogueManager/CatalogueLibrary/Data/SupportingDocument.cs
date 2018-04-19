@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
@@ -13,15 +13,18 @@ namespace CatalogueLibrary.Data
     /// Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset (Catalogue).  This can be marked as Extractable in which case 
     /// every time the dataset is extracted the file will also be bundled along with it (so that researchers can also benefit from the file).
     /// 
-    /// You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected
-    /// e.g. a PDF on data governance or a copy of an empty 'data use contract document'
+    /// <para>You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected
+    /// e.g. a PDF on data governance or a copy of an empty 'data use contract document'</para>
     /// 
-    /// Finally you can tie in the Ticketing system so that you can audit time spent curating the document etc.
+    /// <para>Finally you can tie in the Ticketing system so that you can audit time spent curating the document etc.</para>
     /// </summary>
     public class SupportingDocument : VersionedDatabaseEntity,INamed
     {
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int URL_MaxLength = -1;
 
         #region Database Properties
@@ -82,7 +85,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public SupportingDocument(ICatalogueRepository repository, DbDataReader r)
+        internal SupportingDocument(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString()); //gets around decimals and other random crud number field types that sql returns

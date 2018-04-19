@@ -90,17 +90,26 @@ namespace DataExportManager.DataRelease
 
             _environmentPotential = environmentPotential;
 
+            CheckForMixedReleaseTypes(ConfigurationsForRelease.SelectMany(cfr => cfr.Value).Union(datasetReleasePotentials));
+
             ConfigurationsForRelease.Add((ExtractionConfiguration) toAdd, datasetReleasePotentials.ToList());
             _releaseState = ReleaseState.DoingProperRelease;
 
             ReloadTreeView();
         }
 
+        private void CheckForMixedReleaseTypes(IEnumerable<ReleasePotential> datasetReleasePotentials)
+        {
+            if (datasetReleasePotentials.Select(rp => rp.ExtractionResults.DestinationType).Distinct().Count() > 1)
+                throw new Exception(
+                    "There is a mix of extraction types (DB and filesystem) in the datasets you are trying to add. This is not allowed.");
+        }
+
         private void CheckForCumulativeExtractionResults(ReleasePotential[] datasetReleasePotentials)
         {
             var staleDatasets = datasetReleasePotentials.Where(
                 p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
-
+           
             if (staleDatasets.Any())
                 throw new Exception(
                     "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
@@ -116,7 +125,7 @@ namespace DataExportManager.DataRelease
             }
 
             if (_environmentPotential != null)
-                if (_environmentPotential.Assesment != _environmentPotential.Assesment)
+                if (_environmentPotential.Assesment != _environmentPotential.Assesment) //DAFUCK?
                     throw new Exception("We have been given two ReleaseEnvironmentPotentials but they have different .Assesment properties");
 
             _environmentPotential = environmentPotential;
@@ -183,7 +192,7 @@ namespace DataExportManager.DataRelease
 
             //translated into an engine
             var engine = context.GetEngine(_pipelineUI.Pipeline, progressUI);
-            var checksUI = new PopupChecksUI("Checking engine", false);
+            var checksUI = new PopupChecksUI("Checking engine", false, allowYesNoToAll: false);
             checksUI.Check(engine);
             
             if (checksUI.GetWorst() < CheckResult.Fail)
@@ -241,7 +250,7 @@ namespace DataExportManager.DataRelease
                 var releaseData = GetReleaseData();
                 releaseData.IsDesignTime = true;
                 var context = new ReleaseUseCase(_project, releaseData);
-                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release",DockStyle.Fill,pnlPipeline);
+                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
             }
         }
 

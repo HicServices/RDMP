@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,6 +11,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -30,31 +31,31 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
     /// Converts the contents of an existing column of your live data into anonymous identifiers.  You should only use this after backing up your database first and being very certain
     /// that you do not need the sensitive data being anonymised in any project extracts.
     /// 
-    /// BACKGROUND:
+    /// <para>BACKGROUND:
     /// The process of anonymisation is referred to as ANO and involves moving existing identifiers into an ANOStore (separate database) and substituting in their place unique anonymous
     /// identifiers (there is a 1 to 1 mapping between ANO identifiers and the original values).  Each type of data (e.g. GP Code, Practice Code etc) should have it's own ANOTable with
-    /// a unique suffix such that you can more easily trace down identifiers if you ever have to deanonymise data.  
+    /// a unique suffix such that you can more easily trace down identifiers if you ever have to deanonymise data.  </para>
     /// 
-    /// For example if you imagine that all GP codes must be anonymised, in your data they appear as a healthboard (T - Tayside, F - Fife) followed by 3 digits.  Then your ANOTable would
+    /// <para>For example if you imagine that all GP codes must be anonymised, in your data they appear as a healthboard (T - Tayside, F - Fife) followed by 3 digits.  Then your ANOTable would
     /// contain the (Deleted) original values e.g. 'T402' and the substituted (ANO) identifier '3622_G'.  ANO identifiers are always a sequence of random integers and letters (you can choose
     /// how many letters and how many characters) followed by a suffix (in this case _G to indicate that it is a GP Code).  After Finalising the configuration, your live data table would go from
     /// varchar(4) to varchar(6) - to accommodate the suffix and longer number of maximum digits and all codes would be replaced with ANO codes.  This lets your data users still match across
-    /// GPs (e.g. to identify prescribing patterns in GPs) without knowing which GP is which (which would be the case with a GP Code which can be looked up on any clinical system).
+    /// GPs (e.g. to identify prescribing patterns in GPs) without knowing which GP is which (which would be the case with a GP Code which can be looked up on any clinical system).</para>
     /// 
-    /// All columns that share an ANOTable (e.g. ANOGPCode) must have the same datatype (in above example this would be varchar(4)).
+    /// <para>All columns that share an ANOTable (e.g. ANOGPCode) must have the same datatype (in above example this would be varchar(4)).</para>
     /// 
-    /// USING WINDOW:
+    /// <para>USING WINDOW:
     /// To use this window you must be sure that you want to transform identifiable data into anonymous format.  It is advisable to never anonymise useful result data e.g. numberOfPrescriptions) and
     /// stick to anonymising only categorical fields that compromise patient or carer anonymity (GP Codes, Patient identifiers etc).  Also if you never intend to process or even host certain columns
-    /// (e.g. Firstname / Surname) then you can drop the fields entirely as part of data loading through the PreLoadDiscardedColumn mechanism).
+    /// (e.g. Firstname / Surname) then you can drop the fields entirely as part of data loading through the PreLoadDiscardedColumn mechanism).</para>
     /// 
-    /// If the data in your column already conforms to a known type that you have anonymised before (e.g. 'GP Code' in another dataset) and the datatype matches exactly (e.g. varchar(4)) then you  
-    /// can select an existing ANOTable and push the data straight through into ANO format.
+    /// <para>If the data in your column already conforms to a known type that you have anonymised before (e.g. 'GP Code' in another dataset) and the datatype matches exactly (e.g. varchar(4)) then you  
+    /// can select an existing ANOTable and push the data straight through into ANO format.</para>
     /// 
-    /// If not then you will need to type in a name (beginning with ANO) that refers to the type (e.g. ANOPatientIdentifier) and give it a meaningful suffix (e.g. 'P' for patient) and select 
-    /// Create ANOTable.  Adjust the Integer/Character count till the preview data looks pleasing and no errors are reported then Finalise the choice.
+    /// <para>If not then you will need to type in a name (beginning with ANO) that refers to the type (e.g. ANOPatientIdentifier) and give it a meaningful suffix (e.g. 'P' for patient) and select 
+    /// Create ANOTable.  Adjust the Integer/Character count till the preview data looks pleasing and no errors are reported then Finalise the choice.</para>
     /// 
-    /// 
+    /// <para></para>
     /// </summary>
     public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConverterUI_Design
     {
@@ -120,6 +121,8 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
         public ColumnInfoToANOTableConverterUI()
         {
             InitializeComponent();
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ColumnInfo databaseObject)

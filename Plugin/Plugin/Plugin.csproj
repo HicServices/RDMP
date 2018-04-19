@@ -103,10 +103,6 @@
       <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
       <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CatalogueManager\TicketingModules\Ticketing\Ticketing.csproj">
-      <Project>{048e1478-e4a7-4ad1-95ab-c40c604a4f60}</Project>
-      <Name>Ticketing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
@@ -115,10 +111,6 @@
       <Project>{76d185e2-2b48-45b6-a2a9-74ff71d46c15}</Project>
       <Name>DataExportLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Applications\RDMPAutomationService\RDMPAutomationService\RDMPAutomationService.csproj">
-      <Project>{04aebb47-fdd6-4bdf-8fef-572b947afeff}</Project>
-      <Name>RDMPAutomationService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
       <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
       <Name>LoadModules.Generic</Name>
@@ -126,10 +118,6 @@
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
       <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
       <Name>DataQualityEngine.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Developer\PluginPackager\PluginPackager.csproj">
-      <Project>{27bdabce-8fef-48d9-bad6-8e280b13adf5}</Project>
-      <Name>PluginPackager</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
       <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>
@@ -150,6 +138,14 @@
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
+      <Project>{27bdabce-8fef-48d9-bad6-8e280b13adf5}</Project>
+      <Name>PluginPackager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04aebb47-fdd6-4bdf-8fef-572b947afeff}</Project>
+      <Name>RDMPAutomationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>

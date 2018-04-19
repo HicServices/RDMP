@@ -176,7 +176,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             var declaration = syntaxHelper.GetParameterDeclaration("@category", new DatabaseTypeRequest(typeof(string), 1));
 
             var ORContainer = new SpontaneouslyInventedFilterContainer(null, null, FilterContainerOperation.OR);
-            var constParam = new ConstantParameter(declaration, "'T'", "T Category Only");
+            var constParam = new ConstantParameter(declaration, "'T'", "T Category Only", syntaxHelper);
             
             //this is deliberately duplication, it tests that the parameter compiles as well as that any dynamic sql doesn't get thrown by quotes
             var filter1 = new SpontaneouslyInventedFilter(ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",

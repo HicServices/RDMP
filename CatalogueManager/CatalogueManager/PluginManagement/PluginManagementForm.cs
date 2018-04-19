@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
-using CatalogueLibrary.Remoting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
@@ -30,6 +29,7 @@ using ReusableLibraryCode.Serialization;
 using ReusableUIComponents;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
+using Sharing.Transmission;
 
 namespace CatalogueManager.PluginManagement
 {
@@ -38,12 +38,12 @@ namespace CatalogueManager.PluginManagement
     /// of the Plugin.  You can upload a plugin by dropping the zip file into left hand tree view (where it says 'Drop Here').  Once uploaded, all the contents of the zip file are saved in the
     /// LoadModuleAssembly table in your Catalogue Database.  Then when any user launches an RDMP program they will receive a copy of the plugin downloaded into their %appdata%\MEF directory.
     /// 
-    /// Clicking a plugin will expand to show all the dll files in the plugin.  Expanding a dll will show all the list of RDMP compatible (Exported) classes in that dll.  Clicking on one of the
-    /// classes will open populate the dependencies and allow you to view the MISL of the plugin (See PluginDependencyVisualisation).
+    /// <para>Clicking a plugin will expand to show all the dll files in the plugin.  Expanding a dll will show all the list of RDMP compatible (Exported) classes in that dll.  Clicking on one of the
+    /// classes will open populate the dependencies and allow you to view the MISL of the plugin (See PluginDependencyVisualisation).</para>
     /// 
-    /// Pressing the 'Delete' key on your keyboard will delete the selected Plugin or Dll from the LoadModuleAssembly table in your Catalogue Database.  This will not immediately unload the 
+    /// <para>Pressing the 'Delete' key on your keyboard will delete the selected Plugin or Dll from the LoadModuleAssembly table in your Catalogue Database.  This will not immediately unload the 
     /// plugin locally because all the plugins will be currently read locked however the next time you restart the application (or start a new RDMP application) the local copies of the plugin
-    /// will also be deleted. 
+    /// will also be deleted. </para>
     /// </summary>
     public partial class PluginManagementForm : RDMPForm
     {
@@ -351,11 +351,11 @@ namespace CatalogueManager.PluginManagement
             }
 
             var barsUI = new ProgressBarsUI("Pushing to remotes", true);
-            var service = new RemotePushingService(RepositoryLocator.CatalogueRepository, barsUI);
+            var service = new RemotePushingService(RepositoryLocator, barsUI);
             var f = new SingleControlForm(barsUI);
             f.Show();
             
-            service.SendPluginsToAllRemotes(plugins, () => barsUI.Done());
+            service.SendPluginsToAllRemotes(plugins, barsUI.Done);
         }
     }
 }

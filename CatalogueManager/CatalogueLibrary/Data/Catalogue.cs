@@ -18,6 +18,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -25,50 +26,80 @@ namespace CatalogueLibrary.Data
     /// The central class for the RDMP, a Catalogue is a virtual dataset e.g. 'Hospital Admissions'.  A Catalogue can be a merging of multiple underlying tables and exists 
     /// independent of where the data is actually stored (look at other classes like TableInfo to see the actual locations of data).
     /// 
-    /// As well as storing human readable names/descriptions of what is in the dataset it is the hanging off point for Attachments (SupportingDocument), validation logic, 
-    /// extractable columns (CatalogueItem->ExtractionInformation->ColumnInfo) ways of filtering the data, aggregations to help understand the dataset etc.
+    /// <para>As well as storing human readable names/descriptions of what is in the dataset it is the hanging off point for Attachments (SupportingDocument), validation logic, 
+    /// extractable columns (CatalogueItem->ExtractionInformation->ColumnInfo) ways of filtering the data, aggregations to help understand the dataset etc.</para>
     /// 
-    /// Catalogues are always flat views although they can be built from multiple relational data tables underneath.
+    /// <para>Catalogues are always flat views although they can be built from multiple relational data tables underneath.</para>
     /// 
-    /// Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)
+    /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
     public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed
     {
         #region Database Properties
 
         //just create these variables (one for every string or Uri field and reflection will populate them
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Acronym_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Geographical_coverage_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Background_summary_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Search_keywords_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Update_freq_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Update_sched_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Time_coverage_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Contact_details_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Resource_owner_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Attribution_citation_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Access_options_MaxLength = -1;
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Detail_Page_URL_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int API_access_URL_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Browse_URL_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Bulk_Download_URL_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Query_tool_URL_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Source_URL_MaxLength = -1;
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Country_of_origin_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Data_standards_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Administrative_contact_name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Administrative_contact_email_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Administrative_contact_telephone_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Administrative_contact_address_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Ethics_approver_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Source_of_data_collection_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int SubjectNumbers_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int ValidatorXML_MaxLength = -1;
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Ticket_MaxLength = -1;
 
         private string _acronym;
@@ -414,6 +445,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="LoadMetadata_ID"/>
         [NoMappingToDatabase]
         public LoadMetadata LoadMetadata
         {
@@ -432,6 +464,7 @@ namespace CatalogueLibrary.Data
             get { return Repository.GetAllObjectsWithParent<AggregateConfiguration>(this); }
         }
 
+        /// <inheritdoc cref="LiveLoggingServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer LiveLoggingServer
         {
@@ -443,6 +476,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="TestLoggingServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer TestLoggingServer
         {
@@ -454,6 +488,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="TimeCoverage_ExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation TimeCoverage_ExtractionInformation {
             get
@@ -464,6 +499,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc cref="PivotCategory_ExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation PivotCategory_ExtractionInformation
         {
@@ -524,7 +560,7 @@ namespace CatalogueLibrary.Data
         /// Creates a single runtime instance of the Catalogue based on the current state of the row read from the DbDataReader (does not advance the reader)
         /// </summary>
         /// <param name="r"></param>
-        public Catalogue(ICatalogueRepository repository, DbDataReader r)
+        internal Catalogue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             if(r["LoadMetadata_ID"] != DBNull.Value)
@@ -1144,12 +1180,22 @@ namespace CatalogueLibrary.Data
         private bool? _isExtractable;
 
 
-        public bool GetIsExtractabilityKnown()
+        /// <summary>
+        /// Returns whether or not the extractability of the Catalogue is known.  In general this is only true
+        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// </summary>
+        /// <returns></returns>
+        internal bool GetIsExtractabilityKnown()
         {
             return _isExtractable != null;
         }
 
-        public bool GetIsExtractable()
+        /// <summary>
+        /// Method is only valid once InjectExtractability is called, do not use it without first calling <see cref="GetIsExtractabilityKnown"/>.  In general this is only true
+        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// </summary>
+        /// <returns></returns>
+        internal bool GetIsExtractable()
         {
             if(_isExtractable == null)
                 throw new NotSupportedException("Method is only valid once InjectExtractability is called.  Catalogues do not know if they are extractable, it takes a Data Export object to tell them this fact");
@@ -1162,5 +1208,15 @@ namespace CatalogueLibrary.Data
             _isExtractable = isExtractable;
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var f = new QuerySyntaxHelperFactory();
+            var type = GetDistinctLiveDatabaseServerType();
+
+            if(type == null)
+                throw new Exception("Catalogue '" + this +"' does not have a single Distinct Live Database Type");
+            
+            return f.Create(type.Value);
+        }
     }
 }

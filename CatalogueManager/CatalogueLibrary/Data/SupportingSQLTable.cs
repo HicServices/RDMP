@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -16,11 +16,11 @@ namespace CatalogueLibrary.Data
     /// Extractable then it will be bundled along with the Catalogue every time it is extracted.  This can be used as an alternative to definining Lookups
     /// through the Lookup class or to extract other useful administrative data etc to be provided to researchers
     /// 
-    /// It is VITAL that you do not use this as a method of extracting sensitive/patient data as this data is run as is and is not joined against a cohort
-    /// or anonymised in anyway.
+    /// <para>It is VITAL that you do not use this as a method of extracting sensitive/patient data as this data is run as is and is not joined against a cohort
+    /// or anonymised in anyway.</para>
     /// 
-    /// If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in 
-    /// an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets. 
+    /// <para>If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in 
+    /// an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets. </para>
     /// </summary>
     public class SupportingSQLTable : VersionedDatabaseEntity,INamed
     {
@@ -80,12 +80,14 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="Catalogue_ID"/>
         [NoMappingToDatabase]
         public Catalogue Catalogue
         {
             get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
         }
 
+        /// <inheritdoc cref="ExternalDatabaseServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer ExternalDatabaseServer {
             get { return ExternalDatabaseServer_ID == null ? null : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID); }
@@ -102,7 +104,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public SupportingSQLTable(ICatalogueRepository repository, DbDataReader r)
+        internal SupportingSQLTable(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString());

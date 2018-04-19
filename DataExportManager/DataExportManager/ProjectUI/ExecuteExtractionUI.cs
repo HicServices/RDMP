@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +14,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -46,11 +47,11 @@ namespace DataExportManager.ProjectUI
     /// Allows you to execute an extraction of a project configuration (Generate anonymous project data extractions for researchers).  You should make sure that you have already selected 
     /// the correct datasets, filters, transforms etc to meet the researchers project requirements (and governance approvals) - See ExtractionConfigurationUI and ConfigureDatasetUI.
     /// 
-    /// Start by selecting which datasets you want to execute (this can be an iterative process - you can extract half of them overnight and then come back and extract the other half the 
-    /// next night).  See ChooseExtractablesUI for how to select datasets.
+    /// <para>Start by selecting which datasets you want to execute (this can be an iterative process - you can extract half of them overnight and then come back and extract the other half the 
+    /// next night).  See ChooseExtractablesUI for how to select datasets.</para>
     /// 
-    /// Next you should select/create a new extraction pipeline (See 'A Brief Overview Of What A Pipeline Is' in UserManual.docx).  This will determine the format of the extracted data
-    /// (e.g. .CSV or .MDB database file or any other file for which you have a plugin implemented for).
+    /// <para>Next you should select/create a new extraction pipeline (See 'A Brief Overview Of What A Pipeline Is' in UserManual.docx).  This will determine the format of the extracted data
+    /// (e.g. .CSV or .MDB database file or any other file for which you have a plugin implemented for).</para>
     /// </summary>
     public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     {
@@ -69,6 +70,7 @@ namespace DataExportManager.ProjectUI
         public ExecuteExtractionUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
 
@@ -152,27 +154,26 @@ namespace DataExportManager.ProjectUI
                     progressUI.Dock = DockStyle.Fill;
                     globalsTab.Controls.Add(progressUI);
 
-                    var globalExtractor = new ExtractionPipelineUseCase(ExtractDatasetCommand.EmptyCommand,_pipelineSelectionUI1.Pipeline,_dataLoadInfo);
+                    var globalExtractor = new ExtractionPipelineUseCase(Project, ExtractDatasetCommand.EmptyCommand, _pipelineSelectionUI1.Pipeline, _dataLoadInfo);
 
                     Thread t = new Thread(() =>
-                    {
-                        try
                         {
-                            progressUI.ShowRunning(true);
+                            try
+                            {
+                                progressUI.ShowRunning(true);
 
-                            globalExtractor.ExtractGlobalsForDestination(Project,
-                                _configurationToExecute,
-                                globals,
-                                progressUI,
-                                _dataLoadInfo);
-                        }
-                        finally
-                        {
-                            progressUI.ShowRunning(false);
-                        }
-                    }
-                        
-                        );
+                                globalExtractor.ExtractGlobalsForDestination(Project,
+                                    _configurationToExecute,
+                                    globals,
+                                    progressUI,
+                                    _dataLoadInfo);
+                            }
+                            finally
+                            {
+                                progressUI.ShowRunning(false);
+                            }
+                        }   
+                    );
 
                     t.Start();
                 }
@@ -353,7 +354,7 @@ namespace DataExportManager.ProjectUI
             if (_pipelineSelectionUI1 == null)
             {
                 //create a new selection UI (pick an extraction pipeliene UI)
-                var useCase = new ExtractionPipelineUseCase();
+                var useCase = new ExtractionPipelineUseCase(Project);
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
                 _pipelineSelectionUI1 = factory.Create("Extraction Pipeline",DockStyle.Fill,panel1);

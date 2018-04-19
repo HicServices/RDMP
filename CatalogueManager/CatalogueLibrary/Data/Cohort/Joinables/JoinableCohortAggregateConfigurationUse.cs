@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -41,6 +41,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="JoinableCohortAggregateConfiguration_ID"/>
         [NoMappingToDatabase]
         public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration
         {
@@ -50,6 +51,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
             }
         }
 
+        /// <inheritdoc cref="AggregateConfiguration_ID"/>
         [NoMappingToDatabase]
         public AggregateConfiguration AggregateConfiguration
         {
@@ -60,7 +62,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         }
         #endregion
 
-        public JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
+        internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionJoinType joinType;

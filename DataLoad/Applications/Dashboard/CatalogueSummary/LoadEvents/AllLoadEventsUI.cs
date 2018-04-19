@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
@@ -28,6 +29,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             liveLoads.IsTestServerInterrogation = false;
             testLoads.IsTestServerInterrogation = true;
+
+            AssociatedCollection = RDMPCollection.DataLoad;
         }
         
         private void tbFilter_TextChanged(object sender, EventArgs e)

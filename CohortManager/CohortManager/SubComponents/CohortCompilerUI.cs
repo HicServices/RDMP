@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +15,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Nodes;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
@@ -41,50 +42,50 @@ namespace CohortManager.SubComponents
     /// Cohort identification in the RDMP is done by assembling patient sets and applying set operations on these sets (See 'Cohort Generation' in UserManual.docx).  For a use case of
     /// cohort identification see CohortIdentificationConfigurationUI.
     /// 
-    /// The cohort identification requirements of researchers can sometimes be very complicated and so the RDMP is designed to help you split down the requirements into manageable bite
-    /// sized pieces (Sets).
+    /// <para>The cohort identification requirements of researchers can sometimes be very complicated and so the RDMP is designed to help you split down the requirements into manageable bite
+    /// sized pieces (Sets).</para>
     /// 
-    /// Start by identifying the first dataset you will need to interrogate (e.g. if they want to know about diabetic medications drag in 'Prescribing').  Next double click the set
+    /// <para>Start by identifying the first dataset you will need to interrogate (e.g. if they want to know about diabetic medications drag in 'Prescribing').  Next double click the set
     /// and configure appropriate filters (See AggregateEditor) do not change the Dimension (this should already be the patient identifier).  Finally once you have configured
-    /// the correct filters you should rename your set (AggregateConfiguration) to have a name that reflects the filters (e.g. 'People who have been prescribed a diabetic medication).
+    /// the correct filters you should rename your set (AggregateConfiguration) to have a name that reflects the filters (e.g. 'People who have been prescribed a diabetic medication).</para>
     /// 
-    /// Next identify the next dataset you need to interrogate (e.g. if they want to exclude patients who have a 'Biochemistry' test result of 'CREATANINE' > 100)  create this set as 
-    /// you did above.  
+    /// <para>Next identify the next dataset you need to interrogate (e.g. if they want to exclude patients who have a 'Biochemistry' test result of 'CREATANINE' > 100)  create this set as 
+    /// you did above.  </para>
     /// 
-    /// Then set the root container to EXCEPT such that your configuration is the first set of patients excluding the second set of patients.
+    /// <para>Then set the root container to EXCEPT such that your configuration is the first set of patients excluding the second set of patients.</para>
     /// 
-    /// There are 3 set operations:
+    /// <para>There are 3 set operations:</para>
     ///  
-    /// UNION - All patients in any of the sets (e.g. patients prescribed opiates UNION patients who have attended a drug rehabilitation clinic outpatient appointment)
+    /// <para>UNION - All patients in any of the sets (e.g. patients prescribed opiates UNION patients who have attended a drug rehabilitation clinic outpatient appointment)
     /// INTERSECT - Only patients who are in all the sets (e.g. patients prescribed opiates WHO HAVE ALSO attended a drug rehabilitation clinic)
-    /// EXCEPT - All patients in the first set throwing out any that are in subsequent sets (e.g. patients prescribed opiates EXCEPT those who have attended a drug rehabilitation clinic)
+    /// EXCEPT - All patients in the first set throwing out any that are in subsequent sets (e.g. patients prescribed opiates EXCEPT those who have attended a drug rehabilitation clinic)</para>
     /// 
-    /// Once you have configured your sets / set operations click 'Start All Tasks' to launch the SQL queries in parallel to the server.  If a set or container fails you can right click
-    /// it to view the SQL error message or just look at the SQL the system has generated and run that manually (e.g. in Sql Management Studio). 
+    /// <para>Once you have configured your sets / set operations click 'Start All Tasks' to launch the SQL queries in parallel to the server.  If a set or container fails you can right click
+    /// it to view the SQL error message or just look at the SQL the system has generated and run that manually (e.g. in Sql Management Studio). </para>
     /// 
-    /// Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See QueryCachingServerSelector for how this is 
-    /// implemented).
+    /// <para>Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See QueryCachingServerSelector for how this is 
+    /// implemented).</para>
     /// 
-    /// You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.
+    /// <para>You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.</para>
     /// 
-    /// Ticking 'Include Cumulative Totals' will give you a second total for each set that is in a container with at least 1 other set, this is the number of unique identifiers after
-    /// performing the set operation e.g.
+    /// <para>Ticking 'Include Cumulative Totals' will give you a second total for each set that is in a container with at least 1 other set, this is the number of unique identifiers after
+    /// performing the set operation e.g.</para>
     /// 
-    /// Except
+    /// <para>Except</para>
     /// 
-    /// People in Tayside
+    /// <para>People in Tayside</para>
     /// 
-    /// Dead People
+    /// <para>Dead People</para>
     /// 
-    /// will give you 3 totals:
+    /// <para>will give you 3 totals:</para>
     /// 
-    /// 1. Total number of people who live in Tayside
+    /// <para>1. Total number of people who live in Tayside</para>
     /// 
-    /// 2. Total number of people who are dead across all healthboards
+    /// <para>2. Total number of people who are dead across all healthboards</para>
     /// 
-    /// 3. The number of people in set 1 that are not in set 2 (because of the EXCEPT)
+    /// <para>3. The number of people in set 1 that are not in set 2 (because of the EXCEPT)</para>
     /// 
-    /// 
+    /// <para></para>
     /// </summary>
     public partial class 
         CohortCompilerUI : CohortCompilerUI_Design, IRefreshBusSubscriber
@@ -117,6 +118,8 @@ namespace CohortManager.SubComponents
             _cohortUnionImage = CatalogueIcons.UNIONCohortAggregate;
             _cohortIntersectImage = CatalogueIcons.INTERSECTCohortAggregate;
             _cohortExceptImage = CatalogueIcons.EXCEPTCohortAggregate;
+
+            AssociatedCollection = RDMPCollection.Cohort;
         }
 
         #region Layout, Children Getting, Appearance etc

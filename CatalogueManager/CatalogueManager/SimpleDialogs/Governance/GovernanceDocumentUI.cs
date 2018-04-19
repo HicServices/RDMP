@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -20,10 +20,10 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// provider.  It is important to store the document trail and schedule (e.g. do you require yearly re-approval) for audit purposes.  The RDMP does this through Governance Periods
     /// (See GovernanceUI).  
     /// 
-    /// This control allows you to configure/view attachments of a GovernancePeriod (e.g. an email, a scan of a signed approval letter etc). For ease of reference you should describe
-    /// what is in the document (e.g. 'letter to Fife healthboard (Mary Sue) listing the datasets we host and requesting re-approval for 2016.  Letter is signed by Dr Governancer.)'
+    /// <para>This control allows you to configure/view attachments of a GovernancePeriod (e.g. an email, a scan of a signed approval letter etc). For ease of reference you should describe
+    /// what is in the document (e.g. 'letter to Fife healthboard (Mary Sue) listing the datasets we host and requesting re-approval for 2016.  Letter is signed by Dr Governancer.)'</para>
     /// 
-    /// This control saves changes as you make them (there is no need to press Ctrl+S)
+    /// <para>This control saves changes as you make them (there is no need to press Ctrl+S)</para>
     /// </summary>
     public partial class GovernanceDocumentUI : UserControl
     {

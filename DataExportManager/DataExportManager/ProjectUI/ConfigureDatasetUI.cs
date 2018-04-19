@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -38,11 +39,11 @@ namespace DataExportManager.ProjectUI
     /// Researcher A wants prescribing dataset including all the Core columns but he also has obtained governance approval to receive Supplemental column 'PrescribingGP' so the
     /// configuration would need to include this column.
     /// 
-    /// On the left you can see all the available columns and transforms in the selected dataset (see ExtractionConfigurationUI for selecting datasets).  You can add these by selecting them
-    /// and pressing the '>' button.  On the right the QueryBuilder will show you what columns are currently included in the researchers extract. 
+    /// <para>On the left you can see all the available columns and transforms in the selected dataset (see ExtractionConfigurationUI for selecting datasets).  You can add these by selecting them
+    /// and pressing the '>' button.  On the right the QueryBuilder will show you what columns are currently included in the researchers extract. </para>
     /// 
-    /// Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See 
-    /// ExtractionInformationUI).
+    /// <para>Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See 
+    /// ExtractionInformationUI).</para>
     /// </summary>
     public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design
     {
@@ -61,12 +62,11 @@ namespace DataExportManager.ProjectUI
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
 
-            
-
             var dropSink = (SimpleDropSink) olvSelected.DropSink;
             
             dropSink.CanDropOnItem = false;
             dropSink.CanDropBetween = true;
+            AssociatedCollection = RDMPCollection.DataExport;
         }
 
         private void SortSelectedByOrder()
@@ -186,7 +186,7 @@ namespace DataExportManager.ProjectUI
         /// So we have to convert it to an ExtractableColumn (which has configuration specific stuff - and lets
         /// data analyst override stuff for this extraction only)
         /// 
-        /// Then add it to the right hand list
+        /// <para>Then add it to the right hand list</para>
         /// </summary>
         /// <param name="item"></param>
         private void AddColumnToExtraction(IColumn item)

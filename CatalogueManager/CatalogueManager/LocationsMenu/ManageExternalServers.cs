@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace CatalogueManager.LocationsMenu
     /// keeping track of the locations of other servers such as the Logging server/database, Data Quality Engine reporting database, anonymisation databases, query caching databases
     /// etc. 
     /// 
-    /// This dialog lets you set which server references (ExternalDatabaseServer) are used for each of the defaults that RDMP has (e.g. which logging server should be used by default)
+    /// <para>This dialog lets you set which server references (ExternalDatabaseServer) are used for each of the defaults that RDMP has (e.g. which logging server should be used by default)</para>
     ///  
     /// </summary>
     public partial class ManageExternalServers : RDMPForm

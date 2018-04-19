@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -89,6 +90,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             
             return database.ExpectTable(tableName);
         }
+
+        public abstract DirectoryInfo Detach(DiscoveredDatabase database);
 
         protected virtual string GetPrimaryKeyDeclarationSql(string tableName, DatabaseColumnRequest[] pks)
         {

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.SimpleControls;
@@ -28,6 +29,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
         {
             InitializeComponent();
             ddDestination.DataSource = Enum.GetValues(typeof (DiscardedColumnDestination));
+            AssociatedCollection = RDMPCollection.Tables;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, PreLoadDiscardedColumn databaseObject)

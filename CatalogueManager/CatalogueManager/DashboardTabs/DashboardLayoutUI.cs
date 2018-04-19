@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
+using CatalogueManager.Collections;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.DashboardTabs.Construction.Exceptions;
 using CatalogueManager.Icons.IconOverlays;
@@ -37,6 +38,8 @@ namespace CatalogueManager.DashboardTabs
         {
             InitializeComponent();
             _editModeFunctionality = new DashboardEditModeFunctionality(this);
+
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         private void btnEditMode_CheckedChanged(object sender, EventArgs e)

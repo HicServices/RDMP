@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -10,7 +10,7 @@ namespace CatalogueLibrary.QueryBuilding
     /// ('I want this column',  'I want LimitationSQL: DISTINCT' etc) then the ISqlQueryBuilder turns it into SQL 
     /// (See namespace CatalogueLibraryTests.Integration.QueryBuildingTests.QueryBuilderTests).
     /// 
-    /// The main purpose of this interface is to move common logic such as finding which TableInfos to join and resolving Parameter overriding into SqlQueryBuilderHelper 
+    /// <para>The main purpose of this interface is to move common logic such as finding which TableInfos to join and resolving Parameter overriding into SqlQueryBuilderHelper </para>
     /// </summary>
     public interface ISqlQueryBuilder
     {

@@ -59,7 +59,6 @@ namespace DataExportManager.Collections
             this.tlvDataExport.View = System.Windows.Forms.View.Details;
             this.tlvDataExport.VirtualMode = true;
             this.tlvDataExport.ItemActivate += new System.EventHandler(this.tlvDataExport_ItemActivate);
-            this.tlvDataExport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tlvDataExport_KeyUp);
             // 
             // olvName
             // 

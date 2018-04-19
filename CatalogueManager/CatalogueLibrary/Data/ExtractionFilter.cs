@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -20,16 +20,16 @@ namespace CatalogueLibrary.Data
     /// 'Only prescriptions for diabetes medications'.  An ExtractionFilter can have 0 or more ExtractionFilterParameters which allows
     /// you to define a more versatile filter e.g. 'Only prescriptions for drug @bnfCode'
     /// 
-    /// Typically an ExtractionFilter is cloned out as either a DeployedExtractionFilter or an AggregateFilter and either used as is or
-    /// customised in it's new state (where it's parameters might have values populated into them).
+    /// <para>Typically an ExtractionFilter is cloned out as either a DeployedExtractionFilter or an AggregateFilter and either used as is or
+    /// customised in it's new state (where it's parameters might have values populated into them).</para>
     /// 
-    /// It is not uncommon for an extraction to involve multiple customised copies of the same Extraction filter for example a user might
+    /// <para>It is not uncommon for an extraction to involve multiple customised copies of the same Extraction filter for example a user might
     /// take the filter 'Prescriptions of drug @Drugname' and make 3 copies in a given project in DataExportManager (this would result in
     /// 3 DeployedExtractionFilters) and set the value of the first to 'Paracetamol' the second to 'Aspirin' and the third to 'Ibuprofen'
-    /// and then put them all in a single AND container.
+    /// and then put them all in a single AND container.</para>
     /// 
-    /// At query building time QueryBuilder rationalizes all the various containers, subcontainers, filters and parameters into one extraction
-    /// SQL query (including whatever columns/transforms it was setup with).
+    /// <para>At query building time QueryBuilder rationalizes all the various containers, subcontainers, filters and parameters into one extraction
+    /// SQL query (including whatever columns/transforms it was setup with).</para>
     /// </summary>
     public class ExtractionFilter : ConcreteFilter, IHasDependencies
     {
@@ -47,33 +47,32 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public override IContainer FilterContainer { get { return null; } }
 
         #endregion
 
-        /// <summary>
-        /// Used to fulfil requirements of interface. But Filters at Catalogue level are never nested / used in AND/OR containers
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public override int? FilterContainer_ID
         {
             get { throw new NotSupportedException(); }
             set { throw new NotSupportedException(); }
         }
-
+        /// <inheritdoc/>
         public override ColumnInfo GetColumnInfoIfExists()
         {
             return ExtractionInformation.ColumnInfo;
-
         }
 
+        /// <inheritdoc/>
         public override IFilterFactory GetFilterFactory()
         {
             return new ExtractionFilterFactory(ExtractionInformation);
         }
 
-
+        /// <inheritdoc/>
         public override Catalogue GetCatalogue()
         {
             return ExtractionInformation.CatalogueItem.Catalogue;
@@ -84,7 +83,9 @@ namespace CatalogueLibrary.Data
             return ExtractionFilterParameters.ToArray();
         }
 
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
 
         #region Relationships
@@ -107,7 +108,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public ExtractionFilter(ICatalogueRepository repository, DbDataReader r)
+        internal ExtractionFilter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ExtractionInformation_ID = int.Parse(r["ExtractionInformation_ID"].ToString());

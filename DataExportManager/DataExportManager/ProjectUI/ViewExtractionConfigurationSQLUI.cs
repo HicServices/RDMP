@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -18,6 +19,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using HIC.Common.Validation.Constraints.Primary;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
@@ -50,6 +52,8 @@ namespace DataExportManager.ProjectUI
             QueryEditor.ReadOnly = false;
             QueryEditor.Text = "";
             QueryEditor.ReadOnly = before;
+
+            AssociatedCollection = RDMPCollection.DataExport;
 
         }
 

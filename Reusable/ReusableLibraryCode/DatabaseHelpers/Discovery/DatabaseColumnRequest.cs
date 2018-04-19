@@ -1,4 +1,4 @@
-﻿using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -6,7 +6,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     /// Request to create a column in a DatabaseType agnostic manner.  This class exists to let you declare a field called X where the data type is wide enough
     /// to store strings up to 10 characters long (For example) without having to worry that it is varchar(10) in SqlServer but varchar2(10) in Oracle.
     /// 
-    /// Type specification is defined in the DatabaseTypeRequest but can also be specified explicitly (e.g. 'varchar(10)').
+    /// <para>Type specification is defined in the DatabaseTypeRequest but can also be specified explicitly (e.g. 'varchar(10)').</para>
     /// </summary>
     public class DatabaseColumnRequest
     {

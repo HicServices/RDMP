@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using CatalogueLibrary.Checks;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
@@ -221,7 +224,7 @@ namespace CatalogueLibrary.QueryBuilding
                 //make sure to only throw SyntaxErrorException errors in here
                 try
                 {
-                    RDMPQuerySyntaxHelper.CheckSyntax(IColumn);
+                    IColumn.Check(new ThrowImmediatelyCheckNotifier());
                     string runtimeName = IColumn.GetRuntimeName();
 
                     if (string.IsNullOrWhiteSpace(runtimeName))

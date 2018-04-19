@@ -82,9 +82,9 @@ namespace CatalogueLibrary.Data.Cache
         /// exist before starting a caching activity.  E.g. if the cache is up to date (including the lag period offset) and 1 second passes then we don't want to 
         /// make a request for 1 second of data.  Similarly we don't want to just use the ChunkPeriod otherwise we would be executing arbitrary manner.  
         /// 
-        /// This lets you say 'only execute the cache if theres at least 1 month of data (assumed) to exist on the cache source' (CacheLagPeriodLoadDelay) and don't
+        /// <para>This lets you say 'only execute the cache if theres at least 1 month of data (assumed) to exist on the cache source' (CacheLagPeriodLoadDelay) and don't
         /// request any data generated within the last month (CacheLagPeriod).  This means the cache will execute once a month and fetch a month of data at a time but
-        /// the CacheFillProgress will always be 1-2 months behind DateTime.Now (depending on how recently the execution occured).
+        /// the CacheFillProgress will always be 1-2 months behind DateTime.Now (depending on how recently the execution occured).</para>
         /// </summary>
         public string CacheLagPeriodLoadDelay
         {
@@ -101,18 +101,21 @@ namespace CatalogueLibrary.Data.Cache
             get { return Repository.GetAllObjectsWithParent<CacheFetchFailure>(this); }
         }
 
+        /// <inheritdoc cref="LoadProgress_ID"/>
         [NoMappingToDatabase]
         public LoadProgress LoadProgress
         {
             get { return Repository.GetObjectByID<LoadProgress>(LoadProgress_ID); }
         }
 
+        /// <inheritdoc cref="Pipeline_ID"/>
         [NoMappingToDatabase]
         public IPipeline Pipeline
         {
             get { return Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID); }
         }
 
+        /// <inheritdoc cref="PermissionWindow_ID"/>
         [NoMappingToDatabase]
         public PermissionWindow PermissionWindow
         {
@@ -175,7 +178,7 @@ namespace CatalogueLibrary.Data.Cache
             });
         }
 
-        public CacheProgress(ICatalogueRepository repository, DbDataReader r)
+        internal CacheProgress(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             LoadProgress_ID = int.Parse(r["LoadProgress_ID"].ToString());

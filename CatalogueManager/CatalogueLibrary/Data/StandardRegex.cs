@@ -51,7 +51,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public StandardRegex(ICatalogueRepository repository, DbDataReader r)
+        internal StandardRegex(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ConceptName = r["ConceptName"].ToString();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -18,18 +18,18 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// <summary>
     /// This dialog is the preferred way of extracting per dataset documentation for users.  It will generate a report for each (or a single) dataset (Catalogue) including:
     /// 
-    /// - The dataset description
+    /// <para>- The dataset description</para>
     /// 
-    /// - Descriptions of all extractable columns / extraction transforms
+    /// <para>- Descriptions of all extractable columns / extraction transforms</para>
     /// 
-    /// - Counts of the number of records and unique patient identifiers (See ExtractionInformationUI and the IsExtractionIdentifier flag)
+    /// <para>- Counts of the number of records and unique patient identifiers (See ExtractionInformationUI and the IsExtractionIdentifier flag)</para>
     /// 
-    /// - Complete extract of the lookup tables configured for the dataset (See ConfigureLookups)
+    /// <para>- Complete extract of the lookup tables configured for the dataset (See ConfigureLookups)</para>
     /// 
-    /// - Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)
+    /// <para>- Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)</para>
     /// 
-    /// You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an 
-    /// Aggregate run faster) or just increase the Query Timeout (default is 30s).
+    /// <para>You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an 
+    /// Aggregate run faster) or just increase the Query Timeout (default is 30s).</para>
     /// </summary>
     public partial class ConfigureMetadataReport : RDMPForm
     {

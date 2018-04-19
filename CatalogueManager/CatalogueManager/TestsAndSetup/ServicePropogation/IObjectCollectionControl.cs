@@ -1,4 +1,4 @@
-﻿using CatalogueLibrary.Data.Dashboarding;
+using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 
@@ -9,9 +9,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     /// and that you require a combination of objects and/or custom settings to be persisted/refreshed.  If you can manage with only one object (which you really should be able to) then use
     /// RDMPSingleDatabaseObjectControl instead which is much easier to implement
     /// 
-    /// IObjectCollectionControls are controls driven by 0 or more database objects and optional persistence string (stored in an IPersistableObjectCollection).  The lifecycle of the control
+    /// <para>IObjectCollectionControls are controls driven by 0 or more database objects and optional persistence string (stored in an IPersistableObjectCollection).  The lifecycle of the control
     /// is that it is Activated (probably by an IActivateItems control class) with a fully hydrated IPersistableObjectCollection.  This collection should be pretty immutable and will be saved
-    /// into the persistence text file when the application is exited (via PersistableObjectCollectionDockContent)
+    /// into the persistence text file when the application is exited (via PersistableObjectCollectionDockContent)</para>
     /// 
     /// </summary>
     public interface IObjectCollectionControl:ILifetimeSubscriber,INamedTab

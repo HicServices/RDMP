@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,7 +13,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// for a plugin component but also rationalising differences e.g. there is a new version of a class in the latest plugin with different [DemandsInitialization] properties,
     /// which Argument values are no longer needed and which new ones must be created to store configuration values.
     /// 
-    /// Remember that a given plugin class can have multiple instances of it deployed into different pipelines with different argument values.
+    /// <para>Remember that a given plugin class can have multiple instances of it deployed into different pipelines with different argument values.</para>
     /// </summary>
     public class ArgumentFactory
     {

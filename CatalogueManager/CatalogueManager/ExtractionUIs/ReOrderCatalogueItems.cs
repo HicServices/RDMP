@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -23,12 +24,12 @@ namespace CatalogueManager.ExtractionUIs
     /// pasted into the Desired Order listbox.  All items are cleaned such that the user should be able to paste in
     /// a list, the middle section of a SELECT statement or pretty much anything else.
     /// 
-    /// Once a desired order is entered the class will attempt to find the first item in the desired order.  Assuming
+    /// <para>Once a desired order is entered the class will attempt to find the first item in the desired order.  Assuming
     /// this item is found then the location of this field becomes the 'insertion' point for reordering and all fields 
-    /// that the user pasted in are reordered into this point.
+    /// that the user pasted in are reordered into this point.</para>
     /// 
-    /// At any time you can look at the 'New Order' section to see the new order that columns will be in if you accept the
-    /// reordering.
+    /// <para>At any time you can look at the 'New Order' section to see the new order that columns will be in if you accept the
+    /// reordering.</para>
     /// 
     /// </summary>
     public partial class ReOrderCatalogueItems : ReOrderCatalogueItems_Design
@@ -50,6 +51,7 @@ namespace CatalogueManager.ExtractionUIs
         {
             InitializeComponent();
             splitContainer1.Panel2Collapsed = true;
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

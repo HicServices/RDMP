@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using CatalogueLibrary.Data;
 
@@ -60,7 +60,7 @@ namespace CatalogueLibrary.DataHelper
         /// <summary>
         /// Returns the first half of the join with an inverted join type
         /// 
-        /// Explanation:joins are defined as FK table JOIN_TYPE PK table so if you are requesting a join to the FK table it is assumed you are coming from the pk table therefore the join type is INVERTED i.e. LEFT becomes RIGHT
+        /// <para>Explanation:joins are defined as FK table JOIN_TYPE PK table so if you are requesting a join to the FK table it is assumed you are coming from the pk table therefore the join type is INVERTED i.e. LEFT becomes RIGHT</para>
         /// 
         /// </summary>
         /// <param name="join"></param>
@@ -91,8 +91,8 @@ namespace CatalogueLibrary.DataHelper
         /// Gets the JOIN Sql for the JoinInfo as foreign key JOIN primary key on fk.col1 = pk.col2.  Pass in a number
         /// in order to have the primary key table be assigned an alias e.g. 1 to give it t1
         /// 
-        /// Because join type refers to FK join PK and you are requesting "X" + " JOIN PK table on x" then the join is inverted e.g. LEFT => RIGHT and RIGHT => LEFT
-        /// unless it is a lookup join which is always LEFT
+        /// <para>Because join type refers to FK join PK and you are requesting "X" + " JOIN PK table on x" then the join is inverted e.g. LEFT => RIGHT and RIGHT => LEFT
+        /// unless it is a lookup join which is always LEFT</para>
         /// </summary>
         /// <param name="aliasNumber"></param>
         /// <returns></returns>

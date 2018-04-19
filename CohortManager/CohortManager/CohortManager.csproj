@@ -255,10 +255,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Content Include="..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
-      <Link>SourceCodeForSelfAwareness.zip</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="SubComponents\ViewCohortIdentificationConfigurationUI.resx">
       <DependentUpon>ViewCohortIdentificationConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>

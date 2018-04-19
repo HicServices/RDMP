@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -89,6 +89,7 @@ namespace CatalogueLibrary.Data.Cohort
         #endregion
 
         #region Relationships
+        /// <inheritdoc cref="RootCohortAggregateContainer_ID"/>
         [NoMappingToDatabase]
         public CohortAggregateContainer RootCohortAggregateContainer {
             get { return 
@@ -96,6 +97,7 @@ namespace CatalogueLibrary.Data.Cohort
                 Repository.GetObjectByID<CohortAggregateContainer>((int) RootCohortAggregateContainer_ID); }
         }
 
+        /// <inheritdoc cref="QueryCachingServer_ID"/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer QueryCachingServer {
             get
@@ -122,7 +124,7 @@ namespace CatalogueLibrary.Data.Cohort
             });
         }
 
-        public CohortIdentificationConfiguration(ICatalogueRepository repository, DbDataReader r)
+        internal CohortIdentificationConfiguration(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"].ToString();

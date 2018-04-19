@@ -41,7 +41,6 @@ namespace ReusableLibraryCode
             return _instance;
         }
         
-        
         public int GetColumnLength(DbConnection connection, string tableName, string columnName)
         {
             if (connection is MySqlConnection)
@@ -225,7 +224,6 @@ c.name = @column_name", con);
             }
             throw new MissingFieldException("Could not find field " + columnName + " in table " + tableName);
         }
-
 
         public string[] ListStoredProcedures(string connectionString,string databaseName )
         {
@@ -1023,6 +1021,26 @@ c.name = @column_name", con);
         public static string PascalCaseStringToHumanReadable(string pascalCaseString)
         {
             return Regex.Replace(pascalCaseString, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
+        }
+
+        public void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
+        {
+            if (first.EnumerateFiles().Count() != other.EnumerateFiles().Count())
+                throw new Exception("found different number of files in Globals directory " + first.FullName + " and " + other.FullName);
+
+            var filesInFirst = first.EnumerateFiles().ToArray();
+            var filesInOther = other.EnumerateFiles().ToArray();
+
+            for (int i = 0; i < filesInFirst.Length; i++)
+            {
+                FileInfo file1 = filesInFirst[i];
+                FileInfo file2 = filesInOther[i];
+                if (!file1.Name.Equals(file2.Name))
+                    throw new Exception("Although there were the same number of files in Globals directories " + first.FullName + " and " + other.FullName + ", there were differing file names (" + file1.Name + " and " + file2.Name + ")");
+
+                if (!UsefulStuff.MD5File(file1.FullName).Equals(UsefulStuff.MD5File(file2.FullName)))
+                    throw new Exception("File found in Globals directory which has a different MD5 from another Globals file.  Files were \"" + file1.FullName + "\" and \"" + file2.FullName + "\"");
+            }
         }
     }
 }

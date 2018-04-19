@@ -212,8 +212,7 @@ You MUST either provide an SQL Server connection string to an existing Catalogue
 
 The Data Export Manager database stores projects, cohorts and configurations for extracting data from your database (see DataExportManager application).  This data is stored in a different database, population of this connection string is optional and if it is left blank then most of the DataManagementPlatform will still work but you won't be able to extract data through the DataExportManager.
 
-These connection strings are stored in the Windows Registry of each system in:
-HKEY_CURRENT_USER\Software\HICDataManagementPlatform</value>
+These connection strings are stored in the User Settings of each user.</value>
   </data>
   <data name="ManageExternalServers" xml:space="preserve">
     <value></value>

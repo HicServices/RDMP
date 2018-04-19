@@ -18,13 +18,13 @@ namespace CatalogueLibrary.Data
     /// References an SQL column in a TableInfo (which itself references an SQL table).  This is the RDMP's awareness of the state of your database.  You can
     /// synchronize against the underlying sql server state using TableInfoSynchronizer.
     /// 
-    /// A ColumnInfo can belong to an anonymisation group (ANOTable) e.g. ANOGPCode, in this case it will be aware not only of it's name and datatype in LIVE
-    /// but also it's unanonymised name/datatype (see method GetRuntimeName(LoadStage stage)).
+    /// <para>A ColumnInfo can belong to an anonymisation group (ANOTable) e.g. ANOGPCode, in this case it will be aware not only of it's name and datatype in LIVE
+    /// but also it's unanonymised name/datatype (see method GetRuntimeName(LoadStage stage)).</para>
     /// 
-    /// A ColumnInfo may seem superfluous since you can query much of it's information at runtime but consider the situation where TableInfo is a table valued 
+    /// <para>A ColumnInfo may seem superfluous since you can query much of it's information at runtime but consider the situation where TableInfo is a table valued 
     /// function or it is a view and someone deletes a column from the view without telling anyone.  The ColumnInfo ensures a standard unchanging representation
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
-    /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).
+    /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
     public class ColumnInfo : VersionedDatabaseEntity, IDeleteable, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo
     {
@@ -65,6 +65,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _anoTableID, value); }
         }
 
+        [Sql]
         public string Name
         {
             get { return _name; }
@@ -141,6 +142,7 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
+        /// <inheritdoc cref="TableInfo_ID"/>
         [NoMappingToDatabase]
         public TableInfo TableInfo
         {
@@ -150,6 +152,7 @@ namespace CatalogueLibrary.Data
             }
         }
         
+        /// <inheritdoc cref="ANOTable_ID"/>
         [NoMappingToDatabase]
         public ANOTable ANOTable {
             get { return ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int) ANOTable_ID); }
@@ -186,7 +189,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public ColumnInfo(ICatalogueRepository repository, DbDataReader r)
+        internal ColumnInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());

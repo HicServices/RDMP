@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,7 +17,7 @@ namespace DataExportManager.SimpleDialogs
     /// of rows extracted, distinct patient identifiers etc.  This document can optionally include a statement about use of the data / accreditation or a disclaimer or whatever else message
     /// you want researchers to read.  
     /// 
-    /// You can only have one message at a time and it is constant, we suggest something like "this data was supplied by blah, please accredit us and the NHS as the data provider... etc"
+    /// <para>You can only have one message at a time and it is constant, we suggest something like "this data was supplied by blah, please accredit us and the NHS as the data provider... etc"</para>
     /// </summary> 
     public partial class ConfigureDisclaimer : RDMPForm
     {

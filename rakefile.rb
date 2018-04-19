@@ -63,7 +63,7 @@ assemblyinfo :assemblyinfo do |asm|
 end
 
 desc "Pushes the plugin packages into the specified folder"    
-task :deployplugins, [:folder,:version] do |t, args|
+task :deployplugins, [:folder] do |t, args|
     asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
         
     major, minor, patch, build = asminfoversion.split(/\./)

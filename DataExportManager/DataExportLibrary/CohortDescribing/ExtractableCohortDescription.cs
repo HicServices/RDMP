@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using DataExportLibrary.Data.DataTables;
@@ -12,8 +12,8 @@ namespace DataExportLibrary.CohortDescribing
     /// Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount (can differ if there are aliases 
     /// for a patient - 2 private identifiers map to the same release identifier).
     /// 
-    /// Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may start out null/0 and become populated
-    /// after the CohortDescriptionDataTableAsyncFetch completes.
+    /// <para>Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may start out null/0 and become populated
+    /// after the CohortDescriptionDataTableAsyncFetch completes.</para>
     /// </summary>
     public class ExtractableCohortDescription
     {

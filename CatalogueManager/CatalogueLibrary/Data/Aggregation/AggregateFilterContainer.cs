@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
@@ -14,14 +14,16 @@ namespace CatalogueLibrary.Data.Aggregation
     /// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR 
     /// the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data Export Manager but for AggregateConfigurations (GROUP BY queries)
     /// 
-    /// FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
-    /// The class deals with all this transparently via GetSubContainers.
+    /// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
+    /// The class deals with all this transparently via GetSubContainers.</para>
     /// </summary>
     public class AggregateFilterContainer: VersionedDatabaseEntity, IContainer
     {
         #region Database Properties
         private FilterContainerOperation _operation;
 
+
+        /// <inheritdoc/>
         public FilterContainerOperation Operation
         {
             get { return _operation; }
@@ -30,39 +32,51 @@ namespace CatalogueLibrary.Data.Aggregation
 
         #endregion
 
-
+        /// <summary>
+        /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="operation"></param>
         public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
         }
 
-        public AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+
+        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             FilterContainerOperation op;
             FilterContainerOperation.TryParse(r["Operation"].ToString(), out op);
             Operation = op;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Operation.ToString();
         }
+
+        /// <inheritdoc/>
         public IContainer GetParentContainerIfAny()
         {
             return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID=" + ID,
                 "AggregateFilterContainer_ParentID").SingleOrDefault();
         }
-        
+
+        /// <inheritdoc/>
         public IContainer[] GetSubContainers()
         {
             return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID=" + ID, 
                 "AggregateFilterContainer_ChildID").ToArray();
         }
+        
+        /// <inheritdoc/>
         public IFilter[] GetFilters()
         {
             return Repository.GetAllObjects<AggregateFilter>("WHERE FilterContainer_ID="+ID).ToArray();
         }
 
+        /// <inheritdoc/>
         public void AddChild(IContainer child)
         {
             AddChild((AggregateFilterContainer)child);
@@ -79,9 +93,9 @@ namespace CatalogueLibrary.Data.Aggregation
             });
         }
 
-        
 
 
+        /// <inheritdoc/>
         public void MakeIntoAnOrphan()
         {
             Repository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
@@ -89,29 +103,37 @@ namespace CatalogueLibrary.Data.Aggregation
                 {"AggregateFilterContainer_ChildID", ID}
             });
         }
-
+        
+        /// <inheritdoc/>
         public IContainer GetRootContainerOrSelf()
         {
             return new ContainerHelper().GetRootContainerOrSelf(this);
         }
 
+        /// <inheritdoc/>
         public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
         {
             return new ContainerHelper().GetAllFiltersIncludingInSubContainersRecursively(this);
         }
 
+        /// <inheritdoc/>
         public Catalogue GetCatalogueIfAny()
         {
             var agg = GetAggregate();
             return agg != null?agg.Catalogue:null;
         }
 
+        /// <inheritdoc/>
         public List<IContainer> GetAllSubContainersRecursively()
         {
             return new ContainerHelper().GetAllSubContainersRecursively(this);
         }
         
-        
+        /// <summary>
+        /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those 
+        /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
+        /// </summary>
+        /// <returns></returns>
         public AggregateFilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
@@ -153,6 +175,7 @@ namespace CatalogueLibrary.Data.Aggregation
             return clone;
         }
 
+        /// <inheritdoc/>
         public void AddChild(IFilter filter)
         {
             if(filter.FilterContainer_ID.HasValue)
@@ -165,6 +188,11 @@ namespace CatalogueLibrary.Data.Aggregation
             filter.SaveToDatabase();
         }
 
+        /// <summary>
+        /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
+        /// Returns null if the container is somehow an orphan. 
+        /// </summary>
+        /// <returns></returns>
         public AggregateConfiguration GetAggregate()
         {
             var aggregateConfiguration = Repository.GetAllObjects<AggregateConfiguration>("WHERE RootFilterContainer_ID = " + ID).SingleOrDefault();

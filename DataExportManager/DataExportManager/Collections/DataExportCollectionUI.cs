@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,11 +24,11 @@ using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.Providers;
+using DataExportLibrary.Providers.Nodes;
+using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
+using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportLibrary.Repositories;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.ProjectCohortNodes;
-using DataExportManager.Collections.Nodes.UsedByProject;
-using DataExportManager.Collections.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.Icons.IconProvision;
 using DataExportManager.Menus;
@@ -44,40 +44,10 @@ using ReusableUIComponents.TreeHelper;
 namespace DataExportManager.Collections
 {
     /// <summary>
-    /// Contains a list of all the currently stored cohorts in all your cohort databases (See ExtractableCohortUI for description of what a cohort is).  
+    /// Contains a list of all the currently configured data export projects you have.  A data export Project is a collection of one or more datasets combined with a cohort (or multiple
+    /// if you have sub ExtractionConfigurations within the same Project e.g. cases/controls).
     /// 
-    /// You can filter the cohorts by name and select/edit them on the right (See ExtractableCohortUI).
-    ///  
-    /// If you do not have any cohorts/sources yet then you should select 'Manage Sources...' and then launch CreateNewCohortDatabaseWizardUI).
-    /// 
-    /// If you have been manually feeding cohorts into your cohort database without using the RDMP you might have cohorts that are not  listed in the 'Imported ExtractableCohorts' listbox
-    /// but are none the less in your database.  If this is the case then you can 'Import Existing Cohort from Source'.
-    /// 
-    /// If you have a list of private patient identifiers in a flat file that you want to add to the cohort database (e.g. the output of a CohortManager configuration or a manual cohort
-    /// generation exercise).  You should select 'Load File As New Cohort Into Source...' which will launch CohortCreationRequestUI.
-    /// 
-    /// Lists all the Cohort Databases you have configured.  If you do not have any yet then you should select 'Create New Cohort Database Using Wizard' (Launches 
-    /// CreateNewCohortDatabaseWizardUI).  If you have somehow managed to lose your reference to a cohort database but the database is still there (e.g. maybe you 
-    /// are migrating a database to a new RDMP deployment or someone hit delete by accident) you can 'Create New Reference' which will give you an empty reference you
-    /// can wire up to the existing database.
-    /// 
-    /// Cohort Databases are referred to as 'External' because they are not maintained by the RDMP.  This is a deliberate design decision to allow for maximum flexibility
-    /// in how you allocate release identifiers, the datatype of your private identifier etc.  The fields on the right indicate all the information the RDMP stores about the
-    /// cohort database.  Everything else (what cohorts are available, what identifiers are in each cohort, what custom cohort data tables are there etc) is discovered at runtime.
-    ///  
-    /// Extractable Data Sets
-    /// Lets you choose which datasets (Catalogues) are extractable as part of research projects.   On the left are all the datasets (Catalogues) you currently have configured in your 
-    /// Catalogue Manager Database.  On the right are all those that are currently configured as extractable. 
-    /// 
-    /// To make a Catalogue extractable, select it and press 'Import As ExtractableDataset'
-    /// 
-    /// If you don't see a Catalogue you expect to be there on the left then it is likely either already extractable or it doesn't have any columns configured for extraction (See 
-    /// ExtractionInformationUI).  Also make sure that it has an IsExtractionIdentifier column (i.e. the patient private identifier field).
-    /// 
-    /// TECHNICAL: Currently an ExtractableDataset is simply a record in the Data Export Manager dataset which records the ID of the Catalogue record and whether it is temporarily disabled
-    /// for extraction.  It mostly exists for future proofing for example if we want to specify dataset level governance rules (Catalogue 'Prescribing' is only available with X special 
-    /// approval) rather than the current state which is for all governance levels to be configured on column level.  We could add such a field into the ExtractableDataset table schema 
-    /// instead of the Catalogue table schema.
+    /// <para>Data in these datasets will be linked against the cohort and anonymised on extraction (to flat files / database etc).</para>
     /// </summary>
     public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
@@ -147,23 +117,6 @@ namespace DataExportManager.Collections
 
                 foreach (ProjectCohortIdentificationConfigurationAssociation assoc in dataExportChildProvider.AllProjectAssociatedCics.Where(d => d.GetCohortIdentificationConfigurationCached().Equals(e.Object)).ToArray())
                     tlvDataExport.RefreshObject(assoc.Project);//refresh linked cic
-            }
-        }
-
-        private void tlvDataExport_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                var o = tlvDataExport.SelectedObject;
-                var linkedCohortNode = o as LinkedCohortNode;
-                var packageContentNode = o as PackageContentNode;
-                
-                if (linkedCohortNode != null)
-                    linkedCohortNode.DeleteWithConfirmation(_activator);
-
-                
-                if (packageContentNode != null)
-                    packageContentNode.DeleteWithConfirmation(_activator, (DataExportChildProvider)_activator.CoreChildProvider);
             }
         }
 

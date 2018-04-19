@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
@@ -35,9 +35,9 @@ namespace CatalogueLibrary.Data.DataLoad
     /// irrelevant to you etc.  Each discarded column has a destination (DiscardedColumnDestination)  e.g. it might be dropped completely or routed into an identifier dump for
     /// when you still want to store information such as Who an MRI was for but do not want it sitting in your live dataset for governance/anonymisation reasons.
     /// 
-    /// Each instance is tied to a specific TableInfo and when a data load occurs from an unstructured format (e.g. CSV) which RequestsExternalDatabaseCreation then not only are the
+    /// <para>Each instance is tied to a specific TableInfo and when a data load occurs from an unstructured format (e.g. CSV) which RequestsExternalDatabaseCreation then not only are the
     /// LIVE columns created in the RAW bubble but also the dropped columns described in PreLoadDiscardedColumn instances.  This allows the live system state to drive required formats/fields
-    /// for data load resulting in a stricter/more maintainable data load model.
+    /// for data load resulting in a stricter/more maintainable data load model.</para>
     /// </summary>
     public class PreLoadDiscardedColumn : VersionedDatabaseEntity, IPreLoadDiscardedColumn
     {
@@ -88,6 +88,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
         #region Relationships
+        /// <inheritdoc cref="TableInfo_ID"/>
         [NoMappingToDatabase]
         public ITableInfo TableInfo
         {
@@ -115,7 +116,7 @@ namespace CatalogueLibrary.Data.DataLoad
             });
         }
 
-        public PreLoadDiscardedColumn(ICatalogueRepository repository, DbDataReader r)
+        internal PreLoadDiscardedColumn(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -22,13 +22,13 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// provider.  This control lets you configure a period of governance (GovernancePeriod) which can be open ended (never expires).  You must then choose which datasets (Catalogues)
     /// the governance permission applies to.  Finally you can attach documents that prove the permission (See GovernanceDocumentUI).
     /// 
-    /// You should make sure you name and describe the governance period.  The name should correspond to the period.  For example you might have 3 periods 'Fife approvals 2001-2002', 
-    /// 'Fife approvals 2002-2003' and 'Fife open ended approvals 2003-Forever'.  
+    /// <para>You should make sure you name and describe the governance period.  The name should correspond to the period.  For example you might have 3 periods 'Fife approvals 2001-2002', 
+    /// 'Fife approvals 2002-2003' and 'Fife open ended approvals 2003-Forever'.  </para>
     /// 
-    /// If you are doing yearly approvals you can import the dataset list from the last year as the basis of governanced datasets.
+    /// <para>If you are doing yearly approvals you can import the dataset list from the last year as the basis of governanced datasets.</para>
     /// 
-    /// If a GovernancePeriod expires all datasets (Catalogues) in the period will be assumed to have expired governance and will appear in the Dashboard as expired unless there is a new
-    /// GovernancePeriod that is active (See GovernanceSummary).
+    /// <para>If a GovernancePeriod expires all datasets (Catalogues) in the period will be assumed to have expired governance and will appear in the Dashboard as expired unless there is a new
+    /// GovernancePeriod that is active (See GovernanceSummary).</para>
     /// </summary>
     public partial class GovernancePeriodUI : RDMPUserControl
     {

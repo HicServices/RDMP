@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -12,11 +12,11 @@ namespace CatalogueManager.AggregationUIs
     /// Query Caching is the process by which the results of your cohort identification queries are indexed and stored in a purpose created database for performance.  By creating a 
     /// Query Caching database you can execute your cohort identification aggregates and store the resulting patient identifier list into the cache.
     /// 
-    /// This is vital for performance once your cohort identification criteria goes beyond 4 or 5 datasets (assuming non trivial dataset size) or when your dataset queries take a long
-    /// time to run.  The CohortManager will use cached data where available to speed up execution.  
+    /// <para>This is vital for performance once your cohort identification criteria goes beyond 4 or 5 datasets (assuming non trivial dataset size) or when your dataset queries take a long
+    /// time to run.  The CohortManager will use cached data where available to speed up execution.  </para>
     /// 
-    /// IMPORTANT: Make sure to put proper access controls on the Query Caching database just as if it was any of your repository datasets since identifier lists are considered sensitive
-    /// information and should not be disclosed to any system user who could not otherwise access the datasets on which the queries themselves run anyway.
+    /// <para>IMPORTANT: Make sure to put proper access controls on the Query Caching database just as if it was any of your repository datasets since identifier lists are considered sensitive
+    /// information and should not be disclosed to any system user who could not otherwise access the datasets on which the queries themselves run anyway.</para>
     /// </summary>
     public partial class QueryCachingServerSelector : RDMPUserControl
     {

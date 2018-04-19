@@ -15,7 +15,7 @@ namespace CatalogueLibrary.Data.PerformanceImprovement
     /// and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant relationship records with two queries and then
     /// sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
     /// 
-    /// This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).
+    /// <para>This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).</para>
     /// </summary>
     public class CohortHierarchy
     {

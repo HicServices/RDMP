@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -29,8 +29,8 @@ namespace LoadModules.Generic.Attachers
     /// expected to have lots of columns which might be sparsely populated or otherwise suitable for key value pair representation rather than traditional 
     /// relational/flat format.
     /// 
-    /// Component converts each DataTable row into one or more rows in the format pk,key,value where pk are the column(s) which uniquely identify the source
-    /// row (e.g. Labnumber).  See KVPAttacher.docx for a full explanation.
+    /// <para>Component converts each DataTable row into one or more rows in the format pk,key,value where pk are the column(s) which uniquely identify the source
+    /// row (e.g. Labnumber).  See KVPAttacher.docx for a full explanation.</para>
     /// </summary>
     public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDestination<DataTable>
     {

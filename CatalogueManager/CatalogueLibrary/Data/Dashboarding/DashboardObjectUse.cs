@@ -51,7 +51,7 @@ namespace CatalogueLibrary.Data.Dashboarding
 
         #endregion
 
-        public DashboardObjectUse(ICatalogueRepository repository, DbDataReader r)
+        internal DashboardObjectUse(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             DashboardControl_ID = Convert.ToInt32(r["DashboardControl_ID"]);

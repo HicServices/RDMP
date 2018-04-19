@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -28,11 +28,11 @@ namespace CatalogueManager.Validation
     /// repository that prevents null values? well sometimes research data is quite dirty and if a problematic field(especially if it is a non-essential column) is sometimes worth allowing
     /// it through even though it's null and highlighting problem records with the validation rule NotNull.
     /// 
-    /// Other secondary constraints include Regex patterns, standard regexes (See StandardRegexUI), referential integrity constraints etc.
+    /// <para>Other secondary constraints include Regex patterns, standard regexes (See StandardRegexUI), referential integrity constraints etc.</para>
     /// 
-    /// Each constraint has a Consequence (Missing, Wrong, Invalidates Row) these are used to classify the state of each row in the Data Quality Engine when running validation.  For example
+    /// <para>Each constraint has a Consequence (Missing, Wrong, Invalidates Row) these are used to classify the state of each row in the Data Quality Engine when running validation.  For example
     /// if you have 2 cells in a row that are both failing validation, one with a consequence of Missing and one with a consequence of Wrong then the entire row is classified as 'Wrong' 
-    /// overall.
+    /// overall.</para>
     /// </summary>
     public partial class SecondaryConstraintUI : UserControl
     {

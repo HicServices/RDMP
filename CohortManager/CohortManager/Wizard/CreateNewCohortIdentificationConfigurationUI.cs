@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,8 +18,8 @@ namespace CohortManager.Wizard
     /// Provides streamlined/simplified access to the cohort creation functionality of RDMP.  The UI lets you pick from existing datasets and existing filters created by your Data Manager for
     /// interacting with those datasets including specifying values for arguments e.g. TestCode = 'CRE'.  
     /// 
-    /// Initially you are limited to 2 inclusion criteria and 2 exclsuion criteria (datasets).  Upon completing the wizard you will be taken to the execution screen of the Cohort Identification
-    /// Configuration created (See CohortCompilerUI).  There you can test/refine your configuration as well as add more datasets and deeper nesting of set operations as required.
+    /// <para>Initially you are limited to 2 inclusion criteria and 2 exclsuion criteria (datasets).  Upon completing the wizard you will be taken to the execution screen of the Cohort Identification
+    /// Configuration created (See CohortCompilerUI).  There you can test/refine your configuration as well as add more datasets and deeper nesting of set operations as required.</para>
     /// 
     /// </summary>
     public partial class CreateNewCohortIdentificationConfigurationUI : Form

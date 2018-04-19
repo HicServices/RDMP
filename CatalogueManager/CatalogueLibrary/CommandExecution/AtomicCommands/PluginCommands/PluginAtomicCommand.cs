@@ -21,6 +21,11 @@ namespace CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands
             RepositoryLocator = repositoryLocator;
         }
 
+        /// <summary>
+        /// Provides an icon 19x19 pixels which represents this command in user interfaces.  Can return null if no image is needed.
+        /// </summary>
+        /// <param name="iconProvider"></param>
+        /// <returns></returns>
         public virtual Image GetImage(IIconProvider iconProvider)
         {
             return null;

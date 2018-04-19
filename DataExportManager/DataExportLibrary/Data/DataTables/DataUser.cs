@@ -37,8 +37,11 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
         
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Forename_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Surname_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Email_MaxLength = -1;
 
         public DataUser(IDataExportRepository repository, string forename, string surname)
@@ -51,7 +54,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public DataUser(IDataExportRepository repository, DbDataReader r)
+        internal DataUser(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Forename = r["Forename"] as string;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -24,11 +24,11 @@ namespace DataExportLibrary.Data.DataTables
     /// ExtractionConfigurations at a time for example a Project might have two cohorts 'Cases' and 'Controls' and you would have two ExtractionConfiguration possibly containing
     /// the same datasets and filters but with different cohorts.
     /// 
-    /// Once you have executed, extracted and released an ExtractionConfiguration then it becomes 'frozen' IsReleased and it is not possible to edit it (unless you unfreeze it 
-    /// directly in the database).  This is intended to ensure that once data has gone out the door the configuration that generated the data is immutable.
+    /// <para>Once you have executed, extracted and released an ExtractionConfiguration then it becomes 'frozen' IsReleased and it is not possible to edit it (unless you unfreeze it 
+    /// directly in the database).  This is intended to ensure that once data has gone out the door the configuration that generated the data is immutable.</para>
     /// 
-    /// If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
-    /// e.g. 'Cases - 5 year update'.
+    /// <para>If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
+    /// e.g. 'Cases - 5 year update'.</para>
     /// </summary>
     public class ExtractionConfiguration : VersionedDatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
     {
@@ -127,15 +127,21 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
         
         #region MaxLengths
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Username_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int RequestTicket_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int ReleaseTicket_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Separator_MaxLength = -1;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
         #endregion
 
         #region Relationships
         
+        /// <inheritdoc cref="Project_ID"/>
         [NoMappingToDatabase]
         public IProject Project
         {
@@ -162,6 +168,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
+        /// <inheritdoc cref="Cohort_ID"/>
         [NoMappingToDatabase]
         public IExtractableCohort Cohort
         {
@@ -209,6 +216,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc cref="DefaultPipeline_ID"/>
         [NoMappingToDatabase]
         public IPipeline DefaultPipeline {
             get
@@ -221,6 +229,7 @@ namespace DataExportLibrary.Data.DataTables
             }}
 
 
+        /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
         [NoMappingToDatabase]
         public CohortIdentificationConfiguration CohortIdentificationConfiguration
         {
@@ -234,6 +243,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc cref="CohortRefreshPipeline_ID"/>
         [NoMappingToDatabase]
         public IPipeline CohortRefreshPipeline
         {
@@ -271,7 +281,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        public ExtractionConfiguration(IDataExportRepository repository, DbDataReader r)
+        internal ExtractionConfiguration(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Project_ID = int.Parse(r["Project_ID"].ToString());

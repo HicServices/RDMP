@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -24,9 +24,9 @@ namespace CatalogueLibrary.Repositories
     /// [Export] or [InheritedExport] and defining contracts, importing constructors, paramters etc.  RDMP makes use of MEF in a limited fashion, it processes all 
     /// Exported classes into a SafeDirectoryCatalog (a collection of MEF AssemblyCatalogs/AggregateCatalog).
     /// 
-    /// This class provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the SafeDirectoryCatalog.  It also includes
+    /// <para>This class provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the SafeDirectoryCatalog.  It also includes
     /// methods for creating instances of the exported Types.  Because MEF only gets you so far it also has some generally helpful reflection based methods such as 
-    /// GetAllTypesFromAllKnownAssemblies.
+    /// GetAllTypesFromAllKnownAssemblies.</para>
     /// </summary>
     public class MEF
     {
@@ -112,8 +112,8 @@ namespace CatalogueLibrary.Repositories
         /// Turns the legit C# name:
         /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
         /// 
-        /// Into a freaky MEF name:
-        /// DataLoadEngine.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)
+        /// <para>Into a freaky MEF name:
+        /// DataLoadEngine.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)</para>
         /// 
         /// </summary>
         /// <param name="t"></param>
@@ -138,11 +138,11 @@ namespace CatalogueLibrary.Repositories
         
         /// <summary>
         /// 
-        /// Turns the legit C# name: 
-        /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+        /// <para>Turns the legit C# name: 
+        /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</para>
         /// 
-        /// Into a proper C# code:
-        /// IDataFlowSource&lt;DataTable&gt;
+        /// <para>Into a proper C# code:
+        /// IDataFlowSource&lt;DataTable&gt;</para>
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
@@ -215,7 +215,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Creates an instance of the named class whcih must have a blank constructor
         /// 
-        /// IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly
+        /// <para>IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="toCreate"></param>
@@ -231,7 +231,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Creates an instance of the named class with a single constructor parameter
         /// 
-        /// IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly
+        /// <para>IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="T1"></typeparam>

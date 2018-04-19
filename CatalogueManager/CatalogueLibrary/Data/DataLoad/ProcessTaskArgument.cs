@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// 1 to 1 with [DemandsInitialization] flagged properties of a data class e.g. 'LoadModules.Generic.Attachers.AnySeparatorFileAttacher' would have
     /// a ProcessTaskArgument record for the property UnderReadBehaviour and one for IgnoreBlankLines and one for IgnoreQuotes etc. 
     /// 
-    /// This all happens transparently by reflection and is handled at design time through PluginProcessTaskUI seamlessly
+    /// <para>This all happens transparently by reflection and is handled at design time through PluginProcessTaskUI seamlessly</para>
     /// </summary>
     public class ProcessTaskArgument : Argument
     {
@@ -38,7 +38,7 @@ namespace CatalogueLibrary.Data.DataLoad
             });
         }
 
-        public ProcessTaskArgument(ICatalogueRepository repository, DbDataReader r)
+        internal ProcessTaskArgument(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             ProcessTask_ID = int.Parse(r["ProcessTask_ID"].ToString());

@@ -8,9 +8,9 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
-using ResearchDataManagementPlatform.WindowManagement.UserSettings;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform
@@ -31,7 +31,7 @@ namespace ResearchDataManagementPlatform
             dockPanel1.DocumentStyle = DocumentStyle.DockingWindow;
             WindowState = FormWindowState.Maximized;
 
-            if(!UserSettingsFile.GetInstance().LicenseAccepted)
+            if(!UserSettings.LicenseAccepted)
                 new LicenseUI().ShowDialog();
         }
 
@@ -63,9 +63,8 @@ namespace ResearchDataManagementPlatform
             _persistenceFile = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"RDMP", "RDMPDockPanelPersist.xml"));
 
             //if there is no persist file or user wants to show the home screen always on startup
-            if (!_persistenceFile.Exists || UserSettingsFile.GetInstance().ShowHomeScreenInsteadOfPersistence)
+            if (!_persistenceFile.Exists || UserSettings.ShowHomeOnStartup)
             {
-
                 _windowManager.CloseAllToolboxes();
                 _windowManager.CloseAllWindows();
                 _windowManager.PopHome();

@@ -1,9 +1,11 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
+using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data
 {
@@ -12,7 +14,7 @@ namespace CatalogueLibrary.Data
     /// ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an ExtractionInformation defined in the Catalogue 
     /// database and copied out for use in the data extraction configuration).
     /// 
-    /// Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)
+    /// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
     /// </summary>
     public abstract class ConcreteColumn : VersionedDatabaseEntity, IColumn,IOrderable
     {
@@ -31,6 +33,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _order, value); }
         }
 
+        [Sql]
         public string SelectSQL
         {
             get { return _selectSql; }
@@ -93,6 +96,9 @@ namespace CatalogueLibrary.Data
         }
 
 
-        
+        public void Check(ICheckNotifier notifier)
+        {
+            new ColumnSyntaxChecker(this).Check(notifier);
+        }
     }
 }

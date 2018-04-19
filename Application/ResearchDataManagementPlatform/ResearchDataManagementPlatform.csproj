@@ -34,6 +34,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>f90534d8</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -137,6 +138,9 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
     <Compile Include="Menus\MenuItems\SaveMenuItem.cs" />
     <Compile Include="RDMPDocumentationStore.cs" />
@@ -191,13 +195,6 @@
       <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
     </Compile>
     <Compile Include="WindowManagement\UIObjectConstructor.cs" />
-    <Compile Include="WindowManagement\UserSettings\UserSettingsFile.cs" />
-    <Compile Include="WindowManagement\UserSettings\UserSettingsFileUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WindowManagement\UserSettings\UserSettingsFileUI.Designer.cs">
-      <DependentUpon>UserSettingsFileUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="WindowManagement\WindowArranging\WindowArranger.cs" />
     <Compile Include="WindowManagement\WindowFactory.cs" />
     <Compile Include="WindowManagement\ContentWindowTracking\ContentWindowTracker.cs" />
@@ -216,7 +213,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Content Include="..\..\Reusable\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
+    <Content Include="..\..\Tools\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip">
       <Link>SourceCodeForSelfAwareness.zip</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -231,9 +228,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Menus\RDMPMenuStrip.resx">
       <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WindowManagement\UserSettings\UserSettingsFileUI.resx">
-      <DependentUpon>UserSettingsFileUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\LICENSE">
       <Link>WindowManagement\Licenses\LICENSE</Link>
@@ -255,7 +249,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">

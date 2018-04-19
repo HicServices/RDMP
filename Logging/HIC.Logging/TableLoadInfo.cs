@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -10,9 +10,9 @@ namespace HIC.Logging
     /// e.g. a targetTable of 'bob.csv' would be absolutely fine.  As long as the count of inserts is useful and you want to preserve the information then go ahead
     /// and create a TableLoadInfo.
     /// 
-    /// You can increment Inserts / Deletes etc as often as you want but do not decrease them.  When you are sure you have finished loading the target table
+    /// <para>You can increment Inserts / Deletes etc as often as you want but do not decrease them.  When you are sure you have finished loading the target table
     /// (even if there were errors) you should call CloseAndArchive to write the final insert/update/delete count into the database.  After this is called you
-    /// won't be able to change the counts any more.
+    /// won't be able to change the counts any more.</para>
     /// </summary>
     public class TableLoadInfo : ITableLoadInfo
     {

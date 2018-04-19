@@ -123,7 +123,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public PermissionWindow(ICatalogueRepository repository, DbDataReader r)
+        internal PermissionWindow(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Name = r["Name"].ToString();

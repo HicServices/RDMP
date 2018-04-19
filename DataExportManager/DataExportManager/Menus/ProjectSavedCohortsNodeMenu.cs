@@ -8,8 +8,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
-using DataExportManager.Collections.Nodes;
-using DataExportManager.Collections.Nodes.ProjectCohortNodes;
+using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 

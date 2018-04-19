@@ -10,7 +10,7 @@ namespace CatalogueLibrary.Data
     /// The virtual 'folder' in which to describe the Catalogue as residing in to the user.  This is implemented in the UI as a tree of folders but is calculated from all the
     /// visible Catalogues at any given time (you can't create an empty CatalogueFolder you just have to declare a Catalogue as being in a new folder name).
     /// 
-    /// CatalogueFolder is basically a string but has method to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues (See GetImmediateSubFoldersUsing)
+    /// <para>CatalogueFolder is basically a string but has method to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues (See GetImmediateSubFoldersUsing)</para>
     /// </summary>
     public class CatalogueFolder : IConvertible
     {
@@ -208,18 +208,18 @@ namespace CatalogueLibrary.Data
         /// Returns the next level of folder down towards the Catalogues in collection - note that the next folder down might be empty 
         /// e.g.
         /// 
-        /// Pass in 
+        /// <para>Pass in 
         /// CatalogueA - \2005\Research\
-        /// CatalogueB - \2006\Research\
+        /// CatalogueB - \2006\Research\</para>
         /// 
-        /// This is Root (\)
+        /// <para>This is Root (\)
         /// Returns:
         ///     \2005\ - empty 
-        ///     \2006\ - empty
+        ///     \2006\ - empty</para>
         /// 
-        /// Pass in the SAME collection but call on This (\2005\)
+        /// <para>Pass in the SAME collection but call on This (\2005\)
         /// Returns :
-        /// \2005\Research\ - containing CatalogueA
+        /// \2005\Research\ - containing CatalogueA</para>
         /// </summary>
         /// <param name="collection"></param>
         [Pure]

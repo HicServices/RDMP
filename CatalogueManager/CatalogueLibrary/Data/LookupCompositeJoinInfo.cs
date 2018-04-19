@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -46,6 +46,7 @@ namespace CatalogueLibrary.Data
         [NoMappingToDatabase]
         public ColumnInfo ForeignKey { get { return Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID); } }
 
+        /// <inheritdoc cref="PrimaryKey_ID"/>
         [NoMappingToDatabase]
         public ColumnInfo PrimaryKey {
             get { return Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID); }
@@ -70,7 +71,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        public LookupCompositeJoinInfo(ICatalogueRepository repository, DbDataReader r)
+        internal LookupCompositeJoinInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Collation = r["Collation"] as string;

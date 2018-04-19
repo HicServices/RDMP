@@ -29,6 +29,11 @@ namespace CatalogueLibrary.Checks
             _catalogueDatabaseRepository = catalogueDatabaseRepository;
         }
 
+        /// <summary>
+        /// Checks that the alleged parent of the cloned IFilter still exists and issues a warning if the SQL has changed vs the master (might not
+        ///  be a problem since user customisation is allowed)
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             if (_allegedParent == null)

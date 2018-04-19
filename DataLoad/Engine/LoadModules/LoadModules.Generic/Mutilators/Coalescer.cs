@@ -34,6 +34,8 @@ namespace LoadModules.Generic.Mutilators
 
         public void Check(ICheckNotifier notifier)
         {
+            if (TableRegexPattern == null)
+                notifier.OnCheckPerformed(new CheckEventArgs("You must specify a regex pattern for identifying tables in RAW which need to be processed",CheckResult.Fail));
         }
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)

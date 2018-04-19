@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -18,10 +18,10 @@ namespace LoadModules.Generic.Mutilators
     /// apply a TableVarcharMaxer as a Mounting operation before loading data into it with an IAttacher you can have all the data loaded succesfully into RAW where
     /// it can be interrogated with SQL to find out what the truncated fields are and what to do about them.
     /// 
-    /// Remember that RAW and STAGING are created based on the LIVE table schema (but that RAW has no column constraints like pks or not null fields).  This
+    /// <para>Remember that RAW and STAGING are created based on the LIVE table schema (but that RAW has no column constraints like pks or not null fields).  This
     /// component lets you further relax the structure of RAW to have varchar(max) column datatypes.  The load will still crash when it comes to migration to 
     /// STAGING or merging with LIVE because the datatypes are not valid according to LIVE but you will have an easier time debugging than trying to look through
-    /// a flat file for problematic values.
+    /// a flat file for problematic values.</para>
     /// </summary>
     [Description("Runs in in Mounting or RAW (ideally as the first module in Mounting) which turns all columns in all tables in the bubble into a different data type (e.g. varchar(max)).")]
     public class TableVarcharMaxer : IPluginMutilateDataTables

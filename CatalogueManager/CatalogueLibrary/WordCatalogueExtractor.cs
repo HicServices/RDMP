@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -191,7 +191,6 @@ namespace CatalogueLibrary
                 }
 
             table.AutoFit = AutoFit.Contents;
-            _document.InsertTable(table);
         }
         
         

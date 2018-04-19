@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -32,12 +33,12 @@ namespace CatalogueManager.MainFormUITabs
     /// provide as much background about your datasets as possible since this is the information that will be given to researchers when you extract the dataset (as well as being a great 
     /// reference for when you find a dataset and you're not quite sure about what it contains or how it got there or who supplied it etc).
     /// 
-    /// The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.  Realistically though just entering all the information into 'Resource 
+    /// <para>The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.  Realistically though just entering all the information into 'Resource 
     /// Description' is probably a more realistic goal.  Documentation may be boring but it is absolutely vital for handling providence of research datasets especially if you frequently
-    /// get given small datasets from researchers (e.g. questionnaire data they have collected) for use in cohort generation etc).
+    /// get given small datasets from researchers (e.g. questionnaire data they have collected) for use in cohort generation etc).</para>
     /// 
-    /// There is also a box for storing a ticket number, this will let you reference a ticket in your ticketing system (e.g. Jira, Fogbugz etc).  This requires selecting/writing a compatible
-    /// plugin for your ticketing system and configuring it (see TicketingSystemConfigurationUI)
+    /// <para>There is also a box for storing a ticket number, this will let you reference a ticket in your ticketing system (e.g. Jira, Fogbugz etc).  This requires selecting/writing a compatible
+    /// plugin for your ticketing system and configuring it (see TicketingSystemConfigurationUI)</para>
     /// </summary>
     public partial class CatalogueTab : CatalogueTab_Design, ISaveableUI
     {
@@ -48,6 +49,8 @@ namespace CatalogueManager.MainFormUITabs
             InitializeComponent();
 
             ticketingControl1.TicketTextChanged += ticketingControl1_TicketTextChanged;
+            
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public Catalogue Catalogue { get; private set; }

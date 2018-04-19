@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,12 +21,12 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
     /// for all the projects you have released data for.  A Cohort is a list of patient identifiers.  All identifiers must have the same datatype (If you handle two distinct patient 
     /// identifiers e.g. CHI number and NHS number then you can have 2 cohort databases... or you could just standardise with a mapping table and save yourself a lot of confusion) 
     /// 
-    /// This wizard offers 2 methods of allocating Release Identifiers (See Screen2) but because there can be company specific methods for allocating release identifiers (e.g. upload
+    /// <para>This wizard offers 2 methods of allocating Release Identifiers (See Screen2) but because there can be company specific methods for allocating release identifiers (e.g. upload
     /// the private identifiers to an anonymisation web service and wait a week before downloading the corresponding release identifiers) the RDMP does not manage the cohort database 
     /// directly.  If you have such an obscure release identifier allocation policy tell Screen 3 to leave the release identifiers blank and write a process/plugin for updating the cohort
-    /// table.
+    /// table.</para>
     /// 
-    /// Data Export Manager will always link datasets against the private identifier and substitute it for the release identifier when extracting data.
+    /// <para>Data Export Manager will always link datasets against the private identifier and substitute it for the release identifier when extracting data.</para>
     /// 
     /// </summary>
     public partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
