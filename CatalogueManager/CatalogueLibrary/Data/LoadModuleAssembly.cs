@@ -196,56 +196,10 @@ namespace CatalogueLibrary.Data
         /// <param name="f"></param>
         public LoadModuleAssembly(ICatalogueRepository repository, FileInfo f, Plugin plugin)
         {
-            byte[] allPdbBytes = null;
-            string version = null;
-
-            //always allowed
-            if(f.Name != "src.zip")
-            {
-                if (!f.Extension.ToLower().Equals(".dll"))
-                    throw new NotSupportedException("Only .dll files can be commited");
-
-                if (ProhibitedDllNames.Contains(f.Name) || ProhibitedDllNames.Contains("Test"))
-                    throw new ArgumentException("Cannot commit assembly " + f.Name + " because it is a prohibited dll or has the word 'Test' in its filename");
-                
-                var pdb = new FileInfo(f.FullName.Substring(0, f.FullName.Length - ".dll".Length) + ".pdb");
-                if (pdb.Exists)
-                    allPdbBytes = File.ReadAllBytes(pdb.FullName);
-
-                try
-                {
-                    version = FileVersionInfo.GetVersionInfo(f.FullName).FileVersion;
-                }
-                catch (Exception)
-                {
-                    // couldn't get file version, nevermind maybe it is some kind of freaky dll type
-                }
-
-
-            }
-            else
-            {
-                //source code
-                version = "1.0";
-            }
+            var dictionaryParameters = GetDictionaryParameters(f, plugin);
 
             //so we can reference it in fetch requests to check for duplication (normaly Repository is set during hydration by the repo)
             Repository = repository;
-
-            string name = f.Name;
-            byte[] allBytes = File.ReadAllBytes(f.FullName);
-            
-            var dictionaryParameters = new Dictionary<string, object>()
-                {
-                    {"Name",name},
-                    {"Dll",allBytes},
-                    {"DllFileVersion",version},
-                    {"Committer",Environment.UserName},
-                    {"Plugin_ID",plugin.ID}
-                };
-                
-            if (allPdbBytes != null)
-                dictionaryParameters.Add("Pdb", allPdbBytes);
 
             Repository.InsertAndHydrate(this,dictionaryParameters);
         }
@@ -315,9 +269,69 @@ namespace CatalogueLibrary.Data
 
                 goto TryAgain;
             }
-
         }
 
+        private Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
+        {
+            byte[] allPdbBytes = null;
+            string version = null;
+
+            //always allowed
+            if (f.Name != "src.zip")
+            {
+                if (!f.Extension.ToLower().Equals(".dll"))
+                    throw new NotSupportedException("Only .dll files can be commited");
+
+                if (ProhibitedDllNames.Contains(f.Name) || ProhibitedDllNames.Contains("Test"))
+                    throw new ArgumentException("Cannot commit assembly " + f.Name + " because it is a prohibited dll or has the word 'Test' in its filename");
+
+                var pdb = new FileInfo(f.FullName.Substring(0, f.FullName.Length - ".dll".Length) + ".pdb");
+                if (pdb.Exists)
+                    allPdbBytes = File.ReadAllBytes(pdb.FullName);
+
+                try
+                {
+                    version = FileVersionInfo.GetVersionInfo(f.FullName).FileVersion;
+                }
+                catch (Exception)
+                {
+                    // couldn't get file version, nevermind maybe it is some kind of freaky dll type
+                }
+            }
+            else
+            {
+                //source code
+                version = "1.0";
+            }
+
+
+            string name = f.Name;
+            byte[] allBytes = File.ReadAllBytes(f.FullName);
+
+            var dictionaryParameters = new Dictionary<string, object>()
+                {
+                    {"Name",name},
+                    {"Dll",allBytes},
+                    {"DllFileVersion",version},
+                    {"Committer",Environment.UserName},
+                    {"Plugin_ID",plugin.ID}
+                };
+
+            if (allPdbBytes != null)
+                dictionaryParameters.Add("Pdb", allPdbBytes);
+
+            return dictionaryParameters;
+        }
+
+        public void UpdateTo(FileInfo toCommit)
+        {
+            var dict = GetDictionaryParameters(toCommit, Plugin);
+            Dll = (byte[])dict["Dll"];
+            DllFileVersion = (string) dict["DllFileVersion"];
+            Committer = (string) dict["Committer"];
+            Pdb = (byte[]) dict["Pdb"];
+            SaveToDatabase();
+        }
         private bool AreEqual(byte[] readAllBytes, byte[] dll)
         {
             if (readAllBytes.Length != dll.Length)
