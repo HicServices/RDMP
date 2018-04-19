@@ -25,6 +25,7 @@ namespace DataExportLibrary.Data.DataTables
         #region Database Properties
         private int _catalogue_ID;
         private bool _disableExtraction;
+        private int? _project_ID;
 
         public int Catalogue_ID
         {
@@ -35,6 +36,11 @@ namespace DataExportLibrary.Data.DataTables
         {
             get { return _disableExtraction; }
             set { SetField(ref _disableExtraction, value); }
+        }
+        public int? Project_ID
+        {
+            get { return _project_ID; }
+            set { SetField(ref _project_ID, value); }
         }
 
         #endregion
@@ -83,6 +89,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             Catalogue_ID = Convert.ToInt32(r["Catalogue_ID"]);
             DisableExtraction = (bool) r["DisableExtraction"];
+            Project_ID = ObjectToNullableInt(r["Project_ID"]);
         }
 
         private Catalogue _catalogue;
@@ -113,27 +120,27 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         private bool _datasetBroken;
+        
 
         private void RefreshCatalogueInfo()
         {
-            if(Catalogue_ID != null)
-                try
-                {
-                    _catalogue = ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<Catalogue>((int) Catalogue_ID);
+            try
+            {
+                _catalogue = ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<Catalogue>((int) Catalogue_ID);
 
-                    if (_catalogue == null)
-                        _datasetBroken = true;
-                }
-                catch (Exception e)
+                if (_catalogue == null)
+                    _datasetBroken = true;
+            }
+            catch (Exception e)
+            {
+                if (e.Message.ToLower().Contains("could not find"))
                 {
-                    if (e.Message.ToLower().Contains("could not find"))
-                    {
-                        _catalogue = null;
-                        _datasetBroken = true;
-                    }
-                    else
-                        throw;
+                    _catalogue = null;
+                    _datasetBroken = true;
                 }
+                else
+                    throw;
+            }
         }
 
         /// <summary>
