@@ -329,7 +329,8 @@ namespace CatalogueLibrary.Data
             Dll = (byte[])dict["Dll"];
             DllFileVersion = (string) dict["DllFileVersion"];
             Committer = (string) dict["Committer"];
-            Pdb = (byte[]) dict["Pdb"];
+            Pdb = dict.ContainsKey("Pdb") ? (byte[]) dict["Pdb"] : null;
+
             SaveToDatabase();
         }
         private bool AreEqual(byte[] readAllBytes, byte[] dll)
