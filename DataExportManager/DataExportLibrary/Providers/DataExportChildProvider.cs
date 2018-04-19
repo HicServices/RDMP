@@ -140,11 +140,14 @@ namespace DataExportLibrary.Providers
                 AddChildren(p, new DescendancyList(p));
 
             //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
-            var extractableCatalogueIds = new HashSet<int>(ExtractableDataSets.Select(ds => ds.Catalogue_ID));
+            var cataToEds = new Dictionary<int,ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
 
             //inject extractability into Catalogues
             foreach (Catalogue catalogue in AllCatalogues)
-                catalogue.InjectExtractability(extractableCatalogueIds.Contains(catalogue.ID));
+                if (cataToEds.ContainsKey(catalogue.ID))
+                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(true, cataToEds[catalogue.ID].Project_ID != null));
+                else
+                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));    
         }
 
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)

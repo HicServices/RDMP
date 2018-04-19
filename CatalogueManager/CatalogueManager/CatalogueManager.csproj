@@ -1548,6 +1548,7 @@
     <None Include="Icons\ExtractableColumn.png" />
     <None Include="Icons\famfamfam\page_white_get.png" />
     <None Include="Icons\famfamfam\page_white_put.png" />
+    <None Include="Icons\ExtractionInformation_ProjectSpecific.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1639,6 +1640,7 @@
     <None Include="Icons\TinyYellow.png" />
     <None Include="Icons\TinyGreen.png" />
     <None Include="Icons\TinyRed.png" />
+    <None Include="Icons\ProjectCatalogue.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

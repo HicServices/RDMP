@@ -803,6 +803,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ExtractionInformation_ProjectSpecific {
+            get {
+                object obj = ResourceManager.GetObject("ExtractionInformation_ProjectSpecific", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap ExtractionInformation_SpecialApproval {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation_SpecialApproval", resourceCulture);
@@ -1246,6 +1256,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Project {
             get {
                 object obj = ResourceManager.GetObject("Project", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectCatalogue {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCatalogue", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

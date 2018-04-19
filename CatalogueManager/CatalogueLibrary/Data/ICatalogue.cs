@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
@@ -57,5 +58,7 @@ namespace CatalogueLibrary.Data
         ExtractionFilter[] GetAllFilters();
 
         DatabaseType? GetDistinctLiveDatabaseServerType();
+
+        CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository);
     }
 }

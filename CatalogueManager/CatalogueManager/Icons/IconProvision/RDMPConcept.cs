@@ -28,6 +28,7 @@ namespace CatalogueManager.Icons.IconProvision
         ExternalDatabaseServer,
 
         Catalogue,
+        ProjectCatalogue,
         CatalogueItemsNode,
         CatalogueItem,
         CatalogueItemIssue,
