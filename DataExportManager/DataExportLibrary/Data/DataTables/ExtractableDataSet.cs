@@ -18,7 +18,6 @@ namespace DataExportLibrary.Data.DataTables
     /// performing an extract we can still report to the user the facts in a graceful manner if they clone the old configuration.  The second reason is that you could (if you were crazy)
     /// have multiple DataExportManager databases all feeding off the same Catalogue database - e.g. one that does identifiable extracts and one which does anonymous extracts.  Some
     /// datasets (Catalogues) would therefore be extractable in one DataExportManager database while a different set would be extractable in the other DataExportManager database.
-    /// 
     /// </summary>
     public class ExtractableDataSet : VersionedDatabaseEntity, IExtractableDataSet
     {
@@ -37,6 +36,21 @@ namespace DataExportLibrary.Data.DataTables
             get { return _disableExtraction; }
             set { SetField(ref _disableExtraction, value); }
         }
+
+
+        /// <summary>
+        /// Indicates that the referenced <see cref="Catalogue_ID"/> is associated only with one <see cref="Project"/> and should not be used outside of that.
+        /// 
+        /// <para>Data Export Manager supports Project only custom data, these are data tables that contain information relevant to a cohort of patients or specific Project only. 
+        /// Usually this means the data is bespoke project data e.g. questionnaire answers for a cohort etc.  These data tables are treated exactly like regular Catalogues and 
+        /// extracted in the same way as all the regular data.</para>
+        /// 
+        /// <para>In addition, you can use the columns in the referenced <see cref="Catalogue_ID"/> by joining them to any regular Catalogue being extracted in the Project.  These
+        /// selected columns will be bolted on as additional columns.  You can also reference them in the WhereSql of filters which will trigger an similar Join></para>.
+        /// 
+        /// <para>For example imagine you have a custom data set which is 'Patient ID,Date Consented' then you could configure an extraction filters that only extracted records from
+        ///  Prescribing, Demography, Biochemistry catalogues AFTER each patients consent date.</para>
+        /// </summary>
         public int? Project_ID
         {
             get { return _project_ID; }

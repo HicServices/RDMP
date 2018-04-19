@@ -32,8 +32,6 @@ namespace DataExportLibrary.CohortDescribing
 
         public int OriginID;
 
-        public string CustomTables;
-
         public Exception Exception { get; private set; }
 
         public DateTime? CreationDate { get; set; }
@@ -79,8 +77,6 @@ namespace DataExportLibrary.CohortDescribing
             {
                 ReleaseIdentifier = "Unknown";
             }
-
-            CustomTables = string.Join(",",cohort.GetCustomTableNames());
 
             try
             {
@@ -128,8 +124,6 @@ namespace DataExportLibrary.CohortDescribing
                 ReleaseIdentifier = "Unknown";
             }
             
-            CustomTables = "Loading...";
-            
             try
             {
                 PrivateIdentifier = cohort.GetPrivateIdentifier(true);
@@ -162,9 +156,6 @@ namespace DataExportLibrary.CohortDescribing
                 if (Fetch.DataTable == null)
                     throw new Exception("IsFaulted was false but DataTable was not populated for fetch " + Fetch.Source);
             
-                if(Fetch.CustomDataTable == null)
-                    throw new Exception("IsFaulted was false but CustomDataTable was not populated for fetch " + Fetch.Source);
-
                 var row = Fetch.DataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID);
              
                 if(row == null)
@@ -190,10 +181,6 @@ namespace DataExportLibrary.CohortDescribing
                 Version = Convert.ToInt32(row["Version"]); ;
                 Description =  row["Description"] as string;
                 CreationDate = ObjectToNullableDateTime(row["dtCreated"]);
-
-                var rows = Fetch.CustomDataTable.Rows.Cast<DataRow>().Where(r => Convert.ToInt32(r["OriginID"]) == OriginID).ToArray();
-            
-                CustomTables = !rows.Any() ? "" : string.Join(",", rows.Select(r => r["CustomTableName"]));
             }
             catch (Exception e)
             {

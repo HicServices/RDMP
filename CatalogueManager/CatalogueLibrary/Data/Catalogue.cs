@@ -36,7 +36,7 @@ namespace CatalogueLibrary.Data
     public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper
     {
         #region Database Properties
-
+        
         //just create these variables (one for every string or Uri field and reflection will populate them
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Acronym_MaxLength = -1;

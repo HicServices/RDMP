@@ -32,10 +32,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         //Request is either for one of these
         public  ExtractDatasetCommand Request { get; protected set; }
 
-        //or one of these
-        protected ExtractCohortCustomTableCommand _customTableRequest;
-        private bool _customTablePairDataSent = false;
-
         public const string AuditTaskName = "DataExtraction";
 
         private readonly List<string> _extractionIdentifiersidx = new List<string>();
@@ -124,9 +120,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (_customTableRequest != null)
-                return _customTablePairDataSent ? null : SendCustomTableData(listener);
-            
             if (Request == null)
                  listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Component has not been initialized before being asked to GetChunk(s)"));
 
@@ -270,32 +263,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             return chunk;
 
         }
-
-        private DataTable SendCustomTableData(IDataLoadEventListener listener)
-        {
-            _customTablePairDataSent = true;
-            try
-            {
-                var sql = _customTableRequest.ExtractableCohort.GetCustomTableExtractionSQL(_customTableRequest.TableName);
-
-                using (var con = _customTableRequest.ExtractableCohort.GetDatabaseServer().Server.GetConnection())
-                {
-                    con.Open();
-                    var dt = new DataTable();
-                    var cmd = DatabaseCommandHelper.GetCommand(sql, con);
-                    DatabaseCommandHelper.GetDataAdapter(cmd).Fill(dt);
-
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Read "+dt.Rows.Count+" rows from custom table " + _customTableRequest.TableName));
-                    return dt;
-                }
-            }
-            catch (Exception e)
-            {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,"Failed to extract custom table " + _customTableRequest.TableName,e));
-                throw;
-            }
-        }
-
+        
         private void GenerateExtractionTransformObservations(DataTable chunk)
         {
             ExtractTimeTransformationsObserved = new Dictionary<ExtractableColumn, ExtractTimeTransformationObserved>();
@@ -418,8 +386,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         {
             if (value is ExtractDatasetCommand)
                 Initialize(value as ExtractDatasetCommand);
-            else
-                _customTableRequest = value as ExtractCohortCustomTableCommand;
         }
         
         public virtual void Check(ICheckNotifier notifier)

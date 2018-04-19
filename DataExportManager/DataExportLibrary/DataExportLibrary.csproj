@@ -236,7 +236,6 @@
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />
     <Compile Include="Data\ConfigurationProperties.cs" />
-    <Compile Include="Data\DataTables\CohortCustomColumn.cs" />
     <Compile Include="Data\DataTables\CohortDefinition.cs" />
     <Compile Include="Data\DataTables\CumulativeExtractionResults.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
@@ -253,7 +252,6 @@
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />
-    <Compile Include="ExtractionTime\Commands\ExtractCohortCustomTableCommand.cs" />
     <Compile Include="Data\DataTables\DataUser.cs" />
     <Compile Include="Data\DataTables\ExternalCohortTable.cs" />
     <Compile Include="Data\DataTables\ExtractableCohort.cs" />

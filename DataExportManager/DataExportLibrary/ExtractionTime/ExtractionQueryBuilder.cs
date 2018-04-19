@@ -121,12 +121,7 @@ namespace DataExportLibrary.ExtractionTime
                 }
                 //add the JOIN in after any other joins
                 queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
-
-                //if there is a custom table then make sure to also join to that (e.g. date registered in study)
-                foreach (string customTableJoinSql in request.ExtractableCohort.GetCustomTableJoinSQLIfExists(queryBuilder))
-                    queryBuilder.AddCustomLine(customTableJoinSql, QueryComponent.JoinInfoJoin);
-
-
+                
                 //add the filter cohortID because our new Cohort system uses ID number and a giant combo table with all the cohorts in it we need to say Select XX from XX join Cohort Where Cohort number = Y
                 queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
             }
