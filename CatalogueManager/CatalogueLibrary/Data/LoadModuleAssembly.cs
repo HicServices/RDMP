@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -261,6 +263,11 @@ namespace CatalogueLibrary.Data
             Plugin_ID = Convert.ToInt32(r["Plugin_ID"]);
         }
         
+        internal LoadModuleAssembly(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this, shareManager, shareDefinition);
+        }
+
         public static bool IsDllProhibited(FileInfo f)
         {
             return ProhibitedDllNames.Contains(f.Name);

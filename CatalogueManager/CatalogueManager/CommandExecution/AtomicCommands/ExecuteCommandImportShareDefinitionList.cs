@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
@@ -35,26 +36,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 try
                 {
                     ShareManager shareManager = new ShareManager(Activator.RepositoryLocator);
-                    
+
                     foreach (var f in ofd.FileNames)
-                    {
-                        var text = File.ReadAllText(f);
-                        var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(text, typeof(List<ShareDefinition>), Activator.RepositoryLocator);
-                        
-                        foreach (ShareDefinition sd in toImport)
-                        {
-                            try
-                            {
-                                var objectConstructor = new ObjectConstructor();
-                                objectConstructor.ConstructIfPossible(sd.Type, shareManager, sd);
-                            }
-                            catch (Exception e)
-                            {
-                                throw new Exception("Error constructing " + sd.Type ,e);
-                            }
-                        }
-                        
-                    }
+                        using (var stream = File.Open(f, FileMode.Open))
+                            shareManager.ImportSharedObject(stream);
                 }
                 catch (Exception e)
                 {

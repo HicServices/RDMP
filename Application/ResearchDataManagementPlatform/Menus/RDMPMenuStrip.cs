@@ -372,7 +372,7 @@ namespace ResearchDataManagementPlatform.Menus
         
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PluginManagementForm dialogue = new PluginManagementForm();
+            PluginManagementForm dialogue = new PluginManagementForm(_activator);
             dialogue.RepositoryLocator = RepositoryLocator;
             dialogue.Show();
         }

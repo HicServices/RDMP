@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Text;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -205,5 +209,29 @@ namespace CatalogueLibrary.Data.ImportExport
                     import.DeleteInDatabase();
         }
 
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream pluginSharedObjectsFile)
+        {
+            List<IMapsDirectlyToDatabaseTable> created = new List<IMapsDirectlyToDatabaseTable>();
+            
+            var sr = new StreamReader(pluginSharedObjectsFile);
+            var text = sr.ReadToEnd();
+
+            var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(text, typeof(List<ShareDefinition>), RepositoryLocator);
+
+            foreach (ShareDefinition sd in toImport)
+            {
+                try
+                {
+                    var objectConstructor = new ObjectConstructor();
+                    created.Add((IMapsDirectlyToDatabaseTable) objectConstructor.ConstructIfPossible(sd.Type, this, sd));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error constructing " + sd.Type, e);
+                }
+            }
+
+            return created;
+        }
     }
 }
