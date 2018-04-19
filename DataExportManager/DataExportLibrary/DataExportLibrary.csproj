@@ -293,7 +293,6 @@
     <Compile Include="Providers\DataExportChildProvider.cs" />
     <Compile Include="Providers\DataExportProblemProvider.cs" />
     <Compile Include="Providers\Nodes\AllCohortsNode.cs" />
-    <Compile Include="Providers\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Providers\Nodes\ExtractionConfigurationsNode.cs" />
     <Compile Include="Providers\Nodes\ExtractionDirectoryNode.cs" />
     <Compile Include="Providers\Nodes\FrozenExtractionConfigurationsNode.cs" />
@@ -303,7 +302,6 @@
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
-    <Compile Include="Providers\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />

@@ -48,7 +48,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
                     tbReleaseIdentifierField.Text = "";
                     tbDefinitionTableForeignKeyField.Text = "";
 
-                    tbCustomTablesTableName.Text = "";
                     tbDefinitionTableName.Text = "";
                 }
                 else
@@ -66,7 +65,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
                     tbReleaseIdentifierField.Text = value.ReleaseIdentifierField;
                     tbDefinitionTableForeignKeyField.Text = value.DefinitionTableForeignKeyField;
 
-                    tbCustomTablesTableName.Text = value.CustomTablesTableName;
                     tbDefinitionTableName.Text = value.DefinitionTableName;
                 }
 
@@ -121,10 +119,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
                 ExternalCohortTable.ReleaseIdentifierField = value;
             if (tbSender == tbDefinitionTableForeignKeyField)
                 ExternalCohortTable.DefinitionTableForeignKeyField = value;
-
-
-            if (tbSender == tbCustomTablesTableName)
-                ExternalCohortTable.CustomTablesTableName = value;
             if (tbSender == tbDefinitionTableName)
                 ExternalCohortTable.DefinitionTableName = value;
 

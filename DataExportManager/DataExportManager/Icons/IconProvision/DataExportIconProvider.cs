@@ -21,7 +21,6 @@ namespace DataExportManager.Icons.IconProvision
         {
             //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once  
             StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider());
-            StateBasedIconProviders.Add(new CustomDataTableNodeStateBasedIconProvider());
             StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
         }
 

@@ -18,7 +18,7 @@ namespace CohortManagerTests
             
             try
             {
-                Assert.IsTrue(config.StillExists());
+                Assert.IsTrue(config.Exists());
                 Assert.AreEqual("franky",config.Name);
             
                 config.Description = "Hi there";
@@ -31,7 +31,7 @@ namespace CohortManagerTests
             finally 
             {
                 config.DeleteInDatabase();
-                Assert.IsFalse(config.StillExists());
+                Assert.IsFalse(config.Exists());
             }
         }
 

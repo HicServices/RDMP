@@ -542,7 +542,6 @@ GO
                     DefinitionTableName = "CohortDefinition",
                     ReleaseIdentifierField = "ReleaseID",
                     PrivateIdentifierField = _identifierIsANOVersion ? "ANOCHI" : "CHI",
-                    CustomTablesTableName = "CohortCustomData",
                     DefinitionTableForeignKeyField = "cohortDefinition_id"
                 };
 

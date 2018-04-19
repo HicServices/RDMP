@@ -10,9 +10,17 @@ begin
 end
 GO
 
+if exists (select 1 from sys.columns where name = 'CustomTablesTableName' and OBJECT_NAME(object_id) ='ExternalCohortTable')
+begin
+alter table ExternalCohortTable drop column CustomTablesTableName
+end
+go
+
 if not exists (select 1 from sys.foreign_keys where name = 'FK_ExtractableDataSet_Project')
 begin
 ALTER TABLE [dbo].[ExtractableDataSet]  WITH CHECK ADD  CONSTRAINT [FK_ExtractableDataSet_Project] FOREIGN KEY([Project_ID])
 REFERENCES [dbo].[Project] ([ID])
 end
 GO
+
+

@@ -469,7 +469,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CustomDataTableNodeStateBasedIconProvider.cs" />
     <Compile Include="SimpleDialogs\ConfigureDisclaimer.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -124,29 +124,6 @@ REFERENCES [dbo].[CohortDefinition] ([id])
 GO
 ALTER TABLE [dbo].[Cohort] CHECK CONSTRAINT [FK_Cohort_CohortDefinition]
 GO
-
-CREATE TABLE [dbo].[CohortCustomData](
-	[cohortDefinition_id] [int] NOT NULL,
-	[customTableName] [varchar](256) NOT NULL,
-	[active] [bit] NOT NULL,
- CONSTRAINT [PK_CohortCustomData] PRIMARY KEY CLUSTERED 
-(
-	[cohortDefinition_id] ASC,
-	[customTableName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-ALTER TABLE [dbo].[CohortCustomData] ADD  CONSTRAINT [DF_CohortCustomData_active]  DEFAULT ((1)) FOR [active]
-GO
-
-ALTER TABLE [dbo].[CohortCustomData]  WITH CHECK ADD  CONSTRAINT [FK_CohortCustomData_CohortDefinition] FOREIGN KEY([cohortDefinition_id])
-REFERENCES [dbo].[CohortDefinition] ([id])
-GO
-
-ALTER TABLE [dbo].[CohortCustomData] CHECK CONSTRAINT [FK_CohortCustomData_CohortDefinition]
-GO
 ",
                 //{0}
 CohortDatabaseName);
@@ -205,8 +182,7 @@ CohortDatabaseName);
 
         private void CreateExtractableCohort()
         {
-            int colsCreated;
-            _extractableCohort = new ExtractableCohort(DataExportRepository, _externalCohortTable, cohortIDInTestData,out colsCreated);
+            _extractableCohort = new ExtractableCohort(DataExportRepository, _externalCohortTable, cohortIDInTestData);
             Assert.AreEqual(2, colsCreated);
 
             Assert.AreEqual(_extractableCohort.OriginID,cohortIDInTestData);
