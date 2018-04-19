@@ -359,8 +359,8 @@ namespace CatalogueManager.PluginManagement
             var service = new RemotePushingService(RepositoryLocator, barsUI);
             var f = new SingleControlForm(barsUI);
             f.Show();
-            
-            service.SendPluginsToAllRemotes(plugins, barsUI.Done);
+
+            service.SendToAllRemotes(plugins, barsUI.Done);
         }
 
         private void btnExportToDisk_Click(object sender, EventArgs e)
