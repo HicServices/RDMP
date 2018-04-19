@@ -33,10 +33,6 @@ namespace DataExportManager.CommandExecution.Proposals
 
         public override ICommandExecution ProposeExecution(ICommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
         {
-            var fileCommand = cmd as FileCollectionCommand; 
-            if(fileCommand != null)
-                return new ExecuteCommandImportFileAsCustomDataForCohort(ItemActivator, target, fileCommand);
-
             //no command possible, dragged command must have been something else
             return null;
         }

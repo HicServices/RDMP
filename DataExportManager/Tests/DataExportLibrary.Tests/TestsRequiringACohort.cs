@@ -167,7 +167,6 @@ CohortDatabaseName);
                 DefinitionTableName = definitionTableName,
                 TableName = cohortTableName,
                 Name = ExternalCohortTableNameInCatalogue,
-                CustomTablesTableName = customTablesTableName,
                 Username = _externalCohortDetails.Server.ExplicitUsernameIfAny,
                 Password = _externalCohortDetails.Server.ExplicitPasswordIfAny,
                 PrivateIdentifierField = "PrivateID",
@@ -183,13 +182,7 @@ CohortDatabaseName);
         private void CreateExtractableCohort()
         {
             _extractableCohort = new ExtractableCohort(DataExportRepository, _externalCohortTable, cohortIDInTestData);
-            Assert.AreEqual(2, colsCreated);
-
             Assert.AreEqual(_extractableCohort.OriginID,cohortIDInTestData);
-
-            var cols = _extractableCohort.CustomCohortColumns;
-            Assert.IsTrue(cols.Any(c => c.GetRuntimeName().Equals("SuperSecretThing")));
-            Assert.IsTrue(cols.Any(c => c.GetRuntimeName().Equals("PrivateID")));
         }
 
         private void SetupCohortDefinitionAndCustomTable()

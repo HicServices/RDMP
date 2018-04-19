@@ -28,9 +28,7 @@ namespace DataExportManager.Menus
         {
             _cohort = cohort;
             Items.Add("View TOP 100 identifiers",null, (s, e) => ViewTop100());
-
-            Add(new ExecuteCommandImportFileAsCustomDataForCohort(_activator,cohort));
-
+            
             Add(new ExecuteCommandImportPatientIndexTableAsCustomData(_activator, cohort));
 
         }

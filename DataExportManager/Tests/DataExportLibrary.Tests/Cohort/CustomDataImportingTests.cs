@@ -17,9 +17,9 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Tests.Cohort
 {
-    public class CustomDataImportingTests:TestsRequiringACohort
+    public class CustomDataImportingTests : TestsRequiringACohort
     {
-
+        /*
         private List<string> _customTablesToCleanup = new List<string>();
             
         [Test]
@@ -212,6 +212,6 @@ namespace DataExportLibrary.Tests.Cohort
             return customData;
         }
 
-        #endregion
+        #endregion*/
     }
 }

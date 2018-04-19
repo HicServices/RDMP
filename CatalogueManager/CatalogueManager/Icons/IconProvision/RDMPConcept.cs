@@ -88,7 +88,6 @@ namespace CatalogueManager.Icons.IconProvision
         ProjectSavedCohortsNode,
         ExtractableDataSetsNode,
         ExtractionDirectoryNode,
-        CustomDataTableNode,
         
         CohortIdentificationConfiguration,
 
@@ -133,7 +132,6 @@ namespace CatalogueManager.Icons.IconProvision
         AllObjectImportsNode,
         AllObjectExportsNode,
 
-        CohortCustomColumn,
         ExtractableColumn,
         ProjectCohortsNode,
         FrozenExtractionConfigurationsNode

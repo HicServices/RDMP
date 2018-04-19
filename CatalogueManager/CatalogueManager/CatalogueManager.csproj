@@ -536,6 +536,11 @@
     <Compile Include="FindAndReplace\FindAndReplaceUI.Designer.cs">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Icons\IconProvision\CatalogueIcons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CatalogueIcons.resx</DependentUpon>
+    </Compile>
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AllObjectImportsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
@@ -695,11 +700,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Overlays.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Icons\IconProvision\CatalogueIcons.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="Icons\IconProvision\EnumImageCollection.cs" />
     <Compile Include="Icons\IconProvision\Exceptions\IconProvisionException.cs" />

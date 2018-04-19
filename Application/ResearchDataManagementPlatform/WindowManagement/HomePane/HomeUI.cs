@@ -92,11 +92,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                         dataExportChildProvider.Projects,
                         cic => cic.Name,
                         tlpDataExport);
-
-                AddCommand(new ExecuteCommandImportFileAsCustomDataForCohort(_windowManager.ContentManager), 
-                        dataExportChildProvider.Cohorts,
-                        c => c.ToString(),
-                        tlpDataExport);
             }
 
             //////////////////////////////////Data Loading////////////////////////////////////
