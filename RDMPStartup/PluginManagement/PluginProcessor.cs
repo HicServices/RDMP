@@ -65,8 +65,15 @@ namespace RDMPStartup.PluginManagement
                 foreach (var srcZipFile in Directory.GetFiles(workingDirectory,"src.zip"))
                     ProcessFile(plugin, new FileInfo(srcZipFile), legacyDlls);
 
-  //              foreach (LoadModuleAssembly unused in legacyDlls)
-//                    unused.DeleteInDatabase();
+                //For assemblies that have less dll dependencies now than before (i.e. redundant assemblies)
+                foreach (LoadModuleAssembly unused in legacyDlls)
+                {
+                    var export = _repository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(unused));
+                    if(export != null)
+                        export.DeleteInDatabase();
+
+                    unused.DeleteInDatabase();
+                }
             }
             catch (Exception e)
             {
