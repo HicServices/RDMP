@@ -1641,6 +1641,7 @@
     <None Include="Icons\TinyGreen.png" />
     <None Include="Icons\TinyRed.png" />
     <None Include="Icons\ProjectCatalogue.png" />
+    <None Include="Icons\ProjectCataloguesNode.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

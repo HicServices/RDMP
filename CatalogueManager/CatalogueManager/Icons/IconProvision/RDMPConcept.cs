@@ -135,6 +135,7 @@ namespace CatalogueManager.Icons.IconProvision
 
         ExtractableColumn,
         ProjectCohortsNode,
-        FrozenExtractionConfigurationsNode
+        FrozenExtractionConfigurationsNode,
+        ProjectCataloguesNode
     }
 }

@@ -18,6 +18,13 @@ namespace CatalogueLibrary.Providers
     {
         public object[] Parents;
 
+
+        /// <summary>
+        /// Set to true to indicate that this route should be considered better than any you have seen before for the given object and it's children.  This will cause
+        /// other colliding <see cref="DescendancyList"/> paths for the same object to be marked BetterRouteExists
+        /// </summary>
+        public bool NewBestRoute { get; private set; }
+
         /// <summary>
         /// Set to true to indicate that you might find a better DescendancyList for the given object and if so that other DescendancyList should be considered 'better'
         /// </summary>
@@ -45,6 +52,7 @@ namespace CatalogueLibrary.Providers
             list.Add(anotherKnownParent);
             var toReturn = new DescendancyList(list.ToArray());
             toReturn.BetterRouteExists = BetterRouteExists;
+            toReturn.NewBestRoute = NewBestRoute;
             return toReturn;
         }
 
@@ -55,12 +63,31 @@ namespace CatalogueLibrary.Providers
         /// <returns></returns>
         public DescendancyList SetBetterRouteExists()
         {
+            NewBestRoute = false;
+            BetterRouteExists = true;
+
             var toReturn= new DescendancyList(Parents);
+            toReturn.NewBestRoute = false;
             toReturn.BetterRouteExists = true;
             return toReturn;
         }
 
+        /// <summary>
+        /// Returns a new DescendancyList with NewBestRoute set to true, this means the system will consider that this DescendancyList can override other colliding DescendancyList
+        /// that already exist.
+        /// </summary>
+        /// <returns></returns>
+        public DescendancyList SetNewBestRoute()
+        {
+            NewBestRoute = true;
+            BetterRouteExists = false;
 
+            var toReturn= new DescendancyList(Parents);
+            toReturn.NewBestRoute = true;
+            toReturn.BetterRouteExists = false;
+
+            return toReturn;
+        }
         public override string ToString()
         {
             return "<<"+ string.Join("=>", Parents) + ">>";

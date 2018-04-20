@@ -298,6 +298,7 @@
     <Compile Include="Providers\Nodes\FrozenExtractionConfigurationsNode.cs" />
     <Compile Include="Providers\Nodes\LinkedCohortNode.cs" />
     <Compile Include="Providers\Nodes\PackageContentNode.cs" />
+    <Compile Include="Providers\Nodes\ProjectCataloguesNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />

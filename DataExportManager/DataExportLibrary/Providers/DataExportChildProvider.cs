@@ -166,7 +166,11 @@ namespace DataExportLibrary.Providers
             var projectCohortNode = new ProjectCohortsNode(project);
             children.Add(projectCohortNode);
             AddChildren(projectCohortNode,descendancy.Add(projectCohortNode));
-            
+
+            var projectCataloguesNode = new ProjectCataloguesNode(project);
+            children.Add(projectCataloguesNode);
+            AddChildren(projectCataloguesNode, descendancy.Add(projectCataloguesNode).SetNewBestRoute());
+
             var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
             children.Add(extractionConfigurationsNode);
 
@@ -175,6 +179,16 @@ namespace DataExportLibrary.Providers
             var folder = new ExtractionDirectoryNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ProjectCataloguesNode projectCataloguesNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            foreach (ExtractableDataSet projectSpecificEds in ExtractableDataSets.Where(eds=>eds.Project_ID == projectCataloguesNode.Project.ID))
+                children.Add(projectSpecificEds.Catalogue);
+            
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(ProjectCohortsNode projectCohortsNode, DescendancyList descendancy)
