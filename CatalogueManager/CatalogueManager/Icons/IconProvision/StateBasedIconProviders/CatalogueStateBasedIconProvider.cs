@@ -9,9 +9,6 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
     {
         private readonly Bitmap _basic;
         private Bitmap _projectSpecific;
-        private readonly Bitmap _deprecated;
-        private readonly Bitmap _deprecatedAndInternal;
-        private readonly Bitmap _internal;
         private IconOverlayProvider _overlayProvider;
 
 
@@ -21,9 +18,7 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             _projectSpecific = CatalogueIcons.ProjectCatalogue;
 
             _overlayProvider = overlayProvider;
-            _deprecated = overlayProvider.GetOverlayNoCache(_basic, OverlayKind.Deprecated);
-            _deprecatedAndInternal = overlayProvider.GetOverlayNoCache(_deprecated, OverlayKind.Internal);
-            _internal = overlayProvider.GetOverlayNoCache(_basic, OverlayKind.Internal);
+
         }
 
         public Bitmap GetImageIfSupportedObject(object o)
@@ -40,17 +35,13 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
                 img = _projectSpecific;
             else
                 img = _basic;
-            
-            if (c.IsDeprecated && c.IsInternalDataset)
-                img = _deprecatedAndInternal;
-            
+
             if (c.IsDeprecated)
-                img = _deprecated;
+                img = _overlayProvider.GetOverlay(img, OverlayKind.Deprecated);
             
             if (c.IsInternalDataset)
-                img = _internal;
-
-
+                img = _overlayProvider.GetOverlay(img, OverlayKind.Internal);
+            
             if (status != null && status.IsExtractable)
                 img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
