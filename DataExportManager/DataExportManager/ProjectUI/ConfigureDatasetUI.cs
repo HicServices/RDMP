@@ -63,7 +63,7 @@ namespace DataExportManager.ProjectUI
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
 
-            var dropSink = (SimpleDropSink) olvSelected.DropSink;
+            SimpleDropSink dropSink = (SimpleDropSink) olvSelected.DropSink;
             
             dropSink.CanDropOnItem = false;
             dropSink.CanDropBetween = true;
@@ -86,12 +86,12 @@ namespace DataExportManager.ProjectUI
 
         private object AvailableColumnCategoryAspectGetter(object rowObject)
         {
-            var ei = rowObject as ExtractionInformation;
+            ExtractionInformation ei = (ExtractionInformation)rowObject;
 
-            if (ei != null)
-                return ei.ExtractionCategory.ToString();
+            if (ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                return ei.ExtractionCategory + "::" + ei.CatalogueItem.Catalogue.Name;
 
-            return null;
+            return ei.ExtractionCategory.ToString();
         }
 
 
@@ -121,18 +121,24 @@ namespace DataExportManager.ProjectUI
             }
 
             //on the left
-
-            //add all the extractable columns from the current Catalogue (unless its project specific anyway)
-            if (!cata.GetExtractabilityStatus(_activator.RepositoryLocator.DataExportRepository).IsProjectSpecific)
-                olvAvailable.AddObjects(cata.GetAllExtractionInformation(ExtractionCategory.Any));
             
+            HashSet<IColumn> toAdd = new HashSet<IColumn>();
+
+            //add all the extractable columns from the current Catalogue
+            foreach (ExtractionInformation e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
+                toAdd.Add(e);
+
+            //plus all the Project Specific columns
+            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific))
+                toAdd.Add(e);
+
             //add the stuff that is in Project Catalogues so they can pick these too
-            olvAvailable.AddObjects(_config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.Any));
+            olvAvailable.AddObjects(toAdd.ToArray());
             
             //on the right
 
             //add the already included ones on the right
-            var allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
+            ConcreteColumn[] allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
 
             //now get all the ExtractableColumns that are already configured for this configuration (previously)
             olvSelected.AddObjects(allExtractableColumns);
@@ -155,7 +161,7 @@ namespace DataExportManager.ProjectUI
         /// <returns></returns>
         private bool IsAlreadySelected(IColumn info)
         {
-            var selectedColumns = olvSelected.Objects.Cast<ConcreteColumn>();
+            IEnumerable<ConcreteColumn> selectedColumns = olvSelected.Objects.Cast<ConcreteColumn>();
 
             //compare regular columns on their ID in the catalogue
             return selectedColumns.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == info.ID);
@@ -172,13 +178,13 @@ namespace DataExportManager.ProjectUI
         /// <param name="item"></param>
         private void AddColumnToExtraction(IColumn item)
         {
-            var r = item as IRevertable;
+            IRevertable r = item as IRevertable;
             
             //if the column is out of date
             if(r != null && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 r.RevertToDatabaseState();//get a fresh copy
 
-            var addMe = _config.AddColumnToExtraction(_dataSet,item);
+            ExtractableColumn addMe = _config.AddColumnToExtraction(_dataSet,item);
             olvSelected.AddObject(addMe);
             
             RefreshDisabledObjectStatus();
@@ -195,13 +201,15 @@ namespace DataExportManager.ProjectUI
 
         private void btnExclude_Click(object sender, EventArgs e)
         {
-            RemoveColumnFromExtraction(olvSelected.SelectedObject as ConcreteColumn);
+            foreach (ExtractableColumn item in olvSelected.SelectedObjects)
+                RemoveColumnFromExtraction(item);
+
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
         }
         
         private void btnExcludeAll_Click(object sender, EventArgs e)
         {
-            foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
+            foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
                 RemoveColumnFromExtraction(c);
 
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
@@ -241,7 +249,7 @@ namespace DataExportManager.ProjectUI
 
         private void olvAvailable_ItemActivate(object sender, EventArgs e)
         {
-            var o = olvAvailable.SelectedObject;
+            object o = olvAvailable.SelectedObject;
 
             if(_activator.CommandExecutionFactory.CanActivate(o))
                 _activator.CommandExecutionFactory.Activate(o);
@@ -281,7 +289,7 @@ namespace DataExportManager.ProjectUI
         private void HandleDropAdding(ModelDropEventArgs e)
         {
             if (e.SourceModels != null)
-                foreach (var sourceModel in e.SourceModels.OfType<IColumn>())
+                foreach (IColumn sourceModel in e.SourceModels.OfType<IColumn>())
                     if (!IsAlreadySelected(sourceModel)) 
                         AddColumnToExtraction(sourceModel);
 
@@ -293,9 +301,9 @@ namespace DataExportManager.ProjectUI
             if (e.SourceModels == null || e.SourceModels.Count != 1)
                 return;
 
-            var sourceColumn = (ConcreteColumn) e.SourceModels[0];
+            ConcreteColumn sourceColumn = (ConcreteColumn) e.SourceModels[0];
 
-            var targetOrderable = (IOrderable) e.TargetModel;
+            IOrderable targetOrderable = (IOrderable) e.TargetModel;
 
             int destinationOrder = targetOrderable.Order;
 
@@ -304,7 +312,7 @@ namespace DataExportManager.ProjectUI
                 case DropTargetLocation.AboveItem:
 
                     //bump down the other columns
-                    foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
+                    foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
                         if (c.Order >= destinationOrder && !Equals(c, sourceColumn))
                         {
                             c.Order++;
@@ -317,7 +325,7 @@ namespace DataExportManager.ProjectUI
                 case DropTargetLocation.BelowItem:
 
                     //bump up other columns
-                    foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
+                    foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
                         if (c.Order <= destinationOrder && !Equals(c, sourceColumn))
                         {
                             c.Order--;
@@ -346,8 +354,18 @@ namespace DataExportManager.ProjectUI
 
         private void tbSearch_TextChanged(object sender, EventArgs e)
         {
-            olvAvailable.ModelFilter = string.IsNullOrWhiteSpace(tbSearch.Text) ? null : new TextMatchFilter(olvAvailable, tbSearch.Text);
-            olvAvailable.UseFiltering = !string.IsNullOrWhiteSpace(tbSearch.Text);
+            ObjectListView tree;
+            var senderTb = (TextBox) sender;
+
+            if(sender == tbSearchAvailable)
+                tree = olvAvailable;
+            else if (sender == tbSearchSelected)
+                tree = olvSelected;
+            else
+                throw new Exception("Unexpected sender " + sender);
+
+            tree.ModelFilter = string.IsNullOrWhiteSpace(senderTb.Text) ? null : new TextMatchFilter(tree, senderTb.Text);
+            tree.UseFiltering = !string.IsNullOrWhiteSpace(senderTb.Text);
         }
     }
 

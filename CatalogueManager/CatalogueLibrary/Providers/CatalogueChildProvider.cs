@@ -529,6 +529,10 @@ namespace CatalogueLibrary.Providers
                 .Where(ci => ci.Catalogue_ID == c.ID)
                 .ToArray();
 
+            //tell the CatalogueItems that we are are their parent
+            foreach (CatalogueItem ci in cis)
+                ci.InjectKnown(c);
+
             //add a new CatalogueItemNode (can be empty)
             var catalogueItemsNode = new CatalogueItemsNode(c, cis);
             childObjects.Add(catalogueItemsNode);

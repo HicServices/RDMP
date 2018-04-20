@@ -55,7 +55,9 @@ namespace DataExportManager.Menus
             var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
 
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
-            _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).ToArray();
+            
+            
+            _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).Where(ds=>ds.Project_ID == null || ds.Project_ID == extractionConfiguration.Project_ID).ToArray();
             
             ///////////////////Change Cohorts//////////////
             string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";

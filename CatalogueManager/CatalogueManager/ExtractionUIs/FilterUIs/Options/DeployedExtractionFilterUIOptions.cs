@@ -26,7 +26,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
             List<IColumn> columns = new List<IColumn>();
             
             columns.AddRange(c.GetAllExtractableColumnsFor(ds));
-            columns.AddRange(c.Project.GetAllProjectCatalogueColumns(ExtractionCategory.Any));
+            columns.AddRange(c.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific));
 
             _columns = columns.ToArray();
         }

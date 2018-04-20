@@ -159,12 +159,7 @@ namespace DataExportLibrary.Data.DataTables
             if(!string.IsNullOrWhiteSpace(Alias))
                 return Alias;
 
-            //the ExtractionInformation has been deleted in the Catalogue!
-            if (_knownCatalogueItem.Value == null)
-                return SelectSQL;
-
-            //it hasn't, copy down the name of it
-            return _knownCatalogueItem.Value.Name;
+            return SelectSQL;
         }
 
         public int CompareTo(object obj)

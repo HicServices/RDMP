@@ -534,10 +534,11 @@ namespace DataExportLibrary.Data.DataTables
 
             var legacyColumns = GetAllExtractableColumnsFor(extractableDataSet).Cast<ExtractableColumn>().ToArray();
 
-            //add Core columns
-            foreach (var core in extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core))
-                if (legacyColumns.All(l => l.CatalogueExtractionInformation_ID != core.ID))
-                    AddColumnToExtraction(extractableDataSet, core);
+            //add Core or ProjectSpecific columns
+            foreach (var all in extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+                if(all.ExtractionCategory == ExtractionCategory.Core || all.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                    if (legacyColumns.All(l => l.CatalogueExtractionInformation_ID != all.ID))
+                        AddColumnToExtraction(extractableDataSet, all);
         }
 
         public void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet)

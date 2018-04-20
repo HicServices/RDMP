@@ -27,7 +27,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
-    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>
+    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
     {
         #region Database Properties
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -61,6 +61,7 @@ namespace CatalogueLibrary.Data
 
         private Lazy<ExtractionInformation> _knownExtractionInformation;
         private Lazy<ColumnInfo> _knownColumnInfo;
+        private Lazy<Catalogue> _knownCatalogue;
 
         /// <summary>
         /// The ID of the parent <see cref="Catalogue"/> (dataset) to which this is a virtual column/column description
@@ -69,7 +70,11 @@ namespace CatalogueLibrary.Data
         public int Catalogue_ID
         {
             get { return _catalogueID; }
-            set { SetField(ref _catalogueID , value); }
+            set
+            {
+                SetField(ref _catalogueID, value);
+                ClearAllInjections();
+            }
         }
         /// <inheritdoc/>
         public string Name {
@@ -178,7 +183,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc cref="Catalogue_ID"/>
         [NoMappingToDatabase]
         public Catalogue Catalogue {
-            get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
+            get{return _knownCatalogue.Value;}
         }
 
         /// <summary>
@@ -262,11 +267,22 @@ namespace CatalogueLibrary.Data
             ClearAllInjections();
         }
 
+        public void InjectKnown(Catalogue instance)
+        {
+            _knownCatalogue = new Lazy<Catalogue>(()=>instance);
+        }
+
         /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
             _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformationIfAny);
+            _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue); 
+        }
+
+        private Catalogue FetchCatalogue()
+        {
+            return Repository.GetObjectByID<Catalogue>(Catalogue_ID);
         }
 
         private ExtractionInformation FetchExtractionInformationIfAny()
