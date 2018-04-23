@@ -384,7 +384,14 @@ namespace CatalogueLibrary.Repositories
         {
             //Make a dictionary of the normal properties we are supposed to be importing
             Dictionary<string,object> propertiesDictionary = shareDefinition.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            
+
+            //remove null arguments they won't help us here
+            foreach (string key in propertiesDictionary.Keys.ToArray())
+            {
+                if (propertiesDictionary[key] == null)
+                    propertiesDictionary.Remove(key);
+            }
+
             //If we have already got a local copy of this shared object?
             //either as an import
             T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid);
