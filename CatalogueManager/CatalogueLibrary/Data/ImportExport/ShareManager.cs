@@ -214,7 +214,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="sharedObjectsFile"></param>
         /// <returns></returns>
-        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream sharedObjectsFile)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream sharedObjectsFile, bool deleteExisting = false)
         {
             var sr = new StreamReader(sharedObjectsFile);
             var text = sr.ReadToEnd();
@@ -227,7 +227,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="sharedObjectsFileText"></param>
         /// <returns></returns>
-        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
         {
             var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(sharedObjectsFileText, typeof(List<ShareDefinition>), RepositoryLocator);
 
@@ -239,7 +239,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="toImport"></param>
         /// <returns></returns>
-        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting = false)
         {
             List<IMapsDirectlyToDatabaseTable> created = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -247,6 +247,12 @@ namespace CatalogueLibrary.Data.ImportExport
             {
                 try
                 {
+                    if (deleteExisting)
+                    {
+                        var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
+                        if (actual != null)
+                            actual.Repository.DeleteFromDatabase(actual);
+                    }
                     var objectConstructor = new ObjectConstructor();
                     created.Add((IMapsDirectlyToDatabaseTable)objectConstructor.ConstructIfPossible(sd.Type, this, sd));
                 }

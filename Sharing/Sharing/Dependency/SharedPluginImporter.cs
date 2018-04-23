@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
@@ -26,7 +27,7 @@ namespace Sharing.Dependency
 
         public Plugin Import(Stream stream)
         {
-            return _shareManager.ImportSharedObject(stream).OfType<Plugin>().Single();
+            return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<Plugin>().Single();
         }
     }
 }
