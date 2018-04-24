@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,8 +7,6 @@ using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data.ImportExport
 {
@@ -239,7 +236,18 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="toImport"></param>
         /// <returns></returns>
-        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting = false)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport)
+        {
+            return ImportSharedObject(toImport, false);
+        }
+
+        /// <summary>
+        /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
+        /// </summary>
+        /// <param name="toImport"></param>
+        /// <param name="deleteExisting"></param>
+        /// <returns></returns>
+        internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting)
         {
             List<IMapsDirectlyToDatabaseTable> created = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -251,7 +259,7 @@ namespace CatalogueLibrary.Data.ImportExport
                     {
                         var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
                         if (actual != null)
-                            actual.Repository.DeleteFromDatabase(actual);
+                            actual.DeleteInDatabase();
                     }
                     var objectConstructor = new ObjectConstructor();
                     created.Add((IMapsDirectlyToDatabaseTable)objectConstructor.ConstructIfPossible(sd.Type, this, sd));
