@@ -18,7 +18,9 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
     public class ProcessTaskArgumentTests:DatabaseTests
     {
         [Test]
-        public void TypeOfTableInfo()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TypeOfTableInfo(bool declareAsInterface)
         {
             string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
 
@@ -34,7 +36,11 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 var pt = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.AdjustStaging);
                 var pta = new ProcessTaskArgument(CatalogueRepository, pt);
 
-                pta.SetType(typeof (TableInfo));
+                if(declareAsInterface)
+                    pta.SetType(typeof(ITableInfo));
+                else
+                    pta.SetType(typeof (TableInfo));
+
                 var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
                 try
                 {

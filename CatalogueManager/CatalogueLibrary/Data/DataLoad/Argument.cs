@@ -179,16 +179,10 @@ namespace CatalogueLibrary.Data.DataLoad
             if (Type.Equals(typeof(Regex).ToString()))
                 return new Regex(Value);
 
-            Type type = GetSystemType();
+            Type type = GetConcreteSystemType();
 
-            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            {
-                //if it is interface e.g. ITableInfo fetch instead the TableInfo object
-                if (type.IsInterface && type.Name.StartsWith("I"))
-                    type = ((CatalogueRepository) Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1));
-
+            if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
                 return Repository.GetObjectByID(type, Convert.ToInt32(Value));
-            }
 
             if (Type.Equals(typeof (EncryptedString).ToString()))
                 return new EncryptedString((CatalogueRepository) Repository) {Value = Value};
@@ -266,6 +260,31 @@ namespace CatalogueLibrary.Data.DataLoad
                 throw new Exception("Could not figure out what SystemType to use for Type = '" + Type +"'");
 
             return anyType;
+        }
+
+        /// <summary>
+        /// Gets the concrete implementation class of GetSystemType if GetSystemType is an interface (that we know about)
+        /// </summary>
+        /// <returns></returns>
+        public Type GetConcreteSystemType()
+        {
+            var type = GetSystemType();
+
+            //if it is interface e.g. ITableInfo fetch instead the TableInfo object
+            if (type.IsInterface)
+                if (!type.Name.StartsWith("I"))
+                    throw new NotSupportedException("Interface " + type + " did not start with an 'I'");
+                else
+                {
+                    var candidate = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1));
+
+                    if(candidate.IsAbstract)
+                        throw new NotSupportedException("Could not get concrete implementation of " + type + " because the concrete class " + candidate + " was abstract");
+
+                    return candidate;
+                }
+
+            return type;
         }
 
         public void SetType(Type t)
