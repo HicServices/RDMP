@@ -10,6 +10,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -58,8 +59,9 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
         
         #region Relationships
-        
+
         /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
+        [CanBeNull]
         [NoMappingToDatabase]
         public ExtractionInformation CatalogueExtractionInformation
         {
@@ -69,6 +71,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        [CanBeNull]
         [NoMappingToDatabase]
         public override ColumnInfo ColumnInfo
         {

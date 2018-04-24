@@ -74,7 +74,12 @@ namespace DataExportManager.ProjectUI
         private object SelectedCatalogue_AspectGetter(object rowObject)
         {
             var c = (ExtractableColumn) rowObject;
-            return c.CatalogueExtractionInformation.CatalogueItem.Catalogue.Name;
+            var ei = c.CatalogueExtractionInformation;
+
+            if (ei == null)
+                return null;
+
+            return ei.CatalogueItem.Catalogue.Name;
         }
 
         private void SortSelectedByOrder()
