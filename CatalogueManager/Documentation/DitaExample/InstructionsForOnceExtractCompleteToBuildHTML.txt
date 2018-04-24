@@ -1,4 +1,0 @@
-instructions:
-
-Run the following:
-java -jar lib/dost.jar /i:c:\temp\DitaTest\hic_data_catalogue.ditamap /outdir:C:\temp\DitaTest\out  /transtype:xhtml

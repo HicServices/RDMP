@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
@@ -62,7 +63,7 @@ namespace CatalogueManager.PluginManagement
             treeListView.ChildrenGetter+= ChildrenGetter;
             treeListView.FormatRow += TreeListViewOnFormatRow;
 
-            treeListView.SetNativeBackgroundWatermark(Images.DropHere);
+            treeListView.SetNativeBackgroundWatermark(CatalogueIcons.DropHere);
 
         }
 
