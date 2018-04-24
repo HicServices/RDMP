@@ -44,11 +44,12 @@ namespace DataExportManager.ProjectUI
             this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelectCore = new System.Windows.Forms.Button();
+            this.tbSearchSelected = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.olvSelected = new BrightIdeasSoftware.ObjectListView();
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.tbSearchSelected = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.olvSelectedCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -212,46 +213,6 @@ namespace DataExportManager.ProjectUI
             this.btnSelectCore.UseVisualStyleBackColor = true;
             this.btnSelectCore.Click += new System.EventHandler(this.btnSelectCore_Click);
             // 
-            // olvSelected
-            // 
-            this.olvSelected.AllColumns.Add(this.olvSelectedColumnName);
-            this.olvSelected.AllColumns.Add(this.olvSelectedColumnOrder);
-            this.olvSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.olvSelected.CellEditUseWholeCell = false;
-            this.olvSelected.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvSelectedColumnName,
-            this.olvSelectedColumnOrder});
-            this.olvSelected.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvSelected.FullRowSelect = true;
-            this.olvSelected.HideSelection = false;
-            this.olvSelected.IsSimpleDragSource = true;
-            this.olvSelected.IsSimpleDropSink = true;
-            this.olvSelected.Location = new System.Drawing.Point(6, 16);
-            this.olvSelected.Name = "olvSelected";
-            this.olvSelected.RowHeight = 19;
-            this.olvSelected.ShowGroups = false;
-            this.olvSelected.Size = new System.Drawing.Size(317, 689);
-            this.olvSelected.TabIndex = 154;
-            this.olvSelected.Text = "label14";
-            this.olvSelected.UseCompatibleStateImageBehavior = false;
-            this.olvSelected.View = System.Windows.Forms.View.Details;
-            this.olvSelected.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelCanDrop);
-            this.olvSelected.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelDropped);
-            // 
-            // olvSelectedColumnName
-            // 
-            this.olvSelectedColumnName.AspectName = "ToString";
-            this.olvSelectedColumnName.FillsFreeSpace = true;
-            this.olvSelectedColumnName.Sortable = false;
-            this.olvSelectedColumnName.Text = "Name";
-            // 
-            // olvSelectedColumnOrder
-            // 
-            this.olvSelectedColumnOrder.AspectName = "Order";
-            this.olvSelectedColumnOrder.Text = "Order";
-            // 
             // tbSearchSelected
             // 
             this.tbSearchSelected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -271,6 +232,53 @@ namespace DataExportManager.ProjectUI
             this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 157;
             this.label4.Text = "Search:";
+            // 
+            // olvSelected
+            // 
+            this.olvSelected.AllColumns.Add(this.olvSelectedColumnName);
+            this.olvSelected.AllColumns.Add(this.olvSelectedColumnOrder);
+            this.olvSelected.AllColumns.Add(this.olvSelectedCatalogue);
+            this.olvSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.olvSelected.CellEditUseWholeCell = false;
+            this.olvSelected.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvSelectedColumnName,
+            this.olvSelectedColumnOrder,
+            this.olvSelectedCatalogue});
+            this.olvSelected.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvSelected.FullRowSelect = true;
+            this.olvSelected.HideSelection = false;
+            this.olvSelected.IsSimpleDragSource = true;
+            this.olvSelected.IsSimpleDropSink = true;
+            this.olvSelected.Location = new System.Drawing.Point(6, 16);
+            this.olvSelected.Name = "olvSelected";
+            this.olvSelected.RowHeight = 19;
+            this.olvSelected.ShowGroups = false;
+            this.olvSelected.Size = new System.Drawing.Size(317, 685);
+            this.olvSelected.TabIndex = 154;
+            this.olvSelected.Text = "label14";
+            this.olvSelected.UseCompatibleStateImageBehavior = false;
+            this.olvSelected.View = System.Windows.Forms.View.Details;
+            this.olvSelected.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelCanDrop);
+            this.olvSelected.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelected_ModelDropped);
+            // 
+            // olvSelectedColumnName
+            // 
+            this.olvSelectedColumnName.AspectName = "ToString";
+            this.olvSelectedColumnName.FillsFreeSpace = true;
+            this.olvSelectedColumnName.Sortable = false;
+            this.olvSelectedColumnName.Text = "Name";
+            // 
+            // olvSelectedColumnOrder
+            // 
+            this.olvSelectedColumnOrder.AspectName = "Order";
+            this.olvSelectedColumnOrder.Text = "Order";
+            // 
+            // olvSelectedCatalogue
+            // 
+            this.olvSelectedCatalogue.Text = "Catalogue";
+            this.olvSelectedCatalogue.Width = 100;
             // 
             // ConfigureDatasetUI
             // 
@@ -311,5 +319,6 @@ namespace DataExportManager.ProjectUI
         private OLVColumn olvSelectedIsExtractionIdentifier;
         private System.Windows.Forms.TextBox tbSearchSelected;
         private System.Windows.Forms.Label label4;
+        private OLVColumn olvSelectedCatalogue;
     }
 }

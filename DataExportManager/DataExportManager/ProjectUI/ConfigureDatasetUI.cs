@@ -62,12 +62,19 @@ namespace DataExportManager.ProjectUI
 
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
+            olvSelectedCatalogue.AspectGetter += SelectedCatalogue_AspectGetter;
 
             SimpleDropSink dropSink = (SimpleDropSink) olvSelected.DropSink;
             
             dropSink.CanDropOnItem = false;
             dropSink.CanDropBetween = true;
             AssociatedCollection = RDMPCollection.DataExport;
+        }
+
+        private object SelectedCatalogue_AspectGetter(object rowObject)
+        {
+            var c = (ExtractableColumn) rowObject;
+            return c.CatalogueExtractionInformation.CatalogueItem.Catalogue.Name;
         }
 
         private void SortSelectedByOrder()
