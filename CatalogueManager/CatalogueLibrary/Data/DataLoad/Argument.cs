@@ -264,6 +264,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         /// <summary>
         /// Gets the concrete implementation class of GetSystemType if GetSystemType is an interface (that we know about)
+        /// Tries its best to return a concrete type if at all possible, otherwise it will just return the passed in type.
         /// </summary>
         /// <returns></returns>
         public Type GetConcreteSystemType()
@@ -271,18 +272,13 @@ namespace CatalogueLibrary.Data.DataLoad
             var type = GetSystemType();
 
             //if it is interface e.g. ITableInfo fetch instead the TableInfo object
-            if (type.IsInterface)
-                if (!type.Name.StartsWith("I"))
-                    throw new NotSupportedException("Interface " + type + " did not start with an 'I'");
-                else
-                {
-                    var candidate = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1));
+            if (type.IsInterface && type.Name.StartsWith("I"))
+            {
+                var candidate = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1)); // chop the 'I' off
 
-                    if(candidate.IsAbstract)
-                        throw new NotSupportedException("Could not get concrete implementation of " + type + " because the concrete class " + candidate + " was abstract");
-
+                if(!candidate.IsAbstract)
                     return candidate;
-                }
+            }
 
             return type;
         }
