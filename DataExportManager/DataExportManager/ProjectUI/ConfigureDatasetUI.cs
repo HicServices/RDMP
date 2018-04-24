@@ -15,6 +15,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.Checks;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -252,6 +253,8 @@ namespace DataExportManager.ProjectUI
 
             SortSelectedByOrder();
 
+            var checkable = new SelectedDatasetsChecker(databaseObject, activator.RepositoryLocator);
+            ragSmiley1.StartChecking(checkable);
         }
 
         public override string GetTabName()
