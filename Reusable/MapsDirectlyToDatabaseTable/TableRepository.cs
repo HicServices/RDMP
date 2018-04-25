@@ -453,7 +453,18 @@ namespace MapsDirectlyToDatabaseTable
 
         private T ConstructEntity<T>(DbDataReader reader) where T : IMapsDirectlyToDatabaseTable
         {
-            return (T) ConstructEntity(typeof (T), reader);
+            if(reader == null)
+                throw new ArgumentNullException("reader");
+
+            try
+            {
+                return (T) ConstructEntity(typeof (T), reader);
+            }
+            catch (Exception e)
+            {
+                var id = reader["ID"];
+                throw new Exception("Could not construct '" + typeof(T).Name +"' with ID="+id,e);
+            }
         }
 
         public T[] GetAllObjects<T>( string whereSQL = null) where T:IMapsDirectlyToDatabaseTable
@@ -1052,7 +1063,14 @@ namespace MapsDirectlyToDatabaseTable
                 _compatibleTypes = GetCompatibleTypes();
 
             foreach (var type in _compatibleTypes)
-                toReturn.AddRange(GetAllObjects(type));
+                try
+                {
+                    toReturn.AddRange(GetAllObjects(type));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Failed to GetAllObjects of Type '" + type +"'",e);
+                }
 
             return toReturn.ToArray();
         }
