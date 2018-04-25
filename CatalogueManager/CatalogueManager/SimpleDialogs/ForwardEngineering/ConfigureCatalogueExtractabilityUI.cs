@@ -263,9 +263,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void FinaliseExtractability()
         {
-            var cmd = new ExecuteCommandChangeExtractability(_activator, _catalogue, true);
-            if(!cmd.IsImpossible)
-                cmd.Execute();
+            new ExtractableDataSet(_activator.RepositoryLocator.DataExportRepository, _catalogue);
         }
 
         private void btnAddToExisting_Click(object sender, EventArgs e)
