@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.Data;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Tests.DataExtraction;
-using DataExportLibrary;
-using DataExportLibrary.CohortCreationPipeline.Destinations;
-using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 
 
 namespace DataExportLibrary.Tests.Cohort
@@ -31,26 +23,86 @@ namespace DataExportLibrary.Tests.Cohort
             CustomExtractableDataSet.SaveToDatabase();
 
             var pipe = SetupPipeline();
-            pipe.Name = "RefreshPipe";
+            pipe.Name = "Extract_ProjectSpecificCatalogue_WholeDataset Pipe";
             pipe.SaveToDatabase();
 
             _configuration.AddDatasetToConfiguration(CustomExtractableDataSet);
 
-            _request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+            try
+            {
+                _request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+                ExtractionPipelineUseCase useCase;
+                IExecuteDatasetExtractionDestination results;
+                Execute(out useCase, out results);
+
+                var customDataCsv = results.DirectoryPopulated.GetFiles().Single();
+
+                Assert.IsNotNull(customDataCsv);
+                Assert.AreEqual("custTable99.csv",customDataCsv.Name);
+            
+                var lines = File.ReadAllLines(customDataCsv.FullName);
+
+                Assert.AreEqual("SuperSecretThing,ReleaseID",lines[0]);
+                Assert.AreEqual("monkeys can all secretly fly,Pub_54321",lines[1]);
+                Assert.AreEqual("the wizard of OZ was a man behind a machine,Pub_11ftw",lines[2]);
+
+            }
+            finally
+            {
+                _configuration.RemoveDatasetFromConfiguration(CustomExtractableDataSet);
+            }
+        }
+
+
+        /// <summary>
+        /// Tests that you can add a custom cohort column on the end of an existing dataset as an append
+        /// </summary>
+        [Test]
+        public void Extract_ProjectSpecificCatalogue_AppendedColumn()
+        {
+            //make the catalogue a custom catalogue for this project
+            CustomExtractableDataSet.Project_ID = _project.ID;
+            CustomExtractableDataSet.SaveToDatabase();
+
+            var pipe = SetupPipeline();
+            pipe.Name = "Extract_ProjectSpecificCatalogue_AppendedColumn Pipe";
+            pipe.SaveToDatabase();
+
+            var extraColumn = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("SuperSecretThing"));
+            var asExtractable = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, extraColumn, 10,extraColumn.SelectSQL);
+            
+            //generate a new request (this will include the newly created column)
+            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
+
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
+            tbl.Truncate();
+
+            using(var blk = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("PrivateID");
+                dt.Columns.Add("Result");
+                dt.Rows.Add(new object[] {"Priv_12345", 1});
+                dt.Rows.Add(new object[] {"Priv_wtf11", 2});
+                blk.Upload(dt);
+            }
+            
             ExtractionPipelineUseCase useCase;
             IExecuteDatasetExtractionDestination results;
             Execute(out useCase, out results);
 
-            var customDataCsv = results.DirectoryPopulated.GetFiles().Single();
+            var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single();
 
-            Assert.IsNotNull(customDataCsv);
-            Assert.AreEqual("custTable99.csv",customDataCsv.Name);
+            Assert.IsNotNull(mainDataTableCsv);
+            Assert.AreEqual("TestTable.csv", mainDataTableCsv.Name);
+                
+            var lines = File.ReadAllLines(mainDataTableCsv.FullName);
+
+            Assert.AreEqual("ReleaseID,Result,SuperSecretThing", lines[0]);
+            Assert.AreEqual("Pub_54321,1,monkeys can all secretly fly", lines[1]);
+            Assert.AreEqual("Pub_11ftw,2,the wizard of OZ was a man behind a machine", lines[2]);
             
-            var lines = File.ReadAllLines(customDataCsv.FullName);
-
-            Assert.AreEqual("SuperSecretThing,ReleaseID",lines[0]);
-            Assert.AreEqual("monkeys can all secretly fly,Pub_54321",lines[1]);
-            Assert.AreEqual("the wizard of OZ was a man behind a machine,Pub_11ftw",lines[2]);
+            
         }
 
         /*
