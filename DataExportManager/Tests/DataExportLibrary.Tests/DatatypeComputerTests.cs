@@ -344,5 +344,53 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(randomCrud);
             Assert.AreEqual(typeof(string), t.CurrentEstimate);
         }
+
+
+        [TestCase("bigint")]
+        [TestCase("binary")]
+        [TestCase("bit")]
+        [TestCase("char")]
+        [TestCase("date")]
+        [TestCase("datetime")]
+        [TestCase("datetime2")]
+        [TestCase("datetimeoffset")]
+        [TestCase("decimal")]
+        [TestCase("varbinary(max)")]
+        [TestCase("float")]
+        [TestCase("image")]
+        [TestCase("int")]
+        [TestCase("money")]
+        [TestCase("nchar")]
+        [TestCase("ntext")]
+        [TestCase("numeric")]
+        [TestCase("nvarchar")]
+        [TestCase("real")]
+        [TestCase("rowversion")]
+        [TestCase("smalldatetime")]
+        [TestCase("smallint")]
+        [TestCase("smallmoney")]
+        [TestCase("text")]
+        [TestCase("time")]
+        [TestCase("timestamp")]
+        [TestCase("tinyint")]
+        [TestCase("uniqueidentifier")]
+        [TestCase("varbinary")]
+        [TestCase("varchar")]
+        [TestCase("xml")]
+        public void TestIsKnownType(string sqlType)
+        {
+            var tt = new MicrosoftSQLTypeTranslater();
+            var t = tt.GetCSharpTypeForSQLDBType(sqlType);
+
+            Assert.IsNotNull(t);
+        }
+
+        [TestCase("sql_variant")]
+        public void TestNotSupportedTypes(string sqlType)
+        {
+            var tt = new MicrosoftSQLTypeTranslater();
+            Assert.Throws<NotSupportedException>(() => tt.GetCSharpTypeForSQLDBType(sqlType));
+        }
+
     }
 }
