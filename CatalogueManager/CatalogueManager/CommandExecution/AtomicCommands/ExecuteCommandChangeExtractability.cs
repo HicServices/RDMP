@@ -15,11 +15,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private readonly Catalogue _catalogue;
         private bool _isExtractable;
 
-        public ExecuteCommandChangeExtractability(IActivateItems activator, Catalogue catalogue,bool setExplictExtractability):this(activator,catalogue)
-        {
-            _isExtractable = setExplictExtractability;
-        }
-
         public ExecuteCommandChangeExtractability(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
