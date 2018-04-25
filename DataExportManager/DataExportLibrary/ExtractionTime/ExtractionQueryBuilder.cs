@@ -74,7 +74,6 @@ namespace DataExportLibrary.ExtractionTime
          
             queryBuilder.SetSalt(request.Salt.GetSalt());
 
-
             var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
 
             if(databaseType == null)
@@ -110,15 +109,10 @@ namespace DataExportLibrary.ExtractionTime
                 string cohortJoin;
 
                 if (substitutions.Count == 1)
-                    cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + substitutions.First().JoinSQL;
+                    cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + substitutions.Single().JoinSQL;
                 else
-                {
-                    cohortJoin = substitutions.Aggregate(" INNER JOIN " + externalCohortTable.TableName + " ON ",
-                                                         (seed, next) => seed + next.JoinSQL + " OR ");
+                    cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + string.Join(" OR ", substitutions.Select(s => s.JoinSQL));
 
-                    cohortJoin = cohortJoin.Substring(0, cohortJoin.Length - " OR ".Length);
-
-                }
                 //add the JOIN in after any other joins
                 queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
                 
@@ -126,10 +120,12 @@ namespace DataExportLibrary.ExtractionTime
                 queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
             }
 
+
+            
             request.QueryBuilder = queryBuilder;
             return queryBuilder;
         }
-
+        
         public static List<ConstantParameter> GetConstantParameters(IQuerySyntaxHelper syntaxHelper, IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
         {
             List<ConstantParameter> toReturn = new List<ConstantParameter>();
