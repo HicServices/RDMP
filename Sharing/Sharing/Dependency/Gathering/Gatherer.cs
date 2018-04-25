@@ -101,7 +101,7 @@ namespace Sharing.Dependency.Gathering
                 {
                     var sql = (string)propertyInfo.GetValue(o);
 
-                    if (sql.Contains(c.Name))
+                    if (sql != null && sql.Contains(c.Name))
                         root.Children.Add(new GatheredObject(o));
                 }
             }
