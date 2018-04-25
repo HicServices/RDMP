@@ -11,7 +11,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 
         protected override bool IsByteArray(string sqlType)
         {
-            return base.IsByteArray(sqlType) || sqlType.Contains("image");
+            var lower = sqlType.ToLower().Trim();
+
+            return base.IsByteArray(sqlType)
+                || lower.Contains("image")
+                || lower == "timestamp" 
+                || lower == "rowversion";
+
         }
     }
 }
