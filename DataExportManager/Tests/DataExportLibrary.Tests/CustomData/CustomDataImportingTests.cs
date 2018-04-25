@@ -10,8 +10,7 @@ using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Tests.DataExtraction;
 using NUnit.Framework;
 
-
-namespace DataExportLibrary.Tests.Cohort
+namespace DataExportLibrary.Tests.CustomData
 {
     public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
     {
@@ -101,8 +100,6 @@ namespace DataExportLibrary.Tests.Cohort
             Assert.AreEqual("ReleaseID,Result,SuperSecretThing", lines[0]);
             Assert.AreEqual("Pub_54321,1,monkeys can all secretly fly", lines[1]);
             Assert.AreEqual("Pub_11ftw,2,the wizard of OZ was a man behind a machine", lines[2]);
-            
-            
         }
 
         /*

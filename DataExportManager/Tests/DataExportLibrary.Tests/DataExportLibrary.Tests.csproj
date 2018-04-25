@@ -145,8 +145,8 @@
     <Compile Include="Cohort\CohortTests.cs" />
     <Compile Include="Cohort\CommittingNewCohortsTests.cs" />
     <Compile Include="Cohort\CreateNewCohortDatabaseWizardTests.cs" />
-    <Compile Include="Cohort\CustomDataImportingTests.cs" />
     <Compile Include="ConfigurationPropertiesTests.cs" />
+    <Compile Include="CustomData\CustomDataImportingTests.cs" />
     <Compile Include="DataAccess\PackageContentsTests.cs" />
     <Compile Include="DataAccess\SelectedColumnsTests.cs" />
     <Compile Include="DataExtraction\EmptyDataExtractionTests.cs" />
