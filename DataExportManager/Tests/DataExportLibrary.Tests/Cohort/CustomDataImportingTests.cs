@@ -5,6 +5,10 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using DataExportLibrary.ExtractionTime.Commands;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Tests.DataExtraction;
 using DataExportLibrary;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
@@ -17,8 +21,38 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Tests.Cohort
 {
-    public class CustomDataImportingTests : TestsRequiringACohort
+    public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
     {
+        [Test]
+        public void Extract_ProjectSpecificCatalogue_WholeDataset()
+        {
+            //make the catalogue a custom catalogue for this project
+            CustomExtractableDataSet.Project_ID = _project.ID;
+            CustomExtractableDataSet.SaveToDatabase();
+
+            var pipe = SetupPipeline();
+            pipe.Name = "RefreshPipe";
+            pipe.SaveToDatabase();
+
+            _configuration.AddDatasetToConfiguration(CustomExtractableDataSet);
+
+            _request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+            ExtractionPipelineUseCase useCase;
+            IExecuteDatasetExtractionDestination results;
+            Execute(out useCase, out results);
+
+            var customDataCsv = results.DirectoryPopulated.GetFiles().Single();
+
+            Assert.IsNotNull(customDataCsv);
+            Assert.AreEqual("custTable99.csv",customDataCsv.Name);
+            
+            var lines = File.ReadAllLines(customDataCsv.FullName);
+
+            Assert.AreEqual("SuperSecretThing,ReleaseID",lines[0]);
+            Assert.AreEqual("monkeys can all secretly fly,Pub_54321",lines[1]);
+            Assert.AreEqual("the wizard of OZ was a man behind a machine,Pub_11ftw",lines[2]);
+        }
+
         /*
         private List<string> _customTablesToCleanup = new List<string>();
             

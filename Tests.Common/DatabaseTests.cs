@@ -162,7 +162,7 @@ namespace Tests.Common
         }
         
 
-        private void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        protected void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             using (var con = repositoryLocator.CatalogueRepository.GetConnection())
             {
@@ -315,7 +315,6 @@ delete from {1}..FilterContainer
 
 delete from {1}..Project_DataUser
 delete from {1}..DataUser
-delete from {1}..Project
 
 delete from {1}..ExtractableCohort
 delete from {1}..ExternalCohortTable
@@ -323,7 +322,7 @@ delete from {1}..ExternalCohortTable
 delete from {1}..ExtractableDataSetPackage
 
 delete from {1}..ExtractableDataSet
-
+delete from {1}..Project
 ";
 
         /// <summary>
