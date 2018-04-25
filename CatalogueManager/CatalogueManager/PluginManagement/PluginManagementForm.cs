@@ -17,7 +17,9 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using MapsDirectlyToDatabaseTable;
@@ -48,8 +50,11 @@ namespace CatalogueManager.PluginManagement
     /// </summary>
     public partial class PluginManagementForm : RDMPForm
     {
-        public PluginManagementForm()
+        private readonly IActivateItems _activator;
+
+        public PluginManagementForm(IActivateItems activator)
         {
+            _activator = activator;
             InitializeComponent();
 
             var sink = new SimpleDropSink();
@@ -355,8 +360,14 @@ namespace CatalogueManager.PluginManagement
             var service = new RemotePushingService(RepositoryLocator, barsUI);
             var f = new SingleControlForm(barsUI);
             f.Show();
-            
-            service.SendPluginsToAllRemotes(plugins, barsUI.Done);
+
+            service.SendToAllRemotes(plugins, barsUI.Done);
+        }
+
+        private void btnExportToDisk_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandExportObjectsToFile(_activator, plugins);
+            cmd.Execute();
         }
     }
 }

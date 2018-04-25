@@ -9,7 +9,7 @@
 # Background
 The RDMP displays almost all the persistent objects  (Projects, Cohorts, Extraction Configurations etc) in various tree views `CatalogueManager.Collections.RDMPCollectionUI`.  In this tutorial we will look at making a code change to the tree structure.
 
-At the time of writing this tutorial, all `ExtractionConfiguration` (![Pr](Icons\ExtractionConfiguration.png)) in a `Project` (![Pr](Icons\Project.png))appear in a single `ExtractionConfigurationsNode` folder (![Pr](Icons\ExtractionConfigurationsNode.png)).  This means that over time a Project can accrue a considerable number of configurations and it can be difficult to see the active one.  RDMP lets you freeze old Extraction Configurations but they are still visible in the tree. We want to add a new node under the `ExtractionConfigurationsNode` (![Pr](Icons\ExtractionConfigurationsNode.png)) in which to store all the frozen configurations.
+At the time of writing this tutorial, all `ExtractionConfiguration` (![Pr](Icons/ExtractionConfiguration.png)) in a `Project` (![Pr](Icons/Project.png))appear in a single `ExtractionConfigurationsNode` folder (![Pr](Icons/ExtractionConfigurationsNode.png)).  This means that over time a Project can accrue a considerable number of configurations and it can be difficult to see the active one.  RDMP lets you freeze old Extraction Configurations but they are still visible in the tree. We want to add a new node under the `ExtractionConfigurationsNode` (![Pr](Icons/ExtractionConfigurationsNode.png)) in which to store all the frozen configurations.
 
 ![Goal](Images/CreatingANewCollectionTreeNode/Goal.png) 
 
@@ -123,7 +123,7 @@ class FrozenExtractionConfigurationsNode
 
 <a name="addToTree"></a>
 # Adding the node to the tree
-Finally we can add instances of the node class to the tree.  This is done through the `CatalogueLibrary.Providers.IChildProvider`.  Open  `DataExportManager.Collections.Providers.DataExportChildProvider` and `CatalogueLibrary.Providers.CatalogueChildProvider` and identify the method which adds children for your parent object.  It will be called `AddChildren` and take a first parameter of the Type you want to add children to.  In this example we want to add the child node to the class `ExtractionConfigurationsNode` (![Pr](Icons\ExtractionConfigurationsNode.png)).  So we search for '`AddChildren(ExtractionConfigurationsNode`'
+Finally we can add instances of the node class to the tree.  This is done through the `CatalogueLibrary.Providers.IChildProvider`.  Open  `DataExportManager.Collections.Providers.DataExportChildProvider` and `CatalogueLibrary.Providers.CatalogueChildProvider` and identify the method which adds children for your parent object.  It will be called `AddChildren` and take a first parameter of the Type you want to add children to.  In this example we want to add the child node to the class `ExtractionConfigurationsNode` (![Pr](Icons/ExtractionConfigurationsNode.png)).  So we search for '`AddChildren(ExtractionConfigurationsNode`'
 
 ![FindAddChildren](Images/CreatingANewCollectionTreeNode/FindAddChildren.png) 
 

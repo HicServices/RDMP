@@ -24,7 +24,7 @@ namespace DataExportLibrary.ExtractionTime
         public const string StandardExtractionPrefix = "Extr_";
         public const string GlobalsDataFolderName = "Globals";
         public const string CustomCohortDataFolderName = "CohortCustomData";
-        public const string OtherDataFolderName = "OtherData";
+        public const string MasterDataFolderName = "MasterData";
 
         public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
             : this(rootExtractionDirectory, configuration, DateTime.Now)
@@ -107,9 +107,9 @@ namespace DataExportLibrary.ExtractionTime
             return extractionDirectory.CreateSubdirectory(CustomCohortDataFolderName);
         }
 
-        public DirectoryInfo GetDirectoryForOtherData()
+        public DirectoryInfo GetDirectoryForMasterData()
         {
-            return extractionDirectory.CreateSubdirectory(OtherDataFolderName);
+            return extractionDirectory.CreateSubdirectory(MasterDataFolderName);
         }
 
         public static void CleanupExtractionDirectory(object sender, string extractionDirectory, IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)

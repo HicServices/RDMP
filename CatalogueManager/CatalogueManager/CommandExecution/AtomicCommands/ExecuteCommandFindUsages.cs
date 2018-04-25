@@ -15,22 +15,24 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandFindUsages : BasicUICommandExecution,IAtomicCommand
     {
-        private GatheredObject _dependencies;
+        private Gatherer _gatherer;
+        private DatabaseEntity _o;
 
         public ExecuteCommandFindUsages(IActivateItems activator, DatabaseEntity o) : base(activator)
         {
-            var gatherer = new Gatherer(activator.RepositoryLocator);
-            if(!gatherer.CanGatherDependencies(o))
+            _gatherer = new Gatherer(activator.RepositoryLocator);
+            if(!_gatherer.CanGatherDependencies(o))
                 SetImpossible("Object Type " + o.GetType() + " is not compatible with Gatherer");
-            else
-                _dependencies = gatherer.GatherDependencies(o);
+            _o = o;
         }
 
         public override void Execute()
         {
             base.Execute();
+
+            var dependencies = _gatherer.GatherDependencies(_o);
             
-            var cmd  = new ExecuteCommandViewDependencies(_dependencies, new CatalogueObjectVisualisation(Activator.CoreIconProvider));
+            var cmd  = new ExecuteCommandViewDependencies(dependencies, new CatalogueObjectVisualisation(Activator.CoreIconProvider));
             cmd.Execute();
             
         }

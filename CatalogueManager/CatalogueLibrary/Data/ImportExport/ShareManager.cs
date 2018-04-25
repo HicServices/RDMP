@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Data.Common;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data.ImportExport
 {
@@ -205,5 +206,71 @@ namespace CatalogueLibrary.Data.ImportExport
                     import.DeleteInDatabase();
         }
 
+        /// <summary>
+        /// Reads and deserializes the .so file into objects in the database
+        /// </summary>
+        /// <param name="sharedObjectsFile"></param>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream sharedObjectsFile, bool deleteExisting = false)
+        {
+            var sr = new StreamReader(sharedObjectsFile);
+            var text = sr.ReadToEnd();
+
+            return ImportSharedObject(text);
+        }
+
+        /// <summary>
+        /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See <see cref="Gatherer"/>)
+        /// </summary>
+        /// <param name="sharedObjectsFileText"></param>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
+        {
+            var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(sharedObjectsFileText, typeof(List<ShareDefinition>), RepositoryLocator);
+
+            return ImportSharedObject(toImport);
+        }
+
+        /// <summary>
+        /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
+        /// </summary>
+        /// <param name="toImport"></param>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport)
+        {
+            return ImportSharedObject(toImport, false);
+        }
+
+        /// <summary>
+        /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
+        /// </summary>
+        /// <param name="toImport"></param>
+        /// <param name="deleteExisting"></param>
+        /// <returns></returns>
+        internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting)
+        {
+            List<IMapsDirectlyToDatabaseTable> created = new List<IMapsDirectlyToDatabaseTable>();
+
+            foreach (ShareDefinition sd in toImport)
+            {
+                try
+                {
+                    if (deleteExisting)
+                    {
+                        var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
+                        if (actual != null)
+                            actual.DeleteInDatabase();
+                    }
+                    var objectConstructor = new ObjectConstructor();
+                    created.Add((IMapsDirectlyToDatabaseTable)objectConstructor.ConstructIfPossible(sd.Type, this, sd));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error constructing " + sd.Type, e);
+                }
+            }
+
+            return created;
+        }
     }
 }
