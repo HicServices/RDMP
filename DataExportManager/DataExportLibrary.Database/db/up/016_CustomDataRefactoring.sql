@@ -23,4 +23,26 @@ REFERENCES [dbo].[Project] ([ID])
 end
 GO
 
+--Support for 'join to these tables too' on extraction (Has similar role to AggregateForcedJoin)
+if not exists (select 1 from sys.tables where name = 'SelectedDatasetsForcedJoin')
+begin
+CREATE TABLE [SelectedDatasetsForcedJoin](
+	[ID] [int] NOT NULL,
+	[SelectedDatasets_ID] [int] NOT NULL,
+	[TableInfo_ID] [int] NOT NULL,
+ CONSTRAINT [PK_SelectedDatasetsForcedJoin] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)
+)
+end
+GO
+if not exists (select 1 from sys.foreign_keys where name = 'FK_SelectedDatasetsForcedJoin_SelectedDataSets') begin
+ALTER TABLE [SelectedDatasetsForcedJoin]  WITH CHECK ADD  CONSTRAINT [FK_SelectedDatasetsForcedJoin_SelectedDataSets] FOREIGN KEY([SelectedDataset_ID])
+REFERENCES [SelectedDataSets] ([ID])
+ON DELETE CASCADE
+end
+GO
+
+
 
