@@ -36,13 +36,21 @@ CREATE TABLE [SelectedDatasetsForcedJoin](
 )
 )
 end
-GO
-if not exists (select 1 from sys.foreign_keys where name = 'FK_SelectedDatasetsForcedJoin_SelectedDataSets') begin
-ALTER TABLE [SelectedDatasetsForcedJoin]  WITH CHECK ADD  CONSTRAINT [FK_SelectedDatasetsForcedJoin_SelectedDataSets] FOREIGN KEY([SelectedDataset_ID])
+go
+if not exists (select 1 from sys.foreign_keys where name = 'FK_SelectedDatasetsForcedJoin_SelectedDataSets') 
+begin
+ALTER TABLE [SelectedDatasetsForcedJoin]  WITH CHECK ADD  CONSTRAINT [FK_SelectedDatasetsForcedJoin_SelectedDataSets] FOREIGN KEY([SelectedDatasets_ID])
 REFERENCES [SelectedDataSets] ([ID])
 ON DELETE CASCADE
+
+CREATE UNIQUE NONCLUSTERED INDEX [ix_SelectedDatasetsForceJoinsMustBeUnique] ON [dbo].[SelectedDatasetsForcedJoin]
+(
+	[SelectedDatasets_ID] ASC,
+	[TableInfo_ID] ASC
+)
 end
 GO
+
 
 
 

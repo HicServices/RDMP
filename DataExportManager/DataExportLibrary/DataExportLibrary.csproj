@@ -243,6 +243,7 @@
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
     <Compile Include="Data\DataTables\DeployedExtractionFilterFactory.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
+    <Compile Include="Data\DataTables\SelectedDatasetsForcedJoin.cs" />
     <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
     <Compile Include="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />

@@ -1,7 +1,6 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
 
-namespace DataExportManager.ProjectUI
+namespace DataExportManager.ProjectUI.Datasets
 {
     partial class ConfigureDatasetUI
     {
@@ -44,25 +43,26 @@ namespace DataExportManager.ProjectUI
             this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelectCore = new System.Windows.Forms.Button();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.label5 = new System.Windows.Forms.Label();
+            this.olvJoin = new BrightIdeasSoftware.ObjectListView();
+            this.olvJoinTableName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvJoinDirection = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.tbSearchSelected = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.olvSelected = new BrightIdeasSoftware.ObjectListView();
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.label5 = new System.Windows.Forms.Label();
-            this.olvJoin = new BrightIdeasSoftware.ObjectListView();
-            this.olvJoinTableName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvJoinDirection = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.lblFromTable = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.tbSearchTables = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvAvailable)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvJoin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -136,10 +136,11 @@ namespace DataExportManager.ProjectUI
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.tbSearchTables);
+            this.splitContainer1.Panel2.Controls.Add(this.label6);
             this.splitContainer1.Panel2.Controls.Add(this.ragSmiley1);
             this.splitContainer1.Panel2.Controls.Add(this.label5);
             this.splitContainer1.Panel2.Controls.Add(this.olvJoin);
-            this.splitContainer1.Panel2.Controls.Add(this.lblFromTable);
             this.splitContainer1.Panel2.Controls.Add(this.tbSearchSelected);
             this.splitContainer1.Panel2.Controls.Add(this.label4);
             this.splitContainer1.Panel2.Controls.Add(this.olvSelected);
@@ -224,11 +225,73 @@ namespace DataExportManager.ProjectUI
             this.btnSelectCore.UseVisualStyleBackColor = true;
             this.btnSelectCore.Click += new System.EventHandler(this.btnSelectCore_Click);
             // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.ragSmiley1.Location = new System.Drawing.Point(298, 443);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 162;
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ForeColor = System.Drawing.Color.Blue;
+            this.label5.Location = new System.Drawing.Point(6, 453);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(42, 13);
+            this.label5.TabIndex = 159;
+            this.label5.Text = "FROM";
+            // 
+            // olvJoin
+            // 
+            this.olvJoin.AllColumns.Add(this.olvJoinTableName);
+            this.olvJoin.AllColumns.Add(this.olvJoinDirection);
+            this.olvJoin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.olvJoin.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
+            this.olvJoin.CellEditUseWholeCell = false;
+            this.olvJoin.CheckBoxes = true;
+            this.olvJoin.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvJoinTableName,
+            this.olvJoinDirection});
+            this.olvJoin.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvJoin.FullRowSelect = true;
+            this.olvJoin.IsSimpleDropSink = true;
+            this.olvJoin.Location = new System.Drawing.Point(6, 474);
+            this.olvJoin.Name = "olvJoin";
+            this.olvJoin.RowHeight = 19;
+            this.olvJoin.Size = new System.Drawing.Size(317, 235);
+            this.olvJoin.TabIndex = 161;
+            this.olvJoin.UseCompatibleStateImageBehavior = false;
+            this.olvJoin.View = System.Windows.Forms.View.Details;
+            // 
+            // olvJoinTableName
+            // 
+            this.olvJoinTableName.AspectName = "ToString";
+            this.olvJoinTableName.FillsFreeSpace = true;
+            this.olvJoinTableName.Groupable = false;
+            this.olvJoinTableName.IsEditable = false;
+            this.olvJoinTableName.Text = "Table Name";
+            this.olvJoinTableName.Width = 163;
+            // 
+            // olvJoinDirection
+            // 
+            this.olvJoinDirection.AspectName = "JoinType";
+            this.olvJoinDirection.Groupable = false;
+            this.olvJoinDirection.Text = "Join Direction";
+            this.olvJoinDirection.Width = 100;
+            // 
             // tbSearchSelected
             // 
             this.tbSearchSelected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbSearchSelected.Location = new System.Drawing.Point(53, 488);
+            this.tbSearchSelected.Location = new System.Drawing.Point(53, 417);
             this.tbSearchSelected.Name = "tbSearchSelected";
             this.tbSearchSelected.Size = new System.Drawing.Size(270, 20);
             this.tbSearchSelected.TabIndex = 158;
@@ -238,7 +301,7 @@ namespace DataExportManager.ProjectUI
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 491);
+            this.label4.Location = new System.Drawing.Point(3, 420);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 157;
@@ -266,7 +329,7 @@ namespace DataExportManager.ProjectUI
             this.olvSelected.Name = "olvSelected";
             this.olvSelected.RowHeight = 19;
             this.olvSelected.ShowGroups = false;
-            this.olvSelected.Size = new System.Drawing.Size(317, 466);
+            this.olvSelected.Size = new System.Drawing.Size(317, 395);
             this.olvSelected.TabIndex = 154;
             this.olvSelected.Text = "label14";
             this.olvSelected.UseCompatibleStateImageBehavior = false;
@@ -291,76 +354,25 @@ namespace DataExportManager.ProjectUI
             this.olvSelectedCatalogue.Text = "Catalogue";
             this.olvSelectedCatalogue.Width = 100;
             // 
-            // label5
+            // tbSearchTables
             // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ForeColor = System.Drawing.Color.Blue;
-            this.label5.Location = new System.Drawing.Point(3, 518);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(42, 13);
-            this.label5.TabIndex = 159;
-            this.label5.Text = "FROM";
-            // 
-            // olvJoin
-            // 
-            this.olvJoin.AllColumns.Add(this.olvJoinTableName);
-            this.olvJoin.AllColumns.Add(this.olvJoinDirection);
-            this.olvJoin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbSearchTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.olvJoin.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
-            this.olvJoin.CellEditUseWholeCell = false;
-            this.olvJoin.CheckBoxes = true;
-            this.olvJoin.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvJoinTableName,
-            this.olvJoinDirection});
-            this.olvJoin.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvJoin.FullRowSelect = true;
-            this.olvJoin.IsSimpleDropSink = true;
-            this.olvJoin.Location = new System.Drawing.Point(6, 534);
-            this.olvJoin.Name = "olvJoin";
-            this.olvJoin.RowHeight = 19;
-            this.olvJoin.Size = new System.Drawing.Size(317, 197);
-            this.olvJoin.TabIndex = 161;
-            this.olvJoin.UseCompatibleStateImageBehavior = false;
-            this.olvJoin.View = System.Windows.Forms.View.Details;
+            this.tbSearchTables.Location = new System.Drawing.Point(53, 713);
+            this.tbSearchTables.Name = "tbSearchTables";
+            this.tbSearchTables.Size = new System.Drawing.Size(270, 20);
+            this.tbSearchTables.TabIndex = 164;
+            this.tbSearchTables.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
             // 
-            // olvJoinTableName
+            // label6
             // 
-            this.olvJoinTableName.AspectName = "ToString";
-            this.olvJoinTableName.FillsFreeSpace = true;
-            this.olvJoinTableName.Groupable = false;
-            this.olvJoinTableName.IsEditable = false;
-            this.olvJoinTableName.Text = "Table Name";
-            this.olvJoinTableName.Width = 163;
-            // 
-            // olvJoinDirection
-            // 
-            this.olvJoinDirection.AspectName = "JoinType";
-            this.olvJoinDirection.Groupable = false;
-            this.olvJoinDirection.Text = "Join Direction";
-            this.olvJoinDirection.Width = 100;
-            // 
-            // lblFromTable
-            // 
-            this.lblFromTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblFromTable.AutoSize = true;
-            this.lblFromTable.Location = new System.Drawing.Point(47, 518);
-            this.lblFromTable.Name = "lblFromTable";
-            this.lblFromTable.Size = new System.Drawing.Size(10, 13);
-            this.lblFromTable.TabIndex = 160;
-            this.lblFromTable.Text = "-";
-            // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Location = new System.Drawing.Point(295, 508);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 162;
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 717);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(44, 13);
+            this.label6.TabIndex = 163;
+            this.label6.Text = "Search:";
             // 
             // ConfigureDatasetUI
             // 
@@ -376,8 +388,8 @@ namespace DataExportManager.ProjectUI
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvAvailable)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvJoin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -407,7 +419,8 @@ namespace DataExportManager.ProjectUI
         private ObjectListView olvJoin;
         private OLVColumn olvJoinTableName;
         private OLVColumn olvJoinDirection;
-        private System.Windows.Forms.Label lblFromTable;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private System.Windows.Forms.TextBox tbSearchTables;
+        private System.Windows.Forms.Label label6;
     }
 }

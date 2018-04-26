@@ -412,15 +412,16 @@
     <Compile Include="ProjectUI\ChooseExtractablesUI.Designer.cs">
       <DependentUpon>ChooseExtractablesUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectUI\ConfigureDatasetUI.cs">
+    <Compile Include="ProjectUI\Datasets\ConfigureDatasetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ProjectUI\ConfigureDatasetUI.Designer.cs">
+    <Compile Include="ProjectUI\Datasets\ConfigureDatasetUI.Designer.cs">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ProjectUI\DataGridViewWithBackgroundImage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ProjectUI\Datasets\Node\AvailableForceJoinNode.cs" />
     <Compile Include="ProjectUI\DataUsers\DataUserManagement.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -555,7 +556,7 @@
     <EmbeddedResource Include="ProjectUI\ChooseExtractablesUI.resx">
       <DependentUpon>ChooseExtractablesUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjectUI\ConfigureDatasetUI.resx">
+    <EmbeddedResource Include="ProjectUI\Datasets\ConfigureDatasetUI.resx">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

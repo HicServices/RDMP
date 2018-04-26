@@ -1,40 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueManager;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Checks;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
+using DataExportManager.ProjectUI.Datasets.Node;
 using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
 
-using ScintillaNET;
-using Clipboard = System.Windows.Forms.Clipboard;
-
-namespace DataExportManager.ProjectUI
+namespace DataExportManager.ProjectUI.Datasets
 {
     /// <summary>
     /// Allows you to choose which columns you want to extract from a given dataset (Catalogue) for a specific research project extraction (ExtractionConfiguration).  For example
@@ -119,7 +103,6 @@ namespace DataExportManager.ProjectUI
             olvAvailable.ClearObjects();
             olvSelected.ClearObjects();
             
-
             //get the catalogue and then all the items
             ICatalogue cata;
             try
@@ -157,7 +140,52 @@ namespace DataExportManager.ProjectUI
             olvSelected.AddObjects(allExtractableColumns);
 
             RefreshDisabledObjectStatus();
+             
+
+            ////// Figure out tables that can be joined on and that are part of the query ////////////////
             
+            //get rid of old ones
+            olvJoin.ClearObjects();
+
+            var nodes = new HashSet<AvailableForceJoinNode>();
+
+            //identify those we are already joining to based on the columns selected
+            var tablesInQuery = olvSelected.Objects.OfType<ExtractableColumn>()
+                .Where(c => c.ColumnInfo != null)
+                .Select(c => c.ColumnInfo.TableInfo)
+                .Distinct();
+
+            //add those as readonly (you cant unjoin from those)
+            foreach (TableInfo tableInfo in tablesInQuery)
+                nodes.Add(new AvailableForceJoinNode(tableInfo, true));
+            
+            foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
+                foreach (TableInfo projectSpecificTables in projectCatalogue.GetTableInfoList(false))
+                {
+                    var node = new AvailableForceJoinNode(projectSpecificTables, false);
+                    
+                    //.Equals works on TableInfo so we avoid double adding
+                    if (!nodes.Contains(node))
+                        nodes.Add(node);
+                }
+
+            //identify the existing force joins
+            var existingForceJoins = new HashSet<SelectedDatasetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDatasetsForcedJoin>(SelectedDataSet));
+
+            foreach (AvailableForceJoinNode node in nodes)
+            {
+                var forceJoin = existingForceJoins.SingleOrDefault(j => j.TableInfo_ID == node.TableInfo.ID);
+                if (forceJoin != null)
+                {
+                    node.ForcedJoin = forceJoin;
+                    existingForceJoins.Remove(forceJoin);
+                }
+            }
+
+            foreach (SelectedDatasetsForcedJoin redundantForcedJoin in existingForceJoins)
+                redundantForcedJoin.DeleteInDatabase();
+
+            olvJoin.AddObjects(nodes.ToArray());
         }
 
         private void RefreshDisabledObjectStatus()
@@ -376,6 +404,8 @@ namespace DataExportManager.ProjectUI
                 tree = olvAvailable;
             else if (sender == tbSearchSelected)
                 tree = olvSelected;
+            else if (sender == tbSearchTables)
+                tree = olvJoin;
             else
                 throw new Exception("Unexpected sender " + sender);
 
