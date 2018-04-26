@@ -7,6 +7,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Collections;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -54,6 +55,11 @@ namespace DataExportManager.ProjectUI.Datasets
             dropSink.CanDropOnItem = false;
             dropSink.CanDropBetween = true;
             AssociatedCollection = RDMPCollection.DataExport;
+
+            var tableInfoIcon = CatalogueIcons.TableInfo;
+            olvJoinTableName.ImageGetter += o => tableInfoIcon;
+            olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
+            olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
         }
 
         private object SelectedCatalogue_AspectGetter(object rowObject)
@@ -96,7 +102,6 @@ namespace DataExportManager.ProjectUI.Datasets
         /// The left list contains ExtractionInformation from the Data Catalogue, this is columns in the database which could be extracted
         /// The right list contains ExtractableColumn which is a more advanced class that contains runtime configurations such as order to be outputed in etc.
         /// </summary>
-    
         private void SetupUserInterface()
         {
             //clear the UI
@@ -140,58 +145,17 @@ namespace DataExportManager.ProjectUI.Datasets
             olvSelected.AddObjects(allExtractableColumns);
 
             RefreshDisabledObjectStatus();
-             
-
-            ////// Figure out tables that can be joined on and that are part of the query ////////////////
-            
-            //get rid of old ones
-            olvJoin.ClearObjects();
-
-            var nodes = new HashSet<AvailableForceJoinNode>();
-
-            //identify those we are already joining to based on the columns selected
-            var tablesInQuery = olvSelected.Objects.OfType<ExtractableColumn>()
-                .Where(c => c.ColumnInfo != null)
-                .Select(c => c.ColumnInfo.TableInfo)
-                .Distinct();
-
-            //add those as readonly (you cant unjoin from those)
-            foreach (TableInfo tableInfo in tablesInQuery)
-                nodes.Add(new AvailableForceJoinNode(tableInfo, true));
-            
-            foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
-                foreach (TableInfo projectSpecificTables in projectCatalogue.GetTableInfoList(false))
-                {
-                    var node = new AvailableForceJoinNode(projectSpecificTables, false);
-                    
-                    //.Equals works on TableInfo so we avoid double adding
-                    if (!nodes.Contains(node))
-                        nodes.Add(node);
-                }
-
-            //identify the existing force joins
-            var existingForceJoins = new HashSet<SelectedDatasetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDatasetsForcedJoin>(SelectedDataSet));
-
-            foreach (AvailableForceJoinNode node in nodes)
-            {
-                var forceJoin = existingForceJoins.SingleOrDefault(j => j.TableInfo_ID == node.TableInfo.ID);
-                if (forceJoin != null)
-                {
-                    node.ForcedJoin = forceJoin;
-                    existingForceJoins.Remove(forceJoin);
-                }
-            }
-
-            foreach (SelectedDatasetsForcedJoin redundantForcedJoin in existingForceJoins)
-                redundantForcedJoin.DeleteInDatabase();
-
-            olvJoin.AddObjects(nodes.ToArray());
         }
 
         private void RefreshDisabledObjectStatus()
         {
             olvAvailable.DisabledObjects = olvAvailable.Objects.OfType<IColumn>().Where(IsAlreadySelected).ToArray();
             olvAvailable.RefreshObjects(olvAvailable.Objects.OfType<IColumn>().ToArray());
+
+            UpdateJoins();
+            
+            olvJoin.DisabledObjects = olvJoin.Objects.OfType<AvailableForceJoinNode>().Where(n=>n.IsMandatory).ToArray();
+            olvJoin.RefreshObjects(olvJoin.Objects.OfType<AvailableForceJoinNode>().ToArray());
         }
 
 
@@ -208,7 +172,7 @@ namespace DataExportManager.ProjectUI.Datasets
             return selectedColumns.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == info.ID);
         }
 
-    
+
         /// <summary>
         /// The user has selected an extractable thing in the catalogue and opted to include it in the extraction
         /// So we have to convert it to an ExtractableColumn (which has configuration specific stuff - and lets
@@ -231,7 +195,7 @@ namespace DataExportManager.ProjectUI.Datasets
             RefreshDisabledObjectStatus();
             SortSelectedByOrder();
         }
-        
+
         private void btnInclude_Click(object sender, EventArgs e)
         {
             foreach (IColumn item in olvAvailable.SelectedObjects)
@@ -247,7 +211,7 @@ namespace DataExportManager.ProjectUI.Datasets
 
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
         }
-        
+
         private void btnExcludeAll_Click(object sender, EventArgs e)
         {
             foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
@@ -275,13 +239,16 @@ namespace DataExportManager.ProjectUI.Datasets
             _dataSet = SelectedDataSet.ExtractableDataSet;
             _config = SelectedDataSet.ExtractionConfiguration;
             
-            
-
             SetupUserInterface();
 
             SortSelectedByOrder();
 
-            var checkable = new SelectedDatasetsChecker(databaseObject, activator.RepositoryLocator);
+            RunChecks();
+        }
+
+        private void RunChecks()
+        {
+            var checkable = new SelectedDatasetsChecker(SelectedDataSet, _activator.RepositoryLocator);
             ragSmiley1.StartChecking(checkable);
         }
 
@@ -394,6 +361,102 @@ namespace DataExportManager.ProjectUI.Datasets
                 olvAvailable.Objects.OfType<ExtractionInformation>()
                 .Where(ei => ei.ExtractionCategory == ExtractionCategory.Core).ToArray());
         }
+        #region Joins
+
+        private CheckState ForceJoinCheckStateGetter(object rowobject)
+        {
+            var n = (AvailableForceJoinNode)rowobject;
+
+            //it is jecked if there is a forced join or if the columns make it a requirement
+            if (n.ForcedJoin != null || n.IsMandatory)
+                return CheckState.Checked;
+
+            return CheckState.Unchecked;
+        }
+
+        private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
+        {
+            var node = (AvailableForceJoinNode)rowobject;
+
+            //cannot change mandatory ones (should be disabled anyway)
+            if (node.IsMandatory)
+                return CheckState.Checked;
+
+            //user is checking a force join
+            if(node.ForcedJoin == null)
+                if (newvalue == CheckState.Checked)
+                {
+                    var forceJoin = new SelectedDatasetsForcedJoin(_activator.RepositoryLocator.DataExportRepository,SelectedDataSet, node.TableInfo);
+                    node.ForcedJoin = forceJoin;
+                    return CheckState.Checked;
+                }
+                else
+                    return CheckState.Unchecked; //user is unchecking but there already isn't a forced join... very strange
+
+            if(node.ForcedJoin != null)
+                if (newvalue == CheckState.Unchecked)
+                {
+                    node.ForcedJoin.DeleteInDatabase();
+                    node.ForcedJoin = null;
+                    return CheckState.Unchecked;
+                }
+                else
+                {
+                    return CheckState.Checked; 
+                }
+
+            throw new Exception("Expected to have handled all situations!");
+        }
+
+        private void UpdateJoins()
+        {
+            ////// Figure out tables that can be joined on and that are part of the query ////////////////
+
+            //get rid of old ones
+            olvJoin.ClearObjects();
+
+            var nodes = new HashSet<AvailableForceJoinNode>();
+
+            //identify those we are already joining to based on the columns selected
+            var tablesInQuery = olvSelected.Objects.OfType<ExtractableColumn>()
+                .Where(c => c.ColumnInfo != null)
+                .Select(c => c.ColumnInfo.TableInfo)
+                .Distinct();
+
+            //add those as readonly (you cant unjoin from those)
+            foreach (TableInfo tableInfo in tablesInQuery)
+                nodes.Add(new AvailableForceJoinNode(tableInfo, true));
+
+            foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
+                foreach (TableInfo projectSpecificTables in projectCatalogue.GetTableInfoList(false))
+                {
+                    var node = new AvailableForceJoinNode(projectSpecificTables, false);
+
+                    //.Equals works on TableInfo so we avoid double adding
+                    if (!nodes.Contains(node))
+                        nodes.Add(node);
+                }
+
+            //identify the existing force joins
+            var existingForceJoins = new HashSet<SelectedDatasetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDatasetsForcedJoin>(SelectedDataSet));
+
+            foreach (AvailableForceJoinNode node in nodes)
+            {
+                var forceJoin = existingForceJoins.SingleOrDefault(j => j.TableInfo_ID == node.TableInfo.ID);
+                if (forceJoin != null)
+                {
+                    node.ForcedJoin = forceJoin;
+                    existingForceJoins.Remove(forceJoin);
+                }
+            }
+
+            foreach (SelectedDatasetsForcedJoin redundantForcedJoin in existingForceJoins)
+                redundantForcedJoin.DeleteInDatabase();
+
+            olvJoin.AddObjects(nodes.ToArray());
+        }
+
+        #endregion
 
         private void tbSearch_TextChanged(object sender, EventArgs e)
         {
@@ -411,6 +474,11 @@ namespace DataExportManager.ProjectUI.Datasets
 
             tree.ModelFilter = string.IsNullOrWhiteSpace(senderTb.Text) ? null : new TextMatchFilter(tree, senderTb.Text);
             tree.UseFiltering = !string.IsNullOrWhiteSpace(senderTb.Text);
+        }
+
+        private void btnRefreshChecks_Click(object sender, EventArgs e)
+        {
+            RunChecks();
         }
     }
 

@@ -23,14 +23,14 @@ namespace DataExportLibrary.Data.DataTables
     {
         #region Database Properties
 
-        private int _selectedDataset_ID;
+        private int _selectedDatasets_ID;
         private int _tableInfo_ID;
         #endregion
 
-        public int SelectedDataset_ID
+        public int SelectedDatasets_ID
         {
-            get { return _selectedDataset_ID; }
-            set { SetField(ref _selectedDataset_ID, value); }
+            get { return _selectedDatasets_ID; }
+            set { SetField(ref _selectedDatasets_ID, value); }
         }
         public int TableInfo_ID
         {
@@ -41,17 +41,16 @@ namespace DataExportLibrary.Data.DataTables
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
-                {"SelectedDataset_ID",sds.ID},
+                {"SelectedDatasets_ID",sds.ID},
                 {"TableInfo_ID",tableInfo.ID},
             });
 
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
         }
-        public SelectedDatasetsForcedJoin(IRepository repository, DbDataReader r)
-            : base(repository, r)
+        internal SelectedDatasetsForcedJoin(IRepository repository, DbDataReader r): base(repository, r)
         {
-            SelectedDataset_ID = Convert.ToInt32(r["SelectedDataset_ID"]);
+            SelectedDatasets_ID = Convert.ToInt32(r["SelectedDatasets_ID"]);
             TableInfo_ID = Convert.ToInt32(r["TableInfo_ID"]);
         }
     }

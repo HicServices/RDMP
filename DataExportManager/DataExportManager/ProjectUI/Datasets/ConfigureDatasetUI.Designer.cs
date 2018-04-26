@@ -30,6 +30,7 @@ namespace DataExportManager.ProjectUI.Datasets
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureDatasetUI));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnExcludeAll = new System.Windows.Forms.Button();
@@ -43,6 +44,8 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelectCore = new System.Windows.Forms.Button();
+            this.tbSearchTables = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.label5 = new System.Windows.Forms.Label();
             this.olvJoin = new BrightIdeasSoftware.ObjectListView();
@@ -54,8 +57,8 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.tbSearchTables = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.btnRefreshChecks = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -136,6 +139,8 @@ namespace DataExportManager.ProjectUI.Datasets
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnRefreshChecks);
+            this.splitContainer1.Panel2.Controls.Add(this.label7);
             this.splitContainer1.Panel2.Controls.Add(this.tbSearchTables);
             this.splitContainer1.Panel2.Controls.Add(this.label6);
             this.splitContainer1.Panel2.Controls.Add(this.ragSmiley1);
@@ -225,6 +230,26 @@ namespace DataExportManager.ProjectUI.Datasets
             this.btnSelectCore.UseVisualStyleBackColor = true;
             this.btnSelectCore.Click += new System.EventHandler(this.btnSelectCore_Click);
             // 
+            // tbSearchTables
+            // 
+            this.tbSearchTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSearchTables.Location = new System.Drawing.Point(53, 713);
+            this.tbSearchTables.Name = "tbSearchTables";
+            this.tbSearchTables.Size = new System.Drawing.Size(270, 20);
+            this.tbSearchTables.TabIndex = 164;
+            this.tbSearchTables.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 717);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(44, 13);
+            this.label6.TabIndex = 163;
+            this.label6.Text = "Search:";
+            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
@@ -242,7 +267,7 @@ namespace DataExportManager.ProjectUI.Datasets
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.Blue;
-            this.label5.Location = new System.Drawing.Point(6, 453);
+            this.label5.Location = new System.Drawing.Point(5, 469);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(42, 13);
             this.label5.TabIndex = 159;
@@ -263,10 +288,10 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvJoin.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvJoin.FullRowSelect = true;
             this.olvJoin.IsSimpleDropSink = true;
-            this.olvJoin.Location = new System.Drawing.Point(6, 474);
+            this.olvJoin.Location = new System.Drawing.Point(6, 490);
             this.olvJoin.Name = "olvJoin";
             this.olvJoin.RowHeight = 19;
-            this.olvJoin.Size = new System.Drawing.Size(317, 235);
+            this.olvJoin.Size = new System.Drawing.Size(317, 219);
             this.olvJoin.TabIndex = 161;
             this.olvJoin.UseCompatibleStateImageBehavior = false;
             this.olvJoin.View = System.Windows.Forms.View.Details;
@@ -354,25 +379,26 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvSelectedCatalogue.Text = "Catalogue";
             this.olvSelectedCatalogue.Width = 100;
             // 
-            // tbSearchTables
+            // btnRefreshChecks
             // 
-            this.tbSearchTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbSearchTables.Location = new System.Drawing.Point(53, 713);
-            this.tbSearchTables.Name = "tbSearchTables";
-            this.tbSearchTables.Size = new System.Drawing.Size(270, 20);
-            this.tbSearchTables.TabIndex = 164;
-            this.tbSearchTables.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
+            this.btnRefreshChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
+            this.btnRefreshChecks.Location = new System.Drawing.Point(274, 444);
+            this.btnRefreshChecks.Name = "btnRefreshChecks";
+            this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
+            this.btnRefreshChecks.TabIndex = 165;
+            this.btnRefreshChecks.UseVisualStyleBackColor = true;
+            this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
             // 
-            // label6
+            // label7
             // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 717);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(44, 13);
-            this.label6.TabIndex = 163;
-            this.label6.Text = "Search:";
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(278, 469);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(38, 13);
+            this.label7.TabIndex = 166;
+            this.label7.Text = "Check";
             // 
             // ConfigureDatasetUI
             // 
@@ -422,5 +448,7 @@ namespace DataExportManager.ProjectUI.Datasets
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbSearchTables;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnRefreshChecks;
+        private System.Windows.Forms.Label label7;
     }
 }

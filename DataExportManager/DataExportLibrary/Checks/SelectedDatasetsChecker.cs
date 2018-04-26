@@ -105,7 +105,7 @@ namespace DataExportLibrary.Checks
                                 notifier.OnCheckPerformed(new CheckEventArgs("Read at least 1 row successfully from dataset " + ds,
                                     CheckResult.Success));
                             else
-                                notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty",
+                                notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty (when linked with the cohort)",
                                     CheckResult.Fail));
                         }
                     }
