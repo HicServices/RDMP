@@ -71,7 +71,8 @@ namespace CachingEngine
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Current time is " + DateTime.UtcNow +
-                            " which is not a permitted time according to the configured PermissionWindow of the CacheProgress",
+                            " which is not a permitted time according to the configured PermissionWindow " + _cacheProgress.PermissionWindow.Description + 
+                            " of the CacheProgress " + _cacheProgress,
                             CheckResult.Fail));
 
                 var shortfall = _cacheProgress.GetShortfall();
