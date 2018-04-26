@@ -82,9 +82,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             // gbTables
             // 
+            this.gbTables.Controls.Add(this.tlvTableInfoMigrations);
             this.gbTables.Controls.Add(this.panel2);
             this.gbTables.Controls.Add(this.panel1);
-            this.gbTables.Controls.Add(this.tlvTableInfoMigrations);
             this.gbTables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbTables.Location = new System.Drawing.Point(0, 410);
             this.gbTables.Name = "gbTables";
@@ -245,7 +245,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.Location = new System.Drawing.Point(3, 16);
             this.tlvTableInfoMigrations.Name = "tlvTableInfoMigrations";
             this.tlvTableInfoMigrations.ShowGroups = false;
-            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(962, 291);
+            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(962, 232);
             this.tlvTableInfoMigrations.SmallImageList = this.imageList1;
             this.tlvTableInfoMigrations.TabIndex = 0;
             this.tlvTableInfoMigrations.UseCellFormatEvents = true;
