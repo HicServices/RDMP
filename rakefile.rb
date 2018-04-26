@@ -124,8 +124,8 @@ task :publishall, [:folder, :url] do |t, args|
     # now we build the Automation Service
     Dir.chdir('Tools/RDMPAutomationService') do
         sh "./build.cmd #{deployfolder}/RDMPAutomationService/"
-        sh "rd \"#{basefolder}/Stable/RDMPAutomationService\"" if Dir.exists?("#{basefolder}/Stable/RDMPAutomationService")
-        sh "call mklink /J \"#{basefolder}/Stable/RDMPAutomationService\" \"#{deployfolder}/RDMPAutomationService\""
+        File.delete "#{basefolder}/Stable/RDMPAutomationService.zip" if File.exists?("#{basefolder}/Stable/RDMPAutomationService.zip")
+        sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('#{deployfolder}/RDMPAutomationService', '#{basefolder}/Stable/RDMPAutomationService.zip'); }\""
     end
 end
 
