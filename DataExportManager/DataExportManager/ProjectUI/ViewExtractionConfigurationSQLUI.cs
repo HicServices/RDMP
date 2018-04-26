@@ -34,7 +34,7 @@ namespace DataExportManager.ProjectUI
     public partial class ViewExtractionConfigurationSQLUI : ViewExtractionConfigurationSQLUI_Design
     {
         private ScintillaNET.Scintilla QueryEditor;
-        private ExtractionConfiguration _extractionConfiguration;
+        private IExtractionConfiguration _extractionConfiguration;
         private IExtractableDataSet _extractableDataSet;
 
 

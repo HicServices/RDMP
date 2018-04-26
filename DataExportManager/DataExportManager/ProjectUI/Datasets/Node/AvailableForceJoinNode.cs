@@ -1,4 +1,5 @@
 ﻿using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Annotations;
 
@@ -10,14 +11,17 @@ namespace DataExportManager.ProjectUI.Datasets.Node
         public SelectedDatasetsForcedJoin ForcedJoin { get; set; }
 
         public TableInfo TableInfo { get; set; }
+        public JoinInfo[] JoinInfos { get; set; }
         public bool IsMandatory { get; set; }
 
         public AvailableForceJoinNode(TableInfo tableInfo, bool isMandatory)
         {
             TableInfo = tableInfo;
             IsMandatory = isMandatory;
+
+            JoinInfos = ((CatalogueRepository) TableInfo.Repository).JoinInfoFinder.GetAllJoinInfosWhereTableContains(TableInfo,JoinInfoType.AnyKey);
         }
-  
+
         public object MasqueradingAs()
         {
             return TableInfo;

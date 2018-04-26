@@ -54,7 +54,7 @@ namespace DataExportLibrary.Tests.CustomData
 
 
         /// <summary>
-        /// Tests that you can add a custom cohort column on the end of an existing dataset as an append
+        /// Tests that you can add a custom cohort column on the end of an existing dataset as an append.  Requires you configure a JoinInfo
         /// </summary>
         [Test]
         public void Extract_ProjectSpecificCatalogue_AppendedColumn()
@@ -69,7 +69,12 @@ namespace DataExportLibrary.Tests.CustomData
 
             var extraColumn = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("SuperSecretThing"));
             var asExtractable = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, extraColumn, 10,extraColumn.SelectSQL);
-            
+
+            //add the ability to join the two tables in the query
+            var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
+            var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
+            CatalogueRepository.JoinInfoFinder.AddJoinInfo(idCol, otherIdCol,ExtractionJoinType.Left,null);
+
             //generate a new request (this will include the newly created column)
             _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
 
@@ -98,9 +103,73 @@ namespace DataExportLibrary.Tests.CustomData
             var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
             Assert.AreEqual("ReleaseID,Result,SuperSecretThing", lines[0]);
-            Assert.AreEqual("Pub_54321,1,monkeys can all secretly fly", lines[1]);
-            Assert.AreEqual("Pub_11ftw,2,the wizard of OZ was a man behind a machine", lines[2]);
+            Assert.AreEqual("Pub_11ftw,2,the wizard of OZ was a man behind a machine", lines[1]);
+            Assert.AreEqual("Pub_54321,1,monkeys can all secretly fly", lines[2]);
         }
+
+        /// <summary>
+        /// Tests that you can reference a custom cohort column in the WHERE Sql of a core dataset in extraction.  Requires you configure a <see cref="JoinInfo"/> and specify a <see cref="SelectedDatasetsForcedJoin"/>
+        /// </summary>
+        [Test]
+        public void Extract_ProjectSpecificCatalogue_FilterReference()
+        {
+            //make the catalogue a custom catalogue for this project
+            CustomExtractableDataSet.Project_ID = _project.ID;
+            CustomExtractableDataSet.SaveToDatabase();
+
+            var pipe = SetupPipeline();
+            pipe.Name = "Extract_ProjectSpecificCatalogue_AppendedColumn Pipe";
+            pipe.SaveToDatabase();
+
+            var rootContainer = new FilterContainer(DataExportRepository);
+            _selectedDataSet.RootFilterContainer_ID = rootContainer.ID;
+            _selectedDataSet.SaveToDatabase();
+
+            var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer);
+            filter.WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'";
+            filter.SaveToDatabase();
+            rootContainer.AddChild(filter);
+            
+            //add the ability to join the two tables in the query
+            //var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
+            //var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
+            //CatalogueRepository.JoinInfoFinder.AddJoinInfo(idCol, otherIdCol, ExtractionJoinType.Left, null);
+
+            new SelectedDatasetsForcedJoin(DataExportRepository, _selectedDataSet, CustomTableInfo);
+
+            //generate a new request (this will include the newly created column)
+            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
+            
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
+            tbl.Truncate();
+
+            using (var blk = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("PrivateID");
+                dt.Columns.Add("Result");
+                dt.Rows.Add(new object[] { "Priv_12345", 1 });
+                dt.Rows.Add(new object[] { "Priv_wtf11", 2 });
+                blk.Upload(dt);
+            }
+
+            ExtractionPipelineUseCase useCase;
+            IExecuteDatasetExtractionDestination results;
+            Execute(out useCase, out results);
+
+            var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single();
+
+            Assert.IsNotNull(mainDataTableCsv);
+            Assert.AreEqual("TestTable.csv", mainDataTableCsv.Name);
+
+            var lines = File.ReadAllLines(mainDataTableCsv.FullName);
+
+            Assert.AreEqual("ReleaseID,Result", lines[0]);
+            Assert.AreEqual("Pub_54321,1", lines[1]);
+            Assert.AreEqual(2,lines.Length);
+        }
+
+
 
         /*
         private List<string> _customTablesToCleanup = new List<string>();

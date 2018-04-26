@@ -18,7 +18,7 @@ namespace DataExportLibrary.Data.LinkCreators
     /// Usually when creating an ExtractionConfiguration you do not want to extract all the datasets (Catalogues).  SelectedDataSets represents the desire to extract a
     /// given dataset for a given ExtractableDataSet for a given ExtractionConfiguration.  
     /// </summary>
-    public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>
+    public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>
     {
         #region Database Properties
         
@@ -27,7 +27,8 @@ namespace DataExportLibrary.Data.LinkCreators
         private int? _rootFilterContainer_ID;
 
         private Lazy<IExtractableDataSet> _extractableDataSet;
-        
+        private Lazy<IExtractionConfiguration> _extractionConfiguration;
+
 
         public int ExtractionConfiguration_ID
         {
@@ -66,16 +67,13 @@ namespace DataExportLibrary.Data.LinkCreators
             }
         }
 
+        /// <inheritdoc cref="ExtractionConfiguration_ID"/>
         [NoMappingToDatabase]
-        public ExtractionConfiguration ExtractionConfiguration { get
-        {
-            return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
-        } }
+        public IExtractionConfiguration ExtractionConfiguration { get { return _extractionConfiguration.Value; } }
 
         /// <inheritdoc cref="ExtractableDataSet_ID"/>
         [NoMappingToDatabase]
-        public IExtractableDataSet ExtractableDataSet {
-            get { return _extractableDataSet.Value; }
+        public IExtractableDataSet ExtractableDataSet {get { return _extractableDataSet.Value; }
         }
         
         #endregion
@@ -114,8 +112,19 @@ namespace DataExportLibrary.Data.LinkCreators
             _extractableDataSet = new Lazy<IExtractableDataSet>(()=>instance);
         }
 
+        public void InjectKnown(IExtractionConfiguration instance)
+        {
+            _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
+        }
+
+        private IExtractionConfiguration FetchExtractionConfiguration()
+        {
+            return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+        }
+
         public void ClearAllInjections()
         {
+            _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
             _extractableDataSet = new Lazy<IExtractableDataSet>(FetchExtractableDataset);
         }
         private ICatalogue FetchCatalogue()

@@ -60,6 +60,9 @@ namespace DataExportManager.ProjectUI.Datasets
             olvJoinTableName.ImageGetter += o => tableInfoIcon;
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
+
+            olvJoinColumn.AspectGetter += JoinColumn_AspectGetter;
+            olvJoin.ButtonClick += olvJoin_ButtonClick;
         }
 
         private object SelectedCatalogue_AspectGetter(object rowObject)
@@ -237,7 +240,7 @@ namespace DataExportManager.ProjectUI.Datasets
             base.SetDatabaseObject(activator,databaseObject);
             SelectedDataSet = databaseObject;
             _dataSet = SelectedDataSet.ExtractableDataSet;
-            _config = SelectedDataSet.ExtractionConfiguration;
+            _config = (ExtractionConfiguration)SelectedDataSet.ExtractionConfiguration;
             
             SetupUserInterface();
 
@@ -454,6 +457,29 @@ namespace DataExportManager.ProjectUI.Datasets
                 redundantForcedJoin.DeleteInDatabase();
 
             olvJoin.AddObjects(nodes.ToArray());
+        }
+        
+        void olvJoin_ButtonClick(object sender, CellClickEventArgs e)
+        {
+            var node = (AvailableForceJoinNode) e.Model;
+            if(e.Column == olvJoinColumn)
+            {
+
+                //if (node.JoinInfos.Any())
+                    //return "Show";
+
+                MessageBox.Show("Click!");
+            }
+        }
+
+        private object JoinColumn_AspectGetter(object rowObject)
+        {
+            var node = (AvailableForceJoinNode)rowObject;
+
+            if (node.JoinInfos.Any())
+                return "Show";
+
+            return "Configure";
         }
 
         #endregion

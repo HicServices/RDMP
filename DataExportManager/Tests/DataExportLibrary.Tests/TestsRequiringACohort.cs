@@ -39,6 +39,7 @@ namespace DataExportLibrary.Tests
         protected ExtractableDataSet CustomExtractableDataSet;
         protected Catalogue CustomCatalogue;
         protected DiscoveredTable CustomTable;
+        protected TableInfo CustomTableInfo;
 
         /// <summary>
         /// Dictionary of the private and release IDs generated for the cohort, where Keys is a collection of private identifiers and Values are the corresponding release identifiers
@@ -209,17 +210,14 @@ CohortDatabaseName);
 
             CustomTable = _cohortDatabase.CreateTable("custTable99", dt);
 
-            TableInfo t;
             ColumnInfo[] cols;
-            new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out t,out cols);
+            new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out cols);
             
-            Catalogue cata;
             CatalogueItem[] cis;
             ExtractionInformation[] eis;
-            new ForwardEngineerCatalogue(t, cols, true).ExecuteForwardEngineering(out cata,out cis,out eis);
-            
-            CustomCatalogue = cata;
-            CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, cata);
+            new ForwardEngineerCatalogue(CustomTableInfo, cols, true).ExecuteForwardEngineering(out CustomCatalogue, out cis, out eis);
+
+            CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
             
             foreach (ExtractionInformation e in eis)
             {

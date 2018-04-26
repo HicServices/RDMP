@@ -44,21 +44,21 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelectCore = new System.Windows.Forms.Button();
+            this.btnRefreshChecks = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             this.tbSearchTables = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.label5 = new System.Windows.Forms.Label();
             this.olvJoin = new BrightIdeasSoftware.ObjectListView();
             this.olvJoinTableName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvJoinDirection = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvJoinColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.tbSearchSelected = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.olvSelected = new BrightIdeasSoftware.ObjectListView();
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.btnRefreshChecks = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -230,6 +230,27 @@ namespace DataExportManager.ProjectUI.Datasets
             this.btnSelectCore.UseVisualStyleBackColor = true;
             this.btnSelectCore.Click += new System.EventHandler(this.btnSelectCore_Click);
             // 
+            // btnRefreshChecks
+            // 
+            this.btnRefreshChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
+            this.btnRefreshChecks.Location = new System.Drawing.Point(274, 444);
+            this.btnRefreshChecks.Name = "btnRefreshChecks";
+            this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
+            this.btnRefreshChecks.TabIndex = 165;
+            this.btnRefreshChecks.UseVisualStyleBackColor = true;
+            this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(278, 469);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(38, 13);
+            this.label7.TabIndex = 166;
+            this.label7.Text = "Check";
+            // 
             // tbSearchTables
             // 
             this.tbSearchTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -276,7 +297,7 @@ namespace DataExportManager.ProjectUI.Datasets
             // olvJoin
             // 
             this.olvJoin.AllColumns.Add(this.olvJoinTableName);
-            this.olvJoin.AllColumns.Add(this.olvJoinDirection);
+            this.olvJoin.AllColumns.Add(this.olvJoinColumn);
             this.olvJoin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.olvJoin.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
@@ -284,7 +305,7 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvJoin.CheckBoxes = true;
             this.olvJoin.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvJoinTableName,
-            this.olvJoinDirection});
+            this.olvJoinColumn});
             this.olvJoin.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvJoin.FullRowSelect = true;
             this.olvJoin.IsSimpleDropSink = true;
@@ -305,12 +326,14 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvJoinTableName.Text = "Table Name";
             this.olvJoinTableName.Width = 163;
             // 
-            // olvJoinDirection
+            // olvJoinColumn
             // 
-            this.olvJoinDirection.AspectName = "JoinType";
-            this.olvJoinDirection.Groupable = false;
-            this.olvJoinDirection.Text = "Join Direction";
-            this.olvJoinDirection.Width = 100;
+            this.olvJoinColumn.AspectName = "";
+            this.olvJoinColumn.ButtonSizing = BrightIdeasSoftware.OLVColumn.ButtonSizingMode.CellBounds;
+            this.olvJoinColumn.Groupable = false;
+            this.olvJoinColumn.IsButton = true;
+            this.olvJoinColumn.Text = "Join";
+            this.olvJoinColumn.Width = 100;
             // 
             // tbSearchSelected
             // 
@@ -379,27 +402,6 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvSelectedCatalogue.Text = "Catalogue";
             this.olvSelectedCatalogue.Width = 100;
             // 
-            // btnRefreshChecks
-            // 
-            this.btnRefreshChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
-            this.btnRefreshChecks.Location = new System.Drawing.Point(274, 444);
-            this.btnRefreshChecks.Name = "btnRefreshChecks";
-            this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
-            this.btnRefreshChecks.TabIndex = 165;
-            this.btnRefreshChecks.UseVisualStyleBackColor = true;
-            this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(278, 469);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(38, 13);
-            this.label7.TabIndex = 166;
-            this.label7.Text = "Check";
-            // 
             // ConfigureDatasetUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -444,7 +446,7 @@ namespace DataExportManager.ProjectUI.Datasets
         private System.Windows.Forms.Label label5;
         private ObjectListView olvJoin;
         private OLVColumn olvJoinTableName;
-        private OLVColumn olvJoinDirection;
+        private OLVColumn olvJoinColumn;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbSearchTables;
         private System.Windows.Forms.Label label6;
