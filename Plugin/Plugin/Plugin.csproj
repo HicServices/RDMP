@@ -139,6 +139,10 @@
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Tools\BundleUpSourceIntoZip\BundleUpSourceIntoZip.csproj">
+      <Project>{f00ef92f-a683-4d43-a2a1-c237c23ade8d}</Project>
+      <Name>BundleUpSourceIntoZip</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
       <Project>{27bdabce-8fef-48d9-bad6-8e280b13adf5}</Project>
       <Name>PluginPackager</Name>

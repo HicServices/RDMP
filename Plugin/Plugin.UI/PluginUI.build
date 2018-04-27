@@ -4,7 +4,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
   <Target Name="Deploy">
-    <CallTarget Targets="Build" />
+    <CallTarget Targets="Clean;Build" />
 	
     <Error Condition="'$(ReleaseNugetPackageSource)' == ''" 
        Text="Please pass 'ReleaseNugetPackageSource' in to this build task (/p:ReleaseNugetPackageSource=foo)" />
