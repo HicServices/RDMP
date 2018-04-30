@@ -36,7 +36,7 @@ namespace DataExportManager.ProjectUI.Datasets
     /// <para>Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See 
     /// ExtractionInformationUI).</para>
     /// </summary>
-    public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design
+    public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSubscriber
     {
         public SelectedDataSets SelectedDataSet { get; private set; }
         private IExtractableDataSet _dataSet;
@@ -242,6 +242,9 @@ namespace DataExportManager.ProjectUI.Datasets
         public override void SetDatabaseObject(IActivateItems activator, SelectedDataSets databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
+
+            activator.RefreshBus.EstablishLifetimeSubscription(this);
+
             SelectedDataSet = databaseObject;
             _dataSet = SelectedDataSet.ExtractableDataSet;
             _config = (ExtractionConfiguration)SelectedDataSet.ExtractionConfiguration;
@@ -540,6 +543,11 @@ namespace DataExportManager.ProjectUI.Datasets
         {
             RunChecks();
 
+            UpdateJoins();
+        }
+
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
             UpdateJoins();
         }
     }
