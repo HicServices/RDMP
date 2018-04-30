@@ -74,6 +74,18 @@ namespace CatalogueManager.Collections
         
         public static bool IsPinnableType(object o)
         {
+            //Project specific Catalogues are not pinnable because they are children of Projects
+            var cata = o as Catalogue;
+            if (cata != null)
+            {
+                var extractability = cata.GetExtractabilityStatus(null);
+
+                if (extractability != null && extractability.IsProjectSpecific)
+                    return false;
+
+                return true;
+            }
+
             return PinnableTypes.Contains(o.GetType());
         }
 
