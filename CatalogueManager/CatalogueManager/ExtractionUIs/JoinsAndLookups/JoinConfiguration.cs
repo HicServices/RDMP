@@ -189,6 +189,11 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         {
             UpdateValidityAssesment();
         }
+
+        public void SetOtherTableInfo(TableInfo otherTableInfo)
+        {
+            SetRightTableInfo(otherTableInfo);
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<JoinConfiguration_Design, UserControl>))]

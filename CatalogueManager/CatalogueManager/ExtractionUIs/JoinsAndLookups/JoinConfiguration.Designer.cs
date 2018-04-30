@@ -50,17 +50,26 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.tbFilterRight = new System.Windows.Forms.TextBox();
-            this.fk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.fk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.fk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.rbAllLeftHandTableRecords = new System.Windows.Forms.RadioButton();
             this.rbAllRightHandTableRecords = new System.Windows.Forms.RadioButton();
             this.rbJoinInner = new System.Windows.Forms.RadioButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.pk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.pk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.pk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.fk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.fk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.fk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvLeftColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvRightColumns)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label3
@@ -68,7 +77,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(184, 254);
+            this.label3.Location = new System.Drawing.Point(184, 264);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 13);
             this.label3.TabIndex = 163;
@@ -85,9 +94,9 @@
             this.olvLeftColumnNames});
             this.olvLeftColumns.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvLeftColumns.IsSimpleDragSource = true;
-            this.olvLeftColumns.Location = new System.Drawing.Point(3, 31);
+            this.olvLeftColumns.Location = new System.Drawing.Point(7, 29);
             this.olvLeftColumns.Name = "olvLeftColumns";
-            this.olvLeftColumns.Size = new System.Drawing.Size(461, 220);
+            this.olvLeftColumns.Size = new System.Drawing.Size(461, 232);
             this.olvLeftColumns.TabIndex = 3;
             this.olvLeftColumns.UseCompatibleStateImageBehavior = false;
             this.olvLeftColumns.View = System.Windows.Forms.View.Details;
@@ -103,7 +112,7 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(475, 414);
+            this.label10.Location = new System.Drawing.Point(474, 101);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(13, 13);
             this.label10.TabIndex = 17;
@@ -113,7 +122,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(475, 375);
+            this.label7.Location = new System.Drawing.Point(474, 62);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(13, 13);
             this.label7.TabIndex = 14;
@@ -123,7 +132,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(475, 336);
+            this.label4.Location = new System.Drawing.Point(474, 23);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(13, 13);
             this.label4.TabIndex = 166;
@@ -140,9 +149,9 @@
             this.olvRightColumnNames});
             this.olvRightColumns.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvRightColumns.IsSimpleDragSource = true;
-            this.olvRightColumns.Location = new System.Drawing.Point(489, 31);
+            this.olvRightColumns.Location = new System.Drawing.Point(493, 29);
             this.olvRightColumns.Name = "olvRightColumns";
-            this.olvRightColumns.Size = new System.Drawing.Size(461, 220);
+            this.olvRightColumns.Size = new System.Drawing.Size(461, 232);
             this.olvRightColumns.TabIndex = 4;
             this.olvRightColumns.UseCompatibleStateImageBehavior = false;
             this.olvRightColumns.View = System.Windows.Forms.View.Details;
@@ -160,7 +169,7 @@
             this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(408, 509);
+            this.ragSmiley1.Location = new System.Drawing.Point(402, 192);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 24;
@@ -169,7 +178,7 @@
             // 
             this.btnCreateJoinInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCreateJoinInfo.Enabled = false;
-            this.btnCreateJoinInfo.Location = new System.Drawing.Point(439, 511);
+            this.btnCreateJoinInfo.Location = new System.Drawing.Point(433, 194);
             this.btnCreateJoinInfo.Name = "btnCreateJoinInfo";
             this.btnCreateJoinInfo.Size = new System.Drawing.Size(109, 23);
             this.btnCreateJoinInfo.TabIndex = 25;
@@ -180,7 +189,7 @@
             // tbCollation
             // 
             this.tbCollation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbCollation.Location = new System.Drawing.Point(439, 485);
+            this.tbCollation.Location = new System.Drawing.Point(433, 168);
             this.tbCollation.Name = "tbCollation";
             this.tbCollation.Size = new System.Drawing.Size(229, 20);
             this.tbCollation.TabIndex = 23;
@@ -189,7 +198,7 @@
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(383, 489);
+            this.label13.Location = new System.Drawing.Point(377, 172);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(50, 13);
             this.label13.TabIndex = 22;
@@ -200,7 +209,7 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(694, 254);
+            this.label2.Location = new System.Drawing.Point(694, 264);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 13);
             this.label2.TabIndex = 163;
@@ -208,7 +217,7 @@
             // 
             // btnChooseRightTableInfo
             // 
-            this.btnChooseRightTableInfo.Location = new System.Drawing.Point(489, 3);
+            this.btnChooseRightTableInfo.Location = new System.Drawing.Point(496, 0);
             this.btnChooseRightTableInfo.Name = "btnChooseRightTableInfo";
             this.btnChooseRightTableInfo.Size = new System.Drawing.Size(26, 26);
             this.btnChooseRightTableInfo.TabIndex = 1;
@@ -217,7 +226,7 @@
             // 
             // tbLeftTableInfo
             // 
-            this.tbLeftTableInfo.Location = new System.Drawing.Point(3, 5);
+            this.tbLeftTableInfo.Location = new System.Drawing.Point(7, 3);
             this.tbLeftTableInfo.Name = "tbLeftTableInfo";
             this.tbLeftTableInfo.ReadOnly = true;
             this.tbLeftTableInfo.Size = new System.Drawing.Size(397, 20);
@@ -225,7 +234,7 @@
             // 
             // tbRightTableInfo
             // 
-            this.tbRightTableInfo.Location = new System.Drawing.Point(521, 7);
+            this.tbRightTableInfo.Location = new System.Drawing.Point(531, 3);
             this.tbRightTableInfo.Name = "tbRightTableInfo";
             this.tbRightTableInfo.ReadOnly = true;
             this.tbRightTableInfo.Size = new System.Drawing.Size(397, 20);
@@ -235,7 +244,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(75, 326);
+            this.label5.Location = new System.Drawing.Point(74, 13);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(162, 13);
             this.label5.TabIndex = 9;
@@ -245,7 +254,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(726, 326);
+            this.label6.Location = new System.Drawing.Point(725, 13);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(206, 13);
             this.label6.TabIndex = 12;
@@ -254,7 +263,7 @@
             // tbFilterLeft
             // 
             this.tbFilterLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbFilterLeft.Location = new System.Drawing.Point(41, 270);
+            this.tbFilterLeft.Location = new System.Drawing.Point(41, 280);
             this.tbFilterLeft.Name = "tbFilterLeft";
             this.tbFilterLeft.Size = new System.Drawing.Size(423, 20);
             this.tbFilterLeft.TabIndex = 6;
@@ -264,7 +273,7 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 273);
+            this.label8.Location = new System.Drawing.Point(3, 283);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(32, 13);
             this.label8.TabIndex = 5;
@@ -274,7 +283,7 @@
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(490, 273);
+            this.label9.Location = new System.Drawing.Point(490, 283);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(32, 13);
             this.label9.TabIndex = 7;
@@ -283,77 +292,17 @@
             // tbFilterRight
             // 
             this.tbFilterRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbFilterRight.Location = new System.Drawing.Point(528, 270);
+            this.tbFilterRight.Location = new System.Drawing.Point(528, 280);
             this.tbFilterRight.Name = "tbFilterRight";
             this.tbFilterRight.Size = new System.Drawing.Size(422, 20);
             this.tbFilterRight.TabIndex = 8;
             this.tbFilterRight.TextChanged += new System.EventHandler(this.tbFilterRight_TextChanged);
             // 
-            // fk3
-            // 
-            this.fk3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.fk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
-            this.fk3.Location = new System.Drawing.Point(494, 410);
-            this.fk3.Name = "fk3";
-            this.fk3.Size = new System.Drawing.Size(226, 35);
-            this.fk3.TabIndex = 18;
-            this.fk3.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
-            // 
-            // fk2
-            // 
-            this.fk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.fk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
-            this.fk2.Location = new System.Drawing.Point(494, 369);
-            this.fk2.Name = "fk2";
-            this.fk2.Size = new System.Drawing.Size(226, 35);
-            this.fk2.TabIndex = 15;
-            this.fk2.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
-            // 
-            // fk1
-            // 
-            this.fk1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.fk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
-            this.fk1.Location = new System.Drawing.Point(494, 326);
-            this.fk1.Name = "fk1";
-            this.fk1.Size = new System.Drawing.Size(226, 35);
-            this.fk1.TabIndex = 11;
-            this.fk1.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
-            // 
-            // pk2
-            // 
-            this.pk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
-            this.pk2.Location = new System.Drawing.Point(243, 369);
-            this.pk2.Name = "pk2";
-            this.pk2.Size = new System.Drawing.Size(226, 35);
-            this.pk2.TabIndex = 13;
-            this.pk2.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
-            // 
-            // pk3
-            // 
-            this.pk3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
-            this.pk3.Location = new System.Drawing.Point(243, 410);
-            this.pk3.Name = "pk3";
-            this.pk3.Size = new System.Drawing.Size(226, 35);
-            this.pk3.TabIndex = 16;
-            this.pk3.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
-            // 
-            // pk1
-            // 
-            this.pk1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
-            this.pk1.Location = new System.Drawing.Point(243, 326);
-            this.pk1.Name = "pk1";
-            this.pk1.Size = new System.Drawing.Size(226, 35);
-            this.pk1.TabIndex = 10;
-            this.pk1.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
-            // 
             // rbAllLeftHandTableRecords
             // 
             this.rbAllLeftHandTableRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbAllLeftHandTableRecords.AutoSize = true;
-            this.rbAllLeftHandTableRecords.Location = new System.Drawing.Point(187, 451);
+            this.rbAllLeftHandTableRecords.Location = new System.Drawing.Point(181, 134);
             this.rbAllLeftHandTableRecords.Name = "rbAllLeftHandTableRecords";
             this.rbAllLeftHandTableRecords.Size = new System.Drawing.Size(224, 17);
             this.rbAllLeftHandTableRecords.TabIndex = 19;
@@ -366,7 +315,7 @@
             // 
             this.rbAllRightHandTableRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbAllRightHandTableRecords.AutoSize = true;
-            this.rbAllRightHandTableRecords.Location = new System.Drawing.Point(575, 451);
+            this.rbAllRightHandTableRecords.Location = new System.Drawing.Point(569, 134);
             this.rbAllRightHandTableRecords.Name = "rbAllRightHandTableRecords";
             this.rbAllRightHandTableRecords.Size = new System.Drawing.Size(224, 17);
             this.rbAllRightHandTableRecords.TabIndex = 21;
@@ -379,7 +328,7 @@
             // 
             this.rbJoinInner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbJoinInner.AutoSize = true;
-            this.rbJoinInner.Location = new System.Drawing.Point(429, 451);
+            this.rbJoinInner.Location = new System.Drawing.Point(423, 134);
             this.rbJoinInner.Name = "rbJoinInner";
             this.rbJoinInner.Size = new System.Drawing.Size(120, 17);
             this.rbJoinInner.TabIndex = 20;
@@ -388,45 +337,148 @@
             this.rbJoinInner.UseVisualStyleBackColor = true;
             this.rbJoinInner.CheckedChanged += new System.EventHandler(this.rb_CheckedChanged);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.rbJoinInner);
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.rbAllRightHandTableRecords);
+            this.panel1.Controls.Add(this.tbCollation);
+            this.panel1.Controls.Add(this.rbAllLeftHandTableRecords);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.btnCreateJoinInfo);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.ragSmiley1);
+            this.panel1.Controls.Add(this.pk1);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.pk3);
+            this.panel1.Controls.Add(this.pk2);
+            this.panel1.Controls.Add(this.fk1);
+            this.panel1.Controls.Add(this.fk3);
+            this.panel1.Controls.Add(this.fk2);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(965, 224);
+            this.panel1.TabIndex = 167;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label8);
+            this.panel2.Controls.Add(this.label3);
+            this.panel2.Controls.Add(this.tbLeftTableInfo);
+            this.panel2.Controls.Add(this.tbRightTableInfo);
+            this.panel2.Controls.Add(this.label9);
+            this.panel2.Controls.Add(this.btnChooseRightTableInfo);
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Controls.Add(this.tbFilterRight);
+            this.panel2.Controls.Add(this.olvRightColumns);
+            this.panel2.Controls.Add(this.tbFilterLeft);
+            this.panel2.Controls.Add(this.olvLeftColumns);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(965, 305);
+            this.panel2.TabIndex = 168;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.panel2);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.panel1);
+            this.splitContainer1.Panel2MinSize = 240;
+            this.splitContainer1.Size = new System.Drawing.Size(965, 533);
+            this.splitContainer1.SplitterDistance = 305;
+            this.splitContainer1.TabIndex = 169;
+            // 
+            // pk1
+            // 
+            this.pk1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk1.Location = new System.Drawing.Point(242, 13);
+            this.pk1.Name = "pk1";
+            this.pk1.Size = new System.Drawing.Size(226, 35);
+            this.pk1.TabIndex = 10;
+            this.pk1.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
+            // 
+            // pk3
+            // 
+            this.pk3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk3.Location = new System.Drawing.Point(242, 97);
+            this.pk3.Name = "pk3";
+            this.pk3.Size = new System.Drawing.Size(226, 35);
+            this.pk3.TabIndex = 16;
+            this.pk3.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
+            // 
+            // pk2
+            // 
+            this.pk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk2.Location = new System.Drawing.Point(242, 56);
+            this.pk2.Name = "pk2";
+            this.pk2.Size = new System.Drawing.Size(226, 35);
+            this.pk2.TabIndex = 13;
+            this.pk2.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
+            // 
+            // fk1
+            // 
+            this.fk1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.fk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk1.Location = new System.Drawing.Point(493, 13);
+            this.fk1.Name = "fk1";
+            this.fk1.Size = new System.Drawing.Size(226, 35);
+            this.fk1.TabIndex = 11;
+            this.fk1.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
+            // 
+            // fk3
+            // 
+            this.fk3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.fk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk3.Location = new System.Drawing.Point(493, 97);
+            this.fk3.Name = "fk3";
+            this.fk3.Size = new System.Drawing.Size(226, 35);
+            this.fk3.TabIndex = 18;
+            this.fk3.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
+            // 
+            // fk2
+            // 
+            this.fk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.fk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk2.Location = new System.Drawing.Point(493, 56);
+            this.fk2.Name = "fk2";
+            this.fk2.Size = new System.Drawing.Size(226, 35);
+            this.fk2.TabIndex = 15;
+            this.fk2.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
+            // 
             // JoinConfiguration
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.rbJoinInner);
-            this.Controls.Add(this.rbAllRightHandTableRecords);
-            this.Controls.Add(this.rbAllLeftHandTableRecords);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.tbFilterRight);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.tbFilterLeft);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.tbRightTableInfo);
-            this.Controls.Add(this.tbLeftTableInfo);
-            this.Controls.Add(this.btnChooseRightTableInfo);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.btnCreateJoinInfo);
-            this.Controls.Add(this.tbCollation);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.olvRightColumns);
-            this.Controls.Add(this.olvLeftColumns);
-            this.Controls.Add(this.fk3);
-            this.Controls.Add(this.fk2);
-            this.Controls.Add(this.fk1);
-            this.Controls.Add(this.pk2);
-            this.Controls.Add(this.pk3);
-            this.Controls.Add(this.pk1);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label4);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.Controls.Add(this.splitContainer1);
             this.Name = "JoinConfiguration";
-            this.Size = new System.Drawing.Size(970, 546);
+            this.Size = new System.Drawing.Size(965, 533);
             ((System.ComponentModel.ISupportInitialize)(this.olvLeftColumns)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvRightColumns)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -463,5 +515,8 @@
         private System.Windows.Forms.RadioButton rbAllLeftHandTableRecords;
         private System.Windows.Forms.RadioButton rbAllRightHandTableRecords;
         private System.Windows.Forms.RadioButton rbJoinInner;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

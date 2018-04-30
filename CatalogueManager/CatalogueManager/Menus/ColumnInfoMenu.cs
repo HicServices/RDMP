@@ -30,7 +30,7 @@ namespace CatalogueManager.Menus
 
             Items.Add(new ToolStripSeparator());
 
-            Items.Add(new AddJoinInfoMenuItem(_activator, columnInfo.TableInfo));
+            Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
 
             var convertToANO = new ToolStripMenuItem("Configure ANO Transform", _activator.CoreIconProvider.GetImage(RDMPConcept.ANOColumnInfo), (s, e) => _activator.ActivateConvertColumnInfoIntoANOColumnInfo(columnInfo));
 

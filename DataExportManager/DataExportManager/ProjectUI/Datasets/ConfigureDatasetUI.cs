@@ -7,8 +7,11 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.ExtractionUIs.JoinsAndLookups;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Checks;
@@ -17,6 +20,7 @@ using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.ProjectUI.Datasets.Node;
 using MapsDirectlyToDatabaseTable.Revertable;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
 
 namespace DataExportManager.ProjectUI.Datasets
@@ -464,11 +468,41 @@ namespace DataExportManager.ProjectUI.Datasets
             var node = (AvailableForceJoinNode) e.Model;
             if(e.Column == olvJoinColumn)
             {
+                //if it has Join Infos
+                if (node.JoinInfos.Any())
+                {
+                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(node.JoinInfos.Select(j=>j.PrimaryKey), false,false);
 
-                //if (node.JoinInfos.Any())
-                    //return "Show";
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                        _activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
 
-                MessageBox.Show("Click!");
+                    return;
+                }
+
+                var otherTables = olvJoin.Objects.OfType<AvailableForceJoinNode>().Where(n=> !Equals(n, node)).Select(n => n.TableInfo).ToArray();
+
+                if(otherTables.Length == 0)
+                {
+                    MessageBox.Show("There are no other tables so no join is required");
+                    return;
+                }
+
+                TableInfo otherTable = null;
+                if (otherTables.Length == 1)
+                    otherTable = otherTables[0];
+                else
+                {
+                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(otherTables, false, false);
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                        otherTable = (TableInfo) dialog.Selected;
+                }
+
+                if(otherTable != null)
+                {
+                    var cmd = new ExecuteCommandAddJoinInfo(_activator, node.TableInfo);
+                    cmd.SetInitialJoinToTableInfo(otherTable);
+                    cmd.Execute();
+                }
             }
         }
 
@@ -505,6 +539,8 @@ namespace DataExportManager.ProjectUI.Datasets
         private void btnRefreshChecks_Click(object sender, EventArgs e)
         {
             RunChecks();
+
+            UpdateJoins();
         }
     }
 

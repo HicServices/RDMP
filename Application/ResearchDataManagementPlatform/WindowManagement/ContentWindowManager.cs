@@ -320,11 +320,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 t.SetLookupTableInfo(optionalLookupTableInfo);
         }
 
-        public void ActivateJoinInfoConfiguration(object sender, TableInfo tableInfo)
-        {
-            Activate<JoinConfiguration, TableInfo>(tableInfo);
-        }
-
         public void ActivateReOrderCatalogueItems(Catalogue catalogue)
         {
             Activate<ReOrderCatalogueItems, Catalogue>(catalogue);

@@ -143,7 +143,7 @@ namespace CatalogueManager.ItemActivation
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
         
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
-        void ActivateJoinInfoConfiguration(object sender, TableInfo tableInfo);
+        
 
         void ActivateReOrderCatalogueItems(Catalogue catalogue);
 

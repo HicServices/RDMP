@@ -493,6 +493,7 @@
     <Compile Include="Collections\Providers\IDColumnProvider.cs" />
     <Compile Include="Collections\RDMPCollection.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddJoinInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewLookupTableRelationship.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
@@ -917,7 +918,6 @@
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
-    <Compile Include="Menus\MenuItems\AddJoinInfoMenuItem.cs" />
     <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs">
