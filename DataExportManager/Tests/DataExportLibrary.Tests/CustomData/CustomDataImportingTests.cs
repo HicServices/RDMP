@@ -70,6 +70,10 @@ namespace DataExportLibrary.Tests.CustomData
             var extraColumn = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("SuperSecretThing"));
             var asExtractable = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, extraColumn, 10,extraColumn.SelectSQL);
 
+            //get rid of any lingering joins
+            foreach (JoinInfo j in CatalogueRepository.JoinInfoFinder.GetAllJoinInfos())
+                j.DeleteInDatabase();
+
             //add the ability to join the two tables in the query
             var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
             var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
@@ -105,6 +109,8 @@ namespace DataExportLibrary.Tests.CustomData
             Assert.AreEqual("ReleaseID,Result,SuperSecretThing", lines[0]);
             Assert.AreEqual("Pub_11ftw,2,the wizard of OZ was a man behind a machine", lines[1]);
             Assert.AreEqual("Pub_54321,1,monkeys can all secretly fly", lines[2]);
+
+            asExtractable.DeleteInDatabase();
         }
 
         /// <summary>
@@ -118,7 +124,7 @@ namespace DataExportLibrary.Tests.CustomData
             CustomExtractableDataSet.SaveToDatabase();
 
             var pipe = SetupPipeline();
-            pipe.Name = "Extract_ProjectSpecificCatalogue_AppendedColumn Pipe";
+            pipe.Name = "Extract_ProjectSpecificCatalogue_FilterReference Pipe";
             pipe.SaveToDatabase();
 
             var rootContainer = new FilterContainer(DataExportRepository);
@@ -129,11 +135,15 @@ namespace DataExportLibrary.Tests.CustomData
             filter.WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'";
             filter.SaveToDatabase();
             rootContainer.AddChild(filter);
-            
+
+            //get rid of any lingering joins
+            foreach (JoinInfo j in CatalogueRepository.JoinInfoFinder.GetAllJoinInfos())
+                j.DeleteInDatabase();
+
             //add the ability to join the two tables in the query
-            //var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
-            //var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
-            //CatalogueRepository.JoinInfoFinder.AddJoinInfo(idCol, otherIdCol, ExtractionJoinType.Left, null);
+            var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
+            var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
+            CatalogueRepository.JoinInfoFinder.AddJoinInfo(idCol, otherIdCol, ExtractionJoinType.Left, null);
 
             new SelectedDatasetsForcedJoin(DataExportRepository, _selectedDataSet, CustomTableInfo);
 
@@ -167,6 +177,8 @@ namespace DataExportLibrary.Tests.CustomData
             Assert.AreEqual("ReleaseID,Result", lines[0]);
             Assert.AreEqual("Pub_54321,1", lines[1]);
             Assert.AreEqual(2,lines.Length);
+
+            
         }
 
 

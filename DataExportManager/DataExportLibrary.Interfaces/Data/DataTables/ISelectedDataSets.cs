@@ -17,5 +17,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         IExtractionConfiguration ExtractionConfiguration { get;}
         IExtractableDataSet ExtractableDataSet { get; }
+        ISelectedDatasetsForcedJoin[] SelectedDatasetsForcedJoins { get;}
     }
 }

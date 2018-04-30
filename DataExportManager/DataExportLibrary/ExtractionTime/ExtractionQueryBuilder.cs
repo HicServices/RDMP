@@ -69,9 +69,13 @@ namespace DataExportLibrary.ExtractionTime
             string hashingAlgorithm = configurationProperties.TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern);
             if (string.IsNullOrWhiteSpace(hashingAlgorithm))
                 hashingAlgorithm = null;
+
+            //identify any tables we are supposed to force join to
+            var forcedJoins = request.SelectedDataSets.SelectedDatasetsForcedJoins;
+
+            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql, hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
+
             
-            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql,hashingAlgorithm);
-         
             queryBuilder.SetSalt(request.Salt.GetSalt());
 
             var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();

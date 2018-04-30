@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -19,12 +21,14 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// A <see cref="JoinInfo"/> must still exist to tell <see cref="QueryBuilder"/> how to write the Join section of the query.
     /// </summary>
-    public class SelectedDatasetsForcedJoin : DatabaseEntity
+    public class SelectedDatasetsForcedJoin : DatabaseEntity, ISelectedDatasetsForcedJoin, IInjectKnown<TableInfo>
     {
         #region Database Properties
 
         private int _selectedDatasets_ID;
         private int _tableInfo_ID;
+        private Lazy<TableInfo> _knownTableInfo;
+
         #endregion
 
         public int SelectedDatasets_ID
@@ -37,6 +41,14 @@ namespace DataExportLibrary.Data.DataTables
             get { return _tableInfo_ID; }
             set { SetField(ref _tableInfo_ID, value); }
         }
+        
+        [NoMappingToDatabase]
+        public TableInfo TableInfo
+        {
+            get { return _knownTableInfo.Value; }
+            
+        }
+
         public SelectedDatasetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, TableInfo tableInfo)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
@@ -47,11 +59,30 @@ namespace DataExportLibrary.Data.DataTables
 
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
+
+            ClearAllInjections();
         }
         internal SelectedDatasetsForcedJoin(IRepository repository, DbDataReader r): base(repository, r)
         {
             SelectedDatasets_ID = Convert.ToInt32(r["SelectedDatasets_ID"]);
             TableInfo_ID = Convert.ToInt32(r["TableInfo_ID"]);
+
+            ClearAllInjections();
+        }
+
+        public void InjectKnown(TableInfo instance)
+        {
+            _knownTableInfo = new Lazy<TableInfo>(()=>instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownTableInfo = new Lazy<TableInfo>(FetchTableInfo);
+        }
+
+        private TableInfo FetchTableInfo()
+        {
+            return ((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<TableInfo>(TableInfo_ID);
         }
     }
 }
