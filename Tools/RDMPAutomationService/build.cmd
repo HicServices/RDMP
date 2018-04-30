@@ -48,7 +48,7 @@ goto build
 
 :build
 nuget restore ..\..\HIC.DataManagementPlatform.sln
-msbuild /t:Clean,Build /p:Configuration=Release,Outdir=..\..\Release\RDMPAutomationService RDMPAutomationService.csproj
+msbuild /t:Clean,Build /p:Configuration=Release,Outdir=%1 RDMPAutomationService.csproj
 goto end
 
 :end

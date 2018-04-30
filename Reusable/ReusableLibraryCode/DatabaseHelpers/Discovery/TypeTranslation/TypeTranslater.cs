@@ -51,10 +51,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (t == typeof (byte[]))
                 return GetByteArrayDataType();
 
+            if (t == typeof (Guid))
+                return GetGuidDataType();
 
             throw new NotSupportedException("Unsure what SQL Database type to use for Property Type " + t.Name);
 
         }
+
         protected virtual string GetByteArrayDataType()
         {
             return "varbinary(max)";
@@ -108,10 +111,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         {
             return "int";
         }
-        
+
         protected virtual string GetBigIntDataType()
         {
             return "bigint";
+        }
+
+        protected virtual string GetGuidDataType()
+        {
+            return "uniqueidentifier";
         }
 
         public Type GetCSharpTypeForSQLDBType(string sqlType)
@@ -143,8 +151,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (IsByteArray(sqlType))
                 return typeof (byte[]);
 
+            if (IsGuid(sqlType))
+                return typeof (Guid);
+
             throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
         }
+
 
         public virtual DatabaseTypeRequest GetDataTypeRequestForSQLDBType(string sqlType)
         {
@@ -307,7 +319,7 @@ select LEN(dt) from omgdates
 
         protected virtual bool IsInt(string sqlType)
         {
-            return sqlType.Trim().Equals("int",StringComparison.CurrentCultureIgnoreCase);
+            return sqlType.Trim().Equals("int",StringComparison.CurrentCultureIgnoreCase) || sqlType.Trim().Equals("bigint",StringComparison.CurrentCultureIgnoreCase);
         }
 
         protected virtual bool IsDate(string sqlType)
@@ -317,18 +329,24 @@ select LEN(dt) from omgdates
 
         protected virtual bool IsString(string sqlType)
         {
-            return sqlType.ToLower().Contains("char") || sqlType.ToLower().Contains("text");
+            var lower = sqlType.ToLower().Trim();
+            return lower.Contains("char") || lower.Contains("text") || lower == "xml";
         }
 
         protected virtual bool IsFloatingPoint(string sqlType)
         {
-            foreach (var s in new[] { "float","decimal","numeric" })
+            foreach (var s in new[] { "float","decimal","numeric","real" ,"money","smallmoney"})
             {
                 if (sqlType.Trim().StartsWith(s, StringComparison.CurrentCultureIgnoreCase))
                     return true;
             }
 
             return false;
+        }
+
+        protected virtual bool IsGuid(string sqlType)
+        {
+            return sqlType.ToLower().Trim().Equals("uniqueidentifier");
         }
     }
 }

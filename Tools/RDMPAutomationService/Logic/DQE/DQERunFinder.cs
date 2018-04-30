@@ -185,16 +185,18 @@ namespace RDMPAutomationService.Logic.DQE
         private bool CanBeDQEd(Catalogue catalogue)
         {
             //see if it can be checked
-            CatalogueConstraintReport report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
+            var report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
 
             var checker = new ToMemoryCheckNotifier();
             report.Check(checker);
 
             if (_listener != null)
+            {
                 foreach (var check in checker.Messages)
                 {
-                    _listener.OnNotify(this, check.ToNotifyEventArgs());
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, check.Message, check.Ex));
                 }
+            }
 
             return checker.GetWorst() != CheckResult.Fail;
         }

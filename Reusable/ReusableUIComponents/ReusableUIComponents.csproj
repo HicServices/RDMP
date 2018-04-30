@@ -204,7 +204,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-	 <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
@@ -381,6 +381,7 @@
     <Compile Include="ServerDatabaseTableSelector.Designer.cs">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\RDMPApplicationSettings.cs" />
     <Compile Include="Settings\UserSettings.cs" />
     <Compile Include="Settings\UserSettingsUI.cs">
       <SubType>Form</SubType>

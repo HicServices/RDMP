@@ -36,7 +36,6 @@ namespace CatalogueManager.ANOEngineeringUIs
     /// </summary>
     public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogueUI_Design
     {
-
         private bool _setup = false;
         private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
         private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;

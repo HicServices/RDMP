@@ -12,6 +12,7 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Pipeline;
 using RDMPStartup;
+using RDMPStartup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
@@ -82,6 +83,7 @@ namespace RDMPAutomationService
                 _serviceSlot.Lock();
 
                 Startup startup = new Startup(_locator);
+                startup.DatabaseFound += StartupOnDatabaseFound;
                 startup.DoStartup(new AutomationMEFLoadingCheckNotifier()); //who cares if MEF has problems eh?
 
                 OnStartCompleted();
@@ -94,6 +96,18 @@ namespace RDMPAutomationService
             }
             t = new Thread(Run);
             t.Start();
+        }
+
+        private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
+        {
+            if ((eventArgs.Tier == 1 || eventArgs.Tier == 2) && eventArgs.Status != RDMPPlatformDatabaseStatus.Healthy)
+            {
+                _log(EventLogEntryType.Error, eventArgs.SummariseAsString());
+            }
+            if (eventArgs.Tier == 3 && eventArgs.Status != RDMPPlatformDatabaseStatus.Healthy)
+            {
+                _log(EventLogEntryType.Warning, eventArgs.SummariseAsString());
+            }
         }
 
         private void Run()
@@ -246,7 +260,7 @@ namespace RDMPAutomationService
         private void OnStartCompleted()
         {
             lockEstablished = true;
-
+            
             var eventArgs = new ServiceEventArgs()
             {
                 EntryType = EventLogEntryType.Information,
