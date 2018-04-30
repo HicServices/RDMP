@@ -113,6 +113,8 @@ namespace DataExportLibrary.Checks
                     {
                         if (e.Message.Contains("Timeout"))
                             notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s",CheckResult.Warning));
+                        else
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail,e));
                     }
                 }
             }
