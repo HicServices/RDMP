@@ -346,8 +346,10 @@ namespace DataExportLibrary.Providers
         
         private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
         {
-            AddToDictionaries(new HashSet<object>(CohortSources), descendancy);
-            foreach (var s in CohortSources)
+            var validSources = CohortSources.Except(BlackListedSources).ToArray();
+
+            AddToDictionaries(new HashSet<object>(validSources), descendancy);
+            foreach (var s in validSources)
                 AddChildren(s, descendancy.Add(s));
         }
 
@@ -382,7 +384,14 @@ namespace DataExportLibrary.Providers
                 if (server == null || !server.RespondsWithinTime(10, out ex))
                 {
                     BlackListedSources.Add(source);
-                    throw new Exception("Blacklisted source '" + source + "' due to error " + ex);
+
+                    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Blacklisted source '" + source + "'",CheckResult.Fail, ex));
+
+                    //tell them not to bother looking for the cohort data because its inaccessible
+                    foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
+                        cohort.InjectKnown(null);
+
+                    continue;
                 }
 
                 using (var con = server.GetConnection())
@@ -408,7 +417,7 @@ namespace DataExportLibrary.Providers
                             var externalData = new ExternalCohortDefinitionData((SqlDataReader)r, source.Name);
 
                             //tell the cohort about the data
-                            c.SetKnownExternalData(externalData);
+                            c.InjectKnown(externalData);
 
                             //for performance also keep a dictionary of project number => compatible cohorts
                             if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))

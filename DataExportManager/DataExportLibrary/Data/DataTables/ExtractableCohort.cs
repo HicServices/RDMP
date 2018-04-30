@@ -11,7 +11,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
-
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -33,7 +33,7 @@ namespace DataExportLibrary.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>
     {
         #region Database Properties
         private int _externalCohortTable_ID;
@@ -133,6 +133,8 @@ namespace DataExportLibrary.Data.DataTables
             OriginID = Convert.ToInt32(r["OriginID"]);
             ExternalCohortTable_ID = Convert.ToInt32(r["ExternalCohortTable_ID"]);
             AuditLog = r["AuditLog"] as string;
+
+            ClearAllInjections();
             /*
             try
             {
@@ -169,7 +171,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         
-        private IExternalCohortDefinitionData _cacheData;
+        private Lazy<IExternalCohortDefinitionData> _cacheData;
         private int _originID;
 
         public ExtractableCohort(IDataExportRepository repository, ExternalCohortTable externalSource, int originalId)
@@ -184,14 +186,18 @@ namespace DataExportLibrary.Data.DataTables
                 {"OriginID", originalId},
                 {"ExternalCohortTable_ID", externalSource.ID}
             });
+
+            ClearAllInjections();
         }
 
         public override string ToString()
         {
-            if (_cacheData == null)
-                _cacheData = GetExternalData();
+            var v = _cacheData.Value;
 
-            return _cacheData.ExternalProjectNumber + "_" + _cacheData.ExternalDescription + "_V" + _cacheData.ExternalVersion;
+            if (v == null)
+                return "Broken Cohort";
+
+            return v.ExternalProjectNumber + "_" + v.ExternalDescription + "_V" + v.ExternalVersion;
         }
 
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
@@ -201,11 +207,6 @@ namespace DataExportLibrary.Data.DataTables
                 _cachedQuerySyntaxHelper = ExternalCohortTable.GetQuerySyntaxHelper();
 
             return _cachedQuerySyntaxHelper;
-        }
-
-        public void SetKnownExternalData(IExternalCohortDefinitionData externalData)
-        {
-            _cacheData = externalData;
         }
 
         #region Stuff for executing the actual queries described by this class (generating cohorts etc)
@@ -522,6 +523,16 @@ namespace DataExportLibrary.Data.DataTables
 
             AuditLog += Environment.NewLine + DateTime.Now + " " + Environment.UserName  + " " + s;
             SaveToDatabase();
+        }
+
+        public void InjectKnown(IExternalCohortDefinitionData instance)
+        {
+            _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _cacheData = new Lazy<IExternalCohortDefinitionData>(GetExternalData);
         }
     }
         public enum OneToMErrorResolutionStrategy
