@@ -188,7 +188,7 @@ namespace DataExportManager.ProjectUI.Datasets
         /// <para>Then add it to the right hand list</para>
         /// </summary>
         /// <param name="item"></param>
-        private void AddColumnToExtraction(IColumn item)
+        private ExtractableColumn AddColumnToExtraction(IColumn item)
         {
             IRevertable r = item as IRevertable;
             
@@ -201,6 +201,8 @@ namespace DataExportManager.ProjectUI.Datasets
             
             RefreshDisabledObjectStatus();
             SortSelectedByOrder();
+
+            return addMe;
         }
 
         private void btnInclude_Click(object sender, EventArgs e)
@@ -310,9 +312,13 @@ namespace DataExportManager.ProjectUI.Datasets
         {
             if (e.SourceModels != null)
                 foreach (IColumn sourceModel in e.SourceModels.OfType<IColumn>())
-                    if (!IsAlreadySelected(sourceModel)) 
-                        AddColumnToExtraction(sourceModel);
+                    if (!IsAlreadySelected(sourceModel))
+                    {
 
+                        var added = AddColumnToExtraction(sourceModel);
+                        HandleReorder(added,e.TargetModel as IOrderable,e.DropTargetLocation);
+                    }
+            
             RefreshDisabledObjectStatus();
         }
 
@@ -321,13 +327,22 @@ namespace DataExportManager.ProjectUI.Datasets
             if (e.SourceModels == null || e.SourceModels.Count != 1)
                 return;
 
-            ConcreteColumn sourceColumn = (ConcreteColumn) e.SourceModels[0];
+            ExtractableColumn sourceColumn = (ExtractableColumn)e.SourceModels[0];
+            
+            HandleReorder(sourceColumn,(IOrderable) e.TargetModel,e.DropTargetLocation);
+        }
 
-            IOrderable targetOrderable = (IOrderable) e.TargetModel;
+        private void HandleReorder(ExtractableColumn sourceColumn, IOrderable targetOrderable, DropTargetLocation location)
+        {
+            if (targetOrderable == null)
+                targetOrderable = olvSelected.Objects.Cast<IOrderable>().OrderByDescending(o => o.Order).FirstOrDefault();
+
+            if (targetOrderable == null)
+                return;
 
             int destinationOrder = targetOrderable.Order;
 
-            switch (e.DropTargetLocation)
+            switch (location)
             {
                 case DropTargetLocation.AboveItem:
 
@@ -342,6 +357,7 @@ namespace DataExportManager.ProjectUI.Datasets
                     //should now be space at the destination order position
                     sourceColumn.Order = destinationOrder;
                     break;
+                case DropTargetLocation.None:
                 case DropTargetLocation.BelowItem:
 
                     //bump up other columns
