@@ -475,7 +475,7 @@ namespace CatalogueLibrary.Providers
 
         #endregion
 
-        private void AddChildren(Catalogue c, DescendancyList descendancy)
+        protected void AddChildren(Catalogue c, DescendancyList descendancy)
         {
             List<object> childObjects = new List<object>();
 

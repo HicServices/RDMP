@@ -87,7 +87,7 @@ namespace CatalogueManager.ExtractionUIs
                 return;
 
             //note that we don't add the Any category
-            ddExtractionCategory.DataSource = new object[] { ExtractionCategory.Core, ExtractionCategory.Supplemental, ExtractionCategory.SpecialApprovalRequired, ExtractionCategory.Internal,ExtractionCategory.Deprecated};
+            ddExtractionCategory.DataSource = new object[] { ExtractionCategory.Core, ExtractionCategory.Supplemental, ExtractionCategory.SpecialApprovalRequired, ExtractionCategory.Internal,ExtractionCategory.Deprecated, ExtractionCategory.ProjectSpecific};
             QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
             QueryEditor.TextChanged += QueryEditorOnTextChanged;
 

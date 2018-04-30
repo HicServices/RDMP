@@ -186,7 +186,10 @@ namespace DataExportLibrary.Providers
             HashSet<object> children = new HashSet<object>();
 
             foreach (ExtractableDataSet projectSpecificEds in ExtractableDataSets.Where(eds=>eds.Project_ID == projectCataloguesNode.Project.ID))
+            {
                 children.Add(projectSpecificEds.Catalogue);
+                AddChildren((Catalogue)projectSpecificEds.Catalogue, descendancy.Add(projectSpecificEds.Catalogue));
+            }
             
             AddToDictionaries(children, descendancy);
         }
