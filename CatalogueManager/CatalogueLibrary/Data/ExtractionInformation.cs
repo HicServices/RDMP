@@ -53,7 +53,7 @@ namespace CatalogueLibrary.Data
             get { return _extractionCategory; }
             set
             {
-                if (_extractionCategory == ExtractionCategory.Any)
+                if (value == ExtractionCategory.Any)
                     throw new ArgumentException("Any is only usable as an extraction argument and cannot be assigned to an ExtractionInformation");
 
                 SetField(ref _extractionCategory, value);

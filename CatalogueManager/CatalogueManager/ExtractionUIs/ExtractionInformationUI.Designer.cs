@@ -48,18 +48,19 @@ namespace CatalogueManager.ExtractionUIs
             this.label5 = new System.Windows.Forms.Label();
             this.lblFromTable = new System.Windows.Forms.Label();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.gbIsDirectlyExtractable.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbIsDirectlyExtractable
             // 
-            this.gbIsDirectlyExtractable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbIsDirectlyExtractable.Controls.Add(this.flowLayoutPanel1);
-            this.gbIsDirectlyExtractable.Location = new System.Drawing.Point(14, 3);
+            this.gbIsDirectlyExtractable.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gbIsDirectlyExtractable.Location = new System.Drawing.Point(0, 0);
             this.gbIsDirectlyExtractable.Name = "gbIsDirectlyExtractable";
-            this.gbIsDirectlyExtractable.Size = new System.Drawing.Size(1100, 80);
+            this.gbIsDirectlyExtractable.Size = new System.Drawing.Size(1127, 80);
             this.gbIsDirectlyExtractable.TabIndex = 2;
             this.gbIsDirectlyExtractable.TabStop = false;
             this.gbIsDirectlyExtractable.Text = "Extraction Flags";
@@ -78,7 +79,7 @@ namespace CatalogueManager.ExtractionUIs
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1094, 61);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1121, 61);
             this.flowLayoutPanel1.TabIndex = 14;
             // 
             // label1
@@ -169,7 +170,7 @@ namespace CatalogueManager.ExtractionUIs
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(17, 86);
+            this.objectSaverButton1.Location = new System.Drawing.Point(3, 80);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
@@ -180,7 +181,7 @@ namespace CatalogueManager.ExtractionUIs
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Blue;
-            this.label4.Location = new System.Drawing.Point(20, 133);
+            this.label4.Location = new System.Drawing.Point(3, 109);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 13);
             this.label4.TabIndex = 5;
@@ -191,9 +192,9 @@ namespace CatalogueManager.ExtractionUIs
             this.pSql.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pSql.Location = new System.Drawing.Point(43, 149);
+            this.pSql.Location = new System.Drawing.Point(51, 125);
             this.pSql.Name = "pSql";
-            this.pSql.Size = new System.Drawing.Size(1068, 326);
+            this.pSql.Size = new System.Drawing.Size(1073, 447);
             this.pSql.TabIndex = 6;
             // 
             // label5
@@ -202,7 +203,7 @@ namespace CatalogueManager.ExtractionUIs
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.Blue;
-            this.label5.Location = new System.Drawing.Point(20, 487);
+            this.label5.Location = new System.Drawing.Point(3, 575);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(42, 13);
             this.label5.TabIndex = 5;
@@ -213,9 +214,9 @@ namespace CatalogueManager.ExtractionUIs
             this.lblFromTable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblFromTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFromTable.Location = new System.Drawing.Point(68, 487);
+            this.lblFromTable.Location = new System.Drawing.Point(51, 575);
             this.lblFromTable.Name = "lblFromTable";
-            this.lblFromTable.Size = new System.Drawing.Size(1043, 18);
+            this.lblFromTable.Size = new System.Drawing.Size(1073, 18);
             this.lblFromTable.TabIndex = 10;
             this.lblFromTable.Text = "Your Header Goes Here";
             // 
@@ -224,29 +225,39 @@ namespace CatalogueManager.ExtractionUIs
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(3, 149);
+            this.ragSmiley1.Location = new System.Drawing.Point(9, 125);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
             this.ragSmiley1.TabIndex = 11;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.objectSaverButton1);
+            this.panel1.Controls.Add(this.ragSmiley1);
+            this.panel1.Controls.Add(this.gbIsDirectlyExtractable);
+            this.panel1.Controls.Add(this.pSql);
+            this.panel1.Controls.Add(this.lblFromTable);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1127, 598);
+            this.panel1.TabIndex = 12;
             // 
             // ExtractionInformationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.lblFromTable);
-            this.Controls.Add(this.pSql);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.gbIsDirectlyExtractable);
+            this.Controls.Add(this.panel1);
             this.Name = "ExtractionInformationUI";
-            this.Size = new System.Drawing.Size(1127, 546);
+            this.Size = new System.Drawing.Size(1127, 598);
             this.gbIsDirectlyExtractable.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -269,5 +280,6 @@ namespace CatalogueManager.ExtractionUIs
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblFromTable;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private System.Windows.Forms.Panel panel1;
     }
 }
