@@ -192,8 +192,16 @@ namespace DataExportLibrary.Data.DataTables
 
         public override string ToString()
         {
-            var v = _cacheData.Value;
+            IExternalCohortDefinitionData v = null;
 
+            try
+            {
+                v = _cacheData.Value;
+            }
+            catch (Exception e)
+            {
+                _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>null);    
+            }
             if (v == null)
                 return "Broken Cohort";
 
