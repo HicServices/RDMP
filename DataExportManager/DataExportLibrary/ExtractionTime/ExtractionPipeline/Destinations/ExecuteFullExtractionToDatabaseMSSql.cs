@@ -441,6 +441,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs("Request is ExtractDatasetCommand.EmptyCommand, will not try to connect to Database",CheckResult.Warning));
                 return;
             }
+
             try
             {
                 var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
