@@ -155,6 +155,8 @@
             this.olvRightColumns.TabIndex = 4;
             this.olvRightColumns.UseCompatibleStateImageBehavior = false;
             this.olvRightColumns.View = System.Windows.Forms.View.Details;
+            this.olvRightColumns.DragDrop += new System.Windows.Forms.DragEventHandler(this.olvRightColumns_DragDrop);
+            this.olvRightColumns.DragEnter += new System.Windows.Forms.DragEventHandler(this.olvRightColumns_DragEnter);
             // 
             // olvRightColumnNames
             // 
@@ -193,6 +195,7 @@
             this.tbCollation.Name = "tbCollation";
             this.tbCollation.Size = new System.Drawing.Size(229, 20);
             this.tbCollation.TabIndex = 23;
+            this.tbCollation.Leave += new System.EventHandler(this.tbCollation_Leave);
             // 
             // label13
             // 
