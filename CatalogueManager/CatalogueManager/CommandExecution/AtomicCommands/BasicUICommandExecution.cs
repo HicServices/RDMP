@@ -40,9 +40,32 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }
 
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T in the list you provide
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="availableObjects"></param>
+        /// <returns></returns>
         protected T SelectOne<T>(IEnumerable<T> availableObjects) where T : DatabaseEntity
         {
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+                return (T)dialog.Selected;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Prompts user to select 1 object of type T from all the ones stored in the repository provided
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="repository"></param>
+        /// <returns></returns>
+        protected T SelectOne<T>(IRepository repository) where T : DatabaseEntity
+        {
+            var all = repository.GetAllObjects<T>();
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(all, false, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 return (T)dialog.Selected;
