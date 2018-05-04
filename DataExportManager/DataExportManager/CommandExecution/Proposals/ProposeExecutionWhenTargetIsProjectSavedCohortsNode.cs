@@ -43,6 +43,11 @@ namespace DataExportManager.CommandExecution.Proposals
             if(fileCommand != null && fileCommand.Files.Length == 1)
                 return new ExecuteCommandImportFileAsNewCohort(ItemActivator,fileCommand.Files[0]).SetTarget(target.Project);
 
+            //drop a Project Specific Catalogue onto it
+            var catalogueCommand = cmd as CatalogueCommand;
+            if (catalogueCommand != null)
+                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCommand.Catalogue).SetTarget(target.Project);
+            
             return null;
         }
     }

@@ -329,6 +329,7 @@
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\CohortCreationCommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneConfiguration.cs" />
