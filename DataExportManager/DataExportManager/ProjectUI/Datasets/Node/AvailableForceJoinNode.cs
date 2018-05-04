@@ -15,6 +15,11 @@ namespace DataExportManager.ProjectUI.Datasets.Node
         public JoinInfo[] JoinInfos { get; set; }
         public bool IsMandatory { get; set; }
 
+        /// <summary>
+        /// The table will be in the query if it IsMandatory (becaues of the columns the user has selected) or is explicitly picked for inclusion by the user (ForcedJoin)
+        /// </summary>
+        public bool IsIncludedInQuery { get { return ForcedJoin != null || IsMandatory; }}
+
         public AvailableForceJoinNode(TableInfo tableInfo, bool isMandatory)
         {
             TableInfo = tableInfo;

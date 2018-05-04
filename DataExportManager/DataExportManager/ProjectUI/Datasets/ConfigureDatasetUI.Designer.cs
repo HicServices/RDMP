@@ -44,6 +44,9 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelectCore = new System.Windows.Forms.Button();
+            this.flpCouldNotJoinTables = new System.Windows.Forms.FlowLayoutPanel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.helpIconJoin = new ReusableUIComponents.HelpIcon();
             this.btnRefreshChecks = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.tbSearchTables = new System.Windows.Forms.TextBox();
@@ -64,6 +67,7 @@ namespace DataExportManager.ProjectUI.Datasets
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvAvailable)).BeginInit();
+            this.flpCouldNotJoinTables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvJoin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).BeginInit();
             this.SuspendLayout();
@@ -139,6 +143,7 @@ namespace DataExportManager.ProjectUI.Datasets
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.flpCouldNotJoinTables);
             this.splitContainer1.Panel2.Controls.Add(this.btnRefreshChecks);
             this.splitContainer1.Panel2.Controls.Add(this.label7);
             this.splitContainer1.Panel2.Controls.Add(this.tbSearchTables);
@@ -229,6 +234,37 @@ namespace DataExportManager.ProjectUI.Datasets
             this.btnSelectCore.Text = "Select Core";
             this.btnSelectCore.UseVisualStyleBackColor = true;
             this.btnSelectCore.Click += new System.EventHandler(this.btnSelectCore_Click);
+            // 
+            // flpCouldNotJoinTables
+            // 
+            this.flpCouldNotJoinTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.flpCouldNotJoinTables.Controls.Add(this.label8);
+            this.flpCouldNotJoinTables.Controls.Add(this.helpIconJoin);
+            this.flpCouldNotJoinTables.Location = new System.Drawing.Point(8, 442);
+            this.flpCouldNotJoinTables.Name = "flpCouldNotJoinTables";
+            this.flpCouldNotJoinTables.Size = new System.Drawing.Size(260, 24);
+            this.flpCouldNotJoinTables.TabIndex = 168;
+            this.flpCouldNotJoinTables.Visible = false;
+            // 
+            // label8
+            // 
+            this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label8.AutoSize = true;
+            this.label8.ForeColor = System.Drawing.Color.Red;
+            this.label8.Location = new System.Drawing.Point(3, 6);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(204, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Missing join information for included tables";
+            // 
+            // helpIconJoin
+            // 
+            this.helpIconJoin.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.helpIconJoin.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconJoin.BackgroundImage")));
+            this.helpIconJoin.Location = new System.Drawing.Point(213, 3);
+            this.helpIconJoin.Name = "helpIconJoin";
+            this.helpIconJoin.Size = new System.Drawing.Size(19, 19);
+            this.helpIconJoin.TabIndex = 1;
             // 
             // btnRefreshChecks
             // 
@@ -416,6 +452,8 @@ namespace DataExportManager.ProjectUI.Datasets
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvAvailable)).EndInit();
+            this.flpCouldNotJoinTables.ResumeLayout(false);
+            this.flpCouldNotJoinTables.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvJoin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvSelected)).EndInit();
             this.ResumeLayout(false);
@@ -452,5 +490,8 @@ namespace DataExportManager.ProjectUI.Datasets
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnRefreshChecks;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.FlowLayoutPanel flpCouldNotJoinTables;
+        private System.Windows.Forms.Label label8;
+        private ReusableUIComponents.HelpIcon helpIconJoin;
     }
 }

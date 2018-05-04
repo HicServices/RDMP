@@ -69,6 +69,8 @@ namespace DataExportManager.ProjectUI.Datasets
             olvJoin.ButtonClick += olvJoin_ButtonClick;
 
             olvJoinColumn.EnableButtonWhenItemIsDisabled = true;
+
+            helpIconJoin.SetHelpText("Configure JoinInfos","Your query involves more than 1 table and RDMP does not yet know which columns to use to join the tables on.  Click the 'Configure' button below on any ticked tables for which no joins are shown");
         }
 
         private object SelectedCatalogue_AspectGetter(object rowObject)
@@ -316,7 +318,6 @@ namespace DataExportManager.ProjectUI.Datasets
                 foreach (IColumn sourceModel in e.SourceModels.OfType<IColumn>())
                     if (!IsAlreadySelected(sourceModel))
                     {
-
                         var added = AddColumnToExtraction(sourceModel);
                         HandleReorder(added,e.TargetModel as IOrderable,e.DropTargetLocation);
                     }
@@ -396,7 +397,7 @@ namespace DataExportManager.ProjectUI.Datasets
             var n = (AvailableForceJoinNode)rowobject;
 
             //it is jecked if there is a forced join or if the columns make it a requirement
-            if (n.ForcedJoin != null || n.IsMandatory)
+            if (n.IsIncludedInQuery)
                 return CheckState.Checked;
 
             return CheckState.Unchecked;
@@ -484,6 +485,11 @@ namespace DataExportManager.ProjectUI.Datasets
             foreach (var node in nodes)
                 node.FindJoinsBetween(nodes);
 
+            //highlight to user the fact that there are unlinkable tables
+            
+            //if there are 2+ tables in the query and at least 1 of them doesn't have any join logic configured for it
+            flpCouldNotJoinTables.Visible = nodes.Count(n => n.IsIncludedInQuery) > 1 && nodes.Any(n => n.IsIncludedInQuery && !n.JoinInfos.Any());
+            
             olvJoin.AddObjects(nodes.ToArray());
         }
         
