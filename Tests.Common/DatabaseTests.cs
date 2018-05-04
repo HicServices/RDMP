@@ -161,8 +161,11 @@ namespace Tests.Common
             return builder;
         }
         
-
-        private void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        /// <summary>
+        /// Deletes all objects in the Catalogue and DataExport databases
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        protected void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             using (var con = repositoryLocator.CatalogueRepository.GetConnection())
             {

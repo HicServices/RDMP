@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace Sharing.Dependency.Gathering
@@ -21,10 +23,16 @@ namespace Sharing.Dependency.Gathering
         
         private Dictionary<int, ExtractionConfiguration> _allExtractionConfigurations;
         private ExtractableColumn[] _allExtractionColumns;
-        
+
+        readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>>();
+
         public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
+            
+            _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
+            _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
+            _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
         }
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
@@ -32,6 +40,40 @@ namespace Sharing.Dependency.Gathering
             var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetEverySingleObjectInEntireDatabase();
             var allDataExportObjects = ((DataExportRepository)_repositoryLocator.DataExportRepository).GetEverySingleObjectInEntireDatabase();
             return allCatalogueObjects.Union(allDataExportObjects).ToArray();
+        }
+
+        /// <summary>
+        /// Invokes the relevant overload if it exists. 
+        /// <seealso cref="CanGatherDependencies"/>
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
+        public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity)
+        {
+            return _functions.ContainsKey(databaseEntity.GetType());
+        }
+
+        public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o)
+        {
+            return _functions[o.GetType()](o);
+        }
+
+        public GatheredObject GatherDependencies(ANOTable anoTable)
+        {
+            var root = new GatheredObject(anoTable.Server);
+            root.Children.Add(new GatheredObject(anoTable));
+
+            return root;
+        }
+
+        public GatheredObject GatherDependencies(Plugin plugin)
+        {
+            var root = new GatheredObject(plugin);
+
+            foreach (var lma in plugin.LoadModuleAssemblies)
+                root.Children.Add(new GatheredObject(lma));
+            
+            return root;
         }
 
         /// <summary>
@@ -43,7 +85,6 @@ namespace Sharing.Dependency.Gathering
         /// <returns></returns>
         public GatheredObject GatherDependencies(ColumnInfo c)
         {
-            
             var allObjects = GetAllObjectsInAllDatabases();
 
             var propertyFinder = new AttributePropertyFinder<SqlAttribute>(allObjects);
@@ -56,24 +97,12 @@ namespace Sharing.Dependency.Gathering
                 if(Equals(o,c))
                     continue;
                 
-                bool foundReference = false;
-
-                    foreach (var propertyInfo in propertyFinder.GetProperties(o))
-                    {
-                        var sql = (string)propertyInfo.GetValue(o);
-
-                        if (sql.Contains(c.Name))
-                            foundReference = true;
-                    }
-
-                if(foundReference)
+                foreach (var propertyInfo in propertyFinder.GetProperties(o))
                 {
-                    var type = o.GetType();
+                    var sql = (string)propertyInfo.GetValue(o);
 
-                    if(!root.Contains(type))
-                        root.Add(new GatheredType(type));
-
-                    root.DependencyTypes[type].Add(o);
+                    if (sql != null && sql.Contains(c.Name))
+                        root.Children.Add(new GatheredObject(o));
                 }
             }
             /*
@@ -140,5 +169,6 @@ namespace Sharing.Dependency.Gathering
             
             return root;
         }
+
     }
 }

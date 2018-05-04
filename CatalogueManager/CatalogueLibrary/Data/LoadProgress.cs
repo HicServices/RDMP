@@ -82,10 +82,10 @@ namespace CatalogueLibrary.Data
         #endregion
         #region Relationships
         [NoMappingToDatabase]
-        public LoadMetadata LoadMetadata { get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }}
+        public ILoadMetadata LoadMetadata { get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }}
 
         [NoMappingToDatabase]
-        public CacheProgress CacheProgress
+        public ICacheProgress CacheProgress
         {
             get
             {
@@ -118,12 +118,7 @@ namespace CatalogueLibrary.Data
             DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
             AllowAutomation = Convert.ToBoolean(r["AllowAutomation"]);
         }
-
-        public ILoadMetadata GetLoadMetadata()
-        {
-            return LoadMetadata;
-        }
-
+        
         public TimeSpan GetLoadPeriodicity()
         {
             return TimeSpan.Parse(LoadPeriodicity);
@@ -157,12 +152,5 @@ namespace CatalogueLibrary.Data
         {
             ((CatalogueRepository) Repository).RefreshLockPropertiesFromDatabase(this);
         }
-
-        public ICacheProgress GetCacheProgress()
-        {
-            return CacheProgress;
-        }
-
-       
     }
 }

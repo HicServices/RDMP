@@ -13,6 +13,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
@@ -42,7 +43,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>
     {
         #region Database Properties
         private string _countSQL;
@@ -337,6 +338,8 @@ namespace CatalogueLibrary.Data.Aggregation
                 {"Name", name},
                 {"Catalogue_ID", catalogue.ID}
             });
+
+            ClearAllInjections();
         }
         
         internal AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
@@ -366,7 +369,7 @@ namespace CatalogueLibrary.Data.Aggregation
             OverrideFiltersByUsingParentAggregateConfigurationInstead_ID =
                 ObjectToNullableInt(r["OverrideFiltersByUsingParentAggregateConfigurationInstead_ID"]);
 
-            
+            ClearAllInjections();
         }
 
 
@@ -376,6 +379,26 @@ namespace CatalogueLibrary.Data.Aggregation
         public void ReFetchOrder()
         {
             _orderWithinKnownContainer = ((CatalogueRepository) Repository).GetOrderIfExistsFor(this);
+        }
+
+        private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
+
+
+        /// <summary>
+        /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
+        /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
+        /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method <see cref="IsJoinablePatientIndexTable"/>
+        /// </summary>
+        /// <param name="joinable"></param>
+        public void InjectKnown(JoinableCohortAggregateConfiguration instance)
+        {
+            _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>instance);
+        }
+
+        /// <inheritdoc/>
+        public void ClearAllInjections()
+        {
+            _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
         }
 
         /// <summary>
@@ -548,13 +571,7 @@ namespace CatalogueLibrary.Data.Aggregation
         ///  JoinableCohortAggregateConfiguration object</returns>
         public bool IsJoinablePatientIndexTable()
         {
-            if (!_databaseLookupPerformed)
-            {
-                _cachedJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
-                _databaseLookupPerformed = true;
-            }
-
-            return _cachedJoinable != null;
+            return _knownJoinableCohortAggregateConfiguration.Value != null;
         }
 
         /// <summary>
@@ -687,21 +704,6 @@ namespace CatalogueLibrary.Data.Aggregation
                 dependers.Add(cic);
 
             return dependers.ToArray();
-        }
-
-        private JoinableCohortAggregateConfiguration _cachedJoinable;
-        private bool _databaseLookupPerformed;
-
-        /// <summary>
-        /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
-        /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
-        /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method IsJoinablePatientIndexTable
-        /// </summary>
-        /// <param name="joinable"></param>
-        public void InjectKnownJoinableOrNone(JoinableCohortAggregateConfiguration joinable)
-        {
-            _cachedJoinable = joinable;
-            _databaseLookupPerformed = true;
         }
     }
 }

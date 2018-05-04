@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
@@ -178,16 +179,10 @@ namespace CatalogueLibrary.Data.DataLoad
             if (Type.Equals(typeof(Regex).ToString()))
                 return new Regex(Value);
 
-            Type type = GetSystemType();
+            Type type = GetConcreteSystemType();
 
-            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            {
-                //if it is interface e.g. ITableInfo fetch instead the TableInfo object
-                if (type.IsInterface && type.Name.StartsWith("I"))
-                    type = ((CatalogueRepository) Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1));
-
+            if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
                 return Repository.GetObjectByID(type, Convert.ToInt32(Value));
-            }
 
             if (Type.Equals(typeof (EncryptedString).ToString()))
                 return new EncryptedString((CatalogueRepository) Repository) {Value = Value};
@@ -265,6 +260,27 @@ namespace CatalogueLibrary.Data.DataLoad
                 throw new Exception("Could not figure out what SystemType to use for Type = '" + Type +"'");
 
             return anyType;
+        }
+
+        /// <summary>
+        /// Gets the concrete implementation class of GetSystemType if GetSystemType is an interface (that we know about)
+        /// Tries its best to return a concrete type if at all possible, otherwise it will just return the passed in type.
+        /// </summary>
+        /// <returns></returns>
+        public Type GetConcreteSystemType()
+        {
+            var type = GetSystemType();
+
+            //if it is interface e.g. ITableInfo fetch instead the TableInfo object
+            if (type.IsInterface && type.Name.StartsWith("I"))
+            {
+                var candidate = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1)); // chop the 'I' off
+
+                if(!candidate.IsAbstract)
+                    return candidate;
+            }
+
+            return type;
         }
 
         public void SetType(Type t)

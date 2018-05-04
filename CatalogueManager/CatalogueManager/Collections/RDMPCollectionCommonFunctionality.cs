@@ -113,7 +113,8 @@ namespace CatalogueManager.Collections
 
             Tree.ItemActivate += CommonItemActivation;
             Tree.CellRightClick += CommonRightClick;
-            Tree.SelectionChanged += Tree_SelectionChanged;
+            Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
+            
 
             iconColumn.ImageGetter += ImageGetter;
             Tree.RowHeight = 19;
@@ -210,15 +211,16 @@ namespace CatalogueManager.Collections
         {
             return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
         }
-
-        void Tree_SelectionChanged(object sender, EventArgs e)
+        
+        private void RefreshContextMenuStrip()
         {
             Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObject);
         }
+
         public void CommonRightClick(object sender, CellRightClickEventArgs e)
         {
             Tree.SelectedObject = e.Model;
-            Tree.ContextMenuStrip = GetMenuIfExists(e.Model);
+            RefreshContextMenuStrip();
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
@@ -483,6 +485,8 @@ namespace CatalogueManager.Collections
                     }
                 }
             }
+
+            RefreshContextMenuStrip();
         }
 
         private bool IsHiddenByFilter(object o)
@@ -493,7 +497,6 @@ namespace CatalogueManager.Collections
         private void OnRefreshChildProvider(ICoreChildProvider coreChildProvider)
         {
             CoreChildProvider = coreChildProvider;
-            CoreIconProvider.SetClassifications(CoreChildProvider.CatalogueItemClassifications);
         }
 
         public void TearDown()

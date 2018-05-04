@@ -43,7 +43,7 @@ namespace DataLoadEngine.DataProvider.FromCache
 
         protected  ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
         {
-            var cacheProgress = job.LoadProgress.GetCacheProgress();
+            var cacheProgress = job.LoadProgress.CacheProgress;
 
             if(cacheProgress == null)
                 throw new NullReferenceException("cacheProgress cannot be null");
@@ -208,7 +208,7 @@ namespace DataLoadEngine.DataProvider.FromCache
                     return;
                 }
 
-                var cp = LoadProgress.GetCacheProgress();
+                var cp = LoadProgress.CacheProgress;
 
                 if(cp == null)
                 {

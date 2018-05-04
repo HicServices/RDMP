@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.IO.Compression;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -70,6 +72,11 @@ namespace CatalogueLibrary.Data
                     PluginVersion = new Version("0.0.0.0");//user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
                 }
             }
+        }
+
+        internal Plugin(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this, shareManager, shareDefinition);
         }
 
         public override string ToString()

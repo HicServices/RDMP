@@ -26,6 +26,9 @@ namespace CatalogueLibrary.Data.Cache
         private TimeSpan _chunkPeriod;
         private string _cacheLagPeriodLoadDelay;
 
+        /// <summary>
+        /// The LoadProgress which is responsible for loading data from this cache.
+        /// </summary>
         public int LoadProgress_ID
         {
             get { return _loadProgressID; }
@@ -62,6 +65,10 @@ namespace CatalogueLibrary.Data.Cache
             set { SetField(ref  _cacheLagPeriod, value); }
         } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
 
+        /// <summary>
+        /// The pipeline configuration responsible for populating the cache.  This will be run repeatedly for each date range fetched 
+        /// <see cref="CachingEngine.Factories.CachingPipelineUseCase"/>
+        /// </summary>
         public int? Pipeline_ID
         {
             get { return _pipelineID; }
@@ -96,14 +103,18 @@ namespace CatalogueLibrary.Data.Cache
 
         #region Relationships
 
+        /// <summary>
+        /// Returns all failed cache requests documented.  This is an array of dates that were requested of the caching endpoint but were no data was available due
+        /// to the endpoint reporting an Exception at the time it was requested. 
+        /// </summary>
         [NoMappingToDatabase]
-        public IEnumerable<CacheFetchFailure> CacheFetchFailures {
+        public IEnumerable<ICacheFetchFailure> CacheFetchFailures {
             get { return Repository.GetAllObjectsWithParent<CacheFetchFailure>(this); }
         }
 
         /// <inheritdoc cref="LoadProgress_ID"/>
         [NoMappingToDatabase]
-        public LoadProgress LoadProgress
+        public ILoadProgress LoadProgress
         {
             get { return Repository.GetObjectByID<LoadProgress>(LoadProgress_ID); }
         }
@@ -117,7 +128,7 @@ namespace CatalogueLibrary.Data.Cache
 
         /// <inheritdoc cref="PermissionWindow_ID"/>
         [NoMappingToDatabase]
-        public PermissionWindow PermissionWindow
+        public IPermissionWindow PermissionWindow
         {
             get
             {
@@ -128,8 +139,7 @@ namespace CatalogueLibrary.Data.Cache
         }
 
         #endregion
-
-
+        /// <inheritdoc cref="CacheLagPeriod"/>
         public CacheLagPeriod GetCacheLagPeriod()
         {
             if (string.IsNullOrWhiteSpace(CacheLagPeriod))
@@ -138,6 +148,7 @@ namespace CatalogueLibrary.Data.Cache
             return new CacheLagPeriod(CacheLagPeriod);
         }
 
+        /// <inheritdoc cref="CacheLagPeriodLoadDelay"/>
         public CacheLagPeriod GetCacheLagPeriodLoadDelay()
         {
             if (string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay))
@@ -145,31 +156,25 @@ namespace CatalogueLibrary.Data.Cache
 
             return new CacheLagPeriod(CacheLagPeriodLoadDelay);
         }
-
+        
+        /// <inheritdoc cref="CacheLagPeriod"/>
         public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
         {
             CacheLagPeriod = (cacheLagPeriod == null) ? "" : cacheLagPeriod.ToString();
         }
+
+        /// <inheritdoc cref="CacheLagPeriodLoadDelay"/>
         public void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagLoadDelayPeriod)
         {
             CacheLagPeriodLoadDelay = (cacheLagLoadDelayPeriod == null) ? "" : cacheLagLoadDelayPeriod.ToString();
         }
 
-        public ILoadProgress GetLoadProgress()
-        {
-            return LoadProgress;
-        }
-
-        public IPermissionWindow GetPermissionWindow()
-        {
-            return PermissionWindow;
-        }
-
-        public IEnumerable<ICacheFetchFailure> GetAllFetchFailures()
-        {
-            return CacheFetchFailures;
-        }
-
+        /// <summary>
+        /// Defines that the given <see cref="LoadProgress"/> is a DLE data load that is driven by reading data from a cache.  The instance created can be used
+        /// to describe which pipeline should be run to fill that cache, the period that has been fetched from the remote endpoint so far etc.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="loadProgress"></param>
         public CacheProgress(ICatalogueRepository repository, ILoadProgress loadProgress)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -190,6 +195,7 @@ namespace CatalogueLibrary.Data.Cache
             ChunkPeriod = (TimeSpan)r["ChunkPeriod"];
         }
 
+        /// <inheritdoc/>
         public IEnumerable<ICacheFetchFailure> FetchPage(int start, int batchSize)
         {
             List<int> toReturnIds = new List<int>();
@@ -233,7 +239,7 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction);
                 shortfall = lastExpectedCacheDate.Subtract(CacheFillProgress.Value);
             else
             {
-                var load = GetLoadProgress();
+                var load = LoadProgress;
                 if (load.DataLoadProgress.HasValue)
                     shortfall = lastExpectedCacheDate.Subtract(load.DataLoadProgress.Value);
                 else if (load.OriginDate.HasValue)
@@ -245,6 +251,7 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction);
             return shortfall;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return "Cache Progress " + ID;
@@ -257,9 +264,9 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction);
         public Catalogue[] GetAllCataloguesMaximisingOnPermissionWindow()
         {
             if(PermissionWindow_ID == null)
-                return LoadProgress.GetLoadMetadata().GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray();
+                return LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray();
             
-            return PermissionWindow.GetAllCacheProgresses().SelectMany(p => p.GetLoadProgress().GetLoadMetadata().GetAllCatalogues()).Cast<Catalogue>().Distinct().ToArray();
+            return PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues()).Cast<Catalogue>().Distinct().ToArray();
         }
     }
 }

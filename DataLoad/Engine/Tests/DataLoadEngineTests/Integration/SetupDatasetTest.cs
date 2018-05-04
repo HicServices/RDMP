@@ -96,7 +96,7 @@ namespace DataLoadEngineTests.Integration
                 if(testCatalogue.LiveLoggingServer_ID == null)
                     throw new NullReferenceException("No logging server was configured for test catalogue");
                 
-                var loggingServer = DataAccessPortal.GetInstance().ExpectServer(testCatalogue.GetLoggingServer(false), DataAccessContext.Logging);
+                var loggingServer = DataAccessPortal.GetInstance().ExpectServer(testCatalogue.LiveLoggingServer, DataAccessContext.Logging);
                 var logManager = new LogManager(loggingServer);
                 var preExecutionChecker = new PreExecutionChecker(loadMetadata, configuration);
                 var pipelineFactory = new HICDataLoadFactory(loadMetadata, configuration, loadConfigurationFlags, CatalogueRepository, logManager);

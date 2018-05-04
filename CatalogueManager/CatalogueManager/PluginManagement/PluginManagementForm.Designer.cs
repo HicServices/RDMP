@@ -39,6 +39,7 @@ namespace CatalogueManager.PluginManagement
             this.lblProgressAnalysing = new System.Windows.Forms.Label();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSaveToRemote = new System.Windows.Forms.Button();
+            this.btnExportToDisk = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -125,11 +126,22 @@ namespace CatalogueManager.PluginManagement
             this.btnSaveToRemote.UseVisualStyleBackColor = true;
             this.btnSaveToRemote.Click += new System.EventHandler(this.btnSaveToRemote_Click);
             // 
+            // btnExportToDisk
+            // 
+            this.btnExportToDisk.Location = new System.Drawing.Point(368, 447);
+            this.btnExportToDisk.Name = "btnExportToDisk";
+            this.btnExportToDisk.Size = new System.Drawing.Size(298, 39);
+            this.btnExportToDisk.TabIndex = 6;
+            this.btnExportToDisk.Text = "Export All To Disk";
+            this.btnExportToDisk.UseVisualStyleBackColor = true;
+            this.btnExportToDisk.Click += new System.EventHandler(this.btnExportToDisk_Click);
+            // 
             // PluginManagementForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1387, 759);
+            this.Controls.Add(this.btnExportToDisk);
             this.Controls.Add(this.btnSaveToRemote);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.lblProgressAnalysing);
@@ -155,5 +167,6 @@ namespace CatalogueManager.PluginManagement
         private System.Windows.Forms.Label lblProgressAnalysing;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnSaveToRemote;
+        private System.Windows.Forms.Button btnExportToDisk;
     }
 }

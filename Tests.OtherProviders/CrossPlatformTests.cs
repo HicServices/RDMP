@@ -122,6 +122,47 @@ namespace Tests.OtherProviders
             tbl.Drop();
         }
 
+        [Test]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestDistincting(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var tbl = database.CreateTable("TestDistincting",new []
+            {
+                new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),10)),
+                new DatabaseColumnRequest("Field2",new DatabaseTypeRequest(typeof(DateTime))),
+                new DatabaseColumnRequest("Field3",new DatabaseTypeRequest(typeof(int)))
+            });
+
+            var dt = new DataTable();
+            dt.Columns.Add("Field1");
+            dt.Columns.Add("Field2");
+            dt.Columns.Add("Field3");
+
+            dt.Rows.Add(new[] {"dave", "2001-01-01", "50"});
+            dt.Rows.Add(new[] {"dave", "2001-01-01", "50"});
+            dt.Rows.Add(new[] {"dave", "2001-01-01", "50"});
+            dt.Rows.Add(new[] {"dave", "2001-01-01", "50"});
+            dt.Rows.Add(new[] {"frank", "2001-01-01", "50"});
+            dt.Rows.Add(new[] {"frank", "2001-01-01", "50"});
+            dt.Rows.Add(new[] {"frank", "2001-01-01", "51"});
+
+            Assert.AreEqual(1,tbl.Database.DiscoverTables(false).Count());
+            Assert.AreEqual(0,tbl.GetRowCount());
+
+            using (var insert = tbl.BeginBulkInsert())
+                insert.Upload(dt);
+
+            Assert.AreEqual(7, tbl.GetRowCount());
+
+            tbl.MakeDistinct();
+
+            Assert.AreEqual(3, tbl.GetRowCount());
+            Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+        }
+
         [TestFixtureTearDown]
         public void TearDown()
         {

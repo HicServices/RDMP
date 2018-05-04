@@ -5,6 +5,7 @@ using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data

@@ -13,9 +13,19 @@ namespace ReusableUIComponents.Settings
     /// </summary>
     public static class UserSettings
     {
+        static Lazy<ISettings> implementation = new Lazy<ISettings>(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+
         private static ISettings AppSettings
         {
-            get { return CrossSettings.Current; }
+            get
+            {
+                ISettings ret = implementation.Value;
+                if (ret == null)
+                {
+                    throw new NotImplementedException("Isolated Storage does not work in this environment...");
+                }
+                return ret;
+            }
         }
 
         public static bool LicenseAccepted
@@ -47,15 +57,18 @@ namespace ReusableUIComponents.Settings
             get { return AppSettings.GetValueOrDefault("CatalogueConnectionString", ""); }
             set { AppSettings.AddOrUpdateValue("CatalogueConnectionString", value); }
         }
+
         public static string DataExportConnectionString
         {
             get { return AppSettings.GetValueOrDefault("DataExportConnectionString", ""); }
             set { AppSettings.AddOrUpdateValue("DataExportConnectionString", value); }
         }
+        
         public static bool GetTutorialDone(Guid tutorialGuid)
         {
             return AppSettings.GetValueOrDefault("T_" + tutorialGuid.ToString("N"), false); 
         }
+
         public static void SetTutorialDone(Guid tutorialGuid,bool value)
         {
             AppSettings.AddOrUpdateValue("T_" + tutorialGuid.ToString("N"), value);
@@ -65,9 +78,21 @@ namespace ReusableUIComponents.Settings
         {
             return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.RemoveEmptyEntries);
         }
+
         public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
         {
             AppSettings.AddOrUpdateValue("A_" + controlGuid.ToString("N"), string.Join("#!#", history));
+        }
+
+        static ISettings CreateSettings()
+        {
+#if NETSTANDARD1_0 || NETSTANDARD2_0
+            return null;
+#else
+#pragma warning disable IDE0022 // Use expression body for methods
+            return new RDMPApplicationSettings();
+#pragma warning restore IDE0022 // Use expression body for methods
+#endif
         }
     }
 }

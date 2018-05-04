@@ -7,6 +7,8 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -20,7 +22,7 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// <para>It also means you have a single point you can change the parameter if you need to adjust it later on.</para>
     /// </summary>
-    public class GlobalExtractionFilterParameter : VersionedDatabaseEntity, ISqlParameter
+    public class GlobalExtractionFilterParameter : VersionedDatabaseEntity, ISqlParameter, IInjectKnown<IQuerySyntaxHelper>
     {
         [NoMappingToDatabase]
         public string ParameterName
@@ -94,9 +96,13 @@ namespace DataExportLibrary.Data.DataTables
             new ParameterSyntaxChecker(this).Check(notifier);
         }
 
+        
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
+            if (_syntaxHelper == null)
+                throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
+
+            return _syntaxHelper;
         }
 
 
@@ -105,5 +111,16 @@ namespace DataExportLibrary.Data.DataTables
             return ExtractionConfiguration;
         }
 
+        private IQuerySyntaxHelper _syntaxHelper;
+        
+        public void InjectKnown(IQuerySyntaxHelper instance)
+        {
+            _syntaxHelper = instance;
+        }
+
+        public void ClearAllInjections()
+        {
+            _syntaxHelper = null;
+        }
     }
 }

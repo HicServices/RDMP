@@ -144,6 +144,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     if (category.HasValue && n.ExtractionInformation.ExtractionCategory != category.Value)
                     {
                         n.ExtractionInformation.ExtractionCategory = category.Value;
+                        n.ExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
                         n.ExtractionInformation.SaveToDatabase();
                         olvColumnExtractability.RefreshObject(n);
                     }
@@ -170,6 +171,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     if (category.HasValue)
                     {
                         newExtractionInformation.ExtractionCategory = category.Value;
+                        newExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
                         newExtractionInformation.SaveToDatabase();
                     }
 

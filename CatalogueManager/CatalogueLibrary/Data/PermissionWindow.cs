@@ -70,7 +70,7 @@ namespace CatalogueLibrary.Data
         #region Relationships
 
         [NoMappingToDatabase]
-        public IEnumerable<CacheProgress> CacheProgresses {
+        public IEnumerable<ICacheProgress> CacheProgresses {
             get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
         }
         #endregion
@@ -99,16 +99,17 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        public bool CurrentlyWithinPermissionWindow()
+        public bool WithinPermissionWindow()
         {
             if (!PermissionWindowPeriods.Any())
                 return true;
 
-            return TimeIsWithinPermissionWindow(DateTime.UtcNow);
+            return WithinPermissionWindow(DateTime.UtcNow);
         }
-        
-        public virtual bool TimeIsWithinPermissionWindow(DateTime dateTimeUTC)
+
+        public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
         {
+            
             if (!PermissionWindowPeriods.Any())
                 return true;
 
@@ -147,11 +148,6 @@ namespace CatalogueLibrary.Data
             return (string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name) + "(ID = " + ID + ")";
         }
         
-        public IEnumerable<ICacheProgress> GetAllCacheProgresses()
-        {
-            return CacheProgresses;
-        }
-
         public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
         {
             PermissionWindowPeriods = windowPeriods;

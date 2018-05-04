@@ -9,7 +9,6 @@ namespace CatalogueManager.Icons.IconProvision
 {
     public interface ICoreIconProvider:IIconProvider
     {
-        void SetClassifications(Dictionary<int, CatalogueItemClassification> classifications);
         ImageList GetImageList(bool addFavouritesOverlayKeysToo);
     }
 }

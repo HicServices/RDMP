@@ -16,9 +16,17 @@ namespace CatalogueLibrary.Data
     {
         private readonly Catalogue _parent;
         private string _path;
-        
+         
+        /// <summary>
+        /// The topmost folder under which all <see cref="CatalogueFolder"/> reside
+        /// </summary>
         public static CatalogueFolder Root = new CatalogueFolder("\\");
 
+
+        /// <summary>
+        /// The full path of the folder (starts and ends with a slash).  Throws if you try to set property to an invalid path 
+        /// <seealso cref="IsValidPath"/> 
+        /// </summary>
         public string Path
         {
             get { return _path; }
@@ -28,19 +36,23 @@ namespace CatalogueLibrary.Data
 
                 if (IsValidPath(value, out reason))
                 {
-
                     _path = value.ToLower();
                     
                     //ensure it ends with a slash
                     if (!_path.EndsWith("\\"))
                         _path += "\\";
-
                 }
                 else
                     throw new NotSupportedException(reason);
             }
         }
 
+        /// <summary>
+        /// Creates a new folder that the Catalogue should now reside in.
+        /// <para><remarks>After calling this you should use <code>parent.Folder = instance; parent.SaveToDatabase();</code></remarks></para>
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="folder"></param>
         public CatalogueFolder(Catalogue parent, string folder)
         {
             //always Lower everything!
@@ -75,18 +87,24 @@ namespace CatalogueLibrary.Data
             return reason == null;
         }
 
+        /// <summary>
+        /// Returns true if the specified path is valid for a <see cref="CatalogueFolder"/>.  Not blank, starts with '\' etc.
+        /// </summary>
+        /// <param name="candidatePath"></param>
+        /// <returns></returns>
         public static bool IsValidPath(string candidatePath)
         {
             string whoCares;
             return new CatalogueFolder(candidatePath).IsValidPath(candidatePath, out whoCares);
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Path;
         }
 
-
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             var other = obj as CatalogueFolder;
@@ -95,101 +113,150 @@ namespace CatalogueLibrary.Data
 
             return base.Equals(obj);
         }
-
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return Path.GetHashCode();
         }
 
+        /// <summary>
+        /// Makes this class behave as a string for IConvertible
+        /// </summary>
+        /// <returns></returns>
         public TypeCode GetTypeCode()
         {
             return TypeCode.String;
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public bool ToBoolean(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public char ToChar(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public sbyte ToSByte(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public byte ToByte(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public short ToInt16(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public ushort ToUInt16(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public int ToInt32(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public uint ToUInt32(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public long ToInt64(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public ulong ToUInt64(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public float ToSingle(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public double ToDouble(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public decimal ToDecimal(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Not supported
+        /// </summary>
         public DateTime ToDateTime(IFormatProvider provider)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
-
+        /// <summary>
+        /// Returns the Path
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public string ToString(IFormatProvider provider)
         {
             return Path;
         }
 
+        /// <inheritdoc/>
         public object ToType(Type conversionType, IFormatProvider provider)
         {
             //if it is a string or subtype of string?
             if (typeof (string).IsAssignableFrom(conversionType))
                 return Path;//return path
 
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
+        /// <summary>
+        /// Returns true if the passed value is resident in a subfolder of this one.
+        /// </summary>
+        /// <param name="potentialParent"></param>
+        /// <returns></returns>
         public bool IsSubFolderOf(CatalogueFolder potentialParent)
         {
             if (potentialParent == null)
@@ -202,7 +269,6 @@ namespace CatalogueLibrary.Data
             //we contain the potential parents path therefore we are a child of them
             return Path.StartsWith(potentialParent.Path);
         }
-        
         
         /// <summary>
         /// Returns the next level of folder down towards the Catalogues in collection - note that the next folder down might be empty 

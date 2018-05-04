@@ -56,7 +56,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 }
                 else if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
                 {
-                    toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(catalogueRepository, parent, argumentType,
+                    toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(argument,catalogueRepository, parent, argumentType,
                         true);
                 }
                 else if (typeof (Enum).IsAssignableFrom(argument.GetSystemType()))
@@ -84,10 +84,12 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
             return toReturn;
         }
 
-        public IArgumentValueUI HandleCreateForIMapsDirectlyToDatabaseTable(CatalogueRepository repository, IArgumentHost parent, Type argumentType, bool relatedOnlyToLoadMetadata)
+        public IArgumentValueUI HandleCreateForIMapsDirectlyToDatabaseTable(IArgument argument, CatalogueRepository repository, IArgumentHost parent, Type argumentType, bool relatedOnlyToLoadMetadata)
         {
             //value is in IMapsDirectly type e.g. .Catalogue/TableInfo or something
             object[] array;
+            
+            argumentType = argument.GetConcreteSystemType();
 
             //Populate dropdown with the appropriate types
             if (argumentType == typeof(TableInfo))
@@ -98,8 +100,6 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs.ArgumentValueControls
                 array = GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(repository, parent).ToArray();
             else if (argumentType == typeof (LoadProgress))
                 array = GetAllLoadProgressAssociatedWithLoadMetadata(parent).ToArray();
-            else if (argumentType == typeof(IExternalDatabaseServer))
-                array = repository.GetAllObjects<ExternalDatabaseServer>().ToArray();
             else
                 array = repository.GetAllObjects(argumentType).ToArray(); //Default case fetch all the objects of the Type
 

@@ -1,4 +1,5 @@
 using System;
+using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace MapsDirectlyToDatabaseTable
 {
@@ -13,11 +14,21 @@ namespace MapsDirectlyToDatabaseTable
     /// </summary>
     public interface IObscureDependencyFinder
     {
+        /// <summary>
+        /// Throws if there are relationships that cannot be handled with database constraints that should prevent the deletion of the passed object.  For example a 
+        /// CatalogueItem could have deletion prevented by the fact that it is referenced in a Catalogue ValidationXml (this dependency could not be modelled at database
+        /// level).  An Exception is thrown if the delete is not allowed
+        /// </summary>
+        /// <param name="oTableWrapperObject"></param>
         void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject);
 
         /// <summary>
-        /// oTableWrapperObject has just been deleted, you must now deal with the fact that oTableWrapperObject no longer exists (e.g. tidy up orphans etc).  Do not attempt to Save or Delete
-        /// or really do anything much with oTableWrapperObject because it no longer exists in the database.
+        /// Callback for when an <see cref="IMapsDirectlyToDatabaseTable"/> object has just been deleted.  This method automatically cleans up any objects which the 
+        /// <see cref="IObscureDependencyFinder"/> thinks are dependent in a way similar to a CASCADE foreign key constraint.  This should only ever include cases
+        /// where it is not possible to model the behaviour at database level e.g. when the dependency is cross server/databse.
+        /// 
+        /// <para><remarks>Do not attempt to Save or Delete or really do any other database level operations with the parameter <see cref="oTableWrapperObject"/> because
+        /// it will no longer exists in the database as a record (<see cref="IRevertable.Exists"/> will be false).</remarks></para>
         /// </summary>
         /// <param name="oTableWrapperObject"></param>
         void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject);

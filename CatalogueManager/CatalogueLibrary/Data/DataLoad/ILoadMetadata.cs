@@ -18,7 +18,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         void SaveToDatabase();
 
-        DiscoveredServer GetDistinctLoggingDatabaseSettings(bool isTest);
+        DiscoveredServer GetDistinctLoggingDatabaseSettings();
         string GetDistinctLoggingTask();
 
         DiscoveredServer GetDistinctLiveDatabaseServer();

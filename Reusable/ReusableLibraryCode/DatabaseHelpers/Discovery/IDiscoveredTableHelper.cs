@@ -33,6 +33,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection);
         
         void TruncateTable(DiscoveredTable discoveredTable);
-        
+        void MakeDistinct(DiscoveredTable discoveredTable);
     }
 }

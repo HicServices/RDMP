@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
@@ -41,25 +43,37 @@ namespace RDMPStartup.PluginManagement
             ZipFile.ExtractToDirectory(toCommit.FullName, workingDirectory);
 
             //delete old versions of the file
-            var oldVersions = _repository.GetAllObjects<Plugin>().Where(p => p.Name.Equals(toCommit.Name));
-            
-            foreach (Plugin p in oldVersions)
-            {
-                p.DeleteInDatabase();
-                toReturn = true;
-            }
+            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name));
 
-            var plugin = new Plugin(_repository, toCommit);
+            List<LoadModuleAssembly> legacyDlls = new List<LoadModuleAssembly>();
+            Plugin plugin = null;
+
+            if (oldVersion != null)
+            {
+                legacyDlls.AddRange(oldVersion.LoadModuleAssemblies);
+                toReturn = true;
+                plugin = oldVersion;
+            }
+            else           
+                plugin = new Plugin(_repository, toCommit);
 
             try
             {
                 foreach (var file in Directory.GetFiles(workingDirectory, "*.dll"))
-                    ProcessFile(plugin, new FileInfo(file));
+                    ProcessFile(plugin, new FileInfo(file), legacyDlls);
 
                 foreach (var srcZipFile in Directory.GetFiles(workingDirectory,"src.zip"))
-                    ProcessFile(plugin, new FileInfo(srcZipFile));
-                
+                    ProcessFile(plugin, new FileInfo(srcZipFile), legacyDlls);
 
+                //For assemblies that have less dll dependencies now than before (i.e. redundant assemblies)
+                foreach (LoadModuleAssembly unused in legacyDlls)
+                {
+                    var export = _repository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(unused));
+                    if(export != null)
+                        export.DeleteInDatabase();
+
+                    unused.DeleteInDatabase();
+                }
             }
             catch (Exception e)
             {
@@ -76,15 +90,23 @@ namespace RDMPStartup.PluginManagement
             return toReturn;
         }
 
-        private void ProcessFile(Plugin plugin, FileInfo toCommit)
+        private void ProcessFile(Plugin plugin, FileInfo toCommit, List<LoadModuleAssembly> legacyDlls)
         {
-
             if (LoadModuleAssembly.IsDllProhibited(toCommit))
                 return;
 
             try
             {
-                new LoadModuleAssembly(_repository,toCommit,plugin);
+                var toUpdate = legacyDlls.SingleOrDefault(d => d.Name == toCommit.Name);
+
+                if (toUpdate != null)
+                {
+                    toUpdate.UpdateTo(toCommit);
+                    legacyDlls.Remove(toUpdate);
+                }
+                else
+                    new LoadModuleAssembly(_repository,toCommit,plugin);
+
                 _notifier.OnCheckPerformed(new CheckEventArgs("File " + toCommit.Name + " uploaded as a new LoadModuleAssembly under plugin " + plugin.Name, CheckResult.Success));
             }
             catch (Exception e)

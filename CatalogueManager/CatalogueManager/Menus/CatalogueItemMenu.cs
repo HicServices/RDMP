@@ -23,18 +23,16 @@ namespace CatalogueManager.Menus
     class CatalogueItemMenu : RDMPContextMenuStrip
     {
         private readonly CatalogueItem _catalogueItem;
-        private CatalogueItemClassification _classification;
 
         public CatalogueItemMenu(RDMPContextMenuStripArgs args, CatalogueItem catalogueItem): base(args, catalogueItem)
         {
             _catalogueItem = catalogueItem;
-            _classification = _activator.CoreChildProvider.CatalogueItemClassifications[catalogueItem.ID];
 
             Items.Add("Add Issue", _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemIssue,OverlayKind.Add),(s,e)=> AddIssue());
 
             if (catalogueItem.ColumnInfo_ID == null)
                 Items.Add("Set Column Info (Currently MISSING)", _activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem), (s, e) => SetColumnInfo(catalogueItem));
-            else if (_classification.ExtractionInformation_ID == null)
+            else if (catalogueItem.ExtractionInformation == null)
                 //it does not yet have extractability
                 Items.Add("Add Extract Logic", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation, OverlayKind.Add), (s, e) => AddExtractionInformation());
 

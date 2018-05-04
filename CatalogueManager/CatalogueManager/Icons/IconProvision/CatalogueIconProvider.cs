@@ -36,12 +36,6 @@ namespace CatalogueManager.Icons.IconProvision
 
         protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
 
-        /// <summary>
-        /// This special snowflake needs to know lots of complex info about the environment it is in that is expensive to compute so this cached knowledge for all CatalogueItems gets passed in,
-        /// and must be regularly refreshed - see SetClassifications method
-        /// </summary>
-        private CatalogueItemStateBasedIconProvider _catalogueItemStateBasedIconProvider;
-
         public CatalogueIconProvider(IIconProvider[] pluginIconProviders)
         {
             _pluginIconProviders = pluginIconProviders;
@@ -62,14 +56,7 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new LoadStageNodeStateBasedIconProvider(this));
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
             StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
-            
-            _catalogueItemStateBasedIconProvider = new CatalogueItemStateBasedIconProvider(OverlayProvider);
-            StateBasedIconProviders.Add(_catalogueItemStateBasedIconProvider);
-        }
-        
-        public void SetClassifications(Dictionary<int, CatalogueItemClassification> catalogueItemClassifications)
-        {
-            _catalogueItemStateBasedIconProvider.SetClassifications(catalogueItemClassifications);
+            StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider(OverlayProvider));
         }
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)

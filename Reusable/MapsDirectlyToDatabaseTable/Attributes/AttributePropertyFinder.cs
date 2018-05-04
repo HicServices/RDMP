@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using MapsDirectlyToDatabaseTable;
 
-namespace Sharing.Dependency.Gathering
+namespace MapsDirectlyToDatabaseTable.Attributes
 {
     /// <summary>
     /// Implementation of <see cref="IAttributePropertyFinder"/> in which a specific Attribute only is looked for.  The
@@ -38,6 +35,11 @@ namespace Sharing.Dependency.Gathering
             }
         }
 
+        public AttributePropertyFinder(IMapsDirectlyToDatabaseTable o): this(new[] { o})
+        {
+            
+        }
+
         public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o)
         {
             var t = o.GetType();
@@ -56,6 +58,11 @@ namespace Sharing.Dependency.Gathering
         public bool ObjectContainsProperty(IMapsDirectlyToDatabaseTable arg)
         {
             return _properties.ContainsKey(arg.GetType());
+        }
+
+        public T GetAttribute(PropertyInfo property)
+        {
+            return (T) property.GetCustomAttributes(typeof (T), true).SingleOrDefault();
         }
     }
 }

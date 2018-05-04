@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 

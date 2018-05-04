@@ -18,7 +18,9 @@ namespace CatalogueLibrary.Data.DataLoad
         void SetValue(object o);
 
         object GetValueAsSystemType();
+        
         Type GetSystemType();
+        Type GetConcreteSystemType();
         void SetType(Type t);
     }
 }

@@ -436,6 +436,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if (!TableNamingPattern.Contains("$d") && !TableNamingPattern.Contains("$a"))
                 notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain either $d or $a, the name/acronym of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once",CheckResult.Warning));
 
+            if (_request == ExtractDatasetCommand.EmptyCommand)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Request is ExtractDatasetCommand.EmptyCommand, will not try to connect to Database",CheckResult.Warning));
+                return;
+            }
+
             try
             {
                 var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);

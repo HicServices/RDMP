@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace DataExportLibrary.Data.DataTables

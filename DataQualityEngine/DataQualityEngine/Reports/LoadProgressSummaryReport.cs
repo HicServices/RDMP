@@ -25,8 +25,8 @@ namespace DataQualityEngine.Reports
     /// </summary>
     public class LoadProgressSummaryReport:ICheckable
     {
-        private readonly LoadProgress _loadProgress;
-        private readonly LoadMetadata _loadMetadata;
+        private readonly ILoadProgress _loadProgress;
+        private readonly ILoadMetadata _loadMetadata;
         
         public bool DQERepositoryExists { get { return dqeRepository != null; } }
         
@@ -38,7 +38,7 @@ namespace DataQualityEngine.Reports
         public DirectoryInfo ResolvedCachePath;
         
         public HashSet<Catalogue> CataloguesMissingDQERuns { get; private set; }
-        private CacheProgress _cacheProgress;
+        private ICacheProgress _cacheProgress;
 
         public Dictionary<Catalogue,Evaluation> CataloguesWithDQERuns { get; private set; }
 
@@ -263,7 +263,7 @@ namespace DataQualityEngine.Reports
                 CachePeriodictiyData.Columns.Add("Files In Cache", typeof (int));
 
                 var allFailures =
-                    _cacheProgress.GetAllFetchFailures()
+                    _cacheProgress.CacheFetchFailures
                         .Where(f => f.ResolvedOn == null)
                         .Select(f => f.FetchRequestStart)
                         .ToArray();

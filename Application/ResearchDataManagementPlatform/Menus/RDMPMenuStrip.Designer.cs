@@ -165,7 +165,7 @@
             // 
             this.changeCatalogueToolStripMenuItem.Name = "changeCatalogueToolStripMenuItem";
             this.changeCatalogueToolStripMenuItem.Size = new System.Drawing.Size(295, 22);
-            this.changeCatalogueToolStripMenuItem.Text = "ndand";
+            this.changeCatalogueToolStripMenuItem.Text = "Change Catalogue Connection String...";
             this.changeCatalogueToolStripMenuItem.Click += new System.EventHandler(this.changeCatalogueToolStripMenuItem_Click);
             // 
             // configureExternalServersToolStripMenuItem

@@ -40,8 +40,8 @@ namespace CatalogueManager.LoadExecutionUIs
     public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
     {
         private CachingHost _cachingHost;
-        private LoadProgress _loadProgress;
-        private CacheProgress _cacheProgress;
+        private ILoadProgress _loadProgress;
+        private ICacheProgress _cacheProgress;
         
         private CancellationTokenSource _abortTokenSource;
         private CancellationTokenSource _stopTokenSource;
@@ -64,8 +64,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
             rdmpObjectsRibbonUI1.Clear();
             rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-            rdmpObjectsRibbonUI1.Add(_loadProgress);
-            rdmpObjectsRibbonUI1.Add(_cacheProgress);
+            rdmpObjectsRibbonUI1.Add((DatabaseEntity) _loadProgress);
+            rdmpObjectsRibbonUI1.Add((DatabaseEntity) _cacheProgress);
 
             SetButtonStates();
         }
@@ -108,7 +108,7 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private void StartCachingJob(Action<GracefulCancellationToken> action)
         {
-            progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Creating caching host for CacheProgress: " + _cacheProgress.GetLoadProgress().Name));
+            progressUI.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Creating caching host for CacheProgress: " + _cacheProgress.LoadProgress.Name));
             _cachingHost = new CachingHost( RepositoryLocator.CatalogueRepository);
             _cachingHost.CacheProgressList = new List<ICacheProgress> { _cacheProgress };
 
@@ -225,7 +225,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private void ProcessCacheProgressFailures()
         {
             // Check if there are any failures
-            var anyFailures = _cacheProgress.GetAllFetchFailures().Any(f => f.ResolvedOn == null);
+            var anyFailures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
 
             rbRetryFailures.Enabled = anyFailures;
             btnViewFailures.Enabled = anyFailures;

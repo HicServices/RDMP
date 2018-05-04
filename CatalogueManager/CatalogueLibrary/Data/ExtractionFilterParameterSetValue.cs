@@ -4,6 +4,7 @@ using System.Data.Common;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 

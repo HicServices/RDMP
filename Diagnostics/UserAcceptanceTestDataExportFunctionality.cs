@@ -278,7 +278,7 @@ GO
 
             try
             {
-                 var lm = _catalogue.GetLogManager(true);
+                 var lm = _catalogue.GetLogManager();
 
                 string[] tasks = lm.ListDataTasks();
 

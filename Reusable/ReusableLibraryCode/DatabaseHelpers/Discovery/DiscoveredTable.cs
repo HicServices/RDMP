@@ -62,6 +62,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return _table;
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return _querySyntaxHelper;
@@ -154,6 +155,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public void Truncate()
         {
             Helper.TruncateTable(this);
+        }
+
+        /// <summary>
+        /// Deletes all EXACT duplicate rows from the table leaving only unique records.  This is method may not be transaction/threadsafe
+        /// </summary>
+        public void MakeDistinct()
+        {
+            Helper.MakeDistinct(this);
         }
     }
 

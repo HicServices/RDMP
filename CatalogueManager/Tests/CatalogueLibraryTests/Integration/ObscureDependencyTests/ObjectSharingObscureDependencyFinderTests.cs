@@ -8,7 +8,6 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
-using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
@@ -33,8 +32,8 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
             var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 
             Assert.AreEqual(CatalogueRepository.GetAllObjects<ObjectExport>().Count(), 0);
-            var ec = _share.GetExportFor(c);
-            var eci = _share.GetExportFor(ci);
+            var ec = _share.GetNewOrExistingExportFor(c);
+            var eci = _share.GetNewOrExistingExportFor(ci);
 
             _share.GetImportAs(ec.SharingUID, c2);
             _share.GetImportAs(eci.SharingUID, ci2);
@@ -65,7 +64,7 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
             Assert.IsFalse(_share.IsExportedObject(c));
 
             //make it exportable
-            var exportDefinition = _share.GetExportFor(c);
+            var exportDefinition = _share.GetNewOrExistingExportFor(c);
 
             Assert.IsTrue(_share.IsExportedObject(c));
 
@@ -87,7 +86,7 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
         {
             Project p = new Project(DataExportRepository, "prah");
 
-            var exportDefinition = _share.GetExportFor(p);
+            var exportDefinition = _share.GetNewOrExistingExportFor(p);
 
             Project p2 = new Project(DataExportRepository, "prah2");
 

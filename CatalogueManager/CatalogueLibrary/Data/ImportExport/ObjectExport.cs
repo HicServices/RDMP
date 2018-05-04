@@ -42,19 +42,23 @@ namespace CatalogueLibrary.Data.ImportExport
             set { SetField(ref _repositoryTypeName, value); }
         }
 
+        /// <inheritdoc cref="SharingUID"/>
+        [NoMappingToDatabase]
+        public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); }}
+
         /// <summary>
-        /// use CatalogueRepository.GetExportFor to access this constructor
+        /// use <see cref="ShareManager.GetNewOrExistingExportFor"/> for easier access to this constructor
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="objectForSharing"></param>
-        internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing)
+        internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
                 {"ObjectID",objectForSharing.ID},
                 {"ObjectTypeName",objectForSharing.GetType().Name},
                 {"RepositoryTypeName",objectForSharing.Repository.GetType().Name},
-                {"SharingUID",Guid.NewGuid().ToString()},
+                {"SharingUID",guid.ToString()},
             
             });
 
@@ -70,6 +74,11 @@ namespace CatalogueLibrary.Data.ImportExport
             RepositoryTypeName = r["RepositoryTypeName"].ToString();
         }
 
+        public override string ToString()
+        {
+            return "E::" + ObjectTypeName +"::" + SharingUID;
+        }
+
         /// <summary>
         /// Returns true if this ObjectExport is an export declaration for the passed parameter
         /// </summary>
@@ -77,6 +86,16 @@ namespace CatalogueLibrary.Data.ImportExport
         public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
         {
             return o.ID == ObjectID && o.GetType().Name == ObjectTypeName && o.Repository.GetType().Name == RepositoryTypeName;
+        }
+
+        /// <summary>
+        /// Returns the local object referenced by this export declaration
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
+        public IMapsDirectlyToDatabaseTable GetLocalObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            return repositoryLocator.GetArbitraryDatabaseObject(RepositoryTypeName, ObjectTypeName, ObjectID);
         }
     }
 }
