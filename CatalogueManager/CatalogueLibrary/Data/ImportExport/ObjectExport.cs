@@ -47,7 +47,7 @@ namespace CatalogueLibrary.Data.ImportExport
         public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); }}
 
         /// <summary>
-        /// use CatalogueRepository.GetExportFor to access this constructor
+        /// use <see cref="ShareManager.GetNewOrExistingExportFor"/> for easier access to this constructor
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="objectForSharing"></param>

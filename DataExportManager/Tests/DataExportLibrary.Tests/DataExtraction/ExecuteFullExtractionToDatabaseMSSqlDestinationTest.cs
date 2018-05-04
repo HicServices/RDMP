@@ -23,13 +23,12 @@ namespace DataExportLibrary.Tests.DataExtraction
         private ExternalDatabaseServer _extractionServer;
         
         private readonly string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
-
-        //The database that the extracted records will appear in
-        DiscoveredDatabase dbToExtractTo;
-
+        
         [Test]
         public void SQLServerDestination()
         {
+            DiscoveredDatabase dbToExtractTo = null;
+
             try
             {
                 _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
@@ -38,13 +37,16 @@ namespace DataExportLibrary.Tests.DataExtraction
                 ExtractionPipelineUseCase execute;
                 IExecuteDatasetExtractionDestination result;
 
+                var dbname = TestDatabaseNames.GetConsistentName(_project.Name + "_" + _project.ProjectNumber);
+                dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
+                if (dbToExtractTo.Exists())
+                    dbToExtractTo.ForceDrop();
+
                 base.Execute(out execute, out result);
 
-                var extractionDatabase = DataAccessPortal.GetInstance().ExpectDatabase(_extractionServer, DataAccessContext.DataExport);
-                
-                Assert.IsTrue( extractionDatabase.ExpectTable(_expectedTableName).Exists());
+                Assert.IsTrue(dbToExtractTo.ExpectTable(_expectedTableName).Exists());
 
-                var server = extractionDatabase.Server;
+                var server = dbToExtractTo.Server;
                 using (var con = server.GetConnection())
                 {
                     con.Open();
@@ -61,15 +63,6 @@ namespace DataExportLibrary.Tests.DataExtraction
                     Assert.AreEqual(1, dt.Rows[0]["Result"]);
 
                 }
-
-                foreach (var table in extractionDatabase.DiscoverTables(true))
-                {
-                    Console.WriteLine("Dropping table " + table.GetFullyQualifiedName());
-                    table.Drop();
-                }
-
-                Console.WriteLine("Dropping database " + extractionDatabase.GetRuntimeName());
-                extractionDatabase.Drop();
             }
             finally
             {
@@ -84,25 +77,28 @@ namespace DataExportLibrary.Tests.DataExtraction
         
         protected override Pipeline SetupPipeline()
         {
-            var dbname = TestDatabaseNames.GetConsistentName("ExtractionTest");
-            dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
-
             //create a target server pointer
-            _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "ExtractionTest");
-            _extractionServer.SetProperties(dbToExtractTo);
-            
-            dbToExtractTo.Create(true);
+            _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver");
+            _extractionServer.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
+            _extractionServer.SaveToDatabase();
 
             //create a pipeline
             var pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
             
             //set the destination pipeline
             var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
-            PipelineComponentArgument argumentServer = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().Single(a => a.Name == "TargetDatabaseServer");
+            var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().ToList();
+            PipelineComponentArgument argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
+            PipelineComponentArgument argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
+            PipelineComponentArgument argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
 
             Assert.AreEqual("TargetDatabaseServer", argumentServer.Name);
             argumentServer.SetValue(_extractionServer);
             argumentServer.SaveToDatabase();
+            argumentDbNamePattern.SetValue(TestDatabaseNames.Prefix + "$p_$n");
+            argumentDbNamePattern.SaveToDatabase();
+            argumentTblNamePattern.SetValue("$c_$d");
+            argumentTblNamePattern.SaveToDatabase();
             
             var component2 = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
             var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();

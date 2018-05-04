@@ -57,7 +57,8 @@ namespace ANOStore.ANOEngineering
         private Catalogue _catalogue;
 
         /// <summary>
-        /// Constructor for deserialization via LazyConstructorsJsonConverter
+        /// This constructor is primarily intended for deserialization via <see cref="JsonConvertExtensions.DeserializeObject"/>.  You should 
+        /// instead use the overload. 
         /// </summary>
         public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
