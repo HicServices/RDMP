@@ -1,17 +1,15 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandMakeCatalogueProjectSpecific : BasicUICommandExecution,IAtomicCommandWithTarget
     {
@@ -27,6 +25,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
+            if(_project == null)
+                _project = SelectOne<Project>(Activator.RepositoryLocator.DataExportRepository);
+
+            if(_project == null)
+                return;
+            
             var eds = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Single();
 
             IExtractionConfiguration alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);

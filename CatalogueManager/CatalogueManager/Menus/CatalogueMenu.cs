@@ -26,14 +26,19 @@ namespace CatalogueManager.Menus
             Items.Add(new ToolStripSeparator());
 
             var addItem = new ToolStripMenuItem("Add", null);
-            Add(new ExecuteCommandAddNewSupportingSqlTable(_activator, catalogue), Keys.None, addItem);
-            Add(new ExecuteCommandAddNewSupportingDocument(_activator, catalogue), Keys.None, addItem);
-            Add(new ExecuteCommandAddNewAggregateGraph(_activator, catalogue), Keys.None, addItem);
-            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null), Keys.None, addItem);
-            Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue), Keys.None, addItem);
-            Add(new ExecuteCommandChangeExtractability(_activator, catalogue));
+                Add(new ExecuteCommandAddNewSupportingSqlTable(_activator, catalogue), Keys.None, addItem);
+                Add(new ExecuteCommandAddNewSupportingDocument(_activator, catalogue), Keys.None, addItem);
+                Add(new ExecuteCommandAddNewAggregateGraph(_activator, catalogue), Keys.None, addItem);
+                Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null), Keys.None, addItem);
+                Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue), Keys.None, addItem);
+                Items.Add(addItem);
 
-            Items.Add(addItem);
+
+            Items.Add(new ToolStripSeparator());
+            Add(new ExecuteCommandChangeExtractability(_activator, catalogue));
+            Add(new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(catalogue));
+            Add(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, catalogue));
+            
 
             Items.Add(new ToolStripSeparator());
             
