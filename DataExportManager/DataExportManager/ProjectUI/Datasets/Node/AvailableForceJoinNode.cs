@@ -1,4 +1,5 @@
-﻿using CatalogueLibrary.Data;
+﻿using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Annotations;
@@ -18,8 +19,6 @@ namespace DataExportManager.ProjectUI.Datasets.Node
         {
             TableInfo = tableInfo;
             IsMandatory = isMandatory;
-
-            JoinInfos = ((CatalogueRepository) TableInfo.Repository).JoinInfoFinder.GetAllJoinInfosWhereTableContains(TableInfo,JoinInfoType.AnyKey);
         }
 
         public object MasqueradingAs()
@@ -52,5 +51,24 @@ namespace DataExportManager.ProjectUI.Datasets.Node
         }
 
         #endregion
+
+        public void FindJoinsBetween(HashSet<AvailableForceJoinNode> otherNodes)
+        {
+            var mycols = TableInfo.ColumnInfos;
+
+            List<JoinInfo> foundJoinInfos = new List<JoinInfo>();
+
+            foreach (AvailableForceJoinNode otherNode in otherNodes)
+            {
+                //don't look for self joins
+                if(Equals(otherNode , this))
+                    continue;
+
+                var theirCols = otherNode.TableInfo.ColumnInfos;
+                foundJoinInfos.AddRange(((CatalogueRepository) TableInfo.Repository).JoinInfoFinder.GetAllJoinInfosBetweenColumnInfoSets(mycols, theirCols));
+            }
+
+            JoinInfos = foundJoinInfos.ToArray();
+        }
     }
 }

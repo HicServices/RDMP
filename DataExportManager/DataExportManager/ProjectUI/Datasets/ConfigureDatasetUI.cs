@@ -67,6 +67,8 @@ namespace DataExportManager.ProjectUI.Datasets
 
             olvJoinColumn.AspectGetter += JoinColumn_AspectGetter;
             olvJoin.ButtonClick += olvJoin_ButtonClick;
+
+            olvJoinColumn.EnableButtonWhenItemIsDisabled = true;
         }
 
         private object SelectedCatalogue_AspectGetter(object rowObject)
@@ -478,6 +480,9 @@ namespace DataExportManager.ProjectUI.Datasets
 
             foreach (SelectedDatasetsForcedJoin redundantForcedJoin in existingForceJoins)
                 redundantForcedJoin.DeleteInDatabase();
+
+            foreach (var node in nodes)
+                node.FindJoinsBetween(nodes);
 
             olvJoin.AddObjects(nodes.ToArray());
         }
