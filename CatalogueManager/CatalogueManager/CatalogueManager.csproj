@@ -511,6 +511,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportShareDefinitionList.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueProjectSpecific.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeProjectSpecificCatalogueNormalAgain.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
