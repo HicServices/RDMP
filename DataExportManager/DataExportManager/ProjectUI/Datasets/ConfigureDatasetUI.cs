@@ -495,10 +495,25 @@ namespace DataExportManager.ProjectUI.Datasets
                 //if it has Join Infos
                 if (node.JoinInfos.Any())
                 {
-                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(node.JoinInfos.Select(j=>j.PrimaryKey), false,false);
+                    //Find all the joins columns 
+                    var cols = node.JoinInfos.Select(j => j.PrimaryKey).ToArray();
 
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                        _activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
+                    ColumnInfo toEmphasise = null;
+
+                    //if theres only one column involved in the join
+                    if (cols.Length == 1)
+                        toEmphasise = cols[0]; //emphasise it to the user
+                    else
+                    {
+                        //otherwise show all the columns and let them pick which one they want to navigate to (emphasise)
+                        var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(cols, false,false);
+
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                            toEmphasise = (ColumnInfo) dialog.Selected;
+                    }
+
+                    if(toEmphasise != null)
+                        _activator.RequestItemEmphasis(this, new EmphasiseRequest(toEmphasise, 1));
 
                     return;
                 }

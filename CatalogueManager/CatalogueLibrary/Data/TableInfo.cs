@@ -86,6 +86,14 @@ namespace CatalogueLibrary.Data
             get { return _validationXml; }
             set { SetField(ref _validationXml, value); }
         }
+
+        /// <summary>
+        /// <para>Indicates that this TableInfo should be the first table joined in any query that has multiple other TableInfos</para>
+        /// 
+        /// <para>When determining how to join a collection of TableInfos the <see cref="QueryBuilder"/> will attempt to find <see cref="JoinInfo"/> pairings between <see cref="ColumnInfo"/> in
+        /// the tables.  If it cannot work out how to resolve the join order (e.g. if there are 3+ tables and joins going in both directions) then it will demand that one of the 
+        /// <see cref="TableInfo"/> be picked as the first table from which all other tables should then be joined.</para>
+        /// </summary>
         public bool IsPrimaryExtractionTable
         {
             get { return _isPrimaryExtractionTable; }

@@ -158,7 +158,7 @@ namespace CatalogueLibrary.QueryBuilding
                 {
                     //there are multiple primary key tables... see if we are configured to support them
                     string primaryKeyTablesAsString = primaryKeyTables.Aggregate((a, b) => a + "," + b);
-                    throw new QueryBuildingException("Found " + primaryKeyTables.Count + " primary key tables but PrimaryExtractionTable was null, primary key tables identified include: " + primaryKeyTablesAsString);
+                    throw new QueryBuildingException("Found " + primaryKeyTables.Count + " primary key tables but PrimaryExtractionTable (Fix this by setting one TableInfo as 'IsPrimaryExtractionTable'), primary key tables identified include: " + primaryKeyTablesAsString);
                 }
             }
 
