@@ -2,8 +2,11 @@
 using CatalogueLibrary.Data;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
+using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests.DataExtraction
@@ -61,63 +64,11 @@ namespace DataExportLibrary.Tests.DataExtraction
         }
 
         [Test]
-        public void ServerMissingDatabaseName()
-        {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
-            server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-            try
-            {
-                var destination = new ExecuteFullExtractionToDatabaseMSSql();
-                destination.TargetDatabaseServer = server;
-
-                var tomemory = new ToMemoryCheckNotifier();
-                destination.Check(tomemory);
-
-                Assert.AreEqual(CheckResult.Fail, tomemory.Messages[0].Result);
-                Assert.IsTrue(tomemory.Messages[0].Message.StartsWith("TargetDatabaseServer does not have a .Database specified"));
-
-            }
-            finally
-            {
-                server.DeleteInDatabase();
-            }
-        }
-
-        [Test]
-        public void ServerDatabaseIsAbsent()
-        {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
-            server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-            server.Database = "FictionalDatabase";
-            try
-            {
-                var destination = new ExecuteFullExtractionToDatabaseMSSql();
-                destination.TargetDatabaseServer = server;
-                destination.TableNamingPattern = "$d";
-
-                var tomemory = new ToMemoryCheckNotifier();
-                destination.Check(tomemory);
-
-                Assert.AreEqual(CheckResult.Fail, tomemory.Messages[0].Result);
-                Assert.IsTrue(tomemory.Messages[0].Message.StartsWith("Could not connect to TargetDatabaseServer 'Fiction'"));
-                Assert.NotNull(tomemory.Messages[0].Ex);
-
-                SqlConnection.ClearAllPools();//Required because the stale exception breaks future attempts to connect
-            }
-            finally
-            {
-                server.DeleteInDatabase();
-            }
-        }
-
-
-        [Test]
         public void ServerDatabaseIsPresentAndCorrect()
         {
             var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-            server.Database = "FictionalDatabase";
-            
+            //server.Database = "FictionalDatabase"; Ignored by the extractor!
 
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase("FictionalDatabase");
             Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase").Exists());
@@ -125,8 +76,10 @@ namespace DataExportLibrary.Tests.DataExtraction
             try
             {
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
+                destination.PreInitialize(MockRepository.GenerateStub<IProject>(), new ThrowImmediatelyDataLoadEventListener());
                 destination.TargetDatabaseServer = server;
                 destination.TableNamingPattern = "$d";
+                destination.DatabaseNamingPattern = "Fictional$nDatabase";
 
                 var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
                 destination.Check(tomemory);
@@ -145,7 +98,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         {
             var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-            server.Database = "FictionalDatabase";
+            //server.Database = "FictionalDatabase"; Ignored by the extractor!
 
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase("FictionalDatabase");
             
@@ -161,8 +114,10 @@ namespace DataExportLibrary.Tests.DataExtraction
             try
             {
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
+                destination.PreInitialize(MockRepository.GenerateStub<IProject>(), new ThrowImmediatelyDataLoadEventListener());
                 destination.TargetDatabaseServer = server;
                 destination.TableNamingPattern = "$d";
+                destination.DatabaseNamingPattern = "Fictional$nDatabase";
 
                 var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
                 destination.Check(tomemory);

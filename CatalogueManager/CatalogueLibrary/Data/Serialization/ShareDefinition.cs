@@ -6,6 +6,12 @@ using Newtonsoft.Json;
 
 namespace CatalogueLibrary.Data.Serialization
 {
+    /// <summary>
+    /// Describes a DatabaseEntity which has been made exportable from RDMP via <see cref="ObjectExport"/>.  This class includes the properties that are directly recorded for the object
+    /// e.g. Name, SelectSQL etc.  For Foreign Key columns (See <see cref="RelationshipAttribute"/>) e.g. <see cref="CatalogueItem.Catalogue_ID"/> the Guid of another 
+    /// <see cref="ShareDefinition"/> is given (e.g. of the <see cref="Catalogue"/>).  This means that a <see cref="ShareDefinition"/> is only valid when all it's dependencies are
+    /// also available (See <see cref="Sharing.Dependency.Gathering.Gatherer"/> for how to do this)
+    /// </summary>
     [Serializable]
     public class ShareDefinition
     {
