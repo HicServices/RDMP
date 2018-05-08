@@ -56,7 +56,9 @@ namespace DataExportManager.Collections
         public DataExportCollectionUI()
         {
             InitializeComponent();
-            
+
+
+            olvProjectNumber.IsEditable = false;
             olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
         }
         
