@@ -528,14 +528,16 @@ namespace CatalogueLibrary.Providers
             var cis = AllCatalogueItems
                 .Where(ci => ci.Catalogue_ID == c.ID)
                 .ToArray();
-
+            
             //add a new CatalogueItemNode (can be empty)
             var catalogueItemsNode = new CatalogueItemsNode(c, cis);
             childObjects.Add(catalogueItemsNode);
 
-            //if there are at least 1 catalogue items add a recording that the CatalogueItemsNode has these children (otherwise node has no children)
+            //if there are at least 1 catalogue items inject them into Catalogue and add a recording that the CatalogueItemsNode has these children (otherwise node has no children)
             if (cis.Any())
             {
+                c.InjectKnown(cis);
+
                 var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
                 AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
 

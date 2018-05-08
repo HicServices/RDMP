@@ -14,6 +14,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -33,7 +34,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
-    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper
+    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper, IInjectKnown<CatalogueItem[]>
     {
         #region Database Properties
 
@@ -147,6 +148,8 @@ namespace CatalogueLibrary.Data
         private bool _isColdStorageDataset;
         private int? _liveLoggingServerID;
         private int? _testLoggingServerID;
+
+        private Lazy<CatalogueItem[]> _knownCatalogueItems;
         
         /// <summary>
         /// Shorthand (recommended 3 characters or less) for referring to this dataset (e.g. 'DEM' for the dataset 'Demography')
@@ -606,7 +609,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                return Repository.GetAllObjectsWithParent<CatalogueItem>(this);
+                return _knownCatalogueItems.Value;
             }
         }
 
@@ -817,6 +820,8 @@ namespace CatalogueLibrary.Data
 
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
+
+            ClearAllInjections();
         }
         
         /// <summary>
@@ -949,6 +954,8 @@ namespace CatalogueLibrary.Data
             IsColdStorageDataset = (bool) r["IsColdStorageDataset"];
 
             Folder = new CatalogueFolder(this,r["Folder"].ToString());
+
+            ClearAllInjections();
         }
         
         /// <inheritdoc/>
@@ -1448,5 +1455,17 @@ namespace CatalogueLibrary.Data
             return IsAcceptableName(name, out whoCares);
         }
         #endregion
+
+        /// <inheritdoc/>
+        public void InjectKnown(CatalogueItem[] instance)
+        {
+            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => instance);
+        }
+
+        /// <inheritdoc/>
+        public void ClearAllInjections()
+        {
+            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem>(this));
+        }
     }
 }
