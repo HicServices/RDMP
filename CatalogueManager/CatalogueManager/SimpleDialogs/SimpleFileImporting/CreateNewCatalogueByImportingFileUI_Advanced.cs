@@ -12,6 +12,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using RDMPObjectVisualisation;
 using ReusableLibraryCode;
@@ -38,15 +39,17 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private DataFlowPipelineContext<DataTable> _context = new DataFlowPipelineContext<DataTable>();
         private FlatFileToLoad _fileToLoad;
+        private Project _projectSpecific;
 
         public Catalogue CatalogueCreatedIfAny { get; private set; }
 
-        public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator,DiscoveredDatabase database,FileInfo file, bool alsoForwardEngineerCatalogue)
+        public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator,DiscoveredDatabase database,FileInfo file, bool alsoForwardEngineerCatalogue,Project projectSpecific)
         {
             _repositoryLocator = activator.RepositoryLocator;
             _activator = activator;
             _database = database;
             _alsoForwardEngineerCatalogue = alsoForwardEngineerCatalogue;
+            _projectSpecific = projectSpecific;
             _context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
             _context.MustHaveDestination = typeof (DataTableUploadDestination);
 
@@ -75,7 +78,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     targetTable = dest.TargetTableName;
                     var table = _database.ExpectTable(targetTable);
 
-                    var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table), "File '" + _fileToLoad.File.FullName + "'");
+                    var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table), "File '" + _fileToLoad.File.FullName + "'",_projectSpecific);
                     
                     var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
 

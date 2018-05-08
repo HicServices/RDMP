@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -39,6 +40,11 @@ namespace DataExportManager.CommandExecution.Proposals
             var cataCommand = cmd as CatalogueCommand;
             if (cataCommand != null)
                 return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
+
+            var file = cmd as FileCollectionCommand;
+
+            if(file != null)
+                return new ExecuteCommandCreateNewCatalogueByImportingFile(ItemActivator,file).SetTarget(project);
 
             return null;
         }
