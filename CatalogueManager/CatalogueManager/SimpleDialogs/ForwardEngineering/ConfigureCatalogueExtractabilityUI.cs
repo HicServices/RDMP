@@ -59,7 +59,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription)
         {
             InitializeComponent();
 
@@ -70,7 +70,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
             ExtractionInformation[] eis;
             forwardEngineer.ExecuteForwardEngineering(out _catalogue,out _catalogueItems,out eis);
-            
+
+            tbCatalogueName.Text = _catalogue.Name;
+            tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now +")";
+            tbTableName.Text = _tableInfo.Name;
+            _catalogue.SaveToDatabase();
+
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in _catalogueItems)
                 olvColumnExtractability.AddObject(new Node(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID)));
@@ -99,6 +104,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             
             olvColumnInfoName.ImageGetter = ImageGetter;
             olvColumnExtractability.RebuildColumns();
+
+            objectSaverButton1.SetupFor(_catalogue,activator.RefreshBus);
         }
 
         private void IsExtractionIdentifier_AspectPutter(object rowobject, object newvalue)
@@ -297,6 +304,9 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             _choicesFinalised = true;
             _catalogue.DeleteInDatabase();
             _catalogue = null;
+
+            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(addToInstead));
+
             Close();
         }
 
@@ -347,6 +357,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     DialogResult = DialogResult.Cancel;
                     _catalogue.DeleteInDatabase();
                     _catalogue = null;
+
+                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
                 }
                 else
                     e.Cancel = true;
@@ -394,6 +406,16 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             {
                 return CatalogueItem.Name;
             }
+        }
+
+        private void tbCatalogueName_TextChanged(object sender, EventArgs e)
+        {
+            _catalogue.Name = tbCatalogueName.Text;
+        }
+
+        private void tbDescription_TextChanged(object sender, EventArgs e)
+        {
+            _catalogue.Description = tbDescription.Text;
         }
     }
 }

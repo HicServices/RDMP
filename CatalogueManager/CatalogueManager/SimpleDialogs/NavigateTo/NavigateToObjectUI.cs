@@ -31,6 +31,7 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Theme;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Providers.Nodes;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -123,7 +124,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             typeof(AllCataloguesUsedByLoadMetadataNode),
             typeof(AllProcessTasksUsedByLoadMetadataNode),
             typeof(LoadStageNode),
-            typeof(PreLoadDiscardedColumnsNode)
+            typeof(PreLoadDiscardedColumnsNode),
+            typeof(ProjectCataloguesNode)
+
         });
 
         private bool _isClosed;

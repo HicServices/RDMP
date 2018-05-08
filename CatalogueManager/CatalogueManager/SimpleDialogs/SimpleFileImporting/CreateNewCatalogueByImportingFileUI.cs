@@ -414,7 +414,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void ForwardEngineer(DiscoveredTable targetTableName)
         {
-            var extractionPicker = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_activator.RepositoryLocator.CatalogueRepository, targetTableName));
+            var extractionPicker = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_activator.RepositoryLocator.CatalogueRepository, targetTableName),"File '"+ _selectedFile.FullName + "'");
             extractionPicker.ShowDialog();
 
             var catalogue = extractionPicker.CatalogueCreatedIfAny;
