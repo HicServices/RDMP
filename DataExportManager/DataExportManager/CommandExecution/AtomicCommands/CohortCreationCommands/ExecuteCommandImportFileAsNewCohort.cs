@@ -51,8 +51,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             }
             else
                 flatFile = new FlatFileToLoad(_file);
+            
+            var request = GetCohortCreationRequest("Patient identifiers in file '" + flatFile.File.FullName +"'");
 
-            var request = GetCohortCreationRequest();
             //user choose to cancel the cohort creation request dialogue
             if (request == null)
                 return;

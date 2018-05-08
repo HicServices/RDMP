@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
@@ -47,7 +48,12 @@ namespace DataExportManager.CommandExecution.Proposals
             var catalogueCommand = cmd as CatalogueCommand;
             if (catalogueCommand != null)
                 return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCommand.Catalogue).SetTarget(target.Project);
-            
+
+            var columnCommand = cmd as ColumnCommand;
+
+            if (columnCommand != null && columnCommand.Column is ExtractionInformation)
+                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
+
             return null;
         }
     }

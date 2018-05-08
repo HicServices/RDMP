@@ -28,6 +28,16 @@ namespace DataExportManager.CommandExecution
         
         public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
+            var information = o as ExtractionInformation;
+            var cata = o as Catalogue;
+            
+            if (information != null)
+                return
+                    GetMenuArray(new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, information));
+
+            if (cata != null)
+                return GetMenuArray(new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, cata));
+
             return null;
         }
     }

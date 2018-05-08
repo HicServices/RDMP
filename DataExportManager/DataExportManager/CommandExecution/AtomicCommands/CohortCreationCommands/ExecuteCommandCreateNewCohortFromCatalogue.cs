@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
@@ -12,6 +13,15 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
     public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandExecution
     {
         private ExtractionInformation _extractionIdentifierColumn;
+
+
+        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator,ExtractionInformation extractionInformation) : base(activator)
+        {
+            if(!extractionInformation.IsExtractionIdentifier)
+                SetImpossible("Column is not marked IsExtractionIdentifier");
+
+            _extractionIdentifierColumn = extractionInformation;
+        }
 
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, Catalogue catalogue): base(activator)
         {
@@ -29,8 +39,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         public override void Execute()
         {
             base.Execute();
-            
-            var request = GetCohortCreationRequest();
+
+            var request = GetCohortCreationRequest("All patient identifiers in ExtractionInformation '" + _extractionIdentifierColumn.CatalogueItem.Catalogue + "." + _extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + _extractionIdentifierColumn.ID +")");
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)

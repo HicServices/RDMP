@@ -173,6 +173,12 @@
     <Compile Include="DataObjects\CohortCreationRequestVisualisation.Designer.cs">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataObjects\ExtractionInformationVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataObjects\ExtractionInformationVisualisation.Designer.cs">
+      <DependentUpon>ExtractionInformationVisualisation.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataObjects\UnknownVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -322,6 +328,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\CohortCreationRequestVisualisation.resx">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataObjects\ExtractionInformationVisualisation.resx">
+      <DependentUpon>ExtractionInformationVisualisation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\UnknownVisualisation.resx">
       <DependentUpon>UnknownVisualisation.cs</DependentUpon>
