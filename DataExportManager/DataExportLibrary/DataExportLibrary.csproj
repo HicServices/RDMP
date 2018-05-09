@@ -213,6 +213,7 @@
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\CustomCohortDataDestination.cs" />
+    <Compile Include="CohortCreationPipeline\Sources\AggregateConfigurationTableSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\PatientIdentifierColumnSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\PatientIndexTableSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\CohortIdentificationConfigurationSource.cs" />
