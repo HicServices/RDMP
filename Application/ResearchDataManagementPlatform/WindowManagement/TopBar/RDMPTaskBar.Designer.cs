@@ -41,7 +41,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.cbxDashboards = new System.Windows.Forms.ToolStripComboBox();
-            this.btnAddDashboard = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -122,18 +121,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // cbxDashboards
             // 
             this.cbxDashboards.Name = "cbxDashboards";
-            this.cbxDashboards.Size = new System.Drawing.Size(121, 25);
+            this.cbxDashboards.Size = new System.Drawing.Size(180, 25);
             this.cbxDashboards.DropDownClosed += new System.EventHandler(this.cbxDashboards_DropDownClosed);
-            // 
-            // btnAddDashboard
-            // 
-            this.btnAddDashboard.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAddDashboard.Image = ((System.Drawing.Image)(resources.GetObject("btnAddDashboard.Image")));
-            this.btnAddDashboard.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAddDashboard.Name = "btnAddDashboard";
-            this.btnAddDashboard.Size = new System.Drawing.Size(23, 22);
-            this.btnAddDashboard.Text = "toolStripButton1";
-            this.btnAddDashboard.Click += new System.EventHandler(this.btnAddDashboard_Click);
             // 
             // toolStripSeparator3
             // 
@@ -161,7 +150,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator2,
             this.toolStripLabel1,
             this.cbxDashboards,
-            this.btnAddDashboard,
             this.toolStripSeparator3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -213,7 +201,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cbxDashboards;
-        private System.Windows.Forms.ToolStripButton btnAddDashboard;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStrip toolStrip1;
