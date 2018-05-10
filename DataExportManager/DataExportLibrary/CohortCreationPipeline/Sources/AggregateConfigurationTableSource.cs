@@ -24,6 +24,11 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
         [DemandsInitialization("The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.", DemandType.Unspecified, 10000)]
         public int Timeout { get; set; }
 
+        /// <summary>
+        /// The name to give the table produced into the pipeline
+        /// </summary>
+        public string TableName { get; set; }
+
         protected virtual string GetSQL()
         {
             var builder = AggregateConfiguration.GetQueryBuilder();
@@ -64,7 +69,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
                 var dt = new DataTable();
                 server.GetDataAdapter(cmd).Fill(dt);
 
-                dt.TableName = server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(AggregateConfiguration.Name + "_ID" + AggregateConfiguration.ID);
+                dt.TableName = TableName;
 
                 if (listener != null)
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "successfully read " + dt.Rows + " rows from source"));

@@ -1,16 +1,25 @@
+using System;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.DataHelper;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using DataExportLibrary.CohortCreationPipeline.Sources;
 using DataExportLibrary.Data.DataTables;
+using DataLoadEngine.DataFlowPipeline.Destinations;
+using RDMPObjectVisualisation.Pipelines;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
+using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -18,6 +27,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private AggregateConfiguration _aggregateConfiguration;
         private ExtractableCohort _cohort;
+        private DiscoveredTable _table;
+        private Project _projectSpecific;
 
         public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IActivateItems activator) : base(activator)
         {
@@ -57,6 +68,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                     src.PreInitialize(_aggregateConfiguration, new ThrowImmediatelyDataLoadEventListener());
                     src.PreInitialize(_cohort, new ThrowImmediatelyDataLoadEventListener());
                     fixedSource = src;
+
+                    var externalData = _cohort.GetExternalData();
+                    if(externalData != null)
+                    {
+                        var projNumber = externalData.ExternalProjectNumber;
+                        var projs = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p=>p.ProjectNumber == projNumber).ToArray();
+                        if (projs.Length == 1)
+                            _projectSpecific = projs[0];
+                    }
                 }
             }
 
@@ -64,18 +84,50 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             {
                 var src = new AggregateConfigurationTableSource();
                 src.PreInitialize(_aggregateConfiguration,new ThrowImmediatelyDataLoadEventListener());
+                fixedSource = src;
             }
 
+            _table = SelectTable(true,"Choose destination table name");
 
-            //todo execute and commit!
+            if (_table == null)
+                return;
+
+            ((AggregateConfigurationTableSource)fixedSource).TableName = _table.GetRuntimeName();
+            
+            var ui = new ConfigureAndExecutePipeline();
+            ui.AddInitializationObject(_aggregateConfiguration);
+            if(_cohort != null)
+                ui.AddInitializationObject(_cohort);
+
+
+            ui.AddInitializationObject(_table.Database);
+
+            var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
+            var context = contextFactory.Create(PipelineUsage.FixedSource);
+            context.MustHaveDestination = typeof (DataTableUploadDestination);
+
+            ui.SetPipelineOptions(fixedSource,null,context,Activator.RepositoryLocator.CatalogueRepository);
+
+            ui.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
+
+            Activator.ShowWindow(ui, true);
+        }
+
+        void ui_PipelineExecutionFinishedsuccessfully(object sender, CatalogueLibrary.DataFlowPipeline.Events.PipelineEngineEventArgs args)
+        {
+            if(!_table.Exists())
+                throw new Exception("Pipeline execute succesfully but the expected table '" + _table +"' did not exist");
+            
+            var importer = new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, _table);
+            
+            var createCatalogue = new ConfigureCatalogueExtractabilityUI(Activator, importer, "Execution of '" + _aggregateConfiguration + "'",_projectSpecific);
+            createCatalogue.ShowDialog();
         }
 
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return _aggregateConfiguration == null
-                ? iconProvider.GetImage(RDMPConcept.AggregateGraph)
-                : iconProvider.GetImage(_aggregateConfiguration);
+            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)

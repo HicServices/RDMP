@@ -1,6 +1,6 @@
 ﻿namespace RDMPObjectVisualisation.DataObjects
 {
-    partial class PatientIndexTableVisualisation
+    partial class AggregateConfigurationVisualisation
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PatientIndexTableVisualisation));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AggregateConfigurationVisualisation));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -53,14 +53,14 @@
             this.ragSmiley1.Size = new System.Drawing.Size(26, 26);
             this.ragSmiley1.TabIndex = 1;
             // 
-            // PatientIndexTableVisualisation
+            // AggregateConfigurationVisualisation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.pictureBox1);
-            this.Name = "PatientIndexTableVisualisation";
+            this.Name = "AggregateConfigurationVisualisation";
             this.Size = new System.Drawing.Size(96, 96);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

@@ -12,6 +12,8 @@ using DataExportLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -71,6 +73,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 return (T)dialog.Selected;
 
             return null;
+        }
+
+        protected DiscoveredTable SelectTable(bool allowDatabaseCreation,string taskDescription)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
+
+            dialog.ShowDialog();
+
+            return dialog.SelectedTable;
         }
     }
 }
