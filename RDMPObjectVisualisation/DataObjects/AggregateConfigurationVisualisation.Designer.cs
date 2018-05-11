@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AggregateConfigurationVisualisation));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,22 +42,11 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(36, 64);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(26, 26);
-            this.ragSmiley1.TabIndex = 1;
-            // 
             // AggregateConfigurationVisualisation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.pictureBox1);
             this.Name = "AggregateConfigurationVisualisation";
             this.Size = new System.Drawing.Size(96, 96);
@@ -70,6 +58,5 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

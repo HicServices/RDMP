@@ -16,7 +16,7 @@ namespace RDMPObjectVisualisation.DataObjects
     /// have had a prescription for cannabis within 3 weeks of a prescription for opiates and are alive today and resident in Tayside).
     /// </para>
     /// </summary>
-    public partial class AggregateConfigurationVisualisation : UserControl, ICheckable
+    public partial class AggregateConfigurationVisualisation : UserControl
     {
         private readonly AggregateConfiguration _configuration;
 
@@ -24,9 +24,6 @@ namespace RDMPObjectVisualisation.DataObjects
         {
             _configuration = configuration;
             InitializeComponent();
-            DoTransparencyProperly.ThisHoversOver(ragSmiley1,pictureBox1);
-
-            this.Check(ragSmiley1);
             
             if (_configuration.IsJoinablePatientIndexTable())
                 pictureBox1.Image = Images.BigPatientIndexTable;
@@ -34,22 +31,6 @@ namespace RDMPObjectVisualisation.DataObjects
                 pictureBox1.Image = Images.BigCohort;
             else
                 pictureBox1.Image = Images.BigGraph;
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            try
-            {
-                var builder = _configuration.GetQueryBuilder();
-                notifier.OnCheckPerformed(new CheckEventArgs( "Sql for Aggregate is:" + Environment.NewLine + builder.SQL, CheckResult.Success));
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "Failed to generate query for AggregateConfiguration " + _configuration,CheckResult.Fail, e));
-            }
-
         }
     }
 }

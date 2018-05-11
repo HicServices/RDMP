@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CohortManagerLibrary.QueryBuilding;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
@@ -31,9 +32,19 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         protected virtual string GetSQL()
         {
-            var builder = AggregateConfiguration.GetQueryBuilder();
+            if(!AggregateConfiguration.IsCohortIdentificationAggregate)
+            {
+                var builder = AggregateConfiguration.GetQueryBuilder();
+                return builder.SQL;
+            }
 
-            return builder.SQL;
+            var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
+
+            if(cic == null)
+                throw new Exception("There GetCohortIdentificationConfiguration is unknown for '" + AggregateConfiguration +"'");
+
+            var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),AggregateConfiguration.IsJoinablePatientIndexTable());
+            return cohortBuilder.SQL;
         }
         
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
