@@ -120,7 +120,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
             var importer = new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, _table);
             
-            var createCatalogue = new ConfigureCatalogueExtractabilityUI(Activator, importer, "Execution of '" + _aggregateConfiguration + "'",_projectSpecific);
+            var createCatalogue = new ConfigureCatalogueExtractabilityUI(Activator, importer, "Execution of '" + _aggregateConfiguration + "' (AggregateConfiguration ID =" + _aggregateConfiguration.ID+")",_projectSpecific);
             createCatalogue.ShowDialog();
         }
 

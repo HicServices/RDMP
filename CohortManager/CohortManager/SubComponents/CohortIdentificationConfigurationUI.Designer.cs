@@ -46,6 +46,7 @@ namespace CohortManager.SubComponents
             this.olvNameCol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             this.btnClearCache = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
@@ -57,7 +58,6 @@ namespace CohortManager.SubComponents
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -140,6 +140,7 @@ namespace CohortManager.SubComponents
             this.olvExecute});
             this.tlvCic.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvCic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlvCic.HideSelection = false;
             this.tlvCic.Location = new System.Drawing.Point(0, 0);
             this.tlvCic.Name = "tlvCic";
             this.tlvCic.ShowGroups = false;
@@ -176,6 +177,15 @@ namespace CohortManager.SubComponents
             this.splitContainer1.Size = new System.Drawing.Size(1243, 505);
             this.splitContainer1.SplitterDistance = 391;
             this.splitContainer1.TabIndex = 61;
+            // 
+            // CohortCompilerUI1
+            // 
+            this.CohortCompilerUI1.CoreIconProvider = null;
+            this.CohortCompilerUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CohortCompilerUI1.Location = new System.Drawing.Point(0, 0);
+            this.CohortCompilerUI1.Name = "CohortCompilerUI1";
+            this.CohortCompilerUI1.Size = new System.Drawing.Size(844, 501);
+            this.CohortCompilerUI1.TabIndex = 0;
             // 
             // btnClearCache
             // 
@@ -308,15 +318,6 @@ namespace CohortManager.SubComponents
             this.splitContainer3.Size = new System.Drawing.Size(1243, 185);
             this.splitContainer3.SplitterDistance = 75;
             this.splitContainer3.TabIndex = 0;
-            // 
-            // CohortCompilerUI1
-            // 
-            this.CohortCompilerUI1.CoreIconProvider = null;
-            this.CohortCompilerUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CohortCompilerUI1.Location = new System.Drawing.Point(0, 0);
-            this.CohortCompilerUI1.Name = "CohortCompilerUI1";
-            this.CohortCompilerUI1.Size = new System.Drawing.Size(844, 501);
-            this.CohortCompilerUI1.TabIndex = 0;
             // 
             // CohortIdentificationConfigurationUI
             // 

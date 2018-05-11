@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -64,6 +65,15 @@ namespace CohortManager.SubComponents
             olvExecute.AspectGetter += ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
             AssociatedCollection = RDMPCollection.Cohort;
+
+            CohortCompilerUI1.SelectionChanged += CohortCompilerUI1_SelectionChanged;
+        }
+
+        void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
+        {
+            var joinable = obj as JoinableCohortAggregateConfiguration;
+            
+            tlvCic.SelectedObject = joinable != null ? joinable.AggregateConfiguration : obj;
         }
 
         void queryCachingServerSelector_SelectedServerChanged()
@@ -107,6 +117,7 @@ namespace CohortManager.SubComponents
                 tlvCic.ExpandAll();
             }
         }
+
 
         public override string GetTabName()
         {

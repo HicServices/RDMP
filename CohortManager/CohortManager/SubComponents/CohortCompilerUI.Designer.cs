@@ -89,6 +89,7 @@ namespace CohortManager.SubComponents
             this.tlvConfiguration.View = System.Windows.Forms.View.Details;
             this.tlvConfiguration.VirtualMode = true;
             this.tlvConfiguration.ItemActivate += new System.EventHandler(this.tlvConfiguration_ItemActivate);
+            this.tlvConfiguration.SelectedIndexChanged += new System.EventHandler(this.tlvConfiguration_SelectedIndexChanged);
             // 
             // olvAggregate
             // 

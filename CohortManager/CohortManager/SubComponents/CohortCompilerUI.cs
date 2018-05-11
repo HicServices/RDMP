@@ -1,39 +1,26 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents.EmptyLineElements;
-using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary;
 using CohortManagerLibrary.Execution;
 using CohortManagerLibrary.Execution.Joinables;
-using CohortManagerLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
-using ReusableUIComponents.SingleControlForms;
 
 
 namespace CohortManager.SubComponents
@@ -98,7 +85,12 @@ namespace CohortManager.SubComponents
         private int _timeout = 3000;
 
         private ISqlParameter[] _globals;
-        
+
+        /// <summary>
+        /// Occurs when the user selects something in the ObjectListView, object is the thing selected
+        /// </summary>
+        public event Action<IMapsDirectlyToDatabaseTable> SelectionChanged;
+
         public CohortCompilerUI()
         {
             InitializeComponent();
@@ -266,6 +258,7 @@ namespace CohortManager.SubComponents
 
         private bool _haveSubscribed = false;
         private CohortCompilerRunner _runner;
+
 
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
@@ -492,6 +485,14 @@ namespace CohortManager.SubComponents
             {
                 ExceptionViewer.Show(o.CrashMessage);
             }
+        }
+
+        private void tlvConfiguration_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var c = tlvConfiguration.SelectedObject as ICompileable;
+
+            if(SelectionChanged != null)
+                SelectionChanged(c == null ? null : c.Child);
         }
     }
 
