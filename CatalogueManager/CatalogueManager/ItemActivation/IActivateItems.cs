@@ -120,7 +120,7 @@ namespace CatalogueManager.ItemActivation
         /// <returns></returns>
         T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
 
-        bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);
+        bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
         bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
 
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);

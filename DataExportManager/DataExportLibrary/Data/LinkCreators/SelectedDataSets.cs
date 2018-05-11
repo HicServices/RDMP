@@ -18,7 +18,7 @@ namespace DataExportLibrary.Data.LinkCreators
     /// Usually when creating an ExtractionConfiguration you do not want to extract all the datasets (Catalogues).  SelectedDataSets represents the desire to extract a
     /// given dataset for a given ExtractableDataSet for a given ExtractionConfiguration.  
     /// </summary>
-    public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDatasetsForcedJoin[]>
+    public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDatasetsForcedJoin[]>,IDeletableWithCustomMessage
     {
         #region Database Properties
         
@@ -108,7 +108,12 @@ namespace DataExportLibrary.Data.LinkCreators
         {
             return ExtractableDataSet.ToString();
         }
-        
+
+        public string GetDeleteMessage()
+        {
+            return "remove '" + ExtractableDataSet + "' from ExtractionConfiguration '" + ExtractionConfiguration + "'";
+        }
+
         public void InjectKnown(IExtractableDataSet instance)
         {
             if(instance.ID != ExtractableDataSet_ID)

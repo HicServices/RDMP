@@ -151,6 +151,7 @@
     <Compile Include="Attributes\AttributePropertyFinder.cs" />
     <Compile Include="Attributes\IAttributePropertyFinder.cs" />
     <Compile Include="DatabaseConnectionConfiguration.cs" />
+    <Compile Include="IDeletableWithCustomMessage.cs" />
     <Compile Include="IDeleteable.cs" />
     <Compile Include="INamed.cs" />
     <Compile Include="Injection\IInjectKnown.cs" />
