@@ -350,6 +350,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractableCohort.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProject.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCataloguesNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectSavedCohortsNode.cs" />

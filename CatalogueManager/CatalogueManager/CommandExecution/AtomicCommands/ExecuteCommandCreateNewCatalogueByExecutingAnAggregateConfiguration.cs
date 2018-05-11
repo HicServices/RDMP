@@ -23,7 +23,7 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private AggregateConfiguration _aggregateConfiguration;
         private ExtractableCohort _cohort;
@@ -139,6 +139,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var cohort = target as ExtractableCohort;
             if (cohort != null)
                 _cohort = cohort;
+
+            var project = target as Project;
+            if (project != null)
+                _projectSpecific = project;
 
             return this;
         }

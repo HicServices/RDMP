@@ -9,6 +9,7 @@ using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using RDMPObjectVisualisation.Copying.Commands;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
@@ -45,6 +46,12 @@ namespace DataExportManager.CommandExecution.Proposals
 
             if(file != null)
                 return new ExecuteCommandCreateNewCatalogueByImportingFile(ItemActivator,file).SetTarget(project);
+
+            var aggCommand = cmd as AggregateConfigurationCommand;
+            
+            if(aggCommand != null)
+                return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator).SetTarget(project).SetTarget(aggCommand.Aggregate);
+
 
             return null;
         }
