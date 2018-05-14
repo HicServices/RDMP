@@ -1401,7 +1401,18 @@ namespace CatalogueLibrary.Data
 
             _extractabilityStatus = dataExportRepository.GetExtractabilityStatus(this);
             return _extractabilityStatus;
+        }
 
+        /// <summary>
+        /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalouge for whom you know 
+        /// IInjectKnown&lt;CatalogueExtractabilityStatus> has been called already.
+        /// </summary>
+        /// <param name="dataExportRepository"></param>
+        /// <returns></returns>
+        public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
+        {
+            var e = GetExtractabilityStatus(dataExportRepository);
+            return e != null && e.IsProjectSpecific;
         }
 
         /// <summary>

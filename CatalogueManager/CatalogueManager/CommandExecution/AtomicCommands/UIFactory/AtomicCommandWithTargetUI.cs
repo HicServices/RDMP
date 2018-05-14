@@ -61,6 +61,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 
         private void lblGo_Click(object sender, EventArgs e)
         {
+            if (_command.IsImpossible)
+            {
+                MessageBox.Show(_command.ReasonCommandImpossible,"Could not complete command");
+                return;
+            }
+            
             _command.Execute();
         }
 

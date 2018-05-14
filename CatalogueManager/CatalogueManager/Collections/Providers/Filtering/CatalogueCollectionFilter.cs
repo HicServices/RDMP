@@ -37,8 +37,7 @@ namespace CatalogueManager.Collections.Providers.Filtering
                     return true;
             }
 
-            var extractability = cata.GetExtractabilityStatus(null);
-            bool isProjectSpecific = extractability != null && extractability.IsProjectSpecific;
+            bool isProjectSpecific = cata.IsProjectSpecific(null);
             
             //it has hiding flags, show only if one of the true flags matches the checkbox (doesn't need to match on all if a dataset is internal and deprecated then it shows if either is ticked)
             if (cata.IsInternalDataset || cata.IsColdStorageDataset || cata.IsDeprecated || isProjectSpecific)

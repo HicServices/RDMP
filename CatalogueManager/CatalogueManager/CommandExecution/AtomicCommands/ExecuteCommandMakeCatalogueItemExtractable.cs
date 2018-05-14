@@ -30,9 +30,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var newExtractionInformation = new ExtractionInformation(Activator.RepositoryLocator.CatalogueRepository, _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
             //it will be Core but if the Catalogue is ProjectSpecific then instead we should make our new ExtractionInformation ExtractionCategory.ProjectSpecific
-            var extractability = _catalogueItem.Catalogue.GetExtractabilityStatus(Activator.RepositoryLocator.DataExportRepository);
-
-            if(extractability != null && extractability.IsProjectSpecific)
+            if(_catalogueItem.Catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository))
             {
                 newExtractionInformation.ExtractionCategory = ExtractionCategory.ProjectSpecific;
                 newExtractionInformation.SaveToDatabase();

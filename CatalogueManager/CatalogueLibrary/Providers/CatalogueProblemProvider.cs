@@ -61,22 +61,17 @@ namespace CatalogueLibrary.Providers
                 if (catalogue != null)
                 {
                     //if we know the Catalogue extractability
-                    var extractability = catalogue.GetExtractabilityStatus(null);
-                    if (extractability != null)
-                    {
-                        //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
-                        //otherwise it's a Problem
-                        
-                        if (extractability.IsProjectSpecific &&
-                            extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
-                            return "Catalogue " + catalogue +
-                                   " is Project Specific Catalogue so all ExtractionCategory should be " +
-                                   ExtractionCategory.ProjectSpecific;
+                    
+                    //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
+                    //otherwise it's a Problem
 
-                        if(extractability.IsExtractable && !extractability.IsProjectSpecific 
-                            && extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-                            return "ExtractionCategory is only valid when the Catalogue ('"+catalogue+"') is also ProjectSpecific";
+                    if (catalogue.IsProjectSpecific(null))
+                    {
+                        if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
+                            return "Catalogue " + catalogue + " is Project Specific Catalogue so all ExtractionCategory should be " + ExtractionCategory.ProjectSpecific;
                     }
+                    else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                        return "ExtractionCategory is only valid when the Catalogue ('"+catalogue+"') is also ProjectSpecific";
                 }
             }
 

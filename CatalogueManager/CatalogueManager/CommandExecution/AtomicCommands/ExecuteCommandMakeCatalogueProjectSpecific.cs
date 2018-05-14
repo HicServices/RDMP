@@ -58,6 +58,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             if(target is Catalogue)
             {
+                ResetImpossibleness();
+
                 _catalogue = (Catalogue)target;
                 var status = _catalogue.GetExtractabilityStatus(Activator.RepositoryLocator.DataExportRepository);
             
