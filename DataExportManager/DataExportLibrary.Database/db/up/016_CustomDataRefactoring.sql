@@ -28,7 +28,7 @@ if not exists (select 1 from sys.tables where name = 'SelectedDatasetsForcedJoin
 begin
 CREATE TABLE [SelectedDatasetsForcedJoin](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[SelectedDatasets_ID] [int] NOT NULL,
+	[SelectedDataSets_ID] [int] NOT NULL,
 	[TableInfo_ID] [int] NOT NULL,
  CONSTRAINT [PK_SelectedDatasetsForcedJoin] PRIMARY KEY CLUSTERED 
 (
@@ -39,7 +39,7 @@ end
 go
 if not exists (select 1 from sys.foreign_keys where name = 'FK_SelectedDatasetsForcedJoin_SelectedDataSets') 
 begin
-ALTER TABLE [SelectedDatasetsForcedJoin]  WITH CHECK ADD  CONSTRAINT [FK_SelectedDatasetsForcedJoin_SelectedDataSets] FOREIGN KEY([SelectedDatasets_ID])
+ALTER TABLE [SelectedDatasetsForcedJoin]  WITH CHECK ADD  CONSTRAINT [FK_SelectedDatasetsForcedJoin_SelectedDataSets] FOREIGN KEY([SelectedDataSets_ID])
 REFERENCES [SelectedDataSets] ([ID])
 ON DELETE CASCADE
 

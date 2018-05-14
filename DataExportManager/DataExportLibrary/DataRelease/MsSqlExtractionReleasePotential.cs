@@ -24,7 +24,7 @@ namespace DataExportLibrary.DataRelease
         {
             var _extractDir = Configuration.GetProject().ExtractionDirectory;
 
-            ExtractDirectory = ExtractionDirectory.GetForDifferentDate(_extractDir, Configuration, DateOfExtraction).GetDirectoryForDataset(DataSet);
+            ExtractDirectory = new ExtractionDirectory(_extractDir, Configuration).GetDirectoryForDataset(DataSet);
 
             var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
             var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
