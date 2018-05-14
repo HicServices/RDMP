@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
@@ -286,12 +287,16 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         {
             var eds = new ExtractableDataSet(_activator.RepositoryLocator.DataExportRepository, _catalogue);
 
-            var cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(_projectSpecific).SetTarget(_catalogue);
+            IAtomicCommandWithTarget cmd;
+            if(_projectSpecific != null)
+            {
+                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(_projectSpecific).SetTarget(_catalogue);
             
-            if (!cmd.IsImpossible)
-                cmd.Execute();
-            else
-                MessageBox.Show("Could not make Catalogue ProjectSpecific:" + cmd.ReasonCommandImpossible);
+                if (!cmd.IsImpossible)
+                    cmd.Execute();
+                else
+                    MessageBox.Show("Could not make Catalogue ProjectSpecific:" + cmd.ReasonCommandImpossible);
+            }
         }
 
         private void btnAddToExisting_Click(object sender, EventArgs e)
