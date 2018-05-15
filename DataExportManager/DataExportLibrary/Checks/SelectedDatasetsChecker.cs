@@ -17,6 +17,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.Checks
 {
+    /// <summary>
+    /// Checks that the <see cref="SelectedDataSets"/> can be built into a valid SQL extraction Query and that the SQL generated can be executed
+    /// without syntax errors.
+    /// </summary>
     public class SelectedDatasetsChecker : ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;

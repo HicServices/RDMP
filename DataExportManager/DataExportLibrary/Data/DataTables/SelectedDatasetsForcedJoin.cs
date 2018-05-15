@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace DataExportLibrary.Data.DataTables
     /// table e.g. 'Questionnaire answer x > 5'.  In that scenario the <see cref="TableInfo"/> would be the 'Project Specific Catalogue' dataset 'Questionnaire'
     /// and the <see cref="SelectedDataSets"/> would be the dataset you were extracting in your study e.g. 'biochemistry'.
     /// 
-    /// A <see cref="JoinInfo"/> must still exist to tell <see cref="QueryBuilder"/> how to write the Join section of the query.
+    /// <para>A <see cref="JoinInfo"/> must still exist to tell <see cref="QueryBuilder"/> how to write the Join section of the query.</para>
     /// </summary>
     public class SelectedDatasetsForcedJoin : DatabaseEntity, ISelectedDatasetsForcedJoin, IInjectKnown<TableInfo>
     {
@@ -41,13 +41,15 @@ namespace DataExportLibrary.Data.DataTables
             get { return _tableInfo_ID; }
             set { SetField(ref _tableInfo_ID, value); }
         }
-        
+
+        #region Relationships
+        /// <inheritdoc cref="TableInfo_ID"/>
         [NoMappingToDatabase]
         public TableInfo TableInfo
         {
             get { return _knownTableInfo.Value; }
-            
         }
+        #endregion
 
         public SelectedDatasetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, TableInfo tableInfo)
         {

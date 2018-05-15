@@ -24,7 +24,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// 
     /// <para>- Counts of the number of records and unique patient identifiers (See ExtractionInformationUI and the IsExtractionIdentifier flag)</para>
     /// 
-    /// <para>- Complete extract of the lookup tables configured for the dataset (See ConfigureLookups)</para>
+    /// <para>- Complete extract of the lookup tables configured for the dataset (See LookupConfiguration)</para>
     /// 
     /// <para>- Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)</para>
     /// 

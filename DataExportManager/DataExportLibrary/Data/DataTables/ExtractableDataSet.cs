@@ -51,7 +51,7 @@ namespace DataExportLibrary.Data.DataTables
         /// extracted in the same way as all the regular data.</para>
         /// 
         /// <para>In addition, you can use the columns in the referenced <see cref="Catalogue_ID"/> by joining them to any regular Catalogue being extracted in the Project.  These
-        /// selected columns will be bolted on as additional columns.  You can also reference them in the WhereSql of filters which will trigger an similar Join></para>.
+        /// selected columns will be bolted on as additional columns.  You can also reference them in the WhereSQL of filters which will trigger an similar Join></para>.
         /// 
         /// <para>For example imagine you have a custom data set which is 'Patient ID,Date Consented' then you could configure an extraction filters that only extracted records from
         ///  Prescribing, Demography, Biochemistry catalogues AFTER each patients consent date.</para>

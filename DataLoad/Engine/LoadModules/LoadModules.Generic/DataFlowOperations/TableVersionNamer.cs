@@ -14,6 +14,9 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowOperations
 {
+    /// <summary>
+    /// Renames DataTables in the pipeline so that they do not collide with any tables at the destination database.  This is done by appending V1,V2,V3 etc to the table
+    /// </summary>
     [Description("Renames DataTables in the pipeline so that they do not collide with any tables at the destination database.  This is done by appending V1,V2,V3 etc to the table")]
     public class TableVersionNamer : IPluginDataFlowComponent<DataTable>,IPipelineRequirement<DiscoveredDatabase>
     {

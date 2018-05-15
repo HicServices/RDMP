@@ -1,8 +1,12 @@
 using CatalogueLibrary.Data;
+using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
-    public interface ISelectedDatasetsForcedJoin
+    /// <summary>
+    /// See SelectedDatasetsForcedJoin
+    /// </summary>
+    public interface ISelectedDatasetsForcedJoin:IMapsDirectlyToDatabaseTable
     {
         int TableInfo_ID { get; }
         TableInfo TableInfo { get;}

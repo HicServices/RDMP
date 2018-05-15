@@ -147,7 +147,6 @@
     <Compile Include="Data\IExternalCohortDefinitionData.cs" />
     <Compile Include="Data\IHICProjectSalt.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandState.cs" />
-    <Compile Include="ExtractionTime\Commands\IExtractCohortCustomTableCommand.cs" />
     <Compile Include="ExtractionTime\Commands\IExtractCommand.cs" />
     <Compile Include="ExtractionTime\IExtractionDirectory.cs" />
     <Compile Include="ExtractionTime\UserPicks\IBundledLookupTable.cs" />
