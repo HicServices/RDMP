@@ -6,6 +6,7 @@ using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportManager.ProjectUI;
+using DataExportManager.ProjectUI.Datasets;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

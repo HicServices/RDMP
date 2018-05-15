@@ -15,7 +15,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         string Name { get; set; }
         string TableName { get; set; }
         string DefinitionTableName { get; set; }
-        string CustomTablesTableName { get; set; }
         string PrivateIdentifierField { get; set; }
         string ReleaseIdentifierField { get; set; }
         string DefinitionTableForeignKeyField { get; set; }

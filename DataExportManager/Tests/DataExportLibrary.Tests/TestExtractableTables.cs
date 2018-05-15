@@ -16,8 +16,7 @@ namespace DataExportLibrary.Tests
         [Test]
         public void DodgyID_CreateCohortDatabaseTable_Fails()
         {
-            int whoCares;
-            var ex = Assert.Throws<Exception>(() => new ExtractableCohort(DataExportRepository, _externalCohortTable,-899,out whoCares));
+            var ex = Assert.Throws<Exception>(() => new ExtractableCohort(DataExportRepository, _externalCohortTable,-899));
             Assert.IsTrue(ex.Message.StartsWith("ID -899 does not exist in Cohort Definitions"));
         }
 

@@ -34,10 +34,23 @@ namespace ReusableLibraryCode.CommandExecution
             return String.Empty;
         }
 
+        /// <summary>
+        /// makes the command unrunnable because of the given reason.  This will result in greyed out menu items, crashes when executed programatically etc.
+        /// </summary>
+        /// <param name="reason"></param>
         protected void SetImpossible(string reason)
         {
             IsImpossible = true;
             ReasonCommandImpossible = reason;
+        }
+
+        /// <summary>
+        /// Resets the IsImpossible status of the command
+        /// </summary>
+        protected void ResetImpossibleness()
+        {
+            IsImpossible = false;
+            ReasonCommandImpossible = null;
         }
     }
 }

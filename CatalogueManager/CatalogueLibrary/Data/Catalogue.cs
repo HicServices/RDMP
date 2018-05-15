@@ -34,10 +34,11 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
-    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper, IInjectKnown<CatalogueItem[]>
+
+    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
     {
         #region Database Properties
-
+        
         //just create these variables (one for every string or Uri field and reflection will populate them
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Acronym_MaxLength = -1;
@@ -1372,38 +1373,60 @@ namespace CatalogueLibrary.Data
                     .ToArray();
         }
 
-        private bool? _isExtractable;
-        
+        private CatalogueExtractabilityStatus _extractabilityStatus;
+
         /// <summary>
-        /// Returns whether or not the extractability of the Catalogue is known.  In general this is only true
-        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// Records the known extractability status (as a cached answer for <see cref="GetExtractabilityStatus"/>)
         /// </summary>
-        /// <returns></returns>
-        internal bool GetIsExtractabilityKnown()
+        /// <param name="instance"></param>
+        public void InjectKnown(CatalogueExtractabilityStatus instance)
         {
-            return _isExtractable != null;
+            _extractabilityStatus = instance;
+        }
+
+        /// <inheritdoc/>
+        public void InjectKnown(CatalogueItem[] instance)
+        {
+            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => instance);
         }
 
         /// <summary>
-        /// Method is only valid once InjectExtractability is called, do not use it without first calling <see cref="GetIsExtractabilityKnown"/>.  In general this is only true
-        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// Cleares the cached answer of <see cref="GetExtractabilityStatus"/>
         /// </summary>
-        /// <returns></returns>
-        internal bool GetIsExtractable()
+        public void ClearAllInjections()
         {
-            if(_isExtractable == null)
-                throw new NotSupportedException("Method is only valid once InjectExtractability is called.  Catalogues do not know if they are extractable, it takes a Data Export object to tell them this fact");
-            
-            return _isExtractable.Value;
+            _extractabilityStatus = null;
+            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem>(this));
         }
 
         /// <summary>
-        /// Inform the Catalogue that there is/isn't an associated ExtractableDataSet in the data export database (the presence of one of these is what defines extractability)
+        /// Returns the extractability of the Catalogue if it is known.  If it is not known then the repository will be used to find out (and the result will be cached)
+        /// <para>If a null dataExportRepository is passed then you will get the cached answer or null</para>
         /// </summary>
-        /// <param name="isExtractable"></param>
-        internal void InjectExtractability(bool isExtractable)
+        /// <param name="dataExportRepository">Pass null to fetch only the cached value (or null if that is not known)</param>
+        /// <returns></returns>
+        public CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository)
         {
-            _isExtractable = isExtractable;
+            if (_extractabilityStatus != null)
+                return _extractabilityStatus;
+
+            if (dataExportRepository == null)
+                return null;
+
+            _extractabilityStatus = dataExportRepository.GetExtractabilityStatus(this);
+            return _extractabilityStatus;
+        }
+
+        /// <summary>
+        /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalouge for whom you know 
+        /// IInjectKnown&lt;CatalogueExtractabilityStatus> has been called already.
+        /// </summary>
+        /// <param name="dataExportRepository"></param>
+        /// <returns></returns>
+        public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
+        {
+            var e = GetExtractabilityStatus(dataExportRepository);
+            return e != null && e.IsProjectSpecific;
         }
 
         /// <summary>
@@ -1456,16 +1479,5 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
-        /// <inheritdoc/>
-        public void InjectKnown(CatalogueItem[] instance)
-        {
-            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => instance);
-        }
-
-        /// <inheritdoc/>
-        public void ClearAllInjections()
-        {
-            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem>(this));
-        }
     }
 }

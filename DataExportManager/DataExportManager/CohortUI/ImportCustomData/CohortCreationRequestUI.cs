@@ -30,6 +30,12 @@ namespace DataExportManager.CohortUI.ImportCustomData
     {
         private readonly ExternalCohortTable _target;
         private DataExportRepository _repository;
+        
+        public string CohortDescription
+        {
+            get { return tbDescription.Text; }
+            set { tbDescription.Text = value; }
+        }
 
         public CohortCreationRequestUI(ExternalCohortTable target, Project project =null)
         {
@@ -50,7 +56,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             pbCohortSource.Image = CatalogueIcons.ExternalCohortTable;
         }
 
-
+        
         public CohortCreationRequest Result { get; set; }
         public IActivateItems Activator { get; set; }
         public Project Project { get; set; }

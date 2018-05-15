@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
@@ -9,6 +10,6 @@ namespace CatalogueLibrary.Repositories
     public interface IDataExportRepository : ITableRepository
     {
         CatalogueRepository CatalogueRepository { get; }
-        
+        CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
     }
 }

@@ -475,7 +475,7 @@ namespace CatalogueLibrary.Providers
 
         #endregion
 
-        private void AddChildren(Catalogue c, DescendancyList descendancy)
+        protected void AddChildren(Catalogue c, DescendancyList descendancy)
         {
             List<object> childObjects = new List<object>();
 
@@ -528,7 +528,11 @@ namespace CatalogueLibrary.Providers
             var cis = AllCatalogueItems
                 .Where(ci => ci.Catalogue_ID == c.ID)
                 .ToArray();
-            
+
+            //tell the CatalogueItems that we are are their parent
+            foreach (CatalogueItem ci in cis)
+                ci.InjectKnown(c);
+
             //add a new CatalogueItemNode (can be empty)
             var catalogueItemsNode = new CatalogueItemsNode(c, cis);
             childObjects.Add(catalogueItemsNode);
@@ -835,18 +839,28 @@ namespace CatalogueLibrary.Providers
             //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
             foreach (object o in children)
             {
+                //if there is a collision for the object then it means we already know of another way to get to it (that's a problem, there can be only one)
                 if(_descendancyDictionary.ContainsKey(o))
-                    if (_descendancyDictionary[o].BetterRouteExists) //the object o has been seen before with a different route but it is not the preferred one, so throw away old route
+                {
+
+                    var collision =_descendancyDictionary[o];
+                    //the old way of getting to it was marked with BetterRouteExists so we can discard it
+                    if (collision.BetterRouteExists)
                         _descendancyDictionary.Remove(o);
+                    //the new one is marked BetterRouteExists so just throw away the new one
                     else if (list.BetterRouteExists)
-                        //the current one is a good route and the replacement is a BetterRouteExists so just throw away the new one
                         return;
+                    //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
+                    else if (list.NewBestRoute && !collision.NewBestRoute)
+                        _descendancyDictionary.Remove(o);
                     else
                     {
                         //there was a horrible problem with 
-                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + _descendancyDictionary[o],CheckResult.Fail));
+                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + collision,CheckResult.Fail));
                         return;
                     }
+                    
+                }
 
                 _descendancyDictionary.Add(o, list);
             }

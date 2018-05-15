@@ -47,8 +47,6 @@ namespace DataExportLibrary.Providers
 
         public ExtractableCohort[] Cohorts { get; private set; }
 
-        public List<CustomDataTableNode> CustomTables { get; private set; }
-
         public ExtractionConfiguration[] ExtractionConfigurations { get; private set; }
         
         private Dictionary<ExtractionConfiguration, SelectedDataSets[]> _configurationToDatasetMapping;
@@ -106,13 +104,13 @@ namespace DataExportLibrary.Providers
             SelectedDataSets = dataExportRepository.GetAllObjects<SelectedDataSets>();
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
             foreach (SelectedDataSets s in SelectedDataSets)
-                s.SetKnownDataSet(dsDictionary[s.ExtractableDataSet_ID]);
+                s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
             
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
             var dictionary = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
                 if(dictionary.ContainsKey(ds.Catalogue_ID))
-                    ds.SetKnownCatalogue(dictionary[ds.Catalogue_ID]);
+                    ds.InjectKnown(dictionary[ds.Catalogue_ID]);
                 
             AllPackages = dataExportRepository.GetAllObjects<ExtractableDataSetPackage>();
             PackageContents = new ExtractableDataSetPackageContents(dataExportRepository);
@@ -125,9 +123,9 @@ namespace DataExportLibrary.Providers
 
             Cohorts = dataExportRepository.GetAllObjects<ExtractableCohort>();
             
-            GetCustomTables();
-            
             _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, SelectedDataSets[]>();
+
+            GetCohortAvailability();
 
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
                 _configurationToDatasetMapping.Add(configuration, SelectedDataSets.Where(c => c.ExtractionConfiguration_ID == configuration.ID).ToArray());
@@ -142,11 +140,14 @@ namespace DataExportLibrary.Providers
                 AddChildren(p, new DescendancyList(p));
 
             //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
-            var extractableCatalogueIds = new HashSet<int>(ExtractableDataSets.Select(ds => ds.Catalogue_ID));
+            var cataToEds = new Dictionary<int,ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
 
             //inject extractability into Catalogues
             foreach (Catalogue catalogue in AllCatalogues)
-                catalogue.InjectExtractability(extractableCatalogueIds.Contains(catalogue.ID));
+                if (cataToEds.ContainsKey(catalogue.ID))
+                    catalogue.InjectKnown(cataToEds[catalogue.ID].GetCatalogueExtractabilityStatus());
+                else
+                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));    
         }
 
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)
@@ -165,7 +166,11 @@ namespace DataExportLibrary.Providers
             var projectCohortNode = new ProjectCohortsNode(project);
             children.Add(projectCohortNode);
             AddChildren(projectCohortNode,descendancy.Add(projectCohortNode));
-            
+
+            var projectCataloguesNode = new ProjectCataloguesNode(project);
+            children.Add(projectCataloguesNode);
+            AddChildren(projectCataloguesNode, descendancy.Add(projectCataloguesNode).SetNewBestRoute());
+
             var extractionConfigurationsNode = new ExtractionConfigurationsNode(project);
             children.Add(extractionConfigurationsNode);
 
@@ -174,6 +179,19 @@ namespace DataExportLibrary.Providers
             var folder = new ExtractionDirectoryNode(project);
             children.Add(folder);
             AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ProjectCataloguesNode projectCataloguesNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            foreach (ExtractableDataSet projectSpecificEds in ExtractableDataSets.Where(eds=>eds.Project_ID == projectCataloguesNode.Project.ID))
+            {
+                children.Add(projectSpecificEds.Catalogue);
+                AddChildren((Catalogue)projectSpecificEds.Catalogue, descendancy.Add(projectSpecificEds.Catalogue));
+            }
+            
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(ProjectCohortsNode projectCohortsNode, DescendancyList descendancy)
@@ -326,33 +344,36 @@ namespace DataExportLibrary.Providers
 
         private void AddChildren(CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode, DescendancyList descendancy)
         {
-            foreach (var usedCohort in cohortSourceUsedByProjectNode.CohortsUsedByProject)
-                AddChildren(usedCohort, descendancy.Add(usedCohort));
-
             AddToDictionaries(new HashSet<object>(cohortSourceUsedByProjectNode.CohortsUsedByProject),descendancy);
         }
-
-        private void AddChildren(ExtractableCohortUsedByProjectNode usedCohort, DescendancyList descendancy)
+        
+        private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
         {
-            if(usedCohort.CustomTablesUsed.Any())
-                AddToDictionaries(new HashSet<object>(usedCohort.CustomTablesUsed),descendancy );
+            var validSources = CohortSources.Except(BlackListedSources).ToArray();
+
+            AddToDictionaries(new HashSet<object>(validSources), descendancy);
+            foreach (var s in validSources)
+                AddChildren(s, descendancy.Add(s));
         }
 
-        private void GetCustomTables()
+        private void AddChildren(ExternalCohortTable externalCohortTable, DescendancyList descendancy)
         {
-            CustomTables = new List<CustomDataTableNode>();
+            var cohorts = Cohorts.Where(c => c.ExternalCohortTable_ID == externalCohortTable.ID).ToArray();
+            AddToDictionaries(new HashSet<object>(cohorts), descendancy);
+        }
 
+        private void GetCohortAvailability()
+        {
             foreach (ExternalCohortTable source in CohortSources.Except(BlackListedSources))
             {
-                
-                DiscoveredServer server=null;
+                DiscoveredServer server = null;
 
-                Exception ex=null;
+                Exception ex = null;
 
                 //it obviously hasn't been initialised properly yet
-                if(string.IsNullOrWhiteSpace(source.Server) || string.IsNullOrWhiteSpace(source.Database))
+                if (string.IsNullOrWhiteSpace(source.Server) || string.IsNullOrWhiteSpace(source.Database))
                     continue;
-                
+
 
                 try
                 {
@@ -362,37 +383,29 @@ namespace DataExportLibrary.Providers
                 {
                     ex = exception;
                 }
-                
-                if(server == null || !server.RespondsWithinTime(10, out ex))
+
+                if (server == null || !server.RespondsWithinTime(10, out ex))
                 {
                     BlackListedSources.Add(source);
-                    throw new Exception("Blacklisted source '" + source +"' due to error " + ex);
+
+                    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Blacklisted source '" + source + "'",CheckResult.Fail, ex));
+
+                    //tell them not to bother looking for the cohort data because its inaccessible
+                    foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
+                        cohort.InjectKnown(null);
+
+                    continue;
                 }
-               
+
                 using (var con = server.GetConnection())
                 {
                     con.Open();
-
-                    var cmd = server.GetCommand(source.GetCustomTableSql(), con);
-                    cmd.CommandTimeout = 120; //give it up to 2 minutes
-                    var r = cmd.ExecuteReader();
-
-                    while (r.Read())
-                    {
-                        var cohorts = Cohorts.Where(
-                            c => c.OriginID == Convert.ToInt32(r["OriginID"]) && c.ExternalCohortTable_ID == source.ID)
-                            .ToArray();
-
-                        foreach (ExtractableCohort c in cohorts)
-                            CustomTables.Add(new CustomDataTableNode(c, r["CustomTableName"] as string, Convert.ToBoolean(r["active"])));
-                    }
-                    r.Close();
-
+                    
                     //Get all of the project numbers and remote origin ids etc from the source in one query
-                    var cmd2 = server.GetCommand(source.GetExternalDataSql(), con);
-                    cmd2.CommandTimeout = 120;
+                    var cmd = server.GetCommand(source.GetExternalDataSql(), con);
+                    cmd.CommandTimeout = 120;
 
-                    r = cmd2.ExecuteReader();
+                    var r = cmd.ExecuteReader();
                     while (r.Read())
                     {
                         //really should be only one here but still they might for some reason have 2 references to the same external cohort
@@ -404,45 +417,22 @@ namespace DataExportLibrary.Providers
                         foreach (ExtractableCohort c in cohorts)
                         {
                             //load external data from the result set
-                            var externalData = new ExternalCohortDefinitionData((SqlDataReader) r, source.Name);
-                            
+                            var externalData = new ExternalCohortDefinitionData((SqlDataReader)r, source.Name);
+
                             //tell the cohort about the data
-                            c.SetKnownExternalData(externalData);
+                            c.InjectKnown(externalData);
 
                             //for performance also keep a dictionary of project number => compatible cohorts
-                            if(!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
-                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber,new List<ExtractableCohort>());
-                            
+                            if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
+                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
+
                             ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
-                            
                         }
                     }
                 }
             }
         }
 
-        private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
-        {
-            AddToDictionaries(new HashSet<object>(CohortSources), descendancy);
-            foreach (var s in CohortSources)
-                AddChildren(s, descendancy.Add(s));
-        }
-
-        private void AddChildren(ExternalCohortTable externalCohortTable, DescendancyList descendancy)
-        {
-            var cohorts = Cohorts.Where(c => c.ExternalCohortTable_ID == externalCohortTable.ID).ToArray();
-            foreach (var cohort in cohorts)
-                AddChildren(cohort, descendancy.Add(cohort));
-
-            AddToDictionaries(new HashSet<object>(cohorts), descendancy);
-        }
-
-        private void AddChildren(ExtractableCohort extractableCohort, DescendancyList descendancy)
-        {
-            AddToDictionaries(new HashSet<object>(CustomTables.Where(ct => ct.Cohort.Equals(extractableCohort))), descendancy);
-        }
-
-        
         private List<CohortSourceUsedByProjectNode> GetAllCohortProjectUsageNodesFor(Project project)
         {
             //if the current project does not have a number or there are no cohorts associated with it
@@ -468,11 +458,10 @@ namespace DataExportLibrary.Providers
                 }
 
                 //add the cohort to the list of known cohorts from this source (a project can have lots of cohorts and even cohorts from different sources) 
-                var cohortUsedByProject = new ExtractableCohortUsedByProjectNode(cohort, project, CustomTables);
+                var cohortUsedByProject = new ExtractableCohortUsedByProjectNode(cohort, project);
                 existing.CohortsUsedByProject.Add(cohortUsedByProject);
 
                 DuplicateObjectsButUsedByProjects.Add(cohortUsedByProject);
-                DuplicateObjectsButUsedByProjects.AddRange(cohortUsedByProject.CustomTablesUsed);
             }
 
             DuplicateObjectsButUsedByProjects.AddRange(toReturn);
@@ -502,8 +491,10 @@ namespace DataExportLibrary.Providers
             //Get the extraction configurations node of the project
             var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
 
+            var frozenConfigurationsNode = GetChildren(configurationsNode).OfType<FrozenExtractionConfigurationsNode>().Single();
+
             //then add all the children extraction configurations
-            return GetChildren(configurationsNode).OfType<ExtractionConfiguration>();
+            return GetChildren(configurationsNode).OfType<ExtractionConfiguration>().Union(GetChildren(frozenConfigurationsNode).OfType<ExtractionConfiguration>());
         }
 
         public IEnumerable<ExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)

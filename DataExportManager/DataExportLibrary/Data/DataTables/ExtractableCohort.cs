@@ -11,7 +11,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
-
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -33,7 +33,7 @@ namespace DataExportLibrary.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>
     {
         #region Database Properties
         private int _externalCohortTable_ID;
@@ -122,15 +122,6 @@ namespace DataExportLibrary.Data.DataTables
             get { return Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID);}
         }
 
-        [NoMappingToDatabase]
-        public IColumn[] CustomCohortColumns
-        {
-            get
-            {
-                return Repository.GetAllObjectsWithParent<CohortCustomColumn>(this)
-                    .Cast<IColumn>().ToArray();
-            }
-        }
         #endregion
 
 
@@ -142,6 +133,8 @@ namespace DataExportLibrary.Data.DataTables
             OriginID = Convert.ToInt32(r["OriginID"]);
             ExternalCohortTable_ID = Convert.ToInt32(r["ExternalCohortTable_ID"]);
             AuditLog = r["AuditLog"] as string;
+
+            ClearAllInjections();
             /*
             try
             {
@@ -178,10 +171,10 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         
-        private IExternalCohortDefinitionData _cacheData;
+        private Lazy<IExternalCohortDefinitionData> _cacheData;
         private int _originID;
 
-        public ExtractableCohort(IDataExportRepository repository, ExternalCohortTable externalSource, int originalId, out int numberOfCustomColumnsCreated)
+        public ExtractableCohort(IDataExportRepository repository, ExternalCohortTable externalSource, int originalId)
         {
             Repository = repository;
 
@@ -194,16 +187,25 @@ namespace DataExportLibrary.Data.DataTables
                 {"ExternalCohortTable_ID", externalSource.ID}
             });
 
-            //we have been added to database but now we need to create custom columns too
-            numberOfCustomColumnsCreated = CreateCustomColumnsIfCustomTableExists();
+            ClearAllInjections();
         }
 
         public override string ToString()
         {
-            if (_cacheData == null)
-                _cacheData = GetExternalData();
+            IExternalCohortDefinitionData v = null;
 
-            return _cacheData.ExternalProjectNumber + "_" + _cacheData.ExternalDescription + "_V" + _cacheData.ExternalVersion;
+            try
+            {
+                v = _cacheData.Value;
+            }
+            catch (Exception e)
+            {
+                _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>null);    
+            }
+            if (v == null)
+                return "Broken Cohort";
+
+            return v.ExternalProjectNumber + "_" + v.ExternalDescription + "_V" + v.ExternalVersion;
         }
 
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
@@ -213,11 +215,6 @@ namespace DataExportLibrary.Data.DataTables
                 _cachedQuerySyntaxHelper = ExternalCohortTable.GetQuerySyntaxHelper();
 
             return _cachedQuerySyntaxHelper;
-        }
-
-        public void SetKnownExternalData(IExternalCohortDefinitionData externalData)
-        {
-            _cacheData = externalData;
         }
 
         #region Stuff for executing the actual queries described by this class (generating cohorts etc)
@@ -317,75 +314,7 @@ namespace DataExportLibrary.Data.DataTables
         }
         
         #endregion
-
         
-        public void SynchronizeCustomColumns(ICheckNotifier notifier)
-        {
-            List<string> required = new List<string>();
-
-            //foreach custom table 
-            var customTableNames = GetCustomTableNames();
-            
-            var ect = ExternalCohortTable;
-            var syntax = ect.GetQuerySyntaxHelper();
-
-            foreach (var customTable in customTableNames)
-            {
-                string customTableNameLastBitOnly = syntax.GetRuntimeName(customTable);
-
-                var table = ect.GetExpectDatabase().ExpectTable(customTableNameLastBitOnly);
-
-                if(!table.Exists())
-                    throw new Exception("Table " + table + " does not exist");
-
-                 foreach (DiscoveredColumn column in table.DiscoverColumns())
-                     required.Add(column.GetFullyQualifiedName());
-            }
-
-            var existingColumns = CustomCohortColumns;
-            foreach (var existingColumn in existingColumns)
-            {
-                //if it is not required anymore
-                if(!required.Any(c=>c.Equals(existingColumn.SelectSQL)))
-                    if (notifier.OnCheckPerformed(new CheckEventArgs("Column " + existingColumn.SelectSQL + " no longer appears in the Cohort database",CheckResult.Fail,null, "Delete Column")))
-                        ((IDeleteable)existingColumn).DeleteInDatabase();
-            }
-
-            foreach (string column in required)
-                if (!existingColumns.Any(e => e.SelectSQL.Equals(column)))//it does not exist, so create it
-                    if (notifier.OnCheckPerformed(new CheckEventArgs("Column " + column + " has appeared in the Cohort database, would you like to import it into the DataExportManager database as a new CohortCustomColumn",CheckResult.Fail,null, "Import New CohortCustomColumn")))
-                    {
-                        var col = new CohortCustomColumn((IDataExportRepository)Repository, ID, column);
-                    }
-        }
-
-        public int CreateCustomColumnsIfCustomTableExists()
-        {
-            var customTableNames = GetCustomTableNames();
-
-            int created = 0;
-
-            var ect = ExternalCohortTable;
-            var syntax = ect.GetQuerySyntaxHelper();
-
-            foreach(var customTable in customTableNames)
-            {
-                string customTableNameLastBitOnly = syntax.GetRuntimeName(customTable);
-
-                var table = ect.GetExpectDatabase().ExpectTable(customTableNameLastBitOnly);
-
-                if(!table.Exists())
-                    throw new Exception("Custom Table " + table + " does not exist");
-
-                foreach (DiscoveredColumn column in table.DiscoverColumns())
-                {
-                    var col = new CohortCustomColumn((IDataExportRepository)Repository, ID, column.GetFullyQualifiedName());
-                    created++;
-                }
-            }
-            return created;
-        }
-
         public static IEnumerable<CohortDefinition> GetImportableCohortDefinitions(ExternalCohortTable externalSource)
         {
             string displayMemberName, valueMemberName, versionMemberName,projectNumberMemberName;
@@ -430,121 +359,7 @@ namespace DataExportLibrary.Data.DataTables
                 con.Close();
             }
         }
-
-        /// <summary>
-        /// Returns the right half of the Cohort JOIN
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<string> GetCustomTableJoinSQLIfExists(QueryBuilder queryBuilder)
-        {
-            var customTables = GetCustomTableNames();
-
-            if (queryBuilder != null && queryBuilder.SQLOutOfDate)
-                queryBuilder.RegenerateSQL();
-
-            var ect = ExternalCohortTable;
-            var syntax = ect.GetQuerySyntaxHelper(); 
-
-            foreach (string t in customTables)
-            {
-
-                if(
-                    //if there is no query builder (in which case just join to all tables)
-                    queryBuilder == null
-                    ||
-                    //or if there is a column that includes the table name
-                    (queryBuilder.SelectColumns != null && queryBuilder.SelectColumns.Any(c=>c.IColumn.SelectSQL.Contains(t)))
-                    ||
-                    //or there is a filter that contains the table name
-                    (queryBuilder.Filters != null && queryBuilder.Filters.Any(f=>
-                        !string.IsNullOrWhiteSpace(f.WhereSQL) &&
-                        f.WhereSQL.Contains(t)))
-                    )
-
-                    yield return " LEFT JOIN " + t + 
-                        " ON " + ect.PrivateIdentifierField+ "=" + t + "." +
-                        syntax.GetRuntimeName(ect.PrivateIdentifierField) + " collate Latin1_General_BIN";
-            }
-        }
-
-        public IEnumerable<string> GetCustomTableNames()
-        {
-            var ect = ExternalCohortTable;
-
-            if (string.IsNullOrWhiteSpace(ect.CustomTablesTableName))
-                throw new ArgumentNullException("No custom table has been configured for the external cohort table " + ect.Name);
-
-            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
-            con.Open();
-            try
-            {
-                SqlCommand cmdGetCustomTable =
-                    new SqlCommand("SELECT customTableName FROM " + ect.CustomTablesTableName + " WHERE " + ect.DefinitionTableForeignKeyField + "=" + OriginID + " AND active=1",
-                        con);
-
-                SqlDataReader r= cmdGetCustomTable.ExecuteReader();
-
-                while(r.Read())
-                {
-                    yield return ect.GetQuerySyntaxHelper().EnsureFullyQualified(ect.Database,null, (string)r["customTableName"]);
-                }
-            }
-            finally
-            {
-                con.Close();
-            }
-
-        }
-
-
-        public IEnumerable<string> GetCustomTableExtractionSQLs()
-        {
-            var customTables = GetCustomTableNames();
-
-            foreach (string customTable in customTables)
-                yield return GetCustomTableExtractionSQL(customTable);
-        }
-
-        public string GetCustomTableExtractionSQL(string customTable, bool top100=false)
-        {
-            string sql;
-
-            if (top100)
-                sql = "SELECT TOP 100 " + Environment.NewLine;
-            else
-                sql = "SELECT DISTINCT " + Environment.NewLine;
-
-            DiscoveredColumn chiColumn = null;
-
-            var ect = ExternalCohortTable;
-            var syntax = ect.GetQuerySyntaxHelper();
-
-            foreach (var column in ect.GetExpectDatabase().ExpectTable(syntax.GetRuntimeName(customTable)).DiscoverColumns())
-            {
-                //if it is a CHI column - substitute it for PROCHI
-                if (
-                    column.GetRuntimeName().Equals(
-                        syntax.GetRuntimeName(ect.PrivateIdentifierField)))
-                {
-                    sql += GetReleaseIdentifier() + "," + Environment.NewLine;
-                    chiColumn = column;
-                }
-                else//else output the column name normally
-                    sql += column.GetRuntimeName() + "," + Environment.NewLine;
-            }
-
-            //trim off last newline and comma
-            sql = sql.TrimEnd(new[] { ',', '\r', '\n' }) + Environment.NewLine;
-
-            if (chiColumn == null)
-                throw new Exception("Did not find PrivateIdentifierField (" + syntax.GetRuntimeName(ect.PrivateIdentifierField) + ") column in custom table " + customTable);
-
-            sql += " FROM " + customTable + " as custom LEFT JOIN " + ect.TableName + " ON custom." + chiColumn + "=" + ect.PrivateIdentifierField + " collate Latin1_General_BIN" + Environment.NewLine +
-                 " WHERE " + WhereSQL();
-
-            return sql;
-        }
-
+        
         public string GetReleaseIdentifier(bool runtimeName = false)
         {
             var fullName = ExternalCohortTable.GetReleaseIdentifier(this);
@@ -560,47 +375,6 @@ namespace DataExportLibrary.Data.DataTables
             return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(fullName) : fullName;
 
         }
-
-        
-
-        public void RecordNewCustomTable(DiscoveredServer server, string tableName, DbConnection con, DbTransaction transaction)
-        {
-            DbCommand cmdInsert =
- server.GetCommand(string.Format("INSERT INTO {0} (customTableName,"+ExternalCohortTable.DefinitionTableForeignKeyField+") VALUES(@customTableName,@cohortDefinition_id)",
-     ExternalCohortTable.CustomTablesTableName),con);
-
-            server.AddParameterWithValueToCommand("@customTableName",cmdInsert, tableName);
-            server.AddParameterWithValueToCommand("@cohortDefinition_id",cmdInsert, OriginID);
-            cmdInsert.Transaction = transaction;
-            cmdInsert.ExecuteNonQuery();
-        }
-
-        public DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener)
-        {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch release map as data table"));
-            
-            SqlConnection con = (SqlConnection)ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
-
-            con.Open();
-
-            SqlCommand cmdGetMap = new SqlCommand(
-                string.Format("SELECT {0},{1} FROM {2} where "+ExternalCohortTable.DefinitionTableForeignKeyField+"="+OriginID
-                ,GetPrivateIdentifier()
-                ,GetReleaseIdentifier()
-                ,ExternalCohortTable.TableName
-                ),con);
-            
-            DataTable toReturn = new DataTable();
-
-            SqlDataAdapter da = new SqlDataAdapter(cmdGetMap);
-            da.Fill(toReturn);
-
-            con.Close();
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Release map data table fetched, it has " + toReturn.Rows.Count + " rows"));
-            return toReturn;
-        }
-
 
         public string GetPrivateIdentifierDataType()
         {
@@ -620,78 +394,38 @@ namespace DataExportLibrary.Data.DataTables
             return table.DiscoverColumn(GetReleaseIdentifier(true))
                 .DataType.SQLType; //and return it's datatype
         }
-
-        public void DeleteCustomData(string tableName)
-        {
-            var ect = ExternalCohortTable;
-            var syntax = ect.GetQuerySyntaxHelper();
-
-            using(var con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection())
-            {
-
-                con.Open();
-                SqlTransaction transaction = con.BeginTransaction();
-
-                var runtimeNameOfTable = syntax.GetRuntimeName(tableName);
-
-                SqlCommand cmdDeleteFromCustomTable = new SqlCommand("DELETE FROM " + ect.CustomTablesTableName + " WHERE " 
-                                                                     + ect.DefinitionTableForeignKeyField + "=" + OriginID + 
-                                                                     " AND customTableName='" + tableName + "' " +
-                                                                     " OR customTableName = '"+ runtimeNameOfTable +"'", con);
-                cmdDeleteFromCustomTable.Transaction = transaction;
-
-                int affectedRows = cmdDeleteFromCustomTable.ExecuteNonQuery();
-
-                if(affectedRows != 1)
-                    throw new Exception("Delete command did not result in 1 affected rows (it resulted in "+ affectedRows+"), transaction will be rolled back.  Note that the original command you tried to execute was:" + cmdDeleteFromCustomTable.CommandText);
-
-                SqlCommand cmd = new SqlCommand("DROP TABLE " + tableName,con);
-                cmd.Transaction = transaction;
-                cmd.ExecuteNonQuery();
-            
-                //success so commit the transaction
-                transaction.Commit();
-
-                AppendToAuditLog("Custom Data Table '" + tableName + "' DELETED");
-            }
-        }
-
-        public void SetActiveFlagOnCustomData(string tableName, bool flag)
-        {
-            var ect = ExternalCohortTable;
-            var syntax = ect.GetQuerySyntaxHelper();
-
-            using (var con = (SqlConnection) ect.GetExpectDatabase().Server.GetConnection())
-            {
-                con.Open();
-                SqlTransaction transaction = con.BeginTransaction();
-
-                var runtimeNameOfTable = syntax.GetRuntimeName(tableName);
-
-                SqlCommand cmdUpdateCustomTable = new SqlCommand("UPDATE " + ect.CustomTablesTableName + " SET active=" + (flag ? "1" : "0") + " WHERE "
-                    + ect.DefinitionTableForeignKeyField + "=" + OriginID +
-                    " AND customTableName='" + tableName + "' " +
-                    " OR customTableName = '" + runtimeNameOfTable + "'"
-                    , con);
-                cmdUpdateCustomTable.Transaction = transaction;
-
-                int affectedRows = cmdUpdateCustomTable.ExecuteNonQuery();
-
-                if (affectedRows != 1)
-                {
-                    transaction.Rollback();
-                    throw new Exception("Update command did not result in 1 affected rows (it resulted in " + affectedRows + "), transaction will be rolled back.  Note that the original command you tried to execute was:" + cmdUpdateCustomTable.CommandText);
-                }
-
-                //success so commit the transaction
-                transaction.Commit();
-            }
-        }
-
+        
         public DiscoveredDatabase GetDatabaseServer()
         {
             return ExternalCohortTable.GetExpectDatabase();
         }
+
+        public DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch release map as data table"));
+
+            SqlConnection con = (SqlConnection)ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
+
+            con.Open();
+
+            SqlCommand cmdGetMap = new SqlCommand(
+                string.Format("SELECT {0},{1} FROM {2} where " + ExternalCohortTable.DefinitionTableForeignKeyField + "=" + OriginID
+                , GetPrivateIdentifier()
+                , GetReleaseIdentifier()
+                , ExternalCohortTable.TableName
+                ), con);
+
+            DataTable toReturn = new DataTable();
+
+            SqlDataAdapter da = new SqlDataAdapter(cmdGetMap);
+            da.Fill(toReturn);
+
+            con.Close();
+
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Release map data table fetched, it has " + toReturn.Rows.Count + " rows"));
+            return toReturn;
+        }
+
 
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
@@ -746,9 +480,7 @@ namespace DataExportLibrary.Data.DataTables
             }
             int nullsFound = 0;
             int substitutions = 0;
-
-
-
+            
             int progress2 = 0;
             Stopwatch sw2 = new Stopwatch();
             sw2.Start();
@@ -799,6 +531,16 @@ namespace DataExportLibrary.Data.DataTables
 
             AuditLog += Environment.NewLine + DateTime.Now + " " + Environment.UserName  + " " + s;
             SaveToDatabase();
+        }
+
+        public void InjectKnown(IExternalCohortDefinitionData instance)
+        {
+            _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _cacheData = new Lazy<IExternalCohortDefinitionData>(GetExternalData);
         }
     }
         public enum OneToMErrorResolutionStrategy

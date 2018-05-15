@@ -69,11 +69,14 @@ namespace DataExportLibrary.ExtractionTime
             string hashingAlgorithm = configurationProperties.TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern);
             if (string.IsNullOrWhiteSpace(hashingAlgorithm))
                 hashingAlgorithm = null;
-            
-            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql,hashingAlgorithm);
-         
-            queryBuilder.SetSalt(request.Salt.GetSalt());
 
+            //identify any tables we are supposed to force join to
+            var forcedJoins = request.SelectedDataSets.SelectedDatasetsForcedJoins;
+
+            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql, hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
+
+            
+            queryBuilder.SetSalt(request.Salt.GetSalt());
 
             var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
 
@@ -110,31 +113,23 @@ namespace DataExportLibrary.ExtractionTime
                 string cohortJoin;
 
                 if (substitutions.Count == 1)
-                    cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + substitutions.First().JoinSQL;
+                    cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + substitutions.Single().JoinSQL;
                 else
-                {
-                    cohortJoin = substitutions.Aggregate(" INNER JOIN " + externalCohortTable.TableName + " ON ",
-                                                         (seed, next) => seed + next.JoinSQL + " OR ");
+                    cohortJoin = " INNER JOIN " + externalCohortTable.TableName + " ON " + string.Join(" OR ", substitutions.Select(s => s.JoinSQL));
 
-                    cohortJoin = cohortJoin.Substring(0, cohortJoin.Length - " OR ".Length);
-
-                }
                 //add the JOIN in after any other joins
                 queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
-
-                //if there is a custom table then make sure to also join to that (e.g. date registered in study)
-                foreach (string customTableJoinSql in request.ExtractableCohort.GetCustomTableJoinSQLIfExists(queryBuilder))
-                    queryBuilder.AddCustomLine(customTableJoinSql, QueryComponent.JoinInfoJoin);
-
-
+                
                 //add the filter cohortID because our new Cohort system uses ID number and a giant combo table with all the cohorts in it we need to say Select XX from XX join Cohort Where Cohort number = Y
                 queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
             }
 
+
+            
             request.QueryBuilder = queryBuilder;
             return queryBuilder;
         }
-
+        
         public static List<ConstantParameter> GetConstantParameters(IQuerySyntaxHelper syntaxHelper, IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
         {
             List<ConstantParameter> toReturn = new List<ConstantParameter>();

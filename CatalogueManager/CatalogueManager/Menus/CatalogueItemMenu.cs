@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -7,6 +8,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -15,6 +17,7 @@ using CatalogueManager.SimpleDialogs;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying.Commands;
 using RDMPStartup;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
@@ -30,11 +33,10 @@ namespace CatalogueManager.Menus
 
             Items.Add("Add Issue", _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemIssue,OverlayKind.Add),(s,e)=> AddIssue());
 
-            if (catalogueItem.ColumnInfo_ID == null)
-                Items.Add("Set Column Info (Currently MISSING)", _activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem), (s, e) => SetColumnInfo(catalogueItem));
-            else if (catalogueItem.ExtractionInformation == null)
-                //it does not yet have extractability
-                Items.Add("Add Extract Logic", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation, OverlayKind.Add), (s, e) => AddExtractionInformation());
+            Add(new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, catalogueItem));
+
+            //it does not yet have extractability
+            Add(new ExecuteCommandMakeCatalogueItemExtractable(_activator, catalogueItem));
 
             var importDescription = new ToolStripMenuItem("Import Description From Another CatalogueItem");
             
@@ -51,22 +53,6 @@ namespace CatalogueManager.Menus
             Publish(_catalogueItem);
         }
 
-        private void AddExtractionInformation()
-        {
-            var newExtractionInformation = new ExtractionInformation(RepositoryLocator.CatalogueRepository, _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
-
-            Publish(newExtractionInformation);
-            Activate(newExtractionInformation);
-        }
-        
-        private void SetColumnInfo(CatalogueItem ci)
-        {
-            var cols = ci.Repository.GetAllObjects<ColumnInfo>().ToArray();
-            var chooser = new SelectIMapsDirectlyToDatabaseTableDialog(cols, false, false);
-
-            if (chooser.ShowDialog() == DialogResult.OK)
-                new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator,new ColumnInfoCommand((ColumnInfo) chooser.Selected), ci).Execute();
-        }
 
         private void ImportWithSameName(object sender, EventArgs e)
         {

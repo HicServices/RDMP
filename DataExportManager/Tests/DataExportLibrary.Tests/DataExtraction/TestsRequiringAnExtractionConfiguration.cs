@@ -63,23 +63,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [TestFixtureTearDown]
         public void TearDown()
         {
-            //delete all columns
-            foreach (var selectedCol in _extractableColumns)
-                ((ExtractableColumn)selectedCol).DeleteInDatabase();
-
-            //unselect the dataset
-            _configuration.SelectedDataSets.Single().DeleteInDatabase();
-
-            _configuration.DeleteInDatabase();
-            _extractableDataSet.DeleteInDatabase();
-            _project.DeleteInDatabase();
-         
-            _catalogue.DeleteInDatabase();
-            var credentials = _tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            _tableInfo.DeleteInDatabase();
-
-            if(credentials != null)
-                credentials.DeleteInDatabase();
+            RunBlitzDatabases(RepositoryLocator);
         }
 
         private void SetupDataExport()

@@ -12,5 +12,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int Catalogue_ID { get; set; }
         bool DisableExtraction { get; set; }
         ICatalogue Catalogue { get; }
+        int? Project_ID { get; set; }
     }
 }

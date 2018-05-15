@@ -63,6 +63,7 @@ namespace CatalogueManager.ExtractionUIs
             switch (ei.ExtractionCategory)
             {
                 case ExtractionCategory.Core:
+                case ExtractionCategory.ProjectSpecific:
                     olvItem.ForeColor = Color.Green;
                     break;
                 case ExtractionCategory.Supplemental:
@@ -77,8 +78,9 @@ namespace CatalogueManager.ExtractionUIs
                 case ExtractionCategory.Deprecated:
                     olvItem.ForeColor = Color.OrangeRed;
                     break;
-                case ExtractionCategory.Any:
+                    case ExtractionCategory.Any:
                     throw new NotSupportedException();
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -98,26 +100,25 @@ namespace CatalogueManager.ExtractionUIs
                 bLoading = true;
 
                 List<ExtractionInformation> extractionInformations = new List<ExtractionInformation>();
-                
-                //get all the extractions
-                if (rbCoreOnly.Checked)
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
-                else if (rbSupplemental.Checked)
-                {
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
-                }
-                else if (rbCoreSupplementalAndSpecialApproval.Checked)
-                {
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
-                }
-                else if(rbInternal.Checked)
+
+                if (rbInternal.Checked)
                 {
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Internal));
                 }
-                
+                else
+                {
+                    //always add the project specific ones
+                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific));
+                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
+
+                    if (rbSupplemental.Checked || rbCoreSupplementalAndSpecialApproval.Checked)
+                        extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
+
+                    if (rbCoreSupplementalAndSpecialApproval.Checked)
+                        extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
+
+                }
+
                 //sort by Default Order
                 extractionInformations.Sort();
                 

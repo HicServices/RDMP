@@ -10,17 +10,11 @@ namespace DataExportLibrary.Providers.Nodes.UsedByProject
         public object ObjectBeingUsed { get { return Cohort; }}
 
         public ExtractableCohort Cohort { get; set; }
-        public CustomDataTableNodeUsedByProjectNode[] CustomTablesUsed { get; set; }
-
-        public ExtractableCohortUsedByProjectNode(ExtractableCohort cohort, Project project, IEnumerable<CustomDataTableNode> allCustomDataTableNodes )
+        
+        public ExtractableCohortUsedByProjectNode(ExtractableCohort cohort, Project project)
         {
             Cohort = cohort;
             Project = project;
-
-            CustomTablesUsed =
-                allCustomDataTableNodes.Where(t => t.Cohort.Equals(cohort))
-                    .Select(t => new CustomDataTableNodeUsedByProjectNode(t, project))
-                    .ToArray();
         }
 
         public override string ToString()

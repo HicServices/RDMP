@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
@@ -44,8 +45,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
                 _cic = (CohortIdentificationConfiguration)dialog.Selected;
             }
-            
-            var request = GetCohortCreationRequest();
+
+            var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + _cic  +"' (ID=" +_cic.ID +")" );
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)

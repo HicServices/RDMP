@@ -158,7 +158,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.panel4.Controls.Add(this.tlpCohortCreation);
             this.panel4.Location = new System.Drawing.Point(326, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(269, 150);
+            this.panel4.Size = new System.Drawing.Size(269, 184);
             this.panel4.TabIndex = 19;
             // 
             // label1
@@ -182,7 +182,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpCohortCreation.Name = "tlpCohortCreation";
             this.tlpCohortCreation.RowCount = 1;
             this.tlpCohortCreation.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpCohortCreation.Size = new System.Drawing.Size(261, 114);
+            this.tlpCohortCreation.Size = new System.Drawing.Size(261, 145);
             this.tlpCohortCreation.TabIndex = 16;
             // 
             // panel2
@@ -231,7 +231,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             // 
             this.panel3.Controls.Add(this.label4);
             this.panel3.Controls.Add(this.tlpAdvanced);
-            this.panel3.Location = new System.Drawing.Point(3, 159);
+            this.panel3.Location = new System.Drawing.Point(3, 193);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(244, 150);
             this.panel3.TabIndex = 20;

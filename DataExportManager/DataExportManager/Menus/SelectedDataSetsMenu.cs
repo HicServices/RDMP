@@ -24,7 +24,7 @@ namespace DataExportManager.Menus
     class SelectedDataSetsMenu : RDMPContextMenuStrip
     {
         private readonly SelectedDataSets _selectedDataSet;
-        private ExtractionConfiguration _extractionConfiguration;
+        private IExtractionConfiguration _extractionConfiguration;
 
         public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet): base(args, selectedDataSet)
         {

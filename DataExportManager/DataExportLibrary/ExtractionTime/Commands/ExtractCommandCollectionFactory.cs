@@ -12,8 +12,7 @@ using DataExportLibrary.ExtractionTime.UserPicks;
 namespace DataExportLibrary.ExtractionTime.Commands
 { 
     /// <summary>
-    /// Identifies all extractable components of a given ExtractionConfiguration (all datasets, any custom tables etc).  These are returned as an
-    /// ExtractCommandCollection.  
+    /// Identifies all extractable components of a given ExtractionConfiguration (all datasets).  These are returned as an ExtractCommandCollection.  
     /// </summary>
     public class ExtractCommandCollectionFactory
     {
@@ -22,11 +21,9 @@ namespace DataExportLibrary.ExtractionTime.Commands
             var cohort = configuration.Cohort;
             var datasets = configuration.GetAllExtractableDataSets();
             
-            var customTableCommands = cohort.GetCustomTableNames().Select(name => new ExtractCohortCustomTableCommand(configuration, cohort, name));
-
             var datasetBundles = datasets.Select(ds => CreateDatasetCommand(repositoryLocator,ds, configuration));
 
-            return new ExtractCommandCollection(datasetBundles,customTableCommands);
+            return new ExtractCommandCollection(datasetBundles);
         }
 
         private ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IExtractableDataSet dataset, ExtractionConfiguration configuration)

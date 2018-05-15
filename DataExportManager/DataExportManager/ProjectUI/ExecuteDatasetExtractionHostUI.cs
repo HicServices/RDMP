@@ -95,12 +95,9 @@ namespace DataExportManager.ProjectUI
 
                 progressUI1.ShowRunning(true);
 
-                var extractionRequest = ExtractCommand as ExtractDatasetCommand;
+                var extractionRequest = (ExtractDatasetCommand)ExtractCommand;
 
-                if (extractionRequest != null)
-                    DoExtractionAsync(extractionRequest);
-                else
-                    DoExtractionAsync(ExtractCommand as ExtractCohortCustomTableCommand);
+                DoExtractionAsync(extractionRequest);
             }
             catch (Exception e)
             {
@@ -117,23 +114,12 @@ namespace DataExportManager.ProjectUI
             }
         }
 
-        private void DoExtractionAsync(ExtractCohortCustomTableCommand extractCohortCustomTableCommandCohortPair)
-        {
-            extractCohortCustomTableCommandCohortPair.State = ExtractCommandState.WaitingForSQLServer;
-            _pipelineUseCase = new ExtractionPipelineUseCase(extractCohortCustomTableCommandCohortPair.Configuration.Project, extractCohortCustomTableCommandCohortPair, _pipeline, _dataLoadInfo);
-            _pipelineUseCase.Execute(progressUI1);
-
-            if (_pipelineUseCase.Source.WasCancelled)
-                extractCohortCustomTableCommandCohortPair.State = ExtractCommandState.UserAborted;
-            else
-                extractCohortCustomTableCommandCohortPair.State = _pipelineUseCase.Crashed?ExtractCommandState.Crashed:ExtractCommandState.Completed;
-        }
-
+        
         private void DoExtractionAsync(ExtractDatasetCommand request)
         {
             request.State = ExtractCommandState.WaitingForSQLServer;
                 
-            _pipelineUseCase = new ExtractionPipelineUseCase(request.Configuration.Project, request, _pipeline, _dataLoadInfo);
+            _pipelineUseCase = new ExtractionPipelineUseCase(request, _pipeline, _dataLoadInfo);
             _pipelineUseCase.Execute(progressUI1);
 
             if (_pipelineUseCase.Crashed)

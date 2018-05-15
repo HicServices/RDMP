@@ -129,7 +129,7 @@ namespace CatalogueManager.AutoComplete
             if (column is ExtractionInformation || column is ExtractableColumn || column is ReleaseIdentifierSubstitution)
                 return GetIndexFor(column, RDMPConcept.ExtractionInformation.ToString());
 
-            if (column is AggregateDimension || column is CohortCustomColumn)
+            if (column is AggregateDimension)
                 return GetIndexFor(column, RDMPConcept.ColumnInfo.ToString());
             
             throw new ArgumentOutOfRangeException("Did not know what type of icon to use for IColumn Type:" + column.GetType());

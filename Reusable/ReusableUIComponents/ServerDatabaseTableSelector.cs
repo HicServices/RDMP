@@ -232,6 +232,15 @@ namespace ReusableUIComponents
 
         public DiscoveredServer Result { get { return new DiscoveredServer(GetBuilder()); } }
 
+        public bool TableShouldBeNovel
+        {
+            set
+            {
+                cbxTable.AutoCompleteMode = value ? AutoCompleteMode.None : AutoCompleteMode.Suggest;
+                cbxTableValueFunctions.AutoCompleteMode = value ? AutoCompleteMode.None : AutoCompleteMode.Suggest;
+            }
+        }
+
         private void cbxServer_SelectedIndexChanged(object sender, EventArgs e)
         {
             //if they have not selected anything selected something

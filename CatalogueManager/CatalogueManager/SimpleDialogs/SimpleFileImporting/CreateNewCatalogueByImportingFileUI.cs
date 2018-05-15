@@ -22,6 +22,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using CatalogueManager.Tutorials;
+using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using LoadModules.Generic.DataFlowSources;
 using ReusableLibraryCode.Checks;
@@ -297,6 +298,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         }
 
         private bool isAdvanced = false;
+        private Project _projectSpecific;
 
         private void ToggleAdvanced()
         {
@@ -310,7 +312,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     advanced =
                         new CreateNewCatalogueByImportingFileUI_Advanced(
                             _activator,
-                            serverDatabaseTableSelector1.GetDiscoveredDatabase(), _selectedFile, true);
+                            serverDatabaseTableSelector1.GetDiscoveredDatabase(), _selectedFile, true,_projectSpecific);
 
                 advanced.Bounds = pSimplePanel.Bounds;
                 advanced.Anchor = pSimplePanel.Anchor;
@@ -414,7 +416,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void ForwardEngineer(DiscoveredTable targetTableName)
         {
-            var extractionPicker = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_activator.RepositoryLocator.CatalogueRepository, targetTableName));
+            var extractionPicker = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_activator.RepositoryLocator.CatalogueRepository, targetTableName),"File '"+ _selectedFile.FullName + "'",_projectSpecific);
             extractionPicker.ShowDialog();
 
             var catalogue = extractionPicker.CatalogueCreatedIfAny;
@@ -438,6 +440,11 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         private void pbHelp_Click(object sender, EventArgs e)
         {
             HelpWorkflow.Start(force: true);
+        }
+
+        public void SetProjectSpecific(Project project)
+        {
+            _projectSpecific = project;
         }
     }
 }

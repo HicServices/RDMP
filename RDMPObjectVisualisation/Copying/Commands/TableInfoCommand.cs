@@ -6,16 +6,16 @@ namespace RDMPObjectVisualisation.Copying.Commands
 {
     public class TableInfoCommand : ICommand
     {
-        private TableInfo _tableInfo;
+        public TableInfo TableInfo { get; private set; }
 
         public TableInfoCommand(TableInfo tableInfo)
         {
-            _tableInfo = tableInfo;
+            TableInfo = tableInfo;
         }
 
         public string GetSqlString()
         {
-            return _tableInfo.Name;
+            return TableInfo.Name;
         }
     }
 }

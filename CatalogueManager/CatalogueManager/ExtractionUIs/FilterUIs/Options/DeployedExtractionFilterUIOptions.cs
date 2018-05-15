@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -15,18 +16,17 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
         {
             var selectedDataSet = deployedExtractionFilter.GetDataset();
 
+            
             var ds = selectedDataSet.ExtractableDataSet;
             var c = selectedDataSet.ExtractionConfiguration;
-
+            
             _tables = ds.Catalogue.GetTableInfoList(false);
             _globals = c.GlobalExtractionFilterParameters;
 
             List<IColumn> columns = new List<IColumn>();
             
             columns.AddRange(c.GetAllExtractableColumnsFor(ds));
-
-            if(c.Cohort_ID != null)
-                columns.AddRange(c.GetExtractableCohort().CustomCohortColumns);
+            columns.AddRange(c.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific));
 
             _columns = columns.ToArray();
         }

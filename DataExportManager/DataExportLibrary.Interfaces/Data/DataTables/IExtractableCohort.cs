@@ -19,26 +19,18 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int ExternalCohortTable_ID { get; }
         int OriginID { get; }
         string OverrideReleaseIdentifierSQL { get; set; }
-        IColumn[] CustomCohortColumns { get; }
         IExternalCohortTable ExternalCohortTable { get; }
 
         DataTable FetchEntireCohort();
-        IEnumerable<string> GetCustomTableJoinSQLIfExists(QueryBuilder queryBuilder);
         string GetPrivateIdentifier(bool runtimeName = false);
         string GetReleaseIdentifier(bool runtimeName = false);
         DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener);
         string WhereSQL();
-        int CreateCustomColumnsIfCustomTableExists();
         string GetFirstProCHIPrefix();
         IExternalCohortDefinitionData GetExternalData();
-        void DeleteCustomData(string tableName);
         string GetPrivateIdentifierDataType();
         string GetReleaseIdentifierDataType();
 
-        void RecordNewCustomTable(DiscoveredServer server, string tableName, DbConnection con, DbTransaction transaction);
-        IEnumerable<string> GetCustomTableNames();
-        IEnumerable<string> GetCustomTableExtractionSQLs();
-        string GetCustomTableExtractionSQL(string customTable,bool top100 =false);
         DiscoveredDatabase GetDatabaseServer();
         void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener, bool allowCaching);
         

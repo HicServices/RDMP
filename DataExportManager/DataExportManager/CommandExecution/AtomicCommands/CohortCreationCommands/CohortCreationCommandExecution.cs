@@ -44,7 +44,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             if (!dataExport.CohortSources.Any())
                 SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
         }
-        protected CohortCreationRequest GetCohortCreationRequest()
+        protected CohortCreationRequest GetCohortCreationRequest(string cohortInitialDescription)
         {
             //user wants to create a new cohort
 
@@ -64,6 +64,10 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             CohortCreationRequestUI requestUI = new CohortCreationRequestUI(ExternalCohortTable, Project);
             requestUI.RepositoryLocator = Activator.RepositoryLocator;
             requestUI.Activator = Activator;
+
+            if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
+                requestUI.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
+
 
             if (requestUI.ShowDialog() != DialogResult.OK)
                 return null;

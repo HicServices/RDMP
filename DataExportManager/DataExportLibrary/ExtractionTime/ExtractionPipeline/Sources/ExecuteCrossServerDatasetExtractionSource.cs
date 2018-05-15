@@ -125,17 +125,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
          destinationSyntax.EnsureFullyQualified(_tempDb.GetRuntimeName(), null, sourceTable)
          );
         }
+
         private void SetServer()
         {
             if(_server == null)
             {
                 //it's a legit dataset being extracted?
-                if (Request != null)
-                    _server = Request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
-                else
-                    //no... assume it's custom data!
-                    _server = DataAccessPortal.GetInstance().ExpectServer(_customTableRequest.ExtractableCohort.ExternalCohortTable, DataAccessContext.DataExport, false);
-
+                _server = Request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+                
                 //expect a database called called tempdb
                 _tempDb = _server.ExpectDatabase(TemporaryDatabaseName);
             }
@@ -153,10 +150,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             try
             {
-                IExtractableCohort cohort = Request != null
-                    ? Request.ExtractableCohort
-                    : _customTableRequest.ExtractableCohort;
-
+                IExtractableCohort cohort = Request.ExtractableCohort;
                 cohortDataTable = cohort.FetchEntireCohort();
             }
             catch (Exception e)

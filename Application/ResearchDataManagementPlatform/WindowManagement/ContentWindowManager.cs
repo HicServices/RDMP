@@ -203,17 +203,32 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public bool DeleteWithConfirmation(object sender, IDeleteable deleteable, string overrideConfirmationText = null)
+        public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
+
+
+            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
+            var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
+            
+            string overrideConfirmationText = null;
+
+            if (customMessageDeletable != null)
+                overrideConfirmationText = "Are you sure you want to " +customMessageDeletable.GetDeleteMessage() +"?";
 
             //it has already been deleted before
             if (databaseObject != null && !databaseObject.Exists())
                 return false;
 
+            string idText = "";
+
+            if (databaseObject != null)
+                idText = " ID=" + databaseObject.ID;
+
             DialogResult result = MessageBox.Show(
-                overrideConfirmationText??
-                ("Are you sure you want to delete " + deleteable + " from the database?"), "Delete Record", MessageBoxButtons.YesNo);
+                (overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")) +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
+                "Delete " + deleteable.GetType().Name,
+                MessageBoxButtons.YesNo);
             
             if (result == DialogResult.Yes)
             {
@@ -318,11 +333,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             if(optionalLookupTableInfo != null)
                 t.SetLookupTableInfo(optionalLookupTableInfo);
-        }
-
-        public void ActivateJoinInfoConfiguration(object sender, TableInfo tableInfo)
-        {
-            Activate<JoinConfiguration, TableInfo>(tableInfo);
         }
 
         public void ActivateReOrderCatalogueItems(Catalogue catalogue)

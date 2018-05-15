@@ -38,8 +38,7 @@ namespace DataExportManager.ProjectUI
     {
         private const string Globals = "Globals";
         private const string Bundles = "Datasets";
-        private const string CustomTables = "Custom Tables";//these are cohort custom tables - random stuff the user has uploaded for attached to a given cohort e.g. questionnaire data etc 
-
+        
         public event ExtractCommandSelectedHandler CommandSelected;
 
         private GlobalsBundle _lastDispatchedGlobalsBundle = null;
@@ -87,14 +86,11 @@ namespace DataExportManager.ProjectUI
             Categories.Clear();
             Categories.Add(Globals, new List<object>());
             Categories.Add(Bundles, new List<object>());
-            Categories.Add(CustomTables, new List<object>());
             
             var factory = new ExtractCommandCollectionFactory();
             var collection = factory.Create(RepositoryLocator,configuration);
 
             //find all the things that are available for extraction
-            //get all the custom tables
-            Categories[CustomTables].AddRange(collection.CustomTables);
             
             //add globals to the globals category
             Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
@@ -365,17 +361,6 @@ namespace DataExportManager.ProjectUI
                     monitor.SaveState(cmd);
                 }
 
-                foreach (IExtractCohortCustomTableCommand cmd in Categories[CustomTables].ToArray())
-                {
-                    if (!monitor.Contains(cmd))
-                        monitor.Add(cmd);
-
-                    if(monitor.GetHasChanged(cmd))
-                        toRefresh.Add(cmd);
-
-                    monitor.SaveState(cmd);
-                }
-                
                 if(toRefresh.Any())
                     tlvDatasets.RefreshObjects(toRefresh);
                 

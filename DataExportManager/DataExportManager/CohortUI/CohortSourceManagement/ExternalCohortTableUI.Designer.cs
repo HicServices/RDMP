@@ -52,7 +52,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.tbCustomTablesTableName = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tbDefinitionTableName = new System.Windows.Forms.TextBox();
@@ -275,7 +274,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.tbCustomTablesTableName);
             this.groupBox2.Controls.Add(this.label13);
             this.groupBox2.Location = new System.Drawing.Point(21, 475);
             this.groupBox2.Name = "groupBox2";
@@ -285,14 +283,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             this.groupBox2.Text = "Custom Tables Table (Where you store a list of all the freaky patient questionnai" +
     "res and other bespoke researcher/cohort identification datasets & patient index " +
     "tables)";
-            // 
-            // tbCustomTablesTableName
-            // 
-            this.tbCustomTablesTableName.Location = new System.Drawing.Point(161, 19);
-            this.tbCustomTablesTableName.Name = "tbCustomTablesTableName";
-            this.tbCustomTablesTableName.Size = new System.Drawing.Size(284, 20);
-            this.tbCustomTablesTableName.TabIndex = 0;
-            this.tbCustomTablesTableName.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // label13
             // 
@@ -473,7 +463,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox tbCustomTablesTableName;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox tbDefinitionTableName;

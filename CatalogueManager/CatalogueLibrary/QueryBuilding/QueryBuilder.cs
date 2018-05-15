@@ -29,6 +29,7 @@ namespace CatalogueLibrary.QueryBuilding
     /// </summary>
     public class QueryBuilder : ISqlQueryBuilder
     {
+        private readonly TableInfo[] _forceJoinsToTheseTables;
         object oSQLLock = new object();
 
         public string SQL
@@ -153,8 +154,11 @@ namespace CatalogueLibrary.QueryBuilding
         /// Used to build extraction queries based on ExtractionInformation sets
         /// </summary>
         /// <param name="limitationSQL">Any text you want after SELECT to limit the results e.g. "DISTINCT" or "TOP 10"</param>
-        public QueryBuilder(string limitationSQL, string hashingAlgorithm)
+        /// <param name="hashingAlgorithm"></param>
+        /// <param name="selectedDatasetsForcedJoins"></param>
+        public QueryBuilder(string limitationSQL, string hashingAlgorithm, TableInfo[] forceJoinsToTheseTables = null)
         {
+            _forceJoinsToTheseTables = forceJoinsToTheseTables;
             SetLimitationSQL(limitationSQL);
             Sort = true;
             ParameterManager = new ParameterManager();
@@ -357,6 +361,13 @@ namespace CatalogueLibrary.QueryBuilding
            
             TableInfo primary;
             TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary);
+
+            //force join to any TableInfos that would not be normally joined to but the user wants to anyway e.g. if theres WHERE sql that references them but no columns
+            if (_forceJoinsToTheseTables != null)
+                foreach (var force in _forceJoinsToTheseTables)
+                    if (!TablesUsedInQuery.Contains(force))
+                        TablesUsedInQuery.Add(force);
+
             this.PrimaryExtractionTable = primary;
             
             SqlQueryBuilderHelper.FindLookups(this);

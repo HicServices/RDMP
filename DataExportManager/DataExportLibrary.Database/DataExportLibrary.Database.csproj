@@ -151,6 +151,7 @@
     <EmbeddedResource Include="db\up\013_AddExtractionPipelineIDToExtractionConfiguration.sql" />
     <EmbeddedResource Include="db\up\014_AssociateCicsWithProjects.sql" />
     <EmbeddedResource Include="db\up\015_AddedPropertiesToCumulativeExtractionResult.sql" />
+    <EmbeddedResource Include="db\up\016_CustomDataRefactoring.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>
