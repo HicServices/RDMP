@@ -57,11 +57,6 @@ namespace DataExportLibrary.ExtractionTime
             return StandardExtractionPrefix + configuration.ID;
         }
 
-        public static ExtractionDirectory GetForDifferentDate(string rootExtractionDirectory, IExtractionConfiguration configuration, DateTime extractDate)
-        {
-            return new ExtractionDirectory(rootExtractionDirectory, configuration, extractDate);
-        }
-
         public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
         {
             if(dataset.ToString().Equals(CustomCohortDataFolderName))

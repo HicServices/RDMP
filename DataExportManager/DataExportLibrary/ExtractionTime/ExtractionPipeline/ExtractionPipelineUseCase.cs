@@ -51,11 +51,22 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         { }
 
         public ExtractionPipelineUseCase(IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
-            : this(extractCommand, pipeline, dataLoadInfo)
         {
             _project = project;
+            _dataLoadInfo = dataLoadInfo;
+            ExtractCommand = extractCommand;
+            _pipeline = pipeline;
+
+            //create the context using the standard context factory
+            var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
+            _context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo);
+
+            //adjust context: we want a destination requirement of IExecuteDatasetExtractionDestination
+            _context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
+            _context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
         }
 
+        [Obsolete("Use the constructor with the IProject parameter, this will be removed soon")]
         public ExtractionPipelineUseCase(IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
         {
             _dataLoadInfo = dataLoadInfo;

@@ -49,7 +49,7 @@ namespace DataExportManager.ProjectUI
         {
             InitializeComponent();
 
-            tlvDatasets.RowFormatter+= RowFormatter;
+            tlvDatasets.RowFormatter += RowFormatter;
         }
 
         private void RowFormatter(OLVListItem olvItem)
@@ -88,7 +88,7 @@ namespace DataExportManager.ProjectUI
             Categories.Add(Bundles, new List<object>());
             
             var factory = new ExtractCommandCollectionFactory();
-            var collection = factory.Create(RepositoryLocator,configuration);
+            var collection = factory.Create(RepositoryLocator, configuration);
 
             //find all the things that are available for extraction
             
@@ -96,7 +96,7 @@ namespace DataExportManager.ProjectUI
             Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
 
             //add global SQLs to globals category
-            Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s=>s.IsGlobal && s.Extractable));
+            Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
 
             //add the bundle
             Categories[Bundles].AddRange(collection.Datasets);

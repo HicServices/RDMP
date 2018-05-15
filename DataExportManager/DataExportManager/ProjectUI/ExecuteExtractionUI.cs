@@ -5,7 +5,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -28,7 +27,6 @@ using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
@@ -142,40 +140,56 @@ namespace DataExportManager.ProjectUI
                 //the globals we must extract
                 var globals = chooseExtractablesUI1.GetGlobalsBundle();
 
-                //if there are globals selected for extraction (including cohort custom tables btw)
+                //if there are globals selected for extraction
                 if (globals.Any())
                 {
+
+                    var host = new ExecuteDatasetExtractionHostUI(new ExtractGlobalsCommand(RepositoryLocator, Project, _configurationToExecute, globals), Project, _dataLoadInfo, _pipelineSelectionUI1.Pipeline);
+                    host.RepositoryLocator = RepositoryLocator;
+                    host.Dock = DockStyle.Fill;
+
+                    //add a new tab page for this bundle execution
+                    var tabPage = new TabPage("Globals");
+                    tabPage.Controls.Add(host);
+
+                    tabControl1.TabPages.Add(tabPage);
+                    tabPagesDictionary.Add(tabPage, host);
+
+                    datasetsCurrentlyExecuting++;
+                    host.DoExtraction();
+                    host.Finished += host_Finished;
+                    //////////////////////////////////
                     //create UI tab for globals
-                    var globalsTab = new TabPage("Globals & Custom Data");
-                    tabControl1.TabPages.Add(globalsTab);
+                    //var globalsTab = new TabPage("Globals");
+                    //tabControl1.TabPages.Add(globalsTab);
 
-                    //with a progressUI on it
-                    var progressUI = new ProgressUI();
-                    progressUI.Dock = DockStyle.Fill;
-                    globalsTab.Controls.Add(progressUI);
+                    ////with a progressUI on it
+                    //var progressUI = new ProgressUI();
+                    //progressUI.Dock = DockStyle.Fill;
+                    //globalsTab.Controls.Add(progressUI);
 
-                    var globalExtractor = new ExtractionPipelineUseCase(Project, ExtractDatasetCommand.EmptyCommand, _pipelineSelectionUI1.Pipeline, _dataLoadInfo);
+                    //var globalExtractor = new ExtractionPipelineUseCase(Project, ExtractDatasetCommand.EmptyCommand, _pipelineSelectionUI1.Pipeline, _dataLoadInfo);
 
-                    Thread t = new Thread(() =>
-                        {
-                            try
-                            {
-                                progressUI.ShowRunning(true);
+                    //Thread t = new Thread(() =>
+                    //    {
+                    //        try
+                    //        {
+                    //            progressUI.ShowRunning(true);
 
-                                globalExtractor.ExtractGlobalsForDestination(Project,
-                                    _configurationToExecute,
-                                    globals,
-                                    progressUI,
-                                    _dataLoadInfo);
-                            }
-                            finally
-                            {
-                                progressUI.ShowRunning(false);
-                            }
-                        }   
-                    );
+                    //            globalExtractor.ExtractGlobalsForDestination(Project,
+                    //                _configurationToExecute,
+                    //                globals,
+                    //                progressUI,
+                    //                _dataLoadInfo);
+                    //        }
+                    //        finally
+                    //        {
+                    //            progressUI.ShowRunning(false);
+                    //        }
+                    //    }   
+                    //);
 
-                    t.Start();
+                    //t.Start();
                 }
                 
             }

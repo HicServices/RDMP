@@ -434,7 +434,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs("DatabaseNamingPattern does not contain any token. The tables may be created alongside existing tables and Release would be impossible.", CheckResult.Warning));
 
             if (!TableNamingPattern.Contains("$d") && !TableNamingPattern.Contains("$a"))
-                notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain either $d or $a, the name/acronym of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once",CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs("TableNamingPattern must contain either $d or $a, the name/acronym of the dataset being extracted otherwise you will get collisions when you extract multiple tables at once", CheckResult.Warning));
 
             if (_request == ExtractDatasetCommand.EmptyCommand)
             {
