@@ -362,6 +362,20 @@ namespace ANOStore.ANOEngineering
 
             var columns = _catalogueRepository.GetColumnInfosWithNameExactly(expectedNewName);
 
+            bool failedANOToo = false;
+
+            //maybe it was anonymised in the other configuration?
+            if (columns.Length == 0 && !expectedName.StartsWith("ANO"))
+                try
+                {
+                    return FindNewColumnNamed(syntaxHelper,col,"ANO" + expectedName);
+                }
+                catch (Exception)
+                {
+                    //oh well couldnt find it
+                    failedANOToo = true;
+                }
+
             if (columns.Length == 1)
                 return columns[0];
 
@@ -375,7 +389,7 @@ namespace ANOStore.ANOEngineering
             if (columnsFromCorrectServerThatAreaAlsoLocalImports.Length == 1)
                 return columnsFromCorrectServerThatAreaAlsoLocalImports[0];
 
-            throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedName +"'");
+            throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedNewName + "'" + (failedANOToo ? " (Or 'ANO" + expectedName + "')" : ""));
         }
 
         Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();

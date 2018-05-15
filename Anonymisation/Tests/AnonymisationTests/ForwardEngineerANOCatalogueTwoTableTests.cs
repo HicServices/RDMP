@@ -8,6 +8,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable.Attributes;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -135,16 +136,17 @@ GO";
         [Test]
         public void TestAnonymisingJoinKey()
         {
+            //Create a plan for the first Catlogue (Tests) - single Table dataset
             var plan1 = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata1);
             var testIdHeadPlan = plan1.GetPlanForColumnInfo(c1.Single(c => c.GetRuntimeName().Equals("TestId")));
             plan1.TargetDatabase = _destinationDatabase;
 
+            //the plan is that the column TestId should be anonymised - where it's name will become ANOTestId
             testIdHeadPlan.Plan = Plan.ANO;
             testIdHeadPlan.ANOTable = _anoTable;
 
             plan1.Check(new ThrowImmediatelyCheckNotifier());
-
-
+            
             var engine1 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan1);
             engine1.Execute();
 
@@ -153,20 +155,38 @@ GO";
             var ei1 = plan1ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
             Assert.IsTrue(ei1.Exists());
 
+            //Now create a plan for the combo Catalogue which contains references to both tables (Tests and Results).  Remember Tests has already been migrated as part of plan1
             var plan2 = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, _comboCata);
+            
+            //tell it to skip table 1 (Tests) and only anonymise Results
             plan2.SkippedTables.Add(t1);
             plan2.TargetDatabase = _destinationDatabase;
             plan2.Check(new ThrowImmediatelyCheckNotifier());
 
+            //Run the anonymisation
             var engine2 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator,plan2);
             engine2.Execute();
 
+            //Did it succesfully pick up the correct ANO column
             var plan2ExtractionInformationsAtDestination = engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
             var ei2 = plan2ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
             Assert.IsTrue(ei2.Exists());
 
+            //and can the query be executed succesfully
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumnRange(plan2ExtractionInformationsAtDestination);
 
+            using (var con = _destinationDatabase.Server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = _destinationDatabase.Server.GetCommand(qb.SQL, con);
+                
+                Assert.DoesNotThrow(()=>cmd.ExecuteNonQuery());
+            }
+
+            Console.WriteLine("Final migrated combo dataset SQL was:" + qb.SQL);
         }
 
         [TearDown]
