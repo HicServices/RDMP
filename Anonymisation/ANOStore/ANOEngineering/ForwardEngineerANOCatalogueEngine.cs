@@ -45,6 +45,10 @@ namespace ANOStore.ANOEngineering
         
         public void Execute()
         {
+
+            if(_planManager.TargetDatabase == null)
+                throw new Exception("PlanManager has no TargetDatabase set");
+
             using (_catalogueRepository.BeginNewTransactedConnection())
             {
                 try
