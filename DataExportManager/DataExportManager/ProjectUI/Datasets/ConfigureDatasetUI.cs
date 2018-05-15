@@ -102,10 +102,15 @@ namespace DataExportManager.ProjectUI.Datasets
         {
             ExtractionInformation ei = (ExtractionInformation)rowObject;
 
-            if (ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-                return ei.ExtractionCategory + "::" + ei.CatalogueItem.Catalogue.Name;
+            var cata = ei.CatalogueItem.Catalogue;
 
-            return ei.ExtractionCategory.ToString();
+            string toReturn = null;
+
+            toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific ? ei.ExtractionCategory + "::" + cata.Name : ei.ExtractionCategory.ToString();
+
+            toReturn = cata.IsDeprecated ? toReturn + " (DEPRECATED)" : toReturn;
+
+            return toReturn;
         }
 
 
