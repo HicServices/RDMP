@@ -157,7 +157,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
         void ActivateTableInfo(object sender, TableInfo tableInfo);
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
-        void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);

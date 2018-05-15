@@ -395,10 +395,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
         }
         
-        public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
-        {
-            Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
-        }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {

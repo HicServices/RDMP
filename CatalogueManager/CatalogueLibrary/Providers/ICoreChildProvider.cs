@@ -45,6 +45,9 @@ namespace CatalogueLibrary.Providers
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);
         IEnumerable<ExtractionInformation> AllExtractionInformations { get; }
+        
+        AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
+        AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
     }
