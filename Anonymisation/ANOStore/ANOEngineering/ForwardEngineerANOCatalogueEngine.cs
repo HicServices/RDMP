@@ -174,7 +174,10 @@ namespace ANOStore.ANOEngineering
 
                         //and rewire it's ColumnInfo to the cloned child one
                         newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
-                        newCatalogueItem.Name = newColumnInfo.GetRuntimeName();
+
+                        //If the old CatalogueItem had the same name as it's underlying ColumnInfo then we should use the new one otherwise just copy the old name whatever it was
+                        newCatalogueItem.Name = oldCatalogueItem.Name.Equals(oldColumnInfo.Name) ? newColumnInfo.GetRuntimeName() : oldCatalogueItem.Name;
+
                         newCatalogueItem.SaveToDatabase();
 
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;
@@ -208,7 +211,6 @@ namespace ANOStore.ANOEngineering
 
                                     //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
                                     refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)(kvpOtherCols.Value)).Name,false);
-                                
                                 }
                             
                                 //make the new one exactly as extractable

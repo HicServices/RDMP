@@ -187,6 +187,9 @@ GO";
             }
 
             Console.WriteLine("Final migrated combo dataset SQL was:" + qb.SQL);
+
+            Assert.IsTrue(_comboCata.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")));
+            Assert.IsTrue(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),"ANO Catalogue did not respect the original CatalogueItem Name"); 
         }
 
         [TearDown]

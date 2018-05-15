@@ -61,7 +61,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
         private void SetExtractionIdentifierColumn(ExtractionInformation extractionInformation)
         {
-            if (!extractionInformation.IsExtractionIdentifier)
+            //if they are trying to set the identifier column to something that isn't marked IsExtractionIdentifier
+            if (_extractionIdentifierColumn != null && !extractionInformation.IsExtractionIdentifier)
                 SetImpossible("Column is not marked IsExtractionIdentifier");
 
             _extractionIdentifierColumn = extractionInformation;
