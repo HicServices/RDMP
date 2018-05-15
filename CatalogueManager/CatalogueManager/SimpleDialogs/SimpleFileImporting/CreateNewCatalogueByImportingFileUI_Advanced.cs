@@ -79,6 +79,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     var table = _database.ExpectTable(targetTable);
 
                     var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table), "File '" + _fileToLoad.File.FullName + "'",_projectSpecific);
+                    ui.ShowDialog();
                     
                     var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
 
