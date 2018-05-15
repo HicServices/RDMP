@@ -32,7 +32,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
     /// gives multiple results (white blood cell count, red blood cell count etc) then you will obviously want to store it as two separate tables.
     /// 
     /// <para>Configuring join logic in RDMP enables the QueryBuilder to write an SQL SELECT query including a LEFT JOIN / RIGHT JOIN / INNER JOIN over two or more tables.  If you don't
-    /// understand what an SQL Join is then you should research this before using this window.  Unlike a Lookup (See ConfigureLookups) it doesn't really matter which table contains
+    /// understand what an SQL Join is then you should research this before using this window.  Unlike a Lookup (See LookupConfiguration) it doesn't really matter which table contains
     /// the ForeignKey and which contains the PrimaryKey since changing the Join direction effectively inverts this logic anyway (i.e. Header RIGHT JOIN Results is the same as Results
     /// LEFT JOIN Header).  Configuring join logic in the RDMP database does not affect your data repository in any way (i.e. it doesn't mean we will suddenly start putting referential
     /// integrity constraints into your database!).</para>

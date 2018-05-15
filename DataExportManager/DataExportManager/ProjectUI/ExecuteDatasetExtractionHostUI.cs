@@ -20,7 +20,7 @@ namespace DataExportManager.ProjectUI
 {
     /// <summary>
     /// Reports the progress of a single dataset bundle in a project extraction.  A dataset bundle is the dataset, any accompanying lookups / supporting documents etc.  You will see one
-    /// control per dataset you ticked in ChooseExtractablesUI plus a custom one called Globals which is for all global attachments (See SupportingDocumentsViewer).
+    /// control per dataset you ticked in ChooseExtractablesUI plus a custom one called Globals which is for all global attachments (See SupportingDocumentUI).
     /// 
     /// <para>The notifications will include the extraction SQL sent to the data repository (including the join against the cohort and any extraction specific filters - See ConfigureDatasetUI).
     /// Then depending on the pipeline you selected in ExecuteExtractionUI you will then see messages about the data being extracted including the number of records written/fetched and

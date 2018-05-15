@@ -25,7 +25,7 @@ namespace CatalogueManager.SimpleDialogs
     /// want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the table/document is automatically copied and extracted into 
     /// project extraction directory for provision to the researcher.
     /// 
-    /// <para>If you have Lookup tables (that you don't want to configure as Lookup objects, see ConfigureLookups) or complex dictionary tables etc which are required/helpful in understanding or
+    /// <para>If you have Lookup tables (that you don't want to configure as Lookup objects, see LookupConfiguration) or complex dictionary tables etc which are required/helpful in understanding or
     /// processing the data in your dataset then you should configure it as a SupportingSQLTable.  Make sure to put in an appropriate name and description of what is in the table.  You
     /// must select the server on which the SQL should be run (See ManageExternalServers), if you setup a single reference to your data repository with Database='master' and then ensure
     /// that all your SupportingSQLTables are fully qualified (e.g. [MyDb].dbo.[MyTable]) then you can avoid having to create an ExternalDatabaseServer for each different database.</para>

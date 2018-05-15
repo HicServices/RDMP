@@ -306,10 +306,10 @@ namespace CatalogueLibrary.Data.Aggregation
                     ReFetchOrder();
                     orderFetchAttempted = true;
                 }
-
-
+                
+                //not within any containers
                 if (_orderWithinKnownContainer == null)
-                    throw new NotSupportedException(this + " is not part of any known containers");
+                    return 0;
 
                 return (int)_orderWithinKnownContainer;
             }

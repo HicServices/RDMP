@@ -22,10 +22,6 @@ namespace DataExportManager.ProjectUI
             CommandStates.Add(cmd,cmd.State);
             CommandSubStates.Add(cmd,cmd.DatasetBundle.States);
         }
-        public void Add(IExtractCohortCustomTableCommand cmd)
-        {
-            CommandStates.Add(cmd,cmd.State);
-        }
 
         public void SaveState(IExtractDatasetCommand cmd)
         {
@@ -41,12 +37,7 @@ namespace DataExportManager.ProjectUI
                 toUpdateSubstates[substate.Key] = substate.Value;
             }
         }
-
-        public void SaveState(IExtractCohortCustomTableCommand cmd)
-        {
-            CommandStates[cmd] = cmd.State;
-        }
-
+        
         public IEnumerable<object> GetAllChangedObjects(IExtractDatasetCommand cmd)
         {
             if (CommandStates[cmd] != cmd.State)
@@ -56,11 +47,6 @@ namespace DataExportManager.ProjectUI
                 if (CommandSubStates[cmd][substate.Key] != substate.Value)
                     yield return substate.Key;
         }
-        public bool GetHasChanged(IExtractCohortCustomTableCommand cmd)
-        {
-            return CommandStates[cmd] != cmd.State;
-        }
-
         public void SaveState(GlobalsBundle globals)
         {
             foreach (var gkvp in globals.States)

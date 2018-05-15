@@ -3,6 +3,9 @@ using System.Linq;
 using CatalogueLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.Providers.Nodes;
+using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
+using DataExportLibrary.Providers.Nodes.UsedByProject;
 
 namespace DataExportLibrary.Providers
 {
@@ -11,114 +14,88 @@ namespace DataExportLibrary.Providers
     /// </summary>
     public class DataExportProblemProvider:IProblemProvider
     {
-        public Dictionary<object, string>  _problems = new Dictionary<object, string>();
         private DataExportChildProvider _exportChildProvider;
 
-        public DataExportProblemProvider()
-        {
-            
-        }
-        public DataExportProblemProvider(ICoreChildProvider coreChildProvider):this()
-        {
-            RefreshProblems(coreChildProvider);
-        }
-
-        private void FindProblemsIn(Project project)
-        {
-            if (_exportChildProvider.Projects.Contains(project))
-                if (!_exportChildProvider.GetConfigurations(project).Any())//it has some configurations
-                {
-                    _problems.Add(project,"Project has no ExtractionConfigurations");
-                    return;
-                }
-
-            if(project.ProjectNumber == null)
-            {
-                _problems.Add(project, "Project has no ProjectNumber");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(project.ExtractionDirectory))
-            {
-                _problems.Add(project, "Project has no Extraction Directory configured");
-                return;
-            }
-
-            if (_exportChildProvider.ProjectHasNoSavedCohorts(project))
-            {
-                _problems.Add(project, "Project has no cohorts");
-                return;
-            }
-        }
-
-        private void FindProblemsIn(ExtractionConfiguration config)
-        {
-            if (config.Cohort_ID == null)
-            {
-                _problems.Add(config,"Configuration has no Cohort configured");
-                return;
-            }
-
-            if (_exportChildProvider != null)
-                if (!_exportChildProvider.GetDatasets(config).Any())//there are no selected datasets!
-                {
-                    _problems.Add(config, "Configuration has no selected datasets");
-                    return;
-                }
-
-            if (_problems.Keys.OfType<Project>().Any(p => p.ID == config.Project_ID))
-            {
-                _problems.Add(config, "Parent Project has problems");
-                return;
-            }
-        }
-        
+      
         public void RefreshProblems(ICoreChildProvider childProvider)
         {
             _exportChildProvider = childProvider as DataExportChildProvider;
-
-            if (_exportChildProvider == null)
-                return;
-
-            _problems = new Dictionary<object, string>();
-
-            foreach (var config in _exportChildProvider.ExtractionConfigurations)
-                FindProblemsIn(config);
-
-            foreach (var selectedDataset in _exportChildProvider.SelectedDataSets)
-                FindProblemsIn(selectedDataset);
-
-            foreach (var project in _exportChildProvider.Projects)
-                FindProblemsIn(project);
         }
 
-        private void FindProblemsIn(SelectedDataSets selectedDataset)
-        {
-            var cols = _exportChildProvider.GetColumnsIn(selectedDataset);
-
-            if(!cols.Any(c=>c.IsExtractionIdentifier))
-            {
-                _problems.Add(selectedDataset,"There are no IsExtractionIdentifier columns in dataset");
-                return;
-            }
-
-            var eds = selectedDataset.ExtractableDataSet;
-
-            if(eds.Project_ID != null && eds.Project_ID != selectedDataset.ExtractionConfiguration.Project_ID)
-            {
-                _problems.Add(selectedDataset,"Catalogue is 'Project Specific' for another Project");
-                return;
-            }
-        }
 
         public bool HasProblem(object o)
         {
-            return _problems.ContainsKey(o);
+            return DescribeProblem(o) != null;
         }
 
         public string DescribeProblem(object o)
         {
-            return HasProblem(o) ? _problems[o] : null;
+            if (o is Project)
+                return DescribeProblem((Project) o);
+
+            if (o is ProjectSavedCohortsNode)
+                return DescribeProblem((ProjectSavedCohortsNode)o);
+
+            if (o is ExtractionConfigurationsNode)
+                return DescribeProblem((ExtractionConfigurationsNode) o);
+
+            if (o is SelectedDataSets)
+                return DescribeProblem((SelectedDataSets)o);
+
+            if (o is ExtractionConfiguration)
+                return DescribeProblem((ExtractionConfiguration) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(ExtractionConfiguration extractionConfiguration)
+        {
+            if (extractionConfiguration.Cohort_ID == null)
+                return "Configuration has no Cohort configured";
+
+            if (_exportChildProvider != null)
+                if (!_exportChildProvider.GetDatasets(extractionConfiguration).Any()) //there are no selected datasets!
+                    return "Configuration has no selected datasets";
+
+            return null;
+        }
+
+        public string DescribeProblem(SelectedDataSets selectedDataSets)
+        {
+            var cols = _exportChildProvider.GetColumnsIn(selectedDataSets);
+
+            if (!cols.Any(c => c.IsExtractionIdentifier))
+                return "There are no IsExtractionIdentifier columns in dataset";
+
+            return null;
+        }
+
+        public string DescribeProblem(ExtractionConfigurationsNode extractionConfigurationsNode)
+        {
+            if (_exportChildProvider.Projects.Contains(extractionConfigurationsNode.Project))
+                if (!_exportChildProvider.GetConfigurations(extractionConfigurationsNode.Project).Any())
+                    return "Project has no ExtractionConfigurations";
+
+            return null;
+        }
+
+        public string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
+        {
+            if (_exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project))
+                return "Project has no cohorts";
+
+            return null;
+        }
+
+        public string DescribeProblem(Project project)
+        {
+            if (project.ProjectNumber == null)
+                return "Project has no ProjectNumber";
+
+            if (string.IsNullOrWhiteSpace(project.ExtractionDirectory))
+                return "Project has no Extraction Directory configured";
+
+            return null;
         }
     }
 }

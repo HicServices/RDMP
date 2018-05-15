@@ -14,6 +14,10 @@ using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Sources
 {
+    /// <summary>
+    /// Pipeline source component that generates a DataTable containing all the unique patient identifiers in the column referenced by the <see cref="IPipelineRequirement"/> 
+    /// <see cref="ExtractionInformation"/>.
+    /// </summary>
     public class PatientIdentifierColumnSource:IPluginDataFlowSource<DataTable>, IPipelineRequirement<ExtractionInformation>
     {
         private ExtractionInformation _extractionInformation;

@@ -62,6 +62,7 @@ namespace DataExportLibrary.Data.DataTables
 
         /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
         [CanBeNull]
+        /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation CatalogueExtractionInformation
         {

@@ -8,6 +8,7 @@ using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -398,6 +399,11 @@ namespace CatalogueLibrary.QueryBuilding
 
             foreach (ISqlParameter parameter in ParameterManager.GetFinalResolvedParametersList())
             {
+                //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
+                var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
+                if(needsToldTheSyntaxHelper != null)
+                    needsToldTheSyntaxHelper.InjectKnown(_syntaxHelper);
+                
                 if(CheckSyntax)
                     parameter.Check(checkNotifier);
 

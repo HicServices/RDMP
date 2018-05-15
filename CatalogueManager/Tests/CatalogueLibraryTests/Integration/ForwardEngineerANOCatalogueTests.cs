@@ -369,6 +369,8 @@ namespace CatalogueLibraryTests.Integration
             eiDescription.ExtractionCategory = ExtractionCategory.Supplemental;
             eiDescription.SaveToDatabase();
 
+            bulk.catalogue.ClearAllInjections();
+
             //check it worked
             QueryBuilder qb = new QueryBuilder(null,null);
             qb.AddColumnRange(bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any));

@@ -134,6 +134,7 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ForwardEngineerANOCatalogueTwoTableTests.cs" />
     <Compile Include="ANOStoreFunctionalityTests.cs" />
     <Compile Include="ANOMigrationTests.cs" />
     <Compile Include="ANOTableTests.cs" />

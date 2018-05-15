@@ -58,6 +58,7 @@ namespace AnonymisationTests
 
             tableInfoCreated.ColumnInfos.Single(c => c.GetRuntimeName().Equals("surname")).DeleteInDatabase();
             tableInfoCreated.ColumnInfos.Single(c => c.GetRuntimeName().Equals("forename")).DeleteInDatabase();
+            tableInfoCreated.ClearAllInjections();
         }
 
 
