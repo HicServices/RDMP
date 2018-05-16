@@ -28,9 +28,6 @@ namespace DataExportManager.Menus
         {
             _cohort = cohort;
             Items.Add("View TOP 100 identifiers",null, (s, e) => ViewTop100());
-            
-            Add(new ExecuteCommandImportPatientIndexTableAsCustomData(_activator, cohort));
-
         }
 
         public ExtractableCohortMenu(RDMPContextMenuStripArgs args, ExtractableCohortUsedByProjectNode cohortNode)
