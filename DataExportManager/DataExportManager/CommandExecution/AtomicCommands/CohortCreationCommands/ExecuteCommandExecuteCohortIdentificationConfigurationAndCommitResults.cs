@@ -17,10 +17,14 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
     public class ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults:CohortCreationCommandExecution
     {
         private CohortIdentificationConfiguration _cic;
+        private CohortIdentificationConfiguration[] _allConfigurations;
 
         public ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(IActivateItems activator) : base(activator)
         {
-            
+            _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+
+            if (!_allConfigurations.Any())
+                SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
         }
 
         public override void Execute()
@@ -28,23 +32,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             base.Execute();
 
             if(_cic == null)
-            {
-                var allConfigurations = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().ToArray();
-
-                if (!allConfigurations.Any())
-                {
-                    MessageBox.Show("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
+                if(!SelectOne(Activator.RepositoryLocator.CatalogueRepository,out _cic))
                     return;
-                }
-
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(allConfigurations, false, false);
-                dialog.ShowDialog();
-
-                if (dialog.DialogResult != DialogResult.OK || dialog.Selected == null)
-                    return;
-
-                _cic = (CohortIdentificationConfiguration)dialog.Selected;
-            }
 
             var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + _cic  +"' (ID=" +_cic.ID +")" );
 
