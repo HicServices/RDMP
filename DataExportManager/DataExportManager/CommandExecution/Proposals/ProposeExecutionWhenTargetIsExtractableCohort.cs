@@ -15,7 +15,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
+    class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
     {
         public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator):base(activator)
         {

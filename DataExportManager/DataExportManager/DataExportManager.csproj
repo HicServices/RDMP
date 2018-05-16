@@ -310,12 +310,6 @@
     <Compile Include="CohortUI\ExtractableCohortUI.Designer.cs">
       <DependentUpon>ExtractableCohortUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.Designer.cs">
-      <DependentUpon>ImportCustomDataFileUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="Collections\DataExportCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -392,7 +386,6 @@
     <Compile Include="ChangesSavedHandler.cs" />
     <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
     <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportPatientIndexTableAsCustomData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
@@ -522,10 +515,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\ExtractableCohortUI.resx">
       <DependentUpon>ExtractableCohortUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.resx">
-      <DependentUpon>ImportCustomDataFileUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\DataExportCollectionUI.resx">

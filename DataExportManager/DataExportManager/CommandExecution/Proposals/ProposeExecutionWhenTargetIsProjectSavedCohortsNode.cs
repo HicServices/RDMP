@@ -15,7 +15,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
+    class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
     {
         public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
         {

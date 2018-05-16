@@ -11,7 +11,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsExtractionInformation:RDMPCommandExecutionProposal<ExtractionInformation>
+    class ProposeExecutionWhenTargetIsExtractionInformation:RDMPCommandExecutionProposal<ExtractionInformation>
     {
         public ProposeExecutionWhenTargetIsExtractionInformation(IActivateItems itemActivator) : base(itemActivator)
         {

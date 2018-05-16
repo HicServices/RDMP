@@ -7,7 +7,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandExecutionProposal<ProjectCataloguesNode>
+    class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandExecutionProposal<ProjectCataloguesNode>
     {
         private ProposeExecutionWhenTargetIsProject _projectFunctionality;
 

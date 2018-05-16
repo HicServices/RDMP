@@ -13,7 +13,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CohortManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDMPCommandExecutionProposal<CohortIdentificationConfiguration>
+    class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDMPCommandExecutionProposal<CohortIdentificationConfiguration>
     {
         public ProposeExecutionWhenTargetIsCohortIdentificationConfiguration(IActivateItems itemActivator) : base(itemActivator)
         {

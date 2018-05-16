@@ -9,6 +9,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections.Providers;
@@ -74,43 +75,6 @@ namespace CatalogueManager.Collections
             InitializeComponent();
             tlvLoadMetadata.RowHeight = 19;
         }
-
-        
-        private void otvLoadMetadata_ItemActivate(object sender, EventArgs e)
-        {
-            var o = tlvLoadMetadata.SelectedObject;
-            
-            var permissionWindow = o as PermissionWindow;
-            
-            if (permissionWindow != null)
-                _activator.ActivatePermissionWindow(this, permissionWindow);
-        }
-        private void otvLoadMetadata_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                var cataNode = tlvLoadMetadata.SelectedObject as CatalogueUsedByLoadMetadataNode;
-                
-                if(cataNode != null)
-                    if (
-                        MessageBox.Show(
-                            "Confirm Disassociating Catalogue '" + cataNode +
-                            "' from it's Load logic? This will not delete the Catalogue itself just the relationship to the load",
-                            "Confirm disassociating Catalogue", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        cataNode.Catalogue.LoadMetadata_ID = null;
-                        cataNode.Catalogue.SaveToDatabase();
-
-                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cataNode.LoadMetadata));
-                    }
-            }
-        }
-
-        public void ExpandToCatalogueLevel()
-        {
-            foreach (LoadMetadata loadMetadata in tlvLoadMetadata.Objects)
-                tlvLoadMetadata.Expand(loadMetadata);
-        }
         
         public override void SetItemActivator(IActivateItems activator) 
         {
@@ -126,40 +90,28 @@ namespace CatalogueManager.Collections
 
             CommonFunctionality.WhitespaceRightClickMenuCommands = new[] {new ExecuteCommandCreateNewLoadMetadata(_activator)};
             
-            RefreshAll();
+            tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllPermissionWindowsNode);
+            tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllLoadMetadatasNode);
         }
 
-        public void RefreshAll()
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(RefreshAll));
-                return;
-            }
-
-            //get all those that still exist
-            tlvLoadMetadata.ClearObjects();
-            tlvLoadMetadata.AddObjects(_activator.CoreChildProvider.AllLoadMetadatas);
-            ExpandToCatalogueLevel();
-        }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            var lmd = e.Object as LoadMetadata;
+            if (e.Object is LoadMetadata)
+                tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllLoadMetadatasNode>());
 
-            if (lmd != null)
-                if (lmd.Exists())
-                {
-                    if (!tlvLoadMetadata.Objects.Cast<LoadMetadata>().Contains(lmd)) //it exists and is a new one
-                        tlvLoadMetadata.AddObject(lmd);
-                }
-                else
-                    tlvLoadMetadata.RemoveObject(lmd);//it doesn't exist
+            if (e.Object is PermissionWindow)
+                tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
+
+            if (e.Object is CacheProgress)
+                tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
         }
         
         public static bool IsRootObject(object root)
         {
-            return root is LoadMetadata;
+            return
+                root is AllPermissionWindowsNode ||
+                root is AllLoadMetadatasNode;
         }
     }
 }

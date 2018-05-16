@@ -458,6 +458,8 @@
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
+    <Compile Include="Nodes\AllLoadMetadatasNode.cs" />
+    <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />

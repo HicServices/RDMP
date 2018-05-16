@@ -173,6 +173,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllLoadMetadatasNode {
+            get {
+                object obj = ResourceManager.GetObject("AllLoadMetadatasNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllObjectExportsNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
@@ -196,6 +206,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap AllObjectSharingNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectSharingNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AllPermissionWindowsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllPermissionWindowsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

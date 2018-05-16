@@ -31,6 +31,7 @@
             this.cbShowHomeOnStartup = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbEmphasiseOnTabChanged = new System.Windows.Forms.CheckBox();
+            this.cbConfirmExit = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -42,7 +43,7 @@
             this.cbShowHomeOnStartup.TabIndex = 0;
             this.cbShowHomeOnStartup.Text = "Show Home On Startup";
             this.cbShowHomeOnStartup.UseVisualStyleBackColor = true;
-            this.cbShowHomeOnStartup.CheckedChanged += new System.EventHandler(this.cbShowHomeOnStartup_CheckedChanged);
+            this.cbShowHomeOnStartup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label1
             // 
@@ -62,13 +63,25 @@
             this.cbEmphasiseOnTabChanged.TabIndex = 2;
             this.cbEmphasiseOnTabChanged.Text = "Show Object Collection On Tab Change";
             this.cbEmphasiseOnTabChanged.UseVisualStyleBackColor = true;
-            this.cbEmphasiseOnTabChanged.CheckedChanged += new System.EventHandler(this.cbEmphasiseOnTabChanged_CheckedChanged);
+            this.cbEmphasiseOnTabChanged.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
+            // cbConfirmExit
+            // 
+            this.cbConfirmExit.AutoSize = true;
+            this.cbConfirmExit.Location = new System.Drawing.Point(39, 97);
+            this.cbConfirmExit.Name = "cbConfirmExit";
+            this.cbConfirmExit.Size = new System.Drawing.Size(136, 17);
+            this.cbConfirmExit.TabIndex = 2;
+            this.cbConfirmExit.Text = "Confirm Application Exit";
+            this.cbConfirmExit.UseVisualStyleBackColor = true;
+            this.cbConfirmExit.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 565);
+            this.Controls.Add(this.cbConfirmExit);
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbShowHomeOnStartup);
@@ -84,5 +97,6 @@
         private System.Windows.Forms.CheckBox cbShowHomeOnStartup;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbEmphasiseOnTabChanged;
+        private System.Windows.Forms.CheckBox cbConfirmExit;
     }
 }

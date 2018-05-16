@@ -121,8 +121,7 @@ namespace CatalogueManager.ItemActivation
         T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
-        bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
-
+        
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
         void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue);
 
@@ -157,7 +156,6 @@ namespace CatalogueManager.ItemActivation
         void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
         void ActivateTableInfo(object sender, TableInfo tableInfo);
         void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
-        void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);

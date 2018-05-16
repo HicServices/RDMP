@@ -506,6 +506,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
@@ -526,6 +527,8 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadPeriodically.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadProgress.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindow.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
@@ -547,7 +550,9 @@
       <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
+    <Compile Include="Menus\AllLoadMetadatasNodeMenu.cs" />
     <Compile Include="Menus\AllObjectImportsNodeMenu.cs" />
+    <Compile Include="Menus\AllPermissionWindowsNodeMenu.cs" />
     <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\AllANOTablesNodeMenu.cs" />
@@ -1543,6 +1548,8 @@
     <None Include="Icons\famfamfam\page_white_get.png" />
     <None Include="Icons\famfamfam\page_white_put.png" />
     <None Include="Icons\ExtractionInformation_ProjectSpecific.png" />
+    <None Include="Icons\AllLoadMetadatasNode.png" />
+    <None Include="Icons\AllPermissionWindowsNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

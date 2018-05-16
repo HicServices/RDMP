@@ -49,9 +49,9 @@ provides a description for (a given TableInfo can be a Lookup for many columns i
 
                 if (dr == DialogResult.OK)
                 {
-                    var selectCatalogue = new SelectIMapsDirectlyToDatabaseTableDialog(tbl.Repository.GetAllObjects<Catalogue>(), false, false);
-                    if (selectCatalogue.ShowDialog() == DialogResult.OK)
-                        _activator.ActivateLookupConfiguration(this, (Catalogue)selectCatalogue.Selected, tbl);
+                    Catalogue cata;
+                    if(SelectOne(tbl.Repository,out cata))
+                        _activator.ActivateLookupConfiguration(this, cata, tbl);
                 }
             }
             catch (Exception exception)

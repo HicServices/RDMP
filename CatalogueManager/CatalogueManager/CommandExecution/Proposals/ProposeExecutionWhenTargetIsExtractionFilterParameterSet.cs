@@ -6,7 +6,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPCommandExecutionProposal<ExtractionFilterParameterSet>
+    class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPCommandExecutionProposal<ExtractionFilterParameterSet>
     {
         public ProposeExecutionWhenTargetIsExtractionFilterParameterSet(IActivateItems itemActivator) : base(itemActivator)
         {

@@ -251,18 +251,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return false;
         }
-
-        public bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete)
-        {
-            var layout = controlToDelete.ParentLayout;
-            if (DeleteWithConfirmation(this, controlToDelete))
-            {
-
-                RefreshBus.Publish(sender,new RefreshObjectEventArgs(layout));
-                return true;
-            }
-            return false;
-        }
         
         public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
@@ -395,10 +383,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
         }
         
-        public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
-        {
-            Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
-        }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {

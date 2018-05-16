@@ -33,25 +33,25 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var catalogueBefore = _catalogue;
             try
             {
+                //if we don't have an explicit one picked yet
                 if (_catalogue == null)
-                    GetUserToPickACatalogue();
+                    if(!SelectOne(_availableCatalogues, out _catalogue)) //get user to pick one
+                        return; //user cancelled
             
                 //create the load
-                if (_catalogue != null)
-                {
-                    var cataRepository = (CatalogueRepository)_catalogue.Repository;
+                var cataRepository = (CatalogueRepository)_catalogue.Repository;
 
-                    var lmd = new LoadMetadata(cataRepository, "Loading " + _catalogue.Name);
+                var lmd = new LoadMetadata(cataRepository, "Loading " + _catalogue.Name);
 
-                    lmd.EnsureLoggingWorksFor(_catalogue);
+                lmd.EnsureLoggingWorksFor(_catalogue);
 
-                    _catalogue.LoadMetadata_ID = lmd.ID;
-                    _catalogue.SaveToDatabase();
+                _catalogue.LoadMetadata_ID = lmd.ID;
+                _catalogue.SaveToDatabase();
 
-                    Publish(lmd);
+                Publish(lmd);
 
-                    Activator.WindowArranger.SetupEditAnything(this,lmd);
-                }
+                Activator.WindowArranger.SetupEditAnything(this,lmd);
+                
             }
             finally
             {
@@ -59,13 +59,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             }
         }
 
-        private void GetUserToPickACatalogue()
-        {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues, false, false);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-                _catalogue = dialog.Selected as Catalogue;
-        }
 
         public override string GetCommandName()
         {

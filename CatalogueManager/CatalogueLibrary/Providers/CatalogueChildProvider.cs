@@ -110,6 +110,9 @@ namespace CatalogueLibrary.Providers
             return AllExtractionInformationsDictionary.Values;
         } }
 
+        public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
+        public AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
+
         protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
 
         private readonly CatalogueFilterHierarchy _filterChildProvider;
@@ -140,7 +143,11 @@ namespace CatalogueLibrary.Providers
             AllCacheProgresses = repository.GetAllObjects<CacheProgress>();
             AllLoadPeriodicallies = repository.GetAllObjects<LoadPeriodically>();
 
+            
             AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
+            AllPermissionWindowsNode = new AllPermissionWindowsNode();
+            AddChildren(AllPermissionWindowsNode);
+
 
             AllAutomationServiceSlots = repository.GetAllObjects<AutomationServiceSlot>();
             AllRemoteRDMPs = repository.GetAllObjects<RemoteRDMP>();
@@ -225,8 +232,9 @@ namespace CatalogueLibrary.Providers
 
             AddChildren(CatalogueFolder.Root,new DescendancyList(CatalogueFolder.Root));
 
-            foreach (LoadMetadata lmd in AllLoadMetadatas)
-                AddChildren(lmd);
+
+            AllLoadMetadatasNode = new AllLoadMetadatasNode();
+            AddChildren(AllLoadMetadatasNode);
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
@@ -244,6 +252,42 @@ namespace CatalogueLibrary.Providers
                 ac.InjectKnown(joinable);
             }
                     
+        }
+
+        private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
+        {
+            HashSet<object> children = new HashSet<object>();
+            var descendancy = new DescendancyList(allLoadMetadatasNode);
+
+            foreach (LoadMetadata lmd in AllLoadMetadatas)
+            {
+                children.Add(lmd);
+                AddChildren(lmd, descendancy.Add(lmd));
+            }
+
+            AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(AllPermissionWindowsNode allPermissionWindowsNode)
+        {
+            var descendancy = new DescendancyList(allPermissionWindowsNode);
+
+            foreach (var permissionWindow in AllPermissionWindows)
+                AddChildren(permissionWindow, descendancy.Add(permissionWindow));
+
+
+            AddToDictionaries(new HashSet<object>(AllPermissionWindows),descendancy);
+        }
+
+        private void AddChildren(PermissionWindow permissionWindow, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            foreach (CacheProgress cacheProgress in AllCacheProgresses)
+                if (cacheProgress.PermissionWindow_ID == permissionWindow.ID)
+                    children.Add(new PermissionWindowUsedByCacheProgressNode(cacheProgress, permissionWindow, false));
+
+            AddToDictionaries(children,descendancy);
         }
 
         private void AddChildren(AllExternalServersNode allExternalServersNode)
@@ -361,9 +405,8 @@ namespace CatalogueLibrary.Providers
         }
 
         #region Load Metadata
-        private void AddChildren(LoadMetadata lmd)
+        private void AddChildren(LoadMetadata lmd, DescendancyList descendancy)
         {
-            var descendancy = new DescendancyList(lmd);
             List<object> childObjects = new List<object>();
 
             var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
@@ -420,7 +463,7 @@ namespace CatalogueLibrary.Providers
             if(cacheProgress.PermissionWindow_ID != null)
             {
                 var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
-                var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window);
+                var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window,true);
 
                 children.Add(windowNode);
             }
@@ -881,7 +924,6 @@ namespace CatalogueLibrary.Providers
             foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
                 toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
 
-            AddToReturnSearchablesWithNoDecendancy(toReturn,AllLoadMetadatas);
             AddToReturnSearchablesWithNoDecendancy(toReturn,AllCohortIdentificationConfigurations);
             
             return toReturn;
