@@ -28,7 +28,7 @@ namespace CatalogueManager.CommandExecution.Proposals
         {
             var cacheProgressCommand = cmd as CacheProgressCommand;
             if(cacheProgressCommand != null)
-                return new ExecuteCommandSetPermissionWindow(ItemActivator,cacheProgressCommand.CacheProgress,target);
+                return new ExecuteCommandSetPermissionWindow(ItemActivator,cacheProgressCommand.CacheProgress).SetTarget(target);
 
             return null;
         }

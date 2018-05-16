@@ -46,7 +46,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 newWindow.SaveToDatabase();
 
                 if(_cacheProgressToSetOnIfAny != null)
-                    new ExecuteCommandSetPermissionWindow(Activator, _cacheProgressToSetOnIfAny, newWindow).Execute();
+                    new ExecuteCommandSetPermissionWindow(Activator, _cacheProgressToSetOnIfAny).SetTarget(newWindow).Execute();
 
                 Publish(newWindow);
                 Activate(newWindow);

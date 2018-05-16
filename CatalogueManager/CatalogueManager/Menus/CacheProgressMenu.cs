@@ -27,17 +27,7 @@ namespace CatalogueManager.Menus
             _cacheProgress = cacheProgress;
             
             Add(new ExecuteCommandExecuteCacheProgress(_activator).SetTarget(cacheProgress));
-
-            var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
-
-            foreach (var window in _activator.CoreChildProvider.AllPermissionWindows)
-                Add(new ExecuteCommandSetPermissionWindow(_activator, cacheProgress, window),Keys.None,setWindow);
-
-            setWindow.DropDownItems.Add(new ToolStripSeparator());
-
-            Add(new ExecuteCommandCreateNewPermissionWindow(_activator).SetTarget(_cacheProgress), Keys.None, setWindow);
-
-            Items.Add(setWindow);
+            Add(new ExecuteCommandSetPermissionWindow(_activator,cacheProgress));
 
             //this will be used as design time fetch request date, set it to min dt to avoid issues around caches not having progress dates etc
             var fetchRequest = new SingleDayCacheFetchRequestProvider(new CacheFetchRequest(RepositoryLocator.CatalogueRepository,DateTime.MinValue));

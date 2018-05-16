@@ -123,6 +123,9 @@ namespace CatalogueManager.Collections
 
             if (e.Object is PermissionWindow)
                 tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
+
+            if (e.Object is CacheProgress)
+                tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
         }
         
         public static bool IsRootObject(object root)
