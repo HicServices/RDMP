@@ -255,7 +255,6 @@
     <Compile Include="DataRelease\FlatFileReleasePotential.cs" />
     <Compile Include="DataRelease\MsSqlExtractionReleasePotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FlatFileReleaseSource.cs" />
-    <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecuteGlobalsExtractionSource.cs" />
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />

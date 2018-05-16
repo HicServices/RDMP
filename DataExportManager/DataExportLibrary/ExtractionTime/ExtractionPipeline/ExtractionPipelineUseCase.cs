@@ -163,27 +163,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             
             return engine;
         }
-
-        public void ExtractGlobalsForDestination(IProject project, ExtractionConfiguration configuration, GlobalsBundle globalsBundle,IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
-        {
-            try
-            {
-                //if we don't yet know the destination create an engine which populates Destination/Source as a byproduct
-                if (Destination == null)
-                    GetEngine(_pipeline,listener);
-                
-                if (Destination == null)
-                    throw new Exception("There is no destination configured on Pipeline " + _pipeline + " so we cannot extract globals!");
-
-                listener.OnNotify("ExtractGlobalsForDestination", new NotifyEventArgs(ProgressEventType.Information, "successfully created " + Destination.GetType()));
-                Destination.ExtractGlobals((Project)project, configuration, globalsBundle, listener, dataLoadInfo);
-            }
-            catch (Exception e)
-            {
-                listener.OnNotify("ExtractGlobalsForDestination",new NotifyEventArgs(ProgressEventType.Error,"Fatal error occurred while trying to extract globals",e));
-            }
-        }
-
+        
         public override object[] GetInitializationObjects()
         {
             //initialize it with the extraction configuration request object and the audit object (this will initialize all objects in pipeline which implement IPipelineRequirement<ExtractionRequest> and IPipelineRequirement<TableLoadInfo>
