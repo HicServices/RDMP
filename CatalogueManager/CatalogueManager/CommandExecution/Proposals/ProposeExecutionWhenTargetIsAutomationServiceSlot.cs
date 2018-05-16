@@ -14,7 +14,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsAutomationServiceSlot:RDMPCommandExecutionProposal<AutomationServiceSlot>
+    class ProposeExecutionWhenTargetIsAutomationServiceSlot:RDMPCommandExecutionProposal<AutomationServiceSlot>
     {
         public ProposeExecutionWhenTargetIsAutomationServiceSlot(IActivateItems itemActivator) : base(itemActivator)
         {

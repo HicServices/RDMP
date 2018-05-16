@@ -11,7 +11,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsANOTable:RDMPCommandExecutionProposal<ANOTable>
+    class ProposeExecutionWhenTargetIsANOTable:RDMPCommandExecutionProposal<ANOTable>
     {
         public ProposeExecutionWhenTargetIsANOTable(IActivateItems itemActivator) : base(itemActivator)
         {
