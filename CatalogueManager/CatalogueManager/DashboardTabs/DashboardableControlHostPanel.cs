@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
 using ReusableUIComponents;
 
@@ -99,7 +100,11 @@ namespace CatalogueManager.DashboardTabs
         private void pbDelete_Click(object sender, EventArgs e)
         {
             if(_editMode)
-                _activator.DeleteControlFromDashboardWithConfirmation(this, _databaseRecord);
+            {
+                var layout = _databaseRecord.ParentLayout;
+                _activator.DeleteWithConfirmation(this, _databaseRecord);
+                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(layout));
+            }
         }
     }
 }

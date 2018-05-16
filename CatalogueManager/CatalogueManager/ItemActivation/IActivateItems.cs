@@ -121,8 +121,7 @@ namespace CatalogueManager.ItemActivation
         T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
-        bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
-
+        
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
         void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue);
 

@@ -16,16 +16,26 @@ namespace ReusableUIComponents.Settings
             InitializeComponent();
             cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
+            cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
         }
 
         private void cbShowHomeOnStartup_CheckedChanged(object sender, EventArgs e)
         {
-            UserSettings.ShowHomeOnStartup = cbShowHomeOnStartup.Checked;
+            
         }
 
-        private void cbEmphasiseOnTabChanged_CheckedChanged(object sender, EventArgs e)
+        private void cb_CheckedChanged(object sender, EventArgs e)
         {
-            UserSettings.EmphasiseOnTabChanged = cbEmphasiseOnTabChanged.Checked;
+            var cb = (CheckBox)sender;
+
+            if (cb == cbShowHomeOnStartup)
+                UserSettings.ShowHomeOnStartup = cb.Checked;
+
+            if (cb == cbEmphasiseOnTabChanged)
+                UserSettings.EmphasiseOnTabChanged = cb.Checked;
+
+            if(cb == cbConfirmExit)
+                UserSettings.ConfirmApplicationExiting = cb.Checked;
         }
     }
 }
