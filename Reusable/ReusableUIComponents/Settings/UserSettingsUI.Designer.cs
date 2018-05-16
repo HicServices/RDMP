@@ -43,7 +43,7 @@
             this.cbShowHomeOnStartup.TabIndex = 0;
             this.cbShowHomeOnStartup.Text = "Show Home On Startup";
             this.cbShowHomeOnStartup.UseVisualStyleBackColor = true;
-            this.cbShowHomeOnStartup.CheckedChanged += new System.EventHandler(this.cbShowHomeOnStartup_CheckedChanged);
+            this.cbShowHomeOnStartup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label1
             // 

@@ -19,11 +19,6 @@ namespace ReusableUIComponents.Settings
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
         }
 
-        private void cbShowHomeOnStartup_CheckedChanged(object sender, EventArgs e)
-        {
-            
-        }
-
         private void cb_CheckedChanged(object sender, EventArgs e)
         {
             var cb = (CheckBox)sender;
