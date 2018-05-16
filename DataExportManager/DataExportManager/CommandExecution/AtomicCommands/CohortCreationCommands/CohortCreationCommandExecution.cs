@@ -50,14 +50,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
             //do we know where it's going to end up?
             if (ExternalCohortTable == null)
-                ExternalCohortTable =
-                    SelectIMapsDirectlyToDatabaseTableDialog.ShowDialogSelectOne(
-                    Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>());
-
-            //user didn't select one and cancelled dialog
-            if (ExternalCohortTable == null)
-                return null;
-
+                if (!SelectOne(Activator.RepositoryLocator.DataExportRepository, out ExternalCohortTable)) //not yet, get user to pick one
+                    return null;//user didn't select one and cancelled dialog
+            
             //and document the request
 
             //Get a new request for the source they are trying to populate
@@ -67,7 +62,6 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
             if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
                 requestUI.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
-
 
             if (requestUI.ShowDialog() != DialogResult.OK)
                 return null;
