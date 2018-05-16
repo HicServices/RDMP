@@ -75,27 +75,6 @@ namespace CatalogueManager.Collections
             InitializeComponent();
             tlvLoadMetadata.RowHeight = 19;
         }
-
-        private void otvLoadMetadata_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                var cataNode = tlvLoadMetadata.SelectedObject as CatalogueUsedByLoadMetadataNode;
-                
-                if(cataNode != null)
-                    if (
-                        MessageBox.Show(
-                            "Confirm Disassociating Catalogue '" + cataNode +
-                            "' from it's Load logic? This will not delete the Catalogue itself just the relationship to the load",
-                            "Confirm disassociating Catalogue", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        cataNode.Catalogue.LoadMetadata_ID = null;
-                        cataNode.Catalogue.SaveToDatabase();
-
-                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cataNode.LoadMetadata));
-                    }
-            }
-        }
         
         public override void SetItemActivator(IActivateItems activator) 
         {
