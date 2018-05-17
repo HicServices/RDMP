@@ -18,13 +18,7 @@ namespace CohortManager.CommandExecution.Proposals
         public ProposeExecutionWhenTargetIsCohortIdentificationConfiguration(IActivateItems itemActivator) : base(itemActivator)
         {
         }
-
-        //todo integrate this CohortIdentificationConfigurationUI into ExecuteCohortIdentificationConfigurationUI as single UI
-/*        public void ActivateCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
-        }*/
-
+        
         public override bool CanActivate(CohortIdentificationConfiguration target)
         {
             return true;
