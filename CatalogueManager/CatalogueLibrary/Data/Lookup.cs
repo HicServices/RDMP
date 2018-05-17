@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 

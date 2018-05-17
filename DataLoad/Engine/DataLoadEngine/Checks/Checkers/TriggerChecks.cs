@@ -59,7 +59,7 @@ namespace DataLoadEngine.Checks.Checkers
                     //see if it exists
                     present = trigger.CheckUpdateTriggerIsEnabledOnServer() == TriggerImplementer.TriggerStatus.Enabled;
                 }
-                catch (MissingObjectException)
+                catch (TriggerMissingException)
                 {
                     //clearly it doesnt exist
                     present = false;

@@ -13,8 +13,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
 using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
 using ReusableLibraryCode.DataAccess;
@@ -651,28 +649,7 @@ c.name = @column_name", con);
                 return answer == 1;
             }
         }
-
-        public static void BackupSqlServerDatabase(string connectionString,string database, string backupName, int expirationInMonths=1)
-        {
-            Server sql_server = new Server(new ServerConnection(new SqlConnection(connectionString)));
-            
-            Backup backup = new Backup();
-            backup.Action = BackupActionType.Database;
-            backup.BackupSetDescription = backupName;
-            backup.BackupSetName = backupName;
-            backup.Database = database;
-
-            BackupDeviceItem deviceItem = new BackupDeviceItem(backupName,DeviceType.File );
-            backup.Devices.Add(deviceItem);
-
-            backup.Incremental = false;
-            backup.ExpirationDate = DateTime.Now.AddMonths(expirationInMonths);
-            backup.LogTruncation = BackupTruncateLogType.NoTruncate;
-            backup.CopyOnly = true;
-            backup.SqlBackup(sql_server);
-        }
-
-
+        
         public static int BulkInsertWithBetterErrorMessages(SqlBulkCopy insert, DataTable dt, DiscoveredServer serverForLineByLineInvestigation)
         {
             int rowsWritten = 0;

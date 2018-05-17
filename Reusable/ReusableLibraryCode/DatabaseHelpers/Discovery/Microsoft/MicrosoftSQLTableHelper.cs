@@ -211,6 +211,27 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             }
         }
 
+        public override string ScriptTableCreation(DiscoveredTable table, bool withPrimaryKeys, bool withConstraints)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(string.Format(@"CREATE TABLE [{0}]", table.GetRuntimeName()));
+            sb.AppendLine("(");
+
+            //todo pks
+            throw new NotImplementedException("Primary keys yo!");
+
+            sb.Append(string.Join("," + Environment.NewLine, table.DiscoverColumns().Select(c =>
+                string.Format(@"[{0}] {1} {2},",
+                    c.GetRuntimeName(),
+                    c.DataType.SQLType,
+                    c.AllowNulls || !withConstraints ? "NULL" : "NOT NULL"
+                    ))));
+            
+            sb.AppendLine(")");
+
+            return sb.ToString();
+        }
+
         public override string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)
         {
             return "SELECT TOP " + topX + " * FROM " + table.GetFullyQualifiedName();

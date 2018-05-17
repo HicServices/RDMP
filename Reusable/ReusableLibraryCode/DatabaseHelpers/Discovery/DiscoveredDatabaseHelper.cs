@@ -93,6 +93,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public abstract DirectoryInfo Detach(DiscoveredDatabase database);
 
+        public abstract void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName);
+
         protected virtual string GetPrimaryKeyDeclarationSql(string tableName, DatabaseColumnRequest[] pks)
         {
             return string.Format(" CONSTRAINT PK_{0} PRIMARY KEY ({1})",tableName,string.Join(",",pks.Select(c=>c.ColumnName))) + "," + Environment.NewLine;

@@ -133,5 +133,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             return Helper.Detach(this);
         }
+
+        public void CreateBackup(string backupName)
+        {
+            Helper.CreateBackup(this,backupName);
+        }
     }
 }

@@ -6,8 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
@@ -140,58 +138,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             using (SqlConnection con = new SqlConnection(builder.ConnectionString))
             {
                 con.Open();
-
-                Server s = new Server(new ServerConnection(con));
-                try
-                {
-
-                    toReturn.Add("Backup Locations",s.BackupDirectory);
-                 
-                    string backupDevices = string.Join(",",
-                        s.BackupDevices.Cast<BackupDevice>()
-                            .Select(b => b.PhysicalLocation + "(" + b.BackupDeviceType + ")"));
-
-                    toReturn.Add("Backup Devices",backupDevices);
-                }
-                catch (Exception )
-                {
-                    toReturn.Add("Backups","Unknown");
-                }
-
-                try
-                {
-                    toReturn.Add("CPUs", s.AffinityInfo.Cpus.Count.ToString());
-                }
-                catch (Exception)
-                {
-                    toReturn.Add("CPUs", "Unknown");
-                }
-                try
-                {
-                    toReturn.Add("OS Version", s.OSVersion);
-                }
-                catch (Exception)
-                {
-                    toReturn.Add("OS Version","Unknown");
-                }
                 
-                var properties = s.Information.GetType().GetProperties();
-
-                foreach (var property in properties)
-                {
-                    if(property.Name.Equals("Properties"))
-                        continue;
-                    try
-                    {
-                        var value = property.GetValue(s.Information);
-                        toReturn.Add(property.Name, value == null ? "" : value.ToString());
-                    }
-                    catch (TargetInvocationException)
-                    {
-                        //couldn't get property... nevermind SMO is wierd about this it tells you about properties it doesn't have available! yay
-                    }
-                    
-                }
+                //For more info you could run
+                //SELECT *  FROM sys.databases WHERE name = 'AdventureWorks2012';  but there might not be a database?
 
                 try
                 {

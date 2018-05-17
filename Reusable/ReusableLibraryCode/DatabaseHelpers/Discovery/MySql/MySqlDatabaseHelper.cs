@@ -47,6 +47,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             throw new NotImplementedException();
         }
 
+        public override void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName)
+        {
+            throw new NotImplementedException();
+        }
+
         public override IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
         {
             if (connection.State == ConnectionState.Closed)

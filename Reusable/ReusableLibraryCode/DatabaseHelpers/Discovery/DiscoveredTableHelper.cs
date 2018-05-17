@@ -1,6 +1,4 @@
 ﻿using System.Data.Common;
-using Microsoft.SqlServer.Management.Smo;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -41,5 +39,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
         public abstract void MakeDistinct(DiscoveredTable discoveredTable);
+        public abstract string ScriptTableCreation(DiscoveredTable table, bool withPrimaryKeys, bool withConstraints);
     }
 }

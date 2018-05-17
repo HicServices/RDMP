@@ -7,9 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Triggers.Exceptions;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Sdk.Sfc;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Exceptions;
@@ -436,13 +433,13 @@ END             *
             //script original table
             string createTableSQL = ScriptTableCreation();
 
-            string toReplaceTableName = Regex.Escape("CREATE TABLE [dbo].[" + _table + "]");
+            string toReplaceTableName = Regex.Escape("CREATE TABLE [" + _table + "]");
 
             if (Regex.Matches(createTableSQL, toReplaceTableName).Count != 1)
                 throw new Exception("Expected to find 1 occurrence of " + toReplaceTableName + " in the SQL " + createTableSQL);
 
             //rename table
-            createTableSQL = Regex.Replace(createTableSQL, toReplaceTableName, "CREATE TABLE [dbo].[" + archiveTableName + "]");
+            createTableSQL = Regex.Replace(createTableSQL, toReplaceTableName, "CREATE TABLE [" + archiveTableName + "]");
 
             string toRemoveIdentities = "IDENTITY\\(\\d+,\\d+\\)";
 
@@ -453,44 +450,7 @@ END             *
         }
         private string ScriptTableCreation()
         {
-            StringBuilder resultBuilder = new StringBuilder();
-
-            Server smoServer = new Server(new ServerConnection((SqlConnection) _dbInfo.Server.GetConnection()));
-            var smoDatabase = new Microsoft.SqlServer.Management.Smo.Database(smoServer, _dbInfo.GetRuntimeName());
-
-            Scripter scripter = new Scripter(smoServer);
-            scripter.Options.ScriptDrops = false;
-            scripter.Options.WithDependencies = false;
-            scripter.Options.IncludeIfNotExists = false;
-            scripter.Options.Indexes = false;
-            scripter.Options.DriAllKeys = false;
-            scripter.Options.DriAll = false;
-            scripter.Options.DriForeignKeys = false;
-            scripter.Options.DriPrimaryKey = false;
-            scripter.Options.DriUniqueKeys = false;
-            scripter.Options.DriDefaults = false;
-            scripter.Options.Default = true;
-            scripter.Options.Bindings = true;
-            scripter.Options.DriAllConstraints = false;
-
-            smoDatabase.Refresh();
-
-            Urn[] urn = new Urn[1];
-            foreach (Table t in smoDatabase.Tables)
-            {
-
-                if (t.Name == _table)
-                {
-                    urn[0] = t.Urn;
-                    if (t.IsSystemObject == false)
-                    {
-                        foreach (string s in scripter.Script(urn))
-                            resultBuilder.Append(s + Environment.NewLine);
-                    }
-                }
-            }
-
-            return resultBuilder.ToString();
+            return _dbInfo.ExpectTable(_table).ScriptTableCreation(false,false);
         }
 
 
@@ -554,7 +514,7 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                 var result = cmd.ExecuteScalar() as string;
 
                 if (String.IsNullOrWhiteSpace(result))
-                    throw new MissingObjectException("Trigger " + updateTriggerName +
+                    throw new TriggerMissingException("Trigger " + updateTriggerName +
                                                      " does not have an OBJECT_DEFINITION or is missing or is disabled");
 
                 string expectedSQL = GetCreateTriggerSQL(expectedPrimaryKeys.ToArray(), _dbInfo.ExpectTable(_table).DiscoverColumns());

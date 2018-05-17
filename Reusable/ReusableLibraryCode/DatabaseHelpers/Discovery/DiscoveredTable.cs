@@ -164,6 +164,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             Helper.MakeDistinct(this);
         }
+
+        public string ScriptTableCreation(bool withPrimaryKeys,bool withConstraints)
+        {
+            return Helper.ScriptTableCreation(this,withPrimaryKeys,withConstraints);
+        }
     }
 
     public enum TableType

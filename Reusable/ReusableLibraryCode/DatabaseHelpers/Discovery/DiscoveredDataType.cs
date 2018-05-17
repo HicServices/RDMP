@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlTypes;
-using System.Text.RegularExpressions;
-using Microsoft.SqlServer.Management.Smo;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
