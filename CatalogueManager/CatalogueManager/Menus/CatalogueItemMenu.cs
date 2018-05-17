@@ -49,7 +49,7 @@ namespace CatalogueManager.Menus
         private void AddIssue()
         {
             var newIssue = new CatalogueItemIssue(RepositoryLocator.CatalogueRepository, _catalogueItem);
-            _activator.ActivateCatalogueItemIssue(this,newIssue);
+            Activate(newIssue);
             Publish(_catalogueItem);
         }
 

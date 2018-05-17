@@ -199,28 +199,6 @@ namespace CatalogueManager.Collections
                 ExpandAllFolders(folder);
         }
 
-        #region RightClick Menu and Double Clicking
-        
-        private void tlvCatalogues_ItemActivate(object sender, EventArgs e)
-        {
-            var o = tlvCatalogues.SelectedObject;
-            var issue = o as CatalogueItemIssue;
-            var doc = o as SupportingDocument;
-            var sql = o as SupportingSQLTable;
-            
-            if(issue != null)
-                _activator.ActivateCatalogueItemIssue(this,issue);
-
-            if (doc != null)
-                _activator.ActivateSupportingDocument(this, doc);
-
-            if (sql != null)
-                _activator.ActivateSupportingSqlTable(this, sql);
-
-        }
-
-        #endregion
-        
         public void ApplyFilters()
         {
             tlvCatalogues.UseFiltering = true;

@@ -123,12 +123,8 @@ namespace CatalogueManager.ItemActivation
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
         
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
-        void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue);
-
+        
         void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo);
-        void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument);
-        void ActivateSupportingSqlTable(object sender, SupportingSQLTable supportingSQLTable);
-        void ActivateDataAccessCredentials(object sender, DataAccessCredentials dataAccessCredentials);
         
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
@@ -143,7 +139,6 @@ namespace CatalogueManager.ItemActivation
         
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
         
-
         void ActivateReOrderCatalogueItems(Catalogue catalogue);
 
         void ActivateConfigureValidation(object sender, Catalogue catalogue);
@@ -153,9 +148,7 @@ namespace CatalogueManager.ItemActivation
         void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
 
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
-        void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
-        void ActivateTableInfo(object sender, TableInfo tableInfo);
-        void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
+        
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);

@@ -13,12 +13,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddNewSupportingSqlTable : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly Catalogue _catalogue;
 
         public ExecuteCommandAddNewSupportingSqlTable(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
-            _activator = activator;
             _catalogue = catalogue;
         }
 
@@ -27,12 +25,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             var newSqlTable = new SupportingSQLTable((ICatalogueRepository)_catalogue.Repository, _catalogue, "New Supporting SQL Table " + Guid.NewGuid());
-            _activator.ActivateSupportingSqlTable(this, newSqlTable);
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_catalogue));
+            Activate(newSqlTable);
+            Publish(_catalogue);
         }
-
-
+        
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
+﻿using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using RDMPObjectVisualisation.Copying.Commands;
