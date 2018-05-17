@@ -32,20 +32,29 @@ namespace LoadModules.Generic.Attachers
         [DemandsInitialization("The file to attach, e.g. \"*hic*.csv\" - this is NOT a Regex", Mandatory = true)]
         public string FilePattern { get; set; }
 
-        [DemandsInitialization("The table name to load e.g. \"My Table1\" (should not contain wrappers such as square brackets)",Mandatory=true)]
+
+        [DemandsInitialization("The table name to load with data from the file (this will be the RAW version of the table)")]
+        public TableInfo TableToLoad { get; set; }
+
+        [DemandsInitialization("Alternative to `TableToLoad`, type table name in if you want to load a custom table e.g. one created by another load component (that doesn't exist in LIVE).  The table name should should not contain wrappers such as square brackets (e.g. \"My Table1\")")]
         public string TableName { get; set; }
 
         [DemandsInitialization("Determines the behaviour of the system when no files are matched by FilePattern.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
         public bool SendLoadNotRequiredIfFileNotFound { get; set; }
         
-        public FlatFileAttacher()
-            : base(true)
+        public FlatFileAttacher() : base(true)
         {
             
         }
 
         public override ExitCodeType Attach(IDataLoadJob job)
         {
+            if (string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
+                TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw);
+
+            if(TableName != null)
+                TableName = TableName.Trim();
+
             var baseResult = base.Attach(job);
 
             if (baseResult != ExitCodeType.Success)
@@ -159,11 +168,14 @@ namespace LoadModules.Generic.Attachers
         
         public override void Check(ICheckNotifier notifier)
         {
-            if (string.IsNullOrWhiteSpace(TableName))
-                notifier.OnCheckPerformed(new CheckEventArgs("Argument TableName has not been set on " + this + ", you should specify this value in the LoadMetadataUI" ,CheckResult.Fail));
+            if (string.IsNullOrWhiteSpace(TableName) && TableToLoad == null)
+                notifier.OnCheckPerformed(new CheckEventArgs("Either argument TableName or TableToLoad must be set " + this + ", you should specify this value." ,CheckResult.Fail));
 
             if (string.IsNullOrWhiteSpace(FilePattern))
                 notifier.OnCheckPerformed(new CheckEventArgs("Argument FilePattern has not been set on " + this + ", you should specify this value in the LoadMetadataUI", CheckResult.Fail));
+
+            if (!string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
+                notifier.OnCheckPerformed(new CheckEventArgs("You should only specify argument TableName or TableToLoad, not both", CheckResult.Fail));
         }
         
         private void ConfirmFitToDestination(DataTable dt, DiscoveredTable tableToLoad,IDataLoadJob job)
