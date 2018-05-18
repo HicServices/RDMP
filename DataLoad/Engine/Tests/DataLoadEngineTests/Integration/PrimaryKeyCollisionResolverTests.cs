@@ -5,7 +5,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using LoadModules.Generic.Mutilators;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

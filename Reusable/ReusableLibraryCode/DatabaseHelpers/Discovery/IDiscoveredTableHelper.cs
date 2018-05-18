@@ -35,5 +35,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         void TruncateTable(DiscoveredTable discoveredTable);
         void MakeDistinct(DiscoveredTable discoveredTable);
         string ScriptTableCreation(DiscoveredTable constraints, bool withPrimaryKeys, bool withConstraints);
+        bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction);
+        void RenameTable(DiscoveredTable discoveredTable, string newName, IManagedConnection connection);
     }
 }

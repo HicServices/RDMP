@@ -1,14 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.SqlClient;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 

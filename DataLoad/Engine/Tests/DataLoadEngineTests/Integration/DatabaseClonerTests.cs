@@ -12,8 +12,6 @@ using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -129,12 +127,15 @@ namespace DataLoadEngineTests.Integration
             Assert.IsTrue(anoCHIColumn.DataType.SQLType.Equals("varchar(12)"));
 
             // now check the RAW column is the 'non-ANO' version
-            var smoServer = new Server(new ServerConnection(new SqlConnection(rawDbInfo.Server.Builder.ConnectionString)));
-            var database = smoServer.Databases[rawDbInfo.GetRuntimeName()];
-            var table = database.Tables[testEnvironment.DemographyTableInfo.GetRuntimeName()];
+            var rawTable = rawDbInfo.ExpectTable(testEnvironment.DemographyTableInfo.GetRuntimeName());
+            
+            Assert.IsTrue(rawTable.Exists());
 
-            Assert.IsNotNull(table.Columns["CHI"], "CHI column not found in " + database.Name + ".." + table.Name);
-            Assert.AreEqual(DataType.VarChar(10), table.Columns["CHI"].DataType);
+            var columns = rawTable.DiscoverColumns();
+            var chiCol = columns.SingleOrDefault(c => c.GetRuntimeName().Equals("CHI"));
+
+            Assert.IsNotNull(chiCol, "CHI column not found in RAW database");
+            Assert.AreEqual("varchar(10)", chiCol.DataType);
             
             cloner.LoadCompletedSoDispose(ExitCodeType.Success, null);
         }

@@ -63,13 +63,13 @@ namespace DataLoadEngine.Checks.Checkers
 
         private void CheckTablesDoNotExistOnStaging(IEnumerable<TableInfo> allTableInfos)
         {
-            var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
+            DiscoveredDatabase stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
 
             var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
-            foreach (var tableName in tableNames)
+            foreach (string tableName in tableNames)
             {
-                if (DatabaseOperations.CheckTableExists(tableName, stagingDbInfo))
+                if (stagingDbInfo.ExpectTable(tableName).Exists())
                     alreadyExistingTableInfosThatShouldntBeThere.Add(tableName);
             }
 
@@ -95,10 +95,15 @@ namespace DataLoadEngine.Checks.Checkers
         private void CheckTablesAreEmptyInDatabaseOnServer()
         {
             var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-            if (!DatabaseOperations.CheckTablesAreEmptyInDatabaseOnServer(stagingDbInfo))
-                _notifier.OnCheckPerformed(new CheckEventArgs("Staging database '" + stagingDbInfo.GetRuntimeName() + "' is not empty on " + stagingDbInfo.Server.Name, CheckResult.Fail, null));
-            else
-                _notifier.OnCheckPerformed(new CheckEventArgs("Staging database is empty (" + stagingDbInfo + ")", CheckResult.Success, null));
+
+            foreach (var table in stagingDbInfo.DiscoverTables(false))
+            {
+                if(!table.IsEmpty())
+                    _notifier.OnCheckPerformed(new CheckEventArgs("Table " + table + " in staging database '" + stagingDbInfo.GetRuntimeName() + "' is not empty on " + stagingDbInfo.Server.Name, CheckResult.Fail));
+                else
+                    _notifier.OnCheckPerformed(new CheckEventArgs("Staging database is empty (" + stagingDbInfo + ")", CheckResult.Success, null));
+            }
+            
         }
 
         // Check that the column infos from the catalogue match up with what is actually in the staging databases

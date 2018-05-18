@@ -300,7 +300,6 @@
     <Compile Include="Unit\ExecutableProcessTaskTests.cs" />
     <Compile Include="Integration\FlatFileAttacherTests.cs" />
     <Compile Include="Unit\MDFAttacherTests.cs" />
-    <Compile Include="Integration\MultiStageDataLoadProcessTests.cs" />
     <Compile Include="Integration\PipelineTests\Sources\SourceTests.cs" />
     <Compile Include="Integration\PrimaryKeyCollisionResolverTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -315,7 +314,6 @@
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
     <Compile Include="Unit\SchedulingTests.cs" />
-    <Compile Include="Unit\SMOTypeLookupTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DataLoadEngineTests.dll.config.template">

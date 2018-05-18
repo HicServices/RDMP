@@ -1,9 +1,12 @@
-﻿using System.Data.Common;
+﻿using System.Collections.Generic;
+using System.Data.Common;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
     public abstract class DiscoveredTableHelper :IDiscoveredTableHelper
     {
+        
+
         public abstract string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX);
 
         public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database,
@@ -38,7 +41,33 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
         }
 
+        public string ScriptTableCreation(DiscoveredTable table, bool withPrimaryKeys, bool withConstraints)
+        {
+            List<DatabaseColumnRequest> columns = new List<DatabaseColumnRequest>();
+
+            foreach (DiscoveredColumn c in table.DiscoverColumns())
+                columns.Add(
+                    new DatabaseColumnRequest(
+                        c.GetRuntimeName(),
+                        c.DataType.SQLType,
+                        c.AllowNulls || !withConstraints) { IsPrimaryKey = c.IsPrimaryKey && withPrimaryKeys });
+
+            return table.Database.Helper.GetCreateTableSql(table.Database, table.GetRuntimeName(), columns.ToArray());
+        }
+
+        public virtual bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction)
+        {
+            return GetRowCount(connection, discoveredTable, transaction) == 0;
+        }
+
+        public virtual void RenameTable(DiscoveredTable discoveredTable, string newName, IManagedConnection connection)
+        {
+            DbCommand cmd = DatabaseCommandHelper.GetCommand(GetRenameTableSql(discoveredTable, newName), connection.Connection, connection.Transaction);
+            cmd.ExecuteNonQuery();
+        }
+
+        protected abstract string GetRenameTableSql(DiscoveredTable discoveredTable, string newName);
+
         public abstract void MakeDistinct(DiscoveredTable discoveredTable);
-        public abstract string ScriptTableCreation(DiscoveredTable table, bool withPrimaryKeys, bool withConstraints);
     }
 }

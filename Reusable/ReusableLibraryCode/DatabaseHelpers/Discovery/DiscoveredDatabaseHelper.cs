@@ -59,6 +59,21 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns)
         {
+            string bodySql = GetCreateTableSql(database, tableName, columns);
+
+            var server = database.Server;
+
+            using(var con = server.GetConnection())
+            {
+                con.Open();
+                server.GetCommand(bodySql, con).ExecuteNonQuery();
+            }
+            
+            return database.ExpectTable(tableName);
+        }
+
+        public string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns)
+        {
             string bodySql = "";
 
             var server = database.Server;
@@ -69,26 +84,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             foreach (var col in columns)
             {
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
-                
+
                 //add the column name and accompanying datatype
                 bodySql += syntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
             }
 
             var pks = columns.Where(c => c.IsPrimaryKey).ToArray();
             if (pks.Any())
-                bodySql += GetPrimaryKeyDeclarationSql(tableName,pks);
+                bodySql += GetPrimaryKeyDeclarationSql(tableName, pks);
 
             bodySql = bodySql.TrimEnd('\r', '\n', ',');
 
             bodySql += ")" + Environment.NewLine;
 
-            using(var con = server.GetConnection())
-            {
-                con.Open();
-                server.GetCommand(bodySql, con).ExecuteNonQuery();
-            }
-            
-            return database.ExpectTable(tableName);
+            return bodySql;
         }
 
         public abstract DirectoryInfo Detach(DiscoveredDatabase database);

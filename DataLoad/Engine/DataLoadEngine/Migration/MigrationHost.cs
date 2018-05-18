@@ -40,7 +40,7 @@ namespace DataLoadEngine.Migration
 
         public void Migrate(HICLoadConfigurationFlags loadConfigurationFlags, ILogManager logManager, IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            if (DatabaseOperations.CheckTablesAreEmptyInDatabaseOnServer(_sourceDbInfo))
+            if (_sourceDbInfo.DiscoverTables(false).All(t=>t.IsEmpty()))
                 throw new Exception("The source database '" + _sourceDbInfo.GetRuntimeName()+ "' on " + _sourceDbInfo.Server.Name + " is empty. There is nothing to migrate.");
 
             using (var managedConnectionToDestination = _destinationDbInfo.Server.BeginNewTransactedConnection())

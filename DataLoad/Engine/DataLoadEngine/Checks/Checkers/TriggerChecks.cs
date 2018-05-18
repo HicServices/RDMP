@@ -2,9 +2,6 @@
 using System.Linq;
 using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
-using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 

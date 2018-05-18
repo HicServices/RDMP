@@ -59,22 +59,6 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
         private void tbSqlDataType_TextChanged(object sender, EventArgs e)
         {
             _preLoadDiscardedColumn.SqlDataType = tbSqlDataType.Text;
-
-            if(!string.IsNullOrWhiteSpace(tbSqlDataType.Text))
-            {
-                lblErrorInType.Visible = false;
-                try
-                {
-                    SMOTypeLookup lookup = new SMOTypeLookup();
-                    lookup.GetSMODataTypeForSqlStringDataType(tbSqlDataType.Text);
-                }
-                catch (Exception ex)
-                {
-                    lblErrorInType.Visible = true;
-                    lblErrorInType.Text = ex.Message;
-                }
-            }
-            
         }
 
         private void RunChecks()

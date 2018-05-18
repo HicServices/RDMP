@@ -132,7 +132,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             if (obj.GetType() != this.GetType()) return false;
             return Equals((DiscoveredDataType)obj);
         }
-
-       
+        
+        public bool IsIdentity()
+        {
+            return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.IsIdentity(SQLType);
+        }
     }
 }

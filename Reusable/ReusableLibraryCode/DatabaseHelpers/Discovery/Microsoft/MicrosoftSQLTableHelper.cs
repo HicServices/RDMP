@@ -187,6 +187,16 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return new MicrosoftSQLBulkCopy(discoveredTable,connection);
         }
 
+        protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)
+        {
+            string oldName = "["+discoveredTable.GetRuntimeName() +"]";
+
+            if (!string.IsNullOrWhiteSpace(discoveredTable.Schema))
+                oldName = "[" + discoveredTable.Schema + "]." + oldName;
+
+            return string.Format("exec sp_rename '{0}', '{1}'", oldName, newName);
+        }
+
         public override void MakeDistinct(DiscoveredTable discoveredTable)
         {
             string sql = 
@@ -209,27 +219,6 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
                 con.Open();
                 server.GetCommand(sqlToExecute, con).ExecuteNonQuery();
             }
-        }
-
-        public override string ScriptTableCreation(DiscoveredTable table, bool withPrimaryKeys, bool withConstraints)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(string.Format(@"CREATE TABLE [{0}]", table.GetRuntimeName()));
-            sb.AppendLine("(");
-
-            //todo pks
-            throw new NotImplementedException("Primary keys yo!");
-
-            sb.Append(string.Join("," + Environment.NewLine, table.DiscoverColumns().Select(c =>
-                string.Format(@"[{0}] {1} {2},",
-                    c.GetRuntimeName(),
-                    c.DataType.SQLType,
-                    c.AllowNulls || !withConstraints ? "NULL" : "NOT NULL"
-                    ))));
-            
-            sb.AppendLine(")");
-
-            return sb.ToString();
         }
 
         public override string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)

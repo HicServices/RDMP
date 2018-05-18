@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using ReusableLibraryCode.DataAccess;
@@ -125,6 +126,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 return Helper.GetRowCount(connection.Connection, this, connection.Transaction);
         }
 
+        public bool IsEmpty(IManagedTransaction transaction = null)
+        {
+            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
+                return Helper.IsEmpty(connection.Connection, this, connection.Transaction);
+        }
+
         public void AddColumn(string name, DatabaseTypeRequest type,bool allowNulls)
         {
             AddColumn(name, Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type),allowNulls);
@@ -168,6 +175,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public string ScriptTableCreation(bool withPrimaryKeys,bool withConstraints)
         {
             return Helper.ScriptTableCreation(this,withPrimaryKeys,withConstraints);
+        }
+
+        public void Rename(string newName)
+        {
+            using (IManagedConnection connection = Database.Server.GetManagedConnection())
+            {
+                Helper.RenameTable(this,newName,connection);
+                _table = newName;
+            }
+            
         }
     }
 

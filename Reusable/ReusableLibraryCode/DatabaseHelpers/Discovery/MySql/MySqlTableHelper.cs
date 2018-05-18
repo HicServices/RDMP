@@ -107,6 +107,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return new MySqlBulkCopy(discoveredTable, connection);
         }
 
+        protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)
+        {
+            return string.Format("RENAME TABLE `{0}` TO `{1}`;", discoveredTable.GetRuntimeName(), newName);
+        }
+
         public override void MakeDistinct(DiscoveredTable discoveredTable)
         {
             var server = discoveredTable.Database.Server;

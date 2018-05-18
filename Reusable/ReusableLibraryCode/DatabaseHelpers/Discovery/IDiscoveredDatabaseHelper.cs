@@ -30,6 +30,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty=false);
         DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns);
+        string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns);
+
         DirectoryInfo Detach(DiscoveredDatabase database);
         void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName);
     }
