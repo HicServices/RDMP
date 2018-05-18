@@ -186,6 +186,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
             
         }
+
+        /// <summary>
+        /// Creates a primary key on the table if none exists yet
+        /// </summary>
+        /// <param name="discoverColumn"></param>
+        public void CreatePrimaryKey(params DiscoveredColumn[] discoverColumns)
+        {
+            using (IManagedConnection connection = Database.Server.GetManagedConnection())
+            {
+                Helper.CreatePrimaryKey(this,discoverColumns, connection);
+            }
+        }
     }
 
     public enum TableType

@@ -59,7 +59,6 @@
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showPerformanceCounterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.indexesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openExeDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -229,7 +228,7 @@
             this.serverSpecReportToolStripMenuItem,
             this.dITAExtractionToolStripMenuItem});
             this.generateReportToolStripMenuItem.Name = "generateReportToolStripMenuItem";
-            this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.generateReportToolStripMenuItem.Text = "Generate...";
             // 
             // databaseAccessComplexToolStripMenuItem
@@ -275,7 +274,6 @@
             this.pluginsToolStripMenuItem,
             this.toolStripSeparator1,
             this.showPerformanceCounterToolStripMenuItem,
-            this.indexesToolStripMenuItem,
             this.openExeDirectoryToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
@@ -441,7 +439,6 @@
         private System.Windows.Forms.ToolStripMenuItem generateTestDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem showPerformanceCounterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indexesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openExeDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem userManualToolStripMenuItem;

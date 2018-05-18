@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -68,6 +69,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public virtual void RenameTable(DiscoveredTable discoveredTable, string newName, IManagedConnection connection)
         {
             DbCommand cmd = DatabaseCommandHelper.GetCommand(GetRenameTableSql(discoveredTable, newName), connection.Connection, connection.Transaction);
+            cmd.ExecuteNonQuery();
+        }
+
+        public virtual void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection)
+        {
+            string sql = string.Format("ALTER TABLE {0} ADD PRIMARY KEY ({1});",
+                     table.GetFullyQualifiedName(),
+                    string.Join(",", discoverColumns.Select(c => c.GetRuntimeName()))
+                    );
+            
+
+            DbCommand cmd = DatabaseCommandHelper.GetCommand(sql,connection.Connection,connection.Transaction);
             cmd.ExecuteNonQuery();
         }
 

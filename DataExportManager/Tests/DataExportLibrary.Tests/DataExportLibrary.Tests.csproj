@@ -161,6 +161,7 @@
     <Compile Include="ExtractionConfigurationTest.cs" />
     <Compile Include="DatatypeComputerTests.cs" />
     <Compile Include="ImportFileTests.cs" />
+    <Compile Include="CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
     <Compile Include="ProjectChecksTestsSimple.cs" />
     <Compile Include="ProjectChecksTestsComplex.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

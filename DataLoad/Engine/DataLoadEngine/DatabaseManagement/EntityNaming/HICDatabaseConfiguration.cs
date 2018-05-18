@@ -50,28 +50,30 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
         public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null)
         {
             //respects the override of LIVE server
-            var builderToLive = (SqlConnectionStringBuilder)liveServer.Builder;
+            string liveDatabase = liveServer.Helper.GetCurrentDatabase(liveServer.Builder);
 
-            if (string.IsNullOrWhiteSpace(builderToLive.InitialCatalog))
+            if (string.IsNullOrWhiteSpace(liveDatabase))
                 throw new Exception("Cannot load live without having a unique live named database");
 
             // Default namer
             if (namer == null)
-                namer = new FixedStagingDatabaseNamer(builderToLive.InitialCatalog);
+                namer = new FixedStagingDatabaseNamer(liveDatabase);
             
             IExternalDatabaseServer overrideRAWServer = null;
-            SqlConnectionStringBuilder rawServer = null;
+            DiscoveredServer rawServer = null;
             
             //if there are defaults
             if(defaults != null)
                 overrideRAWServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
 
             //if there was defaults and a raw default server
-            if(overrideRAWServer != null)
-                rawServer = (SqlConnectionStringBuilder)DataAccessPortal.GetInstance().ExpectServer(overrideRAWServer, DataAccessContext.DataLoad,false).Builder;//get the raw server connection
+            if (overrideRAWServer != null)
+                rawServer = DataAccessPortal.GetInstance().ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false); //get the raw server connection
+            else
+                rawServer = liveServer; //there is no raw override so we will have to use the live database for RAW too.
 
             //populates the servers -- note that an empty rawServer value passed to this method makes it the localhost
-            DeployInfo = new StandardDatabaseHelper(builderToLive, namer,rawServer);
+            DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer,rawServer);
             
             RequiresStagingTableCreation = true;
         }
