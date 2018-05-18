@@ -23,8 +23,8 @@ namespace DataLoadEngineTests.Integration
             {
                 con.Open();
                 var cmd = server.GetCommand(
-                    "CREATE TRIGGER [" + databaseName + "]..[TestTable_OnUpdate] ON [dbo].[" + tableName +
-                    "] AFTER DELETE AS ( RAISERROR('MESSAGE',16,10) )", con);
+                    "CREATE TRIGGER dbo.[TestTable_OnUpdate] ON [dbo].[" + tableName +
+                    "] AFTER DELETE AS RAISERROR('MESSAGE',16,10)", con);
 
                 cmd.ExecuteNonQuery();
             }

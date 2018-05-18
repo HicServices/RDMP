@@ -70,8 +70,6 @@ namespace DataLoadEngineTests.Integration
                 Assert.IsTrue(raw.Exists());
                 Assert.IsTrue(raw.ExpectTable("Table_1").Exists());
 
-                cloneDb.ForceDrop();
-
             }
             finally
             {
