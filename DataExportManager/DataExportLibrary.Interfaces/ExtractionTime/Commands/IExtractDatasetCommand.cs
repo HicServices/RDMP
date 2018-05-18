@@ -12,8 +12,6 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
     /// </summary>
     public interface IExtractDatasetCommand:IExtractCommand
     {
-        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get;}
-
         ISelectedDataSets SelectedDataSets { get; }
 
         IExtractableCohort ExtractableCohort { get; set; }
