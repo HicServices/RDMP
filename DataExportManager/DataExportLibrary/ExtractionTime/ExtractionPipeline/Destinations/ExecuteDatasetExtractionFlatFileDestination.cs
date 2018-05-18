@@ -268,23 +268,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             return DestinationType.FileSystem;
         }
-
-        public void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globals, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
-        {
-            ExtractionDirectory targetDirectory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
-            DirectoryInfo globalsDirectory = targetDirectory.GetGlobalsDirectory();
-            
-            foreach (var doc in globals.Documents)
-                globals.States[doc] = TryExtractSupportingDocument(globalsDirectory, doc, listener)
-                    ? ExtractCommandState.Completed
-                    : ExtractCommandState.Crashed;
-            
-            foreach (var sql in globals.SupportingSQL)
-                globals.States[sql] = TryExtractSupportingSQLTable(globalsDirectory, configuration, sql, listener, dataLoadInfo)
-                    ? ExtractCommandState.Completed
-                    : ExtractCommandState.Crashed;
-        }
-
+        
         private void ExtractGlobals(ExtractGlobalsCommand request, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             var globalsDirectory = request.GetExtractionDirectory();

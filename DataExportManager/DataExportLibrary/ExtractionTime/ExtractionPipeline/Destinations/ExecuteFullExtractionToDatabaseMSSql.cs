@@ -78,11 +78,20 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            if (_destination == null)
+            {
+                _destination = PrepareDestination(listener);
+
+                //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it)
+                TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + GetTableName(), GetTableName(),
+                                    new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+            }
+
             if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
             {
                 var bundle = ((ExtractDatasetCommand)_request).DatasetBundle;
                 foreach (var sql in bundle.SupportingSQL)
-                    bundle.States[sql] = ExtractSupportingSql(sql, listener);
+                    bundle.States[sql] = ExtractSupportingSql(sql, listener, _dataLoadInfo);
 
                 foreach (var document in ((ExtractDatasetCommand)_request).DatasetBundle.Documents)
                     bundle.States[document] = ExtractSupportingDocument(_request.GetExtractionDirectory(), document, listener);
@@ -92,52 +101,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
             if (_request is ExtractGlobalsCommand)
             {
-                ExtractGlobals((ExtractGlobalsCommand)_request, job, _dataLoadInfo);
+                ExtractGlobals((ExtractGlobalsCommand)_request, listener, _dataLoadInfo);
                 return null;
-            }
-
-            if (_destination == null)
-            {
-                //see if the user has entered an extraction server/database 
-                if (TargetDatabaseServer == null)
-                    throw new Exception("TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
-                
-                _destinationDatabase = GetDestinationDatabase(listener);
-                
-                try
-                {
-                    if (!_destinationDatabase.Exists())
-                        _destinationDatabase.Create();
-                        //throw new Exception("Could not connect to server " + TargetDatabaseServer.Server);
-                    
-                    var tblName = GetTableName();
-
-                    //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
-                    if (_destinationDatabase.ExpectTable(tblName).Exists())
-                        listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Warning,
-                                "A table called " + tblName + " already exists on server " + TargetDatabaseServer +
-                                ", rows will be appended to this table - or data load might crash if it has an incompatible schema"));
-                    else
-                    {
-                        _tableDidNotExistAtStartOfLoad = true;
-                    }
-                }
-                catch (Exception e)
-                {
-                    //Probably the database didn't exist or the credentials were wrong or something
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Failed to inspect destination for already existing datatables",e));
-                }
-
-                _destination = new DataTableUploadDestination();
-
-                PrimeDestinationTypesBasedOnCatalogueTypes();
-
-                _destination.AllowResizingColumnsAtUploadTime = false;
-                _destination.PreInitialize(_destinationDatabase, listener);
-                
-                //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it)
-                TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + GetTableName(), GetTableName(), new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
             }
 
             //give the data table the correct name
@@ -147,6 +112,50 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             TableLoadInfo.Inserts += toProcess.Rows.Count;
 
             return null;
+        }
+
+        private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener)
+        {
+            //see if the user has entered an extraction server/database 
+            if (TargetDatabaseServer == null)
+                throw new Exception("TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
+
+            _destinationDatabase = GetDestinationDatabase(listener);
+
+            try
+            {
+                if (!_destinationDatabase.Exists())
+                    _destinationDatabase.Create();
+
+                if (_request is ExtractGlobalsCommand)
+                    return null;
+                
+                var tblName = GetTableName();
+
+                //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
+                if (_destinationDatabase.ExpectTable(tblName).Exists())
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                                            "A table called " + tblName + " already exists on server " + TargetDatabaseServer + 
+                                            ", data load might crash if it is populated and/or has an incompatible schema"));
+                else
+                {
+                    _tableDidNotExistAtStartOfLoad = true;
+                }
+            }
+            catch (Exception e)
+            {
+                //Probably the database didn't exist or the credentials were wrong or something
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to inspect destination for already existing datatables", e));
+            }
+
+            _destination = new DataTableUploadDestination();
+
+            PrimeDestinationTypesBasedOnCatalogueTypes();
+
+            _destination.AllowResizingColumnsAtUploadTime = false;
+            _destination.PreInitialize(_destinationDatabase, listener);
+
+            return _destination;
         }
 
         private void PrimeDestinationTypesBasedOnCatalogueTypes()
@@ -173,10 +182,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
 
             //Also tell the destination about the extraction identifier column name e.g. ReleaseId is a varchar(10).  ReleaseId is not part of the Catalogue, it's part of the Cohort
-            _destination.AddExplicitWriteType(
-                datasetCommand.ExtractableCohort.GetReleaseIdentifier(true),
+            _destination.AddExplicitWriteType(datasetCommand.ExtractableCohort.GetReleaseIdentifier(true),
             datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType());
-
         }
         
         public string GetTableName()
@@ -275,38 +282,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             return DestinationType.Database;
         }
-
-        public void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globalsToExtract, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        
+        public void ExtractGlobals(ExtractGlobalsCommand request, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
+            var globalsToExtract = request.Globals;
             if (globalsToExtract.Any())
             {
-                ExtractionDirectory targetDirectory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
-                DirectoryInfo globalsDirectory = targetDirectory.GetGlobalsDirectory();
-                if (_destination == null)
-                {
-                    //see if the user has entered an extraction server/database 
-                    if (TargetDatabaseServer == null)
-                        throw new Exception(
-                            "TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
-
-                    _destinationDatabase = GetDestinationDatabase(listener);
-
-                    try
-                    {
-                        if (!_destinationDatabase.Exists())
-                            _destinationDatabase.Create();
-                    }
-                    catch (Exception e)
-                    {
-                        //Probably the database didn't exist or the credentials were wrong or something
-                        listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Error,
-                                "Failed to inspect destination for already existing datatables", e));
-                    }
-                }
-
+                var globalsDirectory = request.GetExtractionDirectory();
+                
                 foreach (var sql in globalsToExtract.SupportingSQL)
-                    ExtractSupportingSql(sql, listener);
+                    ExtractSupportingSql(sql, listener, dataLoadInfo);
 
                 foreach (var doc in globalsToExtract.Documents)
                     ExtractSupportingDocument(globalsDirectory, doc, listener);
@@ -323,12 +308,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
         }
 
-        private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener)
+        private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             try
             {
                 var tempDestination = new DataTableUploadDestination();
-
+                
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download SQL for global SupportingSQL " + sql.Name));
                 using (var con = sql.GetServer().GetConnection())
                 {
@@ -345,6 +330,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                     dt.TableName = _destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sql.Name);
 
+                    var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", dt.TableName, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
+                    tableLoadInfo.Inserts = dt.Rows.Count;
+
                     listener.OnProgress(this, new ProgressEventArgs("Reading from SupportingSQL " + sql.Name, new ProgressMeasurement(dt.Rows.Count, ProgressType.Records), sw.Elapsed));
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Decided on the following destination table name for SupportingSQL:" + dt.TableName));
 
@@ -352,6 +340,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     tempDestination.PreInitialize(GetDestinationDatabase(listener), listener);
                     tempDestination.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
                     tempDestination.Dispose(listener, null);
+
+                    //end auditing it
+                    tableLoadInfo.CloseAndArchive();
                 }
             }
             catch (Exception e)
