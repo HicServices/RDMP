@@ -5,8 +5,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
     public abstract class DiscoveredTableHelper :IDiscoveredTableHelper
     {
-        
-
         public abstract string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX);
 
         public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database,
@@ -41,16 +39,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
         }
 
-        public string ScriptTableCreation(DiscoveredTable table, bool withPrimaryKeys, bool withConstraints)
+        public string ScriptTableCreation(DiscoveredTable table, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt)
         {
             List<DatabaseColumnRequest> columns = new List<DatabaseColumnRequest>();
 
             foreach (DiscoveredColumn c in table.DiscoverColumns())
-                columns.Add(
-                    new DatabaseColumnRequest(
-                        c.GetRuntimeName(),
-                        c.DataType.SQLType,
-                        c.AllowNulls || !withConstraints) { IsPrimaryKey = c.IsPrimaryKey && withPrimaryKeys });
+            {
+                string sqlType = c.DataType.SQLType;
+
+                if (c.DataType.IsIdentity() && convertIdentityToInt)
+                    sqlType = "int";
+
+                var colRequest = new DatabaseColumnRequest(c.GetRuntimeName(),sqlType , c.AllowNulls || dropNullability);
+                colRequest.IsPrimaryKey = c.IsPrimaryKey && !dropPrimaryKeys;
+                
+                columns.Add(colRequest);
+                
+            }
 
             return table.Database.Helper.GetCreateTableSql(table.Database, table.GetRuntimeName(), columns.ToArray());
         }

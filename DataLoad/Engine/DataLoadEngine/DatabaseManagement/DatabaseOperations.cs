@@ -24,7 +24,7 @@ namespace DataLoadEngine.DatabaseManagement
             if (!discoveredSourceTable.Exists())
                 throw new Exception("Table " + srcTableName + " does not exist on " + srcDatabaseInfo);
 
-            var sql = discoveredSourceTable.ScriptTableCreation(!allowNulls,!allowNulls);
+            var sql = discoveredSourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/); 
 
             using (var con = destDatabaseInfo.Server.GetConnection())
             {
@@ -50,7 +50,6 @@ namespace DataLoadEngine.DatabaseManagement
 
                 if (column.DataType.IsIdentity())
                     drop = true;
-
 
                 if (colName.StartsWith("hic_") && dropHICColumns)
                     drop = true;

@@ -301,7 +301,7 @@ END
         {
             string columnsInArchive = "";
 
-            Match matchStartColumnExtraction = Regex.Match(sqlUsedToCreateArchiveTableSQL, "CREATE TABLE \\[.*\\(");
+            Match matchStartColumnExtraction = Regex.Match(sqlUsedToCreateArchiveTableSQL, "CREATE TABLE .*\\(");
 
             if (!matchStartColumnExtraction.Success)
                 throw new Exception("Could not find regex match at start of Archive table CREATE SQL");
@@ -311,12 +311,8 @@ END
             columnsInArchive = sqlUsedToCreateArchiveTableSQL.Substring(startExtractingColumnsAt);
 
             //trim off excess crud at the end
-            if (!columnsInArchive.Contains(") ON "))
-                throw new Exception("Could not find match at end of Archive table CREATE SQL");
-
-            columnsInArchive = columnsInArchive.Substring(0, columnsInArchive.IndexOf(") ON "));
-
-
+            columnsInArchive = columnsInArchive.Trim(new[] {')', '\r', '\n'});
+            
             string sqlToRun = string.Format("CREATE FUNCTION [dbo].[{0}_Legacy]", mainTable);
             sqlToRun += Environment.NewLine;
             sqlToRun += "(" + Environment.NewLine;
@@ -431,15 +427,15 @@ END             *
         {
 
             //script original table
-            string createTableSQL = ScriptTableCreation();
+            string createTableSQL = _dbInfo.ExpectTable(_table).ScriptTableCreation(true, true, true);
 
-            string toReplaceTableName = Regex.Escape("CREATE TABLE [" + _table + "]");
+            string toReplaceTableName = Regex.Escape("CREATE TABLE " + _table );
 
             if (Regex.Matches(createTableSQL, toReplaceTableName).Count != 1)
                 throw new Exception("Expected to find 1 occurrence of " + toReplaceTableName + " in the SQL " + createTableSQL);
 
             //rename table
-            createTableSQL = Regex.Replace(createTableSQL, toReplaceTableName, "CREATE TABLE [" + archiveTableName + "]");
+            createTableSQL = Regex.Replace(createTableSQL, toReplaceTableName, "CREATE TABLE " + archiveTableName);
 
             string toRemoveIdentities = "IDENTITY\\(\\d+,\\d+\\)";
 
@@ -448,11 +444,6 @@ END             *
 
             return createTableSQL;
         }
-        private string ScriptTableCreation()
-        {
-            return _dbInfo.ExpectTable(_table).ScriptTableCreation(false,false);
-        }
-
 
         public TriggerStatus CheckUpdateTriggerIsEnabledOnServer()
         {

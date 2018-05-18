@@ -135,7 +135,7 @@ namespace DataLoadEngineTests.Integration
             var chiCol = columns.SingleOrDefault(c => c.GetRuntimeName().Equals("CHI"));
 
             Assert.IsNotNull(chiCol, "CHI column not found in RAW database");
-            Assert.AreEqual("varchar(10)", chiCol.DataType);
+            Assert.AreEqual("varchar(10)", chiCol.DataType.SQLType);
             
             cloner.LoadCompletedSoDispose(ExitCodeType.Success, null);
         }

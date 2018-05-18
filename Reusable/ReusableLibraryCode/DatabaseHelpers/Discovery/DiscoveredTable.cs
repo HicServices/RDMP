@@ -172,9 +172,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Helper.MakeDistinct(this);
         }
 
-        public string ScriptTableCreation(bool withPrimaryKeys,bool withConstraints)
+        public string ScriptTableCreation(bool dropPrimaryKeys,bool dropNullability, bool convertIdentityToInt)
         {
-            return Helper.ScriptTableCreation(this,withPrimaryKeys,withConstraints);
+            return Helper.ScriptTableCreation(this, dropPrimaryKeys, dropNullability, convertIdentityToInt);
         }
 
         public void Rename(string newName)
