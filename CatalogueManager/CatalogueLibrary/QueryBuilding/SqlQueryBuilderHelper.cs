@@ -306,7 +306,13 @@ namespace CatalogueLibrary.QueryBuilding
                 if (qb.TablesUsedInQuery.Count == 1)
                     firstTable = qb.TablesUsedInQuery[0];
                 else if (qb.TablesUsedInQuery.Count(t => t.IsPrimaryExtractionTable) == 1) //has the user picked one to be primary?
+                {
                     firstTable = qb.TablesUsedInQuery.Single(t => t.IsPrimaryExtractionTable);
+                    
+                    //has user tried to make a lookup table the primary table!
+                    if(TableIsLookupTable(firstTable,qb))
+                        throw new QueryBuildingException("Lookup tables cannot be marked IsPrimaryExtractionTable (Offender ="+firstTable+")");
+                }
                 else
                 {
                     //User has not picked one and there are multiple!
@@ -315,12 +321,9 @@ namespace CatalogueLibrary.QueryBuilding
                     //maybe! lookup tables are tables where there is an underlying column from that table that is a lookup description
                     var winners = 
                         qb.TablesUsedInQuery.Where(t=> 
-                            //tables where there is NOT any columns which 
-                            !qb.SelectColumns.Any(
-                                //are lookup descriptions and belong to this table
-                                c=>c.IsLookupDescription && c.UnderlyingColumn.TableInfo_ID == t.ID))
+                            !TableIsLookupTable(t,qb))
                                 .ToArray();
-
+                    
                     //if we have discarded all but 1 it is the only table that does not have any lookup descriptions in it so clearly the correct table to start joins from
                     if (winners.Count() == 1)
                         firstTable = winners[0];
@@ -400,6 +403,15 @@ namespace CatalogueLibrary.QueryBuilding
 
 
             return toReturn;
+        }
+
+        private static bool TableIsLookupTable(TableInfo tableInfo,ISqlQueryBuilder qb)
+        {
+            return
+                //tables where there is any columns which 
+                qb.SelectColumns.Any(
+                    //are lookup descriptions and belong to this table
+                    c => c.IsLookupDescription && c.UnderlyingColumn.TableInfo_ID == tableInfo.ID);
         }
 
 
