@@ -14,6 +14,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
@@ -49,6 +50,7 @@ using RDMPObjectVisualisation.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using WeifenLuo.WinFormsUI.Docking;
@@ -251,18 +253,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return false;
         }
-
-        public bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete)
-        {
-            var layout = controlToDelete.ParentLayout;
-            if (DeleteWithConfirmation(this, controlToDelete))
-            {
-
-                RefreshBus.Publish(sender,new RefreshObjectEventArgs(layout));
-                return true;
-            }
-            return false;
-        }
         
         public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
@@ -270,30 +260,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return wizard.ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported);
         }
 
-        public void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue)
-        {
-            Activate<IssueUI,CatalogueItemIssue>(catalogueItemIssue);
-        }
-
         public void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo)
         {
             Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(columnInfo);
         }
 
-        public void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument)
-        {
-            Activate<SupportingDocumentUI, SupportingDocument>(supportingDocument);
-        }
-
-        public void ActivateSupportingSqlTable(object sender, SupportingSQLTable supportingSQLTable)
-        {
-            Activate<SupportingSQLTableUI, SupportingSQLTable>(supportingSQLTable);
-        }
-
-        public void ActivateDataAccessCredentials(object sender, DataAccessCredentials dataAccessCredentials)
-        {
-            Activate<DataAccessCredentialsUI, DataAccessCredentials>(dataAccessCredentials);
-        }
 
         public void ViewDataSample(IViewSQLAndResultsCollection collection)
         {
@@ -380,25 +351,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return Activate<LoadDiagram, LoadMetadata>(loadMetadata);
         }
 
-        public void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer)
-        {
-            Activate<ExternalDatabaseServerUI,ExternalDatabaseServer>(externalDatabaseServer);
-        }
 
-        public void ActivateTableInfo(object sender, TableInfo tableInfo)
-        {
-            Activate<TableInfoUI, TableInfo>(tableInfo);
-        }
-
-        public void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn)
-        {
-            Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
-        }
-        
-        public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
-        {
-            Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
-        }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {

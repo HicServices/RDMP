@@ -280,10 +280,10 @@ namespace DataExportManager.ProjectUI.Datasets
 
         private void olvAvailable_ItemActivate(object sender, EventArgs e)
         {
-            object o = olvAvailable.SelectedObject;
+            var cmd = new ExecuteCommandActivate(_activator, olvAvailable.SelectedObject);
 
-            if(_activator.CommandExecutionFactory.CanActivate(o))
-                _activator.CommandExecutionFactory.Activate(o);
+            if(!cmd.IsImpossible)
+                cmd.Execute();
         }
 
         private void olvSelected_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)

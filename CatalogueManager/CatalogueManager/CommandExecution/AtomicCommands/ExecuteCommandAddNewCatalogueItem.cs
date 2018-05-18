@@ -29,28 +29,19 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         
             MessageBox.Show("Select which column the new CatalogueItem will describe/extract", "Choose underlying Column");
 
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.CoreChildProvider.AllColumnInfos, true, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                var colInfo = dialog.Selected as ColumnInfo;
-                
-                var ci = new CatalogueItem(_activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
+            ColumnInfo colInfo;
+            string text;
 
-                if (colInfo != null)
+            if(SelectOne(_activator.CoreChildProvider.AllColumnInfos,out colInfo))
+                if(TypeText("Name", "Type a name for the new CatalogueItem", 500, colInfo.GetRuntimeName(),out text))
                 {
-                    var textTyper = new TypeTextOrCancelDialog("Name", "Type a name for the new CatalogueItem", 500, colInfo.GetRuntimeName());
-                    if (textTyper.ShowDialog() == DialogResult.OK)
-                    {
-
-                        ci.Name = textTyper.ResultText;
-                        ci.SaveToDatabase();
-                    }
-
+                    var ci = new CatalogueItem(_activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
+                    ci.Name = text;
                     ci.SetColumnInfo(colInfo);
-                }
+                    ci.SaveToDatabase();
 
-                Publish(_catalogue);
-            }
+                    Publish(_catalogue);   
+                }
         }
 
         public Image GetImage(IIconProvider iconProvider)

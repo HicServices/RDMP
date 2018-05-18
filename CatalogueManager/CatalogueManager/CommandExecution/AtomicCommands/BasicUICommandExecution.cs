@@ -14,6 +14,7 @@ using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
+using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -59,6 +60,22 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         }
 
         /// <summary>
+        /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="availableObjects"></param>
+        /// <param name="selected"></param>
+        /// <returns></returns>
+        protected bool SelectOne<T>(IEnumerable<T> availableObjects, out T selected) where T : DatabaseEntity
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            
+            selected = dialog.ShowDialog() == DialogResult.OK? (T) dialog.Selected:null;
+
+            return selected != null;
+        }
+
+        /// <summary>
         /// Prompts user to select 1 object of type T from all the ones stored in the repository provided
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -66,8 +83,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected T SelectOne<T>(IRepository repository) where T : DatabaseEntity
         {
-            var all = repository.GetAllObjects<T>();
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(all, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(repository.GetAllObjects<T>(), false, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 return (T)dialog.Selected;
@@ -75,6 +91,21 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return null;
         }
 
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T from all the ones stored in the repository provided, returns true if they made a non null selection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="availableObjects"></param>
+        /// <param name="selected"></param>
+        /// <returns></returns>
+        protected bool SelectOne<T>(IRepository repository, out T selected) where T : DatabaseEntity
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(repository.GetAllObjects<T>(), false, false);
+
+            selected = dialog.ShowDialog() == DialogResult.OK ? (T)dialog.Selected : null;
+
+            return selected != null;
+        }
         protected DiscoveredTable SelectTable(bool allowDatabaseCreation,string taskDescription)
         {
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
@@ -82,6 +113,28 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             dialog.ShowDialog();
 
             return dialog.SelectedTable;
+        }
+
+        /// <summary>
+        /// Prompts the user to type in some text (up to a maximum length).  Returns true if they supplied some text or false if they didn't or it was blank/cancelled etc
+        /// </summary>
+        /// <param name="header"></param>
+        /// <param name="prompt"></param>
+        /// <param name="maxLength"></param>
+        /// <param name="initialText"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text)
+        {
+            var textTyper = new TypeTextOrCancelDialog(header,prompt, maxLength, initialText);
+            text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
+            return !string.IsNullOrWhiteSpace(text);
+        }
+
+        /// <inheritdoc cref="TypeText(string, string, int, string, out string)"/>
+        protected bool TypeText(string header, string prompt, out string text)
+        {
+            return TypeText(header, prompt, 500, null, out text);
         }
     }
 }

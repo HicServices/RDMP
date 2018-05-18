@@ -148,7 +148,7 @@ namespace CatalogueManager.LocationsMenu.Ticketing
             var creds = ddCredentials.SelectedItem as DataAccessCredentials;
 
             if(creds != null)
-                _activator.ActivateDataAccessCredentials(this,creds);
+                _activator.CommandExecutionFactory.Activate(creds);
         }
 
         private void btnAddCredentials_Click(object sender, EventArgs e)

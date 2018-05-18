@@ -1,11 +1,6 @@
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using CachingEngine.Factories;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus.MenuItems
@@ -37,7 +32,6 @@ namespace CatalogueManager.Menus.MenuItems
             
             foreach (var compatible in _useCase.FilterCompatiblePipelines(allPipelines))
             {
-
                 var cmd = new ExecuteCommandSetPipeline(_activator, _user, compatible);
 
                 if(!cmd.IsImpossible)
@@ -48,8 +42,6 @@ namespace CatalogueManager.Menus.MenuItems
                     mi.Checked = true;
                     DropDown.Items.Add(mi);
                 }
-
-                
             }
         }
     }

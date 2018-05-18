@@ -26,9 +26,8 @@ namespace DataExportManager.ProjectUI
     public delegate void ExtractCommandSelectedHandler(object sender, IExtractCommand command);
     
     /// <summary>
-    /// Part of ExecuteExtractionUI.  This control allows you to select which datasets, extractable attachments (See SupportingDocumentUI), custom data (See ImportCustomDataFileUI)
-    /// and Lookups (See LookupConfiguration) you want to execute on this pass.  You can only select datasets etc which are part of the currently executing project configuration (See 
-    /// ExecuteExtractionUI).
+    /// Part of ExecuteExtractionUI.  This control allows you to select which datasets, extractable attachments (See SupportingDocumentUI)  and Lookups (See LookupConfiguration) you want
+    /// to execute on this pass.  You can only select datasets etc which are part of the currently executing project configuration (See ExecuteExtractionUI).
     /// 
     /// <para>All artifacts are extracted in parallel into the data extraction directory of the project (in a subfolder for the configuration).  This execution will override any files it finds
     /// for previous executions of the same dataset but will not delete unticked datasets.  This allows you to run an extraction overnight of half the datasets and then do the other half

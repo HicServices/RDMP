@@ -75,27 +75,9 @@ namespace CatalogueManager.Collections
         private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvTableInfos.SelectedObject;
-            var credentials = o as DataAccessCredentials;
-            var externalDatabaseServer = o as ExternalDatabaseServer;
-            var tableInfo = o as TableInfo;
-            var preLoadDiscardedColumn = o as PreLoadDiscardedColumn;
             
-
-            if (credentials != null)
-                _activator.ActivateDataAccessCredentials(this,credentials);
-
             if (o is DecryptionPrivateKeyNode)
                 _activator.ShowWindow(new PasswordEncryptionKeyLocationUI(), true);
-
-            if (externalDatabaseServer != null)
-                _activator.ActivateExternalDatabaseServer(this, externalDatabaseServer);
-
-            if (tableInfo != null)
-                _activator.ActivateTableInfo(this, tableInfo);
-
-            if (preLoadDiscardedColumn != null)
-                _activator.ActivatePreLoadDiscardedColumn(this, preLoadDiscardedColumn);
-
         }
         
         public void SelectTableInfo(TableInfo toSelect)

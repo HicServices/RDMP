@@ -6,6 +6,7 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.Menus.MenuItems
 {
+    [System.ComponentModel.DesignerCategory("")]
     public class PluginUserInterfaceCrashedMenuItem : ToolStripMenuItem
     {
         private Exception _exception;

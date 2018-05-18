@@ -138,6 +138,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
+    <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
     <Compile Include="Copying\Commands\CatalogueCommand.cs" />
     <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
     <Compile Include="Copying\Commands\CohortCommandHelper.cs" />

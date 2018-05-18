@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Modal dialog that prompts you to pick a database or table (<see cref="ServerDatabaseTableSelector"/>)
+    /// </summary>
     public partial class ServerDatabaseTableSelectorDialog : Form
     {
         public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel)

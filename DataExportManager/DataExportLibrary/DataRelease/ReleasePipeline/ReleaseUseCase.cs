@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -12,7 +8,6 @@ using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Microsoft.SqlServer.Management.Sdk.Sfc;
 using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline

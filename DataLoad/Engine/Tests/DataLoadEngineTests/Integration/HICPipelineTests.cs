@@ -130,7 +130,8 @@ namespace DataLoadEngineTests.Integration
                     new Tuple<string, string, Type>("IgnoreBlankLines", null, typeof(bool)),
                     new Tuple<string, string, Type>("ForceHeadersReplacesFirstLineInFile", null, typeof(bool)),
                     new Tuple<string, string, Type>("SendLoadNotRequiredIfFileNotFound", "false", typeof(bool)),
-                    new Tuple<string, string, Type>("Separator", ",", typeof(string))
+                    new Tuple<string, string, Type>("Separator", ",", typeof(string)),
+                    new Tuple<string, string, Type>("TableToLoad", null, typeof(TableInfo))
                 };
 
                 foreach (var tuple in processTaskArgs)

@@ -15,7 +15,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
+    class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
     {
         public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
         {

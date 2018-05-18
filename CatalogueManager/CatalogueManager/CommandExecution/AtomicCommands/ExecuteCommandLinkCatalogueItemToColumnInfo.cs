@@ -1,13 +1,12 @@
 ﻿using System.Drawing;
 using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicUICommandExecution, IAtomicCommand
     {
