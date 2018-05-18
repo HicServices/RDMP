@@ -89,7 +89,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                 haveExtractedBundledContent = true;
             }
-         
+
+            if (_request is ExtractGlobalsCommand)
+            {
+                ExtractGlobals((ExtractGlobalsCommand)_request, job, _dataLoadInfo);
+                return null;
+            }
+
             if (_destination == null)
             {
                 //see if the user has entered an extraction server/database 
