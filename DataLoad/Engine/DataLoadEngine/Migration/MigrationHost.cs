@@ -38,7 +38,7 @@ namespace DataLoadEngine.Migration
             _cataloguesToLoad = cataloguesToLoad;
         }
 
-        public void Migrate(HICLoadConfigurationFlags loadConfigurationFlags, ILogManager logManager, IDataLoadJob job, GracefulCancellationToken cancellationToken)
+        public void Migrate(HICLoadConfigurationFlags loadConfigurationFlags, IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             if (_sourceDbInfo.DiscoverTables(false).All(t=>t.IsEmpty()))
                 throw new Exception("The source database '" + _sourceDbInfo.GetRuntimeName()+ "' on " + _sourceDbInfo.Server.Name + " is empty. There is nothing to migrate.");
@@ -57,11 +57,10 @@ namespace DataLoadEngine.Migration
                     var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad, new StagingToLiveMigrationFieldProcessor());
 
                     // Migrate the data columns
-                    _migrationStrategy.Execute(dataColsToMigrate, job.DataLoadInfo, logManager, cancellationToken);
+                    _migrationStrategy.Execute(job,dataColsToMigrate, job.DataLoadInfo, cancellationToken);
 
                     managedConnectionToDestination.ManagedTransaction.CommitAndCloseConnection();
                     job.DataLoadInfo.CloseAndMarkComplete();
-
                 }
                 catch (OperationCanceledException)
                 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using CatalogueLibrary.DataFlowPipeline;
+using DataLoadEngine.Job;
 using HIC.Logging;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
@@ -19,7 +20,7 @@ namespace DataLoadEngine.Migration
         protected IManagedConnection _managedConnection;
         protected const int Timeout = 60000;
 
-        abstract public void MigrateTable(MigrationColumnSet columnsToMigrate, ILogManager logManager, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates);
+        abstract public void MigrateTable(IDataLoadJob toMigrate, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates);
 
         protected DatabaseMigrationStrategy( string sourceDatabaseName, IManagedConnection connection)
         {
@@ -27,7 +28,7 @@ namespace DataLoadEngine.Migration
             _managedConnection = connection;
         }
 
-        public void Execute(IEnumerable<MigrationColumnSet> toMigrate, IDataLoadInfo dataLoadInfo, ILogManager logManager, GracefulCancellationToken cancellationToken)
+        public void Execute(IDataLoadJob job, IEnumerable<MigrationColumnSet> toMigrate, IDataLoadInfo dataLoadInfo, GracefulCancellationToken cancellationToken)
         {
             _dataLoadInfo = dataLoadInfo;
 
@@ -39,7 +40,7 @@ namespace DataLoadEngine.Migration
                 var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", columnsToMigrate.DestinationDatabase + "." + columnsToMigrate.DestinationTableName, new[] { new DataSource(_sourceDatabaseName + "." + columnsToMigrate.SourceTableName, DateTime.Now) }, 0);
                 try
                 {
-                    MigrateTable(columnsToMigrate, logManager, dataLoadInfo.ID, cancellationToken, ref inserts, ref updates);
+                    MigrateTable(job,columnsToMigrate, dataLoadInfo.ID, cancellationToken, ref inserts, ref updates);
                     OnTableMigrationCompleteHandler(columnsToMigrate.DestinationTableName, inserts, updates);
                     tableLoadInfo.Inserts = inserts;
                     tableLoadInfo.Updates = updates;

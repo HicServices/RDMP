@@ -1,6 +1,7 @@
 ﻿using System;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
 using HIC.Logging;
 using NUnit.Framework;
@@ -18,7 +19,7 @@ namespace DataLoadEngineTests.Integration
         {
             var databaseName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
             var connection = MockRepository.GenerateStub<IManagedConnection>();
-            var logManager = MockRepository.GenerateStub<ILogManager>();
+            var job = MockRepository.GenerateStub<IDataLoadJob>();
             var strategy = new OverwriteMigrationStrategy(databaseName, connection);
 
             var sourceFields = new[] {"Field"};
@@ -31,7 +32,7 @@ namespace DataLoadEngineTests.Integration
             var inserts = 0;
             var updates = 0;
 
-            var ex = Assert.Throws<InvalidOperationException>(() => strategy.MigrateTable(columnsToMigrate, logManager, 1, cts.Token, ref inserts, ref updates));
+            var ex = Assert.Throws<InvalidOperationException>(() => strategy.MigrateTable(job, columnsToMigrate, 1, cts.Token, ref inserts, ref updates));
             Assert.IsTrue(ex.InnerException.Message.Contains("None of the columns to be migrated are configured as a Primary Key"));
         }
     }

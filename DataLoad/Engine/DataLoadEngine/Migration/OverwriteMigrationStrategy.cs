@@ -1,14 +1,10 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
-using HIC.Logging;
-using log4net;
-using ReusableLibraryCode;
+using DataLoadEngine.Job;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using LogManager = log4net.LogManager;
+using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Migration
 {
@@ -19,14 +15,12 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class OverwriteMigrationStrategy : DatabaseMigrationStrategy
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(OverwriteMigrationStrategy));
-
         public OverwriteMigrationStrategy(string sourceDatabaseName, IManagedConnection managedConnection)
             : base(sourceDatabaseName, managedConnection)
         {
         }
 
-        public override void MigrateTable(MigrationColumnSet columnsToMigrate, ILogManager logManager, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates)
+        public override void MigrateTable(IDataLoadJob job, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates)
         {
             var sourceTable = String.Format("[{0}]..[{1}]", _sourceDatabaseName, columnsToMigrate.SourceTableName);
             var destTable = String.Format("[{0}]..[{1}]", columnsToMigrate.DestinationDatabase, columnsToMigrate.DestinationTableName);
@@ -48,8 +42,8 @@ namespace DataLoadEngine.Migration
             var trans = (SqlTransaction)_managedConnection.ManagedTransaction.Transaction;
 
             var cmd = new SqlCommand(mergeQuery, con,trans ) { CommandType = CommandType.Text, CommandTimeout = Timeout };
-            Log.Info("Merge query: " + mergeQuery);
-            logManager.LogProgress(_dataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, new StackTrace().GetFrames().First().GetMethod().Name, mergeQuery);
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Merge query: " + Environment.NewLine + mergeQuery));
+
             try
             {
                 var reader = cmd.ExecuteReader();
@@ -66,7 +60,7 @@ namespace DataLoadEngine.Migration
                 reader.Close();
 
                 var updateQuery = CreateUpdateQuery(columnsToMigrate, dataLoadInfoID);
-                logManager.LogProgress(_dataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, new StackTrace().GetFrames().First().GetMethod().Name, updateQuery);
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Update query:" + Environment.NewLine + updateQuery));
 
                 var updateCmd = new SqlCommand(updateQuery, con, trans)
                 {
@@ -83,7 +77,7 @@ namespace DataLoadEngine.Migration
                 }
                 catch (SqlException e)
                 {
-                    Log.Fatal("Did not successfully perform the update queries: " + updateQuery, e);
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Did not successfully perform the update queries: " + updateQuery, e));
                     throw new Exception("Did not successfully perform the update queries: " + updateQuery + " - " + e);
                 }
             }
@@ -93,7 +87,7 @@ namespace DataLoadEngine.Migration
             }
             catch (Exception e)
             {
-                Log.Warn("Failed to migrate " + sourceTable + " to " + destTable, e);
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to migrate " + sourceTable + " to " + destTable, e));
                 throw new Exception("Failed to migrate " + sourceTable + " to " + destTable + ": " + e);
             }
         }
