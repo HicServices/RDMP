@@ -8,6 +8,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 { 
@@ -21,12 +22,12 @@ namespace DataExportLibrary.ExtractionTime.Commands
             var cohort = configuration.Cohort;
             var datasets = configuration.GetAllExtractableDataSets();
             
-            var datasetBundles = datasets.Select(ds => CreateDatasetCommand(repositoryLocator,ds, configuration));
+            var datasetBundles = datasets.Select(ds => CreateDatasetCommand(repositoryLocator, ds, configuration));
 
             return new ExtractCommandCollection(datasetBundles);
         }
 
-        private ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IExtractableDataSet dataset, ExtractionConfiguration configuration)
+        private ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, ExtractionConfiguration configuration)
         {
             var catalogue = dataset.Catalogue;
 

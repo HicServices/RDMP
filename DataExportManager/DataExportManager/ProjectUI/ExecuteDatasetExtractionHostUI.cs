@@ -57,7 +57,7 @@ namespace DataExportManager.ProjectUI
             if (extractCommand == null)
                 return;
 
-            lblDataset.Text = "Dataset:" + extractCommand;
+            lblDataset.Text = "Dataset: " + extractCommand;
         }
         
         private void btnCancel_Click(object sender, EventArgs e)
@@ -95,9 +95,9 @@ namespace DataExportManager.ProjectUI
 
                 progressUI1.ShowRunning(true);
 
-                var extractionRequest = (ExtractDatasetCommand)ExtractCommand;
+                //var extractionRequest = (ExtractDatasetCommand)ExtractCommand;
 
-                DoExtractionAsync(extractionRequest);
+                DoExtractionAsync(ExtractCommand);
             }
             catch (Exception e)
             {
@@ -115,11 +115,11 @@ namespace DataExportManager.ProjectUI
         }
 
         
-        private void DoExtractionAsync(ExtractDatasetCommand request)
+        private void DoExtractionAsync(IExtractCommand request)
         {
             request.State = ExtractCommandState.WaitingForSQLServer;
                 
-            _pipelineUseCase = new ExtractionPipelineUseCase(request, _pipeline, _dataLoadInfo);
+            _pipelineUseCase = new ExtractionPipelineUseCase(Project, request, _pipeline, _dataLoadInfo);
             _pipelineUseCase.Execute(progressUI1);
 
             if (_pipelineUseCase.Crashed)
@@ -141,11 +141,13 @@ namespace DataExportManager.ProjectUI
                                 "Extraction completed successfully into : " +
                                 _pipelineUseCase.Destination.GetDestinationDescription()));
 
-                        WriteMetadata(request);
+                        if (request is ExtractDatasetCommand)
+                            WriteMetadata(request);
+                        // TODO: add metadata for Globals?
                     }
         }
 
-        private void WriteMetadata(ExtractDatasetCommand request)
+        private void WriteMetadata(IExtractCommand request)
         {
             request.State = ExtractCommandState.WritingMetadata;
             WordDataWriter wordDataWriter;

@@ -121,8 +121,6 @@ namespace DataExportLibrary.ExtractionTime.Commands
             SelectedDataSets = selectedDataSets[0];
         }
 
-        
-
         public void GenerateQueryBuilder()
         {
             List<ReleaseIdentifierSubstitution> substitutions;

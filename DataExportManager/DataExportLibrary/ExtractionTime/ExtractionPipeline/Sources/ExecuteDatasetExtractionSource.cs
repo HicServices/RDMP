@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
@@ -30,7 +31,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
     public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<IExtractCommand>
     {
         //Request is either for one of these
-        public  ExtractDatasetCommand Request { get; protected set; }
+        public ExtractDatasetCommand Request { get; protected set; }
+        public ExtractGlobalsCommand GlobalsRequest { get; protected set; }
 
         public const string AuditTaskName = "DataExtraction";
 
@@ -49,7 +51,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
-        public CumulativeExtractionResults CumulativeExtractionResults { get; protected set; }
+        public ICumulativeExtractionResults CumulativeExtractionResults { get; protected set; }
         
         [DemandsInitialization("Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
         public bool AllowEmptyExtractions { get; set; }
@@ -98,15 +100,17 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 ExtractionTimeTimeCoverageAggregator = new ExtractionTimeTimeCoverageAggregator(_catalogue, request.ExtractableCohort);
             else
                 ExtractionTimeTimeCoverageAggregator = null;
-         
+        }
 
+        private void Initialize(ExtractGlobalsCommand request)
+        {
+            GlobalsRequest = request;
         }
 
         public bool WasCancelled
         {
             get { return _cancel; }
         }
-
         
         private Stopwatch _timeSpentValidating;
         private int _rowsValidated = 0;
@@ -114,19 +118,32 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         private Stopwatch _timeSpentCalculatingDISTINCT;
         private Stopwatch _timeSpentBuckettingDates;
         private int _rowsBucketted = 0;
-        
+
         private bool firstChunk = true;
+        private bool firstGlobalChunk = true;
         private int _rowsRead;
 
         public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (Request == null)
+            if (Request == null && GlobalsRequest == null)
                  listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Component has not been initialized before being asked to GetChunk(s)"));
+
+            // we are in the Global Commands case, let's return an empty DataTable (not null) 
+            // so we can trigger the destination to extract the globals docs and sql
+            if (GlobalsRequest != null)
+            {
+                if (firstGlobalChunk)
+                {
+                    firstGlobalChunk = false;
+                    return new DataTable("Globals");
+                }
+                
+                return null;
+            }
 
             if(_cancel)
                 throw new Exception("User cancelled data extraction");
-
-        
+            
            if (_hostedSource == null)
             {
                //unless we are checking, start auditing
@@ -258,10 +275,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             //if it is test mode reset the host so it is ready to go again if called a second time
             if (_testMode)
                 _hostedSource = null;
-
-
+            
             return chunk;
-
         }
         
         private void GenerateExtractionTransformObservations(DataTable chunk)
@@ -320,7 +335,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 
             //delete old audit records
-            foreach (CumulativeExtractionResults audit in previousAudit)
+            foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
 
             CumulativeExtractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
@@ -386,8 +401,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         {
             if (value is ExtractDatasetCommand)
                 Initialize(value as ExtractDatasetCommand);
+            if (value is ExtractGlobalsCommand)
+                Initialize(value as ExtractGlobalsCommand);
         }
-        
+
         public virtual void Check(ICheckNotifier notifier)
         {
             if (Request == ExtractDatasetCommand.EmptyCommand)
@@ -455,6 +472,5 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         }
 
         private bool _testMode;
-        
     }
 }
