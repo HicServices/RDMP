@@ -55,7 +55,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
          You must have either $a or $d
          ",Mandatory=true,DefaultValue="$c_$d")]
         public string TableNamingPattern { get; set; }
-
+        
         [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
         public bool DropTableIfLoadFails { get; set; }
 
@@ -209,9 +209,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         
         public string GetTableName(string suffix = null)
         {
-            // if there is a cached answer return it
-            // if (_cachedGetTableNameAnswer != null) return _cachedGetTableNameAnswer;
-            
             string tblName = TableNamingPattern;
             var project = _request.Configuration.Project;
             
@@ -296,7 +293,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public string GetDestinationDescription()
         {
-            var tblName = GetTableName();
+            return GetDestinationDescription(suffix: "");
+        }
+
+        private string GetDestinationDescription(string suffix = "")
+        {
+            var tblName = GetTableName(suffix);
             var dbName = GetDatabaseName();
             return TargetDatabaseServer.ID + "|" + dbName + "|" + tblName;
         }
