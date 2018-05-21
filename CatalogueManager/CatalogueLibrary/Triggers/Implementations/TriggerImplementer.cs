@@ -1,6 +1,11 @@
+using System;
 using System.Linq;
+using System.Text.RegularExpressions;
+using CatalogueLibrary.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.Triggers.Implementations
 {
@@ -26,8 +31,89 @@ namespace CatalogueLibrary.Triggers.Implementations
         }
 
         public abstract void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger);
-        public abstract void CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30);
+
+
+        public virtual string CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30)
+        {
+            if (!_primaryKeys.Any())
+                throw new TriggerException("There must be at least 1 primary key");
+
+            //if _Archive exists skip creating it
+            bool skipCreatingArchive = _archiveTable.Exists();
+
+            //check _Archive does not already exist
+            foreach (string forbiddenColumnName in new[] { "hic_validTo", "hic_userID", "hic_status" })
+                if (_columns.Any(c => c.GetRuntimeName().Equals(forbiddenColumnName)))
+                    throw new TriggerException("Table " + _table + " already contains a column called " + forbiddenColumnName + " this column is reserved for Archiving");
+
+            bool b_mustCreate_validFrom = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom));
+            bool b_mustCreate_dataloadRunId = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)) && _createDataLoadRunIdAlso;
+
+            //forces column order dataloadrunID then valid from (doesnt prevent these being in the wrong place in the record but hey ho - possibly not an issue anyway since probably the 3 values in the archive are what matters for order - see the Trigger which populates *,X,Y,Z where * is all columns in mane table
+            if (b_mustCreate_dataloadRunId && !b_mustCreate_validFrom)
+                throw new TriggerException("Cannot create trigger because table contains " + SpecialFieldNames.ValidFrom + " but not " + SpecialFieldNames.DataLoadRunID + " (ID must be placed before valid from in column order)");
+
+            //must add validFrom outside of transaction if we want SMO to pick it up
+            if (b_mustCreate_dataloadRunId)
+                _table.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof (int)), true);
+
+            var syntaxHelper = _server.GetQuerySyntaxHelper();
+            var dateTimeDatatype = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (DateTime)));
+            var nowFunction = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
+
+            //must add validFrom outside of transaction if we want SMO to pick it up
+            if (b_mustCreate_validFrom)
+                _table.AddColumn(SpecialFieldNames.ValidFrom,string.Format(" {0} DEFAULT {1}",dateTimeDatatype,nowFunction), true);
+
+            string sql = WorkOutArchiveTableCreationSQL(); 
+            
+            if (!skipCreatingArchive)
+                using(var con = _server.GetConnection())
+                {
+                    con.Open();
+                
+                    var cmdCreateArchive = _server.GetCommand(sql, con);
+
+                    cmdCreateArchive.ExecuteNonQuery();
+
+                    _archiveTable.AddColumn("hic_validTo",new DatabaseTypeRequest(typeof(DateTime)),true);
+                    _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string),128), true);
+                    _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string),1), true);
+                }
+
+            return sql;
+        }
+
+        private string WorkOutArchiveTableCreationSQL()
+        {
+            //script original table
+            string createTableSQL = _table.ScriptTableCreation(true, true, true);
+
+            string toReplaceTableName = Regex.Escape("CREATE TABLE " + _table.GetRuntimeName());
+
+            if (Regex.Matches(createTableSQL, toReplaceTableName).Count != 1)
+                throw new Exception("Expected to find 1 occurrence of " + toReplaceTableName + " in the SQL " + createTableSQL);
+
+            //rename table
+            createTableSQL = Regex.Replace(createTableSQL, toReplaceTableName, "CREATE TABLE " + _archiveTable);
+
+            string toRemoveIdentities = "IDENTITY\\(\\d+,\\d+\\)";
+
+            //drop identity bit
+            createTableSQL = Regex.Replace(createTableSQL, toRemoveIdentities, "");
+
+            return createTableSQL;
+        }
         public abstract TriggerStatus GetTriggerStatus();
+
+        /// <summary>
+        /// Returns true if the trigger exists and the method body of the trigger matches the expected method body.  This exists to handle
+        /// the situation where a trigger is created on a table then the schema of the live table or the archive table is altered subsequently.
+        /// 
+        /// <para>The best way to implement this is to regenerate the trigger and compare it to the current code fetched from the ddl</para>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public abstract bool CheckUpdateTriggerIsEnabledAndHasExpectedBody();
     }
 }

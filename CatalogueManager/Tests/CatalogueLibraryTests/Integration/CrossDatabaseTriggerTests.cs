@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
@@ -57,7 +58,11 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("hic_validTo",StringComparison.CurrentCultureIgnoreCase)));
             Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("hic_userID",StringComparison.CurrentCultureIgnoreCase)));
             Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("hic_status")));
+            
+            //is the trigger now existing
+            Assert.AreEqual(TriggerStatus.Enabled, implementer.GetTriggerStatus());
 
+            //does it function as expected
             using(var con = tbl.Database.Server.GetConnection())
             {
                 con.Open();
@@ -72,7 +77,23 @@ namespace CatalogueLibraryTests.Integration
                 
                 Assert.AreEqual(1, tbl.GetRowCount());
                 Assert.AreEqual(1, archiveTable.GetRowCount());
+
+                var archive = archiveTable.GetDataTable();
+                var dr = archive.Rows.Cast<DataRow>().Single();
+                
+                Assert.AreEqual(((DateTime)dr["hic_validTo"]).Date,DateTime.Now.Date);
             }
+            
+            //do the strict check too
+            Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody()); 
+
+            string problems;
+            string worked;
+            implementer.DropTrigger(out problems,out worked);
+
+            Assert.IsNullOrEmpty(problems);
+
+            Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
         }
     }
 }
