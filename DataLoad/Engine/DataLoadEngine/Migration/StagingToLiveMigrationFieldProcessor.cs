@@ -15,10 +15,10 @@ namespace DataLoadEngine.Migration
     {
         public void ValidateFields(string[] sourceFields, string[] destinationFields)
         {
-            if (!destinationFields.Contains(SpecialFieldNames.DataLoadRunID))
+            if (!destinationFields.Any(f => f.Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.DataLoadRunID);
 
-            if (!destinationFields.Contains(SpecialFieldNames.ValidFrom))
+            if (!destinationFields.Any(f=>f.Equals(SpecialFieldNames.ValidFrom,StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.ValidFrom);
 
         }

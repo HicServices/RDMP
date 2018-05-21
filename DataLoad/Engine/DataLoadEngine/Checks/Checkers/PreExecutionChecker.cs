@@ -166,7 +166,17 @@ namespace DataLoadEngine.Checks.Checkers
                 var tableName = tableInfo.GetRuntimeName(tableNamingConvention, _databaseConfiguration.DatabaseNamer);
                 try
                 {
-                    DatabaseOperations.CheckTableContainsColumns(dbInfo, tableName, columnNames);
+
+                    var cols = dbInfo.ExpectTable(tableName).DiscoverColumns().ToArray();
+                    
+                    string missing = string.Join(",",
+                        columnNames.Where(
+                            req =>
+                                !cols.Any(c => c.GetRuntimeName().Equals(req, StringComparison.CurrentCultureIgnoreCase))));
+                    
+                    if (!string.IsNullOrWhiteSpace(missing))
+                        throw new Exception(dbInfo + " does not contain columns: " + missing);
+
                 }
                 catch (Exception e)
                 {
@@ -197,7 +207,7 @@ namespace DataLoadEngine.Checks.Checkers
 
             var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' exists", CheckResult.Fail, null, "Drop database " + rawDbInfo));
             
-            if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW"))
+            if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW",StringComparison.CurrentCultureIgnoreCase))
                 throw new Exception("rawDbInfo database name did not end with _RAW! It was:" + rawDbInfo.GetRuntimeName()+ " (Why is the system trying to drop this database?)");
             if (shouldDrop)
             {

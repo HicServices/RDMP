@@ -21,15 +21,24 @@ namespace CatalogueLibrary.Triggers.Implementations
         public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
         {
             problemsDroppingTrigger = "";
+            thingsThatWorkedDroppingTrigger = "";
 
-            using (var con = _server.GetConnection())
+            try
             {
-                con.Open();
+                using (var con = _server.GetConnection())
+                {
+                    con.Open();
 
-                var cmd = _server.GetCommand("DROP TRIGGER " +GetTriggerName(), con);
-                cmd.ExecuteNonQuery();
+                    var cmd = _server.GetCommand("DROP TRIGGER " + GetTriggerName(), con);
+                    cmd.ExecuteNonQuery();
 
-                thingsThatWorkedDroppingTrigger = "Droppped trigger " + GetTriggerName();
+                    thingsThatWorkedDroppingTrigger = "Droppped trigger " + GetTriggerName();
+                }
+            }
+            catch (Exception exception)
+            {
+                //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
+                problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine; ;
             }
         }
 

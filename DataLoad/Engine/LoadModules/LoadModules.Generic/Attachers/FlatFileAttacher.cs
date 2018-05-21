@@ -106,59 +106,56 @@ namespace LoadModules.Generic.Attachers
             {
                 DataTable dt = tableToLoad.GetDataTable(0);
 
-                // setup bulk insert it into destination
-                SqlBulkCopy insert = new SqlBulkCopy((SqlConnection) con);
-                insert.BulkCopyTimeout = 500000;
+                using (var insert = tableToLoad.BeginBulkInsert())
+                {
+                    // setup bulk insert it into destination
+                    insert.Timeout = 500000;
 
-                //bulk insert ito destination
-                insert.DestinationTableName = tableToLoad.GetRuntimeName();
+                    //bulk insert ito destination
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open file " + fileToLoad.FullName));
+                    OpenFile(fileToLoad,job);
 
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open file " + fileToLoad.FullName));
-                OpenFile(fileToLoad,job);
+                    //confirm the validity of the headers
+                    ConfirmFlatFileHeadersAgainstDataTable(dt,job);
 
-                //confirm the validity of the headers
-                ConfirmFlatFileHeadersAgainstDataTable(dt,job);
+                    con.Open();
 
-                //work out mappings
-                foreach (DataColumn column in dt.Columns)
-                    insert.ColumnMappings.Add(column.ColumnName, column.ColumnName);
-                con.Open();
-
-                //now we will read data out of the file in batches
-                int batchNumber = 1;
-                int maxBatchSize = 10000;
-                int recordsCreatedSoFar = 0;
+                    //now we will read data out of the file in batches
+                    int batchNumber = 1;
+                    int maxBatchSize = 10000;
+                    int recordsCreatedSoFar = 0;
                 
-
-                try
-                {
-                    //while there is data to be loaded into table 
-                    while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize) != 0)
+                    try
                     {
-                        DropEmptyColumns(dt);
-                        ConfirmFitToDestination(dt, tableToLoad, job);
-                        try
+                        //while there is data to be loaded into table 
+                        while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize) != 0)
                         {
-                            recordsCreatedSoFar += UsefulStuff.BulkInsertWithBetterErrorMessages(insert, dt, dbInfo.Server);
-                            dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
+                            DropEmptyColumns(dt);
+                            ConfirmFitToDestination(dt, tableToLoad, job);
+                            try
+                            {
+                                recordsCreatedSoFar += insert.Upload(dt); 
+                                
+                                dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
 
-                            job.OnProgress(this,
-                                new ProgressEventArgs(dbInfo.GetRuntimeName(),
-                                    new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
+                                job.OnProgress(this,
+                                    new ProgressEventArgs(dbInfo.GetRuntimeName(),
+                                        new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
+                            }
+                            catch (Exception e)
+                            {
+                                throw new Exception("Error processing batch number " + batchNumber + " (of batch size " + maxBatchSize+")",e);
+                            } 
                         }
-                        catch (Exception e)
-                        {
-                            throw new Exception("Error processing batch number " + batchNumber + " (of batch size " + maxBatchSize+")",e);
-                        } 
                     }
-                }
-                catch (Exception e)
-                {
-                    throw new FlatFileLoadException("Error processing file " + fileToLoad, e);
-                }
-                finally
-                {
-                    CloseFile();
+                    catch (Exception e)
+                    {
+                        throw new FlatFileLoadException("Error processing file " + fileToLoad, e);
+                    }
+                    finally
+                    {
+                        CloseFile();
+                    }
                 }
             }
         }

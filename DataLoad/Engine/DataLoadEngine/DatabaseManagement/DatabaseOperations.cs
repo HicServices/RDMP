@@ -114,18 +114,6 @@ AND    object_id = object_id('" + table.GetRuntimeName()+ "');";
             }
         }
 
-        public static bool CheckTableContainsColumns(DiscoveredDatabase dbInfo, string tableName, List<string> columnNamesToCheck)
-        {
-            var cols = dbInfo.ExpectTable(tableName).DiscoverColumns().ToArray();
-            var missingColumns = columnNamesToCheck.Except(cols.Select(c => c.GetRuntimeName())).ToArray();
-
-            if(missingColumns.Any())
-                throw new Exception( dbInfo + " does not contain columns: " + String.Join(", ", missingColumns));
-
-            return true;
-        }
-
-
         public static SqlDataReader GetReaderForTableInDatabase(DiscoveredDatabase dbInfo, string tableName)
         {
             var conn = (SqlConnection)dbInfo.Server.GetConnection();
@@ -188,7 +176,7 @@ AND    object_id = object_id('" + table.GetRuntimeName()+ "');";
 
         private static bool IsNukable(DiscoveredDatabase dbInfo)
         {
-            return dbInfo.GetRuntimeName().EndsWith("_STAGING") || dbInfo.GetRuntimeName().EndsWith("_RAW");
+            return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

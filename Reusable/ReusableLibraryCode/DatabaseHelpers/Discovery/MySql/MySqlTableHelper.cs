@@ -86,7 +86,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public override void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop)
         {
-            throw new NotImplementedException();
+            var cmd = new MySqlCommand("alter table " + columnToDrop.Table.GetFullyQualifiedName() + " drop column " + columnToDrop.GetRuntimeName(), (MySqlConnection)connection);
+            cmd.ExecuteNonQuery();
         }
 
         public override int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null)
