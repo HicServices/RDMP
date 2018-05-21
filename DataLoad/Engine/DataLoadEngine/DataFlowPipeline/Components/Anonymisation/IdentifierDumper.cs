@@ -305,8 +305,7 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
                 synchronizer.Synchronize(notifier);
                 
                 //make sure there is a backup trigger enabled on the Identifier dump so that we version updates
-                TriggerChecks triggerChecker = new TriggerChecks(_dumpDatabase, GetRuntimeName(), true,
-                    _tableInfo.ColumnInfos.Where(col => col.IsPrimaryKey).Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray()); // primary keys - ignoring transforms for ANO
+                TriggerChecks triggerChecker = new TriggerChecks(_dumpDatabase.ExpectTable( GetRuntimeName()), true); // primary keys - ignoring transforms for ANO
                triggerChecker.Check(notifier);
             }
         }

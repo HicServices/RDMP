@@ -91,9 +91,9 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
         {
             var database = _dataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
 
-            TriggerImplementer trigger = new TriggerImplementer(database, _tableInfo.GetRuntimeName());
+            TriggerImplementer trigger = new TriggerImplementer(database.ExpectTable(_tableInfo.GetRuntimeName()));
 
-            if (trigger.CheckUpdateTriggerIsEnabledOnServer() != TriggerImplementer.TriggerStatus.Missing)
+            if (trigger.GetTriggerStatus() != TriggerStatus.Missing)
                 throw new NotSupportedException("Table " + _tableInfo + " has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
         }
 

@@ -206,8 +206,8 @@ namespace CatalogueManager.Menus
 
                         var db = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.InternalDataProcessing);
 
-                        TriggerImplementer implementer = new TriggerImplementer(db, tableInfo.GetRuntimeName());
-                        implementer.CreateTrigger(pks.Select(col => col.GetRuntimeName()).ToArray(), checks);
+                        TriggerImplementer implementer = new TriggerImplementer(db.ExpectTable(tableInfo.GetRuntimeName()));
+                        implementer.CreateTrigger(checks);
                         MessageBox.Show("Success, look for the new table " + tableInfo.GetRuntimeName() + "_Archive which will contain old records whenever there is an update");
                     }
                 }

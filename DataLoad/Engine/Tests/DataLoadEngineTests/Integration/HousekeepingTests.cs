@@ -31,9 +31,9 @@ namespace DataLoadEngineTests.Integration
 
             var dbInfo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName);
 
-            var triggerImplementer = new TriggerImplementer(dbInfo, tableName);
-            var isEnabled = triggerImplementer.CheckUpdateTriggerIsEnabledOnServer();
-            Assert.AreEqual(TriggerImplementer.TriggerStatus.Enabled, isEnabled);
+            var triggerImplementer = new TriggerImplementer(table);
+            var isEnabled = triggerImplementer.GetTriggerStatus();
+            Assert.AreEqual(TriggerStatus.Enabled, isEnabled);
 
             
             // disable the trigger and test correct reporting
@@ -47,8 +47,8 @@ namespace DataLoadEngineTests.Integration
                 cmd.ExecuteNonQuery();
             }
 
-            isEnabled = triggerImplementer.CheckUpdateTriggerIsEnabledOnServer();
-            Assert.AreEqual(TriggerImplementer.TriggerStatus.Disabled, isEnabled);
+            isEnabled = triggerImplementer.GetTriggerStatus();
+            Assert.AreEqual(TriggerStatus.Disabled, isEnabled);
         }
     }
 }

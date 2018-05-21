@@ -216,7 +216,7 @@ namespace DataLoadEngine.Checks.Checkers
             // Check that the update triggers are present/enabled
             foreach (var tableInfo in allTableInfos)
             {
-                TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live], tableInfo.GetRuntimeName(), true, null);
+                TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName()), true);
                 checker.Check(_notifier);
             }
         }
