@@ -8,33 +8,12 @@ using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Implementations;
 using DataLoadEngine.Checks.Checkers;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
 {
-
-    public class CrossDatabaseTriggerTests : DatabaseTests
-    {
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
-        public void NoTriggerExists(DatabaseType type)
-        {
-            var db = GetCleanedServer(type, "CrossDatabaseTriggerTests");
-            var tbl = db.CreateTable("MyTable", new[]
-            {
-                new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof (string), 30)),
-                new DatabaseColumnRequest("bubbles", new DatabaseTypeRequest(typeof (int)))
-            });
-
-            
-            
-        }
-    }
-
     public class TriggerTests :DatabaseTests
     {
         private DiscoveredTable _table;
