@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Triggers;
+using CatalogueLibrary.Triggers.Exceptions;
 using CatalogueLibrary.Triggers.Implementations;
 using DataLoadEngine.Checks.Checkers;
 using NUnit.Framework;
@@ -37,7 +38,7 @@ namespace CatalogueLibraryTests.Integration
         [Test]
         public void CreateWithNoPks_Complain()
         {
-            var ex = Assert.Throws<Exception>(() => new MicrosoftSQLTriggerImplementer(_table).CreateTrigger(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<TriggerException>(() => new MicrosoftSQLTriggerImplementer(_table).CreateTrigger(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("There must be at least 1 primary key", ex.Message);
         }
 

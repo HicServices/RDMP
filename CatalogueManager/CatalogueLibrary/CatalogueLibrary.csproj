@@ -544,6 +544,7 @@
     <Compile Include="Ticketing\TicketingSystemFactory.cs" />
     <Compile Include="Triggers\DiffDatabaseDataFetcher.cs" />
     <Compile Include="Triggers\Exceptions\IrreconcilableColumnDifferencesInArchiveException.cs" />
+    <Compile Include="Triggers\Exceptions\TriggerException.cs" />
     <Compile Include="Triggers\Implementations\MicrosoftSQLTriggerImplementer.cs" />
     <Compile Include="Triggers\Implementations\MySqlTriggerImplementer.cs" />
     <Compile Include="Triggers\Implementations\TriggerImplementerFactory.cs" />

@@ -174,7 +174,7 @@ namespace CatalogueLibrary.Triggers.Implementations
             string triggerName = "[dbo]." + _table.GetRuntimeName() + "_OnUpdate";
 
             if (!_primaryKeys.Any())
-                throw new Exception("There must be at least 1 primary key");
+                throw new TriggerException("There must be at least 1 primary key");
 
             //this is the SQL to join on the main table to the deleted to record the hic_validFrom
             string updateValidToWhere = " UPDATE " + _table +
