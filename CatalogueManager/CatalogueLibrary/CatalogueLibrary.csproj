@@ -556,6 +556,7 @@
     <Compile Include="TableInfoSynchronizer.cs" />
     <Compile Include="SimpleStringValueEncryption.cs" />
     <Compile Include="Triggers\Exceptions\TriggerMissingException.cs" />
+    <Compile Include="Triggers\TriggerChecks.cs" />
     <Compile Include="Triggers\TriggerStatus.cs" />
     <Compile Include="WordCatalogueExtractor.cs" />
   </ItemGroup>

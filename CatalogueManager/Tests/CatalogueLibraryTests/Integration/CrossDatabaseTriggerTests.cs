@@ -87,6 +87,41 @@ namespace CatalogueLibraryTests.Integration
             //do the strict check too
             Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody()); 
 
+            tbl.AddColumn("amagad",new DatabaseTypeRequest(typeof(float),null,new Tuple<int, int>(2,2)),true);
+            implementer = factory.Create(tbl);
+
+            Assert.Throws<IrreconcilableColumnDifferencesInArchiveException>(() => implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+
+            archiveTable.AddColumn("amagad", new DatabaseTypeRequest(typeof(float), null, new Tuple<int, int>(2, 2)), true);
+
+            var checks = new TriggerChecks(tbl, true);
+            checks.Check(new AcceptAllCheckNotifier());
+
+            Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+
+            
+            //does it function as expected
+            using (var con = tbl.Database.Server.GetConnection())
+            {
+                con.Open();
+
+                Assert.AreEqual(1, tbl.GetRowCount());
+                Assert.AreEqual(1, archiveTable.GetRowCount());
+
+                var cmd = tbl.Database.Server.GetCommand(string.Format("UPDATE {0} set amagad=1.0", tbl.GetRuntimeName()), con);
+                cmd.ExecuteNonQuery();
+
+                cmd = tbl.Database.Server.GetCommand(string.Format("UPDATE {0} set amagad=.09", tbl.GetRuntimeName()), con);
+                cmd.ExecuteNonQuery();
+
+                Assert.AreEqual(1, tbl.GetRowCount());
+                Assert.AreEqual(3, archiveTable.GetRowCount());
+
+                var archive = archiveTable.GetDataTable();
+                Assert.AreEqual(1,archive.Rows.Cast<DataRow>().Count(r=>Equals(r["amagad"],(decimal)1.00)));
+                Assert.AreEqual(2, archive.Rows.Cast<DataRow>().Count(r => r["amagad"] == DBNull.Value));
+            }
+
             string problems;
             string worked;
             implementer.DropTrigger(out problems,out worked);

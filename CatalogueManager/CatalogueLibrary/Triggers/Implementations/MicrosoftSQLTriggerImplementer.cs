@@ -315,13 +315,11 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
 
         public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
         {
-            
-            //check server has trigger and it is on 
-            TriggerStatus isEnabledSimple = GetTriggerStatus();
+            bool baseResult = base.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
 
-            if (isEnabledSimple == TriggerStatus.Disabled || isEnabledSimple == TriggerStatus.Missing)
+            if (!baseResult)
                 return false;
-
+            
             //now check the definition of it! - make sure it relates to primary keys etc
             var updateTriggerName = _table + "_OnUpdate";
             var query = "USE [" + _table.Database.GetRuntimeName()+ "];SELECT OBJECT_DEFINITION (object_id) FROM sys.triggers WHERE name='" + updateTriggerName + "' and is_disabled=0";
@@ -346,9 +344,6 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                     if (!expectedSQL.Equals(result))
                         throw new ExpectedIdenticalStringsException("Trigger " + updateTriggerName + " is corrupt",
                             expectedSQL, result);
-
-                    CheckColumnDefinitionsMatchArchive();
-
                 }
             }
             catch (IrreconcilableColumnDifferencesInArchiveException)
@@ -364,40 +359,6 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
             return true;
         }
 
-        private void CheckColumnDefinitionsMatchArchive()
-        {
-            List<string> errors = new List<string>();
-            
-            var archiveTableCols =_archiveTable.DiscoverColumns().ToArray();
-
-            foreach (DiscoveredColumn col in _columns)
-            {
-                var colInArchive = archiveTableCols.SingleOrDefault(c => c.GetRuntimeName().Equals(col.GetRuntimeName()));
-                
-                if(colInArchive == null)
-                    errors.Add("Column " + col.GetRuntimeName() + " appears in Table '" + _table + "' but not in archive table '" + _archiveTable +"'");
-                else
-                    if(!AreCompatibleDatatypes(col.DataType,colInArchive.DataType))
-                        errors.Add("Column " + col.GetRuntimeName() + " has data type '" + col.DataType + "' in '" + _table + "' but in Archive table '" + _archiveTable + "' it is defined as '" + colInArchive.DataType + "'");
-            }
-
-            if(errors.Any())
-                throw new IrreconcilableColumnDifferencesInArchiveException("The following column mismatch errors were seen:" +Environment.NewLine  + string.Join(Environment.NewLine, errors));
-        }
-
-        private bool AreCompatibleDatatypes(DiscoveredDataType mainDataType, DiscoveredDataType archiveDataType)
-        {
-            var t1 = mainDataType.SQLType;
-            var t2 = archiveDataType.SQLType;
-
-            if (t1.Equals(t2,StringComparison.CurrentCultureIgnoreCase))
-                return true;
-
-            if (t1.ToLower().Contains("identity"))
-                return t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
-
-            return false;
-        }
-
+        
     }
 }

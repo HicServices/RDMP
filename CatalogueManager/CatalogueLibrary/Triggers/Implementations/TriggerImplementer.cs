@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Triggers.Exceptions;
@@ -43,11 +44,11 @@ namespace CatalogueLibrary.Triggers.Implementations
 
             //check _Archive does not already exist
             foreach (string forbiddenColumnName in new[] { "hic_validTo", "hic_userID", "hic_status" })
-                if (_columns.Any(c => c.GetRuntimeName().Equals(forbiddenColumnName)))
+                if (_columns.Any(c => c.GetRuntimeName().Equals(forbiddenColumnName, StringComparison.CurrentCultureIgnoreCase)))
                     throw new TriggerException("Table " + _table + " already contains a column called " + forbiddenColumnName + " this column is reserved for Archiving");
 
-            bool b_mustCreate_validFrom = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom));
-            bool b_mustCreate_dataloadRunId = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)) && _createDataLoadRunIdAlso;
+            bool b_mustCreate_validFrom = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom, StringComparison.CurrentCultureIgnoreCase));
+            bool b_mustCreate_dataloadRunId = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID,StringComparison.CurrentCultureIgnoreCase)) && _createDataLoadRunIdAlso;
 
             //forces column order dataloadrunID then valid from (doesnt prevent these being in the wrong place in the record but hey ho - possibly not an issue anyway since probably the 3 values in the archive are what matters for order - see the Trigger which populates *,X,Y,Z where * is all columns in mane table
             if (b_mustCreate_dataloadRunId && !b_mustCreate_validFrom)
@@ -114,6 +115,53 @@ namespace CatalogueLibrary.Triggers.Implementations
         /// 
         /// </summary>
         /// <returns></returns>
-        public abstract bool CheckUpdateTriggerIsEnabledAndHasExpectedBody();
+        public virtual bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
+        {
+            //check server has trigger and it is on 
+            TriggerStatus isEnabledSimple = GetTriggerStatus();
+
+            if (isEnabledSimple == TriggerStatus.Disabled || isEnabledSimple == TriggerStatus.Missing)
+                return false;
+            
+            CheckColumnDefinitionsMatchArchive();
+
+            return true;
+        }
+
+        private void CheckColumnDefinitionsMatchArchive()
+        {
+            List<string> errors = new List<string>();
+
+            var archiveTableCols = _archiveTable.DiscoverColumns().ToArray();
+
+            foreach (DiscoveredColumn col in _columns)
+            {
+                var colInArchive = archiveTableCols.SingleOrDefault(c => c.GetRuntimeName().Equals(col.GetRuntimeName()));
+
+                if (colInArchive == null)
+                    errors.Add("Column " + col.GetRuntimeName() + " appears in Table '" + _table + "' but not in archive table '" + _archiveTable + "'");
+                else
+                    if (!AreCompatibleDatatypes(col.DataType, colInArchive.DataType))
+                        errors.Add("Column " + col.GetRuntimeName() + " has data type '" + col.DataType + "' in '" + _table + "' but in Archive table '" + _archiveTable + "' it is defined as '" + colInArchive.DataType + "'");
+            }
+
+            if (errors.Any())
+                throw new IrreconcilableColumnDifferencesInArchiveException("The following column mismatch errors were seen:" + Environment.NewLine + string.Join(Environment.NewLine, errors));
+        }
+
+        private bool AreCompatibleDatatypes(DiscoveredDataType mainDataType, DiscoveredDataType archiveDataType)
+        {
+            var t1 = mainDataType.SQLType;
+            var t2 = archiveDataType.SQLType;
+
+            if (t1.Equals(t2, StringComparison.CurrentCultureIgnoreCase))
+                return true;
+
+            if (t1.ToLower().Contains("identity"))
+                return t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
+
+            return false;
+        }
+
     }
 }

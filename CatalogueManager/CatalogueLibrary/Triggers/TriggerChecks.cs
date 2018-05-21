@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Linq;
-using CachingEngine.DataRetrievers;
-using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
 using CatalogueLibrary.Triggers.Implementations;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
-namespace DataLoadEngine.Checks.Checkers
+namespace CatalogueLibrary.Triggers
 {
-    class TriggerChecks : ICheckable
+    public class TriggerChecks : ICheckable
     {
         private readonly bool _expectedPresence;
         
@@ -106,7 +103,7 @@ namespace DataLoadEngine.Checks.Checkers
             bool passed = true;
 
             foreach (var requiredArchiveColumns in new[] { "hic_validTo", "hic_userID", "hic_status" })
-                if (!archiveCols.Contains(requiredArchiveColumns))
+                if (!archiveCols.Any(c=>c.Equals(requiredArchiveColumns,StringComparison.CurrentCultureIgnoreCase)))
                 {
 
                     notifier.OnCheckPerformed(
@@ -157,7 +154,5 @@ namespace DataLoadEngine.Checks.Checkers
                 TriggerCreated = true;
             }
         }
-
-        
     }
 }

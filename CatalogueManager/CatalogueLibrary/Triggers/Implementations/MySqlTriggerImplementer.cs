@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Exceptions;
 using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Triggers.Implementations
@@ -19,40 +20,70 @@ namespace CatalogueLibrary.Triggers.Implementations
 
         public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
         {
-            throw new NotImplementedException();
+            problemsDroppingTrigger = "";
+
+            using (var con = _server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = _server.GetCommand("DROP TRIGGER " +GetTriggerName(), con);
+                cmd.ExecuteNonQuery();
+
+                thingsThatWorkedDroppingTrigger = "Droppped trigger " + GetTriggerName();
+            }
         }
 
         public override string CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30)
         {
-            base.CreateTrigger(notifier, createArchiveIndexTimeout);
+            string creationSql = base.CreateTrigger(notifier, createArchiveIndexTimeout);
 
-            /*@"CREATE TRIGGER testref BEFORE INSERT ON test1
-  FOR EACH ROW
-  BEGIN
-    INSERT INTO test2 SET a2 = NEW.a1;
-    DELETE FROM test3 WHERE a3 = NEW.a1;
-    UPDATE test4 SET b4 = b4 + 1 WHERE a4 = NEW.a1;
-  END;"*/
-            return null;
+            var sql = string.Format(@"CREATE TRIGGER {0} BEFORE UPDATE ON {1} FOR EACH ROW
+{2};", 
+       GetTriggerName(),
+       _table,
+       CreateTriggerBody());
+
+            using (var con = _server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = _server.GetCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            return creationSql;
+        }
+
+        private string CreateTriggerBody()
+        {
+            return string.Format(@"BEGIN
+    INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
+  END", _archiveTable,
+                string.Join(",", _columns.Select(c => c.GetRuntimeName() + "=OLD." + c.GetRuntimeName())));
         }
 
         public override TriggerStatus GetTriggerStatus()
+        {
+            return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;
+        }
+
+        private string GetTriggerBody()
         {
             using (var con = _server.GetConnection())
             {
                 con.Open();
 
-                var  cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()),con);
+                var cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()), con);
                 var r = cmd.ExecuteReader();
 
                 while (r.Read())
                 {
-                    if(r["Trigger"].Equals(GetTriggerName()))
-                        return TriggerStatus.Enabled;
+                    if (r["Trigger"].Equals(GetTriggerName()))
+                        return (string) r["Statement"];
                 }
             }
 
-            return TriggerStatus.Missing;
+            return null;
         }
 
         private object GetTriggerName()
@@ -62,7 +93,16 @@ namespace CatalogueLibrary.Triggers.Implementations
 
         public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
         {
-            throw new NotImplementedException();
+            if (!base.CheckUpdateTriggerIsEnabledAndHasExpectedBody())
+                return false;
+
+            var sqlThen = GetTriggerBody();
+            var sqlNow = CreateTriggerBody();
+
+            if(!sqlNow.Equals(sqlThen))
+                throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlNow,sqlThen);
+            
+            return true;
         }
     }
 }
