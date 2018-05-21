@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
@@ -50,7 +51,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
-        public CumulativeExtractionResults CumulativeExtractionResults { get; protected set; }
+        public ICumulativeExtractionResults CumulativeExtractionResults { get; protected set; }
         
         [DemandsInitialization("Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
         public bool AllowEmptyExtractions { get; set; }
@@ -334,7 +335,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 
             //delete old audit records
-            foreach (CumulativeExtractionResults audit in previousAudit)
+            foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
 
             CumulativeExtractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);

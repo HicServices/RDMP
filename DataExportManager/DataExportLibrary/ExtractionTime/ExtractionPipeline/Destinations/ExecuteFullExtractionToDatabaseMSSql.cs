@@ -85,6 +85,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             //give the data table the correct name
             toProcess.TableName = GetTableName();
 
+            //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it)
+            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", GetTableName(), new[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+
             if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
                 WriteBundleContents(((ExtractDatasetCommand) _request).DatasetBundle, listener, cancellationToken);
 
@@ -93,10 +96,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 ExtractGlobals((ExtractGlobalsCommand)_request, listener, _dataLoadInfo);
                 return null;
             }
-
-            //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it)
-            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "Drop table " + GetTableName(), GetTableName(),
-                                new DataSource[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
 
             _destination.ProcessPipelineData(toProcess, listener, cancellationToken);
             TableLoadInfo.Inserts += toProcess.Rows.Count;

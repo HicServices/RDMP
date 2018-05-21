@@ -32,8 +32,8 @@ namespace DataExportLibrary.DataRelease.Audit
             if (_datasetName == null)
                 try
                 {
-                    var cumulativeExtractionResults = _repository.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
-                    ExtractableDataSet ds = _repository.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
+                    ICumulativeExtractionResults cumulativeExtractionResults = _repository.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
+                    IExtractableDataSet ds = _repository.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
                     _datasetName = ds.ToString();
                 }
                 catch (Exception e)
